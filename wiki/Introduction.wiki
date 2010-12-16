@@ -12,7 +12,7 @@ It is an Zend-Framework based Education Information System i.e. EduIS which is m
 Maintaining the standards of base framework, this project is designed in loosely coupled modules which can be treated as "use at will".
 
 == Modules ==
-The project is divided into following modules(based on real life parts of academic institution):
+The project is divided into following modules(based on real-life bodies of academic institution):
   * Core
   * Authentication
   * Academics
