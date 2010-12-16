@@ -1,0 +1,525 @@
+<div id="showIssue" >
+<form id="formMember" action="javascript: manageMember();"><label
+	for="member_id" accesskey="M" id="lbl_member_id"
+	style="padding: 0.4em; float: left;"
+	class="ui-widget-content ui-corner-all">Member Id : <input size="10"
+	id="member_id" tabindex="1" type="text" />
+<button type="submit" class="ui-corner-all">Show</button>
+</label></form>
+<form id="formBook" action="javascript: manageBook();"><label
+	for="acc_no" id="lbl_acc_no"
+	style="padding: 0.4em; margin-left: 1%; float: right; display: none;"
+	class="ui-widget-content  ui-corner-all">Accession number : <input
+	id="acc_no" size="7" tabindex="3" accesskey="A" type="text" />
+<button id="submitBook" type="submit" 
+	class="ui-corner-all">Show</button>
+</label></form>
+</div>
+
+
+<div id="grid-main" style="padding-top: 1em; clear: both;"
+	class="ui-widget  ui-corner-all ui-helper-reset">
+	
+	
+<div id="member-area" style="width: 49%; float: left; display: none;">
+<fieldset class="ui-widget-content  ui-corner-all"><legend
+	class="ui-widget-header ui-corner-all">Member Info</legend>
+	<table style="width: 100%;">
+		<tr>
+			<td><div id="memberInfoBasic" class="ui-helper-reset"></div></td>
+			<td style="width: 3.5cm;"><div id="memberInfoImage" class="ui-helper-reset">:IMAGE:</div></td>
+		</tr>
+	</table>
+	<label for="cbkVerify" id="lbl_cbkVerify" class="ui-widget-content  ui-corner-all">
+	Verified : <input id="cbkVerify" type="checkbox" accesskey="V" tabindex="2" value="verified" /> 
+	</label>
+<div id="memberInfo" style="clear: both;">&nbsp;</div>
+<div style="clear: both"><a id="moreAccInfo" href="#">more...</a></div>
+</fieldset>
+<div style="clear: both">
+<fieldset id="fset_accountInfo" class="ui-widget-content  ui-corner-all"><legend
+	class="ui-widget-header ui-corner-all">Account Information</legend>
+<div id="accountInfo">&nbsp;</div>
+<div style="clear: both"><a id="lessAccInfo" href="#"
+	style="display: none;">less...</a></div>
+</fieldset>
+</div>
+</div>
+
+
+<div id="bookArea" style="width: 49%; float: right; display: none;">
+<fieldset class="ui-widget-content  ui-corner-all"><legend
+	class="ui-widget-header ui-corner-all">Document Info</legend>
+<div id="bookInfo">&nbsp;</div>
+<div style="clear: both">
+<div style="clear: both"><a id="moreInfo" tabindex="4" href="#">more...</a></div>
+<div id="moreBookInfo" style="display: none;">processing...</div>
+<div style="clear: both"><a id="lessInfo" tabindex="5" href="#"
+	style="display: none;">less...</a></div>
+</div>
+
+</fieldset>
+</div>
+<div id="divIssue"
+	style="clear: both; text-align: center; padding-top: 1em; padding-bottom: 1em; display: none;">
+<button id="btnissue" tabindex="6" class="ui-corner-all">Issue Document</button>
+</div>
+</div>
+
+<script type="text/javascript">
+var imgServer = 'http://localhost/';
+var imgType = '.jpg';
+var urlMemberInfo = "http://hemant.ace.com/zend/aceis/public/library/member/getmemberaccount";
+var urlMemberLimit = "<?=$this->url ( array ('controller' => 'memberlimit', 'action' => 'getmembertypelimit' ), 'default', true )?>";
+var urlBookInfo = "<?=$this->url ( array ('controller' => 'book', 'action' => 'getbookdetails' ), 'default', true )?>";
+var urlBookMoreInfo = "<?=$this->url ( array ('controller' => 'issue', 'action' => 'getbookinfo' ), 'default', true )?>";
+var urlIssueBook = "<?=$this->url ( array ('controller' => 'issue', 'action' => 'issuebook' ), 'default', true )?>";
+var objMemberInfo = null;
+var objMemberType = {};
+var objBookMoreInfo = null;
+var objBookInfo = null ;
+
+//jQueryfy buttons
+$("button").button();
+
+var manageMember = function(){
+	member_id = $('#member_id').val();
+    if(member_id.length > 0){
+		fetchMemberInfo(member_id);
+        resetBookSection();
+        $('#fset_accountInfo').hide();
+        $('a#moreAccInfo').show();
+        $('a#lessAccInfo').hide(); 
+        $("#cbkVerify").focus();   
+    } else {
+    	resetMemberSection();
+        resetBookSection();
+    }
+};
+
+var manageBook = function(){
+	objBookMoreInfo = null ;
+    acc_no = $('#acc_no').val();
+    if(acc_no.length > 0){
+        fetchBookInfo(acc_no);
+        $('#moreBookInfo').hide();
+        $('a#moreInfo').show();
+        $('a#lessInfo').hide();
+    }
+};
+
+$(function(){
+	//Initial Cursor position
+    $("#member_id").focus();
+    
+    // On Verification
+    $('#cbkVerify').click(function() {
+    	$("#lbl_acc_no").toggle();
+    	if(!$("#cbkVerify :checked").length){
+    		$("#acc_no").val('');
+    		$("#bookArea").fadeOut("slow");
+    		$("#divIssue").slideUp();
+    	}
+     });
+    
+	$('#btnissue').click(function(){
+	    acc_no = $('#acc_no').val();
+	    member_id = $('#member_id').val();
+	    issueBook(acc_no, member_id);
+	});
+
+
+
+    /*
+      Show-Hide things...
+    */
+    $('a#moreInfo').click(function() {
+        if(null == objBookMoreInfo){
+            fetchBookMoreInfo();
+        }
+        toggleBookInfo();
+        return false;
+      });
+
+    $('a#lessInfo').click(function() {
+        toggleBookInfo();
+        return false;
+     });
+
+
+    $('a#moreAccInfo').click(function() {
+        toggleAccountInfo();
+        return false;
+      });
+
+    $('a#lessAccInfo').click(function() {
+        toggleAccountInfo();
+        return false;
+     });
+    
+});
+
+/*
+ * Fetch Member Information
+ */
+var fetchMemberInfo = function(member_id){
+        $.ajax({
+            url : urlMemberInfo,
+            ifModified : true,
+            dataType : "jsonp",
+            data : {'member_id' : member_id },
+            jsonp:"onJsonPLoad",
+            success : function(member){
+                if(member.member_type_id){
+                    switch(member.member_type_id.toUpperCase()){
+                    	case 'STUDENT' : 
+                    		var memberInfoBasic = {};
+                            memberInfoBasic.name = member.info.first_name;
+                            memberInfoBasic.deptt = member.info.department_id;
+                            memberInfoBasic.degree = member.info.degree_id;
+                            memberInfoBasic.semester = member.info.semester_id;
+                            memberInfoBasic.type = member.member_type_id;
+                    	break;
+                    	case 'FACULTY' : alert('Hi!! Im Faculty. But my case is not considered yet.');
+                    	break;
+                    	default: var alertText = 'Oops, "'+member.member_type_id.toUpperCase()+'" is unknown member type!!';
+                    			alert(alertText);
+                    }
+                    objMemberInfo = member;
+                    if(!(objMemberType[objMemberInfo.member_type_id])){
+                        fetchMemberLimit(member_id);
+                    }
+                    processAccountInfo();
+                    //Fetch Member Photo.
+                    //fetchMemberPhoto(member_id);
+                    $('#memberInfoBasic').html('');
+                    traverse(memberInfoBasic,'#memberInfoBasic');
+                    $("#member-area").slideDown("slow");
+                    
+                }else{
+                    $('#member_id').val('');
+                    resetMemberSection();
+                    alert('Recieved member information is incompatible!!');
+                }
+            },
+            error: function(xhr, text){
+                alert(xhr.responseText);
+                resetMemberSection();
+            }
+        });
+};
+
+
+/*
+ * Fetch Member Photo
+ * TODO still pending...
+ */
+/*
+var fetchMemberPhoto = function(member_id, imgId){
+	//Set Default location of img.
+	imgId = typeof(imgId) != 'undefined' ? imgId : '#imgMember';
+	switch((objMemberInfo.member_type_id).toUpperCase()){
+
+	case 'STUDENT' : 
+		imgLoc = 'images/';
+		break;
+	default :
+		alert('Member photo can not be fetched');
+	}
+
+    imgPath = imgServer+imgLoc;
+    $(imgId).attr({
+        alt: member_id,
+        title: objMemberInfo.info.first_name,
+        src : imgPath+member_id+imgType
+      });
+};
+
+*/
+
+/*
+ * Fetch Member Account Type Information
+ */
+var fetchMemberLimit = function(member_id){
+        $.ajax({
+            url : urlMemberLimit,
+            async : false,
+            dataType : "json",
+            data : {'member_type' : objMemberInfo.member_type_id },
+            success : function(memberLimit){
+                if(memberLimit){
+                    objMemberType[objMemberInfo.member_type_id] = memberLimit;
+                }else{
+                    resetMemberSection();
+                    alert('Recieved member account information is incompatible!!');
+                }
+            },
+            error: function(xhr, text){
+                alert(xhr.responseText);
+            }
+        });
+};
+
+/*
+ * Process Member's Account Information
+ * 
+ * Member account information i.e. document limits, documents allowed etc.
+ */
+var processAccountInfo = function(){
+	$("#accountInfo").html('');
+	for(documentType in objMemberType[objMemberInfo.member_type_id]){
+        var maximum = objMemberType[objMemberInfo.member_type_id][documentType].document_limit;
+		if(objMemberInfo.issued[documentType]){
+		    var issued = objMemberInfo.issued[documentType].counts;
+	        var remaining = parseInt(maximum) - parseInt(issued);
+	   			$("#accountInfo").append('<div><div class="infoHeader" >'+documentType+' : </div><div class="infoContent ui-state-highlight ui-corner-all">'+remaining+'/'+maximum+'</div></div>');
+		} else {
+			
+			$("#accountInfo").append('<div><div class="infoHeader" >'+documentType+' : </div><div class="infoContent ui-state-highlight ui-corner-all">'+maximum+'/'+maximum+'</div></div>');
+		}
+	//to get the value for each position
+	//alert(opensource[script]);
+	}
+};
+
+/*
+ * Fetch book information on basis of accession number.
+ * 
+ */
+var fetchBookInfo = function(acc_no){
+        $.ajax({
+            url : urlBookInfo,
+            type : 'GET',
+            dataType : "json",
+            data : {'acc_no' : acc_no },
+            success: function(bookDetail){
+                objBookInfo = bookDetail;
+                if(bookDetail.long_title || bookDetail.title){
+	                if(0 == bookDetail.status){
+	                    objBookInfo = {"Title":bookDetail.title,
+	    	                    "Long Title":bookDetail.long_title,
+	                            "Author":bookDetail.author,
+	                            "Edition":bookDetail.edition,
+	                            "Volume":bookDetail.volume,
+	                            "Place_Pub.":bookDetail.place_publisher,
+                                "Remarks":bookDetail.remarks
+	                            };
+	                } else {
+	                    objBookInfo = {"Title":bookDetail.title,
+                                "Long Title":bookDetail.long_title,
+                                "Author":bookDetail.author,
+                                "Edition":bookDetail.edition,
+                                "Volume":bookDetail.volume,
+                                "Place_Pub.":bookDetail.place_publisher,
+                                "Remarks":bookDetail.remarks,
+	                           "Issued to":bookDetail.member_id,
+	                           "Issue Date":bookDetail.issue_date
+	                           };
+	                }
+	                //setTimeout(fetchBookMoreInfo(acc_no),200);
+	                fetchBookMoreInfo(acc_no);
+	                $('#bookInfo').html('');
+	                traverse(objBookInfo,'#bookInfo');
+	                $("#bookArea").slideDown("slow");
+                } else {
+                    alert("Book Details are incompatible");
+                }
+                
+             },
+             error: function(xhr, text){
+                 alert(xhr.responseText);
+                 $("#bookArea").fadeOut('slow');
+          		$("#divIssue").slideUp();
+             }
+         });
+};
+
+/*
+ * Fetch more information about book (if any)
+ */
+var fetchBookMoreInfo = function(acc_no){
+        $.ajax({
+            url : urlBookMoreInfo,
+            type : 'GET',
+            dataType : 'json',
+            data : {'acc_no' : acc_no},
+            success: function(bookExtraInfo){
+            	objBookMoreInfo = bookExtraInfo;
+                if(bookExtraInfo.isbn_id){
+                    $('#moreBookInfo').html('');
+                    parsedBookInfo = {"ISBN": bookExtraInfo.isbn_id,
+                            "Document Type": bookExtraInfo.document_type_id,
+                            "Status": bookExtraInfo.status,
+                            "Remarks": bookExtraInfo.remarks
+                           };
+                    
+                    traverse(parsedBookInfo,'#moreBookInfo');
+
+                    // CHECK IF BOOK CAN BE ISSUED OR NOT.
+                    // TODO It should not be here.
+                    setIssueState();
+                }else{
+                    $('#acc_no').val('');
+                    $("#bookArea").fadeOut('slow');
+                    alert('Recieved book information is incompatible!!');
+                }      
+             },
+             error: function(xhr, text){
+                 alert(xhr.responseText);
+                 $("#bookArea").fadeOut('slow');
+          		$("#divIssue").slideUp();
+             }
+         });
+};
+
+/**
+ * Issue Book
+ */
+var issueBook = function(acc_no, member_id){
+	var maximum = objMemberType[objMemberInfo.member_type_id][objBookMoreInfo.document_type_id].document_limit;
+	var issued;
+    if( "undefined" === typeof objMemberInfo.issued[objBookMoreInfo.document_type_id]) { 
+     issued = 0;
+    } else {
+        issued = objMemberInfo.issued[objBookMoreInfo.document_type_id].counts;
+    }
+    var remaining = maximum - issued;
+    
+        if((0 < remaining) && (remaining <= maximum)){
+            $.ajax({
+                url : urlIssueBook,
+                ifModified : true,
+                dataType : "json",
+                data : {'acc_no' : acc_no,'member_id' : member_id },
+                success : function(issuedStatus){
+                    if(1 == issuedStatus.totBooksIssued){
+                    	objMemberInfo.issued[objBookMoreInfo.document_type_id].counts = (1 + parseInt(issued));
+                    	alert('Accession no. "'+acc_no+'" issued to '+objMemberInfo.info.first_name+'.');
+                    	processAccountInfo();
+                    } else {
+                        alert('Unexpected Zone: Total books issued is not equal to 1');
+                    }
+                    resetBookSection();
+                    
+                },
+                error: function(xhr){
+                    alert(xhr.responseText);
+                }
+            });
+        } else {
+            alert(objMemberInfo.info.first_name+' has already issued '+issued+' out of '+maximum+'  documents of "'+objBookMoreInfo.document_type_id+'" type.' );
+            resetBookInfoArea();
+        }
+};
+
+/**
+ * ---- Other Helper Functions ----
+ */
+/*
+ * Toggle books info div
+ */
+var toggleBookInfo = function(){
+	$('#moreBookInfo').slideToggle("slow");
+	$('a#moreInfo').toggle();
+	$('a#lessInfo').toggle();
+};
+
+/*
+ * Toggle Account Info div
+ */
+var toggleAccountInfo = function(){
+    $('#fset_accountInfo').slideToggle("slow");
+    $('a#moreAccInfo').toggle();
+    $('a#lessAccInfo').toggle();
+};
+
+var setIssueState = function(){
+	if('AVAILABLE' == (objBookMoreInfo.status).toUpperCase()){
+	    $("#divIssue").slideDown();
+	    scroll("#showIssue");
+	    $("#btnissue").focus();
+	    //$('html, body').animate({scrollBottom:"1px"}, 'slow');
+        
+	} else {
+	    $("#acc_no").select();
+        $("#divIssue").hide('fast');
+		alert('Document cannot be issued.\nStatus : '+objBookMoreInfo.status);
+	}
+};
+
+var resetBookSection = function(){
+    $("#acc_no").val('');
+    $("#bookArea").hide();
+    $("#lbl_acc_no").hide();
+    $("#divIssue").hide();
+    $('#cbkVerify').attr("checked", '');
+    $("#member_id").focus().select();
+};
+
+var resetBookInfoArea = function(){
+    $("#acc_no").val('').focus();
+    $("#bookArea").fadeOut("slow");
+    $("#divIssue").slideUp();
+};
+
+var resetMemberSection = function(){
+	$('#member_id').val('');
+    $("#member-area").fadeOut('slow');
+    $("#member_id").focus().select();
+    $("#divIssue").slideUp();
+};
+
+/*
+ * Paste json object data into a div.
+ */
+var traverse = function(jsonObj, targetDiv, clean){
+	//if (typeof clean === 'undefined') clean = false;
+	$.each(jsonObj, function (key, value) {
+		if( value && typeof value == "object" ) {
+			prepareSelectOption(value, targetDiv);
+		} else if( value && typeof value == "string" ) {
+			if(clean){
+				key = key.replace('_', ' ');
+				key = key.replace('id', '');
+			}
+			$(targetDiv).append('<div class="infoDiv" ><span class="infoHeader" >'+key+' : </span><span class="infoContent ui-state-highlight ui-corner-all">'+value+'</span></div>');
+		}
+	});
+};
+/*
+var traverse1 = function(jsonObj, targetDiv) {
+    if( typeof jsonObj == "object" ) {
+        $.each(jsonObj, function(k,v) {
+            // k is either an array index or object key
+            if(v){
+                $(targetDiv).append('<div><div class="infoHeader" >'+k+' : </div><div class="infoContent ui-state-highlight ui-corner-all">'+v+'</div></div>');
+                if( typeof jsonObj == "object" ) {
+                traverse(v, targetDiv);
+                }
+            }
+            
+        });
+    }
+    else {
+        // jsonObj is a number or string
+    }
+};
+*/
+function scroll(destination){
+	$('html, body').animate({
+	scrollTop: $(destination).offset().top
+	}, 1000);
+}
+/*
+ * Wait for a while.
+ */
+function wait(millis) {
+        var date = new Date();
+        var curDate = null;
+
+        do { curDate = new Date(); } 
+        while(curDate-date < millis);
+}
+
+
+</script>

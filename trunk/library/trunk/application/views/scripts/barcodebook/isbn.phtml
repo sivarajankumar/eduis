@@ -1,0 +1,44 @@
+<?php
+echo $this->doctype ()?>
+<html><head>
+<title>ISBN Barcode</title>
+<style type="text/css">
+<!--
+h2 {
+    text-align: center;
+}
+.barcode {
+	padding-bottom :0.8em;
+}
+@media print
+  {
+  div {display:none;}
+  }
+-->
+</style> </head>
+<body>
+<h2>ISBN Barcode </h2>
+ISBN: <b><?php echo $this->isbn?></b>
+<div>Add <input id="counts" value="1" maxlength="2" size="2" /> times more. 
+<input type="button" id="addImage" value="Add" /></div>
+<br/><br/>
+<?php
+$url = $this->baseUrl('library/barcodebook');
+if (isset ( $this->isbn )) {
+		echo '<img class="barcode" src="'.$url.'/generatecode?text=' . $this->isbn . '&format=Ean13"/>&nbsp;';
+}
+?>
+<script type="text/javascript" src="<?php echo $this->baseUrl () . '/js/jquery.min.js'?>"></script>
+<script type="text/javascript">
+$('#addImage').click(function(){
+	var cache = $('.barcode:first').clone();
+	var counts = $('#counts').val();
+	for( i = 0;i<parseInt(counts); i++){
+		var cache = $('.barcode:first').clone();
+		$('body').append(cache);
+	}
+	
+});
+</script>
+</body>
+</html> 
