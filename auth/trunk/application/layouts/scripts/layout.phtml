@@ -1,0 +1,97 @@
+<?php echo $this->doctype ()?>
+<html>
+
+<head>
+<?php 
+$baseTheme = 'ui-lightness';
+// Various Servers and Addresses
+$baseUrl = $this->baseUrl ();
+// Content Delievery Server i.e. static Files, e.g. CSS, JS, Themes and related images etc
+$cdnServer = 'http://cdn.site.aceambala.com';
+// Images of users, events etc
+$imageServer = $baseUrl;
+
+// Add most common CSS files
+$this->headLink()->prependStylesheet($cdnServer . '/css/layouts/login/default.css');
+//Jquery UI Theme
+$this->jQuery ()->addStylesheet ( $cdnServer . '/css/themes/jqueryui/'.$baseTheme.'/jquery-ui-1.8.6.custom.css' );
+
+// Add most common Script files
+$this->headScript()->prependFile($cdnServer . '/js/plugins/hoverintent/jquery.hoverIntent.minified.js');
+
+// Jquery
+$this->jQuery ()->setLocalPath ( $cdnServer . '/js/jquery-1.4.4.min.js' );
+// Jquery UI
+$this->jQuery ()->setUiLocalPath ( $cdnServer . '/js/jquery-ui-1.8.6.custom.min.js' );
+
+
+echo $this->headMeta();
+echo $this->headTitle (); 
+echo $this->headLink ();
+echo $this->jQuery ()->uiEnable ();
+
+/*
+ * set body color by -> style="background-image: url('<?php $cdnServer; ?>/css/themes/jqueryui/<?php echo $baseTheme;?>/images/ui-bg_glass_100_fdf5ce_1x400.png');"
+ */
+?>
+
+</head>
+
+<body class="ui-helper-reset" >
+<div id="topContent" >
+<span id="topRightInfo">
+<span class="ui-state-default ui-corner-bottom">Today&rsquo;s date: <span id="datetext"><?php $date = new Zend_Date(); echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span>
+<?php if (Zend_Auth::getInstance()->hasIdentity()) { ?>
+<span class="ui-state-default ui-corner-bottom">Hi! <span id="userName"><?php $authContent = Zend_Auth::getInstance()->getStorage ()->read ();echo $authContent['identity'];?></span></span>
+<?php if ($authContent['identity'] != 'anon') { ?>
+	<span class="ui-state-default ui-corner-bl"><a id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'logout' ), 'default' )?>">
+		Logout<span class="ui-icon ui-icon ui-icon-closethick ui-state-default ui-corner-br" style="float: right; padding-left: 1px; margin-left:-1px;">
+		</span></a></span>
+	<?php }?>
+<?php }?>
+</span>
+
+<div id="header" >
+<img alt="Ambala College of Engineering and Applied Research" src="<?php echo $cdnServer . '/images/logos/mainLogo_'.'smoothness'.'.png'; ?>">
+<?php 
+/*
+ * A sample array for top Navigation should be like follows:
+ */
+/*
+ * TODO Make structure for ACL array.
+ */ 
+//Modules
+$topNav = array('Home','Department','Library','Transport');
+//Categories set
+$topNav['Department']['StuAttendance']['index'] = array('');
+?>
+<div id="topNav">Top Nav</div>
+</div>
+</div>
+<!-- Div below is required to keep layout at expected place  -->
+<div style="clear:both" >&nbsp;</div> 
+<!-- Contents begin -->
+<div id="container" class="ui-corner-all">
+<div id="content">
+			<?php echo $this->layout ()->content; ?> </div>
+</div>
+<!-- 
+<div class="container  ui-widget ui-corner-all">
+<div id="module-info">&nbsp;</div>
+ <div id="active-section" ><span class="ui-icon ui-icon-arrowreturnthick-1-e" style="float:left">I am here</span></div> 
+	
+<div id="footer" class="ui-state-default">
+<div id="footerCommonList">
+		<p><a href="<?php echo $baseUrl;?>">About us</a> | 
+		   <a href="<?php echo $baseUrl;?>">Contact us</a> | 
+		   <a href="<?php echo $baseUrl;?>">Feedback</a> | 
+		   <a href="<?php echo $baseUrl;?>">Suggestions</a> | 
+		   <a href="<?php echo $baseUrl;?>">Developers</a>
+	   </p>
+	</div>
+</div>
+-->
+<?php echo $this->headScript()?>
+</body>
+
+</html>
