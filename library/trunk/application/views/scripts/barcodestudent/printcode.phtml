@@ -1,0 +1,24 @@
+<html><head><title>Batch <?php echo $this->batch ?> Barcodes</title>
+<style type="text/css">
+<!--
+h2 {
+    text-align: center;
+}
+.barcode {
+	padding-bottom :0.8em;
+}
+-->
+</style> </head>
+<body>
+<h2>Students Barcode </h2>
+Batch: <b><?php echo $this->batch.'</b> | Deptt: <b>'.strtoupper($this->department).'</b> | Degree: <b>'.strtoupper( $this->degree);?></b><br/><br/>
+<?php
+$url = $this->baseUrl('library/barcodestudent');
+if (isset ( $this->students )) {
+	foreach ( $this->students as $index => $student ) {
+		echo '<img class="barcode" src="'.$url.'/generatecode?text=' . $student ['student_roll_no'] . '"/>&nbsp;';
+	}
+}
+?>
+</body>
+</html> 

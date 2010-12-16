@@ -1,0 +1,102 @@
+<?php 
+/*$baseUrl = $this->baseUrl ();
+$this->headLink ()->appendStylesheet ( $baseUrl . '/plugins/jqgrid/css/ui.jqgrid.css' )
+
+//Select multiple columns from column chooser
+->appendStylesheet ( $baseUrl . '/plugins/jqgrid/css/ui.multiselect.css' );
+$this->headScript ()->appendFile ( $baseUrl . '/plugins/jqgrid/js/ui.multiselect.js' );
+
+// This is compressed version of jqGrid 3.6, It has all plugins in one file only
+$this->headScript ()->appendFile ( $baseUrl . '/plugins/jqgrid/js/i18n/grid.locale-en.js' );
+$this->headScript ()->appendFile ( $baseUrl . '/plugins/jqgrid/jquery.jqGrid.min.js' );
+// Gloabal Settings for JqGrid
+$this->headScript ()->appendFile ( $baseUrl . '/plugins/jqgrid/jqGrid.global.js' );
+*/
+?>
+<style type="text/css">
+.alignCenter
+{
+		width: 70%;margin-left:auto;margin-right:auto;
+}
+#pager a{
+		margin-right:20px; 
+	 	
+}
+#pager a:LINK{
+		color:blue; 	
+}
+#pager a:VISITED{
+		color:blue; 	
+}
+.curPage
+{
+	color:black;
+	background-color:green;
+}
+
+</style>
+
+<h3 align="center">Search Book</h3>
+<div id="search_div" class="alignCenter" style="text-align:center">
+	<form  id="search_form" method="GET">
+	<input  type="text" size="80" name="q" value ="<?php echo $this->q; ?>" / >
+	<input type="submit" value="Search"/>
+	<div id="option_div">
+				<input type="radio" "<?php echo ($this->all_book ? 'checked=checked' : '' )?>" id="all_books" name="filter" value="all_book"/>All Books
+				<input type="radio" "<?php echo ($this->avail_book ? 'checked=checked' : '' )?>" id="available_books" name="filter" value="avail_book"/>Available Books
+				<input type="radio" "<?php echo ($this->issued_book ? 'checked=checked' : '' )?>" id="issued_books" name="filter" value="issued_book"/>Issued Books
+	</div>
+	
+	</form>
+</div>
+<div id="search_result">
+	<ol id="result_lst">
+			<?php if(isset($this->search_result))
+				foreach($this->search_result as $key => $value)
+				{
+					echo "<li>";
+					echo "<div style='padding-bottom: 2px;'><h3><a href=''>" .  $value['title']  . "</a></h3></div>"; 
+					echo "<div><table><tr><td><td><td>";
+					foreach($value as $t_key => $t_value)
+					{
+					echo "<em>$t_key :<b>" . "  "  . $t_value . " " .  "</b></em><br>";
+					}
+					echo "</td></tr></table></div>";
+					echo "</li>";
+					
+				}
+			
+			?>
+	</ol>
+</div>
+<div id="pager" class="alignCenter" style="text-align:center;">
+	<?php
+		if(!is_null($this->paging))
+		{ 
+			foreach($this->paging as $key => $value)
+			{
+			echo $value;
+			}
+		}
+	?>
+		
+		
+			
+		
+</div>
+<script type="text/javascript">
+$(function(){
+	<?php if(isset($this->cur_page)){?>
+		var cur_page = "<?php echo $this->cur_page?>";
+
+		if(cur_page)
+		{
+		$("#pager a[name=" + cur_page +"]").addClass('curPage');
+		}
+		<?php }?>
+	//document.write(cur_page);
+
+});
+</script>
+
+

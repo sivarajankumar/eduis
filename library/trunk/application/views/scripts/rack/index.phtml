@@ -1,0 +1,79 @@
+<h3 align="center">Rack</h3>
+
+<div class="gridstyle">
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+	style="color: red"></span></div>
+<script type="text/javascript">
+$(function(){
+
+    var urlSelectDocType = "<?=$this->url ( array ('module' => $this->module, 'controller' => 'documenttype', 'action' => 'filldocumenttypecombo' ), 'default', true )?>";
+    var urlSelectStatus  = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'statuscombo'  ), 'default', true )?>";
+
+	var gridTable = "#tblgrid";
+    var gridPager = "#gridpager";
+	var urlFillGrid = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid' ), 'default', true )?>";
+	var urlCRUD = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud' ), 'default', true )?>";
+	$(gridTable).jqGrid(
+			{
+			url : urlFillGrid,
+			colNames:['Rack' , 'Shelf'], 
+			colModel:[ {name:'rack_id',
+							index:'rack_id',
+							editable: true
+						},
+						{name:'shelf',
+							index:'shelf',
+							editable: true
+						}	
+					],
+			caption: "Racks" ,
+			sortname: 'rack_id',
+			pager: gridPager, 
+			editurl: urlCRUD
+		});
+
+	$(gridTable).jqGrid('navGrid', gridPager, {
+        add : true,
+        edit : true,
+        view : false,
+        search : false,
+        refresh : false
+    }, // options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true,
+                bottominfo : "Fields marked with (*) are required"
+            }, // edit options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true,
+                bottominfo : "Fields marked with (*) are required"
+            }, // add options
+            {
+                reloadAfterSubmit : false,
+                jqModal : false,
+                closeOnEscape : true
+            }, // del options
+            {
+                closeOnEscape : true
+            }, // search options
+            {
+                navkeys : [ true, 38, 40 ],
+                // height:250,
+                jqModal : false,
+                closeOnEscape : true
+            } // view options
+            );
+
+	 addPager(gridTable, gridPager); 
+});
+</script>

@@ -1,0 +1,30 @@
+<html><head><title>Barcode: <?php echo $this->accFrom;if ($this->accUpto) echo '-'.$this->accUpto;?></title>
+<style type="text/css">
+<!--
+h2 {
+    text-align: center;
+}
+.barcode {
+	padding-bottom :0.8em;
+}
+-->
+</style> </head>
+<body>
+<h2>Barcode: Accession Number<?php if ($this->accUpto) echo 's';?></h2>
+Acc. number : <b><?php echo $this->accFrom.'</b>';
+if ($this->accUpto) {
+	echo ' - <b>'.$this->accUpto.'</b>';
+} ?><br/><br/>
+<?php
+$url = $this->baseUrl('library/barcodebook');
+if (isset ( $this->printAcc )) {
+	if (is_array($this->printAcc)) {
+	
+	foreach ( $this->printAcc as $index => $acc_no ) {
+		echo '<img class="barcode" src="'.$url.'/generatecode?text=' . $acc_no . '"/>&nbsp;';
+	}
+	} else echo '<img src="'.$url.'/generatecode?text=' . $this->printAcc . '"/>&nbsp;';
+}
+?>
+</body>
+</html> 
