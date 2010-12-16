@@ -1,4 +1,4 @@
-#summary Introduction.
+#summary Introduction to the project.
 #labels Featured
 
 = Introduction =
