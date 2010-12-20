@@ -1,0 +1,158 @@
+<?php
+echo $this->doctype ()?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Language" content="en-GB" />
+<?php 
+$baseTheme = 'pepper-grinder';
+// Various Servers and Addresses
+$baseUrl = $this->baseUrl ();
+// Content Delievery Server i.e. static Files, e.g. CSS, JS, Themes and related images etc
+$cdnServer = 'http://site.cdn.aceambala.com';
+// Images of users, events etc
+$imageServer = $baseUrl;
+
+// Add most common CSS files
+$this->headLink()->prependStylesheet($cdnServer . '/css/layouts/library/default.css');
+//Jquery UI Theme
+$this->jQuery ()->addStylesheet ( $cdnServer . '/css/themes/jqueryui/'.$baseTheme.'/jquery-ui-1.8.6.custom.css' );
+
+// Add most common Script files
+$this->headScript()->prependFile($cdnServer . '/js/plugins/hoverintent/jquery.hoverIntent.minified.js');
+
+// Jquery
+$this->jQuery ()->setLocalPath ( $cdnServer . '/js/jquery-1.4.4.min.js' );
+// Jquery UI
+$this->jQuery ()->setUiLocalPath ( $cdnServer . '/js/jquery-ui-1.8.6.custom.min.js' );
+
+
+echo $this->headMeta();
+echo $this->headTitle (); 
+echo $this->headLink ();
+echo $this->jQuery ()->uiEnable ();
+
+/*
+ * set body color by -> style="background-image: url('<?php $cdnServer; ?>/css/themes/jqueryui/<?php echo $baseTheme;?>/images/ui-bg_glass_100_fdf5ce_1x400.png');"
+ */
+?>
+</head>
+
+<body>
+<div id="topContent" >
+<span id="topRightInfo">
+<span class="ui-state-default ui-corner-bottom">Today&rsquo;s date: <span id="datetext"><?php $date = new Zend_Date(); echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span>
+<?php if (Zend_Auth::getInstance()->hasIdentity()) { ?>
+<span class="ui-state-default ui-corner-bottom">Hi! <span id="userName"><?php $authContent = Zend_Auth::getInstance()->getStorage ()->read ();echo $authContent['identity'];?></span></span>
+<?php if ($authContent['identity'] != 'anon') { ?>
+	<span class="ui-state-default ui-corner-bl"><a id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'logout' ), 'default' )?>">
+		Logout<span class="ui-icon ui-icon ui-icon-closethick ui-state-default ui-corner-br" style="float: right; padding-left: 1px; margin-left:-1px;">
+		</span></a></span>
+	<?php }?>
+<?php }?>
+</span>
+
+<div id="header" >
+<img alt="Ambala College of Engineering and Applied Research" src="<?php echo $cdnServer . '/images/logos/mainLogo_'.$baseTheme.'.png'; ?>">
+
+<div id="divTopNav">
+<ul id="topnav" class="ui-widget">
+	<li><a href="#" class="main">Home</a></li>
+	<li><a href="#" class="main">Department</a>
+	<div style="opacity: 0; display: none;" class="sub">
+	<ul>
+	</ul>
+	</div>
+	</li>
+	<li><a href="#" class="main">Library</a>
+	<div id="library" style="opacity: 0; display: none;" class="sub">
+	<div class="row">
+	<ul>
+	</ul>
+	</div>
+	</div>
+	</li><!--
+	<li><a href="#" class="main">Transport</a></li>
+	<li><a href="#" class="main">Hostel</a></li>
+--></ul></div>
+</div>
+</div>
+
+
+
+
+<div class="ui-widget container ui-corner-all">
+<!--<div id="moduleRibbon"></div>-->
+<div id="content">
+    <?php echo $this->layout ()->content; ?>
+    </div>
+<div id="lastDiv"></div>
+<?php
+echo $this->headScript ()?>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    function megaHoverOver(){
+        $(this).find(".sub").stop().fadeTo('fast', 1).show();
+            
+        //Calculate width of all ul's
+        (function($) { 
+            jQuery.fn.calcSubWidth = function() {
+                rowWidth = 0;
+                //Calculate row
+                $(this).find("ul").each(function() {                    
+                    rowWidth += $(this).width(); 
+                }); 
+            };
+        })(jQuery); 
+        
+        if ( $(this).find(".row").length > 0 ) { //If row exists...
+            var biggestRow = 0; 
+            //Calculate each row
+            $(this).find(".row").each(function() {                             
+                $(this).calcSubWidth();
+                //Find biggest row
+                if(rowWidth > biggestRow) {
+                    biggestRow = rowWidth;
+                }
+            });
+            //Set width
+            $(this).find(".sub").css({'width' :biggestRow});
+            $(this).find(".main").addClass('ui-state-active ui-corner-top').removeClass('ui-corner-all');
+            $(this).find(".row:last").css({'margin':'0'});
+            
+        } else { //If row does not exist...
+            
+            $(this).calcSubWidth();
+            //Set Width
+            $(this).find(".sub").css({'width' : rowWidth});
+            $(this).find(".main").addClass('ui-state-active ui-corner-top').removeClass('ui-corner-all');
+            
+        }
+    }
+    
+    function megaHoverOut(){
+        $(this).find(".main").removeClass('ui-state-active').addClass('ui-corner-all');
+      $(this).find(".sub").stop().fadeTo('fast', 0, function() {
+          $(this).hide(); 
+      });
+    }
+
+
+    var config = {    
+         sensitivity: 2, // number = sensitivity threshold (must be 1 or higher)    
+         interval: 100, // number = milliseconds for onMouseOver polling interval    
+         over: megaHoverOver, // function = onMouseOver callback (REQUIRED)    
+         timeout: 500, // number = milliseconds delay before onMouseOut    
+         out: megaHoverOut // function = onMouseOut callback (REQUIRED)    
+    };
+
+    $("ul#topnav li .sub").css({'opacity':'0'});
+    $("ul#topnav li").hoverIntent(config);
+    $(".main").addClass("ui-widget-header ui-corner-all");
+    $(".sub").addClass("ui-state-highlight");
+
+});
+</script></div>
+</body>
+</html>
