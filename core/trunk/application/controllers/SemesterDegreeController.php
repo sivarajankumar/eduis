@@ -1,0 +1,159 @@
+<?php
+/**
+ * @category   Aceis
+ * @package    Default
+ * @subpackage SemesterDegree
+ * @since	   0.1
+ */
+/**
+ * To manage semester in a degree.
+ *
+ */
+class SemesterDegreeController extends Aceis_Base_BaseController {
+	/*
+     * @about Interface.
+     */
+	public function indexAction() {
+		$this->_helper->viewRenderer->setNoRender ( false );
+		$this->_helper->layout ()->enableLayout ();
+		$this->view->assign ( 'controller', $this->_request->getControllerName () );
+		$this->view->assign ( 'module', $this->_request->getModuleName () );
+	}
+	
+	/*
+	 * @about Back end data provider to datagrid.
+	 * @return JSON data
+	 */
+	public function fillgridAction() {
+		$this->jqgrid = new Aceis_Base_Helper_Jqgrid ();
+		self::createModel ();
+		$request = $this->getRequest ();
+		$valid = $request->getParam ( 'nd' );
+		if ($request->isXmlHttpRequest () and $valid) {
+			
+			$this->jqgrid->setGridparam ( $request );
+			
+			$this->jqgrid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
+			
+			$searchOn = $request->getParam ( '_search' );
+			if ($searchOn != 'false') {
+				$sarr = $request->getParams ();
+				foreach ( $sarr as $key => $value ) {
+					switch ($key) {
+						case 'department_id' :
+						case 'degree_id' :
+						case 'semester_id' :
+						case 'semester_duration' :
+						case 'semester_type_id' :
+							$this->jqgrid->sql->where ( "$key LIKE ?", $value . '%' );
+							break;
+					}
+				}
+			}
+			self::fillgridfinal ();
+		
+		} else {
+			header ( "HTTP/1.1 403 Forbidden" );
+		}
+	
+	}
+	/*
+	 * All Semesters of a department
+	 */
+	public function getsemesterAction() {
+		$request = $this->getRequest ();
+		$format = $request->getParam ( 'format', 'json' );
+		$degree = $request->getParam ( 'degree_id' );
+		$department = $request->getParam ( 'department_id' );
+		if (isset ( $degree ) and isset ( $department )) {
+			$result = Model_DbTable_SemesterDegree::allSemesters ( $department, $degree );
+			switch (strtolower ( $format )) {
+				case 'json' :
+					$this->_helper->json ( $result );
+					return;
+				case 'select' :
+					echo '<option value="">Select one</option>';
+					foreach ( $result as $key => $option ) {
+						echo '<option value="' . $option ['semester_id'] . '">' . $option ['semester_id'] . '</option>';
+					}
+					return;
+				default :
+					header ( "HTTP/1.1 400 Bad Request" );
+					echo 'Unsupported format';
+			}
+		}
+		
+		header ( "HTTP/1.1 400 Bad Request" );
+		echo 'Oops!! Inputs are incorrect.';
+	
+	}
+	
+	/*
+	 * Either 'EVEN' or 'ODD' semesters of department according to current session
+	 */
+	public function getsessionsemesterAction() {
+		$request = $this->getRequest ();
+		$format = $request->getParam ( 'format', 'json' );
+		$degree = $request->getParam ( 'degree_id' );
+		$department = $request->getParam ( 'department_id' );
+		if (isset ( $degree ) and isset ( $department )) {
+			$result = Model_DbTable_SemesterDegree::semesters ( $department, $degree, TRUE );
+			if (count ( $result )) {
+				switch (strtolower ( $format )) {
+					case 'json' :
+						$this->_helper->json ( $result );
+						return;
+					case 'select' :
+						echo '<select>';
+						echo '<option value="">Select one</option>';
+						foreach ( $result as $key => $option ) {
+							echo '<option value="' . $option ['semester_id'] . '">' . $option ['semester_id'] . '</option>';
+						}
+						echo '</select>';
+						return;
+				}
+			} else {
+				header ( "HTTP/1.1 400 Bad Request" );
+				echo 'No semesters returned: Either session is over or inputs are wrong.';
+				return;
+			}
+		
+		}
+		
+		header ( "HTTP/1.1 400 Bad Request" );
+		echo 'Inputs are incorrect.';
+	
+	}
+	
+	/*
+     * Either 'EVEN' or 'ODD' semesters of department according to current session
+     */
+	
+	public function getslavedegreeAction() {
+		$request = $this->getRequest ();
+		$format = $request->getParam ( 'format', 'json' );
+		$masterDepartment = $request->getParam ( 'masterDepartment' );
+		$slaveDepartment = $request->getParam ( 'slaveDepartment' );
+		if (isset ( $masterDepartment ) and isset ( $slaveDepartment )) {
+			$result = Model_DbTable_SemesterDegree::slaveDegree ( $masterDepartment, $slaveDepartment );
+			switch (strtolower ( $format )) {
+				case 'json' :
+					$this->_helper->json ( $result );
+					return;
+					break;
+				case 'select' :
+					echo '<select>';
+					echo '<option>Select one</option>';
+					foreach ( $result as $key => $option ) {
+						echo '<option value="' . $option ['degree_id'] . '">' . $option ['degree_id'] . '</option>';
+					}
+					echo '</select>';
+					return;
+					break;
+			}
+		}
+		
+		header ( "HTTP/1.1 400 Bad Request" );
+		echo 'Input params are incorrect.';
+	}
+}
