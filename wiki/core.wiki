@@ -1,5 +1,5 @@
 #summary CORE/MAIN module of EduIS.
-#labels CORE
+#labels Core
 
 = Introduction =
 
