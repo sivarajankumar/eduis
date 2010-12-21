@@ -4,11 +4,10 @@
 == Project Partner ==
 <wiki:gadget url="http://www.ohloh.net/p/487149/widgets/project_partner_badge.xml" height="70" border="0"/>
 
-== Language ==
+== Overview ==
+<wiki:gadget url="http://www.ohloh.net/p/487149/widgets/project_basic_stats.xml" height="220" border="0"/>
+
+
 <wiki:gadget url="http://www.ohloh.net/p/487149/widgets/project_languages.xml" width="340" height="200"  border="0"/>
 
-== Overview ==
-<wiki:gadget url="http://www.ohloh.net/p/487149/widgets/project_basic_stats.xml" height="220" border="1"/>
-
-== Cocomo ==
 <wiki:gadget url="http://www.ohloh.net/p/487149/widgets/project_cocomo.xml" height="240" border="0"/>
