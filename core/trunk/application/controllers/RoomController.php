@@ -11,7 +11,7 @@
  * RoomController
  * 
  */
-class RoomController extends Aceis_Base_BaseController {
+class RoomController extends Corez_Base_BaseController {
 	/*
      * @about Interface.
      */
@@ -27,7 +27,7 @@ class RoomController extends Aceis_Base_BaseController {
 	 * @return JSON data
 	 */
 	public function fillgridAction() {
-		$this->jqgrid = new Aceis_Base_Helper_Jqgrid ();
+		$this->jqgrid = new $this->_helper->jqgrid ();
 		self::createModel ();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
@@ -65,7 +65,7 @@ class RoomController extends Aceis_Base_BaseController {
 		$block_id = $this->getRequest ()->getParam ( 'block_id' );
 		$format = $this->getRequest ()->getParam ( 'format', 'json' );
 		if (isset ( $block_id )) {
-			$result = Model_DbTable_Room::getRooms ( $block_id );
+			$result = Core_Model_DbTable_Room::getRooms ( $block_id );
 			switch (strtolower ( $format )) {
 				case 'json' :
 					$this->_helper->json ( $result );

@@ -9,7 +9,7 @@
  * To manage semester in a degree.
  *
  */
-class SemesterDegreeController extends Aceis_Base_BaseController {
+class SemesterDegreeController extends Corez_Base_BaseController {
 	/*
      * @about Interface.
      */
@@ -25,7 +25,7 @@ class SemesterDegreeController extends Aceis_Base_BaseController {
 	 * @return JSON data
 	 */
 	public function fillgridAction() {
-		$this->jqgrid = new Aceis_Base_Helper_Jqgrid ();
+		$this->jqgrid = new $this->_helper->jqgrid ();
 		self::createModel ();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
@@ -66,7 +66,7 @@ class SemesterDegreeController extends Aceis_Base_BaseController {
 		$degree = $request->getParam ( 'degree_id' );
 		$department = $request->getParam ( 'department_id' );
 		if (isset ( $degree ) and isset ( $department )) {
-			$result = Model_DbTable_SemesterDegree::allSemesters ( $department, $degree );
+			$result = Core_Model_DbTable_SemesterDegree::allSemesters ( $department, $degree );
 			switch (strtolower ( $format )) {
 				case 'json' :
 					$this->_helper->json ( $result );
@@ -97,7 +97,7 @@ class SemesterDegreeController extends Aceis_Base_BaseController {
 		$degree = $request->getParam ( 'degree_id' );
 		$department = $request->getParam ( 'department_id' );
 		if (isset ( $degree ) and isset ( $department )) {
-			$result = Model_DbTable_SemesterDegree::semesters ( $department, $degree, TRUE );
+			$result = Core_Model_DbTable_SemesterDegree::semesters ( $department, $degree, TRUE );
 			if (count ( $result )) {
 				switch (strtolower ( $format )) {
 					case 'json' :
@@ -135,7 +135,7 @@ class SemesterDegreeController extends Aceis_Base_BaseController {
 		$masterDepartment = $request->getParam ( 'masterDepartment' );
 		$slaveDepartment = $request->getParam ( 'slaveDepartment' );
 		if (isset ( $masterDepartment ) and isset ( $slaveDepartment )) {
-			$result = Model_DbTable_SemesterDegree::slaveDegree ( $masterDepartment, $slaveDepartment );
+			$result = Core_Model_DbTable_SemesterDegree::slaveDegree ( $masterDepartment, $slaveDepartment );
 			switch (strtolower ( $format )) {
 				case 'json' :
 					$this->_helper->json ( $result );

@@ -11,7 +11,7 @@
  * SemesterController
  * 
  */
-class SemesterController extends Aceis_Base_BaseController {
+class SemesterController extends Corez_Base_BaseController {
 	/*
      * @about Interface.
      */
@@ -27,7 +27,7 @@ class SemesterController extends Aceis_Base_BaseController {
 	 * @return JSON data
 	 */
 	public function fillgridAction() {
-		$this->jqgrid = new Aceis_Base_Helper_Jqgrid ();
+		$this->jqgrid = new $this->_helper->jqgrid ();
 		self::createModel ();
         $request = $this->getRequest ();
         $valid = $request->getParam ( 'nd' );

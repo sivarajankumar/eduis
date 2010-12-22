@@ -9,7 +9,7 @@
  * Degree(s) provided by department.
  *
  */
-class DegreeDepartmentController extends Aceis_Base_BaseController {
+class DegreeDepartmentController extends Corez_Base_BaseController {
 	
 	public function indexAction() {
 		$this->_helper->viewRenderer->setNoRender ( false );
@@ -23,7 +23,7 @@ class DegreeDepartmentController extends Aceis_Base_BaseController {
 	 * @return JSON data
 	 */
 	public function fillgridAction() {
-		$this->jqgrid = new Aceis_Base_Helper_Jqgrid ();
+		$this->jqgrid = new $this->_helper->jqgrid ();
 		self::createModel ();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
@@ -55,7 +55,7 @@ class DegreeDepartmentController extends Aceis_Base_BaseController {
 	////////Combos
 	public function getdepartmentAction() {
 		$format = $this->getRequest ()->getParam ( 'format', 'json' );
-		$result = Model_DbTable_Degreedepartment::academicDepartments ();
+		$result = Core_Model_DbTable_Degreedepartment::academicDepartments ();
 		switch (strtolower ( $format )) {
 			case 'json' :
 				$this->_helper->json ( $result );
@@ -79,7 +79,7 @@ class DegreeDepartmentController extends Aceis_Base_BaseController {
 		$format = $this->getRequest ()->getParam ( 'format', 'json' );
 		$department = $this->getRequest ()->getParam ( 'department_id' );
 		if (isset ( $department )) {
-			$result = Model_DbTable_Degreedepartment::departmentDegree ( $department );
+			$result = Core_Model_DbTable_Degreedepartment::departmentDegree ( $department );
 			switch (strtolower ( $format )) {
 				case 'json' :
 					$this->_helper->json ( $result );

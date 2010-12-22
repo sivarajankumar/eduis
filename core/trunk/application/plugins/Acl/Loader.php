@@ -37,7 +37,7 @@ class Lib_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract {
 		$auth = Zend_Auth::getInstance ();
 		if (! Zend_Session::isDestroyed ()) {
 			if (! $auth->hasIdentity ()) {
-				$guestAdapter = new Libz_Resource_Acl_Guest ();
+				$guestAdapter = new Corez_Resource_Acl_Guest ();
 				$auth->authenticate ( $guestAdapter );
 			}
 			self::initUserAcl ();

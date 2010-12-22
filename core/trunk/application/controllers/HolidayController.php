@@ -11,7 +11,7 @@
  * HolidayController
  * 
  */
-class HolidayController extends Aceis_Base_BaseController {
+class HolidayController extends Corez_Base_BaseController {
 	/**
 	 * The default action - lists the holidays.
 	 */
@@ -20,7 +20,7 @@ class HolidayController extends Aceis_Base_BaseController {
 	}
 	public function getholidaysAction() {
 		try {
-			$holidays = Model_DbTable_Holiday::getCurrentSessionHolydays ();
+			$holidays = Core_Model_DbTable_Holiday::getCurrentSessionHolydays ();
 			$this->_helper->json ( $holidays );
 		} catch ( Exception $e ) {
 			$this->_helper->json ( null );

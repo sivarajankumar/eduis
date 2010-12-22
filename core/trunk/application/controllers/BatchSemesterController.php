@@ -11,7 +11,7 @@
  *
  * 
  */
-class BatchSemesterController extends Aceis_Base_BaseController {	
+class BatchSemesterController extends Corez_Base_BaseController {
 	/*
      * @about Interface.
      */
@@ -20,21 +20,20 @@ class BatchSemesterController extends Aceis_Base_BaseController {
 		$this->_helper->layout ()->enableLayout ();
 		$this->view->assign ( 'controller', $this->_request->getControllerName () );
 		$this->view->assign ( 'module', $this->_request->getModuleName () );
+	
 		//$this->view->assign ( 'colSetup', self::gridsetup() );
 	}
-	
 	/*
      * @about Back end data provider to datagrid.
      * @return JSON data
      */
 	public function fillgridAction() {
-		$this->jqgrid = new Aceis_Base_Helper_Jqgrid ( );
-		self::createModel();
+		$this->jqgrid = new $this->_helper->jqgrid ();
+		self::createModel ();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
 		if ($valid) {
 			$this->jqgrid->setGridparam ( $request );
-			
 			$this->jqgrid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
 			/*
             $searchOn = $request->getParam ( '_search' );
@@ -54,16 +53,14 @@ class BatchSemesterController extends Aceis_Base_BaseController {
                 }
             }*/
 			self::fillgridfinal ();
-		
 		} else {
 			header ( "HTTP/1.1 403 Forbidden" );
 			die ();
 		}
-	
 	}
-	
+
 	////////combos//////////
-	/*
+/*
 	 * deprecated
     public function combobatchsemAction() {
         //TODO PENDING...Still not in use
@@ -90,8 +87,7 @@ class BatchSemesterController extends Aceis_Base_BaseController {
         }
     
     }*/
-	
-	/*
+/*
      * Get an active batch's current semester
     
 	public function getbatchsemesterAction() {
@@ -141,5 +137,4 @@ class BatchSemesterController extends Aceis_Base_BaseController {
 	
 	}
 	*/
-
 }

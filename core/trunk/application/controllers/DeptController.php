@@ -1,16 +1,14 @@
 <?php
 /**
- * Batch(es) in a degree of a department.
- *
- * @category   Aceis
- * @package    Default
- * @subpackage Department
+ * @category   EduIS
+ * @package    Core
+ * @subpackage Dept
  */
 /**
  * Department
  * 
  */
-class DeptController extends Aceis_Base_BaseController {
+class DeptController extends Corez_Base_BaseController {
 	/*
      * @about Interface.
      */
@@ -26,7 +24,7 @@ class DeptController extends Aceis_Base_BaseController {
 	 * @return JSON data
 	 */
 	public function fillgridAction() {
-		$this->jqgrid = new Aceis_Base_Helper_Jqgrid ();
+		$this->jqgrid = $this->_helper->jqgrid ();
 		self::createModel ();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
@@ -62,7 +60,7 @@ class DeptController extends Aceis_Base_BaseController {
 	public function getdepartmentAction() {
 		self::createModel ();
 		$format = $this->getRequest ()->getParam ( 'format', 'json' );
-		$result = $this->model->select()->query()->fetchAll();
+		$result = $this->model->select ()->query ()->fetchAll ();
 		switch (strtolower ( $format )) {
 			case 'json' :
 				$this->_helper->json ( $result );
@@ -78,6 +76,5 @@ class DeptController extends Aceis_Base_BaseController {
 		}
 	
 	}
-	
 
 }

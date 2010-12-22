@@ -1,9 +1,12 @@
 <?php
-
+/**
+ * @category   EduIS
+ * @package    Core
+ * @subpackage Bootstrap
+ */
 /**
  * Application bootstrap
  * 
- * @package Library
  */
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 	
@@ -15,7 +18,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 		$view->doctype ( 'XHTML1_STRICT' );
 		
 		// Set the initial title and separator:
-		$view->headTitle ( 'Library' )->setSeparator ( ' :: ' );
+		$view->headTitle ( 'EduIS' )->setSeparator ( ' :: ' )->headTitle('Core');
 	
 	}
 	protected function _initCache() {
