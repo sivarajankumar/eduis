@@ -1,6 +1,6 @@
 <?php
 
-class StudentPersonalController extends Aceis_Base_BaseController {
+class StudentPersonalController extends Corez_Base_BaseController {
 	/*
      * @about Interface.
      */

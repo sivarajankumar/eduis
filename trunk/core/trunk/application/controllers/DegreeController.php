@@ -11,7 +11,7 @@
  * Degree(s) provided by institute/organisation.
  *
  */
-class DegreeController extends Aceis_Base_BaseController {
+class DegreeController extends Corez_Base_BaseController {
 	
 	public function indexAction() {
 		$this->_helper->viewRenderer->setNoRender ( false );
@@ -25,7 +25,7 @@ class DegreeController extends Aceis_Base_BaseController {
 	 * @return JSON data
 	 */
 	public function fillgridAction() {
-		$this->jqgrid = new Aceis_Base_Helper_Jqgrid ();
+		$this->jqgrid = new $this->_helper->jqgrid ();
 		self::createModel ();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );

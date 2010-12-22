@@ -1,0 +1,98 @@
+<h3 align="center">Degree in Department</h3>
+<div class="gridstyle">
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+    style="color: red"></span></div>
+<script type="text/javascript">
+
+$(function(){
+    
+    var grid = $("#tblgrid").jqGrid({
+            url : "<?=$this->url ( array ('controller' => 'degreedepartment', 'action' => 'fillgrid' ), 'default', true )?>",   
+            datatype: "json", 
+            colNames:['Department','Degree'], 
+            colModel:[ {name:'department_id',
+                            index:'department_id',
+                            editable: true,
+                            edittype: 'select',
+                            editoptions: { size: 1,
+                                    dataUrl:"<?=$this->url ( array ('controller' => 'dept', 'action' => 'getdepartment' ), 'default', true )?>"
+                             },
+                            editrules:{required:true}
+                        },
+                       {name:'degree_id',
+                            index:'degree_id',
+                            editable:true,
+                            edittype:'select', 
+                            editoptions:{ size:1,
+                                dataUrl:"<?=$this->url ( array ('controller' => 'degree', 'action' => 'getdegree' ), 'default', true )?>"
+                            },
+                            editrules:{required:true}
+                        }
+                ],
+            height: '100%',
+            caption: "Degree provided by Department",
+            sortname: 'department_id',
+            sortorder: 'desc',
+            pager: '#gridpager', 
+            viewrecords: true,
+            autowidth: true,
+            editurl:"<?=$this->url ( array ('controller' => 'degreedepartment', 'action' => 'crud' ), 'default', true )?>",
+            loadError : function(xhr,st,err) { 
+                $('#errorBox').show();
+                jQuery("#rsperror").html("Type: "+st+"; Response: "+ xhr.status + " "+xhr.statusText); 
+            },
+            loadComplete: function(){
+                $('#errorBox').hide();
+            }
+        });
+
+    jQuery("#tblgrid").jqGrid('navGrid','#gridpager',
+            {add:true, edit:true, view:false, search:false, refresh:false}, //options
+            {width : 500,
+                savekey: [true,13],
+                navkeys: [true,38,40],
+                jqModal: false,
+                closeOnEscape:true,
+                bottominfo:"Fields marked with (*) are required"}, // edit options
+            {width : 500,
+                savekey: [true,13],
+                navkeys: [true,38,40],
+                jqModal: false,
+                closeOnEscape:true,
+                bottominfo:"Fields marked with (*) are required"}, // add options
+            {reloadAfterSubmit:false,
+                jqModal:false,
+                closeOnEscape:true}, // del options
+            {closeOnEscape:true}, // search options
+            {navkeys: [true,38,40],
+                height:250,
+                jqModal:false,
+                closeOnEscape:true} // view options
+        );
+
+    jQuery("#tblgrid").jqGrid('navButtonAdd', '#gridpager',{
+        caption:"",
+        title:"Toggle Search Toolbar",
+        buttonicon :'ui-icon-search',
+        onClickButton:function(){
+            grid[0].toggleToolbar(); 
+        }
+    });
+
+    jQuery("#tblgrid").jqGrid('navButtonAdd', '#gridpager',{
+        caption:"",
+        title:"Clear Search",
+        buttonicon :'ui-icon-refresh',
+        onClickButton:function(){
+            grid[0].clearToolbar();
+        }
+    });
+    
+    jQuery("#tblgrid").jqGrid('filterToolbar');
+    grid[0].toggleToolbar();
+    
+});
+</script>

@@ -7,7 +7,7 @@
  * @version 
  */
 
-class IndexController extends Libz_Base_BaseController {
+class IndexController extends Zend_Controller_Action {
 	/**
 	 * The default action - show the home page
 	 */
@@ -15,6 +15,7 @@ class IndexController extends Libz_Base_BaseController {
 		echo '<pre>';
 		print_r ($_REQUEST);
 	}
+	
 
 }
 ?>

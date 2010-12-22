@@ -8,7 +8,7 @@
  * Blocks/Buildings in infrastructure.
  *
  */
-class BlockController extends Aceis_Base_BaseController {
+class BlockController extends Corez_Base_BaseController {
 	/*
      * @about Interface.
      */
@@ -24,7 +24,7 @@ class BlockController extends Aceis_Base_BaseController {
      * @return JSON data
      */
 	public function fillgridAction() {
-		$this->jqgrid = new Aceis_Base_Helper_Jqgrid ( );
+		$this->jqgrid = new $this->_helper->jqgrid ( );
 		self::createModel();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
@@ -61,7 +61,7 @@ class BlockController extends Aceis_Base_BaseController {
 	////////combos//////////
 	public function getblockAction() {
 		$format = $this->getRequest ()->getParam ( 'format', 'json' );
-		$result = Model_DbTable_Block::getblocks ();
+		$result = Core_Model_DbTable_Block::getblocks ();
 		switch (strtolower ( $format )) {
 			case 'json' :
 				$this->_helper->json($result);

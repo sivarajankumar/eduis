@@ -9,7 +9,7 @@
  * Manage weekday (i.e. working days).
  *
  */
-class WeekDayController extends Aceis_Base_BaseController {
+class WeekDayController extends Corez_Base_BaseController {
 	/*
      * @about Interface.
      */
@@ -25,7 +25,7 @@ class WeekDayController extends Aceis_Base_BaseController {
 	 * @return JSON data
 	 */
 	public function fillgridAction() {
-		$this->jqgrid = new Aceis_Base_Helper_Jqgrid ();
+		$this->jqgrid = new $this->_helper->jqgrid ();
 		self::createModel ();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
@@ -57,7 +57,7 @@ class WeekDayController extends Aceis_Base_BaseController {
 	}
 	
 	public function getweekdayAction() {
-		$result = Model_DbTable_WeekDay::fillday ();
+		$result = Core_Model_DbTable_WeekDay::fillday ();
 		$format = $this->getRequest ()->getParam ( 'format', 'json' );
 		switch (strtolower ( $format )) {
 			case 'json' :

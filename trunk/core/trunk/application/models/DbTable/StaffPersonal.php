@@ -1,0 +1,16 @@
+<?php
+/**
+ *
+ * @category   EduIS
+ * @package    Core
+ * @subpackage StaffPersonal
+ * @since	   0.1
+ */
+class Core_Model_DbTable_StaffPersonal extends Zend_Db_Table {
+	protected $_name = 'staff_personal';
+	
+	public static function staffDepartment($staff_id) {
+		$sql = 'SELECT initial,staff_id,first_name,last_name,department_id from staff_personal where staff_id = ?';
+		return self::getDefaultAdapter()->fetchRow($sql,array($staff_id));	
+	}
+}

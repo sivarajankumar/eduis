@@ -1,8 +1,8 @@
 <?php
 /**
  *
- * @category   Aceis
- * @package    Default
+ * @category   EduIS
+ * @package    Core
  * @subpackage Batch
  * @since	   0.1
  */
@@ -10,7 +10,7 @@
  * Batch(es) in a degree of a department.
  * 
  */
-class BatchController extends Aceis_Base_BaseController {
+class BatchController extends Corez_Base_BaseController {
 	/*
      * @about Interface.
      */
@@ -26,7 +26,7 @@ class BatchController extends Aceis_Base_BaseController {
      * @return JSON data
      */
 	public function fillgridAction() {
-		$this->jqgrid = new Aceis_Base_Helper_Jqgrid ( );
+		$this->jqgrid = $this->_helper->jqgrid();
 		self::createModel();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
@@ -54,7 +54,9 @@ class BatchController extends Aceis_Base_BaseController {
 			self::fillgridfinal ();
 		
 		} else {
-			header ( "HTTP/1.1 403 Forbidden" );
+			$this->getResponse()
+				->setException('Non ajax request')
+				->setHttpResponseCode(400);
 		}
 	
 	}
@@ -90,7 +92,7 @@ class BatchController extends Aceis_Base_BaseController {
 		$department = $request->getParam ( 'department_id' );
 		$degree = $request->getParam ( 'degree_id' );
 		if (isset ( $degree ) and isset ( $department )) {
-			$result = Model_DbTable_Batch::batch ( $department, $degree );
+			$result = Core_Model_DbTable_Batch::batch ( $department, $degree );
 			switch (strtolower ( $format )) {
 				case 'json' :
 					$this->_helper->json($result);
@@ -104,8 +106,9 @@ class BatchController extends Aceis_Base_BaseController {
 					echo '</select>';
 					return;
 				default :
-					header ( "HTTP/1.1 400 Bad Request" );
-					echo 'Unsupported format';
+					$this->getResponse()
+						->setException('Unsupported format request')
+						->setHttpResponseCode(400);
 			}
 		} else {
 			header ( "HTTP/1.1 400 Bad Request" );

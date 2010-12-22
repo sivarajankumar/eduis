@@ -1,0 +1,137 @@
+<h3 align="center">Semesters in Department's Degree</h3>
+<div class="gridstyle">
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+	style="color: red"></span></div>
+<script type="text/javascript">
+var urlDeptCombo = "<?=$this->url ( array ('controller' => 'degreedepartment', 'action' => 'filldeptcombo' ), 'default', true )?>";
+var urlDegreeCombo = "<?=$this->url ( array ('controller' => 'degreedepartment', 'action' => 'filldegreecombo' ), 'default', true )?>";
+
+$(function(){
+
+    var gridTable = "#tblgrid";
+    var gridPager = "#gridpager";
+    var urlFillGrid = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid' ), 'default', true )?>";
+    var urlCRUD = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud' ), 'default', true )?>";
+    $(gridTable).jqGrid({
+        url : urlFillGrid,
+        colNames:['Department','Degree','Semester', 'Semester Type', 'Duration In Months','Handled By Dept'],
+        colModel:[
+                  {name:'department_id',
+                      index:'department_id',
+                      editable: true,
+                      edittype: 'select',
+                      editoptions: {
+                      dataUrl:urlDeptCombo,
+                      dataEvents: [{
+                          type: 'change',
+                          fn: function(e) {
+                          $.ajax({url : urlDegreeCombo,
+                              type : 'GET',
+                              data : {department_id : this.value},
+                              success: function(data){
+                                  data = stripSelect(data);
+                                  $('#degree_id').html(data);
+                                  },
+                                  error: function(data){
+                                      alert(data);
+                                      }
+                                  });
+                          }
+                      }]
+                      }
+                  },
+                  {name:'degree_id',
+                      index:'degree_id',
+                      editable:true,
+                      edittype: 'select',
+                      editoptions:{
+                      value : {'':'Select One'}
+                  }
+                  },
+                  {name:'semester_id',
+                      index:'semester_id',
+                      editable:true,
+                      edittype: 'select',
+                      editoptions:{
+                      //I am avoiding extra request to server for almost static dropdown.
+                      value : {'1':'One',
+                               '2':'Two',
+                               '3':'Three',
+                               '4':'Four',
+                               '5':'Five',
+                               '6':'Six',
+                               '7':'Seven',
+                               '8':'Eight'}/*,
+                     dataEvents: [{
+                                  type: 'select',
+                                  fn: function(e) {
+                                    switch to even and odd of semester_type_id
+                                    }
+                                }]*/
+                            }
+                       },
+                       {name:'semester_type_id',
+                           index:'semester_type_id',
+                           editable: true,
+                           edittype: 'select', 
+                           editoptions:{
+                           //Another save of resources.
+                               value : {'EVEN':'Even',
+                                        'ODD':'Odd'}                   
+                           }
+                      },
+                       {name:'semester_duration',
+                           index:'semester_duration',
+                           editable: true
+                       },
+                       {name:'handled_by_dept',
+                           index:'handled_by_dept',
+                           editable: true,
+                           edittype: 'select',
+                           editoptions: {
+                           dataUrl:urlDeptCombo
+                           }
+                       }
+                ],
+            caption: "Semesters in Degree",
+            sortname: 'department_id',
+            pager: gridPager,
+            editurl:urlCRUD
+        });
+
+
+    $(gridTable).jqGrid('navGrid', gridPager, {
+        add : true,
+        edit : true,
+        view : false,
+        search : false,
+        refresh : false
+    }, // options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true
+            }, // edit options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true,
+                clearAfterAdd : true //Default is true, make false if needed
+            }, // add options
+            {
+                reloadAfterSubmit : false,
+                jqModal : false,
+                closeOnEscape : true
+            } // del options
+         );
+
+    addPager(gridTable, gridPager); 
+});
+</script>
