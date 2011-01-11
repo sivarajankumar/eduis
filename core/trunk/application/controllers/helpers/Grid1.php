@@ -6,7 +6,7 @@
  * @subpackage Helper
  * @since	   0.1
  */
-class Core_Controller_Helper_Jqgrid extends Zend_Controller_Action_Helper_Abstract {
+class Core_Controller_Helper_Grid extends Zend_Controller_Action_Helper_Abstract {
 	
 	// Zend_Db_Table_Select object
 	public $sql;
@@ -23,7 +23,7 @@ class Core_Controller_Helper_Jqgrid extends Zend_Controller_Action_Helper_Abstra
 	public function setGridparam() {
 		$request = self::getRequest();
 		$this->gridparam ['page'] = $request->getParam ( 'page' ); // get the requested page
-		$this->gridparam ['limit'] = $request->getParam ( 'rows' ); // rows limit in grid
+		$this->gridparam ['limit'] = $request->getParam ( 'rows' ); // rows limit in Grid
 		$this->gridparam ['sidx'] = $request->getParam ( 'sidx' ); // get index column - i.e. user click to sort
 		$this->gridparam ['sord'] = $request->getParam ( 'sord' ); // sort direction
 		

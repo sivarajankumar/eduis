@@ -24,14 +24,14 @@ class DeptController extends Corez_Base_BaseController {
 	 * @return JSON data
 	 */
 	public function fillgridAction() {
-		$this->jqgrid = $this->_helper->jqgrid ();
+		$this->grid = $this->_helper->grid ();
 		self::createModel ();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
 		if ($valid) {
-			$this->jqgrid->setGridparam ( $request );
+			$this->grid->setGridparam ( $request );
 			
-			$this->jqgrid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
+			$this->grid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
 			
 			$searchOn = $request->getParam ( '_search' );
 			if ($searchOn != 'false') {
@@ -39,10 +39,10 @@ class DeptController extends Corez_Base_BaseController {
 				foreach ( $sarr as $key => $value ) {
 					switch ($key) {
 						case 'department_id' :
-							$this->jqgrid->sql->where ( "$key LIKE ?", $value . '%' );
+							$this->grid->sql->where ( "$key LIKE ?", $value . '%' );
 							break;
 						case 'department_name' :
-							$this->jqgrid->sql->where ( "$key LIKE ?", '%' . $value . '%' );
+							$this->grid->sql->where ( "$key LIKE ?", '%' . $value . '%' );
 							break;
 					}
 				}

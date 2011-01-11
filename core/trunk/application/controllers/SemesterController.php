@@ -27,23 +27,23 @@ class SemesterController extends Corez_Base_BaseController {
 	 * @return JSON data
 	 */
 	public function fillgridAction() {
-		$this->jqgrid = new $this->_helper->jqgrid ();
+		$this->grid = new $this->_helper->grid ();
 		self::createModel ();
         $request = $this->getRequest ();
         $valid = $request->getParam ( 'nd' );
         if ($request->isXmlHttpRequest () and $valid) {
-            $this->jqgrid->setGridparam ( $request );
-            $this->jqgrid->sql = $this->table->select ()->from ( $this->table->info ( 'name' ) );
+            $this->grid->setGridparam ( $request );
+            $this->grid->sql = $this->table->select ()->from ( $this->table->info ( 'name' ) );
             $searchOn = $request->getParam ( '_search' );
             if ($searchOn != 'false') {
                 $sarr = $request->getParams ();
                 foreach ( $sarr as $key => $value ) {
                     switch ($key) {
                         case 'description' :
-                            $this->jqgrid->sql->where ( "$key LIKE ?", $value . '%' );
+                            $this->grid->sql->where ( "$key LIKE ?", $value . '%' );
                             break;
                         case 'semester_id' :
-                            $this->jqgrid->sql->where ( "$key = ?", $value );
+                            $this->grid->sql->where ( "$key = ?", $value );
                             break;
                     }
                 }

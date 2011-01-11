@@ -27,15 +27,15 @@ class RoomController extends Corez_Base_BaseController {
 	 * @return JSON data
 	 */
 	public function fillgridAction() {
-		$this->jqgrid = new $this->_helper->jqgrid ();
+		$this->grid = new $this->_helper->grid ();
 		self::createModel ();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
 		if ($request->isXmlHttpRequest () and $valid) {
 			
-			$this->jqgrid->setGridparam ( $request );
+			$this->grid->setGridparam ( $request );
 			
-			$this->jqgrid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
+			$this->grid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
 			/*
             $searchOn = $request->getParam ( '_search' );
             if ($searchOn != 'false') {
@@ -44,10 +44,10 @@ class RoomController extends Corez_Base_BaseController {
                     switch ($key) {
                         case 'department_id' :
                         case 'degree_id' :
-                            $this->jqgrid->sql->where ( "$key LIKE ?", $value . '%' );
+                            $this->grid->sql->where ( "$key LIKE ?", $value . '%' );
                             break;
                         case 'batch_start' :
-                            $this->jqgrid->sql->where ( "$key = ?", $value );
+                            $this->grid->sql->where ( "$key = ?", $value );
                             break;
                     }
                 }
