@@ -19,7 +19,7 @@ class Corez_Base_BaseController extends Zend_Controller_Action {
 	
 	/**
 	 * Model of the controller
-	 * @var Aceis_Base_Model
+	 * @var Corez_Base_Model
 	 */
 	protected $model;
 	
@@ -31,9 +31,9 @@ class Corez_Base_BaseController extends Zend_Controller_Action {
 	
 	/**
 	 * JqGrid
-	 * @var Aceis_Base_Helper_Jqgrid
+	 * @var Core_Controller_Helper_Grid
 	 */
-	protected $jqgrid;
+	protected $grid;
 	
 	protected static $debug;
 	
@@ -350,9 +350,9 @@ class Corez_Base_BaseController extends Zend_Controller_Action {
 	 * @return json response
 	 */
 	protected function fillgridfinal() {
-		$response = $this->jqgrid->prepareResponse ();
+		$response = $this->grid->prepareResponse ();
 		
-		$result = $this->jqgrid->fetchdata ();
+		$result = $this->grid->fetchdata ();
 		$pkey = $this->model->info ( 'primary' );
 		
 		foreach ( $result as $key => $row ) {

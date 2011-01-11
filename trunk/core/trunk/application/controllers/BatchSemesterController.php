@@ -28,13 +28,13 @@ class BatchSemesterController extends Corez_Base_BaseController {
      * @return JSON data
      */
 	public function fillgridAction() {
-		$this->jqgrid = new $this->_helper->jqgrid ();
+		$this->grid = new $this->_helper->grid ();
 		self::createModel ();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
 		if ($valid) {
-			$this->jqgrid->setGridparam ( $request );
-			$this->jqgrid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
+			$this->grid->setGridparam ( $request );
+			$this->grid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
 			/*
             $searchOn = $request->getParam ( '_search' );
             if ($searchOn != 'false') {
@@ -42,12 +42,12 @@ class BatchSemesterController extends Corez_Base_BaseController {
                 foreach ( $sarr as $key => $value ) {
                     switch ($key) {
                         case 'isbn_id' :
-                            $this->jqgrid->sql->where ( "$key = ?", $value );
+                            $this->grid->sql->where ( "$key = ?", $value );
                             break;
                         case 'title' :
                         case 'long_title' :
                         case 'author' :
-                            $this->jqgrid->sql->where ( "$key LIKE ?", $value . '%' );
+                            $this->grid->sql->where ( "$key LIKE ?", $value . '%' );
                             break;
                     }
                 }
