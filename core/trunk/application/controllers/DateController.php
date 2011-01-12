@@ -19,10 +19,9 @@ class DateController extends Zend_Controller_Action {
 		$this->_helper->viewRenderer->setNoRender ();
 		$this->_helper->layout ()->disableLayout ();
 		$dateobj = new Zend_Date ();
-		$today_Date = $dateobj->get ( Zend_date::DAY ) . '-' . $dateobj->get ( Zend_date::MONTH ) . '-' . $dateobj->get ( Zend_date::YEAR );
-		echo $today_Date;
+		echo $dateobj->getDate();
 	}
-	public function noaclisvaliddateAction() {
+	public function getisvaliddateAction() {
 		$this->_helper->viewRenderer->setNoRender ();
 		$this->_helper->layout ()->disableLayout ();
 		

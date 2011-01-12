@@ -7,7 +7,7 @@
  * @since	   0.1
  */
 class Core_Model_DbTable_Holiday extends Corez_Base_Model {
-	protected $_name = 'holyday';
+	protected $_name = 'holiday';
 	
 	public static function getCurrentSessionHolydays() {
 		$session_startdate = Core_Model_DbTable_AcademicSession::getSessionStartDate ();

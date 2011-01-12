@@ -27,12 +27,11 @@ class SemesterController extends Corez_Base_BaseController {
 	 * @return JSON data
 	 */
 	public function fillgridAction() {
-		$this->grid = new $this->_helper->grid ();
 		self::createModel ();
         $request = $this->getRequest ();
         $valid = $request->getParam ( 'nd' );
         if ($request->isXmlHttpRequest () and $valid) {
-            $this->grid->setGridparam ( $request );
+        	$this->grid = new $this->_helper->grid ( );
             $this->grid->sql = $this->table->select ()->from ( $this->table->info ( 'name' ) );
             $searchOn = $request->getParam ( '_search' );
             if ($searchOn != 'false') {

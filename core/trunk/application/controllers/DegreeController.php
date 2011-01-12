@@ -1,7 +1,7 @@
 <?php
 /**
- * @category   Aceis
- * @package    Default
+ * @category   EduIS
+ * @package    Core
  * @subpackage Degree
  * @since      0.1
  */
@@ -25,13 +25,11 @@ class DegreeController extends Corez_Base_BaseController {
 	 * @return JSON data
 	 */
 	public function fillgridAction() {
-		$this->grid = new $this->_helper->grid ();
 		self::createModel ();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
 		if ($request->isXmlHttpRequest () and $valid) {
-			$this->grid->setGridparam ( $request );
-			
+			$this->grid = new $this->_helper->grid ();
 			$this->grid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
 			
 			$searchOn = $request->getParam ( '_search' );
