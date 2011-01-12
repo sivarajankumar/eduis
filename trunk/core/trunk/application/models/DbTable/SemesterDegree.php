@@ -27,6 +27,7 @@ class Core_Model_DbTable_SemesterDegree extends Corez_Base_Model {
 		              ->where ( 'degree_id = ?', $degree )
 		              ->where ( 'handled_by_dept = ?', $department );
 		
+		              
 		if ($currentSession) {
 			$sessionType = Core_Model_DbTable_AcademicSession::currentSessionType ();
 			$sql->where ( '`semester_type_id` = ?', $sessionType );
@@ -57,7 +58,7 @@ class Core_Model_DbTable_SemesterDegree extends Corez_Base_Model {
 		              ->where ( '`handled_by_dept` = ?', $masterDepartment );
 		
 		if ($currentSession) {
-			$sessionType = Model_DbTable_AcademicSession::currentSessionType ();
+			$sessionType = Core_Model_DbTable_AcademicSession::currentSessionType ();
 			$sql->where ( '`semester_type_id` = ?', $sessionType );
 		}
 		
@@ -93,7 +94,7 @@ class Core_Model_DbTable_SemesterDegree extends Corez_Base_Model {
                       ->where ( 'handled_by_dept = ?', $masterDepartment );
         
         if ($currentSession) {
-            $sessionType = Model_DbTable_AcademicSession::currentSessionType ();
+            $sessionType = Core_Model_DbTable_AcademicSession::currentSessionType ();
             $sql->where ( '`semester_type_id` = ?', $sessionType );
         }
         

@@ -26,6 +26,21 @@ $this->jQuery ()->setLocalPath ( $cdnServer . '/js/jquery-1.4.4.min.js' );
 // Jquery UI
 $this->jQuery ()->setUiLocalPath ( $cdnServer . '/js/jquery-ui-1.8.6.custom.min.js' );
 
+/*
+ * Adding JqGrid as default grid.
+ */
+
+$this->headLink ()->appendStylesheet ( $cdnServer . '/plugins/jqgrid/css/ui.jqgrid.css' )
+
+//Select multiple columns from column chooser
+->appendStylesheet ( $cdnServer . '/plugins/jqgrid/css/ui.multiselect.css' );
+$this->headScript ()->appendFile ( $cdnServer . '/plugins/jqgrid/js/ui.multiselect.js' );
+
+// This is compressed version of jqGrid 3.6, It has all plugins in one file only
+$this->headScript ()->appendFile ( $cdnServer . '/plugins/jqgrid/js/i18n/grid.locale-en.js' );
+$this->headScript ()->appendFile ( $cdnServer . '/plugins/jqgrid/jquery.jqGrid.min.js' );
+// Gloabal Settings for JqGrid
+$this->headScript ()->appendFile ( $cdnServer . '/plugins/jqgrid/jqGrid.global.js' );
 
 echo $this->headMeta();
 echo $this->headTitle (); 

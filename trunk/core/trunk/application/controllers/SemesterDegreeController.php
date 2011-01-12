@@ -25,13 +25,11 @@ class SemesterDegreeController extends Corez_Base_BaseController {
 	 * @return JSON data
 	 */
 	public function fillgridAction() {
-		$this->grid = new $this->_helper->grid ();
 		self::createModel ();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
 		if ($request->isXmlHttpRequest () and $valid) {
-			
-			$this->grid->setGridparam ( $request );
+			$this->grid = new $this->_helper->grid ( );
 			
 			$this->grid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
 			

@@ -16,12 +16,16 @@ class Core_Controller_Helper_Grid extends Zend_Controller_Action_Helper_Abstract
 	public $offset = 0;
 	public $gridparam = array ();
 	
+	public function __construct() {
+		return self::setGridparam ();
+	}
+	
 	function direct() {
-			return self::setGridparam();
+		return self::setGridparam ();
 	}
 	
 	public function setGridparam() {
-		$request = self::getRequest();
+		$request = self::getRequest ();
 		$this->gridparam ['page'] = $request->getParam ( 'page' ); // get the requested page
 		$this->gridparam ['limit'] = $request->getParam ( 'rows' ); // rows limit in Grid
 		$this->gridparam ['sidx'] = $request->getParam ( 'sidx' ); // get index column - i.e. user click to sort

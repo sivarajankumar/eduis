@@ -11,23 +11,6 @@
  */
 
 ?>
-<?php 
-
-$cdnServer = 'http://site.cdn.aceambala.com';
-
-$this->headLink ()->appendStylesheet ( $cdnServer . '/plugins/jqgrid/css/ui.jqgrid.css' )
-
-//Select multiple columns from column chooser
-->appendStylesheet ( $cdnServer . '/plugins/jqgrid/css/ui.multiselect.css' );
-$this->headScript ()->appendFile ( $cdnServer . '/plugins/jqgrid/js/ui.multiselect.js' );
-
-// This is compressed version of jqGrid 3.6, It has all plugins in one file only
-$this->headScript ()->appendFile ( $cdnServer . '/plugins/jqgrid/js/i18n/grid.locale-en.js' );
-$this->headScript ()->appendFile ( $cdnServer . '/plugins/jqgrid/jquery.jqGrid.min.js' );
-// Gloabal Settings for JqGrid
-$this->headScript ()->appendFile ( $cdnServer . '/plugins/jqgrid/jqGrid.global.js' );
-
-?>
 <h3 align="center">Batch</h3>
 <div class="gridstyle">
 <table id="tblgrid" class="scroll"></table>
