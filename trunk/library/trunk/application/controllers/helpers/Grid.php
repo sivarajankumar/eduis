@@ -1,5 +1,11 @@
 <?php
-
+/**
+ *
+ * @category   EduIS
+ * @package    Library
+ * @subpackage Helper
+ * @since	   0.1
+ */
 class Lib_Controller_Helper_Jqgrid extends Zend_Controller_Action_Helper_Abstract {
 	
 	// Zend_Db_Table_Select object
@@ -10,14 +16,18 @@ class Lib_Controller_Helper_Jqgrid extends Zend_Controller_Action_Helper_Abstrac
 	public $offset = 0;
 	public $gridparam = array ();
 	
+	public function __construct() {
+		return self::setGridparam ();
+	}
+	
 	function direct() {
-			return self::setGridparam();
+		return self::setGridparam ();
 	}
 	
 	public function setGridparam() {
-		$request = self::getRequest();
+		$request = self::getRequest ();
 		$this->gridparam ['page'] = $request->getParam ( 'page' ); // get the requested page
-		$this->gridparam ['limit'] = $request->getParam ( 'rows' ); // rows limit in grid
+		$this->gridparam ['limit'] = $request->getParam ( 'rows' ); // rows limit in Grid
 		$this->gridparam ['sidx'] = $request->getParam ( 'sidx' ); // get index column - i.e. user click to sort
 		$this->gridparam ['sord'] = $request->getParam ( 'sord' ); // sort direction
 		

@@ -18,11 +18,11 @@ class BarcodeBookController extends Libz_Base_BaseController {
 	/**
 	 * The default action - show the home page
 	 */
-	public function printaccAction() {
+	public function accessnoAction() {
 		$this->_helper->viewRenderer->setNoRender ( false );
-		$request = $this->getRequest ();
-		$accFrom = $request->getParam ( 'accfrom' );
-		$accUpto = $request->getParam ( 'accupto' );
+		/*$request = $this->getRequest ();
+		$accFrom = trim($request->getParam ( 'accFrom' ));
+		$accUpto = trim($request->getParam ( 'accUpto', null ));
 		if (isset ( $accFrom ) and ((string)$accFrom === (string)(int)$accFrom)) {
 			
 			$this->view->assign ( 'accFrom', $accFrom );
@@ -34,10 +34,13 @@ class BarcodeBookController extends Libz_Base_BaseController {
 				}
 			$this->view->assign ( 'accUpto', $accUpto );
 			} else {
+				$this->_helper->logger('accUpto is invalid or not set');
 				$printAcc = ( int ) $accFrom;
 			}
 			$this->view->assign ( 'printAcc', $printAcc );
-		}
+		} else {
+			$this->_helper->logger('unacceptable accFrom');
+		}*/
 	}
 	
 
@@ -58,11 +61,14 @@ class BarcodeBookController extends Libz_Base_BaseController {
 		// Only the text to draw is required
 		$request = $this->getRequest ();
 		$text = $request->getParam ( 'text' );
-		$format = $request->getParam ( 'format', 'EAN8' );
+		$format = $request->getParam ( 'format', 'CODE39' );
 		$barcodeOptions = array ('text' => $text );
 		// No required options
 		$rendererOptions = array ();
-		
+		$access = new Zend_Date();
+		$this->getResponse()
+				    ->setHeader('Cache-Control', 'public, proxy-revalidate')
+				    ->setHeader('Set-Cookie', '',true);
 		Zend_Barcode::render ( $format, 'image', $barcodeOptions, $rendererOptions );
 	}
 }

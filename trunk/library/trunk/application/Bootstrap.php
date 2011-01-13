@@ -1,9 +1,11 @@
 <?php
-
+/**
+ * @category   EduIS
+ * @package    Library
+ * @subpackage Bootstrap
+ */
 /**
  * Application bootstrap
- * 
- * @package Library
  */
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 	
