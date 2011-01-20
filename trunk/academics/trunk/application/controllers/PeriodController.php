@@ -1,5 +1,5 @@
 <?php
-class Department_PeriodController extends Aceis_Base_BaseController {
+class PeriodController extends Acadz_Base_BaseController {
 	/*
      * @about Interface.
      */
@@ -15,13 +15,11 @@ class Department_PeriodController extends Aceis_Base_BaseController {
      * @return JSON data
      */
 	public function fillgridAction() {
-		$this->jqgrid = new Aceis_Base_Helper_Jqgrid ( );
-		self::createModel();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
 		if ($request->isXmlHttpRequest () and $valid) {
-			
-			$this->jqgrid->setGridparam ( $request );
+			self::createModel();
+			$this->grid = $this->_helper->grid();
 			
 			$this->jqgrid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
 			
@@ -60,7 +58,7 @@ class Department_PeriodController extends Aceis_Base_BaseController {
 		$semester = $request->getParam ( 'semester_id' );
 		$weekday = $request->getParam ( 'weekday_number' );
 		if (isset ( $department ) and isset ( $degree ) and isset ( $semester ) and isset ( $weekday )) {
-			$result = Department_Model_DbTable_Period::getPeriod ( $department, $degree, ( int ) $semester, ( int ) $weekday );
+			$result = Acad_Model_DbTable_Period::getPeriod ( $department, $degree, ( int ) $semester, ( int ) $weekday );
 			switch (strtolower ( $format )) {
 				case 'json' :
 					$this->_helper->json ( $result );

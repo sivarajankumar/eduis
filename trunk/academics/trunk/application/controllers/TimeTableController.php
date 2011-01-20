@@ -1,5 +1,5 @@
 <?php
-class Department_TimeTableController extends Aceis_Base_BaseController {
+class Department_TimeTableController extends Acadz_Base_BaseController {
 	protected $objsubject;
 	protected $department_id;
 	public function init() {
@@ -306,7 +306,7 @@ class Department_TimeTableController extends Aceis_Base_BaseController {
 		$request = $this->getRequest ();
 		$department_id = $request->getParam ( 'department_id' );
 		if (isset ( $department_id )) {
-			$resultSet = Department_Model_DbTable_Timetable::getDepartmentSubjectFaculty ( $department_id );
+			$resultSet = Acad_Model_DbTable_Timetable::getDepartmentSubjectFaculty ( $department_id );
 			echo $this->_helper->json ( $resultSet );
 		
 		}
@@ -315,8 +315,8 @@ class Department_TimeTableController extends Aceis_Base_BaseController {
 	
 	public function tempAction() {
 		echo '<pre>';
-		$obj = new Department_Model_DbTable_TimeTable ();
-		$var = Department_Model_DbTable_TimeTable::currentPeriodStatus ( '438', TRUE );
+		$obj = new Acad_Model_DbTable_TimeTable ();
+		$var = Acad_Model_DbTable_TimeTable::currentPeriodStatus ( '438', TRUE );
 		print_r ( $var );
 	
 	}

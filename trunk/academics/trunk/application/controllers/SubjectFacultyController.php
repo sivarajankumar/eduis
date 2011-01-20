@@ -1,5 +1,5 @@
 <?php
-class Department_SubjectFacultyController extends Aceis_Base_BaseController {
+class Department_SubjectFacultyController extends Acadz_Base_BaseController {
 	
 	public function init() {
 		
@@ -93,6 +93,6 @@ class Department_SubjectFacultyController extends Aceis_Base_BaseController {
 	{
 		
 		$department_id  = $this->getRequest()->getParam('department_id');
-		$this->_helper->json(Department_Model_DbTable_SubjectFaculty::getDepartmentFaculty($department_id));	 		
+		$this->_helper->json(Acad_Model_DbTable_SubjectFaculty::getDepartmentFaculty($department_id));	 		
 	}
 }

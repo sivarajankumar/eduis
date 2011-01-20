@@ -1,5 +1,5 @@
 <?php
-class Department_SubjectTypeController extends Aceis_Base_BaseController {
+class Department_SubjectTypeController extends Acadz_Base_BaseController {
 	/*
      * @about Interface.
      */
@@ -52,7 +52,7 @@ class Department_SubjectTypeController extends Aceis_Base_BaseController {
 	public function getsubjecttypeAction() {
 		$request = $this->getRequest ();
 		$format = $request->getParam ( 'format', 'json' );
-		$result = Department_Model_DbTable_SubjectType::getSubjectTypes ( );
+		$result = Acad_Model_DbTable_SubjectType::getSubjectTypes ( );
 		switch (strtolower ( $format )) {
 			case 'json' :
 				$this->_helper->json ( $result );

@@ -32,9 +32,9 @@ class Acadz_Base_BaseController extends Zend_Controller_Action {
 	
 	/**
 	 * JqGrid
-	 * @var Aceis_Base_Helper_Jqgrid
+	 * @var Acad_Base_Helper_Grid
 	 */
-	protected $jqgrid;
+	protected $grid;
 	
 	protected static $debug;
 	

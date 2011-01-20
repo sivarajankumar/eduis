@@ -1,5 +1,5 @@
 <?php
-class Department_SubjectDepartmentController extends Aceis_Base_BaseController {
+class Department_SubjectDepartmentController extends Acadz_Base_BaseController {
 	/*
      * @about Interface.
      */
@@ -63,7 +63,7 @@ class Department_SubjectDepartmentController extends Aceis_Base_BaseController {
 		$semester_id = $request->getParam ( 'semester_id' );
 		$subject_type_id = $request->getParam ( 'subject_type_id' );
 		if (isset ( $department_id ) and isset ( $degree_id ) and isset ( $semester_id )) {
-			$result = Department_Model_DbTable_SubjectDepartment::getSemesterSubjects ( $department_id, $degree_id, $semester_id, $subject_type_id );
+			$result = Acad_Model_DbTable_SubjectDepartment::getSemesterSubjects ( $department_id, $degree_id, $semester_id, $subject_type_id );
 			switch (strtolower ( $format )) {
 				case 'json' :
 					$this->_helper->json ( $result );

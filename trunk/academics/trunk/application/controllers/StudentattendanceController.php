@@ -1,6 +1,6 @@
 <?php
 
-class Department_StudentattendanceController extends Aceis_Base_BaseController {
+class Department_StudentattendanceController extends Acadz_Base_BaseController {
 	public function indexAction() {
 		$this->_helper->viewRenderer->setNoRender ( FALSE );
 		$this->_helper->layout ()->enableLayout ();
@@ -29,11 +29,11 @@ class Department_StudentattendanceController extends Aceis_Base_BaseController {
 		$period_date = $period_dateobj->toString ( 'YYYY-MM-dd' );
 		
 		if (isset ( $staff_id )) {
-			$dayPeriods = Department_Model_DbTable_TimeTable::getFacultyDayPeriods ( $staff_id, $period_date,$weekday_number);
+			$dayPeriods = Acad_Model_DbTable_TimeTable::getFacultyDayPeriods ( $staff_id, $period_date,$weekday_number);
 			
 		if((isset ( $period_date )))
 			{
-			$adjustedPeriods = Department_Model_DbTable_FacultyAdjustment::getAdjusted ( $staff_id, $period_date );
+			$adjustedPeriods = Acad_Model_DbTable_FacultyAdjustment::getAdjusted ( $staff_id, $period_date );
 			foreach ( $dayPeriods as $key => $value ) {
 				$dayPeriods [$key] ['adjusted'] = 0;
 				$dayPeriods [$key] ['nonattendance'] = 0;
@@ -42,7 +42,7 @@ class Department_StudentattendanceController extends Aceis_Base_BaseController {
 						$dayPeriods [$key] ['adjusted'] = 1;
 					}
 				}
-				$noattendance = Department_Model_DbTable_NoAttendanceDay::isnoattendanceday ( $period_date, $dayPeriods [$key] ['department_id'], $dayPeriods [$key] ['degree_id'], $dayPeriods [$key] ['semester_id'] );
+				$noattendance = Acad_Model_DbTable_NoAttendanceDay::isnoattendanceday ( $period_date, $dayPeriods [$key] ['department_id'], $dayPeriods [$key] ['degree_id'], $dayPeriods [$key] ['semester_id'] );
 				if ($noattendance) {
 					$dayPeriods [$key] ['nonattendance'] = 1;
 				}
@@ -129,12 +129,12 @@ class Department_StudentattendanceController extends Aceis_Base_BaseController {
 		//$rollno = '2306001';
 		$rollno = $this->getRequest ()->getParam ( 'rollno' );
 		if ($rollno) {
-			$semsubjectInfo = new Department_Model_DbTable_TimeTable ( );
-			$periodInfo = new Department_Model_DbTable_PeriodAttendance ( );
+			$semsubjectInfo = new Acad_Model_DbTable_TimeTable ( );
+			$periodInfo = new Acad_Model_DbTable_PeriodAttendance ( );
 			
-			$student = Department_Model_DbTable_StudentDepartment::getStudentInfo($rollno);
+			$student = Acad_Model_DbTable_StudentDepartment::getStudentInfo($rollno);
 			if ($student) {
-				$semsubjects = Department_Model_DbTable_SubjectDepartment::getSemesterSubjects ( $student ['department_id'], $student ['degree_id'], $student ['semester_id']);
+				$semsubjects = Acad_Model_DbTable_SubjectDepartment::getSemesterSubjects ( $student ['department_id'], $student ['degree_id'], $student ['semester_id']);
 			foreach ( $semsubjects as $row => $subject ) {
 				$semsubjects [$row] ['ttids'] = $semsubjectInfo->getSubjectTimetableids ( $student ['department_id'], $student ['degree_id'], $student ['semester_id'], $subject ['subject_code'], '', $student ['group_id'], FALSE );
 				$semsubjects [$row] ['totLec'] = $periodInfo->totalLectures ( $semsubjects [$row] ['ttids'] );

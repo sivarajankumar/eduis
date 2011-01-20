@@ -6,7 +6,7 @@
  * @author
  * @version 
  */
-class NoattendancedayController extends Zend_Controller_Action {
+class Noattendanceday1Controller extends Acadz_Base_BaseController {
 	/**
 	 * The default action - show the home page
 	 */
