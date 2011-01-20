@@ -1,5 +1,5 @@
 <?php
-class Department_SubjectModeController extends Aceis_Base_BaseController {
+class Department_SubjectModeController extends Acadz_Base_BaseController {
 	/*
      * @about Interface.
      */
@@ -60,7 +60,7 @@ class Department_SubjectModeController extends Aceis_Base_BaseController {
 		// If this attribute is set then it will show only grouplevel subject mode and not class level.
 		$groupMode = ('PARTIAL' == $request->getParam ( 'period_status' )) ? 'TRUE' : NULL;
 		if (isset ( $subject_code )) {
-			$result = Department_Model_DbTable_SubjectMode::getSubjectModes ( $subject_code, $groupMode );
+			$result = Acad_Model_DbTable_SubjectMode::getSubjectModes ( $subject_code, $groupMode );
 			switch (strtolower ( $format )) {
 				case 'json' :
 					$this->_helper->json($result);
@@ -85,7 +85,7 @@ class Department_SubjectModeController extends Aceis_Base_BaseController {
 	$request = $this->getRequest ();	
 	$subject_code = $request->getParam ( 'subject_code' );
 	if (isset ( $subject_code )) {
-			$resultSet = Department_Model_DbTable_SubjectMode::getSubjectModes ( $subject_code);
+			$resultSet = Acad_Model_DbTable_SubjectMode::getSubjectModes ( $subject_code);
 			$this->_helper->json($resultSet);
 			return;
 	}
@@ -102,7 +102,7 @@ class Department_SubjectModeController extends Aceis_Base_BaseController {
         $format = $request->getParam ( 'format', 'select' );
         $subject_mode = $request->getParam ( 'subject_mode_id' );
         if (isset ( $subject_mode )) {
-            $result = Department_Model_DbTable_SubjectMode::groupTogether($subject_mode);
+            $result = Acad_Model_DbTable_SubjectMode::groupTogether($subject_mode);
             echo $result;
             return ;
         }

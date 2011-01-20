@@ -3,19 +3,23 @@
 /**
  * PeriodattendanceController
  * 
- * @author
- * @version 
+ * @category   EduIS
+ * @package    Core
+ * @subpackage Batch
+ * @since	   0.1
+ * @author	   Hemant
+ * @version    0.1
  */
 
-class Department_PeriodattendanceController extends Aceis_Base_BaseController{
+class PeriodattendanceController extends Acadz_Base_BaseController{
 	/**
 	 * The default action - show the home page
 	 */
 	protected $objPeriodAttendance;
 	protected $objStudentAttendance;
 	public function init() {
-		$this->objPeriodAttendance = new Department_Model_DbTable_PeriodAttendance ( );
-		$this->objStudentAttendance = new Department_Model_DbTable_StudentAttendance ( );
+		$this->objPeriodAttendance = new Acad_Model_DbTable_PeriodAttendance ( );
+		$this->objStudentAttendance = new Acad_Model_DbTable_StudentAttendance ( );
 		parent::init();
 	}
 	
@@ -66,7 +70,7 @@ class Department_PeriodattendanceController extends Aceis_Base_BaseController{
 			
 			while ( $token != false ) {
 				$timetable_id = substr ( $token, strpos ( $token, ":" ) + 1 );
-				$status = Department_Model_DbTable_PeriodAttendance::isPeriodExists($period_date,$timetable_id,$staff_id);
+				$status = Acad_Model_DbTable_PeriodAttendance::isPeriodExists($period_date,$timetable_id,$staff_id);
 					if(!$status)
 				{
 					$this->getResponse ()->setHttpResponseCode ( 500 );

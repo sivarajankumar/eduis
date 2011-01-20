@@ -1,5 +1,5 @@
 <?php
-class Department_SubjectController extends Aceis_Base_BaseController {
+class Department_SubjectController extends Acadz_Base_BaseController {
 	/*
      * @about Interface.
      */

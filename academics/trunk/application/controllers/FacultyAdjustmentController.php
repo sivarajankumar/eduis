@@ -1,6 +1,6 @@
 <?php
 
-class Department_AdjustmentController extends Zend_Controller_Action {
+class FacultyAdjustmentController extends Acadz_Base_BaseController {
 	protected $objtimetable;
 	protected $objfacultyadjustment;
 	protected $request;
@@ -10,8 +10,8 @@ class Department_AdjustmentController extends Zend_Controller_Action {
 	public function init() {
 		$this->_helper->viewRenderer->setNoRender ( true );
 		$this->_helper->layout ()->disableLayout ();
-		$this->objtimetable = new Department_Model_DbTable_TimeTable ( );
-		$this->objfacultyadjustment = new Department_Model_DbTable_FacultyAdjustment();
+		$this->objtimetable = new Acad_Model_DbTable_TimeTable ( );
+		$this->objfacultyadjustment = new Acad_Model_DbTable_FacultyAdjustment();
 
 		$this->param = array();
 
@@ -55,13 +55,13 @@ class Department_AdjustmentController extends Zend_Controller_Action {
 		$target_staff_id = $request->getParam('target_staff_id');
 		$adjustment_dateobj =new Zend_Date($request->getParam ( 'adjustment_date' ),'dd/MMM/yyyy');
 		$adjustment_date = $adjustment_dateobj->toString('YYYY-MM-dd HH:mm:ss');
-		$resultSet = Department_Model_DbTable_TimeTable::getPeriodIdTimetable($period_id,$adjustment_date,$staff_id);
+		$resultSet = Acad_Model_DbTable_TimeTable::getPeriodIdTimetable($period_id,$adjustment_date,$staff_id);
 		$insertData  = NULL;
 		try{
 			$cnt = 0;
 			foreach($resultSet as $key => $value)
 			{
-				$adj_resultSet = Department_Model_DbTable_TimeTable::getSubjectTimetableids($value['department_id'],$value['degree_id'],$value['semester_id'],$target_subject,$value['subject_mode_id'],$value['group_id']);
+				$adj_resultSet = Acad_Model_DbTable_TimeTable::getSubjectTimetableids($value['department_id'],$value['degree_id'],$value['semester_id'],$target_subject,$value['subject_mode_id'],$value['group_id']);
 				if(count($adj_resultSet) > 0 )
 				{
 				$insertData[$cnt++]= array('source_timetable_id' => $value['timetable_id'] , 'start_date' => $adjustment_date, 'source_staff_id' => $staff_id , 'target_timetable_id' => $adj_resultSet[0] , 'target_staff_id' => $target_staff_id ) ;
@@ -95,7 +95,7 @@ class Department_AdjustmentController extends Zend_Controller_Action {
 		$target_staff_id= $request->getParam('staff_id');
 		$start_dateobj =new Zend_Date($request->getParam ( 'period_date' ),'dd/MMM/yyyy');
 		$start_date = $start_dateobj->toString('YYYY-MM-dd HH:mm:ss');
-		$result = Department_Model_DbTable_FacultyAdjustment::getAdjustment($target_staff_id,$start_date);
+		$result = Acad_Model_DbTable_FacultyAdjustment::getAdjustment($target_staff_id,$start_date);
 		/*if(count($adjustmentResultSet) > 0 )
 		{
 			$this->objtimetable->dbselect->reset();
@@ -114,7 +114,7 @@ class Department_AdjustmentController extends Zend_Controller_Action {
 		$periodDateobj = new Zend_Date($request->getParam ( "period_date" ),'dd/MMM/yyyy');
 		$period_date = $periodDateobj->toString('YYYY-MM-dd HH:mm:ss');
 		
-		$deleted = Department_Model_DbTable_FacultyAdjustment::cancelAdjustment($period_id,$staff_id,$period_date);
+		$deleted = Acad_Model_DbTable_FacultyAdjustment::cancelAdjustment($period_id,$staff_id,$period_date);
 		if($deleted > 0)
 		{
 			echo "Adjustment Deleted Successfully";
