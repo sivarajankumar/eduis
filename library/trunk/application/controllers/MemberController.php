@@ -3,7 +3,7 @@
 /**
  * MemberController
  * 
- * @author
+ * @author 
  * @version 
  */
 
@@ -11,17 +11,18 @@ class MemberController extends Libz_Base_BaseController {
 	/**
 	 * The default action - show the home page
 	 */
-	public function init() {
-		$this->table = new Model_DbTable_Member ( );
-		parent::init ();
-	}
 	
 	public function getmemberinfoAction() {
+		self::createModel ();
 		$request = $this->getRequest ();
 		$member_id = $request->getParam ( 'member_id' );
 		$formatted = $request->getParam ( 'formatted' );
 		if ($member_id) {
-			$memberDetail = $this->table->getMemberDetail ( $member_id );
+			$memberInfo = $this->model->getMemberInfo ( $member_id );
+			$issuedBook = Lib_Model_DbTable_IssueReturn::getIssuedDocumentCount ( $member_id );
+			$memberInfo ['issued'] = $issuedBook;
+			//$this->_helper->logger($memberInfo);
+			//$this->getResponse()->setRedirect($infoURL, 303);
 			/*
 			if ($formatted and isset ( $memberDetail ['info'] )) {
 				$formattedDetail = array ();
@@ -35,13 +36,14 @@ class MemberController extends Libz_Base_BaseController {
 				}
 				$memberDetail ['info'] = $formattedDetail;
 			}*/
+			if ($memberInfo) {
+				$this->_helper->json ( $memberInfo );
+			} else {
+				$this->getResponse ()->setHttpResponseCode ( 400 );
+				echo 'Member "' . $member_id . '" not found.';
+			}
 		}
-		if ($memberDetail) {
-			$this->_helper->json ( $memberDetail );
-		} else {
-			$this->getResponse ()->setHttpResponseCode ( 400 );
-			echo '"' . $member_id . '" is not member.';
-		}
+	
 	}
 	// NOTE: THE ABOVE AND BELOW FUNCTIONS ARE ALMOST IDENTICAL!!
 	/**
@@ -51,9 +53,9 @@ class MemberController extends Libz_Base_BaseController {
 		$request = $this->getRequest ();
 		$memberId = $request->getParam ( 'member_id' );
 		if ($memberId) {
-			$memberDetail = $this->table->getMemberDetail ( $memberId );
+			$memberDetail = $this->model->getMemberDetail ( $memberId );
 			if ($memberDetail) {
-				$issuedBook = Model_DbTable_IssueReturn::getIssuedDocumentCount ( $memberId );
+				$issuedBook = Lib_Model_DbTable_IssueReturn::getIssuedDocumentCount ( $memberId );
 				$memberDetail ['issued'] = $issuedBook;
 				if ($this->debug) {
 					$this->_helper->logger ( $memberDetail );
@@ -61,7 +63,7 @@ class MemberController extends Libz_Base_BaseController {
 				$this->_helper->json ( $memberDetail );
 			} else {
 				$this->getResponse ()->setHttpResponseCode ( 400 );
-				echo ' '.$memberId . ' is not a member';
+				echo ' ' . $memberId . ' is not a member';
 			}
 		
 		} else {

@@ -33,14 +33,14 @@
 	<label for="cbkVerify" id="lbl_cbkVerify" class="ui-widget-content  ui-corner-all">
 	Verified : <input id="cbkVerify" type="checkbox" accesskey="V" tabindex="2" value="verified" /> 
 	</label>
-<div id="memberInfo" style="clear: both;">&nbsp;</div>
-<div style="clear: both"><a id="moreAccInfo" href="#">more...</a></div>
+<!--<div id="memberInfo" style="clear: both;">&nbsp;</div>-->
+<span style="clear: both;"><a id="moreAccInfo" href="#">more...</a></span>
 </fieldset>
 <div style="clear: both">
 <fieldset id="fset_accountInfo" class="ui-widget-content  ui-corner-all"><legend
 	class="ui-widget-header ui-corner-all">Account Information</legend>
 <div id="accountInfo">&nbsp;</div>
-<div style="clear: both"><a id="lessAccInfo" href="#"
+<div style="clear: both;"><a id="lessAccInfo" href="#"
 	style="display: none;">less...</a></div>
 </fieldset>
 </div>
@@ -69,11 +69,11 @@
 <script type="text/javascript">
 var imgServer = 'http://localhost/';
 var imgType = '.jpg';
-var urlMemberInfo = "http://hemant.ace.com/zend/aceis/public/library/member/getmemberaccount";
-var urlMemberLimit = "<?=$this->url ( array ('controller' => 'memberlimit', 'action' => 'getmembertypelimit' ), 'default', true )?>";
-var urlBookInfo = "<?=$this->url ( array ('controller' => 'book', 'action' => 'getbookdetails' ), 'default', true )?>";
-var urlBookMoreInfo = "<?=$this->url ( array ('controller' => 'issue', 'action' => 'getbookinfo' ), 'default', true )?>";
-var urlIssueBook = "<?=$this->url ( array ('controller' => 'issue', 'action' => 'issuebook' ), 'default', true )?>";
+var urlMemberInfo = "<?php echo $this->url ( array ('controller' => 'member', 'action' => 'getmemberinfo' ), 'default', true )?>";
+var urlMemberLimit = "<?php echo $this->url ( array ('controller' => 'membershiplimit', 'action' => 'getmembershiplimit' ), 'default', true )?>";
+var urlBookInfo = "<?php echo $this->url ( array ('controller' => 'book', 'action' => 'getbookdetails' ), 'default', true )?>";
+var urlBookMoreInfo = "<?php echo $this->url ( array ('controller' => 'issue', 'action' => 'getbookinfo' ), 'default', true )?>";
+var urlIssueBook = "<?php echo $this->url ( array ('controller' => 'issue', 'action' => 'issuebook' ), 'default', true )?>";
 var objMemberInfo = null;
 var objMemberType = {};
 var objBookMoreInfo = null;
@@ -166,9 +166,8 @@ var fetchMemberInfo = function(member_id){
         $.ajax({
             url : urlMemberInfo,
             ifModified : true,
-            dataType : "jsonp",
+            dataType : "json",
             data : {'member_id' : member_id },
-            jsonp:"onJsonPLoad",
             success : function(member){
                 if(member.member_type_id){
                     switch(member.member_type_id.toUpperCase()){
@@ -186,7 +185,7 @@ var fetchMemberInfo = function(member_id){
                     			alert(alertText);
                     }
                     objMemberInfo = member;
-                    if(!(objMemberType[objMemberInfo.member_type_id])){
+                    if(!(objMemberType[objMemberInfo.membership_type_id])){
                         fetchMemberLimit(member_id);
                     }
                     processAccountInfo();
@@ -245,10 +244,10 @@ var fetchMemberLimit = function(member_id){
             url : urlMemberLimit,
             async : false,
             dataType : "json",
-            data : {'member_type' : objMemberInfo.member_type_id },
+            data : {'membership_type' : objMemberInfo.membership_type_id },
             success : function(memberLimit){
                 if(memberLimit){
-                    objMemberType[objMemberInfo.member_type_id] = memberLimit;
+                    objMemberType[objMemberInfo.membership_type_id] = memberLimit;
                 }else{
                     resetMemberSection();
                     alert('Recieved member account information is incompatible!!');
@@ -267,8 +266,8 @@ var fetchMemberLimit = function(member_id){
  */
 var processAccountInfo = function(){
 	$("#accountInfo").html('');
-	for(documentType in objMemberType[objMemberInfo.member_type_id]){
-        var maximum = objMemberType[objMemberInfo.member_type_id][documentType].document_limit;
+	for(documentType in objMemberType[objMemberInfo.membership_type_id]){
+        var maximum = objMemberType[objMemberInfo.membership_type_id][documentType].document_limit;
 		if(objMemberInfo.issued[documentType]){
 		    var issued = objMemberInfo.issued[documentType].counts;
 	        var remaining = parseInt(maximum) - parseInt(issued);
@@ -376,7 +375,7 @@ var fetchBookMoreInfo = function(acc_no){
  * Issue Book
  */
 var issueBook = function(acc_no, member_id){
-	var maximum = objMemberType[objMemberInfo.member_type_id][objBookMoreInfo.document_type_id].document_limit;
+	var maximum = objMemberType[objMemberInfo.membership_type_id][objBookMoreInfo.document_type_id].document_limit;
 	var issued;
     if( "undefined" === typeof objMemberInfo.issued[objBookMoreInfo.document_type_id]) { 
      issued = 0;
@@ -419,18 +418,18 @@ var issueBook = function(acc_no, member_id){
  * Toggle books info div
  */
 var toggleBookInfo = function(){
-	$('#moreBookInfo').slideToggle("slow");
-	$('a#moreInfo').toggle();
-	$('a#lessInfo').toggle();
+	$('#moreBookInfo').slideToggle();
+	$('a#moreInfo').slideToggle("slow");
+	$('a#lessInfo').slideToggle("slow");
 };
 
 /*
  * Toggle Account Info div
  */
 var toggleAccountInfo = function(){
-    $('#fset_accountInfo').slideToggle("slow");
-    $('a#moreAccInfo').toggle();
-    $('a#lessAccInfo').toggle();
+    $('#fset_accountInfo').slideToggle();
+    $('a#moreAccInfo').slideToggle("slow");
+    $('a#lessAccInfo').slideToggle("slow");
 };
 
 var setIssueState = function(){

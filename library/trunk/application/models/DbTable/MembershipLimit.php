@@ -1,11 +1,12 @@
 <?php
-class Lib_Model_DbTable_MemberLimit extends Libz_Base_Model {
-	protected $_name = 'member_limit';
+class Lib_Model_DbTable_MembershipLimit extends Libz_Base_Model {
+	protected $_name = 'membership_limit';
+	const TABLE_NAME = 'membership_limit';
 	
-	public static function getMemberTypeLimit($memberType, $documentType = NULL) {
+	public static function getMembershipLimits($membershipType, $documentType = NULL) {
 		$sql = self::getDefaultAdapter()->select ()
-		              ->from ( 'member_limit', array('document_type_id','document_limit','day_limit') )
-		              ->where ( 'member_type_id = ?', $memberType );
+		              ->from ( self::TABLE_NAME, array('document_type_id','document_limit','day_limit') )
+		              ->where ( 'membership_type_id = ?', $membershipType );
 		              
 		if (isset($documentType)) {
 			$sql->where('document_type_id = ?', $documentType);
@@ -16,16 +17,16 @@ class Lib_Model_DbTable_MemberLimit extends Libz_Base_Model {
 	
 	public static function getMemberLimit($member_id, $documentType = NULL) {
 		$sql = self::getDefaultAdapter()->select()
-		              ->from('member_limit', array('document_type_id',
-		                                           'member_type_id',
+		              ->from(self::TABLE_NAME, array('document_type_id',
+		                                           'membership_type_id',
 		                                          'document_limit',
 		                                          'day_limit') )
 		              ->join('member',
-		                      'member.member_type_id = member_limit.member_type_id',
+		                      'member.membership_type_id = '.self::TABLE_NAME.'.membership_type_id',
 		                      array(''))
                       ->where('member_id = ?', $member_id);
-                      
                      
+                  
         if (isset($documentType)) {
             $sql->where('document_type_id = ?', $documentType);
             return $sql->query ()->fetch();

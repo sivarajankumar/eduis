@@ -13,6 +13,7 @@ class IsbnController extends Libz_Base_BaseController {
 		$this->_helper->layout ()->enableLayout ();
 		$this->view->assign ( 'controller', $this->_request->getControllerName () );
 		$this->view->assign ( 'module', $this->_request->getModuleName () );
+	
 		//$this->view->assign ( 'colSetup', self::gridsetup() );
 	}
 	
@@ -24,7 +25,7 @@ class IsbnController extends Libz_Base_BaseController {
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
 		if ($valid) {
-			$this->jqgrid->setGridparam ( $request );
+			$this->jqgrid = $this->_helper->grid ();
 			
 			$this->jqgrid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
 			
@@ -39,7 +40,7 @@ class IsbnController extends Libz_Base_BaseController {
 						case 'title' :
 						case 'long_title' :
 						case 'author' :
-							$this->jqgrid->sql->where ( "$key LIKE ?", '%'. $value . '%' );
+							$this->jqgrid->sql->where ( "$key LIKE ?", '%' . $value . '%' );
 							break;
 					}
 				}
@@ -50,15 +51,12 @@ class IsbnController extends Libz_Base_BaseController {
 			echo ('<b>Oops!! </b><br/>No use of peeping like that.. :)');
 		}
 	}
-	public function getbookimageAction()
-	{
-		$request = $this->getRequest();
-		$isbn_id = $request->getParam("isbn_id");
-		$book_image= $this->model->getBookGdata($isbn_id); 
-		$this->_helper->json($book_image);
+	public function getbookimageAction() {
+		self::getModel();
+		$request = $this->getRequest ();
+		$isbn_id = $request->getParam ( "isbn_id" );
+		$book_image = $this->model->getBookGdata ( $isbn_id );
+		$this->_helper->json ( $book_image );
 	}
-	
-	
-	
-	
+
 }

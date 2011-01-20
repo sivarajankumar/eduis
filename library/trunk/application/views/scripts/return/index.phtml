@@ -1,17 +1,18 @@
 
 <h3 align="center">Book Return</h3>
 <div id="main_div">
-<form method="GET" action="javascript:fetchBookInfo();">
-<div align="center"><label for="txtacc_no" accesskey="A" id="lbl_accno"
-	style="padding: 0.4em; float: none;"
+<form style="text-align: center;" method="GET"
+	action="javascript:fetchBookInfo();"><label for="txtacc_no"
+	accesskey="A" id="lbl_accno" style="padding: 0.4em; float: none;"
 	class="ui-widget-content  ui-corner-all">Acc No : <input type="text"
-	id="txtacc_no" size="8" maxlength="6" /> </label></div>
-</form>
+	id="txtacc_no" size="8" maxlength="6" /> </label> <input type="submit"
+	value="Submit"></form>
 <table border="0" style="width: 100%">
 	<tr>
 		<td>
 		<div id="book_div" style="float: left; display: none;">
-		<fieldset class="ui-widget-content  ui-corner-all"><legend class="ui-widget-header ui-corner-all">Book Return Information</legend>
+		<fieldset class="ui-widget-content  ui-corner-all"><legend
+			class="ui-widget-header ui-corner-all">Book Information</legend>
 		<table id="book_table" border="0">
 			<tr>
 				<td align="right">Title:</td>
@@ -47,10 +48,10 @@
 				<td>&nbsp;</td>
 			</tr>
 		</table>
-	</fieldset>
-	</div>
-	</td>
-	
+		</fieldset>
+		</div>
+		</td>
+
 		<td>
 		<div id="member_div" style="width: 100%; float: right; display: none;">
 		<fieldset class="ui-widget-content  ui-corner-all"><legend
@@ -80,9 +81,9 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
-			
+
 			</tr>
-			
+
 			<tr>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
@@ -99,18 +100,18 @@
 	</tr>
 
 </table>
-<div id="btndiv" style="clear: both; text-align: center; padding-top: 1em; padding-bottom: 1em; display: none;">
-<input type="button" id ="btnreturn" value="Return Book" tabindex="1" class="ui-corner-all"/>
-<input type="reset" id="btnrest"/>
-</div>
+<form id="btndiv" method="GET" action="javascript:returnBook();"
+	style="clear: both; text-align: center; padding-top: 1em; padding-bottom: 1em; display: none;">
+<input type="submit" id="btnreturn" value="Return Book" tabindex="1"
+	class="ui-corner-all" /> <input type="reset" id="btnreset" /></form>
 </div>
 
 
 <script type="text/javascript">
-var urlIsbn  =  '<?= $this->url(array('module' => 'library','controller' => 'book','action' => 'getbookdetails' )); ?>';
-var urlBookImage = '<?= $this->url(array('module' => 'library','controller' => 'isbn','action' => 'getbookimage' )); ?>';
-var urlMember  = '<?= $this->url(array('module' => 'library','controller' => 'member','action' => 'getmemberinfo' )); ?>';
-var urlBookReturn = '<?= $this->url(array('module' => 'library','controller' => 'return','action' => 'returnbook' )); ?>';
+var urlIsbn  =  '<?=$this->url ( array ('module' => 'library', 'controller' => 'book', 'action' => 'getbookdetails' ) );?>';
+var urlBookImage = '<?=$this->url ( array ('module' => 'library', 'controller' => 'isbn', 'action' => 'getbookimage' ) );?>';
+var urlMember  = '<?=$this->url ( array ('module' => 'library', 'controller' => 'member', 'action' => 'getmemberinfo' ) );?>';
+var urlBookReturn = '<?=$this->url ( array ('module' => 'library', 'controller' => 'return', 'action' => 'returnbook' ) );?>';
 var acc_no;
 var book_title;
 var book_authors;
@@ -120,70 +121,27 @@ var return_date;
 var member_id,member_type_id;
 var status ;
 var day_late;
+resetAll();	 
+$(function(){
+	$("#main_div span").parent().attr("class", "ui-state-highlight ui-corner-all");
+	$("#btnreturn").attr("class","ui-corner-all");
 
-	$(function(){
-		$("#main_div span").parent().attr("class", "ui-state-highlight ui-corner-all");
-		$("#btnreturn").attr("class","ui-corner-all");
-		$("#txtacc_no").focus();
-		$("#book_div").hide();
-		$("#member_div").hide();
-		$("#btndiv").hide();
-		
-					
+	$("#btnreset").click(function(){
+		resetAll();	 
+	});
+});
 
-					$("#btnreset").click(function(){
-						resetAll();	 
-					})
-					
-					$("#btnreturn").click(function(){
-						
-						var dateObj = new Date(issue_date);
-						if(status == 1)
-						{
-									$.ajax({url : urlBookReturn,
-									   type: "GET",	
-									   dataType : "json",
-									   data : { acc_no : acc_no , issue_date : issue_date } ,
-									   success : function(response){
-										   alert(response);
-											 $("#acc_no").val('');
-											 $("#main_div  span").text('');
-											 $("#book_div").hide();
-											 $("#member_div").hide();
-											 $("#btndiv").hide();
-											 $("#txtacc_no").focus().select();
-										   }, 
-									   error : function(transport){ alert(transport.responseText);}
-										  
-									});
-									
-							
-						}
-						else
-						{
-								alert("Can Not Return Book");
-						}
-							
-						
-					})
-						
-
-					});
-	
-function fetchBookInfo()
-{
+function fetchBookInfo(){
 	resetAll();
 	acc_no = $("#txtacc_no").val();
-	if ( acc_no != '')
-	{
+	if ( acc_no != ''){
 		$.ajax({
 			url: urlIsbn,
 			data: {acc_no : acc_no},
 			dataType : "json",
 			async : false,
 			success: function(response){
-			
-				status = response.status;
+				status = response.bookInfo.status;
 				isbn_id = response.isbn_id;
 				book_title = response.title;
 				book_authors = response.author;	
@@ -204,46 +162,41 @@ function fetchBookInfo()
 				$('#txtday_late').text(day_late);
 				$("#member_div span:contains('NONE')").parent().parent().hide();
 				$("#member_div span:not(:contains('NONE'))").parent().parent().show();
-				switch(status)
-				{
-				
-				case 0:
-					
-					$("#book_div").show();
-					$("#btndiv").hide();
-					$("#member_div").hide();
-					alert("Book Acc No " +  acc_no + " not issued");
-					$("#txtacc_no").focus().select();
-				break;
-				case 1:
-					$("#book_div").slideDown();
-					member_id = response.member_id;
-					$("#txtmember_id").text(member_id);
-					    	$.getJSON(urlMember,{ member_id : member_id},function(response)
-							{
-								member_type_id = response.member_type_id;
-								var degree_id = response.info.degree_id ? response.info.degree_id : 'NONE' ;
-								var semester_id = response.info.semester_id ? response.info.semester_id : 'NONE';  
-								//$('#txtday_late').val();
-								$("#txtdegree_id").text(degree_id);
-								$("#txtsemester_id").text(semester_id);
-								$("#txtdepartment_id").text(response.info.department_id);
-								$("#member_div").slideDown();
-								$("#btndiv").show();
-								$("span:contains('NONE')").parent().parent().hide();
-								$("span:not(:contains('NONE'))").parent().parent().show();
-								$("#btnreturn").focus();
-							});
-				break;
-				default :
-					alert('Invalid Status of Book.');
-					
-					
+				switch(status.toUpperCase()){
+					case 'AVAILABLE':
+						$("#book_div").show();
+						$("#btndiv").hide();
+						$("#member_div").hide();
+						$("span:contains('NONE')").parent().parent().hide();
+						alert('Book Acc No "' +  acc_no + '" is not issued');
+						$("#txtacc_no").focus().select();
+					break;
+					case 'ISSUED':
+						$("#book_div").slideDown();
+						member_id = response.member_id;
+						$("#txtmember_id").text(member_id);
+						    	$.getJSON(urlMember,{ member_id : member_id},function(response){
+									member_type_id = response.member_type_id;
+									var degree_id = response.info.degree_id ? response.info.degree_id : 'NONE' ;
+									var semester_id = response.info.semester_id ? response.info.semester_id : 'NONE';  
+									//$('#txtday_late').val();
+									$("#txtdegree_id").text(degree_id);
+									$("#txtsemester_id").text(semester_id);
+									$("#txtdepartment_id").text(response.info.department_id);
+									$("#member_div").slideDown();
+									$("#btndiv").show();
+									$("span:not(:contains('NONE'))").parent().parent().show();
+									$("#btnreturn").focus();
+								});
+					break;
+					default :
+						alert('Book status is not "AVAILABLE".');
 				}
 					
-				$.getJSON(urlBookImage,{isbn_id : isbn_id},function(response)
-				{
-							$('#image_div').html(response);	
+				$.getJSON(urlBookImage,
+							{isbn_id : isbn_id},
+							function(response){
+								$('#image_div').html(response);	
 				});
 				
 				
@@ -259,14 +212,30 @@ function fetchBookInfo()
 	}
 	
 }
-function resetAll()
-{
+
+function returnBook() {
+	if(status.toUpperCase() == 'ISSUED'){
+				$.ajax({url : urlBookReturn,
+				   dataType : "json",
+				   data : { acc_no : acc_no } ,
+				   success : function(response){
+					   alert(response.responseText);
+					}, 
+				   error : function(transport){ alert(transport.responseText);}
+					  
+				});
+	}else{
+		alert("Can Not Return Book");
+	}
+	   resetAll();
+};
+
+function resetAll(){
 	 $("#book_div :text").val('');
 	 $("#book_div").hide();
 	 $("#member_div").hide();
 	 $("#member_div :text").val('');
 	 $("#btndiv").hide();
 	 $("#txtacc_no").focus();
-
-}
+};
 </script>
