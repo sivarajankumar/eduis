@@ -6,9 +6,11 @@
  * @subpackage Helper
  * @since	   0.1
  */
-class Lib_Controller_Helper_Jqgrid extends Zend_Controller_Action_Helper_Abstract {
+class Lib_Controller_Helper_Grid extends Zend_Controller_Action_Helper_Abstract {
 	
-	// Zend_Db_Table_Select object
+	/*
+	 * @var Zend_Db_Table_Select
+	 */ 
 	public $sql;
 	// Row Count
 	protected $_count;

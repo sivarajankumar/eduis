@@ -1,10 +1,10 @@
 <?php
 class Lib_Model_DbTable_Isbn extends Libz_Base_Model {
+	const TABLE_NAME = 'isbn';
 	protected $_name = 'isbn';
 	
-	
-	public function getIsbnDetails($isbn_id) {
-		$sql = $this->select ()->from ( $this->_name )->where ( 'isbn_id = ?', $isbn_id );
+	public static function getIsbnDetails($isbn_id) {
+		$sql = self::getDefaultAdapter()->select ()->from ( self::TABLE_NAME )->where ( 'isbn_id = ?', $isbn_id );
 		return $sql->query ()->fetch ();
 	}
 	

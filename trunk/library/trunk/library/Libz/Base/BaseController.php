@@ -20,7 +20,7 @@ class Libz_Base_BaseController extends Zend_Controller_Action {
 	
 	/**
 	 * Model of the controller
-	 * @var Aceis_Base_Model
+	 * @var Libz_Base_Model
 	 */
 	protected $model;
 	
@@ -32,7 +32,7 @@ class Libz_Base_BaseController extends Zend_Controller_Action {
 	
 	/**
 	 * JqGrid
-	 * @var Aceis_Base_Helper_Jqgrid
+	 * @var Lib_Controller_Helper_Grid
 	 */
 	protected $jqgrid;
 	
@@ -99,8 +99,7 @@ class Libz_Base_BaseController extends Zend_Controller_Action {
 		
 		}
 	}
-	
-	protected function createModel($forceReCreate = FALSE) {
+	protected function getModel($forceReCreate = FALSE) {
 		if ((! isset ( $this->model )) || $forceReCreate) {
 			$module = $this->getRequest ()->getModuleName ();
 			$moduleName = null;
@@ -130,6 +129,13 @@ class Libz_Base_BaseController extends Zend_Controller_Action {
 			$this->model = new $model ();
 		}
 		return $this->model;
+	}
+	
+	/**
+	 * @deprecated getModel function sounds better then createModel
+	 */
+	protected function createModel($forceReCreate = FALSE) {
+		return self::getModel($forceReCreate);
 	}
 	
 	protected function createDbCols($forceReCreate = FALSE) {

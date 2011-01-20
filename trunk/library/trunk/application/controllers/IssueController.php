@@ -11,14 +11,6 @@ class IssueController extends Libz_Base_BaseController {
 	/**
 	 * The default action - show the home page
 	 */
-	protected $objbook;
-	protected $objisbn;
-	
-	public function init() {
-		$this->table = new Lib_Model_DbTable_IssueReturn ( );
-		parent::init ();
-	}
-	
 	/*
      * @about Interface.
      */
@@ -34,7 +26,7 @@ class IssueController extends Libz_Base_BaseController {
 		$acc_no = $request->getParam ( 'acc_no' );
 		$formatted = true;
 		if (isset ( $acc_no )) {
-			$bookInfo = Model_DbTable_Book::getBookInfo ( $acc_no );
+			$bookInfo = Lib_Model_DbTable_Book::getBookInfo ( $acc_no );
 			/*
 			 * Deprecated lines (in comments), can be cleaned up.
 			if ($formatted and isset ( $bookInfo )) {
@@ -49,7 +41,7 @@ class IssueController extends Libz_Base_BaseController {
 				}
 				$bookInfo = $formattedDetail;
 			}*/
-			$this->_helper->json( $bookInfo );
+			$this->_helper->json ( $bookInfo );
 		} else {
 			$this->getResponse ()->setHttpResponseCode ( 400 );
 			echo 'Insufficient parameters';
@@ -68,10 +60,11 @@ class IssueController extends Libz_Base_BaseController {
 	}
 	
 	public function getissueinfoAction() {
+		$this->model = new Lib_Model_DbTable_IssueReturn();
 		$request = $this->getRequest ();
 		$param ['member_id'] = $request->getParam ( 'member_id' );
 		
-		$result = $this->table->getissueInfo ( $param );
+		$result = $this->model->getissueInfo ( $param );
 		/*
 		$this->logger->log ( 'Issued Books', Zend_Log::INFO );
 		$this->logger->log ( $result, Zend_Log::DEBUG );
@@ -92,7 +85,7 @@ class IssueController extends Libz_Base_BaseController {
 		if ($page > $total_pages)
 			$page = $total_pages;
 		$start = $limit * $page - $limit;
-		$responce = new stdClass ( );
+		$responce = new stdClass ();
 		$responce->page = $page;
 		$responce->total = $total_pages;
 		$responce->records = $count;
@@ -117,35 +110,27 @@ class IssueController extends Libz_Base_BaseController {
 		$acc_no = $request->getParam ( 'member_id' );
 	}
 	public function issuebookAction() {
+		$this->model = new Lib_Model_DbTable_IssueReturn();
 		$request = $this->getRequest ();
 		$acc_no = $request->getParam ( 'acc_no' );
 		$memberId = $request->getParam ( 'member_id' );
 		if (isset ( $acc_no ) and isset ( $memberId )) {
-			$bookInfo = Model_DbTable_Book::getBookInfo ( $acc_no );
-			if ($this->debug) {
-				$this->_helper->logger->notice ( 'Book Info' );
-				$this->_helper->logger->debug ( $bookInfo );
-			}
+			$bookInfo = Lib_Model_DbTable_Book::getBookInfo ( $acc_no );
+			$this->_helper->logger->notice ( 'Book Info' );
+			$this->_helper->logger->debug ( $bookInfo );
 			if ('AVAILABLE' == strtoupper ( $bookInfo ['status'] )) {
-				
-				$memberConstraints = Model_DbTable_MemberLimit::getMemberLimit ( $memberId, $bookInfo ['document_type_id'] );
-				if ($this->debug) {
-					$this->_helper->logger->notice ( 'Member Constraints' );
-					$this->_helper->logger->debug ( $memberConstraints );
-				}
+				$memberConstraints = Lib_Model_DbTable_MembershipLimit::getMemberLimit ( $memberId, $bookInfo ['document_type_id'] );
+				$this->_helper->logger->notice ( 'Member Constraints' );
+				$this->_helper->logger->debug ( $memberConstraints );
 				// assuming that document type will be always 'reg'.
-				$issuedCount = Model_DbTable_IssueReturn::getIssuedDocumentCount ( $memberId, $bookInfo ['document_type_id'] );
-				if ($this->debug) {
-					$this->_helper->logger->notice ( 'Issued Book Info' );
-					$this->_helper->logger->debug ( $memberConstraints );
-				}
+				$issuedCount = Lib_Model_DbTable_IssueReturn::getIssuedDocumentCount ( $memberId, $bookInfo ['document_type_id'] );
+				$this->_helper->logger->notice ( 'Issued Book Info' );
+				$this->_helper->logger->debug ( $memberConstraints );
 				if ($issuedCount < $memberConstraints ['document_limit']) {
-					$result ['trans_id'] = $this->table->issuebook ( $acc_no, $memberId );
+					$result ['trans_id'] = $this->model->issuebook ( $acc_no, $memberId );
 					$result ['totBooksIssued'] = $issuedCount + 1;
-					if ($this->debug) {
-						$this->_helper->logger->notice ( 'Result' );
-						$this->_helper->logger->debug ( $result );
-					}
+					$this->_helper->logger->notice ( 'Result' );
+					$this->_helper->logger->debug ( $result );
 					$this->_helper->json ( $result );
 				} else {
 					$this->getResponse ()->setHttpResponseCode ( 400 );
