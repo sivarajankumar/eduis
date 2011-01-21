@@ -7,17 +7,10 @@
  * @version 
  */
 
-class RackController extends Aceis_Base_BaseController {
+class RackController extends Libz_Base_BaseController {
 	/**
 	 * The default action - show the home page
 	 */
-	protected $table;
-	
-	public function init() {
-		$this->_autoModel = true;
-		$this->_autoDbCols = true;
-		parent::init ();
-	}
 	
 	public function indexAction() {
 		$this->_helper->viewRenderer->setNoRender ( false );
@@ -28,14 +21,12 @@ class RackController extends Aceis_Base_BaseController {
 	}
 	
 	public function fillgridAction() {
-		
+		self::getModel();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
 		if ($request->isXmlHttpRequest () and $valid) {
-			
-			$this->jqgrid->setGridparam ( $request );
-			
-			$this->jqgrid->sql = $this->table->select ()->from ( $this->table->info ( 'name' ) );
+			$this->grid = $this->_helper->grid();
+			$this->grid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
 			
 			$searchOn = $request->getParam ( '_search' );
 			if ($searchOn != 'false') {
@@ -44,7 +35,7 @@ class RackController extends Aceis_Base_BaseController {
 					switch ($key) {
 						case 'rack_id' :
 						case 'shelf' :
-							$this->jqgrid->sql->where ( "$key = ?", $value );
+							$this->grid->sql->where ( "$key = ?", $value );
 							break;
 					}
 				}

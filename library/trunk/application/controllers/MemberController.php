@@ -13,7 +13,7 @@ class MemberController extends Libz_Base_BaseController {
 	 */
 	
 	public function getmemberinfoAction() {
-		self::createModel ();
+		self::getModel ();
 		$request = $this->getRequest ();
 		$member_id = $request->getParam ( 'member_id' );
 		$formatted = $request->getParam ( 'formatted' );
