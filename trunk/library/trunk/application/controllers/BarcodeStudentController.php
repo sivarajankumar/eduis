@@ -25,7 +25,7 @@ class BarcodeStudentController extends Libz_Base_BaseController {
 		$degree =  $request->getParam ( 'degree_id' );
 		$batch = $request->getParam ( 'batch' );
 		if (isset ( $degree ) and isset ( $department ) and isset ( $batch )) {
-			$client = new Zend_Http_Client('http://'.CORE_SERVER.'/');
+			$client = new Zend_Http_Client('http://'.CORE_SERVER.'/batch/getbatchstudent'."?department_id=$department"."&degree_id=$degree"."&batch_id=$batch");
 			$client->setCookie ( 'PHPSESSID', $_COOKIE ['PHPSESSID'] );
 			$response = $client->request ();
 			if ($response->isError ()) {
@@ -33,16 +33,13 @@ class BarcodeStudentController extends Libz_Base_BaseController {
 				throw new Zend_Exception ( $remoteErr, Zend_Log::ERR );
 			} else {
 				$jsonContent = $response->getBody ( $response );
-				$memberInfo = $membership;
-				$memberInfo['info'] = Zend_Json_Decoder::decode ( $jsonContent );
-				return $memberInfo;
+				$students = Zend_Json::decode($jsonContent);
+				$this->_helper->logger($jsonContent);
+	            $this->view->assign ( 'students', $students );
+	            $this->view->assign ( 'department', $department );
+	            $this->view->assign ( 'degree', $degree );
+	            $this->view->assign ( 'batch', $batch );
 			}
-			$students = Department_Model_DbTable_StudentDepartment::getBatchStudent ( $department, $degree, $batch );
-            $this->view->assign ( 'students', $students );
-            $this->view->assign ( 'department', $department );
-            $this->view->assign ( 'degree', $degree );
-            $this->view->assign ( 'batch', $batch );
-			
 		}
 	}
 	public function generatecodeAction() {
