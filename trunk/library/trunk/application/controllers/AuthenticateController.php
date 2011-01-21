@@ -1,6 +1,5 @@
 <?php
 class AuthenticateController extends Zend_Controller_Action {
-	const AUTH_SERVER = 'http://auth.aceambala.com';
 	const AUTH_PATH = '/authenticate';
 	const AUTH_SID = 'ACESID';
 	public function indexAction() {
@@ -11,7 +10,7 @@ class AuthenticateController extends Zend_Controller_Action {
 		} else {
 			$this->_helper->layout ()->disableLayout ();
 			$this->_helper->viewRenderer->setNoRender ();
-			$client = new Zend_Http_Client ( self::AUTH_SERVER . self::AUTH_PATH . '/check',
+			$client = new Zend_Http_Client ( 'http://'. AUTH_SERVER . self::AUTH_PATH . '/check',
 													 array ('timeout' => 30 ) );
 			try {
 				if (isset ( $_COOKIE [self::AUTH_SID] )) {
@@ -23,10 +22,8 @@ class AuthenticateController extends Zend_Controller_Action {
 					
 					$response = $client->request ();
 					if ($response->isError ()) {
-					$remoteErr = $response->getStatus () . ' : ' 
-									. $response->getMessage () . '<br/>' 
-									. $response->getBody ();
-					throw new Zend_Exception ( $remoteErr, Zend_Log::ERR );
+						$remoteErr = 'REMOTE ERROR: ('.$response->getStatus () . ') ' . $response->getMessage ();
+						throw new Zend_Exception ( $remoteErr, Zend_Log::ERR );
 				} else {
 						$jsonContent = $response->getBody ( $response );
 						$userInfo = Zend_Json_Decoder::decode ( $jsonContent );
@@ -44,7 +41,8 @@ class AuthenticateController extends Zend_Controller_Action {
 						}
 					}
 				} else {
-					echo 'You need to login first.';
+					echo 'You are being redirected to login server.';
+					$this->getResponse ()->setRedirect ( AUTH_SERVER, 303 );
 					/*
 					$userInfo['identity'] = 'anon';
 					$userInfo['roles'][] = 'guest';
@@ -64,7 +62,7 @@ class AuthenticateController extends Zend_Controller_Action {
 	}
 	
 	public function logoutAction() {
-		$serverUrl = self::AUTH_SERVER . self::AUTH_PATH . '/logout';
+		$serverUrl = 'http://'. AUTH_SERVER . self::AUTH_PATH . '/logout';
 		$client = new Zend_Http_Client ( $serverUrl, array ('timeout' => 30 ) );
 		try {
 			if (isset ( $_COOKIE [self::AUTH_SID] )) {

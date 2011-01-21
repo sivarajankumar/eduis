@@ -71,7 +71,7 @@ var imgServer = 'http://localhost/';
 var imgType = '.jpg';
 var urlMemberInfo = "<?php echo $this->url ( array ('controller' => 'member', 'action' => 'getmemberinfo' ), 'default', true )?>";
 var urlMemberLimit = "<?php echo $this->url ( array ('controller' => 'membershiplimit', 'action' => 'getmembershiplimit' ), 'default', true )?>";
-var urlBookInfo = "<?php echo $this->url ( array ('controller' => 'book', 'action' => 'getbookdetails' ), 'default', true )?>";
+var urlBookDetail = "<?php echo $this->url ( array ('controller' => 'book', 'action' => 'getbookdetails' ), 'default', true )?>";
 var urlBookMoreInfo = "<?php echo $this->url ( array ('controller' => 'issue', 'action' => 'getbookinfo' ), 'default', true )?>";
 var urlIssueBook = "<?php echo $this->url ( array ('controller' => 'issue', 'action' => 'issuebook' ), 'default', true )?>";
 var objMemberInfo = null;
@@ -273,7 +273,6 @@ var processAccountInfo = function(){
 	        var remaining = parseInt(maximum) - parseInt(issued);
 	   			$("#accountInfo").append('<div><div class="infoHeader" >'+documentType+' : </div><div class="infoContent ui-state-highlight ui-corner-all">'+remaining+'/'+maximum+'</div></div>');
 		} else {
-			
 			$("#accountInfo").append('<div><div class="infoHeader" >'+documentType+' : </div><div class="infoContent ui-state-highlight ui-corner-all">'+maximum+'/'+maximum+'</div></div>');
 		}
 	//to get the value for each position
@@ -287,12 +286,11 @@ var processAccountInfo = function(){
  */
 var fetchBookInfo = function(acc_no){
         $.ajax({
-            url : urlBookInfo,
+            url : urlBookDetail,
             type : 'GET',
             dataType : "json",
             data : {'acc_no' : acc_no },
             success: function(bookDetail){
-                objBookInfo = bookDetail;
                 if(bookDetail.long_title || bookDetail.title){
 	                if(0 == bookDetail.status){
 	                    objBookInfo = {"Title":bookDetail.title,
@@ -315,53 +313,32 @@ var fetchBookInfo = function(acc_no){
 	                           "Issue Date":bookDetail.issue_date
 	                           };
 	                }
-	                //setTimeout(fetchBookMoreInfo(acc_no),200);
-	                fetchBookMoreInfo(acc_no);
+
 	                $('#bookInfo').html('');
 	                traverse(objBookInfo,'#bookInfo');
 	                $("#bookArea").slideDown("slow");
+	                
+	            	objBookMoreInfo = bookDetail.bookInfo;
+	                if(objBookMoreInfo.isbn_id){
+	                    $('#moreBookInfo').html('');
+	                    parsedBookInfo = {"ISBN": objBookMoreInfo.isbn_id,
+	                            "Document Type": objBookMoreInfo.document_type_id,
+	                            "Status": objBookMoreInfo.status,
+	                            "Remarks": objBookMoreInfo.remarks
+	                           };
+	                    
+	                    traverse(parsedBookInfo,'#moreBookInfo');
+
+	                    // CHECK IF BOOK CAN BE ISSUED OR NOT.
+	                    // TODO It should not be here.
+	                    setIssueState();
+	                }else{
+	                    alert('Recieved book information is partially incompatible!!');
+	                }
                 } else {
                     alert("Book Details are incompatible");
                 }
                 
-             },
-             error: function(xhr, text){
-                 alert(xhr.responseText);
-                 $("#bookArea").fadeOut('slow');
-          		$("#divIssue").slideUp();
-             }
-         });
-};
-
-/*
- * Fetch more information about book (if any)
- */
-var fetchBookMoreInfo = function(acc_no){
-        $.ajax({
-            url : urlBookMoreInfo,
-            type : 'GET',
-            dataType : 'json',
-            data : {'acc_no' : acc_no},
-            success: function(bookExtraInfo){
-            	objBookMoreInfo = bookExtraInfo;
-                if(bookExtraInfo.isbn_id){
-                    $('#moreBookInfo').html('');
-                    parsedBookInfo = {"ISBN": bookExtraInfo.isbn_id,
-                            "Document Type": bookExtraInfo.document_type_id,
-                            "Status": bookExtraInfo.status,
-                            "Remarks": bookExtraInfo.remarks
-                           };
-                    
-                    traverse(parsedBookInfo,'#moreBookInfo');
-
-                    // CHECK IF BOOK CAN BE ISSUED OR NOT.
-                    // TODO It should not be here.
-                    setIssueState();
-                }else{
-                    $('#acc_no').val('');
-                    $("#bookArea").fadeOut('slow');
-                    alert('Recieved book information is incompatible!!');
-                }      
              },
              error: function(xhr, text){
                  alert(xhr.responseText);
@@ -406,7 +383,7 @@ var issueBook = function(acc_no, member_id){
                 }
             });
         } else {
-            alert(objMemberInfo.info.first_name+' has already issued '+issued+' out of '+maximum+'  documents of "'+objBookMoreInfo.document_type_id+'" type.' );
+            alert(objMemberInfo.info.first_name+' has already borrowed '+issued+' out of '+maximum+'  documents of "'+objBookMoreInfo.document_type_id+'" type.' );
             resetBookInfoArea();
         }
 };

@@ -13,7 +13,6 @@
 class Lib_Model_DbTable_Member extends Libz_Base_Model {
 	protected $_name = 'member';
 	const TABLE_NAME = 'member';
-	const AUTH_SID = 'ACESID';
 	
 	public static function getMembership($memberId) {
 		return self::_getMemberInfo ( array('member_type_id', 'membership_type_id'), $memberId );
@@ -42,18 +41,17 @@ class Lib_Model_DbTable_Member extends Libz_Base_Model {
 	
 	public static function getMemberInfo($memberId) {
 		$PROTOCOL = 'http://';
-		$SERVER = 'core.aceambala.com';
 		$membership = self::getMembership ( $memberId );
 		$memberType = strtoupper($membership['member_type_id']);
 		Zend_Registry::get('logger')->debug($membership);
 		switch ($memberType) {
 			case 'STUDENT' :
-				$URL_STU_INFO = $PROTOCOL . $SERVER . '/student/getinfo' . "?rollno=$memberId";
+				$URL_STU_INFO = $PROTOCOL . CORE_SERVER . '/student/getinfo' . "?rollno=$memberId";
 				$client = new Zend_Http_Client ( $URL_STU_INFO );
 				$client->setCookie ( 'PHPSESSID', $_COOKIE ['PHPSESSID'] );
 				$response = $client->request ();
 				if ($response->isError ()) {
-					$remoteErr = $response->getStatus () . ' : ' . $response->getMessage () . '<br/>' . $response->getBody ();
+					$remoteErr = 'REMOTE ERROR: ('.$response->getStatus () . ') ' . $response->getMessage ();
 					throw new Zend_Exception ( $remoteErr, Zend_Log::ERR );
 				} else {
 					$jsonContent = $response->getBody ( $response );
@@ -63,7 +61,7 @@ class Lib_Model_DbTable_Member extends Libz_Base_Model {
 				}
 			
 			case 'FACULTY' :
-				$URL_STAFF_INFO = $PROTOCOL . $SERVER . '/staff/getinfo' . "?id=$memberId";
+				$URL_STAFF_INFO = $PROTOCOL . CORE_SERVER . '/staff/getinfo' . "?id=$memberId";
 				return $URL_STAFF_INFO;
 			default :
 				throw new Zend_Exception ( 'Unknown member type : "'.$memberType.'"', Zend_Log::WARN );

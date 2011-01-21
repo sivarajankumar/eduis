@@ -31,10 +31,10 @@ class Libz_Base_BaseController extends Zend_Controller_Action {
 	protected $dbCols;
 	
 	/**
-	 * JqGrid
+	 * Grid
 	 * @var Lib_Controller_Helper_Grid
 	 */
-	protected $jqgrid;
+	protected $grid;
 	
 	protected static $debug;
 	

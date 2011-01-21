@@ -16,11 +16,13 @@ class BarcodeBookController extends Libz_Base_BaseController {
 	}
 	
 	/**
-	 * The default action - show the home page
+	 * Print acc. no. of book
 	 */
 	public function accessnoAction() {
 		$this->_helper->viewRenderer->setNoRender ( false );
-		/*$request = $this->getRequest ();
+		/*
+		 ** The code was used for basic HTML but now ajax requests are being performed. **
+		 * $request = $this->getRequest ();
 		$accFrom = trim($request->getParam ( 'accFrom' ));
 		$accUpto = trim($request->getParam ( 'accUpto', null ));
 		if (isset ( $accFrom ) and ((string)$accFrom === (string)(int)$accFrom)) {
@@ -57,15 +59,19 @@ class BarcodeBookController extends Libz_Base_BaseController {
 			$this->view->assign ( 'isbn', $newISBN );
 		}
 	}
+	
+	/**
+	 * Generate barcode for books.
+	 * 
+	 * Generate barcode in CODE39.
+	 * @param string text - The text to be printed as barcode.
+	 */
 	public function generatecodeAction() {
-		// Only the text to draw is required
 		$request = $this->getRequest ();
 		$text = $request->getParam ( 'text' );
 		$format = $request->getParam ( 'format', 'CODE39' );
 		$barcodeOptions = array ('text' => $text );
-		// No required options
 		$rendererOptions = array ();
-		$access = new Zend_Date();
 		$this->getResponse()
 				    ->setHeader('Cache-Control', 'public, proxy-revalidate')
 				    ->setHeader('Set-Cookie', '',true);
