@@ -6,15 +6,15 @@
 <div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
 	style="color: red"></span></div>
 <script type="text/javascript">
-var urlDeptCombo = "<?=$this->url ( array ('controller' => 'degreedepartment', 'action' => 'filldeptcombo' ), 'default', true )?>";
-var urlDegreeCombo = "<?=$this->url ( array ('controller' => 'degreedepartment', 'action' => 'filldegreecombo' ), 'default', true )?>";
+var urlDeptCombo = "<?=$this->url(array('controller' => 'degreedepartment', 'action' => 'filldeptcombo'), 'default', true)?>";
+var urlDegreeCombo = "<?=$this->url(array('controller' => 'degreedepartment', 'action' => 'filldegreecombo'), 'default', true)?>";
 
 $(function(){
 
     var gridTable = "#tblgrid";
     var gridPager = "#gridpager";
-    var urlFillGrid = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid' ), 'default', true )?>";
-    var urlCRUD = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud' ), 'default', true )?>";
+    var urlFillGrid = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid'), 'default', true)?>";
+    var urlCRUD = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud'), 'default', true)?>";
     $(gridTable).jqGrid({
         url : urlFillGrid,
         colNames:['Department','Degree','Semester', 'Semester Type', 'Duration In Months','Handled By Dept'],

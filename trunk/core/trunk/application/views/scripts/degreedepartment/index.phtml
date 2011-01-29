@@ -4,13 +4,13 @@
 <div id="gridpager" class="scroll" style="text-align: center;"></div>
 </div>
 <div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
-    style="color: red"></span></div>
+	style="color: red"></span></div>
 <script type="text/javascript">
 
 $(function(){
     
     var grid = $("#tblgrid").jqGrid({
-            url : "<?=$this->url ( array ('controller' => 'degreedepartment', 'action' => 'fillgrid' ), 'default', true )?>",   
+            url : "<?=$this->url(array('controller' => 'degreedepartment', 'action' => 'fillgrid'), 'default', true)?>",   
             datatype: "json", 
             colNames:['Department','Degree'], 
             colModel:[ {name:'department_id',
@@ -18,7 +18,7 @@ $(function(){
                             editable: true,
                             edittype: 'select',
                             editoptions: { size: 1,
-                                    dataUrl:"<?=$this->url ( array ('controller' => 'dept', 'action' => 'getdepartment' ), 'default', true )?>"
+                                    dataUrl:"<?=$this->url(array('controller' => 'dept', 'action' => 'getdepartment'), 'default', true)?>"
                              },
                             editrules:{required:true}
                         },
@@ -27,7 +27,7 @@ $(function(){
                             editable:true,
                             edittype:'select', 
                             editoptions:{ size:1,
-                                dataUrl:"<?=$this->url ( array ('controller' => 'degree', 'action' => 'getdegree' ), 'default', true )?>"
+                                dataUrl:"<?=$this->url(array('controller' => 'degree', 'action' => 'getdegree'), 'default', true)?>"
                             },
                             editrules:{required:true}
                         }
@@ -39,7 +39,7 @@ $(function(){
             pager: '#gridpager', 
             viewrecords: true,
             autowidth: true,
-            editurl:"<?=$this->url ( array ('controller' => 'degreedepartment', 'action' => 'crud' ), 'default', true )?>",
+            editurl:"<?=$this->url(array('controller' => 'degreedepartment', 'action' => 'crud'), 'default', true)?>",
             loadError : function(xhr,st,err) { 
                 $('#errorBox').show();
                 jQuery("#rsperror").html("Type: "+st+"; Response: "+ xhr.status + " "+xhr.statusText); 

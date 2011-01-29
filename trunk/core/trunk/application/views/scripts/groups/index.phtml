@@ -8,11 +8,11 @@
 <script type="text/javascript">
 
 $(function(){
-	var urlDegreeCombo = "<?=$this->url ( array ('controller' => 'degreedepartment', 'action' => 'filldegreecombo' ), 'default', true )?>";
+	var urlDegreeCombo = "<?=$this->url(array('controller' => 'degreedepartment', 'action' => 'filldegreecombo'), 'default', true)?>";
 	 var gridTable = "#tblgrid";
 	    var gridPager = "#gridpager";
-	    var urlFillGrid = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid' ), 'default', true )?>";
-	    var urlCRUD = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud' ), 'default', true )?>";
+	    var urlFillGrid = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid'), 'default', true)?>";
+	    var urlCRUD = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud'), 'default', true)?>";
 	    $(gridTable).jqGrid({
 	        url : urlFillGrid,
 			colNames:['Groups','Department','Degree'], 
@@ -26,7 +26,7 @@ $(function(){
 							editable: true,
 							edittype: 'select',
 							editoptions: { size: 1,
-											dataUrl:"<?=$this->url ( array ('controller' => 'degreedepartment', 'action' => 'filldeptcombo' ), 'default', true )?>",
+											dataUrl:"<?=$this->url(array('controller' => 'degreedepartment', 'action' => 'filldeptcombo'), 'default', true)?>",
 											dataEvents: [{
 												type: 'change',
 						                        fn: function(e) {
