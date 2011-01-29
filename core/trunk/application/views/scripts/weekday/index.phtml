@@ -3,15 +3,15 @@
 <div id="gridpager" class="scroll" style="text-align: center;"></div>
 </div>
 <div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
-    style="color: red"></span></div>
+	style="color: red"></span></div>
 <div id="formDiv"></div>
 <script type="text/javascript">
 
 $(function(){
     var gridTable = "#tblgrid";
     var gridPager = "#gridpager";
-    var urlFillGrid = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid' ), 'default', true )?>";
-    var urlCRUD = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud' ), 'default', true )?>";
+    var urlFillGrid = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid'), 'default', true)?>";
+    var urlCRUD = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud'), 'default', true)?>";
     $(gridTable).jqGrid(
             {
                 url : urlFillGrid,

@@ -11,30 +11,33 @@
  *
  * 
  */
-class BatchSemesterController extends Corez_Base_BaseController {
-	/*
+class BatchSemesterController extends Corez_Base_BaseController
+{
+    /*
      * @about Interface.
      */
-	public function indexAction() {
-		$this->_helper->viewRenderer->setNoRender ( false );
-		$this->_helper->layout ()->enableLayout ();
-		$this->view->assign ( 'controller', $this->_request->getControllerName () );
-		$this->view->assign ( 'module', $this->_request->getModuleName () );
-	
-		//$this->view->assign ( 'colSetup', self::gridsetup() );
-	}
-	/*
+    public function indexAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $this->view->assign('controller', $this->_request->getControllerName());
+        $this->view->assign('module', $this->_request->getModuleName());
+         //$this->view->assign ( 'colSetup', self::gridsetup() );
+    }
+    /*
      * @about Back end data provider to datagrid.
      * @return JSON data
      */
-	public function fillgridAction() {
-		self::createModel ();
-		$request = $this->getRequest ();
-		$valid = $request->getParam ( 'nd' );
-		if ($valid) {
-			$this->grid = new $this->_helper->grid ();
-			$this->grid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
-			/*
+    public function fillgridAction ()
+    {
+        self::createModel();
+        $request = $this->getRequest();
+        $valid = $request->getParam('nd');
+        if ($valid) {
+            $this->grid = new $this->_helper->grid();
+            $this->grid->sql = $this->model->select()->from(
+            $this->model->info('name'));
+            /*
             $searchOn = $request->getParam ( '_search' );
             if ($searchOn != 'false') {
                 $sarr = $request->getParams ();
@@ -51,14 +54,13 @@ class BatchSemesterController extends Corez_Base_BaseController {
                     }
                 }
             }*/
-			self::fillgridfinal ();
-		} else {
-			header ( "HTTP/1.1 403 Forbidden" );
-			die ();
-		}
-	}
-
-	////////combos//////////
+            self::fillgridfinal();
+        } else {
+            header("HTTP/1.1 403 Forbidden");
+            die();
+        }
+    }
+    ////////combos//////////
 /*
 	 * deprecated
     public function combobatchsemAction() {

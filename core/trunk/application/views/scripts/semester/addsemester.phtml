@@ -10,7 +10,7 @@
 $('#errorBox').hide();
 
 $(function(){
-	baseurl = "<?=$this->url ( array ('controller' => 'semester', 'action' => 'fillgrid' ), 'default', true )?>";
+	baseurl = "<?=$this->url(array('controller' => 'semester', 'action' => 'fillgrid'), 'default', true)?>";
 	$("#tblgrid").jqGrid({
 			url : baseurl,
 			datatype: "json",
@@ -24,7 +24,7 @@ $(function(){
 			pager: '#gridpager', 
 			height: '100%',
 			autowidth: true,
-			editurl:"<?=$this->url ( array ('controller' => 'semester', 'action' => 'crud' ), 'default', true )?>",
+			editurl:"<?=$this->url(array('controller' => 'semester', 'action' => 'crud'), 'default', true)?>",
 			loadError : function(xhr,st,err) { 
 				$('#errorBox').show();
 				jQuery("#rsperror").html("Type: "+st+"; Response: "+ xhr.status + " "+xhr.statusText); 

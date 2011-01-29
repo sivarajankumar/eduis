@@ -2,7 +2,7 @@
 $(function(){
 	$("#tblgrid").jqGrid(
 			{
-			url : "<?=$this->url ( array ('controller' => 'room', 'action' => 'fillroomgrid' ), 'default', true )?>",
+			url : "<?=$this->url(array('controller' => 'room', 'action' => 'fillroomgrid'), 'default', true)?>",
 			datatype: "json", height: 130, 
 			colNames:['Block', 'Room','Room type', 'Capacity', 'Remark'],
 			colModel:[ {name:'block', index:'block asc, room'},
@@ -19,14 +19,14 @@ $(function(){
 					 }).navGrid('#pager',{edit:false,add:false,del:false});
 	
 
-	var baseurl="<?=$this->url ( array ('controller' => 'room', 'action' => 'fillblock' ), 'default', true )?>";
+	var baseurl="<?=$this->url(array('controller' => 'room', 'action' => 'fillblock'), 'default', true)?>";
 	$.get(baseurl,function(data){
 		$('#cmbblock').html(data);		
 		});
 
 
 	
-	var baseurl="<?=$this->url ( array ('controller' => 'room', 'action' => 'fillroomtype' ), 'default', true )?>";
+	var baseurl="<?=$this->url(array('controller' => 'room', 'action' => 'fillroomtype'), 'default', true)?>";
 	$.get(baseurl,function(data){
 		$('#cmbroomtype').html(data);		
 		});
@@ -43,7 +43,7 @@ $(function(){
 		var remark = $('#txtremark').val();
 		
 		
-		var baseurl= "<?=$this->url ( array ('controller' => 'room', 'action' => 'insertroom' ), 'default', true )?>";
+		var baseurl= "<?=$this->url(array('controller' => 'room', 'action' => 'insertroom'), 'default', true)?>";
 
 		$.get(baseurl,
 				{block : block, room : room , roomtype : roomtype, capacity : capacity, remark : remark},
@@ -63,29 +63,29 @@ $(function(){
 <form id="myform" action="">
 <table id="tblcmponents" id="tblcmponents" cellpadding="6" border="0">
 	<tr>
-		<td><?=$this->formLabel ( 'cmbblock', 'Block' )?></td>
-		<td><?=$this->formSelect ( 'cmbblock' )?></td>
+		<td><?=$this->formLabel('cmbblock', 'Block')?></td>
+		<td><?=$this->formSelect('cmbblock')?></td>
 	</tr>
 	<tr>
-		<td><?=$this->formLabel ( 'txtroom', 'Room Number' )?></td>
-		<td><?=$this->formText ( 'txtroom' )?></td>
+		<td><?=$this->formLabel('txtroom', 'Room Number')?></td>
+		<td><?=$this->formText('txtroom')?></td>
 	</tr>
 	<tr>
-		<td><?=$this->formLabel ( 'cmbroomtype', 'Room Type' )?></td>
-		<td><?=$this->formSelect ( 'cmbroomtype' )?></td>
+		<td><?=$this->formLabel('cmbroomtype', 'Room Type')?></td>
+		<td><?=$this->formSelect('cmbroomtype')?></td>
 	</tr>
 	<tr>
-		<td><?=$this->formLabel ( 'txtcapacity', 'Capacity' )?></td>
-		<td><?=$this->formText ( 'txtcapacity' )?></td>
+		<td><?=$this->formLabel('txtcapacity', 'Capacity')?></td>
+		<td><?=$this->formText('txtcapacity')?></td>
 	</tr>
 	<tr>
-		<td><?=$this->formLabel ( 'txtremark', 'Remark' )?></td>
-		<td><?=$this->formText ( 'txtremark' )?></td>
+		<td><?=$this->formLabel('txtremark', 'Remark')?></td>
+		<td><?=$this->formText('txtremark')?></td>
 	</tr>
 
 	<tr>
-		<td><?=$this->formButton ( 'btnadd', 'Add' )?></td>
-		<td><?=$this->formReset ( 'btnreset', 'Reset' )?></td>
+		<td><?=$this->formButton('btnadd', 'Add')?></td>
+		<td><?=$this->formReset('btnreset', 'Reset')?></td>
 	</tr>
 </table>
 </form>

@@ -22,8 +22,8 @@
 $(function(){
     var gridTable = "#tblgrid";
     var gridPager = "#gridpager";
-    var urlFillGrid = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid' ), 'default', true )?>";
-    var urlCRUD = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud' ), 'default', true )?>";
+    var urlFillGrid = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid'), 'default', true)?>";
+    var urlCRUD = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud'), 'default', true)?>";
     $(gridTable).jqGrid({
         url : urlFillGrid,
         colNames:['Block Id','Block Name'],

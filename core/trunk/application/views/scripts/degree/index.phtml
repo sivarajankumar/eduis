@@ -12,7 +12,7 @@
 $(function(){
 	var grid = $("#tblgrid").jqGrid(
 			{
-			url : "<?=$this->url ( array ('controller' => 'degree', 'action' => 'fillgrid' ), 'default', true )?>",
+			url : "<?=$this->url(array('controller' => 'degree', 'action' => 'fillgrid'), 'default', true)?>",
 			datatype: "json",
 			colNames:['Degree Id','Degree Name','Total Semesters'], 
 			colModel:[ 	{name:'degree_id',
@@ -39,7 +39,7 @@ $(function(){
 			pager: '#gridpager', 
 			viewrecords: true,
 			autowidth: true,
-			editurl:"<?=$this->url ( array ('controller' => 'degree', 'action' => 'crud' ), 'default', true )?>",
+			editurl:"<?=$this->url(array('controller' => 'degree', 'action' => 'crud'), 'default', true)?>",
 			loadError : function(xhr,st,err) { 
 				$('#errorBox').show();
 				$("#rsperror").html("Type: "+st+"; Response: "+ xhr.status + " "+xhr.statusText); 

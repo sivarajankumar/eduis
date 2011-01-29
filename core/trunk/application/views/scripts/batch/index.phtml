@@ -9,7 +9,6 @@
 /*
  * View for Batch.
  */
-
 ?>
 <h3 align="center">Batch</h3>
 <div class="gridstyle">
@@ -20,15 +19,15 @@
 	style="color: red"></span></div>
 <script type="text/javascript">
 
-var urlDeptCombo = "<?=$this->url ( array ('controller' => 'degreedepartment', 'action' => 'getdepartment' ), 'default', true )?>";
-var urlDegreeCombo = "<?=$this->url ( array ('controller' => 'degreedepartment', 'action' => 'getdegree' ), 'default', true )?>";
+var urlDeptCombo = "<?=$this->url(array('controller' => 'degreedepartment', 'action' => 'getdepartment'), 'default', true)?>";
+var urlDegreeCombo = "<?=$this->url(array('controller' => 'degreedepartment', 'action' => 'getdegree'), 'default', true)?>";
 var deptDegree = new Array();
 
 $(function(){
     var gridTable = "#tblgrid";
     var gridPager = "#gridpager";
-    var urlFillGrid = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid' ), 'default', true )?>";
-    var urlCRUD = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud' ), 'default', true )?>";
+    var urlFillGrid = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid'), 'default', true)?>";
+    var urlCRUD = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud'), 'default', true)?>";
     $(gridTable).jqGrid({
         url : urlFillGrid,
         colNames:['Department','Degree','Batch Start','Batch Number', 'Is Active'],
