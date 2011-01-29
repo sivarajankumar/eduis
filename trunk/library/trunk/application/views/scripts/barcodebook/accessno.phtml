@@ -1,26 +1,42 @@
 <html>
 <head>
 <title>Barcode for Book acc.no.</title>
-<style type="text/css"><!--
+<style type="text/css">
 <!--
+body {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
 h2 {
 	text-align: center;
 }
+.page {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
 .barcodeBox {
-	margin-left : 0.5mm;
-	margin-right:2mm;
-	padding-top : 1mm;
-	padding-left: 1.65mm;
-	width : 35mm;
-	height : 20.3mm;
+	border: 0;	
+	padding: 0;
+	margin-left : 1.6mm;
+	width : 38mm;
+	height : 21.2mm;
 	float: left;
 	position: relative;
 	overflow: hidden;
 	vertical-align : middle;
-	text-align: center;
 }
 
 .barCodeImg {
+	border: 0;	
+	margin: 1mm;
+	padding-bottom: 0;
+	padding-top : 1.5mm;
+	padding-left : 1.6mm;
+	padding-right : 0;
+	float: left;
+	position: relative;
 	vertical-align : middle;
 }
 
@@ -28,7 +44,7 @@ h2 {
   background: url(http://site.cdn.aceambala.com/images/activity/loading/spinner.gif) no-repeat center center;
 }
 @media print {
-	div {
+	#myform {
 		display: none;
 	}
 }
@@ -37,7 +53,7 @@ h2 {
 </head>
 <body>
 
-<div><h2>Barcode for book Acc. no.</h2>
+<div id="myform" ><h2>Barcode for book Acc. no.</h2>
 <form name="formAcc" id="formAcc" action="javascript: getBarCode();">
 Range:<br/>
 <label>From : <input type="text" id="accFrom" name="accFrom"  size="6"></label>&nbsp;
@@ -66,7 +82,7 @@ function getBarCode() {
 }
 function addMore(accNo){
 	var img = new Image();
-	$('body').append('<label class="barcodeBox loading"></label>');
+	$('#page').append('<label class="barcodeBox loading"></label>');
 	$(img)
 		.hide()
 		.load(function () {
@@ -80,5 +96,6 @@ function addMore(accNo){
     
 }
 </script>
+<div class="page" id="page" ></div>
 </body>
 </html>

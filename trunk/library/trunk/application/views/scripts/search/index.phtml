@@ -1,18 +1,3 @@
-<?php 
-/*$baseUrl = $this->baseUrl ();
-$this->headLink ()->appendStylesheet ( $baseUrl . '/plugins/jqgrid/css/ui.jqgrid.css' )
-
-//Select multiple columns from column chooser
-->appendStylesheet ( $baseUrl . '/plugins/jqgrid/css/ui.multiselect.css' );
-$this->headScript ()->appendFile ( $baseUrl . '/plugins/jqgrid/js/ui.multiselect.js' );
-
-// This is compressed version of jqGrid 3.6, It has all plugins in one file only
-$this->headScript ()->appendFile ( $baseUrl . '/plugins/jqgrid/js/i18n/grid.locale-en.js' );
-$this->headScript ()->appendFile ( $baseUrl . '/plugins/jqgrid/jquery.jqGrid.min.js' );
-// Gloabal Settings for JqGrid
-$this->headScript ()->appendFile ( $baseUrl . '/plugins/jqgrid/jqGrid.global.js' );
-*/
-?>
 <style type="text/css">
 .alignCenter
 {
@@ -59,7 +44,7 @@ $this->headScript ()->appendFile ( $baseUrl . '/plugins/jqgrid/jqGrid.global.js'
 					echo "<div><table><tr><td><td><td>";
 					foreach($value as $t_key => $t_value)
 					{
-					echo "<em>$t_key :<b>" . "  "  . $t_value . " " .  "</b></em><br>";
+					echo '<em>'.ucfirst($t_key).' :<b> '. $t_value . '</b></em><br>';
 					}
 					echo "</td></tr></table></div>";
 					echo "</li>";
