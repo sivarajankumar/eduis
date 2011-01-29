@@ -51,8 +51,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 	}
 	
 	protected function _initCache() {
-		$cache = $this->bootstrapCacheManager ()->getResource ( 'cachemanager' );
-		Zend_Registry::set ( "cacheManager", $cache );
+		$cacheManager = $this->bootstrapCacheManager ()->getResource ( 'cachemanager' );
+		Zend_Registry::set ( "cacheManager", $cacheManager );
 	}
 	
 	protected function _initLogger() {
@@ -61,7 +61,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 			return false;
 		}*/
 		
-		switch (APPLICATION_ENV) {
+		switch (strtolower(APPLICATION_ENV)) {
 			case 'production' :
 				$writer = new Zend_Log_Writer_Firebug ();
 				$filter = new Zend_Log_Filter_Priority ( 5, '>=' );
@@ -99,7 +99,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 	}
 	
 	protected function _initDbProfiler() {
-		switch (APPLICATION_ENV) {
+		switch (strtolower(APPLICATION_ENV)) {
 			case 'production' :
 				//Not considered yet.
 				break;
@@ -111,13 +111,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 			case 'testing' :
 				//Not considered yet.
 				break;
-			
-			case 'development' :
-				$profiler = new Zend_Db_Profiler_Firebug ( 'All DB Queries' );
-				$profiler->setEnabled ( true );
-				$db = $this->bootstrapDb ()->getResource ( 'db' );
-				$db->setProfiler ( $profiler );
-				break;
+            case 'development':
+                $profiler = new Zend_Db_Profiler_Firebug(
+                'DB Queries : '.ucfirst(strtolower(APPLICATION_ENV)));
+                $profiler->setEnabled(true);
+                $db = $this->bootstrapDb()->getResource('db');
+                $db->setProfiler($profiler);
+                break;
 			default :
 				throw new Zend_Exception ( 'Unknown <b>Application Environment</b> to create db profiler in bootstrap.', Zend_Log::WARN );
 		

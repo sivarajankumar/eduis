@@ -11,20 +11,6 @@ class SearchController extends Libz_Base_BaseController {
 	/**
 	 * The default action - show the home page
 	 */
-	/*public function init() {
-		$this->table = new Model_DbTable_Isbn ();
-		/*
-        $this->dbCols [] = 'isbn.isbn_id';
-        $this->dbCols [] = 'acc_no';
-        $this->dbCols [] = 'title';
-        $this->dbCols [] = 'author';
-        //$this->dbCols [] = 'subject_code';
-        $this->dbCols [] = 'edition';
-        $this->dbCols [] = 'status_id';
-        $this->dbCols [] = 'rack_id';
-        $this->dbCols [] = 'shelf';*/
-		//parent::init ();
-//	}
 	public function indexAction() {
 		$this->_helper->viewRenderer->setNoRender ( false );
 		$this->_helper->layout ()->enableLayout ();
@@ -70,15 +56,30 @@ class SearchController extends Libz_Base_BaseController {
 		}
 	
 	}
-	/*
+	public function gridAction() {
+		$this->_helper->viewRenderer->setNoRender ( false );
+		$this->_helper->layout ()->enableLayout ();
+		$this->view->assign ( 'controller', $this->_request->getControllerName () );
+		$this->view->assign ( 'module', $this->_request->getModuleName () );
+	}
 	public function fillgridAction() {
+		$this->model = new Lib_Model_DbTable_Isbn ();
+        $this->dbCols [] = 'isbn.isbn_id';
+        $this->dbCols [] = 'acc_no';
+        $this->dbCols [] = 'title';
+        $this->dbCols [] = 'author';
+        //$this->dbCols [] = 'subject_code';
+        $this->dbCols [] = 'edition';
+        $this->dbCols [] = 'status_id';
+        $this->dbCols [] = 'rack_id';
+        $this->dbCols [] = 'shelf';
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
 		if ($valid) {
 			
-			$this->jqgrid->setGridparam ( $request );
+			$this->grid = $this->_helper->grid();
 			
-			$this->jqgrid->sql = $this->table->getDefaultAdapter ()->select ()->from ( $this->table->info ( 'name' ), array ('isbn_id', 'title', 'author', 'edition' ) )->join ( 'book', 'book.isbn_id = isbn.isbn_id', array ('acc_no', 'status', 'rack_id', 'shelf' ) );
+			$this->grid->sql = $this->model->getDefaultAdapter ()->select ()->from ( $this->model->info ( 'name' ), array ('isbn_id', 'title', 'author', 'edition' ) )->join ( 'book', 'book.isbn_id = isbn.isbn_id', array ('acc_no', 'status', 'rack_id', 'shelf' ) );
 			
 			$searchOn = $request->getParam ( '_search' );
 			if ($searchOn != 'false') {
@@ -88,16 +89,16 @@ class SearchController extends Libz_Base_BaseController {
 						case 'isbn_id' :
 						case 'acc_no' :
 						case 'edition' :
-							$this->jqgrid->sql->where ( "$key = ?", $value );
+							$this->grid->sql->where ( "$key = ?", $value );
 							break;
 						case 'status' :
-							$this->jqgrid->sql->where ( "$key = ?", $value . '%' );
+							$this->grid->sql->where ( "$key = ?", $value . '%' );
 							break;
 						
 						case 'title' :
 						case 'long_title' :
 						case 'author' :
-							$this->jqgrid->sql->where ( "$key LIKE ?", '%' . $value . '%' );
+							$this->grid->sql->where ( "$key LIKE ?", '%' . $value . '%' );
 							break;
 					}
 				}
@@ -112,9 +113,9 @@ class SearchController extends Libz_Base_BaseController {
 	}
 	
 	public function fillgridfinal() {
-		$response = $this->jqgrid->prepareResponse ();
+		$response = $this->grid->prepareResponse ();
 		
-		$result = $this->jqgrid->fetchdata ();
+		$result = $this->grid->fetchdata ();
 		foreach ( $result as $key => $row ) {
 			$gridTuplekey = $row ['acc_no'];
 			//unset ( $row ['timetable_id'] );
@@ -123,7 +124,6 @@ class SearchController extends Libz_Base_BaseController {
 		}
 		echo Zend_Json::encode ( $response );
 	}
-*/
 }
 
 ?>

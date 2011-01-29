@@ -29,17 +29,37 @@ class Libz_Base_Model extends Zend_Db_Table {
 	 */
 	protected $logger;
     
-	
-	/**
-	 * Initlize settings usually required by models.
-	 */
 
+	/**
+	 * 
+	 * Get logger of application
+	 * @return Zend_Log
+	 */
 	public static function getLogger() {
-		if (Zend_Registry::isRegistered ( 'logger' ) and (self::$debug === false)) {
+		if (Zend_Registry::isRegistered ( 'logger' )) {
 			$logger = Zend_Registry::get ( 'logger' );
 			return $logger;
-		} else
+		} else {
 			return false;
+		}
+			
+	}
+	
+	/**
+	 * 
+	 * Get default cache for application
+	 * @param string $cacheName
+	 * @return Zend_Cache_Frontend_File
+	 */
+	public static function getCache($cacheName = 'database') {
+		/**
+		 * 
+		 * Enter description here ...
+		 * @var Zend_Cache_Manager
+		 */
+		$cacheManager = Zend_Registry::get('cacheManager');
+		
+		return $cacheManager->getCache ( $cacheName );;
 	}
     
 }

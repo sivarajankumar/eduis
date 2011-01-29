@@ -1,0 +1,159 @@
+﻿<?php
+/**
+ *
+ * @category   EduIS
+ * @package    Library
+ * @subpackage Search
+ * @since	   0.1
+ */
+/*
+ * View for Batch.
+ */
+?>
+<h3 align="center">Grid Search</h3>
+<div class="gridstyle">
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+	style="color: red"></span></div>
+<script type="text/javascript">
+
+$(function(){
+    var gridTable = "#tblgrid";
+    var gridPager = "#gridpager";
+    var urlFillGrid = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid'), 'default', true)?>";
+    var urlCRUD = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud'), 'default', true)?>";
+    $(gridTable).jqGrid({
+        url : urlFillGrid,
+        colNames:['Department','Degree','Batch Start','Batch Number', 'Is Active'],
+        colModel:[{name:'department_id',
+            index:'department_id',
+            editable: true,
+            edittype: 'select',
+            editoptions:{
+	            size: 1,
+	            dataUrl:urlDeptCombo,
+	            buildSelect : function(jDept){
+            /* It is a faaltoo try to make an automatic drop down.....
+            		var prepareSelectOption = function(jsonObj, selectString){
+            			var isVal = TRUE;
+            			var optionString = '<option value ="';
+            			$.each(jsonObj, function (key, value) {
+            				if( value && typeof value == "object" ) {
+            					prepareSelectOption(value, selectString);
+                			} else if( value && typeof value == "string" ) {
+                    			if(isVal){
+                    				optionString += value+'">';
+                    				isVal = null;
+                    			} else {
+                    				optionString += value+'</option>';
+                    			}
+                    			selectString += optionString;
+                			}
+                		});
+            		};
+    		*/
+        			var jDept = $.parseJSON(jDept.responseText);
+        			var selectString = '<select><option value ="">Select one</option>';
+        			$.each(jDept, function (index, deptt) {
+        				selectString += '<option value ="'+deptt.department_id+'">'+deptt.department_name+'</option>';
+        			});
+        			//prepareSelectOption(jDept, selectString);
+        			selectString += '</select>';
+            		return selectString;
+            	},
+	             dataEvents: [{
+	                type: 'change',
+	                fn: function(e) {
+		                
+	            	 if(deptDegree[this.value]){
+	            		var selectOptionString = '<option value ="">Select one</option>';
+	        			$.each(deptDegree[this.value], function (index, degree) {
+	        				selectOptionString += '<option value ="'+degree.degree_id+'">'+degree.degree_name+'</option>';
+	        			});
+                        $('#degree_id').html(selectOptionString);
+	            	 } else{
+		            	 $.ajax({
+			            	url : urlDegreeCombo,
+		                    dataType : 'json',
+		                    data : {department_id : this.value},
+		                    success: function(jDegree){
+		                    	deptDegree[e.target.value] = jDegree;
+			                    var selectOptionString = '<option value ="">Select one</option>';
+			        			$.each(jDegree, function (index, degree) {
+			        				selectOptionString += '<option value ="'+degree.degree_id+'">'+degree.degree_name+'</option>';
+			        			});
+		                        $('#degree_id').html(selectOptionString);
+		                        },
+		                        error: function(data){
+		                            alert(data);
+		                            }
+		                        });
+	            	 }
+	               }
+	            }]
+            }
+            },
+            {name:'degree_id',
+                index:'degree_id',
+                editable:true,
+                edittype: 'select', 
+                editoptions:{
+                    value : {'':'Select one'}                   
+                }
+            },
+            {name:'batch_start',
+                index:'batch_start',
+                editable:true},
+            {name:'batch_number',
+                index:'batch_number',
+                sortable:false,
+                editable:true},
+            {name:'is_active',
+                index:'is_active',
+                editable:true,
+                edittype: 'select', 
+                editoptions:{
+                    value : {'0':'No','1':'Yes'}                   
+                }
+            }],
+            caption: "Batch" ,
+            sortname: "batch_start",
+            pager: gridPager,
+            editurl:urlCRUD
+        });
+
+    $(gridTable).jqGrid('navGrid', gridPager, {
+        add : true,
+        edit : true,
+        view : false,
+        search : false,
+        refresh : false
+    }, // options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true
+            }, // edit options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true,
+                clearAfterAdd : true //Default is true, make false if needed
+            }, // add options
+            {
+                reloadAfterSubmit : false,
+                jqModal : false,
+                closeOnEscape : true
+            } // del options
+         );
+
+    addPager(gridTable, gridPager); 
+    
+});
+</script>
