@@ -1,85 +1,88 @@
 <?php
-class PeriodController extends Acadz_Base_BaseController {
-	/*
+class PeriodController extends Acadz_Base_BaseController
+{
+    /*
      * @about Interface.
      */
-	public function indexAction() {
-		$this->_helper->viewRenderer->setNoRender ( false );
-		$this->_helper->layout ()->enableLayout ();
-		$this->view->assign ( 'controller', $this->_request->getControllerName () );
-		$this->view->assign ( 'module', $this->_request->getModuleName () );
-	}
-	
-	/*
+    public function indexAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $this->view->assign('controller', $this->_request->getControllerName());
+        $this->view->assign('module', $this->_request->getModuleName());
+    }
+    /*
      * Back end data provider to datagrid.
      * @return JSON data
      */
-	public function fillgridAction() {
-		$request = $this->getRequest ();
-		$valid = $request->getParam ( 'nd' );
-		if ($request->isXmlHttpRequest () and $valid) {
-			self::createModel();
-			$this->grid = $this->_helper->grid();
-			
-			$this->jqgrid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
-			
-			$searchOn = $request->getParam ( '_search' );
-			if ($searchOn != 'false') {
-				$sarr = $request->getParams ();
-				foreach ( $sarr as $key => $value ) {
-					switch ($key) {
-						case 'department_id' :
-						case 'degree_id' :
-							$this->jqgrid->sql->where ( "$key LIKE ?", $value . '%' );
-							break;
-						case 'semester_id' :
-							$this->jqgrid->sql->where ( "$key = ?", $value );
-							break;
-					}
-				}
-			}
-			self::fillgridfinal ();
-		
-		} else {
-			header ( "HTTP/1.1 403 Forbidden" );
-			die ();
-		}
-	
-	}
-	
-	/*
+    public function fillgridAction ()
+    {
+        $request = $this->getRequest();
+        $valid = $request->getParam('nd');
+        if ($request->isXmlHttpRequest() and $valid) {
+            self::createModel();
+            $this->grid = $this->_helper->grid();
+            $this->jqgrid->sql = $this->model->select()->from(
+            $this->model->info('name'));
+            $searchOn = $request->getParam('_search');
+            if ($searchOn != 'false') {
+                $sarr = $request->getParams();
+                foreach ($sarr as $key => $value) {
+                    switch ($key) {
+                        case 'department_id':
+                        case 'degree_id':
+                            $this->jqgrid->sql->where("$key LIKE ?", 
+                            $value . '%');
+                            break;
+                        case 'semester_id':
+                            $this->jqgrid->sql->where("$key = ?", $value);
+                            break;
+                    }
+                }
+            }
+            self::fillgridfinal();
+        } else {
+            header("HTTP/1.1 403 Forbidden");
+            die();
+        }
+    }
+    /*
      * Get period's Id and Period Number.
      */
-	public function getperiodAction() {
-		$request = $this->getRequest ();
-		$format = $request->getParam ( 'format', 'json' );
-		$department = $request->getParam ( 'department_id' );
-		$degree = $request->getParam ( 'degree_id' );
-		$semester = $request->getParam ( 'semester_id' );
-		$weekday = $request->getParam ( 'weekday_number' );
-		if (isset ( $department ) and isset ( $degree ) and isset ( $semester ) and isset ( $weekday )) {
-			$result = Acad_Model_DbTable_Period::getPeriod ( $department, $degree, ( int ) $semester, ( int ) $weekday );
-			switch (strtolower ( $format )) {
-				case 'json' :
-					$this->_helper->json ( $result );
-					return;
-				case 'select' :
-					echo '<select>';
-					echo '<option>Select one</option>';
-					foreach ( $result as $key => $row ) {
-						echo '<option value="' . $row ['period_id'] . '">' . $row ['period_number'] . '</option>';
-					}
-					echo '</select>';
-					return;
-				default :
-					header ( "HTTP/1.1 400 Bad Request" );
-					echo 'Unsupported format';
-			}
-		} else {
-			header ( "HTTP/1.1 400 Bad Request" );
-		}
-	}
-	/*
+    public function getperiodAction ()
+    {
+        $request = $this->getRequest();
+        $format = $request->getParam('format', 'json');
+        $department = $request->getParam('department_id');
+        $degree = $request->getParam('degree_id');
+        $semester = $request->getParam('semester_id');
+        $weekday = $request->getParam('weekday_number');
+        if (isset($department) and isset($degree) and isset($semester) and
+         isset($weekday)) {
+            $result = Acad_Model_DbTable_Period::getPeriod($department, $degree, 
+            (int) $semester, (int) $weekday);
+            switch (strtolower($format)) {
+                case 'json':
+                    $this->_helper->json($result);
+                    return;
+                case 'select':
+                    echo '<select>';
+                    echo '<option>Select one</option>';
+                    foreach ($result as $key => $row) {
+                        echo '<option value="' . $row['period_id'] . '">' .
+                         $row['period_number'] . '</option>';
+                    }
+                    echo '</select>';
+                    return;
+                default:
+                    header("HTTP/1.1 400 Bad Request");
+                    echo 'Unsupported format';
+            }
+        } else {
+            header("HTTP/1.1 400 Bad Request");
+        }
+    }
+    /*
 	//Deprecated
 	private function getData($sql = false) {
 		$sql = ($sql) ? $sql : 'select period_number,start_time,duration from ' . $this->model;

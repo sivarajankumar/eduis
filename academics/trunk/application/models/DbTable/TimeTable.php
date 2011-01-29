@@ -6,163 +6,166 @@
  * @version 2.0
  *
  */
-class Acad_Model_DbTable_TimeTable extends Aceis_Base_Model {
-	protected $_name = 'timetable';
-	const TABLE_NAME = 'timetable';
-	/*
+class Acad_Model_DbTable_TimeTable extends Acadz_Base_Model
+{
+    protected $_name = 'timetable';
+    const TABLE_NAME = 'timetable';
+    /*
 	 * Customized insert
 	 * @version 2.0
 	 */
-	public function insert(array $data) {
-		//TODO Include Block and Rooms
-		$data ['block_id'] = 'ADM_B1';
-		$data ['room_id'] = '1';
-		$periodsCovered = $data ['period'];
-		for($i = 1; $i < $data ['period_duration']; ++ $i) {
-			$nextPeriod = $data ['period'] + $i;
-			$periodsCovered .= ',' . $nextPeriod;
-		}
-		$data ['periods_covered'] = $periodsCovered;
-		
-		$date = new Zend_Date ();
-		$date->setDate ( $data ['valid_from'], 'dd/MM/YYYY' );
-		$data ['valid_from'] = $date->toString ( 'YYYY-MM-dd' );
-		$data ['valid_upto'] = Model_DbTable_AcademicSession::getSessionEndDate ();
-		$currentPeriodStatus = self::currentPeriodStatus ( $data ['period_id'], TRUE );
-		if ($currentPeriodStatus ['STATUS'] != 'EMPTY') {
-			
-			self::updateCurrentValidity ( $currentPeriodStatus, $data ['group_id'], $data ['valid_from'], $data ['periods_covered'] );
-		}
-		
-		unset ( $data ['period'] );
-		unset ( $data ['degree_id'] );
-		unset ( $data ['semester_id'] );
-		unset ( $data ['weekday_number'] );
-		return parent::insert ( $data );
-	}
-	
-	/**
-	 * Update validity of current Timtable entry
-	 * @version 2.0
-	 * @param $currentPeriodStatus
-	 * @param $group_id
-	 * @param $endvalidityDate
-	 * @param $periodCovered
-	 */
-	public static function updateCurrentValidity(array $currentPeriodStatus, $group_id, $endvalidityDate, $periodCovered) {
-		//         //TEMP\\
-		$logger = Zend_Registry::get ( 'logger' ); //Kindly delete this and related lines after finalization.
-		//         \\TEMP//
-		$params = array ();
-		$params [] = $currentPeriodStatus ['periodStatus'] [0] ['department_id'];
-		$params [] = $currentPeriodStatus ['periodStatus'] [0] ['degree_id'];
-		$params [] = $currentPeriodStatus ['periodStatus'] [0] ['semester_id'];
-		$params [] = $currentPeriodStatus ['periodStatus'] [0] ['weekday_number'];
-		$groupStmt = '';
-		$prdNumberSmt = '';
-		$periodCovrdArry = explode ( ',', $periodCovered );
-		$isGroupAvailable = FALSE;
-		switch ($group_id) {
-			
-			//If Current period is alloted for ALL then period\'s groups can be ignored here.
-			case ($currentPeriodStatus ['occupiedGroups'] == 'ALL' and $group_id != 'ALL') :
-				$logger->debug ( 'CASE 1 :- CURRENT:ALL, NEXT: Any' );
-				$groupStmt = ' AND (`timetable`.`group_id` = "ALL" OR `timetable`.`group_id` = ?) ';
-				$params [] = $group_id;
-				$prdNumberSmt = ' AND ( ';
-				$setOr = false;
-				foreach ( $periodCovrdArry as $key => $periodNumber ) {
-					if ($setOr) {
-						$prdNumberSmt .= ' OR ';
-					}
-					$prdNumberSmt .= ' FIND_IN_SET(?, periods_covered) ';
-					$params [] = $periodNumber;
-					$setOr = true;
-				}
-				$prdNumberSmt .= ' ) ';
-				break;
-			case ($currentPeriodStatus ['occupiedGroups'] == 'ALL' and $group_id == 'ALL') :
-				$logger->debug ( 'CASE 2 :- CURRENT:ALL, NEXT: Any' );
-				$groupStmt = ' AND (`timetable`.`group_id` = "ALL") ';
-				$prdNumberSmt = ' AND ( ';
-				$setOr = false;
-				foreach ( $periodCovrdArry as $key => $periodNumber ) {
-					if ($setOr) {
-						$prdNumberSmt .= ' OR ';
-					}
-					$prdNumberSmt .= ' FIND_IN_SET(?, periods_covered) ';
-					$params [] = $periodNumber;
-					$setOr = true;
-				}
-				$prdNumberSmt .= ' ) ';
-				break;
-			
-			// Current as well as new allotment is for a group.
-			case ($currentPeriodStatus ['occupiedGroups'] != 'ALL' and $group_id != 'ALL') :
-				$logger->debug ( 'CASE 3 :- CURRENT: GroupWise, NEXT: GroupWise' );
-				foreach ( $currentPeriodStatus ['availableGroups'] as $key => $group ) {
-					if ($group == $group_id) {
-						$isGroupAvailable = TRUE;
-						break;
-					}
-				}
-				if (! $isGroupAvailable) {
-					foreach ( $currentPeriodStatus ['periodStatus'] as $key => $timetable ) {
-						if ($timetable ['group_id'] == $group_id) {
-							$groupStmt = ' AND (  `timetable`.`group_id` = ? ) ';
-							$params [] = $group_id;
-							$prdNumberSmt = ' AND ( ';
-							$setOr = false;
-							foreach ( $periodCovrdArry as $key => $periodNumber ) {
-								if ($setOr) {
-									$prdNumberSmt .= ' OR ';
-								}
-								$prdNumberSmt .= ' FIND_IN_SET(?, periods_covered) ';
-								$params [] = $periodNumber;
-								$setOr = true;
-							}
-							
-							$prdNumberSmt .= ' ) ';
-						}
-					}
-				}
-				
-				break;
-			
-			//Current is groupwise and New allotment for ALL 
-			case ($currentPeriodStatus ['occupiedGroups'] != 'ALL' and $group_id == 'ALL') :
-				$logger->debug ( 'CASE 4 :- CURRENT: GroupsWise, NEXT: ALL' );
-				$setOr = false;
-				$groupStmt = ' AND ( ';
-				foreach ( $currentPeriodStatus ['periodStatus'] as $key => $timetable ) {
-					if ($setOr) {
-						$groupStmt .= ' OR ';
-					}
-					$groupStmt .= ' `timetable`.`group_id` = ? ';
-					$params [] = $timetable ['group_id'];
-					$setOr = true;
-				}
-				$groupStmt .= ' ) ';
-				$prdNumberSmt = ' AND ( ';
-				$setOr = false;
-				foreach ( $periodCovrdArry as $key => $periodNumber ) {
-					if ($setOr) {
-						$prdNumberSmt .= ' OR ';
-					}
-					$prdNumberSmt .= ' FIND_IN_SET(?, periods_covered) ';
-					$params [] = $periodNumber;
-					$setOr = true;
-				}
-				$prdNumberSmt .= ' ) ';
-		}
-		
-		//Final SQL query
-		if (! $isGroupAvailable) {
-			$sql = 'UPDATE timetable AS tmp1
+    public function insert (array $data)
+    {
+        //TODO Include Block and Rooms
+        $data['block_id'] = 'ADM_B1';
+        $data['room_id'] = '1';
+        $periodsCovered = $data['period'];
+        for ($i = 1; $i < $data['period_duration']; ++ $i) {
+            $nextPeriod = $data['period'] + $i;
+            $periodsCovered .= ',' . $nextPeriod;
+        }
+        $data['periods_covered'] = $periodsCovered;
+        $date = new Zend_Date();
+        $date->setDate($data['valid_from'], 'dd/MM/YYYY');
+        $data['valid_from'] = $date->toString('YYYY-MM-dd');
+        $data['valid_upto'] = Acad_Model_DbTable_AcademicSession::getSessionEndDate();
+        $currentPeriodStatus = self::currentPeriodStatus($data['period_id'], 
+        TRUE);
+        if ($currentPeriodStatus['STATUS'] != 'EMPTY') {
+            self::updateCurrentValidity($currentPeriodStatus, $data['group_id'], 
+            $data['valid_from'], $data['periods_covered']);
+        }
+        unset($data['period']);
+        unset($data['degree_id']);
+        unset($data['semester_id']);
+        unset($data['weekday_number']);
+        
+        self::getLogger()->log('Final data for insert', Zend_Log::INFO);
+        self::getLogger()->log($data, Zend_Log::DEBUG);
+        return parent::insert($data);
+    }
+    /**
+     * Update validity of current Timtable entry
+     * @version 2.0
+     * @param $currentPeriodStatus
+     * @param $group_id
+     * @param $endvalidityDate
+     * @param $periodCovered
+     */
+    public static function updateCurrentValidity (array $currentPeriodStatus, 
+    $group_id, $endvalidityDate, $periodCovered)
+    {
+        //         //TEMP\\
+        $logger = self::getLogger();
+        //         \\TEMP//
+        $params = array();
+        $params[] = $currentPeriodStatus['periodStatus'][0]['department_id'];
+        $params[] = $currentPeriodStatus['periodStatus'][0]['degree_id'];
+        $params[] = $currentPeriodStatus['periodStatus'][0]['semester_id'];
+        $params[] = $currentPeriodStatus['periodStatus'][0]['weekday_number'];
+        $groupStmt = '';
+        $prdNumberSmt = '';
+        $periodCovrdArry = explode(',', $periodCovered);
+        $isGroupAvailable = FALSE;
+        switch ($group_id) {
+            //If Current period is alloted for ALL then period\'s groups can be ignored here.
+            case ($currentPeriodStatus['occupiedGroups'] == 'ALL' and
+             $group_id != 'ALL'):
+                $logger->debug('CASE 1 :- CURRENT:ALL, NEXT: Any');
+                $groupStmt = ' AND (`timetable`.`group_id` = "ALL" OR `timetable`.`group_id` = ?) ';
+                $params[] = $group_id;
+                $prdNumberSmt = ' AND ( ';
+                $setOr = false;
+                foreach ($periodCovrdArry as $key => $periodNumber) {
+                    if ($setOr) {
+                        $prdNumberSmt .= ' OR ';
+                    }
+                    $prdNumberSmt .= ' FIND_IN_SET(?, periods_covered) ';
+                    $params[] = $periodNumber;
+                    $setOr = true;
+                }
+                $prdNumberSmt .= ' ) ';
+                break;
+            case ($currentPeriodStatus['occupiedGroups'] == 'ALL' and
+             $group_id == 'ALL'):
+                $logger->debug('CASE 2 :- CURRENT:ALL, NEXT: Any');
+                $groupStmt = ' AND (`timetable`.`group_id` = "ALL") ';
+                $prdNumberSmt = ' AND ( ';
+                $setOr = false;
+                foreach ($periodCovrdArry as $key => $periodNumber) {
+                    if ($setOr) {
+                        $prdNumberSmt .= ' OR ';
+                    }
+                    $prdNumberSmt .= ' FIND_IN_SET(?, periods_covered) ';
+                    $params[] = $periodNumber;
+                    $setOr = true;
+                }
+                $prdNumberSmt .= ' ) ';
+                break;
+            // Current as well as new allotment is for a group.
+            case ($currentPeriodStatus['occupiedGroups'] != 'ALL' and
+             $group_id != 'ALL'):
+                $logger->debug('CASE 3 :- CURRENT: GroupWise, NEXT: GroupWise');
+                foreach ($currentPeriodStatus['availableGroups'] as $key => $group) {
+                    if ($group == $group_id) {
+                        $isGroupAvailable = TRUE;
+                        break;
+                    }
+                }
+                if (! $isGroupAvailable) {
+                    foreach ($currentPeriodStatus['periodStatus'] as $key => $timetable) {
+                        if ($timetable['group_id'] == $group_id) {
+                            $groupStmt = ' AND (  `timetable`.`group_id` = ? ) ';
+                            $params[] = $group_id;
+                            $prdNumberSmt = ' AND ( ';
+                            $setOr = false;
+                            foreach ($periodCovrdArry as $key => $periodNumber) {
+                                if ($setOr) {
+                                    $prdNumberSmt .= ' OR ';
+                                }
+                                $prdNumberSmt .= ' FIND_IN_SET(?, periods_covered) ';
+                                $params[] = $periodNumber;
+                                $setOr = true;
+                            }
+                            $prdNumberSmt .= ' ) ';
+                        }
+                    }
+                }
+                break;
+            //Current is groupwise and New allotment for ALL 
+            case ($currentPeriodStatus['occupiedGroups'] != 'ALL' and
+             $group_id == 'ALL'):
+                $logger->debug('CASE 4 :- CURRENT: GroupsWise, NEXT: ALL');
+                $setOr = false;
+                $groupStmt = ' AND ( ';
+                foreach ($currentPeriodStatus['periodStatus'] as $key => $timetable) {
+                    if ($setOr) {
+                        $groupStmt .= ' OR ';
+                    }
+                    $groupStmt .= ' `timetable`.`group_id` = ? ';
+                    $params[] = $timetable['group_id'];
+                    $setOr = true;
+                }
+                $groupStmt .= ' ) ';
+                $prdNumberSmt = ' AND ( ';
+                $setOr = false;
+                foreach ($periodCovrdArry as $key => $periodNumber) {
+                    if ($setOr) {
+                        $prdNumberSmt .= ' OR ';
+                    }
+                    $prdNumberSmt .= ' FIND_IN_SET(?, periods_covered) ';
+                    $params[] = $periodNumber;
+                    $setOr = true;
+                }
+                $prdNumberSmt .= ' ) ';
+        }
+        //Final SQL query
+        if (! $isGroupAvailable) {
+            $sql = 'UPDATE timetable AS tmp1
 JOIN (SELECT 
          `timetable`.timetable_id
-FROM `nwaceis`.`timetable`
-  INNER JOIN `nwaceis`.`period`
+FROM `timetable`
+  INNER JOIN `period`
     ON (`timetable`.`period_id` = `period`.`period_id`
         AND (CURDATE() BETWEEN valid_from
              AND valid_upto))
@@ -174,15 +177,14 @@ WHERE (`period`.`department_id` = ?
        ' . $groupStmt . $prdNumberSmt . ')) AS tmp2 ON
 	   tmp1.timetable_id = tmp2.timetable_id
 SET tmp1.valid_upto = DATE_SUB(?, INTERVAL 1 DAY);';
-			$params [] = $endvalidityDate;
-			return self::getDefaultAdapter ()->query ( $sql, $params );
-		} else {
-			$logger->debug ( 'Group is available. No update required.' );
-			return TRUE;
-		}
-	}
-	
-	/*
+            $params[] = $endvalidityDate;
+            return self::getDefaultAdapter()->query($sql, $params);
+        } else {
+            $logger->debug('Group is available. No update required.');
+            return TRUE;
+        }
+    }
+    /*
 	public static function updateCurrentValidity_old($periodId, $group_id, $endvalidityDate, $currentPeriodStatus, $duration) {
 		$period = Department_Model_DbTable_Period::getIdPeriod ( $periodId );
 		//$date = new Zend_Date();
@@ -233,11 +235,12 @@ SET tmp.valid_upto = DATE_SUB(?, INTERVAL 1 DAY)';
 	 * Determines the status of a period in current timetable.
 	 * @version 2.0
 	 */
-	public static function currentPeriodStatus($periodId, $detail = FALSE) {
-		$period = Department_Model_DbTable_Period::getIdPeriod ( $periodId );
-		//$date = new Zend_Date();
-		//$date->setDate($expectedValidFrom, 'dd/MM/YYYY');
-		$sql = 'SELECT
+    public static function currentPeriodStatus ($periodId, $detail = FALSE)
+    {
+        $period = Acad_Model_DbTable_Period::getIdPeriod($periodId);
+        //$date = new Zend_Date();
+        //$date->setDate($expectedValidFrom, 'dd/MM/YYYY');
+        $sql = 'SELECT
   `timetable`.timetable_id,
   `period`.department_id,
   `period`.degree_id,
@@ -250,8 +253,8 @@ SET tmp.valid_upto = DATE_SUB(?, INTERVAL 1 DAY)';
   `timetable`.periods_covered,
   `timetable`.valid_from,
   `timetable`.valid_upto
-FROM `nwaceis`.`period`
-  JOIN `nwaceis`.`timetable`
+FROM `period`
+  JOIN `timetable`
     ON (`period`.`period_id` = `timetable`.`period_id`
        AND ( CURDATE() BETWEEN valid_from AND valid_upto ))
 WHERE (`period`.department_id = ?
@@ -260,55 +263,54 @@ WHERE (`period`.department_id = ?
        AND `period`.weekday_number = ?
        AND `period`.period_type_id != "BRK"
     AND FIND_IN_SET(?, periods_covered)) order by `timetable`.group_id';
-		
-		$params = array ($period ['department_id'], $period ['degree_id'], $period ['semester_id'], $period ['weekday_number'], $period ['period_number'] );
-		$totalgroups = Model_DbTable_Groups::getClassGroups ( $period ['department_id'], $period ['degree_id'], TRUE );
-		$periodStatus = self::getDefaultAdapter ()->fetchAll ( $sql, $params );
-		$finalStatus = array ();
-		
-		if (! $periodStatus) {
-			$status = 'EMPTY';
-		} elseif ('ALL' == strtoupper ( $periodStatus [0] ['group_id'] )) {
-			if ($detail) {
-				$finalStatus ['periodStatus'] = $periodStatus;
-			}
-			$finalStatus ['occupiedGroups'] = 'ALL';
-			$status = 'FULL';
-		} else {
-			$occupiedGroups = array ();
-			foreach ( $periodStatus as $key => $group ) {
-				$occupiedGroups [] = $group ['group_id'];
-			}
-			$finalStatus ['occupiedGroups'] = $occupiedGroups;
-			$tmpavailableGroups = array_diff ( $totalgroups, $occupiedGroups );
-			if ($detail) {
-				$finalStatus ['periodStatus'] = $periodStatus;
-			}
-			if (count ( $tmpavailableGroups )) {
-				// $tmpavailableGroups has unordered keys so $availableGroups is created.
-				foreach ( $tmpavailableGroups as $key => $value ) {
-					$availableGroups [] = $value;
-				}
-				$finalStatus ['availableGroups'] = $availableGroups;
-				$status = 'PARTIAL';
-			} else {
-				$status = 'FULL';
-			}
-		
-		}
-		
-		$finalStatus ['maxGroups'] = $totalgroups;
-		$finalStatus ['STATUS'] = $status;
-		return $finalStatus;
-	}
-	
-	/*
+        $params = array($period['department_id'], $period['degree_id'], 
+        $period['semester_id'], $period['weekday_number'], 
+        $period['period_number']);
+        $totalgroups = Acad_Model_DbTable_Groups::getClassGroups(
+        $period['department_id'], $period['degree_id'], TRUE);
+        $periodStatus = self::getDefaultAdapter()->fetchAll($sql, $params);
+        $finalStatus = array();
+        if (! $periodStatus) {
+            $status = 'EMPTY';
+        } elseif ('ALL' == strtoupper($periodStatus[0]['group_id'])) {
+            if ($detail) {
+                $finalStatus['periodStatus'] = $periodStatus;
+            }
+            $finalStatus['occupiedGroups'] = 'ALL';
+            $status = 'FULL';
+        } else {
+            $occupiedGroups = array();
+            foreach ($periodStatus as $key => $group) {
+                $occupiedGroups[] = $group['group_id'];
+            }
+            $finalStatus['occupiedGroups'] = $occupiedGroups;
+            $tmpavailableGroups = array_diff($totalgroups, $occupiedGroups);
+            if ($detail) {
+                $finalStatus['periodStatus'] = $periodStatus;
+            }
+            if (count($tmpavailableGroups)) {
+                // $tmpavailableGroups has unordered keys so $availableGroups is created.
+                foreach ($tmpavailableGroups as $key => $value) {
+                    $availableGroups[] = $value;
+                }
+                $finalStatus['availableGroups'] = $availableGroups;
+                $status = 'PARTIAL';
+            } else {
+                $status = 'FULL';
+            }
+        }
+        $finalStatus['maxGroups'] = $totalgroups;
+        $finalStatus['STATUS'] = $status;
+        return $finalStatus;
+    }
+    /*
 	 * Determines the status of future period.
 	 * @version 2.0
 	 */
-	public function periodStatus($periodId, $detail = FALSE) {
-		$period = Department_Model_DbTable_Period::getIdPeriod ( $periodId );
-		$sql = 'SELECT
+    public function periodStatus ($periodId, $detail = FALSE)
+    {
+        $period = Acad_Model_DbTable_Period::getIdPeriod($periodId);
+        $sql = 'SELECT
   `timetable`.subject_code,
   `timetable`.subject_mode_id,
   `timetable`.group_id,
@@ -316,8 +318,8 @@ WHERE (`period`.department_id = ?
   `timetable`.periods_covered,
   `timetable`.valid_from,
   `timetable`.valid_upto
-FROM `nwaceis`.`period`
-  JOIN `nwaceis`.`timetable`
+FROM `period`
+  JOIN `timetable`
     ON (`period`.`period_id` = `timetable`.`period_id`
        AND ( CURDATE() < `timetable`.valid_upto AND CURDATE() < `timetable`.valid_from))
 WHERE (`period`.department_id = ?
@@ -326,59 +328,59 @@ WHERE (`period`.department_id = ?
        AND `period`.weekday_number = ?
        AND `period`.period_type_id != "BRK")
     AND FIND_IN_SET(?, periods_covered);';
-		
-		$params = array ($period ['department_id'], $period ['degree_id'], $period ['semester_id'], $period ['weekday_number'], $period ['period_number'] );
-		$totalgroups = Model_DbTable_Groups::getClassGroups ( $period ['department_id'], $period ['degree_id'], TRUE );
-		$periodStatus = self::getDefaultAdapter ()->fetchAll ( $sql, $params );
-		$finalStatus = array ();
-		
-		if (! $periodStatus) {
-			$status = 'EMPTY';
-		} elseif ('ALL' == strtoupper ( $periodStatus [0] ['group_id'] )) {
-			if ($detail) {
-				$finalStatus ['periodStatus'] = $periodStatus;
-			}
-			$finalStatus ['occupiedGroups'] = 'ALL';
-			$status = 'FULL';
-		} else {
-			$occupiedGroups = array ();
-			foreach ( $periodStatus as $key => $group ) {
-				$occupiedGroups [] = $group ['group_id'];
-			}
-			$finalStatus ['occupiedGroups'] = $occupiedGroups;
-			$tmpavailableGroups = array_diff ( $totalgroups, $occupiedGroups );
-			if ($detail) {
-				$finalStatus ['periodStatus'] = $periodStatus;
-			}
-			if (count ( $tmpavailableGroups )) {
-				// $tmpavailableGroups has unordered keys so $availableGroups is created.
-				foreach ( $tmpavailableGroups as $key => $value ) {
-					$availableGroups [] = $value;
-				}
-				$finalStatus ['availableGroups'] = $availableGroups;
-				$status = 'PARTIAL';
-			} else {
-				$status = 'FULL';
-			}
-		
-		}
-		
-		$finalStatus ['maxGroups'] = $totalgroups;
-		$finalStatus ['STATUS'] = $status;
-		return $finalStatus;
-	}
-	
-	/**
-	 * It fetches the faculty\'s scheduled periods.
-	 * 
-	 * @param string $staff_id
-	 * @param int $weekday_number
-	 * @param string $department_id
-	 * @version 2.0
-	 */
-	public function getFacultyDayPeriods($staff_id,$period_date, $weekday_number = null, $department_id = null) {
-		try {
-			$sql = "SELECT timetable.timetable_id,timetable.period_id,
+        $params = array($period['department_id'], $period['degree_id'], 
+        $period['semester_id'], $period['weekday_number'], 
+        $period['period_number']);
+        $totalgroups = Acad_Model_DbTable_Groups::getClassGroups(
+        $period['department_id'], $period['degree_id'], TRUE);
+        $periodStatus = self::getDefaultAdapter()->fetchAll($sql, $params);
+        $finalStatus = array();
+        if (! $periodStatus) {
+            $status = 'EMPTY';
+        } elseif ('ALL' == strtoupper($periodStatus[0]['group_id'])) {
+            if ($detail) {
+                $finalStatus['periodStatus'] = $periodStatus;
+            }
+            $finalStatus['occupiedGroups'] = 'ALL';
+            $status = 'FULL';
+        } else {
+            $occupiedGroups = array();
+            foreach ($periodStatus as $key => $group) {
+                $occupiedGroups[] = $group['group_id'];
+            }
+            $finalStatus['occupiedGroups'] = $occupiedGroups;
+            $tmpavailableGroups = array_diff($totalgroups, $occupiedGroups);
+            if ($detail) {
+                $finalStatus['periodStatus'] = $periodStatus;
+            }
+            if (count($tmpavailableGroups)) {
+                // $tmpavailableGroups has unordered keys so $availableGroups is created.
+                foreach ($tmpavailableGroups as $key => $value) {
+                    $availableGroups[] = $value;
+                }
+                $finalStatus['availableGroups'] = $availableGroups;
+                $status = 'PARTIAL';
+            } else {
+                $status = 'FULL';
+            }
+        }
+        $finalStatus['maxGroups'] = $totalgroups;
+        $finalStatus['STATUS'] = $status;
+        return $finalStatus;
+    }
+    /**
+     * It fetches the faculty\'s scheduled periods.
+     * 
+     * @param string $staff_id
+     * @param int $weekday_number
+     * @param string $department_id
+     * @version 2.0
+     */
+    public function getFacultyDayPeriods ($staff_id, $period_date, 
+    $weekday_number = null, $department_id = null)
+    {
+        try {
+            $sql = "SELECT timetable.timetable_id,timetable.period_id,
   subject.subject_name,
   timetable.subject_code,
   timetable.subject_mode_id,
@@ -401,126 +403,138 @@ WHERE (`period`.department_id = ?
     INNER JOIN WEEKDAY ON period.weekday_number = weekday.weekday_number
 WHERE timetable.staff_id = ?
        AND ( '$period_date' between `timetable`.valid_from AND `timetable`.valid_upto)";
-			
-			$param = array ($staff_id );
-			if (isset ( $weekday_number )) {
-				$sql .= ' AND period.weekday_number = ?';
-				array_push ( $param, $weekday_number );
-			}
-			if (isset ( $department_id )) {
-				$sql .= ' AND timetable.department_id = ?';
-				array_push ( $param, $department_id );
-			}
-			$sql .= ' GROUP BY timetable.period_id order by period.weekday_number';
-			
-			$resultSet = self::getDefaultAdapter ()->query ( $sql, $param )->fetchAll ();
-			//return $sql;
-		return $resultSet;
-		} catch ( Exception $ex ) {
-			return $ex->getMessage ();
-		}
-	
-	}
-	
-	///////////////////////////////////////////////All about GROUPS//////////////////////////////
-	
-
-	/**
-	 * Get groups in period.
-	 * @param $period_id
-	 * @param $department_id
-	 * @param $degree_id
-	 * @param $staff_id
-	 */
-	public static function getGroupsInPeriod($period_id, $department_id, $degree_id,$period_date, $staff_id = NULL) {
-		$sql = self::getDefaultAdapter ()->select ()->from ( 'timetable', array ('timetable_id', 'group_id' ) )->where ( "period_id = ?  ", $period_id )->where ( "'$period_date' between `timetable`.valid_from AND `timetable`.valid_upto" );
-		
-		if (isset ( $staff_id )) {
-			$sql->where ( "staff_id = ?", $staff_id );
-		}
-		
-		self::getDefaultAdapter ()->select ()->group ( 'group_id' )->order ( 'group_id' );
-		$groups = $sql->query ()->fetchAll ();
-		$resultSet = null;
-		$is_all = false;
-		$timetable_id = '';
-		foreach ( $groups as $key => $value ) {
-			if (strtoupper ( $value ['group_id'] ) == 'ALL') {
-				$is_all = true;
-				$timetable_id = $value ['timetable_id'];
-				break;
-			}
-		}
-		if ($is_all) {
-			$all_Groups = Model_DbTable_Groups::getClassGroups ( $department_id, $degree_id );
-			foreach ( $all_Groups as $key => $value ) {
-				$resultSet [$key] ['group_id'] = $value ['group_id'];
-				$resultSet [$key] ['timetable_id'] = $timetable_id;
-			}
-			return $resultSet;
-		} else {
-			return $groups;
-		}
-	
-	}
-	
-	/**
-	 * Get Timetable of given period Id
-	 * @param int $period_id
-	 * @param string $staff_id
-	 * @version 2.0
-	 */
-	public static function getPeriodIdTimetable($period_id,$period_date, $staff_id = null) {
-		$sql = self::getDefaultAdapter ()->select ()->from ( 'timetable', array ('timetable_id', 'subject_code', 'subject_mode_id', 'group_id' ) )->join ( 'period', 'timetable.period_id = period.period_id', array ('department_id', 'degree_id', 'semester_id' ) )
-		->where ( 'timetable.period_id = ?', $period_id )
-		->where ( 'timetable.staff_id = ?', $staff_id )
-		->where ( "'$period_date' BETWEEN timetable.valid_from AND timetable.valid_upto" );
-		return $sql->query ()->fetchAll ();
-	
-	}
-	
-	/*
+            $param = array($staff_id);
+            if (isset($weekday_number)) {
+                $sql .= ' AND period.weekday_number = ?';
+                array_push($param, $weekday_number);
+            }
+            if (isset($department_id)) {
+                $sql .= ' AND timetable.department_id = ?';
+                array_push($param, $department_id);
+            }
+            $sql .= ' GROUP BY timetable.period_id order by period.weekday_number';
+            $resultSet = self::getDefaultAdapter()->query($sql, $param)->fetchAll();
+            //return $sql;
+            return $resultSet;
+        } catch (Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
+    ///////////////////////////////////////////////All about GROUPS//////////////////////////////
+    /**
+     * Get groups in period.
+     * @param $period_id
+     * @param $department_id
+     * @param $degree_id
+     * @param $staff_id
+     */
+    public static function getGroupsInPeriod ($period_id, $department_id, 
+    $degree_id, $period_date, $staff_id = NULL)
+    {
+        $sql = self::getDefaultAdapter()->select()
+            ->from('timetable', array('timetable_id', 'group_id'))
+            ->where("period_id = ?  ", $period_id)
+            ->where(
+        "'$period_date' between `timetable`.valid_from AND `timetable`.valid_upto");
+        if (isset($staff_id)) {
+            $sql->where("staff_id = ?", $staff_id);
+        }
+        self::getDefaultAdapter()->select()
+            ->group('group_id')
+            ->order('group_id');
+        $groups = $sql->query()->fetchAll();
+        $resultSet = null;
+        $is_all = false;
+        $timetable_id = '';
+        foreach ($groups as $key => $value) {
+            if (strtoupper($value['group_id']) == 'ALL') {
+                $is_all = true;
+                $timetable_id = $value['timetable_id'];
+                break;
+            }
+        }
+        if ($is_all) {
+            $all_Groups = Acad_Model_DbTable_Groups::getClassGroups(
+            $department_id, $degree_id);
+            foreach ($all_Groups as $key => $value) {
+                $resultSet[$key]['group_id'] = $value['group_id'];
+                $resultSet[$key]['timetable_id'] = $timetable_id;
+            }
+            return $resultSet;
+        } else {
+            return $groups;
+        }
+    }
+    /**
+     * Get Timetable of given period Id
+     * @param int $period_id
+     * @param string $staff_id
+     * @version 2.0
+     */
+    public static function getPeriodIdTimetable ($period_id, $period_date, 
+    $staff_id = null)
+    {
+        $sql = self::getDefaultAdapter()->select()
+            ->from('timetable', 
+        array('timetable_id', 'subject_code', 'subject_mode_id', 'group_id'))
+            ->join('period', 'timetable.period_id = period.period_id', 
+        array('department_id', 'degree_id', 'semester_id'))
+            ->where('timetable.period_id = ?', $period_id)
+            ->where('timetable.staff_id = ?', $staff_id)
+            ->where(
+        "'$period_date' BETWEEN timetable.valid_from AND timetable.valid_upto");
+        return $sql->query()->fetchAll();
+    }
+    /*
 	 * @return all Time-Table Ids of a subject regardless of its type.
 	 * deprecated
 	 */
-	public static function getSubjectTimetableids($department, $degree, $semester, $subjectcode, $subjectmode = NULL, $group = NULL, $current = FALSE) {
-		$sql = self::getDefaultAdapter ()->select ()->from ( 'timetable', 'timetable_id' )
-		->joinInner ( 'period', 'timetable.period_id = period.period_id', array () )
-		->where ( "timetable.subject_code = ?", $subjectcode )
-		->where ( "period.department_id = ?", $department )
-		->where ( "period.degree_id = ?", $degree )
-		->where ( "period.semester_id = ?", $semester );
-		
-		if ($group) {
-			$sql->where ( "timetable.group_id = ?", $group );
-		}
-		if ($subjectmode) {
-			$sql->where ( "timetable.subject_mode_id = ?", $subjectmode );
-		}
-		
-		if ($current) {
-			$sql->where ( 'curdate() between timetable.valid_from and timetable.valid_upto' );
-		}
-		return $sql->query ()->fetchAll ( Zend_db::FETCH_COLUMN );
-	
-	}
-	
-	public static function getMarkedSubjectTimetableids($department, $degree, $semester, $subjectcode, $subjectmode = NULL, $group = NULL, $current = TRUE) {
-		$sql = self::getDefaultAdapter ()->select ()->from ( 'timetable', 'timetable_id' )->joinInner ( 'period', 'timetable.period_id = period.period_id', array () )->where ( "period.department_id = ?", $department )->where ( "period.degree_id = ?", $degree )->where ( "period.semester_id = ?", $semester )->where ( "timetable.subject_code = ?", $subjectcode );
-		
-		if ($group) {
-			$sql->where ( "timetable.group_id = ?", $group );
-		}
-		if ($subjectmode) {
-			$sql->where ( "timetable.subject_mode_id = ?", $subjectmode );
-		}
-		
-		if ($current) {
-			$sql->where ( 'curdate() between timetable.valid_from and timetable.valid_upto' );
-		}
-		return $sql->query ()->fetchAll ();
-	
-	}
+    public static function getSubjectTimetableids ($department, $degree, 
+    $semester, $subjectcode, $subjectmode = NULL, $group = NULL, $current = FALSE)
+    {
+        $sql = self::getDefaultAdapter()->select()
+            ->from('timetable', 'timetable_id')
+            ->joinInner('period', 'timetable.period_id = period.period_id', 
+        array())
+            ->where("timetable.subject_code = ?", $subjectcode)
+            ->where("period.department_id = ?", $department)
+            ->where("period.degree_id = ?", $degree)
+            ->where("period.semester_id = ?", $semester);
+        if ($group) {
+            $sql->where("timetable.group_id = ?", $group);
+        }
+        if ($subjectmode) {
+            $sql->where("timetable.subject_mode_id = ?", $subjectmode);
+        }
+        if ($current) {
+            $sql->where(
+            'curdate() between timetable.valid_from and timetable.valid_upto');
+        }
+        return $sql->query()->fetchAll(Zend_db::FETCH_COLUMN);
+    }
+    public static function getMarkedSubjectTimetableids ($department, $degree, 
+    $semester, $subjectcode, $subjectmode = NULL, $group = NULL, $current = TRUE)
+    {
+        $sql = self::getDefaultAdapter()->select()
+            ->from('timetable', 'timetable_id')
+            ->joinInner('period', 'timetable.period_id = period.period_id', 
+        array())
+            ->where("period.department_id = ?", $department)
+            ->where("period.degree_id = ?", $degree)
+            ->where("period.semester_id = ?", $semester)
+            ->where("timetable.subject_code = ?", $subjectcode);
+        if ($group) {
+            $sql->where("timetable.group_id = ?", $group);
+        }
+        if ($subjectmode) {
+            $sql->where("timetable.subject_mode_id = ?", $subjectmode);
+        }
+        if ($current) {
+            $sql->where(
+            'curdate() between timetable.valid_from and timetable.valid_upto');
+        }
+        return $sql->query()->fetchAll();
+    }
 }
 
 

@@ -1,62 +1,47 @@
 <?php
-class Acad_Model_DbTable_Period extends Aceis_Base_Model {
-	protected $_name = 'period';
-	
-	
-	/*
+class Acad_Model_DbTable_Period extends Acadz_Base_Model
+{
+    protected $_name = 'period';
+    /*
      * Get period's Id
      */
-	public static function getPeriod($department, $degree, $semester, $weekday = NULL, $period = NULL, $periodType = 'REG') {
-		$sql = self::getDefaultAdapter ()
-		              ->select ()
-		              ->from ( 'period', 'period_id' )
-		              ->where ( 'department_id = ?', $department )
-		              ->where ( 'degree_id = ?', $degree )
-		              ->where ( 'semester_id = ?', $semester );
-	
-		              
+    public static function getPeriod ($department, $degree, $semester, 
+    $weekday = NULL, $period = NULL, $periodType = 'REG')
+    {
+        $sql = self::getDefaultAdapter()->select()
+            ->from('period', 'period_id')
+            ->where('department_id = ?', $department)
+            ->where('degree_id = ?', $degree)
+            ->where('semester_id = ?', $semester);
         if ($weekday) {
-            $sql->where ( 'weekday_number = ?', $weekday );
+            $sql->where('weekday_number = ?', $weekday);
         } else {
             $sql->columns('weekday_number');
         }
-        
-        
-		if (isset ( $period )) {
-			$sql->where ( 'period_number = ?', $period );
-		} else {
-			$sql->columns('period_number');
-		}
-		
-		
-        if (isset ( $periodType )) {
-            $sql->where ( 'period_type_id = ?', $periodType );
+        if (isset($period)) {
+            $sql->where('period_number = ?', $period);
+        } else {
+            $sql->columns('period_number');
         }
-		return $sql->query ()->fetchAll ();
-	}
-	
-	
-	/*
+        if (isset($periodType)) {
+            $sql->where('period_type_id = ?', $periodType);
+        }
+        return $sql->query()->fetchAll();
+    }
+    /*
      * Get Id's period
      */
-	public static function getIdPeriod($periodId) {
-		$sql = self::getDefaultAdapter ()
-		              ->select ()
-		              ->from ( 'period', array ('department_id', 
-		                                          'degree_id', 
-		                                          'semester_id',
-		                                          'weekday_number',
-		                                          'period_number',
-		                	                       'period_type_id'
-		              								
-		              	 ) )
-		              ->where ( 'period_id = ?', $periodId );
-		$result = $sql->query ()->fetchAll();
-		return $result[0];
-	}
-	
-	
-	/*
+    public static function getIdPeriod ($periodId)
+    {
+        $sql = self::getDefaultAdapter()->select()
+            ->from('period', 
+        array('department_id', 'degree_id', 'semester_id', 'weekday_number', 
+        'period_number', 'period_type_id'))
+            ->where('period_id = ?', $periodId);
+        $result = $sql->query()->fetchAll();
+        return $result[0];
+    }
+    /*
 	//Should not be here, deprecated as $this->_name doesnot have period_date etc.
 	public function totalLectures($ttid, $dateFrom = NULL, $dateTo = NULL) {
 		$sql = $this->select ()->from ( $this->_name, 'COUNT(*) as counts' );
@@ -71,7 +56,8 @@ class Acad_Model_DbTable_Period extends Aceis_Base_Model {
 		foreach ( $ttid as $row => $value ) {
 			$ttidsql .= " OR (timetable_id = '$value')";
 		}
-		$sql->where ( $ttidsql );*//*
+		$sql->where ( $ttidsql );*/
+    /*
 		return $this->getAdapter ()->fetchRow ( $sql, '', Zend_Db::FETCH_COLUMN );
 	}
 	
@@ -90,16 +76,16 @@ class Acad_Model_DbTable_Period extends Aceis_Base_Model {
 		}
 	
 	}*/
-public static function getPeriodId( $department_id, $degree_id, $semester_id, $weekday_number, $period_number ) {
-		$sql = self::getDefaultAdapter()
-		              ->select()
-		              ->from('period', 'period_id')
-		              ->where('department_id = ?',$department_id)
-                      ->where('degree_id = ?',$degree_id)
-                      ->where('semester_id = ?',$semester_id)
-                     ->where('weekday_number = ?',$weekday_number)
-                     ->where('period_number = ?',$period_number);
-                     return $sql->query()->fetch();
-	}
-
+    public static function getPeriodId ($department_id, $degree_id, $semester_id, 
+    $weekday_number, $period_number)
+    {
+        $sql = self::getDefaultAdapter()->select()
+            ->from('period', 'period_id')
+            ->where('department_id = ?', $department_id)
+            ->where('degree_id = ?', $degree_id)
+            ->where('semester_id = ?', $semester_id)
+            ->where('weekday_number = ?', $weekday_number)
+            ->where('period_number = ?', $period_number);
+        return $sql->query()->fetch();
+    }
 }
