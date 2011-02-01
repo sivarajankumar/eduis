@@ -19,7 +19,9 @@ class TimeTableController extends Acadz_Base_BaseController
         //$this->dbCols [] = 'room_id';
         //$this->dbCols [] = 'valid_upto';
         $this->dbCols[] = 'valid_from';
-        $this->department_id = 'CSE';
+        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+        $this->department_id = $authInfo['department_id'];
+        $this->identity = $authInfo['identity'];
         //$this->objtimetable = new Department_Model_DbTable_TimeTable ( );
         //$this->_autoModel = TRUE;
         //$this->_autoDbCols = TRUE;
@@ -34,10 +36,9 @@ class TimeTableController extends Acadz_Base_BaseController
         $this->_helper->layout()->enableLayout();
         $this->view->assign('controller', $this->_request->getControllerName());
         $this->view->assign('module', $this->_request->getModuleName());
-        $masterDepartment = $this->department_id;
-        $this->view->assign('masterDepartment', $masterDepartment);
-        $this->view->assign('slaveDepartment', 'CSE');
-        //Model_DbTable_SemesterDegree::slaveDepartment($masterDepartment));
+        $this->view->assign('masterDepartment', $this->department_id);
+        $slaves = Acad_Model_DbTable_SemesterDegree::slaveDepartment($this->department_id);
+        $this->view->assign('slaveDepartment', $slaves);
     }
     public function fillgridAction ()
     {
@@ -46,9 +47,7 @@ class TimeTableController extends Acadz_Base_BaseController
         $upcoming = $request->getParam('upcoming');
         if ($valid) {
             $this->grid = $this->_helper->grid();
-            $masterDepartment = $this->department_id;
-            $slaves = Acad_Model_DbTable_SemesterDegree::slaveInfo($masterDepartment, 
-            'thisSessionOnly', 'showDegree', 'showSemester');
+            $slaves = Acad_Model_DbTable_SemesterDegree::slaveInfo($this->department_id);
             $where = '';
             $setOr = false;
             foreach ($slaves as $num => $slave) {
@@ -190,9 +189,7 @@ class TimeTableController extends Acadz_Base_BaseController
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $auth_details = $_SESSION['staff_detail'];
-        $staff_id = $auth_details['staff_id'];
-        $this->view->assign('staff_id', $staff_id);
+        $this->view->assign('staff_id', $this->identity);
          //$week_Periods = Department_Model_DbTable_TimeTable::getFacultyDayPeriods ( $staff_id);
     //$this->_helper->json($week_Periods);
     //print_r($week_Periods);	
@@ -203,7 +200,8 @@ class TimeTableController extends Acadz_Base_BaseController
         $format = $request->getParam('format', 'json');
         $periodId = $request->getParam('period_id');
         if (isset($periodId)) {
-            $result = $this->model->periodStatus($periodId);
+            $result = $this->model->periodStatus($periodId, true);
+            $result['currentStatus'] = $this->model->currentPeriodStatus ($periodId, true);
             $this->_helper->logger->debug($result);
             switch (strtolower($format)) {
                 case 'json':
@@ -231,7 +229,6 @@ class TimeTableController extends Acadz_Base_BaseController
                 case 'json':
                     $this->_helper->json($result);
                     return;
-                    break;
                 case 'select':
                     echo '<select>';
                     echo '<option value="">Select one</option>';
@@ -241,7 +238,6 @@ class TimeTableController extends Acadz_Base_BaseController
                     }
                     echo '</select>';
                     return;
-                    break;
             }
         }
         header("HTTP/1.1 400 Bad Request");

@@ -29,8 +29,8 @@ class SubjectFacultyController extends Acadz_Base_BaseController
             array('subject_faculty.subject_code', 'subject_mode_id', 'staff_id', 
             'subject_department.degree_id', 'department_id', 'department_id', 
             'subject_department.semester_id'))
-                ->join('subject_department', 
-            '(subject_department.subject_code = subject_faculty.subject_code)', 
+                ->joinLeft('subject_department', 
+            '(subject_department.subject_code = subject_faculty.subject_code AND subject_department.department_id = subject_faculty.department_id)', 
             array())
                 ->where('subject_faculty.department_id = ?', 'cse');
             $searchOn = $request->getParam('_search');

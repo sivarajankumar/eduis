@@ -8,7 +8,25 @@ class Acad_Model_DbTable_SubjectDepartment extends Acadz_Base_Model
     public static function getSemesterSubjects ($department, $degree, $semester, 
     $subjectType = NULL)
     {
-        $sql = self::getDefaultAdapter()->select()
+        $sql = 'SELECT
+    `subject`.`subject_code`
+    , `subject`.`subject_name`
+    , `subject`.`subject_type_id`
+    , `subject`.`suggested_duration`
+    , `subject_mode`.`subject_mode_id`
+    , `subject_mode`.`group_together`
+FROM
+    `subject_department`
+    INNER JOIN `subject` 
+        ON (`subject_department`.`subject_code` = `subject`.`subject_code`)
+    INNER JOIN `subject_mode` 
+        ON (`subject_mode`.`subject_type_id` = `subject`.`subject_type_id`)
+        WHERE (`subject_department`.semester_id = ?)
+    AND (`subject_department`.degree_id = ?)
+    AND (`subject_department`.department_id = ?)';
+        $data = array($semester, $degree, $department);
+        /*
+        self::getDefaultAdapter()->select()
             ->from(array('sdep' => 'subject_department'), 'subject_code')
             ->join(array('sub' => 'subject'), 
         '`sub`.subject_code = `sdep`.subject_code', 'subject_name')
@@ -19,7 +37,14 @@ class Acad_Model_DbTable_SubjectDepartment extends Acadz_Base_Model
         if (isset($subjectType)) {
             $sql->where('`sub`.subject_type_id = ?', $subjectType);
         }
-        return $sql->query()->fetchAll();
+        return $sql->query()->fetchAll(Zend_Db::FETCH_GROUP);*/
+        
+        if (isset($subjectType)) {
+                $sql .= ' AND (`sub`.subject_type_id = ?)';
+                $data[] = $subjectType;
+            }
+            $sql .= ' ORDER BY `subject_name` ASC';
+        return self::getDefaultAdapter()->fetchAll($sql, $data, Zend_Db::FETCH_GROUP);
     }
     /*
      * Faculty of a class

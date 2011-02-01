@@ -16,33 +16,55 @@ class Acad_Model_DbTable_TimeTable extends Acadz_Base_Model
 	 */
     public function insert (array $data)
     {
-        //TODO Include Block and Rooms
-        $data['block_id'] = 'ADM_B1';
-        $data['room_id'] = '1';
-        $periodsCovered = $data['period'];
-        for ($i = 1; $i < $data['period_duration']; ++ $i) {
-            $nextPeriod = $data['period'] + $i;
-            $periodsCovered .= ',' . $nextPeriod;
+        $periodStaus = self::periodStatus($data['period_id'], true);
+        if ('EMPTY' == $periodStaus['STATUS']) {
+            //TODO Include Block and Rooms
+            $data['block_id'] = 'ADM_B1';
+            $data['room_id'] = '1';
+            $periodsCovered = $data['period'];
+            for ($i = 1; $i < $data['period_duration']; ++ $i) {
+                $nextPeriod = $data['period'] + $i;
+                $periodsCovered .= ',' . $nextPeriod;
+            }
+            $data['periods_covered'] = $periodsCovered;
+            $date = new Zend_Date();
+            $date->setDate($data['valid_from'], 'dd/MM/YYYY');
+            $data['valid_from'] = $date->toString('YYYY-MM-dd');
+            $data['valid_upto'] = Acad_Model_DbTable_AcademicSession::getSessionEndDate();
+            $currentPeriodStatus = self::currentPeriodStatus($data['period_id'], 
+            TRUE);
+            self::getDefaultAdapter()->beginTransaction();
+            if ($currentPeriodStatus['STATUS'] != 'EMPTY') {
+                self::updateCurrentValidity($currentPeriodStatus, 
+                $data['group_id'], $data['valid_from'], $data['periods_covered']);
+            }
+            unset($data['period']);
+            unset($data['degree_id']);
+            unset($data['semester_id']);
+            unset($data['weekday_number']);
+            self::getLogger()->log('Final data for insert', Zend_Log::INFO);
+            self::getLogger()->log($data, Zend_Log::DEBUG);
+            //Strange but NULL values are being accepted by MySQL(at least my server even in NOT NULL condition)
+            //so im crossing checking null values
+            foreach ($data as $column => $value) {
+                if (! $value) {
+                    self::getDefaultAdapter()->rollBack();
+                    throw new Zend_Exception(
+                    $column . ' should have some value.', Zend_Log::ERR);
+                }
+                ;
+            }
+            $newID = parent::insert($data);
+            self::getDefaultAdapter()->commit();
+            return $newID;
+        } else {
+            $errVar = '';
+            foreach ($periodStaus['periodStatus'] as $key => $value) {
+                $errVar .= "[$key] ::".var_export($value, true);
+            }
+            throw new Zend_Exception('Future period entry confliction. Attempt: '.var_export($data, true).' Actual: '.$errVar, 
+            Zend_Log::WARN);
         }
-        $data['periods_covered'] = $periodsCovered;
-        $date = new Zend_Date();
-        $date->setDate($data['valid_from'], 'dd/MM/YYYY');
-        $data['valid_from'] = $date->toString('YYYY-MM-dd');
-        $data['valid_upto'] = Acad_Model_DbTable_AcademicSession::getSessionEndDate();
-        $currentPeriodStatus = self::currentPeriodStatus($data['period_id'], 
-        TRUE);
-        if ($currentPeriodStatus['STATUS'] != 'EMPTY') {
-            self::updateCurrentValidity($currentPeriodStatus, $data['group_id'], 
-            $data['valid_from'], $data['periods_covered']);
-        }
-        unset($data['period']);
-        unset($data['degree_id']);
-        unset($data['semester_id']);
-        unset($data['weekday_number']);
-        
-        self::getLogger()->log('Final data for insert', Zend_Log::INFO);
-        self::getLogger()->log($data, Zend_Log::DEBUG);
-        return parent::insert($data);
     }
     /**
      * Update validity of current Timtable entry
@@ -249,6 +271,7 @@ SET tmp.valid_upto = DATE_SUB(?, INTERVAL 1 DAY)';
   `timetable`.subject_code,
   `timetable`.subject_mode_id,
   `timetable`.group_id,
+  `timetable`.staff_id,
   `timetable`.period_duration,
   `timetable`.periods_covered,
   `timetable`.valid_from,
@@ -267,7 +290,7 @@ WHERE (`period`.department_id = ?
         $period['semester_id'], $period['weekday_number'], 
         $period['period_number']);
         $totalgroups = Acad_Model_DbTable_Groups::getClassGroups(
-        $period['department_id'], $period['degree_id'], TRUE);
+        $period['department_id'], $period['degree_id']);
         $periodStatus = self::getDefaultAdapter()->fetchAll($sql, $params);
         $finalStatus = array();
         if (! $periodStatus) {
@@ -311,9 +334,11 @@ WHERE (`period`.department_id = ?
     {
         $period = Acad_Model_DbTable_Period::getIdPeriod($periodId);
         $sql = 'SELECT
+  `timetable`.timetable_id,
   `timetable`.subject_code,
   `timetable`.subject_mode_id,
   `timetable`.group_id,
+  `timetable`.staff_id,
   `timetable`.period_duration,
   `timetable`.periods_covered,
   `timetable`.valid_from,

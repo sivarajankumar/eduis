@@ -22,7 +22,6 @@ class SubjectController extends Acadz_Base_BaseController
         $valid = $request->getParam('nd');
         if ($request->isXmlHttpRequest() and $valid) {
             $this->grid = $this->_helper->grid();
-            $this->grid->setGridparam($request);
             $this->grid->sql = $this->model->select()->from(
             $this->model->info('name'));
             $searchOn = $request->getParam('_search');

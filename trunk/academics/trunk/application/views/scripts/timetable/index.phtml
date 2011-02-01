@@ -1,4 +1,5 @@
 <h3 align="center">Time Table</h3>
+
 <?php
 if (count($this->slaveDepartment) > 1) {
     ?>
@@ -14,17 +15,20 @@ if (count($this->slaveDepartment) > 1) {
 <?php
 }
 ?>
-<div class="gridstyle">
 <table id="tblgrid" class="scroll"></table>
 <div id="gridpager" class="scroll" style="text-align: center;"></div>
-</div>
 <div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
 	style="color: red"></span></div>
+
+<div id="currentStatus" style="display: none;" title="Current status of period" >
+<p >&nbsp;</p>
+<br/><label><input id="noCurrentStatus" type="checkbox"/> Click to avoid this pop-up for now.</label>
+</div>
+<div id="periodStatus" style="display: none;" title="New status of period" >
+<p >&nbsp;</p>
+</div>
 <script type="text/javascript">
-var urlDegreeCombo = "<?php
-echo 'http://' . CORE_SERVER . $this->url(
-array('controller' => 'semesterdegree', 'action' => 'getslavedegree'), 'default', 
-true)?>";
+var urlDegreeCombo = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 'action' => 'getslavedegree'), 'default', true)?>";
 var urlSemesterCombo = "<?php
 echo 'http://' . CORE_SERVER . $this->url(
 array('controller' => 'semesterdegree', 'action' => 'getsessionsemester'), 
@@ -102,7 +106,9 @@ const PARTIAL = 'PARTIAL';
 const FULL = 'FULL';
 const EMPTY = 'EMPTY';
 var degreeSem = {};
-
+var semSubjects = {};
+var gPeriodStatus = '';
+var showPopUp = true;
 var slaveDepartment = '';
 </script>
 
@@ -220,6 +226,8 @@ $(function(){
             	        				selectOptionString += '<option value ="'+index+'">'+weekday+'</option>';
             	        			});
                                   $('#weekday_number').html(selectOptionString).attr('disabled', '');
+
+                                  
                                   //Update Subject Code
                                   $.ajax({
                                       url : urlSemesterSubjectCombo,
@@ -228,9 +236,10 @@ $(function(){
                                               degree_id : $('#degree_id').val(),
                                               semester_id: e.target.value},
                                       success: function(jSemSubjects){
+                                          semSubjects = jSemSubjects;
 											var selectOptionString = '<option value ="">Select one</option>';
-	                                    	$.each(jSemSubjects, function (index, subject) {
-	                	        				selectOptionString += '<option value ="'+subject.subject_code+'">'+subject.subject_name+' | '+subject.subject_code+'</option>';
+	                                    	$.each(jSemSubjects, function (subjectCode, subjectInfo) {
+	                	        				selectOptionString += '<option value ="'+subjectCode+'">'+subjectInfo[0].subject_name+' | '+subjectCode+'</option>';
 	                	        			});
                                           $('#subject_code').html(selectOptionString);
                                           },
@@ -318,49 +327,38 @@ $(function(){
                                               subject_mode_id : this.value,
                                               department_id : slaveDepartment },
                                       success: function(jFaculties){
-                                            	  var selectOptionString = '';
-                                                  if(jFaculties.length > 1){
+                                          var selectOptionString = '';
+                                          if (jFaculties.length) {
+                                              if(jFaculties.length > 1){
                                                   selectOptionString = '<option value ="">Select one</option>';
+                                                  $('#staff_id').attr('disabled', '');
                                                   } else{
-                                                	  $('#staff_id').attr('disabled', 'disabled');
+                                                      $('#staff_id').attr('disabled', 'disabled');
                                                   }
-                                                  $.each(jFaculties, function (index, faculty) {
-	                                    			selectOptionString += '<option value ="'+faculty.staff_id+'">'+faculty.staff_id+'</option>';
-	                                    		});
-                                                  $('#staff_id').html(selectOptionString);
+                                              $.each(jFaculties, function (index, faculty) {
+                                                  selectOptionString += '<option value ="'+faculty.staff_id+'">'+faculty.staff_id+'</option>';
+                                                  });
+                                              $('#staff_id').html(selectOptionString)
+                                              $('#staff_id + span').html('').removeClass();;
+                                              } else {
+                                            	  $('#staff_id + span').html('<a href="/subjectfaculty">Add faculty</a>').addClass('ui-state-highlight');
+                                              }
+                                                  
                                           },
                                           error: function(event) {
                                               alert(event.responseText);
                                               }
                                           });
-                                  $('#staff_id').attr('disabled', '');
                                   //
                                   var allGroups = $('#subject_mode_id option:selected').attr('title');
                                   if (eval(allGroups)) {
-                                	  $('#group_id').attr('value', 'ALL');
-                                      $('#group_id').attr('disabled', 'disabled');
+                                	  $('#group_id').attr('value', 'ALL').attr('disabled', 'disabled');
     								} else {
     	                              	  $('#group_id').attr('value', '').attr('disabled', '');
     								}
 
     								var duration = $('#subject_mode_id option:selected').attr('duration');
     								$('#period_duration').val(duration);
-                                  /*$.ajax({
-                                      url : urlGroupsTogoether,
-                                      data : {subject_mode_id : $('#subject_mode_id').val()},
-                                      success: function(data){
-                                          if(eval(data)){
-                                              $('#group_id').attr('value', 'ALL');
-                                              $('#group_id').attr('disabled', 'disabled');
-                                          } else {
-                                              $('#group_id').attr('value', '');
-                                              $('#group_id').attr('disabled', '');
-                                          }
-                                      },
-                                      error: function(event) {
-                                          alert(event.responseText);
-                                          }
-                                  });*/
                                  }
                               }]                 
                             }
@@ -508,7 +506,7 @@ $(function(){
                 */
             }, // edit options
             {
-                width : 625,
+                width : 734,
                 savekey : [ true, 113 ],
                 navkeys : [ true, 38, 40 ],
                 jqModal : false,
@@ -516,8 +514,11 @@ $(function(){
                 clearAfterAdd : false,
                 reloadAfterSubmit : false,
                 onInitializeForm : function(formId) {
-                    $('#period_id').after('<span></span>');
-
+                    $('#period_id').after('<span></span><a id="showPeriodStatus" style="display:none;" href="javascript:void(0)"> Details</a>');
+                    $('#staff_id').after('<span></span>')
+                    $('#showPeriodStatus').click(function(){
+                		popUpInfo(gPeriodStatus, 'periodStatus', true, true);
+                	});
                     var minDate = getToday();
                     var maxDate = getToday();
                 	minDate.setDate(minDate.getDate()+1);
@@ -548,6 +549,7 @@ $(function(){
                     if(200 == response.status){
                     	$('#period_id').val('');
                     	$('#period_id + span').html('').removeClass();
+        		        $('#showPeriodStatus').hide();
                         $("#group_id").attr('disabled', 'disabled').val('');
                         $("#subject_code").attr('disabled', 'disabled').val('');
                         $("#subject_mode_id").attr('disabled', 'disabled').val('');
@@ -574,7 +576,7 @@ $(function(){
 	 addPager(gridTable, gridPager);
 	 
 	 jQuery(gridTable).jqGrid('navButtonAdd', gridPager, {
-	        caption : "",
+	        caption : "Upcoming",
 	        title : "Show Upcoming Timetable",
 	        buttonicon : 'ui-icon-calendar',
 	        onClickButton : function() {
@@ -605,7 +607,24 @@ $(function(){
 	        }
 	 });
 
-				
+
+	$('#noCurrentStatus').click(function(){
+		if(showPopUp){
+			showPopUp = false;
+		} else {
+			showPopUp = true;
+		}
+	});
+
+	$('#noPeriodStatus').click(function(){
+		if(showPopUp){
+			showPopUp = false;
+		} else {
+			showPopUp = true;
+		}
+	});
+	
+
 	 
 });
 /////////////////////////////////////////////////////////////////////////////////////
@@ -614,6 +633,7 @@ var initForm = function(){
 	 //$("#editmodtblgrid select:not(#degree_id)").attr('disabled', 'disabled');
 	$("select:not(#degree_id)").attr('disabled', 'disabled');
 	 $('#period_id + span').html('').removeClass();
+	 $('#showPeriodStatus').hide();
 };
 
 
@@ -622,7 +642,7 @@ var initForm = function(){
 		var periodMaxAllowed = parseInt($("#period_id option:last").text());
 		var calculatedMaxPeriod = periodSelected + parseInt(periodDuration) - 1;
 		if( calculatedMaxPeriod > periodMaxAllowed){
-			return [false, 'Period duration cannot exceed '+(periodMaxAllowed - periodSelected)+ '. '];
+			return [false, 'Period duration cannot exceed '+eval(periodMaxAllowed - periodSelected + 1)+ '. '];
 		} else{
 			return [true];
 		}
@@ -651,16 +671,20 @@ var processPeriod = function(e){
 	        data : {period_id : this.value},
 	        dataType : 'json',
 	        success: function(periodStatus){
-	      	  $('#period_id + span').html('').removeClass();
-	            $("#group_id").attr('disabled', '').val('');
+		        $('#period_id + span').html('').removeClass();
+		        $('#showPeriodStatus').hide();
+	            $("#group_id").val('');
 	            $("#subject_code").attr('disabled', '').val('');
 	            $("#subject_mode_id").attr('disabled', '').val('');
-	            $("#staff_id").attr('disabled', '').html('<option value="">Select one</option>');
+	            $("#staff_id").html('<option value="">Select one</option>');
 
+	            gPeriodStatus = periodStatus;
 	            periodState = periodStatus.STATUS;
+        		
 	            switch(periodState){
 	            case PARTIAL:
 	                $('#period_id + span').html(' The period is partially occupied.').addClass('ui-state-highlight');
+	                $('#showPeriodStatus').show();
 	                var selectOptionString = '<option value ="">Select one</option>';
 	                $.each(periodStatus.availableGroups, function (index, group) {
 	              		selectOptionString += '<option value ="'+group+'">'+group+'</option>';
@@ -672,12 +696,9 @@ var processPeriod = function(e){
 	                $("#subject_code").attr('disabled', 'disabled');
 	                $("#subject_mode_id").attr('disabled', 'disabled');
 	                $("#staff_id").attr('disabled', 'disabled');
-	                if(periodStatus[0]){
-	                $('#period_id + span').html('<b>'+ periodStatus[0].subject_code+' : '+periodStatus[0].subject_mode_id+', w.e.f. : '+periodStatus[0].valid_from+'<b/>').addClass('ui-state-error');
-	                } else {
-	                    $('#period_id + span').html('Multi occupied.').addClass('ui-state-error');
-	                    
-	                    }
+	                $('#period_id + span').html('Already occupied.').addClass('ui-state-error');
+		            $('#showPeriodStatus').show();
+            		popUpInfo(gPeriodStatus, 'periodStatus', true, true);
 	                break;
 	             case EMPTY:
 	            	 var selectOptionString = '<option value ="">Select one</option>';
@@ -690,6 +711,14 @@ var processPeriod = function(e){
 	             default:
 	                 alert('Period status is unkonwn');
 	            }
+
+	            /*
+	            * Current period Information if not empty.
+	            */
+	            var status = periodStatus.currentStatus;
+	            popUpInfo(status, 'currentStatus', true, showPopUp);
+	        	
+	        	            
 	            },
 	            error: function(event) {
 	                alert(event.responseText);
@@ -697,29 +726,50 @@ var processPeriod = function(e){
 	            });
 	   };
 
+	var popUpInfo = function(status, popUpDiv, popUp, processPopUp){
+
+        if ((status.STATUS != EMPTY) & processPopUp) {
+        	var txt = $('#period_id :selected').text();
+        	dialogString = 'Period '+txt+' is ';
+            if(status.STATUS == PARTIAL){
+            	dialogString += 'partially occupied.';
+            } else {
+            	dialogString += 'fully occupied.';
+            }
+            dialogString += '<ol>';
+            $.each(status.periodStatus, function (index, period) {
+            	dialogString += '<li><ul><li>'+period.subject_mode_id+' of '
+            					+period.subject_code+'</li>'
+            					+'<li>'+period.group_id+' group by '+period.staff_id+'</li>';
+				
+				if(period.periods_covered.split(',').length > 1 ){
+					dialogString += '<li>Periods: '+period.periods_covered+'</li>';
+				}
+				dialogString += '</ul></li><br/>';
+            	
+          	});
+            dialogString += '</ol>';
+        	$("#"+popUpDiv+" > p ").html(dialogString);
+        	if(popUp){
+            	$("#"+popUpDiv).dialog();
+        	}
+		}
+
+	}
 
 	var processSubject = function(e){
 		  $('#staff_id').attr('disabled', 'disabled');
 		  $("#group_id").attr('disabled', 'disabled');
-		  $('#staff_id').html('<option>Select one</option>');
+		  $('#staff_id').html('<option  value ="">Select one</option>');
 	      //Update Subject Mode
-	      $.ajax({
-	          url : urlSubjectModeCombo,
-	          dataType : 'json',
-	          data : { subject_code: this.value,
-	  	               period_status: periodState },
-	          success: function(jModes){
-						var selectOptionString = '<option value ="">Select one</option>';
-	                	$.each(jModes, function (index, mode) {
-	        				selectOptionString += '<option title="'+mode.group_together+'" duration="'+mode.suggested_duration+'" value ="'+mode.subject_mode_id+'">'+mode.subject_mode_id+'</option>';
-	        			});
-	            $('#subject_mode_id').html(selectOptionString);
-	              },
-	              error: function(event) {
-	                  alert(event.responseText);
-	                  }
-	              });
-	     };
+	      var selectOptionString = '<option value ="">Select one</option>';
+	      
+	      $.each(semSubjects[e.target.value], function (index, subject) {
+		      selectOptionString += '<option title="'+subject.group_together+'" duration="'+subject.suggested_duration+'" value ="'+subject.subject_mode_id+'">'+subject.subject_mode_id+'</option>';
+		      });
+	      
+	      $('#subject_mode_id').html(selectOptionString);
+      };
 	   
 ///////////////////Experiment/////////////////////
 var mkSelectGroup = function(jGroups){
