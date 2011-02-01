@@ -47,7 +47,13 @@ echo $this->jQuery ()->uiEnable ();
 	<span class="ui-state-default ui-corner-bl"><a id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'logout' ), 'default' )?>">
 		Logout<span class="ui-icon ui-icon ui-icon-closethick ui-state-default ui-corner-br" style="float: right; padding-left: 1px; margin-left:-1px;">
 		</span></a></span>
-	<?php }?>
+	<?php }else {?>
+	<span class="ui-state-default ui-corner-bl"><a id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'index'), 'default' )?>">
+		Login</a></span>
+<?php }?>
+<?php } else {?>
+	<span class="ui-state-default ui-corner-bl"><a id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'index'), 'default' )?>">
+		Login</a></span>
 <?php }?>
 </span>
 

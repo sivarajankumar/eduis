@@ -1,7 +1,7 @@
-<?php $this->headTitle()->append ("DEfault System");
+<?php $this->headTitle()->append ("Authentication");
 if ($this->form) {
-	
 $this->form->setAction($this->url());
-
 echo $this->form;
+} else {
+    echo("<br/>  Already logged in.<br/>");
 }

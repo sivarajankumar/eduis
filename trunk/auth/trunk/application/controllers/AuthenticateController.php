@@ -4,11 +4,13 @@ class AuthenticateController extends Zend_Controller_Action {
 	const AUTH_SID = 'ACESID';
 	
 	public function indexAction() {
-		$this->_helper->layout ()->disableLayout ();
+		//$this->_helper->layout ()->disableLayout ();
 		$authData = Zend_Auth::getInstance ()->getStorage ()->read ();
-		if ($authData ['identity'] != 'anon') {
-			$this->_helper->redirector ( 'index', 'index' );
+		if (is_array($authData) and $authData['identity'] != 'anon' and $authData) {
+		    //do nothing...
+		    //$this->_helper->redirector ( 'index', 'index' );
 		} else {
+		    
 			$loginForm = new Auth_Form_Auth_Login ( $_POST );
 			$authAdapter = null;
 			
@@ -24,11 +26,10 @@ class AuthenticateController extends Zend_Controller_Action {
 						$authAdapter->setCredential ( $loginForm->getValue ( 'password' ) );
 						break;
 					case 'ldap' :
-					/*TODO Implement LDAP auth*/
+					/*TODO Implement LDAP auth */
 					break;
 					default :
 						throw new Zend_Exception ( 'Unknown authentication service -> ' . $authService, Zend_Log::ALERT );
-						break;
 				}
 				
 				$result = Zend_Auth::getInstance ()->authenticate ( $authAdapter );
@@ -39,15 +40,17 @@ class AuthenticateController extends Zend_Controller_Action {
 						break;
 					
 					case Zend_Auth_Result::SUCCESS :
-						//$this->_helper->FlashMessenger ( $result->getMessages() );
-						//$result->getMessages();
 						Zend_Session::regenerateId ();
 						
 						preg_match ( '/[^.]+\.[^.]+$/', $_SERVER ['SERVER_NAME'], $domain );
-						setcookie ( self::AUTH_SID, Zend_Session::getId (), time () + 1200, self::AUTH_PATH, ".$domain[0]" );
+						setcookie ( self::AUTH_SID, Zend_Session::getId (), time () + 1200, self::AUTH_PATH, ".$domain[0]", null, true  );
+						$last = time();
+						setcookie ( 'last', $last,  null,  null, ".$domain[0]", null, true );
+						$lastLogin = new Zend_Session_Namespace('last');
+						$lastLogin->lastLogin = $last;
+						$lastLogin->setExpirationHops(1,null,1);
 						$this->_helper->redirector ( 'index', 'index' );
 						return;
-						break;
 					
 					default :
 						/** do stuff for other failure **/
@@ -66,20 +69,34 @@ class AuthenticateController extends Zend_Controller_Action {
 	}*/
 	
 	public function logoutAction() {
-		if (isset ( $_COOKIE [self::AUTH_SID] )) {
-			preg_match ( '/[^.]+\.[^.]+$/', $_SERVER ['SERVER_NAME'], $domain );
-			setcookie ( self::AUTH_SID, '', time () - 360000, self::AUTH_PATH, ".$domain[0]" );
-		}
 		Zend_Auth::getInstance ()->clearIdentity ();
+	    preg_match ( '/[^.]+\.[^.]+$/', $_SERVER ['SERVER_NAME'], $domain );
+		if (isset ( $_COOKIE [self::AUTH_SID] )) {
+			setcookie ( self::AUTH_SID, false, 315554400, self::AUTH_PATH, ".$domain[0]", null, true  );
+		}
+	    if (isset ( $_COOKIE ['last'] )) {
+			setcookie ( 'last', false, time()-36000, null, ".$domain[0]");
+		}
+		
 		Zend_Session::destroy ();
 	}
 	
+	/**
+	 * 
+	 * Check the user authentication.
+	 * @throws Zend_Exception
+	 */
 	public function checkAction() {
 		$this->_helper->viewRenderer->setNoRender ();
 		$this->_helper->layout ()->disableLayout ();
 		
 		$authData = Zend_Auth::getInstance ()->getStorage ()->read ();
-		$moduleName = null;
+						
+		/*
+		 * * The below code was meant to enhance security check.
+		 * @TODO Security Check
+		 * 
+		 * $moduleName = 'academic';
 		if (isset ( $_COOKIE ['moduleName'] )) {
 			$moduleName = $_COOKIE ['moduleName'];
 			if (! array_key_exists ( $moduleName, $authData ['moduleRole'] )) {
@@ -90,10 +107,12 @@ class AuthenticateController extends Zend_Controller_Action {
 			throw new Zend_Exception ( 'Unauthorized attempt from ' . $_SERVER ['REMOTE_ADDR'], Zend_Log::ALERT );
 		}
 		
-		$remoteAcl ['identity'] = $authData ['identity'];
-		$remoteAcl ['roles'] = $authData ['moduleRole'] [$moduleName];
-		
-		$this->_helper->json ( $remoteAcl );
+		if (isset($authData ['moduleWise'] [$moduleName])) {
+		    $remoteAcl ['roles'] = array_merge($remoteAcl['roles'], $authData ['moduleWise'][$moduleName]);
+		}*/
+		unset($authData ['acl']);
+		//$this->_helper->logger($authData);
+		$this->_helper->json ( $authData );
 	}
 
 }
