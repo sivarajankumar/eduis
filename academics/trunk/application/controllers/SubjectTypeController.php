@@ -17,13 +17,12 @@ class SubjectTypeController extends Acadz_Base_BaseController
      */
     public function fillgridAction ()
     {
-        $this->jqgrid = new Aceis_Base_Helper_Jqgrid();
         self::createModel();
         $request = $this->getRequest();
         $valid = $request->getParam('nd');
         if ($request->isXmlHttpRequest() and $valid) {
-            $this->jqgrid->setGridparam($request);
-            $this->jqgrid->sql = $this->model->select()->from(
+            $this->grid = $this->_helper->grid();
+            $this->grid->sql = $this->model->select()->from(
             $this->model->info('name'));
             /*
 			$searchOn = $request->getParam ( '_search' );
@@ -32,11 +31,11 @@ class SubjectTypeController extends Acadz_Base_BaseController
 				foreach ( $sarr as $key => $value ) {
 					switch ($key) {
 						case 'subject_mode_name' :
-							$this->jqgrid->sql->where ( "$key LIKE ?", $value . '%' );
+							$this->grid->sql->where ( "$key LIKE ?", $value . '%' );
 							break;
 						case 'subject_mode_id' :
 						case 'subject_type_id' :
-							$this->jqgrid->sql->where ( "$key = ?", $value );
+							$this->grid->sql->where ( "$key = ?", $value );
 							break;
 					}
 				}

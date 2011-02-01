@@ -27,7 +27,7 @@ class Acad_Model_DbTable_AcademicSession extends Acadz_Base_Model
                  $response->getMessage();
                 throw new Zend_Exception($remoteErr, Zend_Log::ERR);
             } else {
-                $jsonContent = $response->getBody($response);
+                $jsonContent = $response->getBody();
                 $acadSession = Zend_Json_Decoder::decode($jsonContent);
                 $cache->save($acadSession, 'academicSession');
             }

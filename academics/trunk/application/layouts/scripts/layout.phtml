@@ -5,16 +5,17 @@ echo $this->doctype()?>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="Content-Language" content="en-GB" />
 <?php
-$baseTheme = 'pepper-grinder';
+$baseTheme = 'cupertino';
+$module = 'academics';
 // Various Servers and Addresses
 $baseUrl = $this->baseUrl();
 // Content Delievery Server i.e. static Files, e.g. CSS, JS, Themes and related images etc
-$cdnServer = 'http://site.cdn.aceambala.com';
+$cdnServer = 'http://'.CDN_SERVER;
 // Images of users, events etc
 $imageServer = $baseUrl;
 // Add most common CSS files
 $this->headLink()->prependStylesheet(
-$cdnServer . '/css/layouts/library/default.css');
+$cdnServer . '/css/layouts/'.$module.'/default.css');
 //Jquery UI Theme
 $this->jQuery()->addStylesheet(
 $cdnServer . '/css/themes/jqueryui/' . $baseTheme . '/jquery-ui-1.8.6.custom.css');

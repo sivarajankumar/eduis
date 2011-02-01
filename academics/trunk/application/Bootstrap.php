@@ -36,7 +36,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         //Set default document type.
         $view->doctype('XHTML1_STRICT');
         // Set the initial title and separator:
-        $view->headTitle('ACEIS AUTH')->setSeparator(' :: ');
+        $view->headTitle('Academics')->setSeparator(' :: ');
     }
     protected function _initCache ()
     {

@@ -22,7 +22,7 @@ class PeriodController extends Acadz_Base_BaseController
         if ($request->isXmlHttpRequest() and $valid) {
             self::createModel();
             $this->grid = $this->_helper->grid();
-            $this->jqgrid->sql = $this->model->select()->from(
+            $this->grid->sql = $this->model->select()->from(
             $this->model->info('name'));
             $searchOn = $request->getParam('_search');
             if ($searchOn != 'false') {
@@ -31,11 +31,11 @@ class PeriodController extends Acadz_Base_BaseController
                     switch ($key) {
                         case 'department_id':
                         case 'degree_id':
-                            $this->jqgrid->sql->where("$key LIKE ?", 
+                            $this->grid->sql->where("$key LIKE ?", 
                             $value . '%');
                             break;
                         case 'semester_id':
-                            $this->jqgrid->sql->where("$key = ?", $value);
+                            $this->grid->sql->where("$key = ?", $value);
                             break;
                     }
                 }

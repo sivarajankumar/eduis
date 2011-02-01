@@ -10,8 +10,7 @@ class SubjectDepartmentController extends Acadz_Base_BaseController
         $this->_helper->layout()->enableLayout();
         $this->view->assign('controller', $this->_request->getControllerName());
         $this->view->assign('module', $this->_request->getModuleName());
-        $this->view->assign('department_id', 
-        $_SESSION['staff_detail']['department_id']);
+        $this->view->assign('department_id', 'cse');
     }
     /*
      * Back end data provider to datagrid.
@@ -19,14 +18,13 @@ class SubjectDepartmentController extends Acadz_Base_BaseController
      */
     public function fillgridAction ()
     {
-        $this->jqgrid = new Aceis_Base_Helper_Jqgrid();
         self::createModel();
         $request = $this->getRequest();
         $valid = $request->getParam('nd');
         $department_id = $request->getParam('department_id');
         if ($request->isXmlHttpRequest() and $valid) {
-            $this->jqgrid->setGridparam($request);
-            $this->jqgrid->sql = $this->model->select()
+            $this->grid = $this->_helper->grid();
+            $this->grid->sql = $this->model->select()
                 ->from($this->model->info('name'))
                 ->where('department_id = ?', $department_id);
             $searchOn = $request->getParam('_search');
@@ -36,12 +34,12 @@ class SubjectDepartmentController extends Acadz_Base_BaseController
                     switch ($key) {
                         case 'department_id':
                         case 'degree_id':
-                            $this->jqgrid->sql->where("$key LIKE ?", 
+                            $this->grid->sql->where("$key LIKE ?", 
                             $value . '%');
                             break;
                         case 'subject_code':
                         case 'semester_id':
-                            $this->jqgrid->sql->where("$key = ?", $value);
+                            $this->grid->sql->where("$key = ?", $value);
                             break;
                     }
                 }
@@ -67,7 +65,7 @@ class SubjectDepartmentController extends Acadz_Base_BaseController
             $department_id, $degree_id, $semester_id, $subject_type_id);
             switch (strtolower($format)) {
                 case 'json':
-                    $this->_helper->json($result);
+                    echo $this->_helper->json($result, false);
                     return;
                 case 'select':
                     echo '<select>';

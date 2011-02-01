@@ -13,8 +13,7 @@ class Acad_Model_DbTable_SemesterDegree extends Acadz_Base_Model
      * @throws Zend_Exception
      * @return array Information about current session.
      */
-    protected static function fetchSlaveInfo ($masterDepartment, 
-    $currentSession = NULL, $degree = FALSE, $semester = FALSE)
+    protected static function _fetchSlaveInfo ($masterDepartment)
     {
         $cache = self::getCache('remote');
         $slaveDept = $cache->load('slaveDept');
@@ -23,8 +22,8 @@ class Acad_Model_DbTable_SemesterDegree extends Acadz_Base_Model
             $groupsInfoURL = 'http://' . CORE_SERVER .
              '/semesterdegree/getslaveinfo' .
              "?masterDepartment=$masterDepartment" .
-             "&currentSession=$currentSession" . "&degree=$degree" .
-             "&semseter=$semester";
+             '&currentSession=true' . '&degree=true' .
+             '&semseter=true';
             $client = new Zend_Http_Client($groupsInfoURL);
             $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
             $response = $client->request();
@@ -34,8 +33,7 @@ class Acad_Model_DbTable_SemesterDegree extends Acadz_Base_Model
                 throw new Zend_Exception($remoteErr, Zend_Log::ERR);
             } else {
                 $jsonContent = $response->getBody();
-                $slaveDept[$masterDepartment] = Zend_Json_Decoder::decode(
-                $jsonContent);
+                $slaveDept[$masterDepartment] = Zend_Json_Decoder::decode($jsonContent);
                 $cache->save($slaveDept, 'slaveDept');
             }
         } else {
@@ -47,10 +45,23 @@ class Acad_Model_DbTable_SemesterDegree extends Acadz_Base_Model
     /**
      * All slave Department, Degree, Semesters
      */
-    public static function slaveInfo ($masterDepartment, $currentSession = NULL, 
-    $degree = FALSE, $semester = FALSE)
+    public static function slaveInfo ($masterDepartment)
     {
-        return self::fetchSlaveInfo($masterDepartment, $currentSession = NULL, 
-        $degree = FALSE, $semester = FALSE);
+        return self::_fetchSlaveInfo($masterDepartment);
+    }
+    
+
+    /*
+	 * Get Slave departments of given department.
+	 */
+    public static function slaveDepartment ($masterDepartment)
+    {
+        $deptInfo = self::_fetchSlaveInfo($masterDepartment);
+        $dept = array();
+        foreach ($deptInfo as $key => $deptRow) {
+            $dept[] = $deptRow['department_id'];
+        }
+        
+        return array_unique($dept);
     }
 }

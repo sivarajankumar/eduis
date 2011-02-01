@@ -30,11 +30,11 @@ class SubjectModeController extends Acadz_Base_BaseController
 				foreach ( $sarr as $key => $value ) {
 					switch ($key) {
 						case 'subject_mode_name' :
-							$this->jqgrid->sql->where ( "$key LIKE ?", $value . '%' );
+							$this->grid->sql->where ( "$key LIKE ?", $value . '%' );
 							break;
 						case 'subject_mode_id' :
 						case 'subject_type_id' :
-							$this->jqgrid->sql->where ( "$key = ?", $value );
+							$this->grid->sql->where ( "$key = ?", $value );
 							break;
 					}
 				}
