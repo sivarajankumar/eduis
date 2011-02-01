@@ -1,5 +1,64 @@
 <?php
 $InfoTwoWords = 'Home';
-$InfoOneLine = 'Home Page of ACEIS\'s AUTH Module';
+$InfoOneLine = 'Home Page of EduIS';
 $this->headTitle()->prepend ($InfoTwoWords);
 $this->footerList = array('New Page', 'New Links'); ?>
+
+<p>The <strong>Education Information System</strong> is under 
+development and evolution...</p>
+<ul>
+        <li>User specific navigation is not available right now.</li>
+        <li>You need to login first from <a href="/authenticate"><?php echo 'http://'.AUTH_SERVER ?>/authenticate</a></li>
+        <li>Know latest about project <a href="http://code.google.com/p/eduis">here</a></li>
+        <li>Contribute your suggestions, feature request, issues etc. <a href="http://code.google.com/p/eduis/issues">here</a></li>
+        <li>Login to mail account at <a href="mail.aceambala.com">mail.aceambala.com</a> for notices and latest updates.</li>
+      </ul>
+<div>
+  <table width="100%" border="1" cellpadding="1" cellspacing="1" style="border-bottom-style: solid; border-right-style: solid; border-top-style: solid; border-left-width: 1px; border-bottom-width: 1px; border-right-width: 1px; border-top-width: 1px; border-left-style: solid;" summary="All possible links are provided module wise.">
+    <caption style="background-color: #FFC;">
+      Navigation
+    </caption>
+    
+    <tr>
+      <th style="background-color: #F0FBFA;" scope="col">Academic Module</th>
+      <th style="background-color: #CE6700;" scope="col">Library Module</th>
+    </tr>
+    <tr>
+      <td>Faculty :<ul>
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/studentattendance' ?>">Student Attendance</a></li>
+      </ul></td>
+       <td>Restorer :<ul>
+        <li><a href="<?php echo 'http://'.LIBRARY_SERVER.'/issue' ?>">Issue Book</a></li>
+        <li><a href="<?php echo 'http://'.LIBRARY_SERVER.'/return' ?>">Return Book</a></li>
+      </ul></td>
+      
+    </tr>
+    <tr>
+      <td>Timetable Incharge :<ul>
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/timetable' ?>">Timetable</a></li>
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/subject' ?>">Subject</a></li>
+        <li><a href="<?php  echo 'http://'.ACADEMIC_SERVER.'/subjectdepartment' ?>">Subject Department</a></li>
+        <li><a href="<?php  echo 'http://'.ACADEMIC_SERVER.'/subjectfaculty' ?>">Subject Faculty</a></li>
+      </ul></td>
+       <td>Lib Admin :<ul>
+        <li><a href="<?php ?>"></a></li>
+        <li><a href="<?php ?>"></a></li>
+        <li><a href="<?php ?>"></a></li>
+      </ul></td>
+    </tr>
+     <tr>
+      <td>HOD :<ul>
+        <li><a href="<?php ?>"></a></li>
+        <li><a href="<?php ?>"></a></li>
+        <li><a href="<?php ?>"></a></li>
+        <li><a href="<?php ?>"></a></li>
+      </ul></td>
+    </tr><tr style="background-color: #FFC;">
+      <td colspan="2" >Common<ul>
+        <li><a href="<?php echo 'http://'.LIBRARY_SERVER.'/search' ?>">Book Search</a></li>
+      </ul></td>
+    </tr>
+  </table>
+</div>
+<div>
+</div>

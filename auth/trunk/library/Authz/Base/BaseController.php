@@ -370,7 +370,12 @@ class Authz_Base_BaseController extends Zend_Controller_Action {
 		return $colSetup;
 	}
 */
-	
+
+	/**
+	 * 
+	 * Get logger of application
+	 * @return Zend_Log
+	 */
 	public static function getLogger() {
 		if (Zend_Registry::isRegistered ( 'logger' )) {
 			$logger = Zend_Registry::get ( 'logger' );
@@ -380,9 +385,20 @@ class Authz_Base_BaseController extends Zend_Controller_Action {
 		}
 			
 	}
-	
-	public function getCache($cacheName = 'database') {
-		$cache = $this->getFrontController ()->getParam ( 'bootstrap' )->getResource ( 'cachemanager' )->getCache ( $cacheName );
-		return $cache;
+	/**
+	 * 
+	 * Get default cache for application
+	 * @param string $cacheName
+	 * @return Zend_Cache_Frontend_File
+	 */
+	public static function getCache($cacheName = 'database') {
+		/**
+		 * 
+		 * Enter description here ...
+		 * @var Zend_Cache_Manager
+		 */
+		$cacheManager = Zend_Registry::get('cacheManager');
+		
+		return $cacheManager->getCache ( $cacheName );;
 	}
 }
