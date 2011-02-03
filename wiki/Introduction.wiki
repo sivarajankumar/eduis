@@ -1,6 +1,5 @@
 #summary Introduction to the project.
 #labels Featured
-#sidebar Introduction
 = Introduction =
 
 It is an Zend-Framework based Education Information System i.e. EduIS which is meant to cover all features and functions required by an institution to maintain smooth hold and communication.
