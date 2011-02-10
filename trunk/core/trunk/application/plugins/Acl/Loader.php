@@ -1,6 +1,6 @@
 <?php
 /**
- * @category   Auth
+ * @category   Core
  * @package    Plugin_Acl
  * @subpackage Loader
  * @copyright  Copyright (c) 2009-2010 HeAvi
@@ -15,7 +15,7 @@
  * Finally, it pick user ACL from user\'s session and check access rights. If allowed, it return
  * otherwise redirects to ErrorController -> noaccessAction with exceptions.
  */
-class Lib_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
+class Core_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
 {
     const GUEST = 'guest';
     /**
@@ -37,7 +37,7 @@ class Lib_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
         $auth = Zend_Auth::getInstance();
         if (! Zend_Session::isDestroyed()) {
             if (! $auth->hasIdentity()) {
-                $guestAdapter = new Libz_Resource_Acl_Guest();
+                $guestAdapter = new Corez_Resource_Acl_Guest();
                 $auth->authenticate($guestAdapter);
             }
             self::initUserAcl();
