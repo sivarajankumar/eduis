@@ -51,7 +51,8 @@ $(function(){
     var urlSemesterSubjectCombo = "<?php echo $this->url(array('controller' => 'subjectdepartment', 'action' => 'getsemsubject'), 'default', true)?>";
     var urlSubjectModeCombo = "<?php echo $this->url(array('controller' => 'subjectmode', 'action' => 'getsubjectmode'), 'default', true)?>";
     var urlDeptCombo = "<?php echo 'http://'.CORE_SERVER.$this->url(array('controller' => 'degreedepartment', 'action' => 'getdepartment'), 'default', true)?>";
-	
+
+    var semSubjects = {};
     var department_id = '<?php echo $this->department_id?>';
     var subject_mode='';
     
@@ -194,24 +195,25 @@ $(function(){
                                   type: 'change',
                                   fn: function(e) {
 
-								  $.ajax({
-                                      url : urlSemesterSubjectCombo,
-                                      dataType : 'json',
-                                      data : {department_id: department_id,
-                                              degree_id : $('#degree_id').val(),
-                                              semester_id: e.target.value},
-                                      success: function(jSemSubjects){
-											var selectOptionString = '<option value ="">Select one</option>';
-	                                    	$.each(jSemSubjects, function (index, subject) {
-	                	        				selectOptionString += '<option value ="'+subject.subject_code+'">'+subject.subject_code+' | '+subject.subject_name+'</option>';
-	                	        			});
-                                          $('#subject_code').html(selectOptionString);
-                                          
-                                          },
-                                          error: function(event) {
-                                              alert(event.responseText);
-                                              }
-                                          });
+                                      //Update Subject Code
+                                      $.ajax({
+                                          url : urlSemesterSubjectCombo,
+                                          dataType : 'json',
+                                          data : {department_id: department_id,
+                                                  degree_id : $('#degree_id').val(),
+                                                  semester_id: e.target.value},
+                                          success: function(jSemSubjects){
+                                              semSubjects = jSemSubjects;
+    											var selectOptionString = '<option value ="">Select one</option>';
+    	                                    	$.each(jSemSubjects, function (subjectCode, subjectInfo) {
+    	                	        				selectOptionString += '<option value ="'+subjectCode+'">'+subjectInfo[0].subject_name+' | '+subjectCode+'</option>';
+    	                	        			});
+                                              $('#subject_code').html(selectOptionString);
+                                              },
+                                              error: function(event) {
+                                                  alert(event.responseText);
+                                                  }
+                                              });
                                  	}
                               }]    
 					  
