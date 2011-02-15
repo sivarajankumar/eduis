@@ -19,15 +19,15 @@ class TimeTableController extends Acadz_Base_BaseController
         //$this->dbCols [] = 'room_id';
         //$this->dbCols [] = 'valid_upto';
         $this->dbCols[] = 'valid_from';
-        /*$authInfo = Zend_Auth::getInstance()->getStorage()->read();
-        $this->department_id = $authInfo['department_id'];*/
-        $this->department_id = 'APPSC';
-        //$this->identity = $authInfo['identity'];
+        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+        $this->department_id = $authInfo['department_id'];
+        $this->identity = $authInfo['identity'];
         //$this->objtimetable = new Department_Model_DbTable_TimeTable ( );
         //$this->_autoModel = TRUE;
         //$this->_autoDbCols = TRUE;
         parent::init();
     }
+    
     /*
      * @about Interface.
      */
