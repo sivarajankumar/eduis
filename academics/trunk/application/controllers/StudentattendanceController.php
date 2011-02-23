@@ -3,60 +3,62 @@ class StudentattendanceController extends Acadz_Base_BaseController
 {
     public function indexAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(FALSE);
+        $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $this->view->assign('controller', $this->_request->getControllerName());
         $this->view->assign('module', $this->_request->getModuleName());
         $session_startdate = Acad_Model_DbTable_AcademicSession::getSessionStartDate();
         $this->view->assign('session_startdate', $session_startdate);
         if (Zend_Auth::getInstance()->hasIdentity()) {
-            $arr = Zend_Auth::getInstance()->getIdentity();
-            $staff_id = $arr[1];
-        $this->view->assign('staff_id', 'CSE_AJKU');
+            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+            $this->department_id = $authInfo['department_id'];
+            $this->identity = $authInfo['identity'];
+            $staff_id = $authInfo['identity'];
         }
+        
+        $this->view->assign('staff_id', $staff_id);
     }
     /**
-     * @return json responce
+     * @return json response
      */
     public function fillperiodgridAction ()
     {
         $request = $this->getRequest();
         //Getting Request Parameters
-        $staff_id = $request->getParam('staff_id');
         $weekday_number = $request->getParam('weekday_number');
         $department_id = $request->getParam('department_id');
         $period_dateobj = new Zend_Date($request->getParam('period_date'), 
-        'dd/mm/yyyy');
+        'dd-MM-YYYY');
         $period_date = $period_dateobj->toString('YYYY-MM-dd');
-        if (isset($staff_id)) {
+        if (Zend_Auth::getInstance()->hasIdentity()) {
+            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+            $staff_id = $authInfo['identity'];
+        }
+        
+        if (isset($staff_id) and isset($period_date)) {
             $dayPeriods = Acad_Model_DbTable_TimeTable::getFacultyDayPeriods(
             $staff_id, $period_date, $weekday_number);
-            if ((isset($period_date))) {
-                $adjustedPeriods = Acad_Model_DbTable_FacultyAdjustment::getAdjusted(
-                $staff_id, $period_date);
-                foreach ($dayPeriods as $key => $value) {
-                    $dayPeriods[$key]['adjusted'] = 0;
-                    $dayPeriods[$key]['nonattendance'] = 0;
-                    foreach ($adjustedPeriods as $akey => $avalue) {
-                        if ($value['timetable_id'] ==
-                         $avalue['source_timetable_id']) {
-                            $dayPeriods[$key]['adjusted'] = 1;
-                        }
-                    }
-                    $noattendance = Acad_Model_DbTable_NoAttendanceDay::isnoattendanceday(
-                    $period_date, $dayPeriods[$key]['department_id'], 
-                    $dayPeriods[$key]['degree_id'], 
-                    $dayPeriods[$key]['semester_id']);
-                    if ($noattendance) {
-                        $dayPeriods[$key]['nonattendance'] = 1;
+            $adjustedPeriods = Acad_Model_DbTable_FacultyAdjustment::getAdjusted(
+            $staff_id, $period_date);
+            foreach ($dayPeriods as $key => $value) {
+                $dayPeriods[$key]['adjusted'] = 0;
+                $dayPeriods[$key]['nonattendance'] = 0;
+                foreach ($adjustedPeriods as $akey => $avalue) {
+                    if ($value['timetable_id'] == $avalue['source_timetable_id']) {
+                        $dayPeriods[$key]['adjusted'] = 1;
                     }
                 }
+                $noattendance = Acad_Model_DbTable_NoAttendanceDay::isnoattendanceday(
+                $period_date, $dayPeriods[$key]['department_id'], 
+                $dayPeriods[$key]['degree_id'], $dayPeriods[$key]['semester_id']);
+                if ($noattendance) {
+                    $dayPeriods[$key]['nonattendance'] = 1;
+                }
             }
-            //echo json_encode($dayPeriods);
-            echo $this->_helper->json($dayPeriods);
+            echo json_encode($dayPeriods);
+            //echo $this->_helper->json($dayPeriods);
         } else {
-            $this->getResponse()->setHttpResponseCode(400);
-            echo "Bad Parameters..";
+            throw new Zend_Exception('Unidentified access', Zend_Log::ALERT);
         }
     }
     public function markabsentAction ()

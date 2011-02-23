@@ -3,10 +3,9 @@
  * PeriodattendanceController
  * 
  * @category   EduIS
- * @package    Core
+ * @package    Academic
  * @subpackage Batch
  * @since	   0.1
- * @author	   Hemant
  * @version    0.1
  */
 class PeriodattendanceController extends Acadz_Base_BaseController
@@ -22,7 +21,7 @@ class PeriodattendanceController extends Acadz_Base_BaseController
         $this->objStudentAttendance = new Acad_Model_DbTable_StudentAttendance();
         parent::init();
     }
-    public function noaclisperiodtakenAction ()
+    public function getisperiodtakenAction ()
     {
         $request = $this->getRequest();
         $this->_helper->viewRenderer->setNoRender();
@@ -101,6 +100,42 @@ class PeriodattendanceController extends Acadz_Base_BaseController
             $this->getResponse()->setHttpResponseCode(400);
             echo ("Isufficient parameters!!");
         }
+    }
+    public function getperiodstudentsAction ()
+    {
+        $request = $this->getRequest(); /*
+		$department_id = $request->getParam ( 'department_id' );
+		$degree_id = $request->getParam ( 'degree_id' );
+		$semester_id = $request->getParam ( 'semester_id' );*/
+        $staff_id = $request->getParam('staff_id');
+        $periodId = $request->getParam('period_id');
+        $period_dateobj = new Zend_Date($request->getParam('period_date'), 
+        'dd-MM-YYYY');
+        $periodDate = $period_dateobj->toString('YYYY-MM-dd');
+        $period = new Acad_Model_Period($periodId);
+        $groups = $period->getGroups($periodDate, $staff_id);
+        $studentList = array();
+        $resultSet = array();
+        $resultSet['totalgroups'] = count($groups);
+        $resultSet['group_id'] = $groups;
+        $totalrows = 0;
+        $totalstudents = 0;
+        foreach ($groups as $key => $group) {
+            $group_id = $group['group_id'];
+            $group_number = substr($group_id, strlen($group_id) - 1);
+            $studentList = Acad_Model_Class::fetchSemesterStudents(
+            $period->getDepartment(), $period->getDegree(), 
+            $period->getSemester(), $group_id);
+            $totalstudents = $totalstudents + count($studentList);
+            if ($totalrows < count($studentList)) {
+                $totalrows = count($studentList);
+            }
+            $resultSet[$group_id] = array("group_number" => $group_number, 
+            "students" => $studentList);
+        }
+        $resultSet['totalrows'] = $totalrows;
+        $resultSet['totalstudents'] = $totalstudents;
+        echo json_encode($resultSet);
     }
 }
 
