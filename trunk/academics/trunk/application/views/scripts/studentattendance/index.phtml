@@ -68,18 +68,18 @@ Recent marked periods &nbsp; <span
 <div id="statusdiv" style="position: absolute; left: 30%">
 <table>
 	<tr>
-		<td><?=$this->formLabel('totstalstudents', 'Total Students:')?></td>
+		<td><?php echo $this->formLabel('totstalstudents', 'Total Students:')?></td>
 		<td><input type="text" id="totalstudents"
 			class="ui-widget-content  ui-corner-all" size="4" readonly="readonly"
 			value="0" style="text-align: center"></input></td>
-		<td><?=$this->formLabel('totalabsent', 'Total Absent:')?></td>
+		<td><?php echo $this->formLabel('totalabsent', 'Total Absent:')?></td>
 		<td><input type="text" id="totalabsent"
 			class="ui-widget-content  ui-corner-all" size="4" readonly="readonly"
 			value="0" style="text-align: center"></input></td>
-		<td><?=$this->formLabel('iagree', 'I Agree')?></td>
-		<td><?=$this->formCheckbox('iagree', 'I Agree', array('tabindex' => '150'))?>
+		<td><?php echo $this->formLabel('iagree', 'I Agree')?></td>
+		<td><?php echo $this->formCheckbox('iagree', 'I Agree', array('tabindex' => '150', 'z-index' => '99'))?>
 		</td>
-		<td width=200><?=$this->formButton('btnmark', 'Submit Attendance')?></td>
+		<td width=200><?php echo $this->formButton('btnmark', 'Submit Attendance', array('tabindex' => '151', 'z-index' => '99'))?></td>
 	</tr>
 </table>
 </div>
@@ -111,10 +111,10 @@ $(function(){
 	var holidays = null;
 	var baseurl="<?php echo $this->url(array('controller' => $this->controller, 'action' => 'fillperiodgrid'), 'default', true)?>";
 	var adjustmentUrl = "<?php echo $this->url( array('controller' => 'facultyadjustment', 'action' => 'gettodayadjustments'), 'default', true)?>";
-	var periodStudentsUrl = "<?php echo $this->url(array('controller' => 'studentdepartment', 'action' => 'getperiodstudents'), 'default', true)?>";
+	var periodStudentsUrl = "<?php echo $this->url(array('controller' => 'periodattendance', 'action' => 'getperiodstudents'), 'default', true)?>";
 	var periodAttendanceUrl="<?php echo $this->url(array('controller' => 'periodattendance', 'action' => 'markperiodattendance'), 'default', true)?>";
 	var studentAttendanceUrl="<?php echo $this->url(array('controller' => $this->controller, 'action' => 'markabsent'), 'default', true)?>";
-	var isPeriodTakenUrl="<?php echo $this->url(array('controller' => 'periodattendance', 'action' => 'noaclisperiodtaken'), 'default', true)?>";
+	var isPeriodTakenUrl="<?php echo $this->url(array('controller' => 'periodattendance', 'action' => 'getisperiodtaken'), 'default', true)?>";
 	var adjPeriodStudentUrl="<?php echo $this->url(array('controller' => $this->controller, 'action' => 'filladjustmentgroup'), 'default', true)?>";
 	var holidayUrl = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'holiday', 'action' => 'getholidays'), 'default', true)?>";
 	
@@ -210,7 +210,7 @@ $("#datepicker1").datepicker(
 					url: baseurl ,
 					dataType : "json",
 					async :  false,
-					data: {staff_id : staff_id ,weekday_number :weekday_number , period_date : dateText },
+					data: {weekday_number :weekday_number , period_date : dateText },
 					success: function(response) {
 							for(var cnt = 0;cnt <  response.length ;cnt++){
 							var data = { period_number : response[cnt]['period_number'], 
@@ -359,10 +359,13 @@ function customDate(a) {
 			       {
 	       				return false;
 	       				       				
-			       }
+			       },
+			       beforeSelectRow: function(rowid, e) {
+			    	    return false;
+			    	}
 			        
 			      
-  }); 
+  });
 	
 	hideColumns(); 
 	
@@ -470,7 +473,7 @@ function customDate(a) {
 	                 'subject_code' : subject_code, 
 	                 'subject_mode_id' : subject_mode_id, 
 	                 'period_date' : period_date 
-	                 , period_id : period_id},
+	                 , 'period_id' : period_id},
 				success : 	function(response){
 			    hideColumns();
 				
@@ -582,9 +585,9 @@ function customDate(a) {
 					
 				}
 				var destination = $('#stulistgrid').offset().top;
-				$("html:not(:animated),body:not(:animated)").animate({ scrollTop: destination-15}, 10,'easeOutBack' );
-					
-				$("#statusdiv").show();
+				$("html,body").animate({ scrollTop: destination-40}, 1500, 'swing', function() {
+					$("#statusdiv").show('highlight',null,'slow');
+				});
 				// Check is Period Taken
 				
 				var timetable_ids="";			

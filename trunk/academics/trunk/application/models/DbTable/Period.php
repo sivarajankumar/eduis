@@ -38,8 +38,8 @@ class Acad_Model_DbTable_Period extends Acadz_Base_Model
         array('department_id', 'degree_id', 'semester_id', 'weekday_number', 
         'period_number', 'period_type_id'))
             ->where('period_id = ?', $periodId);
-        $result = $sql->query()->fetchAll();
-        return $result[0];
+        $result = $sql->query()->fetch();
+        return $result;
     }
     /*
 	//Should not be here, deprecated as $this->_name doesnot have period_date etc.

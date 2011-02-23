@@ -260,6 +260,8 @@ $(function(){
                             dataEvents: [{
                                 type: 'change',
                                 fn: function(e) {
+
+                    		        $('#showPeriodStatus').hide();
                                 //Update Period Number
                                 $.ajax({
                                     url : urlPeriodCombo,
@@ -506,7 +508,8 @@ $(function(){
                 */
             }, // edit options
             {
-                width : 734,
+                width : 758,
+                bottominfo : '<div id="submitStatus" style="display:none;" class="ui-state-highlight ui-corner-all" ></div>',
                 savekey : [ true, 113 ],
                 navkeys : [ true, 38, 40 ],
                 jqModal : false,
@@ -514,7 +517,7 @@ $(function(){
                 clearAfterAdd : false,
                 reloadAfterSubmit : false,
                 onInitializeForm : function(formId) {
-                    $('#period_id').after('<span></span><a id="showPeriodStatus" style="display:none;" href="javascript:void(0)"> Details</a>');
+                    $('#period_id').after('<span></span><a id="showPeriodStatus" style="display:none;text-align: center;" href="javascript:void(0)"> Details</a>');
                     $('#staff_id').after('<span></span>')
                     $('#showPeriodStatus').click(function(){
                 		popUpInfo(gPeriodStatus, 'periodStatus', true, true);
@@ -554,7 +557,9 @@ $(function(){
                         $("#subject_code").attr('disabled', 'disabled').val('');
                         $("#subject_mode_id").attr('disabled', 'disabled').val('');
                         $("#staff_id").attr('disabled', 'disabled').html('<option value="">Select one</option>').val('');
-                    	alert('Submit done');
+                        $( "#submitStatus" ).text(' Submitted successfully!!').toggle( 'blind', '', 'slow', function(){
+                        	setTimeout(function(){$( "#submitStatus" ).toggle( 'blind', '', 1000)},3000);
+                        } );
                     	success = true;
                     }
                     return [success,'Inserted...',response.responseText];
@@ -685,7 +690,11 @@ var processPeriod = function(e){
 	            case PARTIAL:
 	                $('#period_id + span').html(' The period is partially occupied.').addClass('ui-state-highlight');
 	                $('#showPeriodStatus').show();
-	                var selectOptionString = '<option value ="">Select one</option>';
+	                if (1 == periodStatus.availableGroups.length) {
+		                $("#group_id").attr('disabled', 'disabled');
+					} else {
+		                var selectOptionString = '<option value ="">Select one</option>';
+					}
 	                $.each(periodStatus.availableGroups, function (index, group) {
 	              		selectOptionString += '<option value ="'+group+'">'+group+'</option>';
 	              	});
@@ -751,7 +760,7 @@ var processPeriod = function(e){
             dialogString += '</ol>';
         	$("#"+popUpDiv+" > p ").html(dialogString);
         	if(popUp){
-            	$("#"+popUpDiv).dialog();
+            	$("#"+popUpDiv).dialog({ zIndex: 100001 });
         	}
 		}
 
@@ -763,10 +772,17 @@ var processPeriod = function(e){
 		  $('#staff_id').html('<option  value ="">Select one</option>');
 	      //Update Subject Mode
 	      var selectOptionString = '<option value ="">Select one</option>';
-	      
+	      if(EMPTY == gPeriodStatus.STATUS){
 	      $.each(semSubjects[e.target.value], function (index, subject) {
-		      selectOptionString += '<option title="'+subject.group_together+'" duration="'+subject.suggested_duration+'" value ="'+subject.subject_mode_id+'">'+subject.subject_mode_id+'</option>';
+		      	selectOptionString += '<option title="'+subject.group_together+'" duration="'+subject.suggested_duration+'" value ="'+subject.subject_mode_id+'">'+subject.subject_mode_id+'</option>';
 		      });
+	      } else {
+		      $.each(semSubjects[e.target.value], function (index, subject) {
+			      if(0 == subject.group_together){
+			      	selectOptionString += '<option title="'+subject.group_together+'" duration="'+subject.suggested_duration+'" value ="'+subject.subject_mode_id+'">'+subject.subject_mode_id+'</option>';
+			      }
+			  });
+	      }
 	      
 	      $('#subject_mode_id').html(selectOptionString);
       };

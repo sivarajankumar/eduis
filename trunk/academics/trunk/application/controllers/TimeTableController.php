@@ -209,11 +209,9 @@ class TimeTableController extends Acadz_Base_BaseController
                     $this->_helper->json($result);
                     //echo json_encode($result);
                     return;
-                    break;
                 case 'select':
                     echo $result;
                     return;
-                    break;
             }
         }
         header("HTTP/1.1 400 Bad Request");

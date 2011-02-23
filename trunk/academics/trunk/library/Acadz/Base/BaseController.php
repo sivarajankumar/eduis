@@ -231,6 +231,10 @@ class Acadz_Base_BaseController extends Zend_Controller_Action
                     try {
                         $status = $this->model->insert($data);
                         echo $status;
+                        if ($status) {
+                            $this->_helper->logger->debug('Status :');
+                            $this->_helper->logger($status);
+                        }
                     } catch (Zend_Exception $e) {
                         $this->_helper->logger->err($e->getMessage());
                         $this->_helper->logger->info('Row insertion failure :');
@@ -243,17 +247,17 @@ class Acadz_Base_BaseController extends Zend_Controller_Action
                         echo 'DATA SUBMIT FAILED: Either criteria is not fulfilled or inputs are wrong.';
                         return false;
                     }
-                    if ($status) {
-                        $this->_helper->logger->debug('Status :');
-                        $this->_helper->logger($status);
-                    }
-                    return true;
-                    break;
+                    return;
                 case 'del':
                     $id = $request->getParam('id');
                     $where = self::whereData($id);
                     try {
                         $status = $this->model->delete($where);
+                        if ($status) {
+                            $this->_helper->logger->debug('Status :');
+                            $this->_helper->logger($status);
+                        }
+                        
                     } catch (Zend_Exception $e) {
                         $this->_helper->logger->err($e->getMessage());
                         $this->_helper->logger->err('Row deletion failure :');
@@ -264,12 +268,7 @@ class Acadz_Base_BaseController extends Zend_Controller_Action
                         echo 'CANNOT DELETE: Either dependents exists or permission not granted.';
                         return false;
                     }
-                    if ($status) {
-                        $this->_helper->logger->debug('Status :');
-                        $this->_helper->logger($status);
-                    }
-                    return true;
-                    break;
+                    return;
                 case 'edit':
                     $rdata = $request->getParams();
                     $data = self::paramData($rdata);
@@ -277,6 +276,10 @@ class Acadz_Base_BaseController extends Zend_Controller_Action
                     $where = self::whereData($id);
                     try {
                         $status = $this->model->update($data, $where);
+                        if ($status) {
+                            $this->_helper->logger->debug('Status :');
+                            $this->_helper->logger($status);
+                        }
                     } catch (Zend_Exception $e) {
                         $this->_helper->logger->err($e->getMessage());
                         $this->_helper->logger->err('Row updation failure :');
@@ -285,12 +288,7 @@ class Acadz_Base_BaseController extends Zend_Controller_Action
                         echo 'CANNOT UPDATE: Either criteria not fulfilled or permission not granted.';
                         return false;
                     }
-                    if ($status) {
-                        $this->_helper->logger->debug('Status :');
-                        $this->_helper->logger($status);
-                    }
-                    return true;
-                    break;
+                    return;
                 default:
                     $this->_helper->logger->crit(
                     'The param "oper" has unexpected value :' .
@@ -300,8 +298,7 @@ class Acadz_Base_BaseController extends Zend_Controller_Action
         } else {
             $this->_helper->logger->err(
             'Criteria to access CRUD is not fullfilled');
-            header("HTTP/1.1 403 Forbidden");
-            die();
+            $this->getResponse()->setHttpResponseCode(403);
         }
     }
     /**
