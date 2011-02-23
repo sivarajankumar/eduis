@@ -26,7 +26,7 @@ class Core_Model_DbTable_StudentDepartment extends Corez_Base_Model
         }
     }
     // Deprecated. See fn below it
-    public function getstudentlist ($params)
+    /*public function getstudentlist ($params)
     {
         $where = ' where 1=1 ';
         $fromJoin = ' FROM aceis.batch_semester INNER JOIN aceis.batch
@@ -46,7 +46,7 @@ class Core_Model_DbTable_StudentDepartment extends Corez_Base_Model
 			    , student_personal.gender_id';
         $sql .= $fromJoin . $where;
         return $this->getAdapter()->fetchAll($sql);
-    }
+    }*/
     /*
 	 * List of Students in a class
 	 */
