@@ -1,6 +1,5 @@
 <?php
 /**
- * 
  * @author Avtar, Hemant
  * @since 0.1
  * @version 2.0
@@ -14,15 +13,14 @@ class Acad_Model_DbTable_TimeTable extends Acadz_Base_Model
 	 * Customized insert
 	 * @version 2.0
 	 */
-    public function insert (array $data)
-    {
+    public function insert (array $data){
         $periodStaus = self::periodStatus($data['period_id'], true);
         if ('FULL' != $periodStaus['STATUS']) {
             if ('PARTIAL' == $periodStaus['STATUS']) {
                 if ('ALL' === strtoupper($data['group_id'])) {
                     throw new Zend_Exception('Period status is '.$periodStaus['STATUS'].'. '.$data['group_id'].' groups can not be placed.',    Zend_Log::WARN);
                 }
-                //TODO More strict check can also be implemented (It is still having some loop holes but hard to detect, I dont want to correct that because frontend covers that problem.).
+                //TODO More strict check can also be implemented (It is still having some holes but hard to detect, I dont want to correct that because frontend covers that problem.).
                 /* self::getLogger()->log('Future partial period!! Do something.', Zend_Log::DEBUG);
                 $errVar = '';
                 foreach ($periodStaus['periodStatus'] as $key => $value) {
