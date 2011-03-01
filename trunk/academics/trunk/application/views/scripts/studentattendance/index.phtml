@@ -28,10 +28,7 @@ $this->headScript()->appendFile(
 .nonattendanceday {
 	background-color: maroon;
 }
-#ui-datepicker-div{
-	font-size: 0.7em;
-	
-}
+
 .aligncenter {
 	width: 50%;
 	margin-left: auto;
@@ -39,36 +36,30 @@ $this->headScript()->appendFile(
 	text-align: center;
 }
 </style>
-<h4 align="center" style="margin-bottom: 0px">Student Attendance</h4>
-<div id="myform">
-<div class="aligncenter">
-<p>Select Date: <input type="text" id="datepicker1" readonly="readonly"
-	class="ui-widget-content  ui-corner-all" style="text-align: center"></input></p>
-</div>
-<div style="text-align: right"><a
-	style="text-decoration: none; font-size: small;"
-	class="ui-priority-secondary ui-state-default ui-corner-tl"
+<div style="padding :2em 0 2em 0; text-align: center; " >
+<form >Select date: <input type="text"
+	id="datepicker1" readonly="readonly"
+	class="ui-widget-content  ui-corner-all" style="text-align: center"></input> <span style="color: gray; " >(i.e. attendance date)</span><a
+	style="text-decoration: none; font-size: small; float: right;"
+	class="ui-priority-secondary ui-state-default ui-corner-all"
 	href="<?=$this->url(array('module' => $this->module, 'controller' => 'rptfacatt', 'action' => 'getlastmarked'), 'default', true)?>">&nbsp;
-Recent marked periods &nbsp; <span
-	style="margin: 3px 0px 0px -2px; padding: 1px 0px; float: right;"
+Check recent marked periods &nbsp;<span
+	style="margin: -1px 0px 0px -2px; float: right;"
 	class="ui-icon ui-icon-link ui-state-default ui-corner-right"> </span></a>
+</form>
+</div>
 
-</div>
-<div class="gridstyle">
-<table id="prdlst" class="scroll"></table>
-</div>
-</div>
+
+<table id="prdlst" style="display: hidden;" class="scroll"></table>
 <br />
-<div class="gridstyle">
-<table id="stulistgrid" class="scroll" cellpadding="0" cellspacing="0"></table>
-</div>
+<table id="stulistgrid" style="display: hidden;" class="scroll"
+	cellpadding="0" cellspacing="0"></table>
 
-<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
-	style="color: red"></span></div>
-<div id="statusdiv" style="position: absolute; left: 30%">
-<table>
+<div id="statusdiv" class="aligncenter">
+<form id="finalStatus">
+<table style="padding: 0.5em;"  >
 	<tr>
-		<td><?php echo $this->formLabel('totstalstudents', 'Total Students:')?></td>
+		<td><?php echo $this->formLabel('totalStudents', 'Total Students:')?></td>
 		<td><input type="text" id="totalstudents"
 			class="ui-widget-content  ui-corner-all" size="4" readonly="readonly"
 			value="0" style="text-align: center"></input></td>
@@ -77,25 +68,23 @@ Recent marked periods &nbsp; <span
 			class="ui-widget-content  ui-corner-all" size="4" readonly="readonly"
 			value="0" style="text-align: center"></input></td>
 		<td><?php echo $this->formLabel('iagree', 'I Agree')?></td>
-		<td><?php echo $this->formCheckbox('iagree', 'I Agree', array('tabindex' => '150', 'z-index' => '99'))?>
+		<td><?php echo $this->formCheckbox('iagree', 'I Agree', array('tabindex' => '150'))?>
 		</td>
-		<td width=200><?php echo $this->formButton('btnmark', 'Submit Attendance', array('tabindex' => '151', 'z-index' => '99'))?></td>
+		<td>&nbsp;<?php echo $this->formButton('btnmark', 'Submit Attendance', array('tabindex' => '151', 'size' => '70%' ))?></td>
 	</tr>
 </table>
+</form>
+&nbsp;
 </div>
-<p id="msgbox"></p>
 
 <script type="text/javascript">
-$('#errorBox').hide();
-$("#btnmark").hide();
+//$("#btnmark").hide();
 $("#statusdiv").hide();
 </script>
 <script type="text/javascript">
 var group_info=null;
 var global_nfo=null;
 $(function(){
-	
-	
 	var staff_id = '<?php echo $this->staff_id;?>';
 	var session_startdate = '<?php echo $this->session_startdate;?>';  
 	var source_staff_id ;
@@ -106,6 +95,8 @@ $(function(){
 	var period_date;
 	var groupUrl;
 	var serverDateObj;
+	var isPeriodGridInit = false;
+	var isStudentGridInit = false;
 	var sessionStartdateObj;
 	var totalstudent = 0;
 	var holidays = null;
@@ -183,10 +174,12 @@ $("#datepicker1").datepicker(
 			gotoCurrent: true,
 			beforeShowDay: noWeekendsOrHolidays,
 			onSelect :function(dateText, inst) {
-			
+			if(!isPeriodGridInit){
+				initPeriodGrid();
+			}
 			$("#statusdiv").hide();
 			$('#totalabsent').val('0');
-			$("#btnmark").hide();
+			//$("#btnmark").hide();
 			$('#iagree').attr('checked',0);	
 			totalstudent = 0;
 								
@@ -345,317 +338,318 @@ function customDate(a) {
 	
 	
 	//Student Grid
-
-	
-	$("#stulistgrid").jqGrid({ 
-		datatype: "local", 
-		colNames:['Group 1','Group 2' , 'Group 3'],
-		colModel:[ {name:'group1',index:'group1', width:100, sorttype:"int"},
-			       {name:'group2',index:'group2', width:100}, 
-			       {name:'group3',index:'group3', width:100}],
-			       caption: "Students",
-			       hoverrows : false,
-			       onCellSelect : function(rowid,icol,content)
-			       {
-	       				return false;
-	       				       				
-			       },
-			       beforeSelectRow: function(rowid, e) {
-			    	    return false;
-			    	}
-			        
-			      
-  });
+	var initStudentGrid = function(){
+		$("#stulistgrid").jqGrid({
+			datatype: "local",
+			colNames:['Group 1','Group 2' , 'Group 3'],
+			colModel:[ {name:'group1',index:'group1', width:100, sorttype:"int"},
+						{name:'group2',index:'group2', width:100},
+						{name:'group3',index:'group3', width:100}],
+			caption: "Students",
+			hoverrows : false,
+			onCellSelect : function(rowid,icol,content){
+				return false;
+			},
+			beforeSelectRow: function(rowid, e) {
+				return false;
+			}
+		});
+	};
 	
 	hideColumns(); 
-	
-	////// PERIOD GRID //////
-	jQuery("#prdlst").jqGrid({
-		sortable: false, 
-		datatype: "local",
-		colNames:['Period Number','Subject','Subject Mode','Department','Degree','Semester','Staff'],
-		colModel:[
-					{name:'period_number',index:'period_number',width:60,align:'center'},
-					{name:'subject_code',index:'subject_code'},
-					{name:'subject_mode_id',index:'subject_mode_id',width:70},
-					{name:'department_id',index:'department_id',width:40,align:'center'},
-					{name:'degree_id',index:'degree_id',width:40,align:'center'},
-					{name:'semester_id',index:'semester_id',width:40,align:'center'},
-					{name:'staff_id',index:'staff_id',width:5,align:'center'}
-		  		],
-		caption: "Day Periods",
-		
-		//Load Complete Event
-		 
-		loadComplete : function (){
-		$("#prdlst").hideCol(["staff_id"]);
-		/*var counter=0;
-		var dataIds = jQuery("#prdlst").jqGrid('getDataIDs');
-		var ret;
+
+	var initPeriodGrid = function(){
+		////// PERIOD GRID //////
+		jQuery("#prdlst").jqGrid({
+			sortable: false, 
+			datatype: "local",
+			colNames:['Period Number','Subject','Subject Mode','Department','Degree','Semester','Staff'],
+			colModel:[
+						{name:'period_number',index:'period_number',width:60,align:'center'},
+						{name:'subject_code',index:'subject_code'},
+						{name:'subject_mode_id',index:'subject_mode_id',width:70},
+						{name:'department_id',index:'department_id',width:40,align:'center'},
+						{name:'degree_id',index:'degree_id',width:40,align:'center'},
+						{name:'semester_id',index:'semester_id',width:40,align:'center'},
+						{name:'staff_id',index:'staff_id',width:5,align:'center'}
+			  		],
+			caption: "Day Periods",
 			
-		if(jQuery("#prdlst").getGridParam("records") <= 0)
-		{
-			alert('No Period Of Selected Date');	
-		}*/
-		},
-		
-		onSelectRow: function() {
-			
-			$("#statusdiv").hide();	
-			period = $('#prdlst').getGridParam("selrow");
-			$("#" + period).addClass("ui-state-highlight");
-			var sub=$("#prdlst").getCell(period, 'subject_code');
-			
-			var $cell = $("#" + period).children(':eq(1)');
-			subject_code =$cell.attr('title');
-			$cell = $("#" + period).children(':eq(2)');
-			subject_mode_id = $cell.attr('title');
-			
-			$cell = $("#" + period).children(':eq(0)');
-			period_id = $cell.attr('title');
-			source_staff_id = $("#prdlst").getCell(period, 'staff_id');			
-			if($("#" + period).hasClass("adjusted"))
+			//Load Complete Event
+			 
+			loadComplete : function (){
+			$("#prdlst").hideCol(["staff_id"]);
+			/*var counter=0;
+			var dataIds = jQuery("#prdlst").jqGrid('getDataIDs');
+			var ret;
+				
+			if(jQuery("#prdlst").getGridParam("records") <= 0)
 			{
-				hideColumns();
-				$("#stulistgrid").clearGridData();
-				$("#statusdiv").hide();
-				setDefault();
-				alert("This Period is Adjusted");
-				return;
-			}
-			if($("#" + period).hasClass("nonattendanceday"))
-			{
-				$("#stulistgrid").clearGridData();
-				$("#statusdiv").hide();
-				setDefault();
-	         	alert('Non Attendance Day');
-     	    	return;	
-			}
-
+				alert('No Period Of Selected Date');	
+			}*/
+			},
 			
-			
-		var rowobj=$("#prdlst").getRowData(period);
-		var department_id = rowobj.department_id;
-		var degree_id = rowobj.degree_id;
-		var period_number = rowobj.period_number;
-		semester_id = rowobj.semester_id;
-
-        
-		ttid1=0;
-		ttid2=0;
-		ttid3=0;
-		if (period == null){
-			period=0;
-		} else {
-			var tmp=0;
-			$("#stulistgrid").clearGridData();
-			
-			var rqUrl="";
-			if($("#" + period).hasClass("adjustment")){
-					rqUrl=periodStudentsUrl;
-			} else {
-				rqUrl=periodStudentsUrl;
-			}
-			
-
-			//Get List Of Students In Selected Period
-			$.ajax({
-				type: "GET",
-				url: rqUrl,
-				async : false,
-				dataType : "json",
-				data : {'department_id' : department_id,
-	                 'degree_id' : degree_id, 
-	                 'semester_id' :  semester_id, 
-	                 'staff_id'  : source_staff_id, 
-	                 'weekday_number' : weekday_number, 
-	                 'period_number' : period_number, 
-	                 'subject_code' : subject_code, 
-	                 'subject_mode_id' : subject_mode_id, 
-	                 'period_date' : period_date 
-	                 , 'period_id' : period_id},
-				success : 	function(response){
-			    hideColumns();
-				
-				setDefault();
-				totalstudent = 0;
-				             		
-				global_Info = response;
-				totalstudents = response.totalstudents;
-				$('#totalstudents').val(totalstudents);
-				var totalgroups = response.totalgroups;
-				var cnt = 0;
-				var studentlist;
-				var totalrows = response.totalrows;
-				
-				for(tmp=0;tmp <= totalrows ;tmp++){
-					var data = { group1 :   "" };
-					$("#stulistgrid").addRowData(tmp,data);
+			onSelectRow: function() {
+				if (!isStudentGridInit) {
+					initStudentGrid();
 				}
-				group_info = response.group_id;
-				for(cnt=0;cnt < totalgroups ; cnt++){
-					var group_id=	response.group_id[cnt]['group_id'];
-				    var group_number = group_id.substring(group_id.length-1);
-				    switch (eval(group_number)){
-					    case 1 : 
-						    var data = { group1 : '<input type="checkbox"  class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
-						    $("#stulistgrid").setRowData(0, data);
-						    break;
-	                    case 2 :
-                            var data = { group2 : '<input type="checkbox" class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
-                            $("#stulistgrid").setRowData(0, data);
-	                        break;
-	                    case 3 :
-                            var data = { group3 : '<input type="checkbox" class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
-                            $("#stulistgrid").setRowData(0, data);
-	                        break;
-	                    default : alert('Unknown group_number :'+group_number);
-				    }			
-				}
+				$("#statusdiv").hide();	
+				period = $('#prdlst').getGridParam("selrow");
+				$("#" + period).addClass("ui-state-highlight");
+				var sub=$("#prdlst").getCell(period, 'subject_code');
 				
-				for(cnt=0;cnt < totalgroups ; cnt++){
-					var group_id = response.group_id[cnt]['group_id'];
-					var timetable_id = response.group_id[cnt]['timetable_id'];
-					var stucnt=0;
-					var group_number = group_id.substring(group_id.length-1);
-					
-					studentlist = response[group_id]['students'];
-					$("#stulistgrid").setLabel("group" + group_number, group_id);
-					$("#stulistgrid").showCol("group"+ group_number);
-					
-					if(studentlist.length  == 0)
-					{
-						hideColumns();
-						setDefault();
-						totalstudent = 0;
-						alert('Students are not available');
-						return;
-					}
-					
-
-					for( stucnt=0;stucnt <studentlist.length ; stucnt++ ){
-
-	                    switch (eval(group_number)){
-	                        case 1 :
-	                            var data = { group1 :'<span id="' + timetable_id + '">' + 
-	                            		                 '<input type="checkbox"  id=' + studentlist[stucnt]['student_roll_no'] + ' tabindex="'+ (stucnt+25) +'">' +
-	                            		                 '<label for="' + studentlist[stucnt]['student_roll_no'] + '">  ' +  
-	                            		                                 studentlist[stucnt]['student_roll_no'] + "  " + studentlist[stucnt]['first_name'] + ' ' + studentlist[stucnt]['last_name'] +
-	                            		                 '</label>'+
-	                            		             '</span>'} ;
-	                            $("#stulistgrid").setRowData(stucnt+1, data);
-	                            $("#stulistgrid").setCell(stucnt+1, 
-	                            		                  'group1', 
-	                            		                  "", 
-	                            		                  "", 
-	                            		                  {title: studentlist[stucnt]['first_name'] + "  "  + studentlist[stucnt]['last_name'] });
-	                            							continue;
-	                        case 2 :
-                                var data = { group2 :'<span id="' + timetable_id + '">' + 
-                                        '<input type="checkbox"  id=' + studentlist[stucnt]['student_roll_no'] + ' tabindex="'+ (stucnt+60) +'">' +
-                                        '<label for="' + studentlist[stucnt]['student_roll_no'] + '">  ' +  
-                                                        studentlist[stucnt]['student_roll_no'] + "  " + studentlist[stucnt]['first_name'] + ' ' + studentlist[stucnt]['last_name'] + 
-                                        '</label>'+
-                                    '</span>'} ;
-				               $("#stulistgrid").setRowData(stucnt+1, data);
-				               $("#stulistgrid").setCell(stucnt+1, 
-				                                         'group2', 
-				                                         "", 
-				                                         "", 
-				                                         {title: studentlist[stucnt]['first_name'] + "  "  + studentlist[stucnt]['last_name'] });
-				               								continue;
-	                        case 3 :
-                                var data = { group3 :'<span id="' + timetable_id + '">' + 
-                                        '<input type="checkbox"  id=' + studentlist[stucnt]['student_roll_no'] + ' tabindex="'+ (stucnt+90) +'">' +
-                                        '<label for="' + studentlist[stucnt]['student_roll_no'] + '">  ' +  
-                                                        studentlist[stucnt]['student_roll_no'] + "  " + studentlist[stucnt]['first_name'] + ' ' + studentlist[stucnt]['last_name'] +
-                                        '</label>'+
-                                    '</span>'} ;
-                               $("#stulistgrid").setRowData(stucnt+1, data);
-                               $("#stulistgrid").setCell(stucnt+1, 
-                                                         'group3', 
-                                                         "", 
-                                                         "", 
-                                                         {title: studentlist[stucnt]['first_name'] + "  "  + studentlist[stucnt]['last_name'] });
-                               continue;
-	                        default : alert('Unknown group_number :'+group_number);
-	                    }
-					}
-					
-					
-				}
-				var destination = $('#stulistgrid').offset().top;
-				$("html,body").animate({ scrollTop: destination-40}, 1500, 'swing', function() {
-					$("#statusdiv").show('highlight',null,'slow');
-				});
-				// Check is Period Taken
+				var $cell = $("#" + period).children(':eq(1)');
+				subject_code =$cell.attr('title');
+				$cell = $("#" + period).children(':eq(2)');
+				subject_mode_id = $cell.attr('title');
 				
-				var timetable_ids="";			
-				for(cnt=0;cnt < group_info.length;cnt++)
+				$cell = $("#" + period).children(':eq(0)');
+				period_id = $cell.attr('title');
+				source_staff_id = $("#prdlst").getCell(period, 'staff_id');			
+				if($("#" + period).hasClass("adjusted"))
 				{
-					timetable_ids = timetable_ids + "timetable_id:" + group_info[cnt]['timetable_id']  + " ";
+					hideColumns();
+					$("#stulistgrid").clearGridData();
+					$("#statusdiv").hide();
+					setDefault();
+					alert("This Period is Adjusted");
+					return;
+				}
+				if($("#" + period).hasClass("nonattendanceday"))
+				{
+					$("#stulistgrid").clearGridData();
+					$("#statusdiv").hide();
+					setDefault();
+		         	alert('Non Attendance Day');
+	     	    	return;	
+				}
+
+				
+				
+			var rowobj=$("#prdlst").getRowData(period);
+			var department_id = rowobj.department_id;
+			var degree_id = rowobj.degree_id;
+			var period_number = rowobj.period_number;
+			semester_id = rowobj.semester_id;
+
+	        
+			ttid1=0;
+			ttid2=0;
+			ttid3=0;
+			if (period == null){
+				period=0;
+			} else {
+				var tmp=0;
+				$("#stulistgrid").clearGridData();
+				
+				var rqUrl="";
+				if($("#" + period).hasClass("adjustment")){
+						rqUrl=periodStudentsUrl;
+				} else {
+					rqUrl=periodStudentsUrl;
 				}
 				
+
+				//Get List Of Students In Selected Period
 				$.ajax({
 					type: "GET",
-					url: isPeriodTakenUrl ,
+					url: rqUrl,
 					async : false,
 					dataType : "json",
-					data: {timetable_ids : timetable_ids , period_date : period_date},
-					success: function(response) {
-					if(response == false)
-					{
-						$('#iagree').removeAttr('disabled');
-					}
-					else
-					{
-						
-						$('#iagree').attr('disabled', 'disabled');
-						$('#totalabsent').val(response.length);
-						if(response.length > 0 )
-						{
-						for(var cnt=0;cnt < response.length; cnt++)
-						{
-							$("#" + response[cnt]['student_roll_no']).attr("checked",1);
-							$('label[for='+response[cnt]['student_roll_no']+']').addClass('checked');
-							//$("#" + response[cnt]['student_roll_no']).parents("td:first").addClass("checked");
-						}
-						}
-						
-						$("#stulistgrid :checkbox").attr("disabled",'disabled');
-						alert("Attendance is Already Marked");
-							
-					}
-						
-					},
+					data : {'department_id' : department_id,
+		                 'degree_id' : degree_id, 
+		                 'semester_id' :  semester_id, 
+		                 'staff_id'  : source_staff_id, 
+		                 'weekday_number' : weekday_number, 
+		                 'period_number' : period_number, 
+		                 'subject_code' : subject_code, 
+		                 'subject_mode_id' : subject_mode_id, 
+		                 'period_date' : period_date 
+		                 , 'period_id' : period_id},
+					success : 	function(response){
+				    hideColumns();
 					
-					error: function(request,error) {
-						alert("Bad Request: "+ request+ " " + error);
+					setDefault();
+					totalstudent = 0;
+					             		
+					global_Info = response;
+					totalstudents = response.totalstudents;
+					$('#totalstudents').val(totalstudents);
+					var totalgroups = response.totalgroups;
+					var cnt = 0;
+					var studentlist;
+					var totalrows = response.totalrows;
+					
+					for(tmp=0;tmp <= totalrows ;tmp++){
+						var data = { group1 :   "" };
+						$("#stulistgrid").addRowData(tmp,data);
 					}
+					group_info = response.group_id;
+					for(cnt=0;cnt < totalgroups ; cnt++){
+						var group_id=	response.group_id[cnt]['group_id'];
+					    var group_number = group_id.substring(group_id.length-1);
+					    switch (eval(group_number)){
+						    case 1 : 
+							    var data = { group1 : '<input type="checkbox"  class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
+							    $("#stulistgrid").setRowData(0, data);
+							    break;
+		                    case 2 :
+	                            var data = { group2 : '<input type="checkbox" class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
+	                            $("#stulistgrid").setRowData(0, data);
+		                        break;
+		                    case 3 :
+	                            var data = { group3 : '<input type="checkbox" class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
+	                            $("#stulistgrid").setRowData(0, data);
+		                        break;
+		                    default : alert('Unknown group_number :'+group_number);
+					    }			
+					}
+					
+					for(cnt=0;cnt < totalgroups ; cnt++){
+						var group_id = response.group_id[cnt]['group_id'];
+						var timetable_id = response.group_id[cnt]['timetable_id'];
+						var stucnt=0;
+						var group_number = group_id.substring(group_id.length-1);
+						
+						studentlist = response[group_id]['students'];
+						$("#stulistgrid").setLabel("group" + group_number, group_id);
+						$("#stulistgrid").showCol("group"+ group_number);
+						
+						if(studentlist.length  == 0)
+						{
+							hideColumns();
+							setDefault();
+							totalstudent = 0;
+							alert('Students are not available');
+							return;
+						}
+						
+
+						for( stucnt=0;stucnt <studentlist.length ; stucnt++ ){
+
+		                    switch (eval(group_number)){
+		                        case 1 :
+		                            var data = { group1 :'<span id="' + timetable_id + '">' + 
+		                            		                 '<input type="checkbox"  id=' + studentlist[stucnt]['student_roll_no'] + ' tabindex="'+ (stucnt+25) +'">' +
+		                            		                 '<label for="' + studentlist[stucnt]['student_roll_no'] + '">  ' +  
+		                            		                                 studentlist[stucnt]['student_roll_no'] + "  " + studentlist[stucnt]['first_name'] + ' ' + studentlist[stucnt]['last_name'] +
+		                            		                 '</label>'+
+		                            		             '</span>'} ;
+		                            $("#stulistgrid").setRowData(stucnt+1, data);
+		                            $("#stulistgrid").setCell(stucnt+1, 
+		                            		                  'group1', 
+		                            		                  "", 
+		                            		                  "", 
+		                            		                  {title: studentlist[stucnt]['first_name'] + "  "  + studentlist[stucnt]['last_name'] });
+		                            							continue;
+		                        case 2 :
+	                                var data = { group2 :'<span id="' + timetable_id + '">' + 
+	                                        '<input type="checkbox"  id=' + studentlist[stucnt]['student_roll_no'] + ' tabindex="'+ (stucnt+60) +'">' +
+	                                        '<label for="' + studentlist[stucnt]['student_roll_no'] + '">  ' +  
+	                                                        studentlist[stucnt]['student_roll_no'] + "  " + studentlist[stucnt]['first_name'] + ' ' + studentlist[stucnt]['last_name'] + 
+	                                        '</label>'+
+	                                    '</span>'} ;
+					               $("#stulistgrid").setRowData(stucnt+1, data);
+					               $("#stulistgrid").setCell(stucnt+1, 
+					                                         'group2', 
+					                                         "", 
+					                                         "", 
+					                                         {title: studentlist[stucnt]['first_name'] + "  "  + studentlist[stucnt]['last_name'] });
+					               								continue;
+		                        case 3 :
+	                                var data = { group3 :'<span id="' + timetable_id + '">' + 
+	                                        '<input type="checkbox"  id=' + studentlist[stucnt]['student_roll_no'] + ' tabindex="'+ (stucnt+90) +'">' +
+	                                        '<label for="' + studentlist[stucnt]['student_roll_no'] + '">  ' +  
+	                                                        studentlist[stucnt]['student_roll_no'] + "  " + studentlist[stucnt]['first_name'] + ' ' + studentlist[stucnt]['last_name'] +
+	                                        '</label>'+
+	                                    '</span>'} ;
+	                               $("#stulistgrid").setRowData(stucnt+1, data);
+	                               $("#stulistgrid").setCell(stucnt+1, 
+	                                                         'group3', 
+	                                                         "", 
+	                                                         "", 
+	                                                         {title: studentlist[stucnt]['first_name'] + "  "  + studentlist[stucnt]['last_name'] });
+	                               continue;
+		                        default : alert('Unknown group_number :'+group_number);
+		                    }
+						}
+						
+						
+					}
+					var destination = $('#stulistgrid').offset().top;
+					$("html,body").animate({ scrollTop: destination-40}, 1500, 'swing', function() {
+						$("#statusdiv").show('highlight',null,'slow');
 					});
-						
-
-				/*$.get(isPeriodTakenUrl ,{timetable_ids : timetable_ids , period_date : period_date },function(data){
-					alert(data);
-				});*/
-
-				$('#stulistgrid input[type=checkbox]').customInput();
-			    $('#stulistgrid input[type=checkbox][class!=checkGroup]').bind("click", function(e){
-			    	updateStatus(this);
-			      });
-
-			    $('#stulistgrid input[type=checkbox][class=checkGroup]').bind("click", function(e){
-						selectAll(this);
-                  });
-
-			}
+					// Check is Period Taken
 					
-			});
-			
+					var timetable_ids="";			
+					for(cnt=0;cnt < group_info.length;cnt++)
+					{
+						timetable_ids = timetable_ids + "timetable_id:" + group_info[cnt]['timetable_id']  + " ";
+					}
+					
+					$.ajax({
+						type: "GET",
+						url: isPeriodTakenUrl ,
+						async : false,
+						dataType : "json",
+						data: {timetable_ids : timetable_ids , period_date : period_date},
+						success: function(response) {
+						if(response == false)
+						{
+							$('#iagree').removeAttr('disabled');
+						}
+						else
+						{
+							
+							$('#iagree').attr('disabled', 'disabled');
+							$('#totalabsent').val(response.length);
+							if(response.length > 0 )
+							{
+							for(var cnt=0;cnt < response.length; cnt++)
+							{
+								$("#" + response[cnt]['student_roll_no']).attr("checked",1);
+								$('label[for='+response[cnt]['student_roll_no']+']').addClass('checked');
+								//$("#" + response[cnt]['student_roll_no']).parents("td:first").addClass("checked");
+							}
+							}
+							
+							$("#stulistgrid :checkbox").attr("disabled",'disabled');
+							alert("Attendance is Already Marked");
+								
+						}
+							
+						},
+						
+						error: function(request,error) {
+							alert("Bad Request: "+ request+ " " + error);
+						}
+						});
+							
 
+					/*$.get(isPeriodTakenUrl ,{timetable_ids : timetable_ids , period_date : period_date },function(data){
+						alert(data);
+					});*/
+
+					$('#stulistgrid input[type=checkbox]').customInput();
+				    $('#stulistgrid input[type=checkbox][class!=checkGroup]').bind("click", function(e){
+				    	updateStatus(this);
+				      });
+
+				    $('#stulistgrid input[type=checkbox][class=checkGroup]').bind("click", function(e){
+							selectAll(this);
+	                  });
+
+				}
+						
+				});
+				
+
+				}
 			}
-		}
-	});
+		});
+		
+	};
 	
 	$('#iagree').attr('disabled', 'disabled');
 	jQuery("#btnmark").click( function() {
