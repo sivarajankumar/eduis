@@ -1,0 +1,405 @@
+<h3 align="center">Period Adjustment</h3>
+<head>
+<style>
+.adjusted {
+	color: gray;
+}
+</style>
+</head>
+<form id="myform" >
+<table id="tblcmponents" id="tblcmponents" cellpadding="6" border="0" align="center">
+	<tr class="lbl">
+		<td><?=$this->formLabel ( 'staff_id', 'Faculty:' )?></td>
+		<td><?=$this->formSelect ( 'staff_id', '' ,array( 'tabindex' => 1))?></td>
+		<td><?=$this->formLabel ( 'datepicker1', 'Select Date' )?></td>
+		<td><input type="text" id="datepicker1" size="30" readonly="readonly" class="ui-widget-content  ui-corner-all" style="text-align: center" /></td>
+	</tr>
+
+</table>
+<div class="gridstyle">
+<table id="prdlst" class="scroll" cellpadding="0" cellspacing="0"></table>
+</div>
+<table align="center" border="0">
+	<tr>
+		<td><?=$this->formLabel ( 'to_staff_id', 'Adjusted To Faculty:' )?></td>
+		<td> <select id="to_staff_id" disabled="disabled"></select></td>
+		<td><?=$this->formLabel ( 'subject', 'Subject' )?></td>
+		<td><select id="subject" disabled="disabled"  ></select></td>
+	</tr>
+	<tr>
+		
+		<td colspan="4" align="center"><div id="btndiv" style="visibility:hidden;"><input id="btnassign" type="button" value="Adjust" disabled="disabled"/>
+		<input id="btncancel" type="button" value="Cancel adjustment" disabled="disabled"/></div>
+		</td>
+		<td colspan="2"></td>
+		
+	</tr>
+</table>
+
+</form>
+<script type="text/javascript">
+
+$(function(){
+
+	var weekday_number;
+	var department_id;
+	var staff_id;
+	var degree_id;
+	var semester_id;
+	var subject_mode_id;
+	var  serverDateObj;
+	var sessionStartdateObj;
+	var period_id;
+	department_id = "<?=$this->department_id?>";
+	var todayTimetableUrl = "<?=$this->url ( array ('module' => 'department', 'controller' => 'studentattendance', 'action' => 'fillperiodgrid' ), 'default', true )?>";
+	var adjustmentUrl="<?=$this->url ( array ('module' => 'department', 'controller' => 'adjustment', 'action' => 'adjustperiod' ), 'default', true )?>";
+	var departmentFacUrl="<?=$this->url ( array ('module' => 'department', 'controller' => 'subjectfaculty', 'action' => 'getdepartmentfaculty' ), 'default', true )?>";
+	var subjectUrl="<?=$this->url ( array ('module' => 'department', 'controller' => 'subjectdepartment', 'action' => 'getsemsubject' ), 'default', true )?>";
+
+	var session_startdate = '<?php echo $this->session_startdate; ?>';
+	
+	jQuery("#prdlst").jqGrid({
+		sortable: false, 
+		datatype: "json",
+		colNames:['Period Number','Subject','Subject Mode','Department','Degree','Semester'],
+		colModel:[
+					{name:'period_number',index:'period_number',width:60,align:'center'},
+					{name:'subject_code',index:'subject_code'},
+					{name:'subject_mode_id',index:'subject_mode_id',width:70},
+					{name:'department_id',index:'department_id',width:40,align:'center'},
+					{name:'degree_id',index:'degree_id',width:40,align:'center'},
+					{name:'semester_id',index:'semester_id',width:40,align:'center'}
+		  		],
+
+		sortname: 'period_number',
+		caption: "Day Periods",
+		onSelectRow: function(period) {
+
+		if($("#" + period).hasClass("adjusted"))
+		{
+				$('#btndiv').css("visibility","visible");
+				$("#btncancel").attr('disabled',0);
+				$("#btnassign").attr('disabled',1);			
+				alert("Selected period is adjusted");
+				return;
+		}
+		else
+		{
+			$("#btncancel").attr('disabled',1);
+		}
+			$("#to_staff_id").attr('disabled',0);
+			var id=$('#prdlst').getGridParam('selrow');
+			var ret = jQuery("#prdlst").getRowData(id);
+		    degree_id = ret.degree_id;
+			semester_id = ret.semester_id;
+			var $cell = $("#" + period).children(':eq(1)');
+			$cell = $("#" + period).children(':eq(2)');
+			subject_mode_id = $cell.attr('title');
+			
+			$cell = $("#" + period).children(':eq(0)');
+			period_id = $cell.attr('title');
+			
+			var subject_type_id = 'TH';
+			if( (subject_mode_id.toUpperCase() == "TUT") || (subject_mode_id.toUpperCase() == "LEC"))
+			{
+				subject_type_id = 'TH';
+			} 
+			else
+			{
+				subject_type_id = 'PR';
+			}
+			$.ajax({
+				type: "GET",
+				url: subjectUrl ,
+				dataType : "json",
+				data : {department_id : department_id, degree_id : degree_id , semester_id : semester_id},
+				success : function(response)
+				{
+					var selectOptionString = '<option value ="">Select one</option>';
+					$.each(response,function(index,value){
+						selectOptionString += '<option value ="'+value.subject_code+'">'+ value.subject_name+'</option>';
+						});
+					$('#subject').html(selectOptionString);	
+				}
+			});
+			
+		},
+		loadError : function(xhr,st,err) { 
+			jQuery("#rsperror").html("Type: "+st+"; Response: "+ xhr.status + " "+xhr.statusText); 
+		},
+		
+		loadComplete : function (){
+			
+		}
+	}).navGrid('#prdlstpager',{add:false,edit:false,del:false}); 
+
+	hidePeriodColumns();
+	
+	/////////// Select staff
+	$('#staff_id').change(function(){
+		
+				staff_id=$('#staff_id').val();
+				$("#to_staff_id option[value="  +  staff_id  + "]").attr('disabled','disabled');
+				$("#to_staff_id option[value!="  +  staff_id  + "]").attr('disabled', 0);
+				
+				if(staff_id =="selectone")
+				{
+					alert('Select source faculty');
+					$("#datepicker1").datepicker( 'disable' );
+					return;
+				}
+				$("#datepicker1").datepicker( 'enable' );
+				jQuery("#prdlst").clearGridData();
+				
+		
+	});	
+
+	$('#to_staff_id').change(function(){
+		$("#subject").attr('disabled',0);
+	});
+	
+	$('#subject').change(function(){
+		$('#btndiv').css("visibility","visible");
+		var rowid = $('#prdlst').getGridParam("selrow");
+		var rowdata= $('#prdlst').getRowData(rowid);
+		var period_number = rowdata.period_number;
+		if($("#" + period_number).hasClass("adjusted"))
+		{
+			$("#btncancel").attr('disabled',0);		
+		}
+		else
+		{
+			$("#btnassign").attr('disabled',0);
+		}
+		
+		
+	});
+	/////////////
+	var datearr = $('#datetext').html().split('-');
+	var day=datearr[0];
+	var month = datearr[1]-1;
+	var year = datearr[2];
+	
+	serverDateObj=new Date(year,month,day);
+	var sdatearr=session_startdate.split('-');
+	year = sdatearr[0];
+	month = sdatearr[1]-1;
+	day = sdatearr[2];
+	sessionStartdateObj= new Date(year,month,day);
+	
+	$("#datepicker1").datepicker(  {
+		minDate : sessionStartdateObj,
+		maxDate : serverDateObj,
+		dateFormat: 'dd/M/yy', 
+		closeText: 'X',
+		onSelect : function(dateText, inst) { 
+		$('#btndiv').css("visibility","hidden");
+		$("#prdlst").clearGridData();
+		var datearr = dateText.split('/');
+		var day=datearr[0];
+		var month = datearr[1];
+		var year = datearr[2];
+		var todayDateObj=new Date(dateText);
+		weekday_number=todayDateObj.getDay();
+		
+		$.ajax({
+			type: "GET",
+			url: todayTimetableUrl ,
+			dataType : "json",
+			async :  false,
+			data: {staff_id : staff_id ,weekday_number :weekday_number , period_date : dateText , department_id : department_id },
+			success: function(response) {
+					for(var cnt = 0;cnt <  response.length ;cnt++){
+					var data = { period_number : response[cnt]['period_number'], 
+								subject_code : response[cnt]['subject_name'], 
+								subject_mode_id : response[cnt]['subject_mode_name'], 
+								department_id : response[cnt]['department_id'], 
+								degree_id : response[cnt]['degree_id'], 
+								semester_id : response[cnt]['semester_id'] };
+					
+					$("#prdlst").addRowData(response[cnt]['period_id'],data);
+
+					 $("#prdlst").setCell(response[cnt]['period_id'], 
+                             'period_number', 
+                             "", 
+                             "", 
+                             {title: response[cnt]['period_id']});
+                     
+					
+					$("#prdlst").setCell(response[cnt]['period_id'], 
+						                 'subject_code', 
+						                 "", 
+						                 "", 
+						                 {title: response[cnt]['subject_code'] });
+					$("#prdlst").setCell(response[cnt]['period_number'], 
+						                 'subject_mode_id', 
+						                 "", 
+						                 "", 
+						                 {title: response[cnt]['subject_mode_id']  });
+	                 if(response[cnt]['adjusted'] == 1)
+	                 {
+						$("#" +response[cnt]['period_id']).addClass("adjusted");
+	                 }
+					}
+			
+					if($("#prdlst").getGridParam("records") == 0)
+					{
+						hidePeriodColumns();
+						alert("No periods");
+						return;
+						
+					}
+					showPeriodColumns();
+
+			},
+			
+			error: function(request,error) {
+				alert("Bad Request: "+ request+ " " + error);
+			}
+				
+		});
+
+
+		},
+		beforeShow : customDate		
+	
+	 });
+	 function customDate(a) {  
+			
+		      return {defaultDate: serverDateObj };  
+		       
+		 }
+	   
+	$("#datepicker1").datepicker( 'disable' );
+	
+	//Get Department Faculty to adjust period.
+	 
+	$.ajax({url :departmentFacUrl,
+			data : {department_id : department_id},
+			dataType : "json",
+			async : false,
+			success :function(response){
+				var data  = '<option value=selectone>Select One </option>' ;
+				for(var cnt=0;cnt < response.length; cnt++)
+				{
+					data += '<option value=' + response[cnt].staff_id + '>' + response[cnt].first_name +' ' + response[cnt].last_name + '</option>';
+				}
+				$('#staff_id').html(data);
+				$('#to_staff_id').html(data);
+			},
+			error :  function(error)
+			{
+					alert(error.responseText);
+			}
+			});
+	
+
+
+	$('#btnassign').click(function(){
+
+		
+		staff_id = $('#staff_id').val();
+		var rowid = $('#prdlst').getGridParam("selrow");
+		var rowdata= $('#prdlst').getRowData(rowid);
+		if(rowid > 0)
+		{
+		var period_number = rowdata.period_number;
+		var target_staff_id = $('#to_staff_id').val();
+		if(staff_id == target_staff_id)
+		{
+				alert("Source and target faculty can not be same");
+				return;
+		}
+		
+		var target_subject = $('#subject').val();
+		if(target_staff_id =="selectone")
+		{
+			alert("Select target faculty");
+			return;
+		} 
+		if(target_subject == null || target_subject == "")
+		{
+			alert("Select target subject");
+			return;
+		}
+		var adjustment_date= $("#datepicker1").val();
+		$.ajax({
+				type: "GET",
+				url : adjustmentUrl,
+				async : "false",
+				data : { period_id : period_id , staff_id : staff_id , target_staff_id : target_staff_id, adjustment_date : adjustment_date, target_subject  : target_subject },
+				success : function(response){
+					var rowid = $('#prdlst').getGridParam("selrow");
+					var rowdata= $('#prdlst').getRowData(rowid);
+					var period_number = rowdata.period_number;
+					$("#" + rowid).addClass("adjusted");
+					alert(response);
+					
+				},
+				error : function(error){
+					alert(error.responseText);
+					}
+				
+				});
+		
+		}
+		else
+		{
+			alert('Select period for adjustment');
+		}
+		
+		
+		});
+
+	$('#btncancel').click(function(){
+		var cancelUrl = "<?=$this->url ( array ('module' => 'department', 'controller' => 'adjustment', 'action' => 'canceladjustment' ), 'default', true )?>";
+
+		var rowid = $('#prdlst').getGridParam("selrow");
+		var rowdata= $('#prdlst').getRowData(rowid);
+		var period_number = rowdata.period_number;
+		
+		$cell = $("#" + period_number).children(':eq(0)');
+		period_id = rowid ; //$cell.attr('title');
+		
+		if($("#" + rowid).hasClass("adjusted"))
+		{
+			var msg = " Delete Adjustment";
+			if(!confirm( msg ))
+			{
+					retrun ;	
+			}
+			$.ajax({
+					type : "GET",
+					url : cancelUrl,
+					async : "false",
+				    data :		{ staff_id : staff_id , period_date : $("#datepicker1").val() , period_id : period_id  },
+				    success : function(response){
+				    	$("#" + rowid).removeClass("adjusted");
+				    	$("#btncancel").attr('disabled','disabled');
+				    	alert(response);
+				    },
+				    error: function(request,error) {
+						alert("Bad Request: "+ request+ " " + error);
+					}
+			});
+		}
+		
+		else
+		{
+			
+			alert("Selected period is not adjusted");
+		}	
+	});
+	
+	
+});
+function hidePeriodColumns()
+{
+	$("#prdlst").hideCol(["subject_code","subject_mode_id" , "period_number" , "department_id","degree_id","semester_id"] );
+}
+function showPeriodColumns()
+{
+	$("#prdlst").showCol(["subject_code","subject_mode_id" , "period_number" , "department_id","degree_id","semester_id"] );
+}
+
+</script>
