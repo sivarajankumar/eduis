@@ -100,7 +100,7 @@
 	</tr>
 
 </table>
-<form id="btndiv" method="GET" action="javascript:returnBook();"
+<form id="btndiv" method="GET" action="javascript:void();"
 	style="clear: both; text-align: center; padding-top: 1em; padding-bottom: 1em; display: none;">
 <input type="reset" id="btnreset" /></form>
 </div>
@@ -211,23 +211,6 @@ function fetchBookInfo(){
 	}
 	
 }
-
-function returnBook() {
-	if(status.toUpperCase() == 'ISSUED'){
-				$.ajax({url : urlBookReturn,
-				   dataType : "json",
-				   data : { acc_no : acc_no } ,
-				   success : function(response){
-					   alert(response.responseText);
-					}, 
-				   error : function(transport){ alert(transport.responseText);}
-					  
-				});
-	}else{
-		alert("Can Not Return Book");
-	}
-	   resetAll();
-};
 
 function resetAll(){
 	 $("#book_div :text").val('');
