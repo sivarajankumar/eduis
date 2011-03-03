@@ -21,6 +21,19 @@ class Acad_Model_Class
      * @var int
      */
     protected $_batchStart;
+    
+    /**
+     * Students of class
+     * @var array
+     */
+    protected $_students;
+    
+    /**
+     * Faculty members teaching in class
+     * @var array
+     */
+    protected $_faculties;
+    
     /**
      * Set class department
      * @param string $department class department
@@ -148,6 +161,25 @@ class Acad_Model_Class
             }
         }
         return $students;
+    }
+    
+
+    /**
+     * Set faculty members
+     * @param array $faculties - faculty members
+     * @return Acad_Model_Department
+     */
+    protected function setFacultyMembers($faculties){
+        
+        return $this;
+    }
+    
+    /**
+     * Get faculty members teaching in class
+     * @return array $faculties - faculty members
+     */
+    public function getFacultyMembers(){
+        return $this->_faculties;
     }
 }
 ?>

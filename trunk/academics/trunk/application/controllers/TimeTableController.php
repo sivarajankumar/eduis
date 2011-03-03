@@ -113,7 +113,7 @@ class TimeTableController extends Acadz_Base_BaseController
                         case 'staff_id':
                             $sql->where("first_name LIKE ?", $value . '%');
                             break;
-                        case 'semester_id,weekday_number':
+                        case 'semester_id':
                             $sql->where("semester_id = ?", $value);
                             break;
                         case 'degree_id':
@@ -122,10 +122,7 @@ class TimeTableController extends Acadz_Base_BaseController
                             $sql->where("$key LIKE ?", $value . '%');
                             break;
                         default:
-                            if ($this->debug) {
-                                $this->_helper->logger(
-                                "Search : key = $key and value = $value.");
-                            }
+                                $this->_helper->logger("Search : key = $key and value = $value.");
                     }
                 }
             }
