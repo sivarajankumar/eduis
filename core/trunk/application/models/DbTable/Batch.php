@@ -20,6 +20,8 @@ class Core_Model_DbTable_Batch extends Corez_Base_Model
      * @param string Degree
      * @param bool Show all batches (Active + inactive), Default = FALSE
      */
+    
+     
     public static function getBatches ($department_id, $degree_id, 
     $showAll = FALSE)
     {

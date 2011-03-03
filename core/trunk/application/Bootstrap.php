@@ -27,7 +27,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         // Define path to Library server.
         defined('LIBRARY_SERVER') ||
          define('LIBRARY_SERVER', 'library.aceambala.com');
-        // Define path to Academics server.
+        // Define path to Accounts server.
         defined('ACCOUNT_SERVER') ||
          define('ACCOUNT_SERVER', 'account.aceambala.com');
     }
