@@ -47,19 +47,17 @@ class MemberController extends Libz_Base_BaseController {
 	}
 	// NOTE: THE ABOVE AND BELOW FUNCTIONS ARE ALMOST IDENTICAL!!
 	/**
-	 * Account Information of a member.
+	 * Account Information of a member along with detailed list of books issued.
 	 */
-	public function getmemberaccountAction() {
-		$request = $this->getRequest ();
-		$memberId = $request->getParam ( 'member_id' );
+	public function getaccountdetailAction() {
+		self::getModel ();
+		$memberId = $this->getRequest ()->getParam ( 'member_id' );
 		if ($memberId) {
-			$memberDetail = $this->model->getMemberDetail ( $memberId );
+			$memberDetail = $this->model->getMemberInfo ( $memberId );
 			if ($memberDetail) {
-				$issuedBook = Lib_Model_DbTable_IssueReturn::getIssuedDocumentCount ( $memberId );
+				$issuedBook = Lib_Model_DbTable_IssueReturn::getIssuedDocumentList ( $memberId );
 				$memberDetail ['issued'] = $issuedBook;
-				if ($this->debug) {
-					$this->_helper->logger ( $memberDetail );
-				}
+				//$this->_helper->logger ( $memberDetail );
 				$this->_helper->json ( $memberDetail );
 			} else {
 				$this->getResponse ()->setHttpResponseCode ( 400 );
@@ -71,7 +69,11 @@ class MemberController extends Libz_Base_BaseController {
 			echo 'Insufficient parameters';
 		}
 	}
-
+	
+	public function accountinfoAction() {
+		$this->_helper->viewRenderer->setNoRender ( false );
+		$this->_helper->layout ()->enableLayout ();
+	}
 }
 ?>
 

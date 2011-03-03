@@ -1,0 +1,240 @@
+
+<h3 align="center">Gate Check</h3>
+<div id="main_div">
+<form style="text-align: center;" method="GET"
+	action="javascript:fetchBookInfo();"><label for="txtacc_no"
+	accesskey="A" id="lbl_accno" style="padding: 0.4em; float: none;"
+	class="ui-widget-content  ui-corner-all">Acc No : <input type="text"
+	id="txtacc_no" size="8" maxlength="6" /> </label> <input type="submit"
+	value="Submit"></form>
+<table border="0" style="width: 100%">
+	<tr>
+		<td>
+		<div id="book_div" style="float: left; display: none;">
+		<fieldset class="ui-widget-content  ui-corner-all"><legend
+			class="ui-widget-header ui-corner-all">Book Information</legend>
+		<table id="book_table" border="0">
+			<tr>
+				<td align="right">Title:</td>
+				<td colspan="2"><span id='txtbook_title'></span></td>
+			</tr>
+			<tr>
+				<td align="right">Authors:</td>
+				<td colspan="2"><span id='txtbook_author'></span></td>
+			</tr>
+			<tr>
+				<td align="right">Issue Date:</td>
+				<td><span id='txtissue_date'></span></td>
+				<td rowspan="5" align="center" valign="top">
+				<div id="image_div" style="width: 80px; height: 100px;">
+				<p>Book Image</p>
+				</div>
+				</td>
+			</tr>
+			<tr>
+				<td align="right"><?=$this->formLabel ( 'txtreturn_date', 'Exp Return Date' )?>:</td>
+				<td><span id='txtreturn_date'></span></td>
+			</tr>
+			<tr>
+				<td align="right"><?=$this->formLabel ( 'txtday_late', 'Day Late' )?>:	</td>
+				<td><span id="txtday_late"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+		</table>
+		</fieldset>
+		</div>
+		</td>
+
+		<td>
+		<div id="member_div" style="width: 100%; float: right; display: none;">
+		<fieldset class="ui-widget-content  ui-corner-all"><legend
+			class="ui-widget-header ui-corner-all"> Member Information</legend>
+		<table id="member_table" border="0">
+			<tr>
+				<td align="right">Member Id:</td>
+				<td colspan="2"><span id="txtmember_id"></span></td>
+			</tr>
+			<tr>
+				<td align="right">Department:</td>
+				<td colspan="2"><span id="txtdepartment_id"></span></td>
+			</tr>
+			<tr>
+				<td align="right">Degree:</td>
+				<td width="100"><span id="txtdegree_id"></span></td>
+				<td width="99" rowspan="5" align="center" valign="top">
+				<div id="member_mage_div" style="width: 80px; height: 100px;">
+				<p>Member Image</p>
+				</div>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">Semester:</td>
+				<td><span id="txtsemester_id"></span></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+
+			</tr>
+
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+		</table>
+		</fieldset>
+		</div>
+
+		</td>
+	</tr>
+
+</table>
+<form id="btndiv" method="GET" action="javascript:returnBook();"
+	style="clear: both; text-align: center; padding-top: 1em; padding-bottom: 1em; display: none;">
+<input type="reset" id="btnreset" /></form>
+</div>
+
+
+<script type="text/javascript">
+var urlIsbn  =  '<?=$this->url ( array ('module' => 'library', 'controller' => 'book', 'action' => 'getbookdetails' ) );?>';
+var urlBookImage = '<?=$this->url ( array ('module' => 'library', 'controller' => 'isbn', 'action' => 'getbookimage' ) );?>';
+var urlMember  = '<?=$this->url ( array ('module' => 'library', 'controller' => 'member', 'action' => 'getmemberinfo' ) );?>';
+var urlBookReturn = '<?=$this->url ( array ('module' => 'library', 'controller' => 'return', 'action' => 'returnbook' ) );?>';
+var acc_no;
+var book_title;
+var book_authors;
+var isbn_id;
+var issue_date;
+var return_date;
+var member_id,member_type_id;
+var status ;
+var day_late;
+resetAll();	 
+$(function(){
+	$("#main_div span").parent().attr("class", "ui-state-highlight ui-corner-all");
+	$("#btnreturn").attr("class","ui-corner-all");
+
+	$("#btnreset").click(function(){
+		resetAll();	 
+	});
+});
+
+function fetchBookInfo(){
+	resetAll();
+	acc_no = $("#txtacc_no").val();
+	if ( acc_no != ''){
+		$.ajax({
+			url: urlIsbn,
+			data: {acc_no : acc_no},
+			dataType : "json",
+			async : false,
+			success: function(response){
+				status = response.bookInfo.status;
+				isbn_id = response.isbn_id;
+				book_title = response.title;
+				book_authors = response.author;	
+				issue_date = response.issue_date;
+				return_date = response.exp_return_date;
+				if(!issue_date){ issue_date = 'NONE';}
+				if(!return_date){ return_date = 'NONE';}
+				if(!day_late) { day_late = 'NONE';}
+				
+				$("#txtbook_title").text(book_title);
+				$("#txtbook_title").attr('title', book_title);
+				$("#txtbook_author").text(book_authors);
+				$("#txtbook_author").attr('title',book_authors);
+				$("#txtissue_date").text(issue_date);
+				$("#txtreturn_date").text(return_date);
+				//day_late = response.day_late ? response.;
+				
+				$('#txtday_late').text(day_late);
+				$("#member_div span:contains('NONE')").parent().parent().hide();
+				$("#member_div span:not(:contains('NONE'))").parent().parent().show();
+				switch(status.toUpperCase()){
+					case 'AVAILABLE':
+						$("#book_div").show();
+						$("#btndiv").hide();
+						$("#member_div").hide();
+						$("span:contains('NONE')").parent().parent().hide();
+						alert('Book Acc No "' +  acc_no + '" is not issued');
+						$("#txtacc_no").focus().select();
+					break;
+					case 'ISSUED':
+						$("#book_div").slideDown();
+						member_id = response.member_id;
+						$("#txtmember_id").text(member_id);
+						    	$.getJSON(urlMember,{ member_id : member_id},function(response){
+									member_type_id = response.member_type_id;
+									var degree_id = response.info.degree_id ? response.info.degree_id : 'NONE' ;
+									var semester_id = response.info.semester_id ? response.info.semester_id : 'NONE';  
+									//$('#txtday_late').val();
+									$("#txtdegree_id").text(degree_id);
+									$("#txtsemester_id").text(semester_id);
+									$("#txtdepartment_id").text(response.info.department_id);
+									$("#member_div").slideDown();
+									$("#btndiv").show();
+									$("span:not(:contains('NONE'))").parent().parent().show();
+									$("#btnreturn").focus();
+								});
+					break;
+					default :
+						alert('Book status is not "AVAILABLE".');
+				}
+					
+				$.getJSON(urlBookImage,
+							{isbn_id : isbn_id},
+							function(response){
+								$('#image_div').html(response);	
+				});
+				
+				
+			},
+			error : function(transport) {
+				$("#txtacc_no").val('');
+				alert(transport.responseText);
+				 
+			   }
+			});
+		
+	
+	}
+	
+}
+
+function returnBook() {
+	if(status.toUpperCase() == 'ISSUED'){
+				$.ajax({url : urlBookReturn,
+				   dataType : "json",
+				   data : { acc_no : acc_no } ,
+				   success : function(response){
+					   alert(response.responseText);
+					}, 
+				   error : function(transport){ alert(transport.responseText);}
+					  
+				});
+	}else{
+		alert("Can Not Return Book");
+	}
+	   resetAll();
+};
+
+function resetAll(){
+	 $("#book_div :text").val('');
+	 $("#book_div").hide();
+	 $("#member_div").hide();
+	 $("#member_div :text").val('');
+	 $("#btndiv").hide();
+	 $("#txtacc_no").focus();
+};
+</script>
