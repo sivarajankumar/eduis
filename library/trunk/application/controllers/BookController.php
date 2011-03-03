@@ -66,7 +66,7 @@ class BookController extends Libz_Base_BaseController {
 			if (isset($bookInfo['isbn_id'])) {
 				$book = $objIsbn->getIsbnDetails ( $bookInfo['isbn_id'] );
 				$bookIssued = $objIssueReturn->getIssuedBookInfo ( $acc_no );
-				$this->_helper->logger($bookIssued);
+				//$this->_helper->logger($bookIssued);
 				if ($bookIssued) {
 					$issueDate = new Zend_Date ( $bookIssued['issue_date'], Zend_Date::ISO_8601 );
 					$book ['member_id'] = $bookIssued['member_id'];
@@ -94,6 +94,35 @@ class BookController extends Libz_Base_BaseController {
 					$bookStatus = 1;
 				}
 				
+				$book['bookInfo'] = $bookInfo;
+				$this->_helper->json ( $book );
+				//echo Zend_Json::encode($book);
+			} else {
+				$this->getResponse ()->setHttpResponseCode ( 400 );
+				echo ('Either the Acc No "' . $acc_no . '" or its corrosponding ISBN is invalid.');
+			}
+		
+		} else {
+			$this->getResponse ()->setHttpResponseCode ( 400 );
+			echo 'Parameters are insufficient to process.';
+		}
+	
+	}
+	
+
+	public function getbookAction() {
+		self::createModel ();
+		$request = $this->getRequest ();
+		$acc_no = $request->getParam ( 'acc_no' );
+		$objIsbn = new Lib_Model_DbTable_Isbn ();
+		
+		$book = array();
+		
+		if (isset ( $acc_no )) {
+			$bookInfo = Lib_Model_DbTable_Book::getBookInfo ( $acc_no );
+			if (isset($bookInfo['isbn_id'])) {
+				$book = $objIsbn->getIsbnDetails ( $bookInfo['isbn_id'] );
+				//$this->_helper->logger($bookIssued);
 				$book['bookInfo'] = $bookInfo;
 				$this->_helper->json ( $book );
 				//echo Zend_Json::encode($book);
