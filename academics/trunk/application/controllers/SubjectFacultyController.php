@@ -39,12 +39,18 @@ class SubjectFacultyController extends Acadz_Base_BaseController
                 foreach ($sarr as $key => $value) {
                     switch ($key) {
                         case 'staff_id':
+                            $this->grid->sql->where("$key LIKE ?", '%'.$value .'%');
+                            break;
                         case 'subject_code':
-                            $this->grid->sql->where("$key LIKE ?", 
+                            $this->grid->sql->where("subject_faculty.subject_code LIKE ?", 
                             $value . '%');
                             break;
-                        case 'subject_mode_id':
-                            $this->grid->sql->where("$key = ?", $value);
+                        case 'subject_mode':
+                            $this->grid->sql->where("subject_faculty.subject_mode_id LIKE ?", 
+                            $value . '%');
+                            break;
+                        case 'semester_id':
+                            $this->grid->sql->where("subject_department.semester_id = ?", $value);
                             break;
                     }
                 }
