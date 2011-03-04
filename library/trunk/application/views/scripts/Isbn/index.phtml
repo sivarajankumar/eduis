@@ -19,7 +19,7 @@ $(function(){
     $(gridTable).jqGrid(
             {
             url : urlFillGrid,
-            colNames:['ISBN','Title','Long Title','Edition','Volume','Year', 'Author(s)','Publisher','DDC','LCC','Language','Physical desc' , 'Cost','Currency' , 'Remarks'], 
+            colNames:['ISBN','Title','Long Title','Edition','Volume','Year', 'Author(s)','Publisher','Cost','Currency' ,'DDC','LCC','Language','Physical desc' ,  'Remarks'], 
             colModel:[  {name:'isbn_id',
                             index:'isbn_id',
                             editable:true,
@@ -27,8 +27,8 @@ $(function(){
                             editoptions: {
                                 dataEvents: [{
                                     type: 'change',
-                                    fn: function(e) {                                    
-                                	$(this).attr('disabled', 'disabled');
+                                    fn: function(e) {                               
+                                	/*$(this).attr('disabled', 'disabled');
 	                                	$.getJSON(urlBookInfo,
 	                                			{isbn : this.value},
 	                                	        function(data, textStatus){
@@ -71,7 +71,7 @@ $(function(){
 	                                                }
 	                                	          
 	                                	        });
-	                                	
+	                                	*/
                                      }
                                 }]
                             }
@@ -84,7 +84,9 @@ $(function(){
                         },
                         {name:'long_title',
                             index:'long_title',
-                            editoptions:{size:30},
+                            editoptions:{
+                                edithidden:true},
+                            hidden : true,
                             editable:true
                         },
                         {name:'edition',
@@ -104,26 +106,10 @@ $(function(){
                             editable:true,
                             editrules:{required:true} 
                         },
-                        {name:'publisher_id',
-                            index:'publisher_id',
+                        {name:'place_publisher',
+                            index:'place_publisher',
                             editable:true,
                             editrules:{required:true} 
-                        },
-                        {name:'ddc',
-                            index:'ddc',
-                            editable:true
-                        },
-                        {name:'lcc',
-                            index:'lcc',
-                            editable:true
-                        },
-                        {name:'language_id',
-                            index:'language_id',
-                            editable:true
-                        },
-                        {name:'physical_desc',
-                            index:'physical_desc',
-                            editable:true
                         },
                         {name:'cost',
                             index:'cost',
@@ -134,8 +120,39 @@ $(function(){
                             index:'currency_id',
                             editable:true
                         },
+                        {name:'ddc',
+                            index:'ddc',
+                            editoptions:{
+                                edithidden:true},
+                            hidden : true,
+                            editable:true
+                        },
+                        {name:'lcc',
+                            index:'lcc',
+                            editoptions:{
+                                edithidden:true},
+                            hidden : true,
+                            editable:true
+                        },
+                        {name:'language_id',
+                            index:'language_id',
+                            editoptions:{
+                                edithidden:true},
+                            hidden : true,
+                            editable:true
+                        },
+                        {name:'physical_desc',
+                            index:'physical_desc',
+                            editoptions:{
+                                edithidden:true},
+                            hidden : true,
+                            editable:true
+                        },
                         {name:'remarks',
                             index:'remarks',
+                            editoptions:{
+                                edithidden:true},
+                            hidden : true,
                             editable:true
                         }
                     ],
@@ -175,4 +192,23 @@ $(function(){
     addPager(gridTable, gridPager); 
 });
 </script>
-
+<?php 
+$protocol = 'http://';
+$cdnServer = $protocol.CDN_SERVER;
+/*
+ * Adding JqGrid as grid.
+ */
+$this->headLink()
+    ->appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.jqgrid.css')
+    ->//Select multiple columns from column chooser
+appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.multiselect.css');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/ui.multiselect.js');
+// This is compressed version of jqGrid 3.6, It has all plugins in one file only
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/i18n/grid.locale-en.js');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/jquery.jqGrid.min.js');
+// Gloabal Settings for JqGrid
+$this->headScript()->appendFile($cdnServer . '/plugins/jqgrid/jqGrid.global.js');
+?>
