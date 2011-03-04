@@ -44,7 +44,7 @@ class BookController extends Libz_Base_BaseController {
 					}
 				}
 			}
-			$this->fillgridfinal ();
+			self::fillgridfinal ();
 		
 		} else {
 			echo ('<b>Error!! </b><br/>)');

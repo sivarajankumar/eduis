@@ -340,9 +340,9 @@ class Libz_Base_BaseController extends Zend_Controller_Action {
 	 * @return json
 	 */
 	protected function fillgridfinal() {
-		$response = $this->jqgrid->prepareResponse ();
+		$response = $this->grid->prepareResponse ();
 		
-		$result = $this->jqgrid->fetchdata ();
+		$result = $this->grid->fetchdata ();
 		$pkey = $this->model->info ( 'primary' );
 		
 		foreach ( $result as $key => $row ) {
