@@ -22,6 +22,7 @@ class IsbnController extends Libz_Base_BaseController {
      * @return JSON data
      */
 	public function fillgridAction() {
+	    self::createModel();
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
 		if ($valid) {
