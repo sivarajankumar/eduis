@@ -12,8 +12,8 @@ class IndexController extends Libz_Base_BaseController {
 	 * The default action - show the home page
 	 */
 	public function indexAction() {
-		echo '<pre>';
-		print_r ($_REQUEST);
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
 	}
 
 }
