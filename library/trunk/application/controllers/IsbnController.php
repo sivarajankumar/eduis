@@ -26,9 +26,9 @@ class IsbnController extends Libz_Base_BaseController {
 		$request = $this->getRequest ();
 		$valid = $request->getParam ( 'nd' );
 		if ($valid) {
-			$this->jqgrid = $this->_helper->grid ();
+			$this->grid = $this->_helper->grid ();
 			
-			$this->jqgrid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
+			$this->grid->sql = $this->model->select ()->from ( $this->model->info ( 'name' ) );
 			
 			$searchOn = $request->getParam ( '_search' );
 			if ($searchOn != 'false') {
@@ -36,12 +36,14 @@ class IsbnController extends Libz_Base_BaseController {
 				foreach ( $sarr as $key => $value ) {
 					switch ($key) {
 						case 'isbn_id' :
-							$this->jqgrid->sql->where ( "$key = ?", $value );
+						case 'year' :
+							$this->grid->sql->where ( "$key = ?", $value );
 							break;
 						case 'title' :
 						case 'long_title' :
 						case 'author' :
-							$this->jqgrid->sql->where ( "$key LIKE ?", '%' . $value . '%' );
+						case 'place_publisher' :
+							$this->grid->sql->where ( "$key LIKE ?", '%' . $value . '%' );
 							break;
 					}
 				}

@@ -1,16 +1,4 @@
-<?php $baseUrl = $this->baseUrl ();
-$this->headLink ()->appendStylesheet ( $baseUrl . '/plugins/jqgrid/css/ui.jqgrid.css' )
-
-//Select multiple columns from column chooser
-->appendStylesheet ( $baseUrl . '/plugins/jqgrid/css/ui.multiselect.css' );
-$this->headScript ()->appendFile ( $baseUrl . '/plugins/jqgrid/js/ui.multiselect.js' );
-
-// This is compressed version of jqGrid 3.6, It has all plugins in one file only
-$this->headScript ()->appendFile ( $baseUrl . '/plugins/jqgrid/js/i18n/grid.locale-en.js' );
-$this->headScript ()->appendFile ( $baseUrl . '/plugins/jqgrid/jquery.jqGrid.min.js' );
-// Gloabal Settings for JqGrid
-$this->headScript ()->appendFile ( $baseUrl . '/plugins/jqgrid/jqGrid.global.js' );
-?><h3 align="center">Manage Books</h3>
+<h3 align="center">Manage Books</h3>
 
 <div class="gridstyle">
 <table id="tblgrid" class="scroll"></table>
@@ -155,3 +143,27 @@ $(function(){
 	 addPager(gridTable, gridPager); 
 });
 </script>
+<?php 
+$protocol = 'http://';
+$cdnServer = $protocol.CDN_SERVER;
+/*
+ * Adding JqGrid as grid.
+ */
+$this->headLink()
+    ->appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.jqgrid.css')
+    ->//Select multiple columns from column chooser
+appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.multiselect.css');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/ui.multiselect.js');
+// This is compressed version of jqGrid 3.6, It has all plugins in one file only
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/i18n/grid.locale-en.js');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/jquery.jqGrid.min.js');
+// Gloabal Settings for JqGrid
+$this->headScript()->appendFile($cdnServer . '/plugins/jqgrid/jqGrid.global.js');
+$this->headLink()->appendStylesheet(
+'http://' . CDN_SERVER . '/plugins/baloon/bt/jquery.bt.css');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/baloon/bt/jquery.bt.min.js');
+?>
