@@ -9,7 +9,9 @@ $baseTheme = 'pepper-grinder';
 // Various Servers and Addresses
 $baseUrl = $this->baseUrl();
 // Content Delievery Server i.e. static Files, e.g. CSS, JS, Themes and related images etc
-$cdnServer = 'http://site.cdn.aceambala.com';
+
+$protocol = 'http://';
+$cdnServer = $protocol.CDN_SERVER;
 // Images of users, events etc
 $imageServer = $baseUrl;
 // Add most common CSS files
