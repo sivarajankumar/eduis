@@ -13,7 +13,7 @@ class Core_Controller_Helper_Logger extends Zend_Controller_Action_Helper_Abstra
      *
      * @var Zend_Log The logger
      */
-    private $logger;
+    private $_logger;
     /**
      * Constructor: initialize plugin loader with logger instance 
      * depending on if configuration allows it
