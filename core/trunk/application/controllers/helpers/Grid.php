@@ -6,7 +6,7 @@
  * @subpackage Helper
  * @since	   0.1
  */
-class Core_Controller_Helper_Grid extends Zend_Controller_Action_HelperAbstract
+class Core_Controller_Helper_Grid extends Zend_Controller_Action_Helper_Abstract
 {
     // Zend_Db_Table_Select object
     public $sql;
