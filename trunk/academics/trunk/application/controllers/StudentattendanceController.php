@@ -25,14 +25,16 @@ class StudentattendanceController extends Acadz_Base_BaseController
     {
         $request = $this->getRequest();
         //Getting Request Parameters
-        $weekday_number = $request->getParam('weekday_number');
-        $department_id = $request->getParam('department_id');
         $period_dateobj = new Zend_Date($request->getParam('period_date'), 
         'dd-MM-YYYY');
+        $weekday_number = $period_dateobj->toString('e') ;
         $period_date = $period_dateobj->toString('YYYY-MM-dd');
+        
         if (Zend_Auth::getInstance()->hasIdentity()) {
             $authInfo = Zend_Auth::getInstance()->getStorage()->read();
             $staff_id = $authInfo['identity'];
+        } else {
+            throw new Zend_Exception('You need to login first.',Zend_Log::ERR);
         }
         
         if (isset($staff_id) and isset($period_date)) {
@@ -55,8 +57,7 @@ class StudentattendanceController extends Acadz_Base_BaseController
                     $dayPeriods[$key]['nonattendance'] = 1;
                 }
             }
-            echo json_encode($dayPeriods);
-            //echo $this->_helper->json($dayPeriods);
+            echo $this->_helper->json($dayPeriods, false);
         } else {
             throw new Zend_Exception('Unidentified access', Zend_Log::ALERT);
         }
