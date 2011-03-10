@@ -9,7 +9,8 @@ class Acad_Model_Member_Student extends Acad_Model_Member_Generic {
      * @param string|int $rollNumber Roll number
      * @return Acad_Model_Member_Student
      */
-    public function setRollNumber($rollNumber){
+    public function setRollNumber($rollNumber)
+    {
         return self::setMemberId($rollNumber);
     }
     
@@ -20,7 +21,8 @@ class Acad_Model_Member_Student extends Acad_Model_Member_Generic {
      * 
      * @return string|int $rollNumber Roll number
      */
-    public function getRollNumber(){
+    public function getRollNumber()
+    {
         return self::getMemberId();
     }
     
