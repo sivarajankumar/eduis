@@ -128,6 +128,11 @@ class StudentattendanceController extends Acadz_Base_BaseController
             return false;
         }
     }
+    
+    public function viewAction()
+    {
+        
+    }
     /*public function reportstuwiseAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
