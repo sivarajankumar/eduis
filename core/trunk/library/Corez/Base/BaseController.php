@@ -21,17 +21,17 @@ class Corez_Base_BaseController extends Zend_Controller_Action
      * Model of the controller
      * @var Corez_Base_Model
      */
-    protected $model;
+    protected $_model;
     /**
      * Database Columns to be processed.
      * @var array Array of database columns.
      */
-    protected $dbCols;
+    protected $_dbCols;
     /**
      * JqGrid
      * @var Core_Controller_Helper_Grid
      */
-    protected $grid;
+    protected $_grid;
     protected static $debug;
     /**
      * Set Model class for Controller
