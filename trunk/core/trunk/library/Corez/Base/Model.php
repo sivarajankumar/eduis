@@ -27,7 +27,7 @@ class Corez_Base_Model extends Zend_Db_Table
      * Default logger for Models.
      * @var object
      */
-    protected $logger;
+    protected $_logger;
     /**
      * 
      * Get logger of application
