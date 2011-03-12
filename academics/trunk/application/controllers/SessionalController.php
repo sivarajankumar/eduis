@@ -2,12 +2,11 @@
 class SessionalController extends Acadz_Base_BaseController
 {
     protected $department_id;
-    public  function init()
-     {
-        
+    public function init ()
+    {
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
         $this->department_id = $authInfo['department_id'];
-        
+        parent::init();
     }
     public function indexAction ()
     {
@@ -23,27 +22,34 @@ class SessionalController extends Acadz_Base_BaseController
     {
         $request = $this->getRequest();
         $valid = $request->getParam('nd');
-        if ($request->isXmlHttpRequest() and $valid) {
+        //$request->isXmlHttpRequest() and $valid
+        if (1) {
+            $this->gridparam['page'] = $request->getParam('page',1); // get the requested page
+            $this->gridparam['limit'] = $request->getParam('rows',20); // rows limit in Grid
+            $this->gridparam['sidx'] = $request->getParam('sidx',1); // get index column - i.e. user click to sort
+            $this->gridparam['sord'] = $request->getParam('sord', 'asc'); // sort direction
+            
             $model = new Acad_Model_Test_Sessional();
-            $this->grid = $this->_helper->grid();
-            $this->grid->sql = $this->model->select()->from(
-            $this->model->info('name'));
-            $searchOn = $request->getParam('_search');
-            if ($searchOn != 'false') {
-                $sarr = $request->getParams();
-                foreach ($sarr as $value) {
-                    switch ($key) {
-                        case 'department_id':
-                        case 'degree_id':
-                            $this->grid->sql->where("$key LIKE ?", $value . '%');
-                            break;
-                        case 'batch_start':
-                            $this->grid->sql->where("$key = ?", $value);
-                            break;
-                    }
+            $result = $model->fetchAll();
+            
+            $this->_count = count($result);
+            $this->total_pages = 0;
+            $this->offset = 0;
+            $response = new stdClass();
+            $response->page = $this->gridparam['page'];
+            $response->total = $this->total_pages;
+            $response->records = $this->_count;
+            $pkey = array('test_info_id');
+            foreach ($result as $key => $row) {
+                $gridTuplekey = null;
+                foreach ($pkey as $num => $col) {
+                    $gridTuplekey[] = $row->getTestInfoId();
                 }
+                $response->rows[$key]['id'] = implode('__', $gridTuplekey);
+                $response->rows[$key]['cell'] = $row->getSubject();
             }
-            self::fillgridfinal();
+            $this->_helper->logger($response);
+            //$this->_helper->json($response);
         } else {
             $this->getResponse()
                 ->setException('Non ajax request')
@@ -55,24 +61,18 @@ class SessionalController extends Acadz_Base_BaseController
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $this->view->assign('masterDepartment', $this->department_id);
-     
     }
     protected function _imod ()
     {}
     public function imodAction ()
     {
-        
         $model = new Acad_Model_Test_SessionalMapper();
-       
         $string = $this->getRequest();
-        $refined= html_entity_decode($string);
+        $refined = html_entity_decode($string);
         $array = explode('', $refined);
-      
-       
-       array_push($array, array('department_id'=>$this->department_id,'test_type_id'=>'ssnl'));   
-        
-      
-        $insert=$this->model->save($array);
+        array_push($array, 
+        array('department_id' => $this->department_id, 'test_type_id' => 'ssnl'));
+        $insert = $this->model->save($array);
     }
 }
 
