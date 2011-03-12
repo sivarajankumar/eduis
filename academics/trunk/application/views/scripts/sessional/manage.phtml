@@ -1,1 +1,119 @@
-<br /><br /><center>View script for controller <b>Sessional</b> and script/action name <b>index</b></center>
+<h3 align="center">Manage Sessionals</h3>
+<div id="main_div">
+
+	<div id="semester-select-div"class="ui-widget-content ui-corner-all" style="width:20em; height:5em; padding:4px">
+		<label for="semester_id" accesskey="S" id="lbl_semester_id" style="padding: 0.4em; float: left;">
+			Degree:</label>&nbsp;
+		<select id="degree_id" tabindex="1" onchange="javascript:loadSemester();">
+		</select>
+		<br /><br />
+		<label for="semester_id" accesskey="S" id="lbl_semester_id" style="padding: 0.4em; float: left;" >
+			Semester:</label>&nbsp;
+		<select id="semester_select" tabindex="1" onchange="javascript:showSessional();"></select>
+	</div> <!-- End sessional-select-div -->
+	<br />
+	
+	<div id="sessional-schedule-div" style="display">
+		<table id="tblgrid" class="scroll"></table>
+		<div id="gridpager" class="scroll" style="text-align: center;"></div>
+	</div><!-- End sessioanl-schedule-div -->
+
+</div> <!-- End main_div -->
+
+
+<script type="text/javascript" language="javascript">
+
+$(function(){
+    var gridTable = "#tblgrid";
+    var gridPager = "#gridpager";
+    
+    var urlFillGrid = "<? echo $this->url(array('module' => $this->module, 
+												'controller' => $this->controller, 
+												'action' => 'fillgrid'), 'default', true)?>";
+												
+    var urlCRUD = "<? echo $this->url(array('module' => $this->module, 
+											'controller' => $this->controller, 
+											'action' => 'crud'), 'default', true)?>";
+											
+	var urlDegreeCombo = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 
+																				'action' => 'getslavedegree'), 
+																				'default', true)?>";
+										    
+	$.ajax({
+        url : urlDegreeCombo,
+        dataType : 'jsonp',
+        jsonp:'onJsonPLoad',
+        data : {'masterDepartment': 'CSE','slaveDepartment' : 'CSE', 'format' : 'jsonp' },
+        success: function(jDegree){
+        	var selectOptionString = '<option value ="">Select one</option>';
+			$.each(jDegree, function (index, degree) {
+				selectOptionString += '<option value ="'+degree.degree_id+'">'+degree.degree_id+'</option>';
+			});
+            $('#degree_id').html(selectOptionString);
+            },
+            error: function(event) {
+                alert(event.responseText);
+                }
+            });
+    
+	$(gridTable).jqGrid({
+		url : urlFillGrid,
+		colNames:['Subject','Date','Time','Max_Marks','Pass_Marks','Optional'],
+		colModel:[{name:'subject',
+            index:'subject'
+            },
+            {name:'date',
+                index:'date'
+            },
+            {name:'time', 
+                index:'time'},
+            {name:'max_marks',
+                index:'max_marks',
+                hidden: true},
+            {name:'pass_marks', 
+                index:'pass_marks',
+                hidden: true},
+            {name:'optional', 
+                index:'optional',
+                hidden: true},
+            ],
+        caption: "Manage Sessional Schedule  " ,
+        pager: gridPager,
+        editurl:urlCRUD
+		});
+
+	$(gridTable).jqGrid('navGrid', gridPager, {
+        add : false,
+        del : false,
+        edit : false,
+        view : false,
+        search : false,
+        refresh : false
+    }, // options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true
+            }, // edit options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true,
+                clearAfterAdd : true //Default is true, make false if needed
+            }, // add options
+            {
+                reloadAfterSubmit : false,
+                jqModal : false,
+                closeOnEscape : true
+            } // del options
+         );
+    
+    addPager(gridTable, gridPager); 
+    
+	});
+	
+</script>
