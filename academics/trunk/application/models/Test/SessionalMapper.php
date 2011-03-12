@@ -34,7 +34,7 @@ class Acad_Model_Test_SessionalMapper
     public function getDbTable()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Acad_Model_Test_Sessional');
+            $this->setDbTable('Acad_Model_DbTable_Sessional');
         }
         return $this->_dbTable;
     }
@@ -81,17 +81,29 @@ class Acad_Model_Test_SessionalMapper
             throw new Zend_Exception('oye, ye kya bheja hai??', Zend_Log::ERR);
         }
     }
+    
+    /**
+     * 
+     * Enter description here ...
+     * return array Acad_Model_Test_Sessional
+     */
     public function fetchAll ()
     {
         $resultSet = $this->getDbTable()->fetchAll();
         $entries = array();
         foreach ($resultSet as $row) {
             $entry = new Acad_Model_Test_Sessional();
-            $entry->setTestNumber($row->testNumber)
-                ->setSubject($row->subject)
-                ->setMaxMarks($row->maxMarks)
-                ->setMinMarks($row->minMarks)
-                ->setTestInfoId($row->testInfoId)
+            $entry->setTestInfoId($row->test_info_id)
+                ->setDepartment($row->department_id)
+                ->setDegree($row->degree_id)
+                ->setSemester($row->semester_id)
+                ->setSubject($row->subject_code)
+                ->setTestType($row->test_type_id)
+                ->setTestNumber($row->test_id)
+                ->setTime($row->time)
+                ->setConductDate($row->date_of_conduct)
+                ->setMaxMarks($row->max_marks)
+                ->setMinMarks($row->pass_marks)
                 ->setMapper($this);
             $entries[] = $entry;
         }

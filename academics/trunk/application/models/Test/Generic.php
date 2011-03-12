@@ -74,6 +74,14 @@ abstract class Acad_Model_Test_Generic
      */
     protected $_minMarks;
     
+    
+    /**
+     * Remarks
+     * @var string
+     */
+    protected $_remark;
+     
+    
     /**
      * Set test info id
      * @param int $testInfoId - test info id
@@ -237,7 +245,7 @@ abstract class Acad_Model_Test_Generic
      * @return Acad_Model_generic
      */
     public function setMaxMarks($maxMarks){
-        $this->getMapper()->getMaxMarks(params);
+        $this->_maxMarks = $maxMarks;
         return $this;
     }
     
@@ -257,7 +265,7 @@ abstract class Acad_Model_Test_Generic
      * @return Acad_Model_generic
      */
     public function setMinMarks($minMarks){
-        $this->getMapper()->getMinMarks(params);
+        $this->_minMarks = $minMarks;
         return $this;
     }
     
@@ -268,6 +276,51 @@ abstract class Acad_Model_Test_Generic
     public function getMinMarks(){
         return $this->_minMarks;
     }
+    
+    /**
+     * Time of conduct
+     * @var str
+     */
+    protected $_time;
+     
+     
+    /**
+     * Set Time of conduct
+     * @param str $time - Time of conduct
+     * @return Acad_Model_Test_Generic
+     */
+    public function setTime($time){
+        
+        return $this;
+    }
+    
+    /**
+     * Get Time of conduct
+     * @return str $time - Time of conduct
+     */
+    public function getTime(){
+        return $this->_time;
+    }
+    
+     
+    /**
+     * Set remarks
+     * @param string $remark - remarks
+     * @return Acad_Model_Test_Generic
+     */
+    public function setRemark($remark){
+        
+        return $this;
+    }
+    
+    /**
+     * Get remarks
+     * @return string $remark - remarks
+     */
+    public function getRemark(){
+        return $this->_remark;
+    }
+    
 
 }
 ?>
