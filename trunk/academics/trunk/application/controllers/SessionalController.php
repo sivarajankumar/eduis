@@ -1,16 +1,20 @@
 <?php
-
 class SessionalController extends Acadz_Base_BaseController
 {
-
-    public function indexAction()
+    protected $department_id;
+    public  function init()
+     {
+        
+        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+        $this->department_id = $authInfo['department_id'];
+        
+    }
+    public function indexAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        // action body
+         // action body
     }
-    
-    
     /**
      * Back end data provider to datagrid.
      * @return json
@@ -20,14 +24,14 @@ class SessionalController extends Acadz_Base_BaseController
         $request = $this->getRequest();
         $valid = $request->getParam('nd');
         if ($request->isXmlHttpRequest() and $valid) {
-            self::createModel();
+            $model = new Acad_Model_Test_Sessional();
             $this->grid = $this->_helper->grid();
             $this->grid->sql = $this->model->select()->from(
             $this->model->info('name'));
             $searchOn = $request->getParam('_search');
             if ($searchOn != 'false') {
                 $sarr = $request->getParams();
-                foreach ($sarr as $key => $value) {
+                foreach ($sarr as $value) {
                     switch ($key) {
                         case 'department_id':
                         case 'degree_id':
@@ -46,14 +50,29 @@ class SessionalController extends Acadz_Base_BaseController
                 ->setHttpResponseCode(400);
         }
     }
-
-    public function manageAction()
+    public function manageAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        // action body
+        $this->view->assign('masterDepartment', $this->department_id);
+     
     }
-
-
+    protected function _imod ()
+    {}
+    public function imodAction ()
+    {
+        
+        $model = new Acad_Model_Test_SessionalMapper();
+       
+        $string = $this->getRequest();
+        $refined= html_entity_decode($string);
+        $array = explode('', $refined);
+      
+       
+       array_push($array, array('department_id'=>$this->department_id,'test_type_id'=>'ssnl'));   
+        
+      
+        $insert=$this->model->save($array);
+    }
 }
 
