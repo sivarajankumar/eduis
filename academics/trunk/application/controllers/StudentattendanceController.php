@@ -131,6 +131,8 @@ class StudentattendanceController extends Acadz_Base_BaseController
     
     public function viewAction()
     {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
         
     }
     /*public function reportstuwiseAction ()
