@@ -1,13 +1,31 @@
 <?php
+/**
+ *
+ * @category   EduIS
+ * @package    Core
+ * @subpackage Batch
+ * @since	   0.1
+ */
+/**
+ * 
+ * 
+ * @author Prarthana
+ * @author Harsh
+ * Sessional datesheet in a degree of a department
+ */
 class SessionalController extends Acadz_Base_BaseController
 {
     protected $department_id;
+    
     public function init ()
     {
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
         $this->department_id = $authInfo['department_id'];
         parent::init();
     }
+    /**
+     * @about Interface.
+     */
     public function indexAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -56,14 +74,28 @@ class SessionalController extends Acadz_Base_BaseController
                 ->setHttpResponseCode(400);
         }
     }
+    /**
+     * 
+     * 
+     * enabling layout and assigning department_id to view
+     */
     public function manageAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $this->view->assign('masterDepartment', $this->department_id);
     }
+    /**
+     * @deprecated
+     * 
+     */
     protected function _imod ()
     {}
+    /**
+     * 
+     * Enter description here ...
+     * insert data in database through SessionalMapper 
+     */
     public function imodAction ()
     {
         $model = new Acad_Model_Test_SessionalMapper();
