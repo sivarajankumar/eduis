@@ -36,6 +36,38 @@ class Acad_Model_Test_Sessional extends Acad_Model_Test_Generic
         return $this->_mapper;
     }
 
+    
+    /**
+     * Overloading: allow property access
+     * 
+     * @param  string $name 
+     * @param  mixed $value 
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        $method = 'set' . $name;
+        if ('mapper' == $name || !method_exists($this, $method)) {
+            throw new Zend_Exception('Invalid property specified');
+        }
+        $this->$method($value);
+    }
+
+    /**
+     * Overloading: allow property access
+     * 
+     * @param  string $name 
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        $method = 'get' . $name;
+        if ('mapper' == $name || !method_exists($this, $method)) {
+             throw new Zend_Exception('Invalid property specified');
+        }
+        return $this->$method();
+    }
+    
     /**
      * Save the current entry
      * 
