@@ -62,7 +62,6 @@ class Acad_Model_Test_SessionalMapper
              . ' (' . implode(', ', $data) . ')';
              return $this->getDbTable()->getAdapter()->query($sql);
             } else {
-                //$this->getDbTable()->update($data, array('testInfoId = ?' => $testInfoId));
                 $set[] = $this->quoteIdentifier($data, true) . ' = ';
                 $where = $this->_whereExpr($where);
                 /**
@@ -74,9 +73,31 @@ class Acad_Model_Test_SessionalMapper
              . (($where) ? " WHERE $where" : '');
 
              return $this->getDbTable()->getAdapter()->query($sql);
+                
             }
         } elseif (is_array($sessional)){
             
+        if (null === ($testInfoId = $sessional->getTestInfoId())) {
+                unset($data['testInfoId']);
+  
+                 $sql='INSERT INTO '
+             . $this->quoteIdentifier($sessional, true)
+             . ' (' . implode(', ', $data) . ')';
+             return $this->getDbTable()->getAdapter()->query($sql);
+            } else {
+                $set[] = $this->quoteIdentifier($data, true) . ' = ';
+                $where = $this->_whereExpr($where);
+                /**
+         * Build the UPDATE statement
+         */
+        $sql = "UPDATE "
+             . $this->quoteIdentifier($sessional, true)
+             . ' SET ' . implode(', ', $set)
+             . (($where) ? " WHERE $where" : '');
+
+             return $this->getDbTable()->getAdapter()->query($sql);
+                
+            }    
         } else {
             throw new Zend_Exception('oye, ye kya bheja hai??', Zend_Log::ERR);
         }
