@@ -74,15 +74,13 @@ abstract class Acad_Model_Test_Generic
      */
     protected $_minMarks;
     
-     
-     
     /**
      * Set test info id
      * @param int $testInfoId - test info id
      * @return Acad_Model_Test_Generic
      */
     public function setTestInfoId($testInfoId){
-        
+        $this->_testInfoId=$testInfoId;        
         return $this;
     }
     
@@ -102,7 +100,7 @@ abstract class Acad_Model_Test_Generic
      * @return Acad_Model_Test_Generic
      */
     public function setDepartment($department){
-        
+        $this->_department=$department;
         return $this;
     }
     
@@ -121,7 +119,7 @@ abstract class Acad_Model_Test_Generic
      * @return Acad_Model_Test_Generic
      */
     public function setDegree($degree){
-        
+        $this->_degree=$degree;
         return $this;
     }
     
@@ -141,7 +139,7 @@ abstract class Acad_Model_Test_Generic
      * @return Acad_Model_Test_Generic
      */
     public function setSemester($semester){
-        
+        $this->_semester=$semester;
         return $this;
     }
     
@@ -161,7 +159,7 @@ abstract class Acad_Model_Test_Generic
      * @return Acad_Model_Test_Generic
      */
     public function setSubject($subject){
-        
+        $this->_subject=$subject;
         return $this;
     }
     
@@ -181,7 +179,7 @@ abstract class Acad_Model_Test_Generic
      * @return Acad_Model_Test_Generic
      */
     public function setTestNumber($testNumber){
-        
+        $this->_testNumber=$testNumber;
         return $this;
     }
     
@@ -200,7 +198,7 @@ abstract class Acad_Model_Test_Generic
      * @return Acad_Model_Test_Generic
      */
     public function setTestType($testType){
-        
+        $this->_testType=$testType;
         return $this;
     }
     
@@ -220,7 +218,7 @@ abstract class Acad_Model_Test_Generic
      * @return Acad_Model_Test_Generic
      */
     public function setConductDate($conductDate){
-        
+        $this->_conductDate=$conductDate;
         return $this;
     }
     
@@ -233,14 +231,13 @@ abstract class Acad_Model_Test_Generic
     }
     
     
-    
-    /**
+/**
      * Set Max Marks
      * @param int $maxMarks - Max Marks
-     * @return Acad_Model_Test_Generic
+     * @return Acad_Model_generic
      */
     public function setMaxMarks($maxMarks){
-        
+        $this->getMapper()->getMaxMarks(params);
         return $this;
     }
     
@@ -257,10 +254,10 @@ abstract class Acad_Model_Test_Generic
     /**
      * Set min marks
      * @param int $minMarks - min marks
-     * @return Acad_Model_Test_Generic
+     * @return Acad_Model_generic
      */
     public function setMinMarks($minMarks){
-        
+        $this->getMapper()->getMinMarks(params);
         return $this;
     }
     
@@ -271,15 +268,6 @@ abstract class Acad_Model_Test_Generic
     public function getMinMarks(){
         return $this->_minMarks;
     }
-    
 
-    /**
-     * Save the current entry
-     * 
-     * @return void
-     */
-    public function save(){
-        $this->getMapper()->save($this);
-    }
 }
 ?>

@@ -35,12 +35,23 @@ class Acad_Model_Class
     protected $_faculties;
     
     /**
+     * Subjects in class
+     * @var array
+     */
+    protected $_subjects;
+    /**
+     * @var Acad_Model_ClassMapper
+     */
+    protected $_mapper;
+        
+    /**
      * Set class department
      * @param string $department class department
      * @return Acad_Model_Class
      */
     public function setDepartment ($department)
     {
+        $this->_department=$department;
         return $this;
     }
     /**
@@ -58,6 +69,7 @@ class Acad_Model_Class
      */
     public function setDegree ($degree)
     {
+        $this->_degree=$degree;
         return $this;
     }
     /**
@@ -75,6 +87,7 @@ class Acad_Model_Class
      */
     public function setSemester ($semester)
     {
+        $this->_semester=$semester;
         return $this;
     }
     /**
@@ -92,6 +105,7 @@ class Acad_Model_Class
      */
     public function setBatchStart ($batchStart)
     {
+        $this->_batchStart=$batchStart;
         return $this;
     }
     /**
@@ -114,55 +128,12 @@ class Acad_Model_Class
         if (isset($this->_batchStart)) {
             ;
         } elseif (isset($this->_semester)) {
-            $this->_students = self::fetchSemesterStudents(
+            $this->_students = $this->getMapper()->fetchSemesterStudents(
             $this->getDepartment(), $this->getDegree(), $this->getSemester(), 
             $group);
         }
         return $this->_students;
     }
-    /**
-     * Fetch semester students.
-     * @throws Zend_Exception
-     * @return array semester students.
-     */
-    public static function fetchSemesterStudents ($department, $degree, 
-    $semester, $group)
-    {
-        
-        $cacheManager = Zend_Registry::get('cacheManager');
-        $cache = $cacheManager->getCache('remote');
-        
-        if (isset($group)) {
-            $stuCache = strtolower($department . $degree . $semester.$group);
-        } else {
-            $stuCache = strtolower($department . $degree . $semester);
-        }
-        $students = $cache->load($stuCache);
-        // see if a cache already exists:
-        if ($students === false) {
-            $semesterStuURL = 'http://' . CORE_SERVER . '/semester/getstudents';
-            $client = new Zend_Http_Client($semesterStuURL);
-            $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID'])
-                ->setParameterGet('department_id', $department)
-                ->setParameterGet('degree_id', $degree)
-                ->setParameterGet('semester_id', $semester);
-            if (isset($group)) {
-                $client->setParameterGet('group_id', $group);
-            }
-            $response = $client->request();
-            if ($response->isError()) {
-                $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
-                 $response->getMessage();
-                throw new Zend_Exception($remoteErr, Zend_Log::ERR);
-            } else {
-                $jsonContent = $response->getBody();
-                $students = Zend_Json_Decoder::decode($jsonContent);
-                $cache->save($students, $stuCache);
-            }
-        }
-        return $students;
-    }
-    
 
     /**
      * Set faculty members
@@ -171,6 +142,7 @@ class Acad_Model_Class
      */
     protected function setFacultyMembers($faculties){
         
+        $this->_faculties=$faculties;
         return $this;
     }
     
@@ -180,6 +152,67 @@ class Acad_Model_Class
      */
     public function getFacultyMembers(){
         return $this->_faculties;
+    }
+    
+
+    /**
+     * Set subjects
+     * 
+     * @return Acad_Model_Class
+     */
+    protected function setSubjects(){
+        $this->_subjects=$this->getMapper()->getSubjects(
+        $this->getDepartment(), $this->getDegree(), $this->getSemester(), 'TH');
+        return $this;
+    }
+    
+    /**
+     * Get subjects of class
+     * @return array $subjects Subjects of class
+     */
+    public function getSubjects ()
+    {
+        if (null === $this->_subjects) {
+            //do smting
+        }
+        return $this->_subjects;
+    }
+    
+
+    /**
+     * Set data mapper
+     * 
+     * @param  mixed $mapper 
+     * @return Acad_Model_Class
+     */
+    public function setMapper($mapper)
+    {
+        $this->_mapper = $mapper;
+        return $this;
+    }
+
+    /**
+     * Get data mapper
+     *
+     * Lazy loads Acad_Model_Class instance if no mapper registered.
+     * 
+     * @return Acad_Model_ClassMapper
+     */
+    public function getMapper()
+    {
+        if (null === $this->_mapper) {
+            $this->setMapper(new Acad_Model_ClassMapper());
+        }
+        return $this->_mapper;
+    }
+   
+    /**
+     * Save the current entry
+     * 
+     * @return void
+     */
+    public function save(){
+        $this->getMapper()->save($this);
     }
 }
 ?>
