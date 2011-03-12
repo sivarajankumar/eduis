@@ -88,8 +88,7 @@ FROM
         $data = array(
         'department_id'=>$class->getDepartment(),
         'degree_id' =>$class->getDegree(),
-        'semester_id' =>$class->getSemester(),
-        'batchstart'=>$class->getBatchStart (),
+        'batchstart'=>$class->getBatchStart ()
         );
     }
 }
