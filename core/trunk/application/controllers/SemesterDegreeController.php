@@ -103,7 +103,7 @@ class SemesterDegreeController extends Corez_Base_BaseController
                         $this->_helper->json($result);
                         return;
                 case 'jsonp':
-                    $callback = $request->getParam('onJsonPLoad');
+                    $callback = $request->getParam('callback');
                     echo $callback.'('.$this->_helper->json($result, false).')';
                     return;
                     case 'select':
@@ -142,7 +142,7 @@ class SemesterDegreeController extends Corez_Base_BaseController
                     $this->_helper->json($result);
                     return;
                 case 'jsonp':
-                    $callback = $request->getParam('onJsonPLoad');
+                    $callback = $request->getParam('callback');
                     echo $callback.'('.$this->_helper->json($result, false).')';
                     return;
                 case 'select':
@@ -180,7 +180,7 @@ class SemesterDegreeController extends Corez_Base_BaseController
                     $this->_helper->json($result);
                     return;
                 case 'jsonp':
-                    $callback = $request->getParam('onJsonPLoad');
+                    $callback = $request->getParam('callback');
                     echo $callback.'('.$this->_helper->json($result, false).')';
                     return;
                 case 'select':
