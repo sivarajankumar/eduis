@@ -24,7 +24,6 @@ function getDepartmentFaculty()
 	
 	 $.ajax({url :urlDepartmentFac,
          dataType : 'jsonp',
-         jsonp:'onJsonPLoad',
 			data : {department_id : $('#department_id').val(), 'format' : 'jsonp' },
 			success :function(response){
 				var data  = '<option value="">Select One </option>' ;
@@ -137,7 +136,6 @@ $(function(){
 		                            $.ajax({
 		                                url : urlDegreeCombo,
 	                                    dataType : 'jsonp',
-	                                    jsonp:'onJsonPLoad',
 		                                data : {'masterDepartment': department_id,'slaveDepartment' : department_id, 'format' : 'jsonp' },
 	                                    success: function(jDegree){
 		                                	var selectOptionString = '<option value ="">Select one</option>';
@@ -160,7 +158,6 @@ $(function(){
 									$.ajax({
 										url : urlSemesterCombo,
 	                                    dataType : 'jsonp',
-	                                    jsonp:'onJsonPLoad',
 										data : {department_id: department_id,
 												degree_id : this.value, 'format' : 'jsonp' },
 										success: function(jSemesters){
@@ -276,7 +273,6 @@ $(function(){
             	$.ajax({
                     url : urlDeptCombo,
                     dataType : 'jsonp',
-                    jsonp:'onJsonPLoad',
                     data : {'format' : 'jsonp' },
                     success: function(jDept){
                     	var selectOptionString = '<option value ="">Select one</option>';

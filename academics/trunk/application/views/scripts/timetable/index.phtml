@@ -164,7 +164,6 @@ $(function(){
 		                            $.ajax({
 		                                url : urlDegreeCombo,
 	                                    dataType : 'jsonp',
-	                                    jsonp:'onJsonPLoad',
 		                                data : {'masterDepartment': masterDepartment,'slaveDepartment' : slaveDepartment, 'format' : 'jsonp' },
 	                                    success: function(jDegree){
 		                                	var selectOptionString = '<option value ="">Select one</option>';
