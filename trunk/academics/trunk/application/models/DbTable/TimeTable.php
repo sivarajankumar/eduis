@@ -13,15 +13,19 @@ class Acad_Model_DbTable_TimeTable extends Acadz_Base_Model
 	 * Customized insert
 	 * @version 2.0
 	 */
-    public function insert (array $data){
+    public function insert (array $data)
+    {
         $periodStaus = self::periodStatus($data['period_id'], true);
         if ('FULL' != $periodStaus['STATUS']) {
             if ('PARTIAL' == $periodStaus['STATUS']) {
                 if ('ALL' === strtoupper($data['group_id'])) {
-                    throw new Zend_Exception('Period status is '.$periodStaus['STATUS'].'. '.$data['group_id'].' groups can not be placed.',    Zend_Log::WARN);
+                    throw new Zend_Exception(
+                    'Period status is ' . $periodStaus['STATUS'] . '. ' .
+                     $data['group_id'] . ' groups can not be placed.', 
+                    Zend_Log::WARN);
                 }
-                //TODO More strict check can also be implemented (It is still having some holes but hard to detect, I dont want to correct that because frontend covers that problem.).
-                /* self::getLogger()->log('Future partial period!! Do something.', Zend_Log::DEBUG);
+                 //TODO More strict check can also be implemented (It is still having some holes but hard to detect, I dont want to correct that because frontend covers that problem.).
+            /* self::getLogger()->log('Future partial period!! Do something.', Zend_Log::DEBUG);
                 $errVar = '';
                 foreach ($periodStaus['periodStatus'] as $key => $value) {
                     $errVar .= "[$key] ::".var_export($value, true);
@@ -29,7 +33,6 @@ class Acad_Model_DbTable_TimeTable extends Acadz_Base_Model
                 
                 self::getLogger()->log('Future partial period. Attempt: '.var_export($data, true).' Actual: '.$errVar, Zend_Log::DEBUG);
                 */
-            
             }
             //TODO Include Block and Rooms
             $data['block_id'] = 'ADM_B1';
@@ -73,10 +76,11 @@ class Acad_Model_DbTable_TimeTable extends Acadz_Base_Model
         } else {
             $errVar = '';
             foreach ($periodStaus['periodStatus'] as $key => $value) {
-                $errVar .= "[$key] ::".var_export($value, true);
+                $errVar .= "[$key] ::" . var_export($value, true);
             }
-            throw new Zend_Exception('Future period entry confliction. Attempt: '.var_export($data, true).' Actual: '.$errVar, 
-            Zend_Log::WARN);
+            throw new Zend_Exception(
+            'Future period entry confliction. Attempt: ' .
+             var_export($data, true) . ' Actual: ' . $errVar, Zend_Log::WARN);
         }
     }
     /**
@@ -209,7 +213,8 @@ WHERE (`period`.`department_id` = ?
        AND `period`.`semester_id` = ?
        AND `period`.`weekday_number` = ?
        AND `period`.period_type_id != "BRK" 
-       ' . $groupStmt . $prdNumberSmt . ')) AS tmp2 ON
+       ' . $groupStmt .
+             $prdNumberSmt . ')) AS tmp2 ON
 	   tmp1.timetable_id = tmp2.timetable_id
 SET tmp1.valid_upto = DATE_SUB(?, INTERVAL 1 DAY);';
             $params[] = $endvalidityDate;
@@ -518,9 +523,10 @@ WHERE timetable.staff_id = ?
             ->join('period', 'timetable.period_id = period.period_id', 
         array('department_id', 'degree_id', 'semester_id'))
             ->where('timetable.period_id = ?', $period_id)
-            ->where('timetable.staff_id = ?', $staff_id)
-            ->where(
-        "'$period_date' BETWEEN timetable.valid_from AND timetable.valid_upto");
+            ->where("? BETWEEN timetable.valid_from AND timetable.valid_upto", $period_date);
+        if (isset($staff_id)) {
+            $sql->where('timetable.staff_id = ?', $staff_id);
+        }
         return $sql->query()->fetchAll();
     }
     /*

@@ -93,7 +93,7 @@ class Acad_Model_DbTable_FacultyAdjustment extends Acadz_Base_Model
     public static function cancelAdjustment ($period_id, $staff_id, $period_date)
     {
         $result = Acad_Model_DbTable_Timetable::getPeriodIdTimetable(
-        $period_id, $staff_id);
+        $period_id, $period_date, $staff_id);
         $where = "source_staff_id='$staff_id'";
         $where .= "AND start_date='$period_date'";
         $where .= 'AND ( ';

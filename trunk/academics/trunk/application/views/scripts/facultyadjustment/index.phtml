@@ -51,10 +51,12 @@ $(function(){
 	var sessionStartdateObj;
 	var period_id;
 	department_id = "<?=$this->department_id?>";
-	var todayTimetableUrl = "<?=$this->url ( array ('module' => 'department', 'controller' => 'studentattendance', 'action' => 'fillperiodgrid' ), 'default', true )?>";
-	var adjustmentUrl="<?=$this->url ( array ('module' => 'department', 'controller' => 'adjustment', 'action' => 'adjustperiod' ), 'default', true )?>";
-	var departmentFacUrl="<?=$this->url ( array ('module' => 'department', 'controller' => 'subjectfaculty', 'action' => 'getdepartmentfaculty' ), 'default', true )?>";
-	var subjectUrl="<?=$this->url ( array ('module' => 'department', 'controller' => 'subjectdepartment', 'action' => 'getsemsubject' ), 'default', true )?>";
+	var todayTimetableUrl = "<? echo $this->url ( array ('controller' => 'studentattendance', 'action' => 'fillperiodgrid' ))?>";
+	var adjustmentUrl="<? echo $this->url ( array ('controller' => 'facultyadjustment', 'action' => 'adjustperiod' ))?>";
+	var departmentFacUrl="<? echo 'http://' . CORE_SERVER . $this->url ( array ('controller' => 'staff', 'action' => 'getdepartmentstaff' ) )?>";
+	var subjectUrl="<? echo $this->url ( array ('controller' => 'subjectdepartment', 'action' => 'getsemsubject' ))?>";
+	var cancelUrl = "<? echo $this->url ( array ('controller' => 'facultyadjustment', 'action' => 'canceladjustment' ))?>";
+	
 
 	var session_startdate = '<?php echo $this->session_startdate; ?>';
 	
@@ -113,23 +115,22 @@ $(function(){
 				url: subjectUrl ,
 				dataType : "json",
 				data : {department_id : department_id, degree_id : degree_id , semester_id : semester_id},
-				success : function(response)
-				{
-					var selectOptionString = '<option value ="">Select one</option>';
-					$.each(response,function(index,value){
-						selectOptionString += '<option value ="'+value.subject_code+'">'+ value.subject_name+'</option>';
-						});
-					$('#subject').html(selectOptionString);	
-				}
+                success: function(jSemSubjects){
+                    semSubjects = jSemSubjects;
+						var selectOptionString = '<option value ="">Select one</option>';
+                  	$.each(jSemSubjects, function (subjectCode, subjectInfo) {
+	        				selectOptionString += '<option value ="'+subjectCode+'">'+subjectInfo[0].subject_name+' | '+subjectCode+'</option>';
+	        			});
+                    $('#subject').html(selectOptionString);
+                    },
+                    error: function(event) {
+                        alert(event.responseText);
+                        }
 			});
 			
 		},
 		loadError : function(xhr,st,err) { 
 			jQuery("#rsperror").html("Type: "+st+"; Response: "+ xhr.status + " "+xhr.statusText); 
-		},
-		
-		loadComplete : function (){
-			
 		}
 	}).navGrid('#prdlstpager',{add:false,edit:false,del:false}); 
 
@@ -175,31 +176,18 @@ $(function(){
 		
 	});
 	/////////////
-	var datearr = $('#datetext').html().split('-');
-	var day=datearr[0];
-	var month = datearr[1]-1;
-	var year = datearr[2];
-	
-	serverDateObj=new Date(year,month,day);
-	var sdatearr=session_startdate.split('-');
-	year = sdatearr[0];
-	month = sdatearr[1]-1;
-	day = sdatearr[2];
-	sessionStartdateObj= new Date(year,month,day);
+	serverDateObj= $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	sessionStartdateObj= $.datepicker.parseDate('yy-mm-dd', session_startdate);
 	
 	$("#datepicker1").datepicker(  {
 		minDate : sessionStartdateObj,
-		maxDate : serverDateObj,
-		dateFormat: 'dd/M/yy', 
+		//maxDate : serverDateObj,
+		dateFormat: 'dd-mm-yy', 
 		closeText: 'X',
 		onSelect : function(dateText, inst) { 
 		$('#btndiv').css("visibility","hidden");
 		$("#prdlst").clearGridData();
-		var datearr = dateText.split('/');
-		var day=datearr[0];
-		var month = datearr[1];
-		var year = datearr[2];
-		var todayDateObj=new Date(dateText);
+		var todayDateObj = $.datepicker.parseDate('dd-mm-yy', dateText);
 		weekday_number=todayDateObj.getDay();
 		
 		$.ajax({
@@ -207,7 +195,7 @@ $(function(){
 			url: todayTimetableUrl ,
 			dataType : "json",
 			async :  false,
-			data: {staff_id : staff_id ,weekday_number :weekday_number , period_date : dateText , department_id : department_id },
+			data: {staff_id : staff_id , period_date : dateText },
 			success: function(response) {
 					for(var cnt = 0;cnt <  response.length ;cnt++){
 					var data = { period_number : response[cnt]['period_number'], 
@@ -275,17 +263,16 @@ $(function(){
 	//Get Department Faculty to adjust period.
 	 
 	$.ajax({url :departmentFacUrl,
-			data : {department_id : department_id},
-			dataType : "json",
+			data : {department_id : department_id,
+					format : "jsonp"},
+			dataType : "jsonp",
 			async : false,
-			success :function(response){
-				var data  = '<option value=selectone>Select One </option>' ;
-				for(var cnt=0;cnt < response.length; cnt++)
-				{
-					data += '<option value=' + response[cnt].staff_id + '>' + response[cnt].first_name +' ' + response[cnt].last_name + '</option>';
-				}
-				$('#staff_id').html(data);
-				$('#to_staff_id').html(data);
+			success :function(jStaff){
+            	var selectOptionString = '<option value ="">Select one</option>';
+    			$.each(jStaff, function (index, faculty) {
+    				selectOptionString += '<option value ="'+faculty.staff_id+'">'+faculty.staff_name+'</option>';
+    			});
+                $('#staff_id,#to_staff_id').html(selectOptionString);
 			},
 			error :  function(error)
 			{
@@ -352,8 +339,6 @@ $(function(){
 		});
 
 	$('#btncancel').click(function(){
-		var cancelUrl = "<?=$this->url ( array ('module' => 'department', 'controller' => 'adjustment', 'action' => 'canceladjustment' ), 'default', true )?>";
-
 		var rowid = $('#prdlst').getGridParam("selrow");
 		var rowdata= $('#prdlst').getRowData(rowid);
 		var period_number = rowdata.period_number;

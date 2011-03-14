@@ -1,6 +1,11 @@
 <?php
 class SubjectFacultyController extends Acadz_Base_BaseController
 {
+    public function init() {
+        
+        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+        $this->department_id = $authInfo['department_id'];
+    }
     /*
      * @about Interface.
      */
@@ -10,7 +15,7 @@ class SubjectFacultyController extends Acadz_Base_BaseController
         $this->_helper->layout()->enableLayout();
         $this->view->assign('controller', $this->_request->getControllerName());
         $this->view->assign('module', $this->_request->getModuleName());
-        $this->view->assign('department_id', 'CSE');
+        $this->view->assign('department_id', $this->department_id);
     }
     /*
      * Back end data provider to datagrid.
@@ -32,7 +37,7 @@ class SubjectFacultyController extends Acadz_Base_BaseController
                 ->joinLeft('subject_department', 
             '(subject_department.subject_code = subject_faculty.subject_code AND subject_department.department_id = subject_faculty.department_id)', 
             array())
-                ->where('subject_faculty.department_id = ?', 'cse');
+                ->where('subject_faculty.department_id = ?', $this->department_id);
             $searchOn = $request->getParam('_search');
             if ($searchOn != 'false') {
                 $sarr = $request->getParams();

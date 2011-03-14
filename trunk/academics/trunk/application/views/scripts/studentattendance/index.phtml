@@ -40,19 +40,19 @@ $this->headScript()->appendFile(
 <form >Select date: <input type="text"
 	id="datepicker1" readonly="readonly"
 	class="ui-widget-content  ui-corner-all" style="text-align: center"></input> <span style="color: gray; " >(i.e. attendance date)</span><a
-	style="text-decoration: none; font-size: small; float: right;"
+	style="text-decoration: none; font-size: small; float: right;display: none;"
 	class="ui-priority-secondary ui-state-default ui-corner-all"
 	href="<?=$this->url(array('module' => $this->module, 'controller' => 'rptfacatt', 'action' => 'getlastmarked'), 'default', true)?>">&nbsp;
 Check recent marked periods &nbsp;<span
-	style="margin: -1px 0px 0px -2px; float: right;"
+	style="margin: -1px 0px 0px -2px; float: right;display: none;"
 	class="ui-icon ui-icon-link ui-state-default ui-corner-right"> </span></a>
 </form>
 </div>
 
 
-<table id="prdlst" style="display: hidden;" class="scroll"></table>
+<table id="prdlst"  class="scroll"></table>
 <br />
-<table id="stulistgrid" style="display: hidden;" class="scroll"
+<table id="stulistgrid" class="scroll"
 	cellpadding="0" cellspacing="0"></table>
 
 <div id="statusdiv" class="aligncenter">

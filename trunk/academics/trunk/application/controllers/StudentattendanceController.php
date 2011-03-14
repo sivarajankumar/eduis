@@ -15,7 +15,6 @@ class StudentattendanceController extends Acadz_Base_BaseController
             $this->identity = $authInfo['identity'];
             $staff_id = $authInfo['identity'];
         }
-        
         $this->view->assign('staff_id', $staff_id);
     }
     /**
@@ -25,18 +24,20 @@ class StudentattendanceController extends Acadz_Base_BaseController
     {
         $request = $this->getRequest();
         //Getting Request Parameters
-        $period_dateobj = new Zend_Date($request->getParam('period_date'), 
-        'dd-MM-YYYY');
-        $weekday_number = $period_dateobj->toString('e') ;
+        $period_dateobj = new Zend_Date(
+        $request->getParam('period_date'), 'dd-MM-YYYY');
+        $weekday_number = $period_dateobj->toString('e');
         $period_date = $period_dateobj->toString('YYYY-MM-dd');
-        
-        if (Zend_Auth::getInstance()->hasIdentity()) {
-            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-            $staff_id = $authInfo['identity'];
-        } else {
-            throw new Zend_Exception('You need to login first.',Zend_Log::ERR);
+        $staff_id = $request->getParam('staff_id');
+        if (! $staff_id) {
+            if (Zend_Auth::getInstance()->hasIdentity()) {
+                $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+                $staff_id = $authInfo['identity'];
+            } else {
+                throw new Zend_Exception('You need to login first.', 
+                Zend_Log::ERR);
+            }
         }
-        
         if (isset($staff_id) and isset($period_date)) {
             $dayPeriods = Acad_Model_DbTable_TimeTable::getFacultyDayPeriods(
             $staff_id, $period_date, $weekday_number);
@@ -128,12 +129,10 @@ class StudentattendanceController extends Acadz_Base_BaseController
             return false;
         }
     }
-    
-    public function viewAction()
+    public function viewAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        
     }
     /*public function reportstuwiseAction ()
     {

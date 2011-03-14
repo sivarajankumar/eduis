@@ -123,7 +123,7 @@ class PeriodattendanceController extends Acadz_Base_BaseController
         foreach ($groups as $key => $group) {
             $group_id = $group['group_id'];
             $group_number = substr($group_id, strlen($group_id) - 1);
-            $studentList = Acad_Model_Class::fetchSemesterStudents(
+            $studentList = Acad_Model_ClassMapper::fetchSemesterStudents(
             $period->getDepartment(), $period->getDegree(), 
             $period->getSemester(), $group_id);
             $totalstudents = $totalstudents + count($studentList);
