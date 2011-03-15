@@ -56,13 +56,9 @@ class SessionalController extends Acadz_Base_BaseController
             $response->page = $this->gridparam['page'];
             $response->total = $this->total_pages;
             $response->records = $this->_count;
-            $pkey = array('test_info_id');
-            foreach ($result as $key => $row) {
-                $gridTuplekey = null;
-                foreach ($pkey as $num => $col) {
-                    $gridTuplekey[] = $row->getTestInfoId();
-                }
-                $response->rows[$key]['id'] = implode('__', $gridTuplekey);
+            foreach ($result as $key => $row) 
+            {
+                $response->rows[$key]['id'] = $row->getTestInfoId();
                 $response->rows[$key]['cell'] = array($row->getSubject(), 
                 $row->getConductDate(), $row->getTime(), $row->getMaxmarks(), 
                 $row->getMinMarks(), $row->getRemark());
