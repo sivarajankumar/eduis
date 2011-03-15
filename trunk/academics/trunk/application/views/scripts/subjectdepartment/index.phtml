@@ -38,7 +38,6 @@ $(function(){
 		                            $.ajax({
 		                                url : urlDegreeCombo,
 	                                    dataType : 'jsonp',
-	                                    jsonp:'onJsonPLoad',
 		                                data : {'masterDepartment': department_id,'slaveDepartment' : department_id, 'format' : 'jsonp' },
 	                                    success: function(jDegree){
 		                                	var selectOptionString = '<option value ="">Select one</option>';
@@ -61,7 +60,6 @@ $(function(){
     									$.ajax({
     										url : urlSemesterCombo,
     	                                    dataType : 'jsonp',
-    	                                    jsonp:'onJsonPLoad',
     										data : {department_id: department_id,
     												degree_id : this.value, 'format' : 'jsonp'},
     										success: function(jSemesters){
