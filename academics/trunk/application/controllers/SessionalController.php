@@ -16,7 +16,6 @@
 class SessionalController extends Acadz_Base_BaseController
 {
     protected $department_id;
-    
     public function init ()
     {
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
@@ -42,14 +41,14 @@ class SessionalController extends Acadz_Base_BaseController
         $valid = $request->getParam('nd');
         //$request->isXmlHttpRequest() and $valid
         if (1) {
-            $this->gridparam['page'] = $request->getParam('page',1); // get the requested page
-            $this->gridparam['limit'] = $request->getParam('rows',20); // rows limit in Grid
-            $this->gridparam['sidx'] = $request->getParam('sidx',1); // get index column - i.e. user click to sort
-            $this->gridparam['sord'] = $request->getParam('sord', 'asc'); // sort direction
-            
+            $this->gridparam['page'] = $request->getParam('page', 1); // get the requested page
+            $this->gridparam['limit'] = $request->getParam('rows', 
+            20); // rows limit in Grid
+            $this->gridparam['sidx'] = $request->getParam('sidx', 1); // get index column - i.e. user click to sort
+            $this->gridparam['sord'] = $request->getParam('sord', 
+            'asc'); // sort direction
             $model = new Acad_Model_Test_Sessional();
             $result = $model->fetchAll();
-            
             $this->_count = count($result);
             $this->total_pages = 0;
             $this->offset = 0;
@@ -64,10 +63,12 @@ class SessionalController extends Acadz_Base_BaseController
                     $gridTuplekey[] = $row->getTestInfoId();
                 }
                 $response->rows[$key]['id'] = implode('__', $gridTuplekey);
-                $response->rows[$key]['cell'] = $row->getSubject();
+                $response->rows[$key]['cell'] = array($row->getSubject(), 
+                $row->getConductDate(), $row->getTime(), $row->getMaxmarks(), 
+                $row->getMinMarks(), $row->getRemark());
             }
             $this->_helper->logger($response);
-            //$this->_helper->json($response);
+            $this->_helper->json($response);
         } else {
             $this->getResponse()
                 ->setException('Non ajax request')
@@ -103,7 +104,7 @@ class SessionalController extends Acadz_Base_BaseController
         $refined = html_entity_decode($string);
         $array = explode('', $refined);
         array_push($array, 
-        array('department_id' => $this->department_id, 'test_type_id' => 'ssnl'));
+        array('department_id' => $this->department_id, 'test_type_id' => 'sess'));
         $insert = $this->model->save($array);
     }
 }
