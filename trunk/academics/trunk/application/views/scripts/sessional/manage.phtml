@@ -27,9 +27,9 @@ $(function(){
     var gridTable = "#tblgrid";
     var gridPager = "#gridpager";
     
-    var urlFillGrid = "<? echo $this->url(array('module' => $this->module, 
-												'controller' => $this->controller, 
-												'action' => 'fillgrid'), 'default', true)?>";
+    var urlFillGrid = "<? echo $this->url(array(
+												'controller' => 'sessional', 
+												'action' => 'fillgrid'))?>";
 												
     var urlCRUD = "<? echo $this->url(array('module' => $this->module, 
 											'controller' => $this->controller, 
@@ -58,7 +58,7 @@ $(function(){
     
 	$(gridTable).jqGrid({
 		url : urlFillGrid,
-		colNames:['Subject','Date','Time','Max_Marks','Pass_Marks','Optional'],
+		colNames:['Subject','Date','Time','Max Marks','Pass Marks','Optional'],
 		colModel:[{name:'subject',
             index:'subject'
             },
