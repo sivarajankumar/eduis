@@ -1,15 +1,18 @@
 <h3 align="center">Manage Sessionals</h3>
 <div id="main_div">
 
-	<div id="semester-select-div"class="ui-widget-content ui-corner-all" style="width:20em; height:5em; padding:4px">
-		<label for="semester_id" accesskey="S" id="lbl_semester_id" style="padding: 0.4em; float: left;">
+	<div id="selection-div"class="ui-widget-content ui-corner-all" style="width:20em; height:5em; padding:4px">
+		<label for="degree_id" accesskey="S" id="lbl_degree_id" style="padding: 0.4em; float: left;">
 			Degree:</label>&nbsp;
-		<select id="degree_id" tabindex="1" onchange="javascript:loadSemester();">
+		<select id="degree_select" tabindex="1" >
 		</select>
+		
 		<br /><br />
-		<label for="semester_id" accesskey="S" id="lbl_semester_id" style="padding: 0.4em; float: left;" >
-			Semester:</label>&nbsp;
-		<select id="semester_select" tabindex="1" onchange="javascript:showSessional();"></select>
+		
+		<label for="class_id" accesskey="S" id="lbl_class_id" style="padding: 0.4em; float: left;" >
+			Class:</label>&nbsp;
+		<select id="class_select" tabindex="1" ></select>
+		
 	</div> <!-- End sessional-select-div -->
 	<br />
 	
@@ -25,7 +28,8 @@
 
 $(function(){
     var gridTable = "#tblgrid";
-    var gridPager = "#gridpager";
+    var gridPager = "#gridpager"; 
+    var dep_id = 'CSE';
     
     var urlFillGrid = "<? echo $this->url(array(
 												'controller' => 'sessional', 
@@ -38,43 +42,75 @@ $(function(){
 	var urlDegreeCombo = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 
 																				'action' => 'getslavedegree'), 
 																				'default', true)?>";
+																				
+	var urlFetchActiveClasses = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 
+																				'action' => 'getsemester'), 
+																				'default', true)?>";
 										    
 	$.ajax({
         url : urlDegreeCombo,
         dataType : 'jsonp',
-        jsonp:'onJsonPLoad',
         data : {'masterDepartment': 'CSE','slaveDepartment' : 'CSE', 'format' : 'jsonp' },
         success: function(jDegree){
         	var selectOptionString = '<option value ="">Select one</option>';
 			$.each(jDegree, function (index, degree) {
 				selectOptionString += '<option value ="'+degree.degree_id+'">'+degree.degree_id+'</option>';
 			});
-            $('#degree_id').html(selectOptionString);
+            $('#degree_select').html(selectOptionString);
             },
             error: function(event) {
                 alert(event.responseText);
                 }
-            });
+            });//End ajax call.
+    
+	$('#degree_select').change({
+		
+		var deg_id = $("#degree_select").val();
+		
+		$.ajax({
+	        url : urlFetchActiveClasses,
+	        dataType : 'jsonp',
+	        data : {'degree_id' : deg_id ,'department_id' : dep_id, 'format' : 'jsonp'}, 
+	        success: function(jClass){
+	        	alert(jClass.responseText);
+	            },
+	            error: function(event) {
+	                alert(event.responseText);
+	            }
+	    });//End ajax call.
+        	
+	});//End #degree_select change.
+
     
 	$(gridTable).jqGrid({
-		url : urlFillGrid,
-		colNames:['Subject','Date','Time','Max Marks','Pass Marks','Optional'],
-		colModel:[{name:'subject',
-            index:'subject'
+		colNames:['Subject Code','Subject Name','Date of conduct','Time','Max Marks','Pass Marks','Optional'],
+		colModel:[
+			{
+				name:'subject_code',
+        	    index:'subject_code'
             },
-            {name:'date',
-                index:'date'
+            {
+				name:'subject_name',
+        	    index:'subject_name'
             },
-            {name:'time', 
+            {
+                name:'date_of_conduct',
+                index:'date_of_conduct'
+            },
+            {
+                name:'time', 
                 index:'time'},
-            {name:'max_marks',
+            {
+                name:'max_marks',
                 index:'max_marks',
                 hidden: true},
-            {name:'pass_marks', 
+            {
+                name:'pass_marks', 
                 index:'pass_marks',
                 hidden: true},
-            {name:'optional', 
-                index:'optional',
+            {
+                name:'is optional', 
+                index:'is_optional',
                 hidden: true},
             ],
         caption: "Manage Sessional Schedule  " ,
