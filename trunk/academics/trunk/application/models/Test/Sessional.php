@@ -1,7 +1,7 @@
 <?php
 /** 
- * @author Administrator
- * 
+ * @author Administrator, udit sharma
+ * @version 3.0
  * 
  */
 class Acad_Model_Test_Sessional extends Acad_Model_Test_Generic
@@ -21,7 +21,6 @@ class Acad_Model_Test_Sessional extends Acad_Model_Test_Generic
      */
     public function setMapper($mapper){
         $this->_mapper=$mapper;
-        
         return $this;
     }
     
@@ -35,7 +34,20 @@ class Acad_Model_Test_Sessional extends Acad_Model_Test_Generic
         }
         return $this->_mapper;
     }
-
+    
+	/**
+     * Constructor
+     * 
+     * @param  array|null $options 
+     * @return void
+     */
+    public function __construct(array $options = null)
+    {
+        if (is_array($options)) {
+            $this->setOptions($options);
+        }
+    }
+    
     
     /**
      * Overloading: allow property access
@@ -69,22 +81,51 @@ class Acad_Model_Test_Sessional extends Acad_Model_Test_Generic
     }
     
     /**
+     * Set object state
+     * 
+     * @param  array $options 
+     * @return Acad_Model_Sessional
+     */
+    public function setOptions(array $options)
+    {
+        $methods = get_class_methods($this);
+        foreach ($options as $key => $value) {
+            $method = 'set' . ucfirst($key);
+            if (in_array($method, $methods)) {
+                $this->$method($value);
+            }
+        }
+        return $this;
+    }
+      
+    /**
      * Save the current entry
      * 
      * @return void
      */
     public function save()
     {
-        $this->getMapper()->save($this);
+       $this->getMapper()->save($this);
     }
- /**
+    
+    /**
+     * Function fectSchedule
+     * Fecthes scedule of particular sessional if exists
+     * Otherwise, it will create partial schedule for further completion
+     * @return  
+     */
+    public function fetchSchedule(){
+        return $this->getMapper()->fetchSchedule($this);
+    }
+    
+ 	/**
      * Fetch all entries
      * 
      * @return array
      */
     public function fetchAll()
     {
-        return $this->getMapper()->fetchAll();
+       return $this->getMapper()->fetchAll($this);
     }   
         
 }
