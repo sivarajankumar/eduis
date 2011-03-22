@@ -42,11 +42,9 @@ class SessionalController extends Acadz_Base_BaseController
         //$request->isXmlHttpRequest() and $valid
         if (1) {
             $this->gridparam['page'] = $request->getParam('page', 1); // get the requested page
-            $this->gridparam['limit'] = $request->getParam('rows', 
-            20); // rows limit in Grid
+            $this->gridparam['limit'] = $request->getParam('rows', 20); // rows limit in Grid
             $this->gridparam['sidx'] = $request->getParam('sidx', 1); // get index column - i.e. user click to sort
-            $this->gridparam['sord'] = $request->getParam('sord', 
-            'asc'); // sort direction
+            $this->gridparam['sord'] = $request->getParam('sord','asc'); // sort direction
             $model = new Acad_Model_Test_Sessional();
             $result = $model->fetchAll();
             $this->_count = count($result);
