@@ -11,6 +11,7 @@
  * 
  * @author Prarthana
  * @author Harsh
+ * @author udit sharma
  * Sessional datesheet in a degree of a department
  */
 class SessionalController extends Acadz_Base_BaseController
@@ -39,14 +40,27 @@ class SessionalController extends Acadz_Base_BaseController
     {
         $request = $this->getRequest();
         $valid = $request->getParam('nd');
+        $department_id = $request->getParam('department_id');
+        $degree_id = $request->getParam('degree_id');
+        $semester_id = $request->getParam('semester_id');
+        $test_id = $request->getParam('test_id');
+        
         //$request->isXmlHttpRequest() and $valid
         if (1) {
             $this->gridparam['page'] = $request->getParam('page', 1); // get the requested page
             $this->gridparam['limit'] = $request->getParam('rows', 20); // rows limit in Grid
             $this->gridparam['sidx'] = $request->getParam('sidx', 1); // get index column - i.e. user click to sort
             $this->gridparam['sord'] = $request->getParam('sord','asc'); // sort direction
-            $model = new Acad_Model_Test_Sessional();
-            $result = $model->fetchAll();
+            
+            $params = array('department_id'=>$department_id,
+                           'degree_id'=>$degree_id,
+                           'semester_id'=>$semester_id,
+                           'test_id'=>$test_id,
+                           'test_type_id'=>'SESS'
+                           );
+            $model = new Acad_Model_Test_Sessional($params);
+            $result = $model->fetchSchedule();
+    
             $this->_count = count($result);
             $this->total_pages = 0;
             $this->offset = 0;
@@ -54,21 +68,48 @@ class SessionalController extends Acadz_Base_BaseController
             $response->page = $this->gridparam['page'];
             $response->total = $this->total_pages;
             $response->records = $this->_count;
-            foreach ($result as $key => $row) 
-            {
-                $response->rows[$key]['id'] = $row->getTestInfoId();
-                $response->rows[$key]['cell'] = array($row->getSubject(), 
-                $row->getConductDate(), $row->getTime(), $row->getMaxmarks(), 
-                $row->getMinMarks(), $row->getRemark());
+
+            if($result['exists'] == true){
+                
+                foreach ($result as $key => $row) 
+                {
+                    $response->rows[$key]['id'] = $row->getTestInfoId();
+                    $response->rows[$key]['cell'] = array($row->getSubject_code(),
+                                                          $row->getSubject_name(),  
+                                                          $row->getDate_of_conduct(), 
+                                                          $row->getTime(), 
+                                                          $row->getMax_marks(), 
+                                                          $row->getPass_Marks(), 
+                                                          $row->getIs_optional());
+                }
+            
+                $this->_helper->logger($response);
+                $this->_helper->json($response);
             }
-            $this->_helper->logger($response);
-            $this->_helper->json($response);
-        } else {
+            elseif($result['exists'] == false){
+                foreach ($result as $key => $row) 
+                {
+                    $response->rows[$key]['id'] = $row->getTestInfoId();
+                    $response->rows[$key]['cell'] = array($row->getSubject_code(),
+                                                          $row->getSubject_name(),  
+                                                          $row->getDate_of_conduct(), 
+                                                          $row->getTime(), 
+                                                          $row->getDefault_max_marks(), 
+                                                          $row->getDefault_pass_Marks(), 
+                                                          $row->getIs_optional());
+                }
+            
+                $this->_helper->logger($response);
+                $this->_helper->json($response);
+            } 
+            else {
             $this->getResponse()
                 ->setException('Non ajax request')
                 ->setHttpResponseCode(400);
-        }
+            }
+        }    
     }
+    
     /**
      * 
      * 
