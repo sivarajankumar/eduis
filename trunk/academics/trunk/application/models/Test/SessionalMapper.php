@@ -129,23 +129,22 @@ class Acad_Model_Test_SessionalMapper
     public function fetchAll (Acad_Model_Test_Sessional $sessional)
     {
         //$logger = Zend_Registry::get('logger');
-        $resultSet = $this->getDbTable()->getDefaultAdapter()
+        $sql = $this->getDbTable()->getDefaultAdapter()
             ->select()
             ->from($this->getDbTable()->info('name'))
             ->joinInner('subject', 
         			    '`test_info`.`subject_code` = `subject`.`subject_code`', 
         			    'subject_name')
             ->where('department_id = ?', $sessional->getDepartment_id())
-            ->where('degree_id = ?', $sessional->getDegree_id())
+//            ->where('degree_id = ?', $sessional->getDegree_id())
             ->where('test_type_id = ?', $sessional->getTest_type_id())
             ->where('test_id =?', $sessional->getTest_id());
             
             if($sessional->getSemester_id()){
-                $resultSet->where('semester_id = ?', $sessional->getSemester_id());
+                $sql->where('semester_id = ?', $sessional->getSemester_id());
             }
             
-            $resultSet->query()
-                      ->fetchAll();
+            $resultSet = $sql->query()->fetchAll();
         //$logger->debug($resultSet);
         
         if ($resultSet != NULL) {
