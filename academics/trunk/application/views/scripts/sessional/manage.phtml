@@ -2,6 +2,7 @@
 <div id="main_div">
 
 	<div id="selection-div"class="ui-widget-content ui-corner-all" style="width:20em; height:5em; padding:4px">
+	
 		<label for="degree_id" accesskey="S" id="lbl_degree_id" style="padding: 0.4em; float: left;">
 			Degree:</label>&nbsp;
 		<select id="degree_select" tabindex="1" >
@@ -9,16 +10,36 @@
 		
 		<br /><br />
 		
-		<label for="class_id" accesskey="S" id="lbl_class_id" style="padding: 0.4em; float: left;" >
-			Class:</label>&nbsp;
-		<select id="class_select" tabindex="1" ></select>
+		<?php
+		    if(count($this->slaveDepartment)>1){
+		    ?>    	    
+		        <label for="slave_dept" accesskey="S" id="lbl_class_id" style="padding: 0.4em; float: left;" >
+			    Choose Department:</label>&nbsp;
+	
+				<select id="slave_dept_select" tabindex="1" disabled="disabled">
+					<option>Select department</option>
+				</select>
+		<?php
+		    }
+		    else{ 
+		?>
+			<label for="class_id" accesskey="S" id="lbl_class_id" style="padding: 0.4em; float: left;" >
+				Class:</label>&nbsp;
+			<select id="class_select" tabindex="1" disabled="disabled">
+				<option>Select one</option>
+			</select>
+		<?php
+		    } 
+		?>
 		
-	</div> <!-- End sessional-select-div -->
+	</div> <!-- End selection-div -->
 	<br />
 	
 	<div id="sessional-schedule-div" style="display">
+	
 		<table id="tblgrid" class="scroll"></table>
 		<div id="gridpager" class="scroll" style="text-align: center;"></div>
+		
 	</div><!-- End sessioanl-schedule-div -->
 
 </div> <!-- End main_div -->
@@ -29,7 +50,7 @@
 $(function(){
     var gridTable = "#tblgrid";
     var gridPager = "#gridpager"; 
-    var dep_id = 'CSE';
+    var dep_id = "<?php echo $this->masterDepartment?>";
     
     var urlFillGrid = "<? echo $this->url(array(
 												'controller' => 'sessional', 
@@ -38,32 +59,32 @@ $(function(){
     var urlCRUD = "<? echo $this->url(array('module' => $this->module, 
 											'controller' => $this->controller, 
 											'action' => 'crud'), 'default', true)?>";
-											
+										
 	var urlDegreeCombo = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 
 																				'action' => 'getslavedegree'), 
 																				'default', true)?>";
 																				
 	var urlFetchActiveClasses = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 
-																				'action' => 'getsemester'), 
+																				'action' => 'getsessionsemester'), 
 																				'default', true)?>";
 										    
 	$.ajax({
         url : urlDegreeCombo,
         dataType : 'jsonp',
-        data : {'masterDepartment': 'CSE','slaveDepartment' : 'CSE', 'format' : 'jsonp' },
+        data : {'masterDepartment': dep_id,'slaveDepartment' : dep_id, 'format' : 'jsonp' },
         success: function(jDegree){
         	var selectOptionString = '<option value ="">Select one</option>';
 			$.each(jDegree, function (index, degree) {
 				selectOptionString += '<option value ="'+degree.degree_id+'">'+degree.degree_id+'</option>';
 			});
             $('#degree_select').html(selectOptionString);
-            },
-            error: function(event) {
-                alert(event.responseText);
-                }
-            });//End ajax call.
+       },
+       error: function(event) {
+            alert(event.responseText);
+       }
+    });//End ajax call.
     
-	$('#degree_select').change({
+	$('#degree_select').change(function(){
 		
 		var deg_id = $("#degree_select").val();
 		
@@ -72,18 +93,43 @@ $(function(){
 	        dataType : 'jsonp',
 	        data : {'degree_id' : deg_id ,'department_id' : dep_id, 'format' : 'jsonp'}, 
 	        success: function(jClass){
-	        	alert(jClass.responseText);
-	            },
-	            error: function(event) {
-	                alert(event.responseText);
-	            }
+	        	var selectOptionString = '<option value ="">Select one</option>';
+				$.each(jClass, function (index, jclass) {
+					selectOptionString += '<option>'+jclass.semester_id+ " " +jclass.department_id+'</option>';
+				});
+	            $('#class_select').html(selectOptionString);
+	            $('#class_select').attr('disabled',null);
+	        },
+	        error: function(event) {
+	            alert(event.responseText);
+	        }
 	    });//End ajax call.
         	
 	});//End #degree_select change.
 
-    
+	$('#class_select').change(function(){
+		
+		var deg_id = $("#degree_select").val();
+		var str = $("#class_select").val();
+		var sem = str[0];
+		var dep = str.substring(2);
+
+		$(gridTable).jqGrid('setGridParam',
+				            {
+             					postData:{
+                 					       'department_id':dep,
+                 					       'degree_id':deg_id,
+                 					       'semester_id':sem,
+                 					       'test_id':1
+                 					     },
+                 			    url: urlFillGrid
+                            }
+                            ).trigger("reloadGrid");
+		
+	});//End #degree_select change.
+	
 	$(gridTable).jqGrid({
-		colNames:['Subject Code','Subject Name','Date of conduct','Time','Max Marks','Pass Marks','Optional'],
+		colNames:['Subject Code','Subject Name','Date of conduct','Time','Max Marks','Pass Marks'],
 		colModel:[
 			{
 				name:'subject_code',
@@ -99,54 +145,56 @@ $(function(){
             },
             {
                 name:'time', 
-                index:'time'},
+                index:'time'
+            },
             {
                 name:'max_marks',
-                index:'max_marks',
-                hidden: true},
+                index:'max_marks'
+            },
             {
                 name:'pass_marks', 
-                index:'pass_marks',
-                hidden: true},
-            {
-                name:'is optional', 
-                index:'is_optional',
-                hidden: true},
+                index:'pass_marks'
+            },            
             ],
         caption: "Manage Sessional Schedule  " ,
         pager: gridPager,
         editurl:urlCRUD
 		});
 
-	$(gridTable).jqGrid('navGrid', gridPager, {
-        add : false,
-        del : false,
-        edit : false,
-        view : false,
-        search : false,
-        refresh : false
-    }, // options
-            {
-                width : 400,
-                savekey : [ true, 13 ],
-                navkeys : [ true, 38, 40 ],
-                jqModal : false,
-                closeOnEscape : true
-            }, // edit options
-            {
-                width : 400,
-                savekey : [ true, 13 ],
-                navkeys : [ true, 38, 40 ],
-                jqModal : false,
-                closeOnEscape : true,
-                clearAfterAdd : true //Default is true, make false if needed
-            }, // add options
-            {
-                reloadAfterSubmit : false,
-                jqModal : false,
-                closeOnEscape : true
-            } // del options
-         );
+	$(gridTable).jqGrid('navGrid', 
+						gridPager, 
+						{
+        					add : false,
+        					del : false,
+        					edit : false,
+       						view : false,
+        					search : false,
+        					refresh : false
+    					}, // options
+    					
+            			{
+                			width : 400,
+                			savekey : [ true, 13 ],
+                			navkeys : [ true, 38, 40 ],
+                			jqModal : false,
+                			closeOnEscape : true
+            			}, // edit options
+            			
+            			{
+            			    width : 400,
+                			savekey : [ true, 13 ],
+                			navkeys : [ true, 38, 40 ],
+                			jqModal : false,
+                			closeOnEscape : true,
+                			clearAfterAdd : true //Default is true, make false if needed
+            			}, // add options
+            			
+            			{
+                			reloadAfterSubmit : false,
+                			jqModal : false,
+                			closeOnEscape : true
+            			} // del options
+ 	);
     
     addPager(gridTable, gridPager); 
     
