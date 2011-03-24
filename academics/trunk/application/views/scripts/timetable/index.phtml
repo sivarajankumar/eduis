@@ -125,8 +125,7 @@ if (count($this->slaveDepartment) > 1) {
 <?php
 } else {
     ?>
-	var slaveDepartment = "<?php
-    echo $this->masterDepartment?>";
+	var slaveDepartment = "<?php echo $this->masterDepartment?>";
 <?php
 }
 ?>
@@ -185,7 +184,6 @@ $(function(){
 									$.ajax({
 										url : urlSemesterCombo,
 	                                    dataType : 'jsonp',
-	                                    jsonp:'onJsonPLoad',
 										data : {department_id: masterDepartment,
 												degree_id : this.value, 'format' : 'jsonp'},
 										success: function(jSemesters){
