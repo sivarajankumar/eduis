@@ -33,8 +33,50 @@ class SessionalController extends Acadz_Base_BaseController
         $this->view->assign('masterDepartment', $this->department_id);
         $slaves = Acad_Model_DbTable_SemesterDegree::slaveDepartment($this->department_id);
         $this->view->assign('slaveDepartment', $slaves);
-        $this->_helper->logger($slaves);
          // action body
+    }
+    
+/**
+     * @about Interface.
+     */
+    public function getsessionalAction ()
+    {
+        $request = $this->getRequest();
+        $test_id = $request->getParam('test_id');
+        $format = $request->getParam('format', 'json');
+        if (1) {
+            $values = array('department_id' => 'CSE', 'test_type_id' => 'SESS', 
+            'test_id' => 1);
+            $model = new Acad_Model_Test_Sessional($values);
+            $sessionals = $model->fetchAll();
+            switch (strtolower($format)) {
+                case 'json':
+                    $result = array();
+                    foreach ($sessionals as $key => $sessional) {
+                        $result[] = array($sessional->getTest_info_id(), 
+                        $sessional->getDepartment_id(), 
+                        $sessional->getDegree_id(), $sessional->getSemester_id(), 
+                        $sessional->getSubject_code(), 
+                        $sessional->getSubject_name(), 
+                        $sessional->getDate_of_conduct(), $sessional->getTime());
+                    }
+                    //$this->_helper->json($result);
+                    $this->_helper->logger($result);
+                    return;
+                default:
+                    $this->getResponse()
+                        ->setException('Unsupported format request')
+                        ->setHttpResponseCode(400);
+            }
+        } else {
+            header("HTTP/1.1 400 Bad Request");
+        }
+         // action body
+    /*if ($result != null) {
+            $this->_helper->json($result);
+        } else {
+            return new Exception('Wrong paramter', Zend_Log::ERR);
+        }*/
     }
     /**
      * Back end data provider to datagrid.
