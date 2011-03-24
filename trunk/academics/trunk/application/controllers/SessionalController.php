@@ -49,19 +49,20 @@ class SessionalController extends Acadz_Base_BaseController
             'test_id' => 1);
             $model = new Acad_Model_Test_Sessional($values);
             $sessionals = $model->fetchAll();
+            $result = array();
+            foreach ($sessionals as $key => $sessional) {
+                $result[$sessional->getSemester_id()][$sessional->getDate_of_conduct()][] = array($sessional->getTest_info_id(), 
+                $sessional->getDepartment_id(), 
+                $sessional->getDegree_id(), 
+                $sessional->getSubject_code(), 
+                $sessional->getSubject_name(), 
+                $sessional->getTime());
+            }
             switch (strtolower($format)) {
                 case 'json':
-                    $result = array();
-                    foreach ($sessionals as $key => $sessional) {
-                        $result[] = array($sessional->getTest_info_id(), 
-                        $sessional->getDepartment_id(), 
-                        $sessional->getDegree_id(), $sessional->getSemester_id(), 
-                        $sessional->getSubject_code(), 
-                        $sessional->getSubject_name(), 
-                        $sessional->getDate_of_conduct(), $sessional->getTime());
-                    }
-                    //$this->_helper->json($result);
                     $this->_helper->logger($result);
+                    //$this->_helper->json($result);
+                    
                     return;
                 default:
                     $this->getResponse()
