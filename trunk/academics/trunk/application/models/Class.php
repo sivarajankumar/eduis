@@ -21,19 +21,16 @@ class Acad_Model_Class
      * @var int
      */
     protected $_batchStart;
-    
     /**
      * Students of class
      * @var array
      */
     protected $_students;
-    
     /**
      * Faculty members teaching in class
      * @var array
      */
     protected $_faculties;
-    
     /**
      * Subjects in class
      * @var array
@@ -43,15 +40,22 @@ class Acad_Model_Class
      * @var Acad_Model_ClassMapper
      */
     protected $_mapper;
-        
     /**
      * Set class department
      * @param string $department class department
      * @return Acad_Model_Class
      */
-    public function setDepartment ($department)
+    public function setDepartment ($department = null)
     {
-        $this->_department=$department;
+        if ($department != null) {
+            $this->_department = $department;
+        } elseif (Zend_Auth::getInstance()->hasIdentity()) {
+            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+            $this->_department = $authInfo['department_id'];
+        } else {
+            throw new Zend_Exception('Could not determine department', 
+            Zend_Log::ERR);
+        }
         return $this;
     }
     /**
@@ -60,6 +64,9 @@ class Acad_Model_Class
      */
     public function getDepartment ()
     {
+        if (! $this->_department) {
+            $this->setDepartment();
+        }
         return $this->_department;
     }
     /**
@@ -69,7 +76,7 @@ class Acad_Model_Class
      */
     public function setDegree ($degree)
     {
-        $this->_degree=$degree;
+        $this->_degree = $degree;
         return $this;
     }
     /**
@@ -85,9 +92,14 @@ class Acad_Model_Class
      * @param int $semester semester of class
      * @return Acad_Model_Class
      */
-    public function setSemester ($semester)
+    public function setSemester ($semester = null)
     {
-        $this->_semester=$semester;
+        if ($semester != null) {
+            $this->_semester = $semester;
+        } else {
+            throw new Zend_Exception('Could not determine semester of class', 
+            Zend_Log::ERR);
+        }
         return $this;
     }
     /**
@@ -96,6 +108,9 @@ class Acad_Model_Class
      */
     public function getSemester ()
     {
+        if (null === $this->_semester) {
+            $this->setSemester();
+        }
         return $this->_semester;
     }
     /**
@@ -105,7 +120,7 @@ class Acad_Model_Class
      */
     public function setBatchStart ($batchStart)
     {
-        $this->_batchStart=$batchStart;
+        $this->_batchStart = $batchStart;
         return $this;
     }
     /**
@@ -115,7 +130,7 @@ class Acad_Model_Class
     public function getBatchStart ()
     {
         if (null === $this->_batchStart) {
-            //do smting
+            $this->getMapper();
         }
         return $this->_batchStart;
     }
@@ -128,69 +143,94 @@ class Acad_Model_Class
         if (isset($this->_batchStart)) {
             ;
         } elseif (isset($this->_semester)) {
-            $this->_students = $this->getMapper()->fetchSemesterStudents(
-            $this->getDepartment(), $this->getDegree(), $this->getSemester(), 
+            $this->_students = $this->getMapper()->fetchSemesterStudents($this, 
             $group);
         }
         return $this->_students;
     }
-
     /**
      * Set faculty members
      * @param array $faculties - faculty members
      * @return Acad_Model_Department
      */
-    protected function setFacultyMembers($faculties){
-        
-        $this->_faculties=$faculties;
+    protected function setFacultyMembers ($faculties)
+    {
+        $this->_faculties = $faculties;
         return $this;
     }
-    
     /**
      * Get faculty members teaching in class
      * @return array $faculties - faculty members
      */
-    public function getFacultyMembers(){
+    public function getFacultyMembers ()
+    {
         return $this->_faculties;
     }
-    
-
     /**
      * Set subjects
      * 
      * @return Acad_Model_Class
      */
-    protected function setSubjects(){
-        $this->_subjects=$this->getMapper()->getSubjects(
-        $this->getDepartment(), $this->getDegree(), $this->getSemester(), 'TH');
+    protected function setSubjects ($type, $mode = null)
+    {
+        if (isset($mode)) {
+            $this->_subjects[$type][$mode] = $this->getMapper()->getSubjects(
+            $this, $type, $mode);
+        } else {
+            $this->_subjects[$type] = $this->getMapper()->getSubjects($this, 
+            $type);
+        }
         return $this;
     }
-    
     /**
      * Get subjects of class
+     * @param string $type
+     * @param string $mode
      * @return array $subjects Subjects of class
      */
-    public function getSubjects ()
+    public function getSubjects ($type = 'TH', $mode = null)
     {
-        if (null === $this->_subjects) {
-            //do smting
+        if (isset($mode)) {
+            if (! isset($this->_subjects[$type][$mode])) {
+                $this->setSubjects($type, $mode);
+            }
+            return $this->_subjects[$type][$mode];
+        } else {
+            if (! isset($this->_subjects[$type])) {
+                $this->setSubjects($type);
+            }
+            return $this->_subjects[$type];
         }
-        return $this->_subjects;
     }
-    
-
+    /**
+     * Get Attendance status of class
+     * 
+     * @param string $subjectCode
+     * @param date $dateFrom
+     * @param date $dateUpto
+     * @param string $subjectType
+     * @param string $subjectMode
+     */
+    public function getAttendanceDetail ($subjectType = null,
+                                    $subjectMode = null,
+                                    $dateFrom = null, 
+                                    $dateUpto = null)
+    {
+        $attendance = $this->getMapper()->getAttendanceDetail($this, $subjectCode, 
+        $subjectMode, $dateFrom, $dateUpto, $subjectType);
+        return $attendance;
+    }
     /**
      * Set data mapper
      * 
      * @param  mixed $mapper 
      * @return Acad_Model_Class
      */
-    public function setMapper($mapper)
+    public function setMapper ($mapper)
     {
         $this->_mapper = $mapper;
         return $this;
     }
-
     /**
      * Get data mapper
      *
@@ -198,20 +238,20 @@ class Acad_Model_Class
      * 
      * @return Acad_Model_ClassMapper
      */
-    public function getMapper()
+    public function getMapper ()
     {
         if (null === $this->_mapper) {
             $this->setMapper(new Acad_Model_ClassMapper());
         }
         return $this->_mapper;
     }
-   
     /**
      * Save the current entry
      * 
      * @return void
      */
-    public function save(){
+    public function save ()
+    {
         $this->getMapper()->save($this);
     }
 }

@@ -133,6 +133,10 @@ class StudentattendanceController extends Acadz_Base_BaseController
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $class = new Acad_Model_Class();
+        $class->setDepartment('cse')->setDegree('btech')->setSemester('8');
+        //$this->_helper->logger($class->getAttendance('CSE-202E',null,'2011-03-08','2011-03-10'));
+        $this->_helper->logger($class->getSubjects());
     }
     /*public function reportstuwiseAction ()
     {
