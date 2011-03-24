@@ -20,7 +20,7 @@ class SessionalController extends Acadz_Base_BaseController
     public function init ()
     {
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-        $this->department_id = $authInfo['department_id'];
+        $this->department_id = 'APSC';
         parent::init();
     }
     /**
@@ -30,50 +30,11 @@ class SessionalController extends Acadz_Base_BaseController
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        
-       $this->setAction($this->_helper->url('getsessional'));
-    }
-    /**
-     * @about Interface.
-     */
-    public function getsessionalAction ()
-    {
-        $request = $this->getRequest();
-        $test_id = $request->getParam('test_id');
-        $format = $request->getParam('format', 'json');
-        if (1) {
-            $values = array('department_id' => 'CSE', 'test_type_id' => 'SESS', 
-            'test_id' => 1);
-            $model = new Acad_Model_Test_Sessional($values);
-            $sessionals = $model->fetchAll();
-            switch (strtolower($format)) {
-                case 'json':
-                    $result = array();
-                    foreach ($sessionals as $key => $sessional) {
-                        $result[] = array($sessional->getTest_info_id(), 
-                        $sessional->getDepartment_id(), 
-                        $sessional->getDegree_id(), $sessional->getSemester_id(), 
-                        $sessional->getSubject_code(), 
-                        $sessional->getSubject_name(), 
-                        $sessional->getDate_of_conduct(), $sessional->getTime());
-                    }
-                    //$this->_helper->json($result);
-                    $this->_helper->logger($result);
-                    return;
-                default:
-                    $this->getResponse()
-                        ->setException('Unsupported format request')
-                        ->setHttpResponseCode(400);
-            }
-        } else {
-            header("HTTP/1.1 400 Bad Request");
-        }
+        $this->view->assign('masterDepartment', $this->department_id);
+        $slaves = Acad_Model_DbTable_SemesterDegree::slaveDepartment($this->department_id);
+        $this->view->assign('slaveDepartment', $slaves);
+        $this->_helper->logger($slaves);
          // action body
-    /*if ($result != null) {
-            $this->_helper->json($result);
-        } else {
-            return new Exception('Wrong paramter', Zend_Log::ERR);
-        }*/
     }
     /**
      * Back end data provider to datagrid.
@@ -87,55 +48,73 @@ class SessionalController extends Acadz_Base_BaseController
         $degree_id = $request->getParam('degree_id');
         $semester_id = $request->getParam('semester_id');
         $test_id = $request->getParam('test_id');
-        //$request->isXmlHttpRequest() and $valid
-        if (1) {
+        
+        
+        if ($request->isXmlHttpRequest() and $valid) 
+        {
             $this->gridparam['page'] = $request->getParam('page', 1); // get the requested page
-            $this->gridparam['limit'] = $request->getParam('rows', 
-            20); // rows limit in Grid
+            $this->gridparam['limit'] = $request->getParam('rows', 20); // rows limit in Grid
             $this->gridparam['sidx'] = $request->getParam('sidx', 1); // get index column - i.e. user click to sort
-            $this->gridparam['sord'] = $request->getParam('sord', 
-            'asc'); // sort direction
-            $params = array('department_id' => $department_id, 
-            'degree_id' => $degree_id, 'semester_id' => $semester_id, 
-            'test_id' => $test_id, 'test_type_id' => 'SESS');
+            $this->gridparam['sord'] = $request->getParam('sord','asc'); // sort direction
+            
+            $params = array('department_id'=>$department_id,
+                           'degree_id'=>$degree_id,
+                           'semester_id'=>$semester_id,
+                           'test_id'=>$test_id,
+                           'test_type_id'=>'SESS'
+                           );
             $model = new Acad_Model_Test_Sessional($params);
             $result = $model->fetchSchedule();
-            $this->_count = count($result);
-            $this->total_pages = 0;
-            $this->offset = 0;
-            $response = new stdClass();
-            $response->page = $this->gridparam['page'];
-            $response->total = $this->total_pages;
-            $response->records = $this->_count;
-            if ($result['exists'] == true) {
-                foreach ($result as $key => $row) {
-                    $response->rows[$key]['id'] = $row->getTestInfoId();
-                    $response->rows[$key]['cell'] = array(
-                    $row->getSubject_code(), $row->getSubject_name(), 
-                    $row->getDate_of_conduct(), $row->getTime(), 
-                    $row->getMax_marks(), $row->getPass_Marks(), 
-                    $row->getIs_optional());
+
+                $this->_count = count($result);
+                $this->total_pages = 1;
+                $this->offset = 0;
+                $response = new stdClass();
+                $response->page = $this->gridparam['page'];
+                $response->total = $this->total_pages;
+                $response->records = $this->_count;
+
+                if(true == $result['exists']){
+                
+                    foreach ($result['data'] as $key => $row) 
+                    {
+                        $response->rows[$key]['id'] = $row->getTest_info_id();
+                        $response->rows[$key]['cell'] = array($row->getSubject_code(),
+                                                              $row->getSubject_name(),  
+                                                              $row->getDate_of_conduct(), 
+                                                              $row->getTime(), 
+                                                              $row->getMax_marks(), 
+                                                              $row->getPass_Marks()); 
+                                                              
+                    }
+            
+                    
+                    $this->_helper->json($response);
                 }
-                $this->_helper->logger($response);
-                $this->_helper->json($response);
-            } elseif ($result['exists'] == false) {
-                foreach ($result as $key => $row) {
-                    $response->rows[$key]['id'] = $row->getTestInfoId();
-                    $response->rows[$key]['cell'] = array(
-                    $row->getSubject_code(), $row->getSubject_name(), 
-                    $row->getDate_of_conduct(), $row->getTime(), 
-                    $row->getDefault_max_marks(), $row->getDefault_pass_Marks(), 
-                    $row->getIs_optional());
+                elseif(false == $result['exists']){
+                    foreach ($result['data'] as $key => $row) 
+                    {
+                        $response->rows[$key]['id'] = $row->getTest_info_id();
+                        $response->rows[$key]['cell'] = array($row->getSubject_code(),
+                                                              $row->getSubject_name(),  
+                                                              $row->getDate_of_conduct(), 
+                                                              $row->getTime(), 
+                                                              $row->getDefault_max_marks(), 
+                                                              $row->getDefault_pass_Marks());
+                    }
+            
+                    
+                    $this->_helper->json($response);
+                } 
+                else {
+                    $this->getResponse()
+                         ->setException('Non ajax request')
+                         ->setHttpResponseCode(400);
                 }
-                $this->_helper->logger($response);
-                $this->_helper->json($response);
-            } else {
-                $this->getResponse()
-                    ->setException('Non ajax request')
-                    ->setHttpResponseCode(400);
             }
-        }
+            
     }
+    
     /**
      * 
      * 
