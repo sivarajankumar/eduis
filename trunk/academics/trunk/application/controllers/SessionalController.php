@@ -36,7 +36,7 @@ class SessionalController extends Acadz_Base_BaseController
          // action body
     }
     
-/**
+	/**
      * @about Interface.
      */
     public function getsessionalAction ()
@@ -45,8 +45,9 @@ class SessionalController extends Acadz_Base_BaseController
         $test_id = $request->getParam('test_id');
         $format = $request->getParam('format', 'json');
         if (1) {
-            $values = array('department_id' => 'CSE', 'test_type_id' => 'SESS', 
-            'test_id' => 1);
+            $values = array('department_id' => 'CSE', 
+            				'test_type_id' => 'SESS', 
+            				'test_id' => 1);
             $model = new Acad_Model_Test_Sessional($values);
             $sessionals = $model->fetchAll();
             $result = array();
@@ -61,7 +62,7 @@ class SessionalController extends Acadz_Base_BaseController
             switch (strtolower($format)) {
                 case 'json':
                     $this->_helper->logger($result);
-                    //$this->_helper->json($result);
+                    echo $this->_helper->json($result,false);
                     
                     return;
                 default:
@@ -169,12 +170,25 @@ class SessionalController extends Acadz_Base_BaseController
         $this->_helper->layout()->enableLayout();
         $this->view->assign('masterDepartment', $this->department_id);
     }
+    
     /**
-     * @deprecated
+     * Get upcoming sessional information.
      * 
+     * @about JSON data provider.
      */
-    protected function _imod ()
-    {}
+    public function getupcomingsessional(){
+        
+        $request = $this->getRequest();
+        
+        if($request->isXmlHttpRequest()){
+            $model = new Acad_Model_Test_Sessional();
+        }
+        else{
+            $this->getResponse()
+                 ->setException('Non ajax request')
+                 ->setHttpResponseCode(400);
+        }
+    }
     /**
      * 
      * Enter description here ...
