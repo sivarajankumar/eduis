@@ -2,9 +2,8 @@
 /**
  *
  * @category   EduIS
- * @package    Core
- * @subpackage Batch
- * @since	   0.1
+ * @package    Academic
+ * @since	   3.0
  */
 /**
  * 
@@ -17,10 +16,14 @@
 class SessionalController extends Acadz_Base_BaseController
 {
     protected $department_id;
+    
     public function init ()
     {
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
         $this->department_id = 'APSC';
+        $this->view->assign('masterDepartment', $this->department_id);
+        $slaves = Acad_Model_DbTable_SemesterDegree::slaveDepartment($this->department_id);
+        $this->view->assign('slaveDepartment', $slaves);
         parent::init();
     }
     /**
@@ -30,9 +33,6 @@ class SessionalController extends Acadz_Base_BaseController
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $this->view->assign('masterDepartment', $this->department_id);
-        $slaves = Acad_Model_DbTable_SemesterDegree::slaveDepartment($this->department_id);
-        $this->view->assign('slaveDepartment', $slaves);
          // action body
     }
     
