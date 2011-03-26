@@ -13,6 +13,14 @@ class MarksController extends Zend_Controller_Action
         // action body
     }
 
-
+    /**
+     * to assign sessional marks
+     * @todo layout
+     * @todo save marks
+     */
+    public function assignAction()
+     {
+        
+     }
 }
 
