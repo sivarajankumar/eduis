@@ -3,6 +3,12 @@ class Acad_Model_DbTable_SubjectFaculty extends Acadz_Base_Model
 {
     protected $_name = 'subject_faculty';
     const TABLE_NAME = 'subject_faculty';
+    /**
+     * @deprecated Should not be here. - By Babita
+     * @see Acad_Model_Member_Faculty for this function
+     * Enter description here ...
+     * @param unknown_type $faculty
+     */
     public function getFacultySubject ($faculty)
     {
         /*$sql = $this->select ()->from ( $this->_name, array ('subject_code', 'subject_mode_id' ) )->where ( "staff_id = ?", $faculty );
