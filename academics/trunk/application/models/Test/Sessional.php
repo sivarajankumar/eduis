@@ -121,7 +121,7 @@ class Acad_Model_Test_Sessional extends Acad_Model_Test_Generic
  	/**
      * Fetch all entries
      * 
-     * @return array
+     * @return array of Acad_Model_Test_Sessional
      */
     public function fetchAll()
     {

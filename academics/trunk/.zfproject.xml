@@ -18,6 +18,9 @@
         <controllerFile controllerName="Sessional">
           <actionMethod actionName="index"/>
         </controllerFile>
+        <controllerFile controllerName="Marks">
+          <actionMethod actionName="index"/>
+        </controllerFile>
       </controllersDirectory>
       <formsDirectory enabled="false"/>
       <layoutsDirectory enabled="false"/>
@@ -35,6 +38,9 @@
             <viewScriptFile forActionName="index"/>
           </viewControllerScriptsDirectory>
           <viewControllerScriptsDirectory forControllerName="Sessional">
+            <viewScriptFile forActionName="index"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Marks">
             <viewScriptFile forActionName="index"/>
           </viewControllerScriptsDirectory>
         </viewScriptsDirectory>
@@ -73,6 +79,7 @@
         <testApplicationControllerDirectory>
           <testApplicationControllerFile filesystemName="FacultyControllerTest.php"/>
           <testApplicationControllerFile filesystemName="SessionalControllerTest.php"/>
+          <testApplicationControllerFile filesystemName="MarksControllerTest.php"/>
         </testApplicationControllerDirectory>
       </testApplicationDirectory>
       <testLibraryDirectory>
