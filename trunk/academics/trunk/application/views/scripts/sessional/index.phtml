@@ -1,24 +1,83 @@
 
+<div id="selection-div"class="ui-widget-content ui-corner-all" style="width:20em; height:5em; padding:4px">
+	
+		<label for="degree_id" accesskey="S" id="lbl_degree_id" style="padding: 0.4em; float: left;">
+			Semester:</label>&nbsp;
+		<select id="semester_select" tabindex="1" >
+		</select>
+		
+		<br /><br />
+		
+	</div> <!-- End selection-div -->
+	<br />
+	
+	<div id="sessional-schedule-div" style="display">
+	
+		<table id="tblgrid" class="scroll"></table>
+		<div id="gridpager" class="scroll" style="text-align: center;"></div>
+		
+	</div><!-- End sessioanl-schedule-div -->
+<div id="message"></div>
+<div id="accordion"></div>
+<!-- <table id="table1" border="2"></table> -->
+
+<div id="accordion">
+</div>
+
 <script type="text/javascript">
 
 var getSchedule = "<?php echo $this->url(array('controller' => 'sessional', 
-                                                  'action' => 'getsessional'), 
-												  'default', true)?>";
-
+                                                  'action' => 'getsessional'))?>";
+var sem_data;
+var sem_data_value;
 $(function(){
 	$.ajax({
         url :getSchedule,
         dataType : 'json',
         success: function(jRes){
-            var test  = jRes[6]["2011-10-11"][0][1];     
-            $.each(jRes,function(key, value){
-                $('body').append('<div style:"color:blue">'+key+' semester</div><br/>');
-            });
-            },
+            sem_data=jRes;
+			$option_value=0;
+        	var selectOptionString = '<option value ="0">Select one</option>';
+			$.each(jRes, function (sem_no , value) {
+				$option_value=sem_no;
+				selectOptionString += '<option value ="'+$option_value+'">' + sem_no + '</option>';
+			});
+            $('#semester_select').html(selectOptionString); 	
+             
+          },
             error: function(event) {
                 alert(event.responseText);
             }
     });//End ajax call.
 
+	 $('#semester_select').change(function(){
+		 var tableDiv='#accordion';
+		 var messageDiv='#message';
+		 $(tableDiv).html("").accordion( "destroy" );
+		 $(messageDiv).html("");
+		 var sem_id = this.value;
+		 if(sem_id!=0){
+			 $(function(){
+				 	var tableInnerHtml='';
+				 	$.each(sem_data[sem_id], function (dates , exams) {
+				 		tableInnerHtml += '<h3>'+dates+'</h3>';
+				 		tableInnerHtml += '<div>';
+				 		$.each(exams, function (examKey , exam) {
+					 		var subjectName = exam[4];
+					 		var subjectCode = exam[3];
+					 		var examTime = exam[5];
+				 			tableInnerHtml += '<p>'+subjectName+' ( '+subjectCode+' ) '+' at '+examTime+'</p>';
+					 	});
+				 		tableInnerHtml += '</div>';
+					});
+					$(messageDiv).html('<h3>The Datesheet of '+ sem_id +'th Semester:');
+				 	$(tableDiv).html(tableInnerHtml).accordion();
+				 });
+		 }
+
+		 	
+				 
+		 });
+	 		 
 });
 </script>
