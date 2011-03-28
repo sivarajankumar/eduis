@@ -1,1 +1,24 @@
-<br /><br /><center>View script for controller <b>Sessional</b> and script/action name <b>index</b></center>
+
+<script type="text/javascript">
+
+var getSchedule = "<?php echo $this->url(array('controller' => 'sessional', 
+                                                  'action' => 'getsessional'), 
+												  'default', true)?>";
+
+$(function(){
+	$.ajax({
+        url :getSchedule,
+        dataType : 'json',
+        success: function(jRes){
+            var test  = jRes[6]["2011-10-11"][0][1];     
+            $.each(jRes,function(key, value){
+                $('body').append('<div style:"color:blue">'+key+' semester</div><br/>');
+            });
+            },
+            error: function(event) {
+                alert(event.responseText);
+            }
+    });//End ajax call.
+
+});
+</script>
