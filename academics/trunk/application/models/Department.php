@@ -35,7 +35,37 @@ class Acad_Model_Department
      * @var array
      */
     protected $_teachingFaculty;
-     
+
+    /**
+     * @var Acad_Model_DepartmentMapper
+     */
+    protected $_mapper;
+    /**
+     * Set data mapper
+     * 
+     * @param  mixed $mapper 
+     * @return Acad_Model_Department
+     */
+    public function setMapper (Acad_Model_DepartmentMapper $mapper)
+    {
+        $this->_mapper = $mapper;
+        return $this;
+    }
+    /**
+     * Get data mapper
+     *
+     * Lazy loads Acad_Model_DepartmentMapper instance if no mapper registered.
+     * 
+     * @return Acad_Model_DepartmentMapper
+     */
+    public function getMapper ()
+    {
+        if (null === $this->_mapper) {
+            $this->setMapper(new Acad_Model_DepartmentMapper());
+        }
+        return $this->_mapper;
+    }
+    
     public function setDepartment ($department)
     {
         $this->_department = $department;
@@ -128,5 +158,8 @@ class Acad_Model_Department
         return $this->_teachingFaculty;
     }
     
+    public function getAttendanceOverview($dateFrom = null) {
+        return $this->getMapper()->fetchAttendanceStat($dateFrom);
+    }
 }
 ?>

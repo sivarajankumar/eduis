@@ -1,14 +1,17 @@
 <?php
 class StudentattendanceController extends Acadz_Base_BaseController
 {
+    public function init() {
+        $session_startdate = Acad_Model_DbTable_AcademicSession::getSessionStartDate();
+        $this->view->assign('session_startdate', $session_startdate);
+        parent::init();
+    }
     public function indexAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $this->view->assign('controller', $this->_request->getControllerName());
         $this->view->assign('module', $this->_request->getModuleName());
-        $session_startdate = Acad_Model_DbTable_AcademicSession::getSessionStartDate();
-        $this->view->assign('session_startdate', $session_startdate);
         if (Zend_Auth::getInstance()->hasIdentity()) {
             $authInfo = Zend_Auth::getInstance()->getStorage()->read();
             $this->department_id = $authInfo['department_id'];
@@ -129,7 +132,7 @@ class StudentattendanceController extends Acadz_Base_BaseController
             return false;
         }
     }
-    public function viewAction ()
+    public function viewstuwiseAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
@@ -138,6 +141,42 @@ class StudentattendanceController extends Acadz_Base_BaseController
         //$this->_helper->logger($class->getAttendance('CSE-202E',null,'2011-03-08','2011-03-10'));
         $this->_helper->logger($class->getSubjects());
     }
+    
+
+    public function getoverviewAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function getoverviewdataAction ()
+    {
+        $request = $this->getRequest();
+        //Getting Request Parameters
+        $period_dateobj = new Zend_Date(
+        $request->getParam('attendance_date'), 'dd-MM-YYYY');
+        $period_date = $period_dateobj->toString('YYYY-MM-dd');
+        //$this->_helper->viewRenderer->setNoRender(false);
+        //$this->_helper->layout()->enableLayout();
+        $class = new Acad_Model_Department();
+        $result = $class->getAttendanceOverview($period_date);
+        $this->gridparam['page'] = $request->getParam('page', 1); // get the requested page
+        $this->gridparam['limit'] = $request->getParam('rows', 20); // rows limit in Grid
+ 
+        $this->_count = count($result);
+        $response = new stdClass();
+        foreach ($result as $key => $value) {
+            $response->rows[$key]['id'] = $value['department_id'];
+            $response->rows[$key]['cell'] = array($value['department_id'],
+                                                    $value['total'],
+                                                    $value['marked'],
+                                                    $value['last_marked']);
+        }
+        $response->page = $this->gridparam['page'];
+        $response->total = 1;
+        $response->records = $this->_count;
+        $this->_helper->json($response);
+    }
+    
     /*public function reportstuwiseAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
