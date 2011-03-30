@@ -1,0 +1,74 @@
+<div style="padding :2em 0 2em 0; text-align: center; " >
+<form >Select date: <input type="text"
+	id="datepicker1" readonly="readonly"
+	class="ui-widget-content  ui-corner-all" style="text-align: center"></input> <span style="color: gray; " >(i.e. period date)</span>
+</form>
+</div>
+
+
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+<script type="text/javascript">
+
+var session_startdate = '<?php echo $this->session_startdate;?>';  
+var urlAttOverviewData = "<?php echo $this->url(array('controller' => 'studentattendance', 'action' => 'getoverviewdata'))?>";
+
+var gridTable = "#tblgrid";
+var gridPager = "#gridpager"; 
+
+serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+//TODO session_startdate is different because its date from db server.
+sessionStartdateObj= $.datepicker.parseDate('yy-mm-dd', session_startdate);
+/* utility functions */
+$("#datepicker1").datepicker({
+	minDate : sessionStartdateObj,
+	maxDate : serverDateObj,
+	dateFormat: 'dd-mm-yy', 
+	closeText: 'Close', 
+	showButtonPanel: true,
+	constrainInput : true,
+	gotoCurrent: true,
+	onSelect :function(attendanceDate, inst) {
+		var selectedDate=$.datepicker.parseDate('dd-mm-yy', attendanceDate);
+		$(gridTable).jqGrid('setGridParam',
+				{postData:{
+					'attendance_date':attendanceDate
+					},
+     			 url: urlAttOverviewData,
+      			datatype: 'json'
+                })
+                .trigger('reloadGrid');
+	}
+});
+$(function(){
+$(gridTable).jqGrid({
+	datatype:'local',
+	colNames:['Department','Total Periods','Attendance Marked','Last activity date'],
+	colModel:[
+		{name:'department_id',
+			index:'department_id',
+			align: 'center'},
+        {name:'total',
+			index:'total',
+			align: 'center',
+			formatter:'number', 
+			formatoptions:{decimalPlaces: 0}},
+        {name:'marked',
+			index:'marked',
+			align: 'center',
+			formatter:'number', 
+			formatoptions:{decimalPlaces: 0}},
+        {name:'last_marked',
+			index:'last_marked',
+			align: 'center',
+			formatter:'date'}
+    ],
+    altRows: true,
+    loadonce : true,
+    shrinkToFit : true,
+    forceFit : true,
+    prmNames: {page: null, rows: null, sort: null, order: null, search: null, nd: null},
+    caption: "Department-wise Overview of Attendance"
+	}).jqGrid('gridResize');
+});
+</script>
