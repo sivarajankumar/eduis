@@ -1,0 +1,318 @@
+﻿@charset "utf-8";
+
+/* Basic Required */
+body {
+	/* it's good practice to zero the margin and padding of the body element to account for differing browser defaults */
+	margin: 0;
+	padding: 0;
+	text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */ ;
+	color: #000000;
+	font-family: Century;
+	background-repeat: repeat;
+	background-attachment: scroll;
+	background-color: #EEEECC;
+}
+
+#topContent {
+	padding: 0px;
+	margin: 0px;
+	height: 55px; /* 2px more then height of #header img */
+}
+#topRightInfo {
+	margin: 0px;
+	padding: 0px 2px 0px 2px;
+	float: right;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	font-weight: lighter;
+	font-style: oblique;
+	font-family: Cambria;
+	font-size: 0.85em;
+}
+
+#topRightInfo span {
+	padding-right: 0.3em;
+	padding-left: 0.3em;
+	margin-left: 0.3em;
+}
+
+#topRightInfo span span {
+	padding: 0em;
+	margin: 0em;
+}
+
+#header img {
+float:left;
+margin:0;
+padding:0;
+
+}
+
+#topNav {
+	padding: 1em 0px 0px 177px;
+	clear: right;
+}
+
+#container {
+	background-color: #FFFFFF;
+	margin: 0 1em 1em 1em;
+	padding: 0em 1em 1em 1em;
+	text-align: left;
+	position: relative;
+	top: -1.5em;
+}
+
+
+/*
+#header {
+	
+}
+
+#header h1 {
+	margin: 0;
+	/* zeroing the margin of the last element in the #header div will avoid margin collapse - an unexplainable space between divs. If the div has a border around it, this is not necessary as that also avoids the margin collapse 
+	padding: 10px 0;
+	/* using padding instead of margin will allow you to keep the element away from the edges of the div 
+}
+
+/* Tips for sidebars:
+1. Since we are working in percentages, it's best not to use side padding on the sidebars. It will be added to the width for standards compliant browsers creating an unknown actual width. 
+2. Space between the side of the div and the elements within it can be created by placing a left and right margin on those elements as seen in the ".LiquidBody #sidebar1 p" rule.
+3. Since Explorer calculates widths after the parent element is rendered, you may occasionally run into unexplained bugs with percentage-based columns. If you need more predictable results, you may choose to change to pixel sized columns.
+
+#sidebar1 {
+	float: left;
+	/* this element must precede in the source order any element you would like it be positioned next to 
+	;
+	width: 22%;
+	/* top and bottom padding create visual space within this div  
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+#sidebar1 h3,#sidebar2 h3,#sidebar1 p,#sidebar2 p {
+	margin-left: 10px;
+	/* the left and right margin should be given to every element that will be placed in the side columns 
+	;
+	margin-right: 10px;
+}
+
+/* Tips for mainContent:
+1. the space between the mainContent and sidebars is created with the left and right margins on the mainContent div.
+2. to avoid float drop at a supported minimum 800 x 600 resolution, elements within the mainContent div should be 300px or smaller (this includes images).
+3. in the Internet Explorer Conditional Comment below, the zoom property is used to give the mainContent "hasLayout." This avoids several IE-specific bugs.
+
+#mainContent {
+	margin-top: 0;
+	margin-right: 0%;
+	margin-bottom: 0;
+	margin-left: 23%;
+	/* the right and left margins on this div element creates the two outer columns on the sides of the page. No matter how much content the sidebar divs contain, the column space will remain. You can remove this margin if you want the #mainContent div's text to fill the sidebar spaces when the content in each sidebar ends. 
+}
+
+#footer {
+	padding: 0 10px;
+	/* this padding matches the left alignment of the elements in the divs that appear above it. 
+}
+
+#footer p {
+	margin: 0;
+	/* zeroing the margins of the first element in the footer will avoid the possibility of margin collapse - a space between divs 
+	padding: 10px 0;
+	/* padding on this element will create space, just as the the margin would have, without the margin collapse issue 
+}
+
+/* Miscellaneous classes for reuse 
+.fltrt 
+	/* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. 
+	float: right;
+	margin-left: 8px;
+}
+
+.fltlft {
+	/* this class can be used to float an element left in your page The floated element must precede the element it should be next to on the page. 
+	float: left;
+	margin-right: 8px;
+}
+
+.clearfloat {
+	/* this class should be placed on a div or break element and should be the final element before the close of a container that should fully contain its child floats 
+	clear: both;
+	height: 0;
+	font-size: 1px;
+	line-height: 0px;
+}
+
+/*
+*	Boreder and Spaces
+*
+*
+*
+
+div {
+	margin: 0px;
+	padding: 0px;
+	border-top-width: 0px;
+	border-right-width: 0px;
+	border-bottom-width: 0px;
+	border-left-width: 0px;
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+}
+
+/*
+/* SAMPLE */ /*
+.topLeftCorner {
+}
+.topMid {
+}
+.topRightCorner {
+}
+.leftMid {
+}
+.rightMid {
+}
+.bottomLeftCorner {
+}
+.bottomMid {
+}
+.bottomRightCorner {
+}
+*/ /* Common for all 
+.topLeftCorner {
+	background-image: url('images/boxSet1/topLeftCorner.png');
+	height: 8px;
+	width: 8px;
+	background-repeat: no-repeat;
+}
+
+.topMid {
+	height: 8px;
+	background-image: url('images/boxSet1/topMid.png');
+}
+
+.topRightCorner {
+	background-image: url('images/boxSet1/topRightCorner.png');
+	height: 8px;
+	width: 8px;
+	background-repeat: no-repeat;
+}
+
+.leftMid {
+	background-image: url('images/boxSet1/leftMid.png');
+	width: 8px;
+	background-repeat: repeat-y;
+}
+
+.rightMid {
+	background-image: url('images/boxSet1/rightMid.png');
+	width: 8px;
+	background-repeat: repeat-y;
+}
+
+.bottomLeftCorner {
+	background-image: url('images/boxSet1/bottomLeftCorner.png');
+	height: 8px;
+	background-repeat: no-repeat;
+	background-position: right;
+}
+
+.bottomMid {
+	background-image: url('images/boxSet1/bottomMid.png');
+	height: 8px;
+	background-repeat: repeat-x;
+}
+
+.bottomRightCorner {
+	background-image: url('images/boxSet1/bottomRightCorner.png');
+	height: 8px;
+	width: 8px;
+	background-repeat: no-repeat;
+}
+
+/* You can explicitly define boxes for some special part also
+/* header 
+#header .topMid {
+	height: 1px;
+}
+
+/*
+#header .topLeftCorner {
+}
+#header .topMid {
+	height: 1px;
+
+}
+#header .topRightCorner {
+}
+#header .leftMid {
+}
+#header .rightMid {
+}
+#header .bottomLeftCorner {
+
+}
+#header .bottomMid {
+}
+#header .bottomRightCorner {
+}
+
+#footer .footerLeftSide {
+	background-image: url('images/boxSet1/footer_left.png');
+	background-repeat: no-repeat;
+	height: 36px;
+	width: 18px;
+}
+
+#footer .footerMid {
+	background-image: url('images/boxSet1/footer_mid.png');
+	height: 36px;
+	background-repeat: repeat-x;
+}
+
+#footer .footerRightSide {
+	background-image: url('images/boxSet1/footer_right.png');
+	background-repeat: no-repeat;
+	height: 36px;
+	width: 18px;
+}
+
+/*
+	Themes Themes.........
+
+
+
+*.centreCell {
+	background-color: #FFFFFF;
+}
+
+#header h1 {
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: xx-large;
+	text-align: center;
+}
+
+#header h2 {
+	font-family: Georgia, "Times New Roman", Times, serif;
+	text-align: center;
+}
+
+#footer {
+	text-align: center;
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	font-size: x-small;
+}
+
+#footer p {
+	
+}
+
+.gridstyle {
+	font-size: 75%;
+	margin: 0;
+	/* Remove body margin/padding 
+	padding: 0;
+}

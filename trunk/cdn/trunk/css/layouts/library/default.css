@@ -1,0 +1,289 @@
+﻿@charset "utf-8";
+
+body {
+	margin: 0;
+	padding: 0;
+	font-size: 0.72em;
+	font: normal Verdana, Arial, Helvetica, sans-serif;
+	background: #F7F3DE url(images/ui-bg_fine-grain_15_f7f3de_60x60.png)
+		repeat scroll 50% 50%;
+}
+
+#content {
+	clear: both;
+}
+
+#topContent {
+	padding: 0px;
+	margin: 0px;
+	height: 55px; /* 2px more then height of #header img */
+}
+#topRightInfo {
+	margin: 0px;
+	padding: 0px 2px 0px 2px;
+	float: right;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	font-weight: lighter;
+	font-style: oblique;
+	font-family: Cambria;
+}
+
+#topRightInfo span {
+	padding-right: 0.3em;
+	padding-left: 0.3em;
+	margin-left: 0.3em;
+}
+
+#topRightInfo span span {
+	padding: 0em;
+	margin: 0em;
+}
+
+#header img {
+float:left;
+margin:0;
+padding:0;
+
+}
+
+/*
+ * div#bookStackLeft {
+	float: right;
+	width: 143px;
+	height: 137px;
+	z-index: 98;
+	background-image: url(images/book5.png);
+	position: relative;
+	top: 0px;
+	right: -5px;
+}
+div#moduleRibbon {
+	float: right;
+	top: 45px;
+	right: 2px;
+	background-image: url(images/Ribbon_Library.png);
+	height: 129px;
+	width: 130px;
+	z-index: 99;
+	position: absolute;
+	background-repeat: no-repeat;
+}*/ /* Navigation Menu*/
+#divTopNav {
+	padding: 1em 0px 0px 177px;
+	clear: right;
+}
+
+#topnav {
+	padding: 0;
+	float: left;
+	width: 98%;
+	list-style: none;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 10px;
+}
+
+#topnav li {
+	float: left;
+	position: relative;
+	margin-top: 0;
+	margin-right: 3%;
+	margin-bottom: 0;
+	margin-left: 0;
+	padding-bottom: 3px;
+}
+
+#topnav li a {
+	float: left;
+	text-decoration: none;
+}
+
+#topnav .main {
+	padding-top: 0.2em;
+	padding-right: 10%;
+	padding-bottom: 0.3em;
+	padding-left: 10%;
+}
+
+#topnav li .sub {
+	position: absolute; /* Position sub menu */;
+	top: 35px;
+	left: 0;
+	padding: 20px 20px 20px;
+	float: left; /*--Top right rounded corner--*/;
+	-moz-border-radius-topright: 40px;
+	-khtml-border-radius-topright: 40px;
+	-webkit-border-top-right-radius: 40px;
+	/*--Bottom left rounded corner--*/;
+	-moz-border-radius-bottomleft: 40px;
+	-khtml-border-radius-bottomleft: 40px;
+	-webkit-border-bottom-left-radius: 40px;
+	display: none;
+	z-index: 1;
+}
+
+#topnav li .row {
+	clear: both;
+	float: left;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+#topnav li .sub ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	width: 150px;
+	float: left;
+}
+
+#topnav .sub ul li {
+	width: 100%;
+	color: #111;
+}
+
+#topnav .sub ul li h3 {
+	font-size: 100%;
+	text-indent: 0; /*--Reset text indent--*/;
+	display: block;
+	text-decoration: none;
+}
+
+#topnav .sub ul li a {
+	font-size: 100%;
+	font-weight: normal;
+	border-left-width: medium;
+	border-left-style: groove;
+	border-left-color: #FFF;
+	padding-top: 0;
+	padding-right: 0;
+	padding-bottom: 0;
+	padding-left: 3px;
+	margin-bottom: 0.5em;
+	float: none;
+	text-indent: 0; /*--Reset text indent--*/;
+	display: block;
+	text-decoration: none;
+}
+
+#topnav .sub ul li a:hover {
+	color: #aaa;
+}
+
+.module-info {
+	position: relative;
+	text-align: left;
+}
+
+#active-section {
+	position: absolute;
+	top: 240px;
+	left: 230px;
+}
+
+/* Content */
+.container {
+	margin: 0px 10px 40px 10px;
+	text-align: left;
+	padding: 0px;
+	background-color: #FFFFFF;
+}
+
+#content {
+	margin-right: 4%;
+	margin-left: 4%;
+	background-color: #FFFFFF;
+}
+
+#lastDiv {
+	clear: both;
+	position: relative;
+	width: 100%;
+	height: 25px;
+	bottom: 0px;
+}
+
+#footer {
+	width: 98%;
+	margin-left: 1%;
+	-moz-border-radius-topleft: 4%;
+	-khtml-border-radius-topleft: 4%;
+	-webkit-border-top-left-radius: 4%;
+	-moz-border-radius-topright: 4%;
+	-khtml-border-radius-topright: 4%;
+	-webkit-border-top-right-radius: 4%;
+	-moz-border-radius-bottomleft: 4%;
+	-khtml-border-radius-bottomleft: 4%;
+	-webkit-border-bottom-left-radius: 4%;
+	-moz-border-radius-bottomright: 4%;
+	-khtml-border-radius-bottomright: 4%;
+	-webkit-border-bottom-right-radius: 4%;
+	margin-bottom: 10px;
+}
+
+#footerContent {
+	width: 92%;
+	margin-left: 4%;
+	text-align: center;
+}
+
+/*
+Form Style look
+*/
+legend {
+	padding-left: 5%;
+	padding-right: 5%;
+	padding-top: 0.3em;
+	padding-bottom: 0.3em;
+}
+
+#memberInfoBasic {
+	float: left;
+	clear: none;
+	display: inline;
+	width: 100%;
+}
+
+#memberInfoImage {
+	border-style: dotted;
+	border-width: thin;
+	width: 3.5cm;
+	height: 4.5cm;
+	float: right;
+	clear: none;
+}
+
+.infoDiv {
+	display: block;
+	clear: both;
+}
+
+.infoHeader {
+	float: left;
+	text-align: right;
+	text-transform: capitalize;
+	padding-right: .3em;
+	padding-left: .3em;
+	clear: left;
+}
+
+.infoContent {
+	width: 54%;
+	float: right;
+	text-transform: capitalize;
+	padding-right: .3em;
+	padding-left: .3em;
+	vertical-align: middle;
+}
+
+#lbl_cbkVerify {
+	position: relative;
+	top: -0.5em;
+	width: 2.5cm;
+	float: right;
+	padding: 0.4em;
+	margin-right: 0.5cm;
+}
