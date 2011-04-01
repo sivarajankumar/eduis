@@ -149,7 +149,7 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
         Zend_Registry::get('logger')->debug('Common ACL from Cache.');
         if (count($dbInfo)) {
             foreach ($dbInfo as $row => $data) {
-                $userInfo['roles'][] = $data['role_id'];
+                $userInfo['roles'][] = strtolower($data['role_id']);
             }
             $userInfo['department_id'] = $dbInfo[0]['department_id'];
             $userInfo['userType'] = $dbInfo[0]['user_type_id'];
