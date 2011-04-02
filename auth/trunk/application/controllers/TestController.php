@@ -14,5 +14,12 @@ class TestController extends Authz_Base_BaseController {
 		$this->_helper->viewRenderer->setNoRender ();
 		echo 'Im in popo';
 	}
+	
+
+	public function gettestAction() {
+	    $user = $_COOKIE['identity'];
+	    echo "Hello $user";
+	    
+	}
 
 }

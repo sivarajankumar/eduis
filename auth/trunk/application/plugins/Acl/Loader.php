@@ -33,6 +33,8 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
      */
     public function preDispatch (Zend_Controller_Request_Abstract $request)
     {
+        $auth = Zend_Auth::getInstance();
+        $authId = $auth->getStorage()->read();
         $actionName = strtolower($request->getActionName());
         $actionName = strtolower($request->getActionName());
         $controllerName = strtolower($request->getControllerName());
@@ -42,12 +44,15 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
          'error' == strtolower($controllerName)) {
             return;
         }
-        $auth = Zend_Auth::getInstance();
+        
         if (! $auth->hasIdentity()) {
             $guestAdapter = new Authz_Resource_Acl_Guest();
             $auth->authenticate($guestAdapter);
         }
-        self::initUserAcl();
+        if (!is_array($authId)) {
+            self::initUserAcl($authId);
+        }
+        
         self::check();
     }
     /**
@@ -70,28 +75,27 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
         return Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource(
         'db');
     }
-    protected static function initUserAcl ()
+    protected static function initUserAcl ($authId)
     {
-        $auth = Zend_Auth::getInstance();
-        if (! is_array($authId = $auth->getStorage()->read())) {
-            Zend_Registry::get('logger')->debug('Fresh visitor');
-            $cache = self::getCache();
-            $acl = $cache->load('objAcl');
-            if ($acl === false) {
-                $acl = self::initAcl();
-            } else {
-                Zend_Registry::get('logger')->debug('Common ACL from Cache.');
-            }
-            $userInfo = self::getUserInfo($authId);
-            $userInfo['identity'] = $authId;
-            $acl->addRole($userInfo['identity'], $userInfo['roles']);
-            $userInfo['acl'] = $acl;
-            $lastLogin = new Zend_Session_Namespace('last');
-            $userInfo['last'] = $lastLogin->lastLogin;
-            $auth->getStorage()->write($userInfo);
-            Zend_Registry::get('logger')->debug(
-            'Specific ACL saved in session.');
+        Zend_Registry::get('logger')->debug('Fresh visitor : '.$authId);
+        $cache = self::getCache();
+        $acl = $cache->load('objAcl');
+        if ($acl === false) {
+            $acl = self::initAcl();
+        } else {
+            Zend_Registry::get('logger')->debug('Common ACL from Cache.');
         }
+        $userInfo = self::getUserInfo($authId);
+        $userInfo['identity'] = $authId;
+        $acl->addRole($userInfo['identity'], $userInfo['roles']);
+        $userInfo['acl'] = $acl;
+        $lastLogin = new Zend_Session_Namespace('last');
+        $userInfo['last'] = $lastLogin->lastLogin;
+        Zend_Auth::getInstance()->getStorage()->write($userInfo);
+        //Setting userID in cookie so that apache can get it in log files.
+        preg_match('/[^.]+\.[^.]+$/', $_SERVER['SERVER_NAME'], $domain);
+        setcookie('identity', $authId, null, null, ".$domain[0]", null, true);
+        Zend_Registry::get('logger')->debug('Specific ACL saved in session.');
     }
     /**
      * initAcl() - Initialize common ACL and save to cache.
@@ -162,39 +166,49 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
     {
         $request = $this->_request;
         $authContent = Zend_Auth::getInstance()->getStorage()->read();
-        if (isset($authContent['acl'])) {
-            $userAcl = $authContent['acl'];
-            if ($userAcl instanceof Zend_Acl) {
-                $reqResource = strtolower(
-                $request->getModuleName() . '_' . $request->getControllerName() .
-                 '_' . $request->getActionName());
-                try {
-                    if ($userAcl->has($reqResource)) {
-                        if ($userAcl->isAllowed($authContent['identity'], 
-                        $reqResource)) {
-                            return true;
+        //if ($_COOKIE['last'] == $authContent['last']) {
+            if (isset($authContent['acl'])) {
+                $userAcl = $authContent['acl'];
+                if ($userAcl instanceof Zend_Acl) {
+                    $reqResource = strtolower(
+                    $request->getModuleName() . '_' .
+                     $request->getControllerName() . '_' .
+                     $request->getActionName());
+                    try {
+                        if ($userAcl->has($reqResource)) {
+                            if ($userAcl->isAllowed($authContent['identity'], 
+                            $reqResource)) {
+                                return true;
+                            } else {
+                                throw new Zend_Exception(
+                                'ACL denied "' .
+                                 str_ireplace('_', '/', $reqResource) . '" to ' .
+                                 $authContent['identity'] . ' at ' .
+                                 $_SERVER['REMOTE_ADDR'], Zend_Log::ERR);
+                            }
                         } else {
                             throw new Zend_Exception(
-                            'ACL denied "' .
-                             str_ireplace('_', '/', $reqResource) . '" to ' .
-                             $authContent['identity']. ' at '.$_SERVER['REMOTE_ADDR'], Zend_Log::ERR);
+                            'RESOURCE "' . str_ireplace('_', '/', $reqResource) .
+                             '" is not found in ACL', Zend_Log::WARN);
                         }
-                    } else {
-                        throw new Zend_Exception(
-                        'RESOURCE "' . str_ireplace('_', '/', $reqResource) .
-                         '" is not found in ACL', Zend_Log::WARN);
+                    } catch (Zend_Exception $e) {
+                        $error = new stdClass();
+                        $error->request = $this->_request;
+                        $error->exception = $e;
+                        $this->_request->setParam('aclError', $error);
+                        $request->setControllerName('error');
+                        $request->setActionName('noaccess');
                     }
-                } catch (Zend_Exception $e) {
-                    $error = new stdClass();
-                    $error->request = $this->_request;
-                    $error->exception = $e;
-                    $this->_request->setParam('aclError', $error);
-                    $request->setControllerName('error');
-                    $request->setActionName('noaccess');
                 }
+            } else {
+                throw new Zend_Exception('User Acl not found.', Zend_Log::ERR);
             }
-        } else {
-            throw new Zend_Exception('User Acl not found.', Zend_Log::ERR);
-        }
+        /*} else {
+            preg_match('/[^.]+\.[^.]+$/', $_SERVER['SERVER_NAME'], $domain);
+            setcookie('userID', null, null, null, ".$domain[0]", null, true);
+            Zend_Auth::getInstance()->clearIdentity();
+            Zend_Session::regenerateId();
+            $this->getResponse()->setRedirect('authenticate', 303);
+        }*/
     }
 }
