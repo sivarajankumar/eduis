@@ -78,6 +78,9 @@ class AuthenticateController extends Zend_Controller_Action {
 			setcookie ( 'last', false, time()-36000, null, ".$domain[0]");
 		}
 		
+		if (isset ( $_COOKIE ['identity'] )) {
+			setcookie ( 'identity', false, time()-36000, null, ".$domain[0]");
+		}
 		Zend_Session::destroy ();
 	}
 	
