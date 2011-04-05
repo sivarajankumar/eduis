@@ -50,7 +50,7 @@ class MarksController extends Zend_Controller_Action
                              'subject_code'=>$SubjectCode
                            );
        
-           $model = new Acad_Model_Course_Subject();
+           $model = new Acad_Model_Course_Subject($params);
            $marks = $model->fetchTest();
            
            $this->_count = count($marks);
