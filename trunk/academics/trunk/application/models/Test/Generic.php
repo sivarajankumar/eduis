@@ -432,5 +432,14 @@ abstract class Acad_Model_Test_Generic
     public function getDefault_max_marks(){
         return $this->_default_max_marks;
     }
+	/**
+     * Save test marks
+     * 
+     * @return void
+     */
+    public function _save ()
+    {
+        $this->getMapper()->save($this);
+    }
 }
 ?>
