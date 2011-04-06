@@ -13,7 +13,12 @@ class Acad_Model_Course_Subject
      * Subject code
      * @var string
      */
-    protected $_code;
+    protected $_subject_code;
+    /**
+     * Subject name
+     * @var string
+     */
+    protected $_subject_name;
     /**
      * Subject department
      * @var string
@@ -66,18 +71,26 @@ class Acad_Model_Course_Subject
      * @param string $code subject code
      * @return Acad_Model_Course_Subject
      */
-    public function setCode ($code)
+    public function setSubject_code ($subject_code)
     {
-        $this->_code = $code;
+        $this->_subject_code = $subject_code;
         return $this;
     }
     /**
      * Get subject code
      * @return string $code subject code
      */
-    public function getCode ()
+    public function getSubject_code ()
     {
-        return $this->_code;
+        return $this->_subject_code;
+    }
+    /**
+     * Fetches all tests of a subject
+     */
+    public function fetchTest ()
+    {
+        $this->getMapper()->fetchTest($this->getDepartment(),$this->getSubject_code());
+        return $this;                                      
     }
     /**
      * Set subject department
@@ -92,7 +105,8 @@ class Acad_Model_Course_Subject
             $authInfo = Zend_Auth::getInstance()->getStorage()->read();
             $this->_department = $authInfo['department_id'];
         } else {
-            throw new Zend_Exception( 'Could not determine department',Zend_Log::ERR);
+            throw new Zend_Exception('Could not determine department', 
+            Zend_Log::ERR);
         }
         return $this;
     }
