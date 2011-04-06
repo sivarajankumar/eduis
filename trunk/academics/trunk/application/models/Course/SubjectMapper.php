@@ -84,7 +84,7 @@ class Acad_Model_Course_SubjectMapper
             ->from(`subject_department`, 
         array('department_id', 'degree_id', 'semester_id'))
             ->join('subject_faculty', 
-        '(`subject_faculty`.`department_id` = `subject_department`.`department_id`) 
+        '(`subject_faculty`.`department_id` = `subject_department`.`department_id`)
         AND (`subject_faculty`.`subject_code` = `subject_department`.`subject_code`)',
             array('`staff_id`','`subject_mode_id`'))
             ->where('`subject_code` = ?', $subject->getCode());
