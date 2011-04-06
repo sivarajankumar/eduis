@@ -5,6 +5,7 @@ class SubjectFacultyController extends Acadz_Base_BaseController
         
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
         $this->department_id = $authInfo['department_id'];
+        parent::init();
     }
     /*
      * @about Interface.

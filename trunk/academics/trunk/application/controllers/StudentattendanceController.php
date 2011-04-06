@@ -1,9 +1,16 @@
 <?php
 class StudentattendanceController extends Acadz_Base_BaseController
 {
-    public function init() {
+    public function init ()
+    {
         $session_startdate = Acad_Model_DbTable_AcademicSession::getSessionStartDate();
         $this->view->assign('session_startdate', $session_startdate);
+        if (Zend_Auth::getInstance()->hasIdentity()) {
+            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+            $this->department_id = $authInfo['department_id'];
+            $this->identity = $authInfo['identity'];
+            $staff_id = $authInfo['identity'];
+        }
         parent::init();
     }
     public function indexAction ()
@@ -12,13 +19,7 @@ class StudentattendanceController extends Acadz_Base_BaseController
         $this->_helper->layout()->enableLayout();
         $this->view->assign('controller', $this->_request->getControllerName());
         $this->view->assign('module', $this->_request->getModuleName());
-        if (Zend_Auth::getInstance()->hasIdentity()) {
-            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-            $this->department_id = $authInfo['department_id'];
-            $this->identity = $authInfo['identity'];
-            $staff_id = $authInfo['identity'];
-        }
-        $this->view->assign('staff_id', $staff_id);
+        $this->view->assign('staff_id', $this->identity);
     }
     /**
      * @return json response
@@ -26,11 +27,16 @@ class StudentattendanceController extends Acadz_Base_BaseController
     public function fillperiodgridAction ()
     {
         $request = $this->getRequest();
+        $period_dateobj = null;
+        $weekday_number = null;
         //Getting Request Parameters
-        $period_dateobj = new Zend_Date(
-        $request->getParam('period_date'), 'dd-MM-YYYY');
-        $weekday_number = $period_dateobj->toString('e');
-        $period_date = $period_dateobj->toString('YYYY-MM-dd');
+        $reqDate = $request->getParam('period_date');
+        if ($reqDate) {
+            $period_dateobj = new Zend_Date($reqDate, 'dd-MM-YYYY');
+            $weekday_number = $period_dateobj->toString('e');
+        } else {
+            $period_dateobj = new Zend_Date();
+        }
         $staff_id = $request->getParam('staff_id');
         if (! $staff_id) {
             if (Zend_Auth::getInstance()->hasIdentity()) {
@@ -41,27 +47,40 @@ class StudentattendanceController extends Acadz_Base_BaseController
                 Zend_Log::ERR);
             }
         }
-        if (isset($staff_id) and isset($period_date)) {
+        $period_date = $period_dateobj->toString('YYYY-MM-dd');
+        if (isset($staff_id)) {
             $dayPeriods = Acad_Model_DbTable_TimeTable::getFacultyDayPeriods(
             $staff_id, $period_date, $weekday_number);
-            $adjustedPeriods = Acad_Model_DbTable_FacultyAdjustment::getAdjusted(
-            $staff_id, $period_date);
-            foreach ($dayPeriods as $key => $value) {
-                $dayPeriods[$key]['adjusted'] = 0;
-                $dayPeriods[$key]['nonattendance'] = 0;
-                foreach ($adjustedPeriods as $akey => $avalue) {
-                    if ($value['timetable_id'] == $avalue['source_timetable_id']) {
-                        $dayPeriods[$key]['adjusted'] = 1;
+            if (isset($period_date) and isset($weekday_number)) {
+                $adjustedPeriods = Acad_Model_DbTable_FacultyAdjustment::getAdjusted(
+                $staff_id, $period_date);
+                foreach ($dayPeriods as $key => $value) {
+                    $dayPeriods[$key]['adjusted'] = 0;
+                    $dayPeriods[$key]['nonattendance'] = 0;
+                    foreach ($adjustedPeriods as $akey => $avalue) {
+                        if ($value['timetable_id'] ==
+                         $avalue['source_timetable_id']) {
+                            $dayPeriods[$key]['adjusted'] = 1;
+                        }
+                    }
+                    $noattendance = Acad_Model_DbTable_NoAttendanceDay::isnoattendanceday(
+                    $period_date, $dayPeriods[$key]['department_id'], 
+                    $dayPeriods[$key]['degree_id'], 
+                    $dayPeriods[$key]['semester_id']);
+                    if ($noattendance) {
+                        $dayPeriods[$key]['nonattendance'] = 1;
                     }
                 }
-                $noattendance = Acad_Model_DbTable_NoAttendanceDay::isnoattendanceday(
-                $period_date, $dayPeriods[$key]['department_id'], 
-                $dayPeriods[$key]['degree_id'], $dayPeriods[$key]['semester_id']);
-                if ($noattendance) {
-                    $dayPeriods[$key]['nonattendance'] = 1;
-                }
             }
-            echo $this->_helper->json($dayPeriods, false);
+            $response = new stdClass();
+            $response->page = 1;
+            $response->total = 1;
+            $response->records = count($dayPeriods);
+            foreach ($dayPeriods as $key => $period) {
+                $response->rows[$key]['id'] = $period['timetable_id'];
+                $response->rows[$key]['cell'] = $period;
+            }
+            echo $this->_helper->json($response, false);
         } else {
             throw new Zend_Exception('Unidentified access', Zend_Log::ALERT);
         }
@@ -137,12 +156,12 @@ class StudentattendanceController extends Acadz_Base_BaseController
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $class = new Acad_Model_Class();
-        $class->setDepartment('cse')->setDegree('btech')->setSemester('8');
+        $class->setDepartment('cse')
+            ->setDegree('btech')
+            ->setSemester('8');
         //$this->_helper->logger($class->getAttendance('CSE-202E',null,'2011-03-08','2011-03-10'));
         $this->_helper->logger($class->getSubjects());
     }
-    
-
     public function getoverviewAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -161,22 +180,52 @@ class StudentattendanceController extends Acadz_Base_BaseController
         $result = $class->getAttendanceOverview($period_date);
         $this->gridparam['page'] = $request->getParam('page', 1); // get the requested page
         $this->gridparam['limit'] = $request->getParam('rows', 20); // rows limit in Grid
- 
         $this->_count = count($result);
         $response = new stdClass();
         foreach ($result as $key => $value) {
             $response->rows[$key]['id'] = $value['department_id'];
-            $response->rows[$key]['cell'] = array($value['department_id'],
-                                                    $value['total'],
-                                                    $value['marked'],
-                                                    $value['last_marked']);
+            $response->rows[$key]['cell'] = array($value['department_id'], 
+            $value['total'], $value['marked'], $value['last_marked']);
         }
         $response->page = $this->gridparam['page'];
         $response->total = 1;
         $response->records = $this->_count;
-        $this->_helper->json($response);
+        echo $this->_helper->json($response, false);
     }
-    
+    /**
+     * Department wise detail of data
+     * Enter description here ...
+     */
+    public function getdetaildataAction ()
+    {
+        $request = $this->getRequest();
+        //Getting Request Parameters
+        $period_dateobj = new Zend_Date(
+        $request->getParam('attendance_date'), 'dd-MM-YYYY');
+        $period_date = $period_dateobj->toString('YYYY-MM-dd');
+        $department = $request->getParam('department_id');
+        //$this->_helper->viewRenderer->setNoRender(false);
+        //$this->_helper->layout()->enableLayout();
+        $depttObj = new Acad_Model_Department();
+        $depttObj->setDepartment($department);
+        $result = $depttObj->getAttendanceDetail($period_date);
+        $this->_helper->logger($result);
+        $this->gridparam['page'] = $request->getParam('page', 1); // get the requested page
+        $this->gridparam['limit'] = $request->getParam('rows', 20); // rows limit in Grid
+        $this->_count = count($result);
+        $response = new stdClass();
+        foreach ($result as $key => $value) {
+            $response->rows[$key]['id'] = $value['subject_code'];
+            $response->rows[$key]['cell'] = array($value['staff_id'], 
+            $value['marked_date'], $value['degree_id'], $value['semester_id'], 
+            $value['periods_covered'], $value['subject_code'], 
+            $value['subject_mode_id'], $value['group_id']);
+        }
+        $response->page = $this->gridparam['page'];
+        $response->total = 1;
+        $response->records = $this->_count;
+        echo $this->_helper->json($response, false);
+    }
     /*public function reportstuwiseAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -218,6 +267,38 @@ class StudentattendanceController extends Acadz_Base_BaseController
     //print_r($totLec);
     //print_r($totAbsent);
     }*/
+    public function getsubjectattAction ()
+    {
+        $class = new Acad_Model_Class();
+        $class->setDepartment('CSE')
+            ->setDegree('BTECH')
+            ->setSemester('8');
+        $result = $class->getSubjectAttendanceDetail('CSE-302');
+        $this->_helper->logger($result);
+    }
+    public function getlastmarkedAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $faculty = new Acad_Model_Member_Faculty();
+        $faculty->setMemberId($this->identity);
+        $result = $faculty->listMarkedAttendance();
+        $this->view->assign('lastMarked', $result);
+    }
+    public function getunmarkedAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function getunmarkedattAction ()
+    {
+        $faculty = new Acad_Model_Member_Faculty();
+        $staff_id = ($this->getRequest()->getParam('staff_id')) ? $this->getRequest()->getParam(
+        'staff_id') : $this->identity;
+        $faculty->setMemberId($staff_id);
+        $result = $faculty->listUnMarkedAttendance();
+        echo $this->_helper->json($result,false);
+    }
 }
 
 

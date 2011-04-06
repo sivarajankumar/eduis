@@ -220,6 +220,29 @@ class Acad_Model_Class
         $subjectMode, $dateFrom, $dateUpto, $subjectType);
         return $attendance;
     }
+    
+    
+    /**
+     * Get Subject Attendance status of class
+     * 
+     * @param string $subjectCode
+     * @param date $dateFrom
+     * @param date $dateUpto
+     * @param string $subjectType
+     * @param string $subjectMode
+     */
+    public function getSubjectAttendanceDetail ($subjectCode,
+                                    $subjectMode = null,
+                                    $dateFrom = null, 
+                                    $dateUpto = null)
+    {
+        $attendance = $this->getMapper()->getSubjectAttendanceDetail ($this, 
+                                    $subjectCode, 
+                                    $subjectMode, 
+                                    $dateFrom, 
+                                    $dateUpto);
+        return $attendance;
+    }
     /**
      * Set data mapper
      * 

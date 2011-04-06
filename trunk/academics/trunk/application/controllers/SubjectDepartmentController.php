@@ -10,7 +10,15 @@ class SubjectDepartmentController extends Acadz_Base_BaseController
         $this->_helper->layout()->enableLayout();
         $this->view->assign('controller', $this->_request->getControllerName());
         $this->view->assign('module', $this->_request->getModuleName());
-        $this->view->assign('department_id', 'cse');
+    
+        if (Zend_Auth::getInstance()->hasIdentity()) {
+            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+            $this->department_id = $authInfo['department_id'];
+        } else if ('testing' == APPLICATION_ENV){
+            $this->department_id = 'cse';
+            throw new Zend_Exception('You are in testing env.',Zend_Log::WARN);
+        } 
+        $this->view->assign('department_id', $this->department_id);
     }
     /*
      * Back end data provider to datagrid.

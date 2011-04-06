@@ -138,7 +138,7 @@ class PeriodattendanceController extends Acadz_Base_BaseController
         }
         $resultSet['totalrows'] = $totalrows;
         $resultSet['totalstudents'] = $totalstudents;
-        echo json_encode($resultSet);
+        echo $this->_helper->json($resultSet,false);
     }
 }
 

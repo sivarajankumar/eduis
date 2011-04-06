@@ -79,7 +79,7 @@ class Acad_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
             $remoteAcl = new Zend_Session_Namespace('remoteAcl');
             if (! isset($remoteAcl->userInfo)) {
                 $remoteAcl->redirectedFrom = $this->getRequest()->getParams();
-                $this->getResponse()->setRedirect('authenticate', 303);
+                $this->getResponse()->setRedirect('/authenticate', 303);
                 return;
             } else {
                 Zend_Registry::get('logger')->debug(
@@ -227,7 +227,7 @@ class Acad_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
             Zend_Session::regenerateId();
             $remoteAcl = new Zend_Session_Namespace('remoteAcl');
             $remoteAcl->redirectedFrom = $this->getRequest()->getParams();
-            $this->getResponse()->setRedirect('authenticate', 303);
+            $this->getResponse()->setRedirect('/authenticate', 303);
         }
         
     }

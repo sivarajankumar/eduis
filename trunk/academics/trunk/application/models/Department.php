@@ -161,5 +161,9 @@ class Acad_Model_Department
     public function getAttendanceOverview($dateFrom = null) {
         return $this->getMapper()->fetchAttendanceStat($dateFrom);
     }
+    
+    public function getAttendanceDetail($dateFrom = null, $degree = null, $semester = null) {
+        return $this->getMapper()->fetchAttendanceDetail($this,$dateFrom);
+    }
 }
 ?>

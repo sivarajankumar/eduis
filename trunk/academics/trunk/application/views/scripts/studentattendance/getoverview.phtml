@@ -8,17 +8,22 @@
 
 <table id="tblgrid" class="scroll"></table>
 <div id="gridpager" class="scroll" style="text-align: center;"></div>
+<br/>
+<table id="detailGrid" class="scroll"></table>
 <script type="text/javascript">
 
 var session_startdate = '<?php echo $this->session_startdate;?>';  
 var urlAttOverviewData = "<?php echo $this->url(array('controller' => 'studentattendance', 'action' => 'getoverviewdata'))?>";
+var urlAttDetailData = "<?php echo $this->url(array('controller' => 'studentattendance', 'action' => 'getdetaildata'))?>";
 
 var gridTable = "#tblgrid";
+var detailGrid = "#detailGrid";
 var gridPager = "#gridpager"; 
 
 serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
 //TODO session_startdate is different because its date from db server.
 sessionStartdateObj= $.datepicker.parseDate('yy-mm-dd', session_startdate);
+var selectedDate = null;
 /* utility functions */
 $("#datepicker1").datepicker({
 	minDate : sessionStartdateObj,
@@ -29,7 +34,7 @@ $("#datepicker1").datepicker({
 	constrainInput : true,
 	gotoCurrent: true,
 	onSelect :function(attendanceDate, inst) {
-		var selectedDate=$.datepicker.parseDate('dd-mm-yy', attendanceDate);
+		selectedDate= attendanceDate;
 		$(gridTable).jqGrid('setGridParam',
 				{postData:{
 					'attendance_date':attendanceDate
@@ -38,6 +43,8 @@ $("#datepicker1").datepicker({
       			datatype: 'json'
                 })
                 .trigger('reloadGrid');
+		$('#gbox_tblgrid').show();
+	    $('#gbox_detailGrid').hide();
 	}
 });
 $(function(){
@@ -63,6 +70,8 @@ $(gridTable).jqGrid({
 			align: 'center',
 			formatter:'date'}
     ],
+    onSelectRow: fetchAttendanceDetail,
+    loadComplete : function() {$('#gbox_detailGrid').hide();},
     altRows: true,
     loadonce : true,
     shrinkToFit : true,
@@ -70,5 +79,64 @@ $(gridTable).jqGrid({
     prmNames: {page: null, rows: null, sort: null, order: null, search: null, nd: null},
     caption: "Department-wise Overview of Attendance"
 	}).jqGrid('gridResize');
+
+$(detailGrid).jqGrid({
+	datatype:'local',
+	colNames:['Faculty ID','Marked Date','Program','Class','Periods','Subject','Mode','Group'],
+	colModel:[
+		{name:'staff_id',
+			index:'staff_id',
+			align: 'center'},
+        {name:'marked_date',
+			index:'marked_date',
+			align: 'center',
+			formatter:'date'},
+        {name:'degree_id',
+			index:'degree_id',
+			align: 'center'},
+        {name:'semester_id',
+			index:'semester_id',
+			align: 'center',
+			formatter:'number', 
+			formatoptions:{decimalPlaces: 0}},
+		{name:'periods_covered',
+			index:'periods_covered',
+			align: 'center'},
+        {name:'subject_code',
+			index:'subject_code',
+			align: 'center'},
+        {name:'subject_mode_id',
+			index:'subject_mode_id',
+			align: 'center'},
+        {name:'group_id',
+			index:'group_id',
+			align: 'center'}
+    ],
+    altRows: true,
+    loadonce : true,
+    shrinkToFit : true,
+    forceFit : true,
+    hoverrows : false,
+    rowNum: -1,
+    prmNames: {page: null, rows: null, sort: null, order: null, search: null, nd: null},
+    caption: "Attendance Detail"
+	}).jqGrid('gridResize');
+
+$('#gbox_tblgrid').hide();
+$('#gbox_detailGrid').hide();
 });
+
+function fetchAttendanceDetail(department){
+
+	$(detailGrid).jqGrid('setGridParam',
+			{postData:{
+				'attendance_date':selectedDate,
+				'department_id':department
+				},
+ 			 url: urlAttDetailData,
+  			datatype: 'json'
+            })
+            .trigger('reloadGrid');
+    $('#gbox_detailGrid').show();
+}
 </script>
