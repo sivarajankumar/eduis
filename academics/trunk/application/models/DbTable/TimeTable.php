@@ -419,34 +419,35 @@ WHERE (`period`.department_id = ?
      * @param string $department_id
      * @version 2.0
      */
-    public function getFacultyDayPeriods ($staff_id, $period_date, 
+    public function getFacultyDayPeriods ($staff_id, $period_date = null, 
     $weekday_number = null, $department_id = null)
     {
-        try {
+        $period_date = isset($period_date)? $period_date : 'CURRENT_DATE';
             $sql = "SELECT timetable.timetable_id,timetable.period_id,
-  subject.subject_name,
-  timetable.subject_code,
-  timetable.subject_mode_id,
-  subject_mode.subject_mode_name,
-  period.period_number,
-  timetable.period_duration,
-  period.weekday_number,
-  period.department_id,
-  period.degree_id,
-  period.semester_id,
-  weekday.weekday_name,
-  timetable.staff_id
-  FROM timetable
-  INNER JOIN period
-    ON period.period_id = timetable.period_id
-  INNER JOIN SUBJECT
-    ON subject.subject_code = timetable.subject_code
-    INNER JOIN subject_mode
-    ON timetable.subject_mode_id = subject_mode.subject_mode_id
-    INNER JOIN WEEKDAY ON period.weekday_number = weekday.weekday_number
-WHERE timetable.staff_id = ?
-       AND ( '$period_date' between `timetable`.valid_from AND `timetable`.valid_upto)";
-            $param = array($staff_id);
+              subject.subject_name,
+              timetable.subject_code,
+              timetable.subject_mode_id,
+              subject_mode.subject_mode_name,
+              period.period_number,
+              timetable.period_duration,
+              period.weekday_number,
+              period.department_id,
+              period.degree_id,
+              period.semester_id,
+              weekday.weekday_name,
+              timetable.staff_id,
+              timetable.group_id
+              FROM timetable
+              INNER JOIN period
+                ON period.period_id = timetable.period_id
+              INNER JOIN SUBJECT
+                ON subject.subject_code = timetable.subject_code
+                INNER JOIN subject_mode
+                ON timetable.subject_mode_id = subject_mode.subject_mode_id
+                INNER JOIN WEEKDAY ON period.weekday_number = weekday.weekday_number
+            WHERE timetable.staff_id = ?
+       AND ( ? between `timetable`.valid_from AND `timetable`.valid_upto)";
+            $param = array($staff_id,$period_date);
             if (isset($weekday_number)) {
                 $sql .= ' AND period.weekday_number = ?';
                 array_push($param, $weekday_number);
@@ -459,9 +460,6 @@ WHERE timetable.staff_id = ?
             $resultSet = self::getDefaultAdapter()->query($sql, $param)->fetchAll();
             //return $sql;
             return $resultSet;
-        } catch (Exception $ex) {
-            return $ex->getMessage();
-        }
     }
     ///////////////////////////////////////////////All about GROUPS//////////////////////////////
     /**

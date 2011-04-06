@@ -1,0 +1,58 @@
+<br />
+<br />
+
+<?php
+if (isset ( $this->lastMarked )) {
+	?>
+<div class="reporterDiv gridstyle">
+<table id="lastMarked" width="100%" border="2" cellpadding="4">
+	<caption>Last Marked Attendance</caption>
+	<thead>
+		<tr>
+			<th scope="col">Period date</th>
+			<th scope="col">Marked Date</th>
+			<th scope="col">Days Late</th>
+			<th scope="col">Period Number</th>
+			<th scope="col">Subject</th>
+			<th scope="col">Department</th>
+			<th scope="col">Degree</th>
+			<th scope="col">Semester</th>
+			<th scope="col">Group</th>
+
+		</tr>
+	</thead>
+	<tbody> 
+	<?php
+	foreach ( $this->lastMarked as $row => $periods ) {
+		?>
+		<tr>
+			<td><?php echo $periods ['period_date']?></td>
+			<td><?php echo $periods ['marked_date']?></td>
+			<td><?php $pDate = new Zend_Date($periods ['period_date'],'YYYY-MM-dd');
+			$mDate = new Zend_Date($periods ['marked_date'],'YYYY-MM-dd');
+			        $days = $mDate->sub($pDate);
+			        $late = $days->toValue()/86400;
+			        echo (($late)?$late:'');?></td>
+			<td><?php echo $periods ['period_number']?></td>
+			<td><?php echo ucwords($periods ['subject_name'])?></td>
+			<td><?php echo $periods ['department_id']?></td>
+			<td><?php echo $periods ['degree_id']?></td>
+			<td><?php echo $periods ['semester_id']?></td>
+			<td><?php if ('all' == strtolower($periods ['group_id'])) {
+				echo '&nbsp;';
+			} else echo $periods ['group_id']?></td>
+		</tr>
+	<?php
+	}
+	?>
+	</tbody>
+</table>
+</div>
+<?php
+}
+?>
+<script type="text/javascript">
+$(function(){
+tableToGrid("#lastMarked");
+}); 
+</script>

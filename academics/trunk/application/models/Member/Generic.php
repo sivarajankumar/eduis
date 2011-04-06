@@ -106,7 +106,7 @@ abstract class Acad_Model_Member_Generic {
 	 * @return Lib_Model_Member_Generic
 	 */
 	public function setMemberId($memberId) {
-		
+		$this->_memberId = $memberId;
 		return $this;
 	}
 	
@@ -141,7 +141,7 @@ abstract class Acad_Model_Member_Generic {
 	 * @param bool $isActive
 	 * @return Lib_Model_Member_Generic
 	 */
-	public function setIsActive(bool $isActive = 1) {
+	public function setIsActive($isActive = 1) {
 		
 		return $this;
 	}

@@ -203,41 +203,41 @@ $("#datepicker1").datepicker(
 					dataType : "json",
 					async :  false,
 					data: {period_date : dateText },
-					success: function(response) {
-							for(var cnt = 0;cnt <  response.length ;cnt++){
-							var data = { period_number : response[cnt]['period_number'], 
-										subject_code : response[cnt]['subject_name'], 
-										subject_mode_id : response[cnt]['subject_mode_name'], 
-										department_id : response[cnt]['department_id'], 
-										degree_id : response[cnt]['degree_id'], 
-										semester_id : response[cnt]['semester_id'],
-										staff_id : response[cnt]['staff_id'] };
-							$("#prdlst").addRowData(response[cnt]['period_number'],data);
+					success: function(gridData) {
+							for(var cnt = 0;cnt <  gridData.rows.length ;cnt++){
+							var data = { period_number : gridData.rows[cnt].cell.period_number, 
+										subject_code : gridData.rows[cnt].cell['subject_name'], 
+										subject_mode_id : gridData.rows[cnt].cell['subject_mode_name'], 
+										department_id : gridData.rows[cnt].cell['department_id'], 
+										degree_id : gridData.rows[cnt].cell['degree_id'], 
+										semester_id : gridData.rows[cnt].cell['semester_id'],
+										staff_id : gridData.rows[cnt].cell['staff_id'] };
+							$("#prdlst").addRowData(gridData.rows[cnt].cell['period_number'],data);
 
-							 $("#prdlst").setCell(response[cnt]['period_number'], 
+							 $("#prdlst").setCell(gridData.rows[cnt].cell['period_number'], 
                                      'period_number', 
                                      "", 
                                      "", 
-                                     {title: response[cnt]['period_id']});
+                                     {title: gridData.rows[cnt].cell['period_id']});
                              
-							$("#prdlst").setCell(response[cnt]['period_number'], 
+							$("#prdlst").setCell(gridData.rows[cnt].cell['period_number'], 
 								                 'subject_code', 
 								                 "", 
 								                 "", 
-								                 {title: response[cnt]['subject_code'] });
-							$("#prdlst").setCell(response[cnt]['period_number'], 
+								                 {title: gridData.rows[cnt].cell['subject_code'] });
+							$("#prdlst").setCell(gridData.rows[cnt].cell['period_number'], 
 								                 'subject_mode_id', 
 								                 "", 
 								                 "", 
-								                 {title: response[cnt]['subject_mode_id']  });
-							 if(response[cnt]['adjusted'] == 1)
+								                 {title: gridData.rows[cnt].cell['subject_mode_id']  });
+							 if(gridData.rows[cnt].cell['adjusted'] == 1)
 			                 {
-								$("#" +response[cnt]['period_number']).addClass("adjusted");
+								$("#" +gridData.rows[cnt].cell['period_number']).addClass("adjusted");
 			                 }
 
-							 if(response[cnt]['nonattendance'] == 1)
+							 if(gridData.rows[cnt].cell['nonattendance'] == 1)
 			                 {
-								$("#" +response[cnt]['period_number']).addClass("nonattendanceday");
+								$("#" +gridData.rows[cnt].cell['period_number']).addClass("nonattendanceday");
 								
 			                 }
 			                 
