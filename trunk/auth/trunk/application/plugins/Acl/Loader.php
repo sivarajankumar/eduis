@@ -49,6 +49,8 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
             $guestAdapter = new Authz_Resource_Acl_Guest();
             $auth->authenticate($guestAdapter);
         }
+        
+        $authId = $auth->getStorage()->read();
         if (!is_array($authId)) {
             self::initUserAcl($authId);
         }
@@ -166,7 +168,7 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
     {
         $request = $this->_request;
         $authContent = Zend_Auth::getInstance()->getStorage()->read();
-        //if ($_COOKIE['last'] == $authContent['last']) {
+        if ($_COOKIE['last'] == $authContent['last']) {
             if (isset($authContent['acl'])) {
                 $userAcl = $authContent['acl'];
                 if ($userAcl instanceof Zend_Acl) {
@@ -203,12 +205,8 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
             } else {
                 throw new Zend_Exception('User Acl not found.', Zend_Log::ERR);
             }
-        /*} else {
-            preg_match('/[^.]+\.[^.]+$/', $_SERVER['SERVER_NAME'], $domain);
-            setcookie('userID', null, null, null, ".$domain[0]", null, true);
-            Zend_Auth::getInstance()->clearIdentity();
-            Zend_Session::regenerateId();
-            $this->getResponse()->setRedirect('authenticate', 303);
-        }*/
+        } else {
+            $this->getResponse()->setRedirect('/authenticate/logout', 303);
+        }
     }
 }
