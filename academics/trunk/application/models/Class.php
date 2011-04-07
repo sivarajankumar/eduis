@@ -216,7 +216,7 @@ class Acad_Model_Class
                                     $dateFrom = null, 
                                     $dateUpto = null)
     {
-        $attendance = $this->getMapper()->getAttendanceDetail($this, $subjectCode, 
+        $attendance = $this->getMapper()->getAttendanceDetail($this, 
         $subjectMode, $dateFrom, $dateUpto, $subjectType);
         return $attendance;
     }
@@ -242,6 +242,14 @@ class Acad_Model_Class
                                     $dateFrom, 
                                     $dateUpto);
         return $attendance;
+    }
+    
+    /**
+     * Get un-marked attendance counts.
+     * Get un-marked attendance in grouped by faculty,subject,mode
+     */
+    public function getUnmarkedAttendance() {
+        return $this->getMapper()->getUnmarkedAttendance ($this);
     }
     /**
      * Set data mapper

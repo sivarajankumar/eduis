@@ -285,6 +285,10 @@ class StudentattendanceController extends Acadz_Base_BaseController
         $result = $faculty->listMarkedAttendance();
         $this->view->assign('lastMarked', $result);
     }
+    //############# Unmarked attendances....
+    /**
+     * Unmarked by an individual faculty
+     */
     public function getunmarkedAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -299,6 +303,37 @@ class StudentattendanceController extends Acadz_Base_BaseController
         $result = $faculty->listUnMarkedAttendance();
         echo $this->_helper->json($result,false);
     }
+    
+    /**
+     * Unmarked in class
+     */
+    public function getclassunmarkedAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+
+    public function getclassunmarkedattAction ()
+    {
+        $request = $this->getRequest();
+        $department = $request->getParam('department_id');
+        $degree = $request->getParam('degree_id');
+        $semester = $request->getParam('semester_id');
+        $class = new Acad_Model_Class();
+        $class->setDepartment($department)
+            ->setDegree($degree)
+            ->setSemester($semester);
+        
+        $result = $class->getUnmarkedAttendance();
+        $response = new stdClass();
+        $response->page = 1;
+        $response->total = 1;
+        $response->records = count($result);
+        $response->rows = $result;
+        echo $this->_helper->json($response, false);
+        //$this->_helper->logger($result);
+    }
+    
 }
 
 

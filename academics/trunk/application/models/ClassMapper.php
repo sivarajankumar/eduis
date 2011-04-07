@@ -43,36 +43,33 @@ class Acad_Model_ClassMapper
      * @param string $subjectMode
      * 
      */
-    public function getSubjects (Acad_Model_Class $class, $subjectType = null,$subjectMode = null)
+    public function getSubjects (Acad_Model_Class $class, $subjectType = null, 
+    $subjectMode = null)
     {
-        $sql = $this->getDbTable()->getAdapter()
+        $sql = $this->getDbTable()
+            ->getAdapter()
             ->select()
             ->from('subject_department', array())
             ->join('subject', 
-    				'`subject_department`.`subject_code` = `subject`.`subject_code`', 
-                    array('subject_code', 
-                    		'subject_name', 
-                    		'suggested_duration'))
+        '`subject_department`.`subject_code` = `subject`.`subject_code`', 
+        array('subject_code', 'subject_name', 'suggested_duration'))
             ->join('subject_mode', 
-        			'`subject`.`subject_type_id` = `subject_mode`.`subject_type_id`', 
-                    array('group_together'))
-            ->where('department_id = ?',$class->getDepartment())
-            ->where('degree_id = ?',$class->getDegree())
-            ->where('semester_id = ?',$class->getSemester());
-    
-            if (isset($subjectType)) {
-                $sql->where('`subject_mode`.`subject_type_id` = ?',$subjectType);
-            } else {
-                $sql->columns('subject_mode`.`subject_type_id');
-            }
-    
-            if (isset($subjectMode)) {
-                $sql->where('subject_mode_id = ?',$subjectMode);
-            } else {
-                $sql->columns('subject_mode.subject_mode_id');
-            }
-            
-         return $sql->query()->fetchAll();
+        '`subject`.`subject_type_id` = `subject_mode`.`subject_type_id`', 
+        array('group_together'))
+            ->where('department_id = ?', $class->getDepartment())
+            ->where('degree_id = ?', $class->getDegree())
+            ->where('semester_id = ?', $class->getSemester());
+        if (isset($subjectType)) {
+            $sql->where('`subject_mode`.`subject_type_id` = ?', $subjectType);
+        } else {
+            $sql->columns('subject_mode`.`subject_type_id');
+        }
+        if (isset($subjectMode)) {
+            $sql->where('subject_mode_id = ?', $subjectMode);
+        } else {
+            $sql->columns('subject_mode.subject_mode_id');
+        }
+        return $sql->query()->fetchAll();
     }
     /**
      * Fetch class students from core server.
@@ -131,58 +128,50 @@ class Acad_Model_ClassMapper
      * @param string $subjectType
      */
     public function getAttendanceDetail (Acad_Model_Class $class, 
-                                    $subjectType = null,
-                                    $subjectMode = null,
-                                    $dateFrom = null, 
-                                    $dateUpto = null)
+    $subjectType = null, $subjectMode = null, $dateFrom = null, $dateUpto = null)
     {
         $data = array();
-        $sql = $this->getDbTable()->getAdapter()->select();
+        $sql = $this->getDbTable()
+            ->getAdapter()
+            ->select();
         $fetchMode = null;
-            $subjects = $class->getSubjects($subjectType,$subjectMode);
-            $where = '';
-            $setOr = false;
-            foreach ($subjects as $key => $subject) {
-                if ($setOr) {
-                    $where .= ' OR ';
-                }
-                $setAnd = false;
-                $where .= ' ( ';
-                $selCol = array('subject_code'=>1,'department_id'=>2);
-                $subject = array_diff_key($subject, $selCol);
-                foreach ($subject as $column => $value) {
-                    if ($setAnd) {
-                        $where .= ' AND ';
-                    }
-                    $where .= $this->model->getAdapter()->quoteInto("$column = ?", $value);
-                    $setAnd = true;
-                }
-                $where .= ' ) ';
-                $setOr = true;
+        $subjects = $class->getSubjects($subjectType, $subjectMode);
+        $where = '';
+        $setOr = false;
+        foreach ($subjects as $key => $subject) {
+            if ($setOr) {
+                $where .= ' OR ';
             }
-            
-            
-            $sql->from('attendance',array('period_date',
-            								'subject_mode_id',
-            								'group_id',
-            								'student_roll_no'))
-                ->where($where);
-            
-            //@TODO do smthing
-            if ($dateFrom  != null) {
-                $data['dateFrom'] = $dateFrom;
-                if ($dateUpto != null) {
-                    $data['dateUpto'] = $dateUpto;
-                    $sql->where('`period_date` BETWEEN :dateFrom AND :dateUpto');
-                } else {
-                    $sql->where('`period_date` = :dateFrom');
+            $setAnd = false;
+            $where .= ' ( ';
+            $selCol = array('subject_code' => 1, 'department_id' => 2);
+            $subject = array_diff_key($subject, $selCol);
+            foreach ($subject as $column => $value) {
+                if ($setAnd) {
+                    $where .= ' AND ';
                 }
+                $where .= $this->model->getAdapter()->quoteInto("$column = ?", 
+                $value);
+                $setAnd = true;
             }
-        
-       return $sql->query(null,$data)->fetchAll($fetchMode);
+            $where .= ' ) ';
+            $setOr = true;
+        }
+        $sql->from('attendance', 
+        array('period_date', 'subject_mode_id', 'group_id', 'student_roll_no'))->where(
+        $where);
+        //@TODO do smthing
+        if ($dateFrom != null) {
+            $data['dateFrom'] = $dateFrom;
+            if ($dateUpto != null) {
+                $data['dateUpto'] = $dateUpto;
+                $sql->where('`period_date` BETWEEN :dateFrom AND :dateUpto');
+            } else {
+                $sql->where('`period_date` = :dateFrom');
+            }
+        }
+        return $sql->query(null, $data)->fetchAll($fetchMode);
     }
-    
-
     /**
      * 
      * Get Attendance status of class in a subject
@@ -195,31 +184,32 @@ class Acad_Model_ClassMapper
      * @param string $subjectType
      */
     public function getSubjectAttendanceDetail (Acad_Model_Class $class, 
-                                    $subjectCode, 
-                                    $subjectMode = null, 
-                                    $dateFrom = null, 
-                                    $dateUpto = null)
+    $subjectCode, $subjectMode = null, $dateFrom = null, $dateUpto = null)
     {
         $data = array();
-        $sql = $this->getDbTable()->getAdapter()->select();
+        $sql = $this->getDbTable()
+            ->getAdapter()
+            ->select();
         $fetchMode = null;
-        if ($subjectCode  != null) {
-                $sql
-                ->from('attendance',array('period_date','subject_mode_id','group_id','student_roll_no'))
-                ->where('subject_code = ?',$subjectCode)
-                ->where('department_id = ?',$class->getDepartment());
-                $fetchMode = Zend_db::FETCH_GROUP;
+        if ($subjectCode != null) {
+            $sql->from('attendance', 
+            array('period_date', 'subject_mode_id', 'group_id', 
+            'student_roll_no'))
+                ->where('subject_code = ?', $subjectCode)
+                ->where('department_id = ?', $class->getDepartment());
+            $fetchMode = Zend_db::FETCH_GROUP;
         } else {
             $subjects = $class->getSubjects();
-            $sql->from('attendance',array('period_date','subject_mode_id','group_id','student_roll_no'));
+            $sql->from('attendance', 
+            array('period_date', 'subject_mode_id', 'group_id', 
+            'student_roll_no'));
             foreach ($subjects as $key => $subject) {
-                $sql
-                ->where('subject_code = ?',$subjectCode)
-                ->where('department_id = ?',$class->getDepartment());
+                $sql->where('subject_code = ?', $subjectCode)->where(
+                'department_id = ?', $class->getDepartment());
             }
-            //@TODO do smthing
+             //@TODO do smthing
         }
-        if ($dateFrom  != null) {
+        if ($dateFrom != null) {
             $data['dateFrom'] = $dateFrom;
             if ($dateUpto != null) {
                 $data['dateUpto'] = $dateUpto;
@@ -228,8 +218,48 @@ class Acad_Model_ClassMapper
                 $sql->where('`period_date` = :dateFrom');
             }
         }
-        
-       return $sql->query(null,$data)->fetchAll($fetchMode);
+        return $sql->query(null, $data)->fetchAll($fetchMode);
+    }
+    
+    public function getUnmarkedAttendance (Acad_Model_Class $class)
+    {
+        $sql = 'SELECT
+  totalprd.*,
+  unmarked.pending
+FROM (SELECT
+        staff_id,
+        subject_name,
+        subject_mode_name,
+        department_id,
+        degree_id,
+        semester_id,
+        COUNT(1)          AS total
+      FROM periodinfo
+      GROUP BY staff_id,subject_code,subject_mode_id) AS totalprd
+  JOIN (SELECT
+          staff_id,
+          subject_name,
+          subject_mode_name,
+          department_id,
+          degree_id,
+          semester_id,
+          COUNT(1)          AS pending
+        FROM unmarkedattendance
+        GROUP BY staff_id,subject_code,subject_mode_id) AS unmarked
+    ON (totalprd.staff_id = unmarked.staff_id
+        AND totalprd.subject_name = unmarked.subject_name
+        AND totalprd.subject_mode_name = unmarked.subject_mode_name
+        AND totalprd.department_id = unmarked.department_id
+        AND totalprd.degree_id = unmarked.degree_id
+        AND totalprd.semester_id = unmarked.semester_id)
+WHERE totalprd.department_id = ?
+    AND totalprd.degree_id = ?
+    AND totalprd.semester_id = ?';
+        $bind = array($class->getDepartment(),
+                        $class->getDegree(), 
+                        $class->getSemester());
+                        
+        return $this->getDbTable()->getAdapter()->query($sql,$bind)->fetchAll();
     }
     /**
      * 
