@@ -85,4 +85,45 @@ class Acad_Model_Member_FacultyMapper
         }
         return $sql->query()->fetchAll();
     }
+    
+
+    public function listUnMarkedAttendanceStat (Acad_Model_Member_Faculty $faculty, $department_id = null)
+    {
+        $sql = 'SELECT
+  totalprd.*,
+  unmarked.pending
+FROM (SELECT
+        staff_id,
+        subject_name,
+        subject_mode_name,
+        department_id,
+        degree_id,
+        semester_id,
+        COUNT(1)          AS total
+      FROM periodinfo
+      GROUP BY staff_id,subject_code,subject_mode_id) AS totalprd
+  JOIN (SELECT
+          staff_id,
+          subject_name,
+          subject_mode_name,
+          department_id,
+          degree_id,
+          semester_id,
+          COUNT(1)          AS pending
+        FROM unmarkedattendance
+        GROUP BY staff_id,subject_code,subject_mode_id) AS unmarked
+    ON (totalprd.staff_id = unmarked.staff_id
+        AND totalprd.subject_name = unmarked.subject_name
+        AND totalprd.subject_mode_name = unmarked.subject_mode_name
+        AND totalprd.department_id = unmarked.department_id
+        AND totalprd.degree_id = unmarked.degree_id
+        AND totalprd.semester_id = unmarked.semester_id)
+WHERE totalprd.staff_id = ? ';
+        $bind = array($faculty->getMemberId());
+        if (! is_null($department_id)) {
+            $sql .= ' AND totalprd.department_id = ?';
+            $bind[] = $department_id;
+        }
+        return $this->getDbTable()->getAdapter()->query($sql,$bind)->fetchAll();
+    }
 }
