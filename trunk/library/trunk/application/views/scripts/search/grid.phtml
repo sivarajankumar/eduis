@@ -17,18 +17,17 @@
 <div id="gridpager" class="scroll" style="text-align: center;"></div>
 </div>
 
-<div id="bookDetail" style="display: none;">&nbsp; </div>
 <div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
 	style="color: red"></span></div>
 	
 <script type="text/javascript">
+var urlBookDetail = "<?php echo $this->url ( array ('controller' => 'book', 'action' => 'getbookdetails' ), 'default', true )?>";
 
 $(function(){
     var gridTable = "#tblgrid";
     var gridPager = "#gridpager";
     var urlFillGrid = "<? echo $this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid'), 'default', true)?>";
     var urlCRUD = "<? echo $this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud'), 'default', true)?>";
-    var urlBookDetail = "<?php echo $this->url ( array ('controller' => 'book', 'action' => 'getbookdetails' ), 'default', true )?>";
     $(gridTable).jqGrid({
         url : urlFillGrid,
         colNames:['ISBN','Title','Author', 'Edition','Acc_no', 'Status', 'Rack', 'Shelf'],
@@ -58,36 +57,14 @@ $(function(){
             pager: gridPager,
             onSelectRow: function(id){
             	$('#'+id).bt({
-        			preBuild:function(){
-        				acc_no = id;
-        		  		$.ajax({
-        		            url : urlBookDetail,
-        		            async : false,
-        		            dataType : "json",
-        		            data : {'acc_no' : acc_no },
-        		            success : function(jBook){
-        			            var bookStr = '<div>ISBN: <b>'+jBook.isbn_id+'</b></div>';
-        			            bookStr += '<div>Title: <b>'+jBook.title+'</b></div>';
-        			            bookStr += jBook.author ? '<div>Author: <b>'+jBook.author+'</b></div>':"";
-        			            bookStr += jBook.edition ? '<div>Edition: <b>'+jBook.edition+'</b></div>':"";
-        			            bookStr += jBook.volume ? '<div>Volume: <b>'+jBook.volume+'</b></div>':"";
-        			            bookStr += jBook.year ? '<div>Year: <b>'+jBook.year+'</b></div>':"";
-        		            	$('#bookDetail').html(bookStr);
-        		            },
-        		            error: function(xhr, text){
-        		            	$('#bookDetail').text('ERROR: xhr.responseText');
-        		               // alert(xhr.responseText);
-        		            }
-        		        });
-        				},
-        				contentSelector:  "$('#bookDetail').html()",
+        			contentSelector:  "fetchBookDetail("+id+");",
         			  showTip: function(box){
         				    $(box).fadeIn(500);
         			  },
         			  hideTip: function(box, callback){
         			    $(box).animate({opacity: 0}, 500);
         			  },
-        			  shrinkToFit: true,
+        			shrinkToFit: true,
         			closeWhenOthersOpen: true,
         			fill: '#FFF',
         		    cornerRadius: 10,
@@ -105,7 +82,7 @@ $(function(){
         		        fontFamily: '"lucida grande",tahoma,verdana,arial,sans-serif', 
         		        fontSize: '0.91em'
         		      }
-        		  	});
+        		  	}).btOn();
              },
             editurl:urlCRUD
         });
@@ -143,6 +120,31 @@ $(function(){
     addPager(gridTable, gridPager); 
     
 });
+
+
+function fetchBookDetail(acc_no) {
+	var tip = 'Book detail...';
+	$.ajax({
+        url : urlBookDetail,
+        async : false,
+        dataType : "json",
+        data : {'acc_no' : acc_no },
+        success : function(jBook){
+            var bookStr = '<div>ISBN: <b>'+jBook.isbn_id+'</b></div>';
+            bookStr += '<div>Title: <b>'+jBook.title+'</b></div>';
+            bookStr += jBook.author ? '<div>Author: <b>'+jBook.author+'</b></div>':"";
+            bookStr += jBook.edition ? '<div>Edition: <b>'+jBook.edition+'</b></div>':"";
+            bookStr += jBook.volume ? '<div>Volume: <b>'+jBook.volume+'</b></div>':"";
+            bookStr += jBook.year ? '<div>Year: <b>'+jBook.year+'</b></div>':"";
+            tip = bookStr;
+        },
+        error: function(xhr, text){
+        	$('#bookDetail').text('ERROR: xhr.responseText');
+           // alert(xhr.responseText);
+        }
+    });
+    return tip;
+}
 </script>
 
 
