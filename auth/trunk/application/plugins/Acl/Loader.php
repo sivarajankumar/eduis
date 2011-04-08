@@ -168,7 +168,7 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
     {
         $request = $this->_request;
         $authContent = Zend_Auth::getInstance()->getStorage()->read();
-        if ($_COOKIE['last'] == $authContent['last']) {
+        //if ($_COOKIE['last'] == $authContent['last']) {
             if (isset($authContent['acl'])) {
                 $userAcl = $authContent['acl'];
                 if ($userAcl instanceof Zend_Acl) {
@@ -205,8 +205,8 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
             } else {
                 throw new Zend_Exception('User Acl not found.', Zend_Log::ERR);
             }
-        } else {
+        /*} else {
             $this->getResponse()->setRedirect('/authenticate/logout', 303);
-        }
+        }*/
     }
 }
