@@ -58,7 +58,7 @@ $(gridTable).jqGrid({
 	      repeatitems: false,
 	      id: ""
 	   },
-	colNames:['Faculty Id','Subject Name','Mode','Pending'],
+	colNames:['Faculty Id','Subject Name','Mode','Total','Pending'],
 	colModel:[{
 		name:'staff_id',
     	    index:'staff_id'},
@@ -68,6 +68,12 @@ $(gridTable).jqGrid({
         {name:'subject_mode_name',
             index:'subject_mode_name'
         },
+        {name:'total', 
+            index:'total',
+    			align: 'center',
+    			formatter:'number', 
+    			formatoptions:{decimalPlaces: 0}
+        },
         {name:'pending', 
             index:'pending',
     			align: 'center',
@@ -75,7 +81,7 @@ $(gridTable).jqGrid({
     			formatoptions:{decimalPlaces: 0}
         }],
     caption: "Unmarked periods in class" ,
-    onSelectRow: function(id){
+    /*onSelectRow: function(id){
     	$('#'+id+' td:first-child').bt({
 			  contentSelector:  "fetchFaculty($(this).text());",
 			  showTip: function(box){
@@ -104,7 +110,7 @@ $(gridTable).jqGrid({
 		        fontSize: '0.91em'
 		      }
 	  	}).btOn();
-     },
+     },*/
     rownumbers : true,
     altRows: true,
     loadonce : true,
