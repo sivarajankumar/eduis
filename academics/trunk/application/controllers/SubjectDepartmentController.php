@@ -15,7 +15,7 @@ class SubjectDepartmentController extends Acadz_Base_BaseController
             $authInfo = Zend_Auth::getInstance()->getStorage()->read();
             $this->department_id = $authInfo['department_id'];
         } else if ('testing' == APPLICATION_ENV){
-            $this->department_id = 'cse';
+            //$this->department_id = 'cse';
             throw new Zend_Exception('You are in testing env.',Zend_Log::WARN);
         } 
         $this->view->assign('department_id', $this->department_id);
