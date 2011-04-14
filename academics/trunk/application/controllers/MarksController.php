@@ -9,7 +9,7 @@ class MarksController extends Zend_Controller_Action
     {
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
         $this->_department_id = $authInfo['department_id'];
-        $this->_staff_id =$authInfo['staff_id'];
+        $this->_staff_id =$authInfo['identity'];
     }
 
     public function indexAction()
@@ -19,7 +19,7 @@ class MarksController extends Zend_Controller_Action
 
     /**
      * to assign sessional marks
-     * @todo save 
+     *  
      */
     public function assignAction()
     
@@ -33,7 +33,7 @@ class MarksController extends Zend_Controller_Action
         $insert = $this->model->CRUD($array);
         
      }
-     public function filltestgrid()
+     public function filltestgridAction()
      {
        $request = $this->getRequest();
        $valid = $request->getParam('nd');
@@ -81,7 +81,7 @@ class MarksController extends Zend_Controller_Action
             
             
     }
-     public function fillstudentgrid()
+     public function fillstudentgridAction()
      {
        $request = $this->getRequest();
        $valid = $request->getParam('nd');
