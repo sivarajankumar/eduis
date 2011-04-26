@@ -1,37 +1,44 @@
 <h3 align="center">Manage Sessionals</h3>
 <div id="main_div">
 
-	<div id="selection-div"class="ui-widget-content ui-corner-all" style="width:20em; height:5em; padding:4px">
+	<div id="selection-div"class="ui-widget-content ui-corner-all" style="width:20em; height:5em; padding:4px" >
 	
-		<label for="degree_id" accesskey="S" id="lbl_degree_id" style="padding: 0.4em; float: left;">
+		<label for="degree_select" accesskey="S" id="lbl_degree_id" style="padding: 0.4em; float: left;">
 			Degree:</label>&nbsp;
 		<select id="degree_select" tabindex="1" >
 		</select>
 		
-		<br /><br />
+		<br />&nbsp;<br />
 		
 		<?php
 		    if(count($this->slaveDepartment)>1){
 		    ?>    	    
-		        <label for="slave_dept" accesskey="S" id="lbl_class_id" style="padding: 0.4em; float: left;" >
+		        <label for="slave_dept_select" accesskey="S" id="lbl_class_id" style="padding: 0.4em; float: left;" >
 			    Choose Department:</label>&nbsp;
 	
-				<select id="slave_dept_select" tabindex="1" disabled="disabled">
+				<select id="slave_dept_select" tabindex="2" disabled="disabled">
 					<option>Select department</option>
 				</select>
 		<?php
 		    }
 		    else{ 
 		?>
-			<label for="class_id" accesskey="S" id="lbl_class_id" style="padding: 0.4em; float: left;" >
+			<label for="class_select" accesskey="S" id="lbl_class_id" style="padding: 0.4em; float: left;" >
 				Class:</label>&nbsp;
-			<select id="class_select" tabindex="1" disabled="disabled">
+			<select id="class_select" tabindex="2" disabled="disabled">
 				<option>Select one</option>
 			</select>
 		<?php
 		    } 
 		?>
 		
+		<br />&nbsp;<br />
+		<label for="sesnl_select" accesskey="N" id="lbl_class_id" style="padding: 0.4em; float: left;" >
+				Sessional:</label>&nbsp;
+			<select id="sesnl_select" tabindex="3" disabled="disabled">
+				<option>Select one</option>
+			</select>
+			&nbsp;<br />
 	</div> <!-- End selection-div -->
 	<br />
 	
@@ -46,19 +53,24 @@
 
 
 <script type="text/javascript" language="javascript">
+var dep_id = "<?php echo $this->masterDepartment?>";
 var slaveDepartment = 'CSE';
+var gridTable = "#tblgrid";
+var gridPager = "#gridpager"; 
+var deg_id;
+var sem_id;
+var sesnl_id;
+var lastSel;
+
 $(function(){
-    var gridTable = "#tblgrid";
-    var gridPager = "#gridpager"; 
-    var dep_id = "<?php echo $this->masterDepartment?>";
+    
     
     var urlFillGrid = "<? echo $this->url(array(
 												'controller' => 'sessional', 
 												'action' => 'fillgrid'))?>";
 												
-    var urlCRUD = "<? echo $this->url(array('module' => $this->module, 
-											'controller' => $this->controller, 
-											'action' => 'crud'), 'default', true)?>";
+    var urlCRUD = "<? echo $this->url(array('controller' => 'sessional', 
+											'action' => 'imod'))?>";
 										
 	var urlDegreeCombo = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 
 																				'action' => 'getslavedegree'), 
@@ -67,11 +79,14 @@ $(function(){
 	var urlFetchActiveClasses = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 
 																				'action' => 'getsessionsemester'), 
 																				'default', true)?>";
-										    
+
+	var urlFetchConducted = "<? echo $this->url(array('controller' => 'sessional', 
+                                                		'action' => 'getconducted'))?>";
+		
 	$.ajax({
         url : urlDegreeCombo,
         dataType : 'jsonp',
-        data : {'masterDepartment': dep_id,'slaveDepartment' : dep_id, 'format' : 'jsonp' },
+        data : {'masterDepartment': dep_id,'slaveDepartment' : slaveDepartment, 'format' : 'jsonp' },
         success: function(jDegree){
         	var selectOptionString = '<option value ="">Select one</option>';
 			$.each(jDegree, function (index, degree) {
@@ -86,12 +101,12 @@ $(function(){
     
 	$('#degree_select').change(function(){
 		
-		var deg_id = $("#degree_select").val();
+		deg_id = $("#degree_select").val();
 		
 		$.ajax({
 	        url : urlFetchActiveClasses,
 	        dataType : 'jsonp',
-	        data : {'degree_id' : deg_id ,'department_id' : dep_id, 'format' : 'jsonp'}, 
+	        data : {'degree_id' : deg_id ,'department_id' : slaveDepartment, 'format' : 'jsonp'}, 
 	        success: function(jClass){
 	        	var selectOptionString = '<option value ="">Select one</option>';
 				$.each(jClass, function (index, jclass) {
@@ -107,19 +122,45 @@ $(function(){
         	
 	});//End #degree_select change.
 
+
 	$('#class_select').change(function(){
+
+		sem_id = $("#class_select").val();
 		
-		var deg_id = $("#degree_select").val();
-		var sem = $("#class_select").val();
-		var dep = slaveDepartment;
+		$.ajax({
+	        url : urlFetchConducted,
+	        dataType : 'json',
+	        data : {'degree_id' : deg_id ,'department_id' : slaveDepartment, 'semester_id': sem_id}, 
+	        success: function(jConducted){
+		        var conducted;
+	        	var selectOptionString = '<option value ="">Select one</option>';
+	        	
+				for ( conducted = 1; conducted <= jConducted.test_id; conducted++) {
+					selectOptionString += '<option  value ="'+jConducted.test_id+'" >'+jConducted.test_id+'</option>';
+				}
+				if (conducted < jConducted.max_test_id) {
+					selectOptionString += '<option  value ="'+conducted+'" >'+conducted+'</option>';
+				}
+	            $('#sesnl_select').html(selectOptionString);
+	            $('#sesnl_select').attr('disabled',null);
+	        },
+	        error: function(event) {
+	            alert(event.responseText);
+	        }
+	    });//End ajax call.
+        	
+	});//End #degree_select change.
+	
+	$('#sesnl_select').change(function(){
+		sesnl_id = $("#sesnl_select").val();
 
 		$(gridTable).jqGrid('setGridParam',
 				            {
              					postData:{
-                 					       'department_id':dep,
+                 					       'department_id':slaveDepartment,
                  					       'degree_id':deg_id,
-                 					       'semester_id':sem,
-                 					       'test_id':1
+                 					       'semester_id':sem_id,
+                 					       'test_id':sesnl_id
                  					     },
                  			    url: urlFillGrid
                             }
@@ -163,10 +204,28 @@ $(function(){
         pager: gridPager,
         onSelectRow: function(id){
             if(id && id!==lastSel){ 
-               jQuery('#grid_id').restoreRow(lastSel); 
+            	$(this).restoreRow(lastSel); 
                lastSel=id; 
             }
-            jQuery('#grid_id').editRow(id, true); 
+            jQuery(this).editRow(id, true,
+                    function(id){ //oneditfunc
+                    	serverDate = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+                    	var strSesnlDate = $('#'+id+'_date_of_conduct').val();
+                    	var sesnlDate= $.datepicker.parseDate('yy-mm-dd', strSesnlDate);
+                    	if(strSesnlDate){
+                    		if (serverDate >= sesnlDate) {
+                        		$(this).restoreRow(id);
+            				}
+                    	}
+                    },
+                    false, //succesfunc
+                    false, //url
+                    {'department_id': slaveDepartment,
+                     'degree_id': deg_id,
+                     'semester_id': sem_id,
+                     'test_id' : sesnl_id,
+                     'subject_code': $('#'+id+' :nth-child(1)').text() } //extraparam
+                    ); 
           },
         editurl:urlCRUD
 		});

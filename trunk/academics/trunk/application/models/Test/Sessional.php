@@ -46,6 +46,7 @@ class Acad_Model_Test_Sessional extends Acad_Model_Test_Generic
         if (is_array($options)) {
             $this->setOptions($options);
         }
+        self::_setTest_type_id('SESS');
     }
     
     
@@ -126,7 +127,7 @@ class Acad_Model_Test_Sessional extends Acad_Model_Test_Generic
     public function fetchAll()
     {
        return $this->getMapper()->fetchAll($this);
-    }   
+    }
         
 }
 ?>

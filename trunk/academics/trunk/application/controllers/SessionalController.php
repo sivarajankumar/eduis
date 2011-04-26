@@ -121,7 +121,7 @@ class SessionalController extends Acadz_Base_BaseController
                 $this->_helper->json($response);
             } else {
                 foreach ($result['data'] as $key => $row) {
-                    $response->rows[$key]['id'] = $row->getTest_info_id();
+                    $response->rows[$key]['id'] = 'new_'.$key;
                     $response->rows[$key]['cell'] = array(
                     $row->getSubject_code(), $row->getSubject_name(), 
                     $row->getDate_of_conduct(), $row->getTime(), 
@@ -165,13 +165,42 @@ class SessionalController extends Acadz_Base_BaseController
      */
     public function imodAction ()
     {
-        $model = new Acad_Model_Test_SessionalMapper();
+        $model = new Acad_Model_Test_Sessional();
         $string = $this->getRequest();
-        $refined = html_entity_decode($string);
-        $array = explode('', $refined);
-        array_push($array, 
-        array('department_id' => $this->department_id, 'test_type_id' => 'sess'));
-        $insert = $this->model->save($array);
+        array_push($array, array('department_id' => $this->department_id));
+        //$insert = $model->save($array);
+    }
+    
+    public function getconductedAction(){
+        $request = $this->getRequest();
+        $department = $request->getParam('department_id');
+        $degree = $request->getParam('degree_id');
+        $semester = $request->getParam('semester_id');
+        $format = $this->getRequest()->getParam('format', 'json');
+        $sessional = new Acad_Model_Test_Sessional();
+        $class = new Acad_Model_Class();
+        $class->setDepartment($department)->setDegree($degree)->setSemester($semester);
+        $result = $sessional->getConducted($class);
+        switch (strtolower($format)) {
+            case 'json':
+                $this->_helper->json($result);
+                return;
+            case 'jsonp':
+                $callback = $request->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($result, false) . ')';
+                return;
+            case 'select':
+                echo '<select>';
+                echo '<option>Select one</option>';
+                foreach ($result as $key => $row) {
+                    echo '<option value="' . $row['department_id'] . '">' .
+                     $row['department_id'] . '</option>';
+                }
+                echo '</select>';
+                return;
+                break;
+        }
+        header("HTTP/1.1 400 Bad Request");
     }
 }
 
