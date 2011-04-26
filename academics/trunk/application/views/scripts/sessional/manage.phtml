@@ -46,7 +46,7 @@
 
 
 <script type="text/javascript" language="javascript">
-
+var slaveDepartment = 'CSE';
 $(function(){
     var gridTable = "#tblgrid";
     var gridPager = "#gridpager"; 
@@ -95,7 +95,7 @@ $(function(){
 	        success: function(jClass){
 	        	var selectOptionString = '<option value ="">Select one</option>';
 				$.each(jClass, function (index, jclass) {
-					selectOptionString += '<option>'+jclass.semester_id+ " " +jclass.department_id+'</option>';
+					selectOptionString += '<option  value ="'+jclass.semester_id+'" >'+jclass.semester_id+'</option>';
 				});
 	            $('#class_select').html(selectOptionString);
 	            $('#class_select').attr('disabled',null);
@@ -110,9 +110,8 @@ $(function(){
 	$('#class_select').change(function(){
 		
 		var deg_id = $("#degree_select").val();
-		var str = $("#class_select").val();
-		var sem = str[0];
-		var dep = str.substring(2);
+		var sem = $("#class_select").val();
+		var dep = slaveDepartment;
 
 		$(gridTable).jqGrid('setGridParam',
 				            {
@@ -141,23 +140,34 @@ $(function(){
             },
             {
                 name:'date_of_conduct',
-                index:'date_of_conduct'
+                index:'date_of_conduct',
+                editable: true
             },
             {
                 name:'time', 
-                index:'time'
+                index:'time',
+                editable: true
             },
             {
                 name:'max_marks',
-                index:'max_marks'
+                index:'max_marks',
+                editable: true
             },
             {
                 name:'pass_marks', 
-                index:'pass_marks'
+                index:'pass_marks',
+                editable: true
             },            
             ],
         caption: "Manage Sessional Schedule  " ,
         pager: gridPager,
+        onSelectRow: function(id){
+            if(id && id!==lastSel){ 
+               jQuery('#grid_id').restoreRow(lastSel); 
+               lastSel=id; 
+            }
+            jQuery('#grid_id').editRow(id, true); 
+          },
         editurl:urlCRUD
 		});
 
