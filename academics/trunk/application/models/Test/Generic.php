@@ -241,7 +241,7 @@ abstract class Acad_Model_Test_Generic
      * @param string $testtypeid - test type id
      * @return Acad_Model_Test_Generic
      */
-    public function setTest_type_id($testtypeid){
+    protected function _setTest_type_id($testtypeid){
         $this->_test_type_id=$testtypeid;
         return $this;
     }
@@ -440,6 +440,31 @@ abstract class Acad_Model_Test_Generic
     public function _save ()
     {
         $this->getMapper()->save($this);
+    }
+    
+    public function getConducted(Acad_Model_Class $class) {
+        $sql = 'SELECT
+  test_id,
+  (SELECT
+     test_id
+   FROM test
+   WHERE test_type_id = ?
+   ORDER BY test_id DESC
+   LIMIT 1) AS max_test_id
+FROM test_info
+WHERE (department_id = ?
+       AND degree_id = ?
+       AND semester_id = ?
+       AND test_type_id = ?)
+ORDER BY test_type_id,test_id DESC
+LIMIT 1';
+        
+        $bind[] = self::getTest_type_id();
+        $bind[] = $class->getDepartment();
+        $bind[] = $class->getDegree();
+        $bind[] = $class->getSemester();
+        $bind[] = self::getTest_type_id();
+        return Zend_Db_Table::getDefaultAdapter()->query($sql,$bind)->fetch();
     }
 }
 ?>
