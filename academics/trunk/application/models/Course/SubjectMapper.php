@@ -90,21 +90,22 @@ class Acad_Model_Course_SubjectMapper
             ->where('`subject_code` = ?', $subject->getCode());
         return $sql->query()->fetchAll();
     }
-    public function fetchTest($dep,$code)
+    public function fetchTest(Acad_Model_Course_Subject $subject)
     {
         $sql = 'SELECT
         `test_info`.`test_info_id`,
         `test_info`.`degree_id`,
-        `test_type`.`test_type_id`,
-        `test_type`.`test_type_name`,
+        `test_info`.`semester_id`,
         `test_info`.`test_id`,
-        `test_info`.`subject_code`
+        `test_type`.`test_type_id`,
+        `test_type`.`test_type_name`
         FROM `test_info`
         INNER JOIN `test_type`
         ON (`test_info`.`test_type_id` = `test_type`.`test_type_id`)
         WHERE (`test_info`.`department_id` = ?
-        AND `test_info`.`subject_code` = ? )';
-        $data=array ($dep,$code);
+        AND `test_info`.`subject_code` = ? )
+        AND `test_info`.`is_locked` = 0';
+        $data=array ($subject->getDepartment(),$subject->getSubject_code());
         $result = Zend_Db_Table::getDefaultAdapter()->query($sql,$data)->fetchAll();
         return $result;
     }

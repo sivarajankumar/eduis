@@ -261,6 +261,31 @@ WHERE totalprd.department_id = ?
                         
         return $this->getDbTable()->getAdapter()->query($sql,$bind)->fetchAll();
     }
+    
+    public function fetchFaculties(Acad_Model_Class $class) {
+        $sql = 'SELECT
+                  `subject_faculty`.`staff_id`,
+                  `subject_department`.`subject_code`,
+                  `subject_faculty`.`subject_mode_id`,
+                  `subject`.`subject_name`,
+                  `subject`.`subject_type_id`
+                FROM `academics`.`subject_faculty`
+                  INNER JOIN `academics`.`subject_department`
+                    ON (`subject_faculty`.`department_id` = `subject_department`.`department_id`)
+                  INNER JOIN `academics`.`subject`
+                    ON (`subject_department`.`subject_code` = `subject`.`subject_code`)
+                      AND (`subject_faculty`.`subject_code` = `subject`.`subject_code`)
+                WHERE (`subject_department`.`department_id` = ?
+                       AND `subject_department`.`degree_id` = ?
+                       AND `subject_department`.`semester_id` = ?)';
+        
+        $bind = array($class->getDepartment(),
+                        $class->getDegree(), 
+                        $class->getSemester());
+                        
+                      
+        return $this->getDbTable()->getAdapter()->query($sql,$bind)->fetchAll(Zend_Db::FETCH_GROUP);
+    }
     /**
      * 
      * Enter description here ...

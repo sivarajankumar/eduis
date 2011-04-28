@@ -130,6 +130,7 @@ class Acad_Model_Class
     public function getBatchStart ()
     {
         if (null === $this->_batchStart) {
+            //@FIXME fetch batch start
             $this->getMapper();
         }
         return $this->_batchStart;
@@ -164,7 +165,7 @@ class Acad_Model_Class
      */
     public function getFacultyMembers ()
     {
-        return $this->_faculties;
+        return $this->getMapper()->fetchFaculties($this);
     }
     /**
      * Set subjects

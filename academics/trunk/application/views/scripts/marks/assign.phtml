@@ -1,0 +1,59 @@
+<form id="selection-div">
+	<label for="facultySubject" accesskey="f" id="lbl_facultySubject">
+		Subject: <select id="facultySubject" name="facultySubject" tabindex="1" >
+	</select></label>
+	<br/><br/><label for="subjectTest" accesskey="s" id="lbl_subjectTest">
+		Test: <select id="subjectTest" name="subjectTest" tabindex="2"  disabled="disabled" >
+	</select></label>
+	
+</form>
+
+<script type="text/javascript" language="javascript">
+var facultySubject;
+var slaveDepartment;
+var urlFacultySubject = "<? echo $this->url(array('controller' => 'faculty', 
+                                            	'action' => 'getsubject'))?>";
+var subjectTest;
+var urlSubjectTest = "<? echo $this->url(array('controller' => 'subject', 
+												'action' => 'gettest'))?>";
+
+$.ajax({
+    url : urlFacultySubject,
+    dataType : 'json',
+    success: function(jFacultySubject){
+    	var selectOptionString = '<option value ="">Select one</option>';
+		$.each(jFacultySubject, function (subjectCode, subjectInfo) {
+			$.each(subjectInfo, function (index, subject) {
+				selectOptionString += '<option value ="'+subjectCode+'">'+subject.subject_name+'</option>';
+			});
+		});
+        $('#facultySubject').html(selectOptionString);
+   },
+   error: function(event) {
+        alert(event.responseText);
+   }
+});//End ajax call.
+
+
+$('#facultySubject').change(function(){
+	
+	facultySubject = $("#facultySubject").val();
+	
+	$.ajax({
+        url : urlSubjectTest,
+        data : {'subject_code' : facultySubject ,'department_id' : slaveDepartment}, 
+        success: function(jSubjectTest){
+        	var selectOptionString = '<option value ="">Select one</option>';
+			$.each(jSubjectTest, function (index, test) {
+				selectOptionString += '<option  value ="'+test.test_info_id+'" >'+test.test_type_name+' '+test.test_id+'</option>';
+			});
+            $('#subjectTest').html(selectOptionString);
+            $('#subjectTest').attr('disabled',null);
+        },
+        error: function(event) {
+            alert(event.responseText);
+        }
+    });//End ajax call.
+    
+});//End #facultySubject change.
+</script>

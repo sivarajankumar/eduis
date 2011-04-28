@@ -54,6 +54,7 @@
 
 <script type="text/javascript" language="javascript">
 var dep_id = "<?php echo $this->masterDepartment?>";
+//TODO remove hard code.
 var slaveDepartment = 'CSE';
 var gridTable = "#tblgrid";
 var gridPager = "#gridpager"; 
@@ -132,15 +133,20 @@ $(function(){
 	        dataType : 'json',
 	        data : {'degree_id' : deg_id ,'department_id' : slaveDepartment, 'semester_id': sem_id}, 
 	        success: function(jConducted){
-		        var conducted;
+		        var conducted = 1;
 	        	var selectOptionString = '<option value ="">Select one</option>';
+	        	if(jConducted){
+    				for ( conducted = 1 ; conducted <= jConducted.test_id; conducted++) {
+    					selectOptionString += '<option  value ="'+conducted+'" >'+conducted+'</option>';
+    				}
+    				if (conducted <= jConducted.max_test_id) {
+    					selectOptionString += '<option  value ="'+conducted+'" >'+conducted+'</option>';
+    				}
+	        	} else {
+	        		selectOptionString += '<option  value ="'+conducted+'" >'+conducted+'</option>';
+	        	}
 	        	
-				for ( conducted = 1; conducted <= jConducted.test_id; conducted++) {
-					selectOptionString += '<option  value ="'+conducted+'" >'+conducted+'</option>';
-				}
-				if (conducted < jConducted.max_test_id) {
-					selectOptionString += '<option  value ="'+conducted+'" >'+conducted+'</option>';
-				}
+				
 	            $('#sesnl_select').html(selectOptionString);
 	            $('#sesnl_select').attr('disabled',null);
 	        },
@@ -245,10 +251,10 @@ $(function(){
         caption: "Manage Sessional Schedule" ,
         pager: gridPager,
         onSelectRow: function(id){
-            /*if(id && id!==lastSel){ 
+            if(id && id!==lastSel){ 
             	$(this).restoreRow(lastSel); 
                lastSel=id; 
-            }*/
+            }
             jQuery(this).editRow(id, true,
                     function(id){ //oneditfunc
                     	serverDate = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());

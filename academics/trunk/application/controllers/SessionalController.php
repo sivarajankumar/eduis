@@ -143,22 +143,6 @@ class SessionalController extends Acadz_Base_BaseController
         $this->view->assign('masterDepartment', $this->department_id);
     }
     /**
-     * Get upcoming sessional information.
-     * 
-     * @about JSON data provider.
-     */
-    public function getupcomingsessional ()
-    {
-        $request = $this->getRequest();
-        if ($request->isXmlHttpRequest()) {
-            $model = new Acad_Model_Test_Sessional();
-        } else {
-            $this->getResponse()
-                ->setException('Non ajax request')
-                ->setHttpResponseCode(400);
-        }
-    }
-    /**
      * 
      * Enter description here ...
      * insert data in database through SessionalMapper 
@@ -172,7 +156,7 @@ class SessionalController extends Acadz_Base_BaseController
         $sessional->setTest_info_id($params['id']);
         $result = $sessional->save();
         if ($result) {
-            echo 'Successfully saved!! Result :'.var_export($result, true);
+            echo 'Successfully saved!! Test Id :'.var_export($result, true);
         }
     }
     
@@ -188,7 +172,7 @@ class SessionalController extends Acadz_Base_BaseController
         $result = $sessional->getConducted($class);
         switch (strtolower($format)) {
             case 'json':
-                $this->_helper->json($result);
+                echo $this->_helper->json($result,false);
                 return;
             case 'jsonp':
                 $callback = $request->getParam('callback');
@@ -206,6 +190,18 @@ class SessionalController extends Acadz_Base_BaseController
                 break;
         }
         header("HTTP/1.1 400 Bad Request");
+    }
+    
+    public function tempAction(){
+        $class = new Acad_Model_Class();
+        $class->setDepartment('CSE')
+                ->setDegree('BTECH')
+                ->setSemester('4');
+        $faculty = new Acad_Model_Member_Faculty();
+        $result = $faculty->getSubjects($class);
+        echo '<pre>';
+        print_r($result);
+        //$this->_helper->logger($result);
     }
 }
 

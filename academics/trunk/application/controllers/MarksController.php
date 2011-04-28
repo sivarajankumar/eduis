@@ -1,6 +1,6 @@
 <?php
 
-class MarksController extends Zend_Controller_Action
+class MarksController extends Acadz_Base_BaseController
 {
 
     protected $_department_id;
@@ -10,11 +10,16 @@ class MarksController extends Zend_Controller_Action
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
         $this->_department_id = $authInfo['department_id'];
         $this->_staff_id =$authInfo['identity'];
+        parent::init();
     }
-
-    public function indexAction()
+    
+	/**
+     * @about Interface.
+     */
+    public function indexAction ()
     {
-       
+        /*$this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();*/
     }
 
     /**
@@ -22,16 +27,15 @@ class MarksController extends Zend_Controller_Action
      *  
      */
     public function assignAction()
-    
      {
-          $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $model = new Acad_Model_Test_SessionalMapper();
+        //$this->_helper->logger($selectSubject);
+        /*$model = new Acad_Model_Test_SessionalMapper();
         $string = $this->getRequest();
         $refined = html_entity_decode($string);
         $array = explode('', $refined);
-        $insert = $this->model->CRUD($array);
-        
+        $insert = $this->model->CRUD($array);*/
      }
      public function filltestgridAction()
      {

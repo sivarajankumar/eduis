@@ -85,12 +85,11 @@ class Acad_Model_Course_Subject
         return $this->_subject_code;
     }
     /**
-     * Fetches all tests of a subject
+     * Fetches all tests etc related to subject
      */
-    public function fetchTest ()
+    public function getTest ()
     {
-        $this->getMapper()->fetchTest($this->getDepartment(),$this->getSubject_code());
-        return $this;                                      
+        return $this->getMapper()->fetchTest($this);
     }
     /**
      * Set subject department
