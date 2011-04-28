@@ -105,9 +105,18 @@ abstract class Acad_Model_Member_Generic {
 	 * @param string|int $memberId
 	 * @return Lib_Model_Member_Generic
 	 */
-	public function setMemberId($memberId) {
-		$this->_memberId = $memberId;
-		return $this;
+	public function setMemberId($memberId = null) {
+	    
+        if ($memberId != null) {
+            $this->_memberId = $memberId;
+        } elseif (Zend_Auth::getInstance()->hasIdentity()) {
+            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+            $this->_memberId = $authInfo['identity'];
+        } else {
+            throw new Zend_Exception('Could not determine identity of member', 
+            Zend_Log::ERR);
+        }
+        return $this;
 	}
 	
 	/**
@@ -115,6 +124,10 @@ abstract class Acad_Model_Member_Generic {
 	 * @return string|int $memberId
 	 */
 	public function getMemberId() {
+	    
+        if (! $this->_memberId) {
+            $this->setMemberId();
+        }
 	    return $this->_memberId;
 	}
 	

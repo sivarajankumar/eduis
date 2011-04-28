@@ -126,4 +126,37 @@ WHERE totalprd.staff_id = ? ';
         }
         return $this->getDbTable()->getAdapter()->query($sql,$bind)->fetchAll();
     }
+    
+	/**
+     * Get Faculty Subjects
+     * @param Acad_Model_Member_Faculty $faculty
+     * @return array
+     */
+    public function fetchSubjects (Acad_Model_Member_Faculty $faculty, 
+                                    Acad_Model_Class $class = NULL, 
+                                    $showModes = NULL){
+        $select = $this->getDbTable()->getAdapter()->select();
+        $select->distinct()
+                ->from('subject_faculty',
+                            array('subject_code'))
+                ->join('subject', 
+                		'subject_faculty.subject_code = subject.subject_code',
+                        array('subject_name'))
+                ->join('subject_department', 
+                		'subject_department.subject_code = subject.subject_code',
+                        array())
+                ->where('subject_faculty.staff_id = ?',$faculty->getMemberId());
+                
+        if (isset($showModes)) {
+            $select->columns('subject_mode_id');
+        }
+        
+        if (isset($class)) {
+            $select->where('subject_department.department_id = ?', $class->getDepartment())
+                    ->where('subject_department.degree_id = ?', $class->getDegree())
+                    ->where('subject_department.semester_id = ?', $class->getSemester());
+        }
+        
+        return  $select->query()->fetchAll(Zend_Db::FETCH_GROUP);
+    }
 }

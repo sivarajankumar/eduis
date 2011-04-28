@@ -80,8 +80,35 @@ class Acad_Model_Test_SessionalMapper
                 $data['test_type_id'] = $sessional->getTest_type_id();
                 
                 $today = new Zend_Date();
-                $data['date_of_announcemnet'] = $today->toString('YYYY-MM-dd') ;
-                return $this->getDbTable()->insert($data);
+                $data['date_of_announcemnet'] = $today->toString('YYYY-MM-dd');
+                
+                $class = new Acad_Model_Class();
+                $class->setDepartment($sessional->getDepartment_id())
+                        ->setDegree($sessional->getDegree_id())
+                        ->setSemester($sessional->getSemester_id());
+                $studentInfo = $class->getStudents();
+                $candidates = array();
+                $cols = array('test_info_id', 'student_roll_no');
+                $this->getDbTable()->getAdapter()->beginTransaction();
+                $this->getDbTable()->insert($data);
+                $id = $this->getDbTable()->getAdapter()->lastInsertId('test_info','test_info_id');
+                foreach ($studentInfo as $key => $student) {
+                        $candidates[] = "($id, ".$student['student_roll_no'].")";
+                    }
+                    
+                // build the statement
+                $sql = "INSERT INTO "
+                     . $this->getDbTable()->getAdapter()->quoteIdentifier('test_marks', true)
+                     . ' (' . implode(', ', $cols) . ') '
+                     . 'VALUES ' . implode(', ', $candidates);
+                try {
+                    $this->getDbTable()->getAdapter()->query($sql);
+                } catch (Zend_Exception $e) {
+                    $this->getDbTable()->getAdapter()->rollBack();
+                    throw new Zend_Exception('Can not get students\' list. Error Msg :'.$e->getMessage(),Zend_Log::ERR);
+                }
+                $this->getDbTable()->getAdapter()->commit();
+                return $id;
             }
         }
         
