@@ -85,6 +85,10 @@ class MarksController extends Acadz_Base_BaseController
             
             
     }
+    /**
+     * @deprecated not in use
+     * Enter description here ...
+     */
      public function fillstudentgridAction()
      {
        $request = $this->getRequest();
@@ -123,7 +127,48 @@ class MarksController extends Acadz_Base_BaseController
               }
          }
                  
-       
-     }
+
+    /**
+     * 
+     * Enter description here ...
+     * insert data in database through SessionalMapper 
+     */
+    public function imodAction ()
+    {
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        
+        $sessional = new Acad_Model_Test_Sessional();
+        $pKey = explode('__', $params['id']);
+        unset($params['id']);
+        $params['test_info_id'] = $pKey[0];
+        $params['student_roll_no'] = $pKey[1];
+        
+        $sessional->setTest_info_id($params['test_info_id']);
+        $result = $sessional->setMarks($params);
+        if ($result) {
+            echo 'Successfully saved!! Affected: '.$result;
+        }
+    }
+    
+
+    /**
+     * 
+     * Enter description here ...
+     * insert data in database through SessionalMapper 
+     */
+    public function lockAction ()
+    {
+        $request = $this->getRequest();
+        $test_info_id = $request->getParam('test_info_id');
+        
+        $sessional = new Acad_Model_Test_Sessional(array('test_info_id'=>$test_info_id));
+        
+        $result = $sessional->setLock(true);
+        if ($result) {
+            echo 'Successfully saved!! Affected: '.$result;
+        }
+    }
+}
 
 

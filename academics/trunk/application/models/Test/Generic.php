@@ -105,10 +105,20 @@ abstract class Acad_Model_Test_Generic
      * Is optional
      * @var small int
      * Default value 
-     * 0 => compulsary
-     * 1 => optional 
+     * 0 => False
+     * 1 => True 
      */
     protected $_is_optional = 0;
+    
+    
+    /**
+     * Is Locked
+     * @var small int
+     * Default value 
+     * 0 => False
+     * 1 => True 
+     */
+    protected $_is_locked = 0;
     
     /**
      * Default pass marks
@@ -140,7 +150,10 @@ abstract class Acad_Model_Test_Generic
      * @return int $_test_info_id - test info id
      */
     public function getTest_info_id(){
-        return $this->_test_info_id;
+        if (isset($this->_test_info_id)) {
+            return $this->_test_info_id;
+        }
+        throw new Zend_Exception("The object's primary key (i.e. _test_info_id) is not set.",Zend_Log::ERR);
     }
     
     
@@ -390,13 +403,32 @@ abstract class Acad_Model_Test_Generic
         $this->_is_optional = $isoptional;
         return $this;
     }
-    
+
     /**
      * Get is optional
      * @return string $_is_optional - is optional
      */
     public function getIs_optional(){
-        return $this->_is_optionals;
+        return $this->_is_optional;
+    }
+    
+
+	/**
+     * Set as locked
+     * @param string $islocked - is locked
+     * @return Acad_Model_Test_Generic
+     */
+    public function setIs_locked($islocked){
+        $this->_is_locked = $islocked;
+        return $this;
+    }
+    
+    /**
+     * Get is optional
+     * @return string $_is_optional - is optional
+     */
+    public function getIs_locked(){
+        return $this->_is_locked;
     }
     
 	/**
@@ -436,12 +468,17 @@ abstract class Acad_Model_Test_Generic
      * Save test marks
      * 
      * @return void
+     * @deprecated 'Useless thing'
      */
     public function _save ()
     {
         $this->getMapper()->save($this);
     }
     
+    /**
+     * Test conducted in class.
+     * @param Acad_Model_Class $class
+     */
     public function getConducted(Acad_Model_Class $class) {
         $sql = 'SELECT
   test_id,
@@ -465,6 +502,67 @@ LIMIT 1';
         $bind[] = $class->getSemester();
         $bind[] = self::getTest_type_id();
         return Zend_Db_Table::getDefaultAdapter()->query($sql,$bind)->fetch();
+    }
+    
+
+    public function getStudents() {
+        $sql = 'SELECT
+    `test_info_id`
+    , `student_roll_no`
+    , `marks_scored`
+    , `status`
+FROM
+    `academics`.`test_marks`
+WHERE (`test_info_id` = ?)';
+        
+        $bind[] = self::getTest_info_id();
+        return Zend_Db_Table::getDefaultAdapter()->query($sql,$bind)->fetchAll();
+    }
+    
+
+    public function setMarks($data) {
+        
+        $where[] = 'test_info_id = '.self::getTest_info_id();
+        $where[] = 'student_roll_no = '.$data['student_roll_no'];
+        
+        $bind['marks_scored'] = $data['marks_scored'];
+        $bind['status'] = $data['status'];
+        return Zend_Db_Table::getDefaultAdapter()->update('test_marks', $bind,$where);
+    }
+    
+    
+    public function __toArray() {
+        $sql = 'SELECT *
+FROM
+    `academics`.`test_info`
+WHERE (`test_info_id` = ?)';
+        $bind[] = self::getTest_info_id();
+        $tuple =  Zend_Db_Table::getDefaultAdapter()->query($sql,$bind)->fetch();
+        $this->setOptions($tuple);
+        $data['date_of_conduct'] = $this->getDate_of_conduct();
+        $data['time'] = $this->getTime();
+        $data['max_marks'] = $this->getMax_marks();
+        $data['pass_marks'] = $this->getPass_marks();
+        $data['department_id'] = $this->getDepartment_id();
+        $data['degree_id'] = $this->getDegree_id();
+        $data['semester_id'] = $this->getSemester_id();
+        $data['subject_code'] = $this->getSubject_code();
+        $data['test_id'] = $this->getTest_id();
+        $data['test_type_id'] = $this->getTest_type_id();
+        $data['date_of_announcement'] = $this->getDate_of_announcement();
+        $data['is_locked'] = $this->getIs_locked();
+        $data['is_optional'] = $this->getIs_optional();
+        return $data;
+                
+    }
+    
+    public function setLock($lock = TRUE) {
+        
+        $where[] = 'test_info_id = '.self::getTest_info_id();
+        
+        $bind['is_locked'] = ($lock)?'1':'0';
+        
+        return Zend_Db_Table::getDefaultAdapter()->update('test_info', $bind,$where);
     }
 }
 ?>
