@@ -6,16 +6,10 @@
  * @since	   3.0
  */
 /**
- * 
- * 
- * @author Prarthana
- * @author Harsh
- * @author udit sharma
  * Sessional datesheet in a degree of a department
  */
 class SessionalController extends Acadz_Base_BaseController
 {
-    protected $department_id;
     public function init ()
     {
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
@@ -37,6 +31,7 @@ class SessionalController extends Acadz_Base_BaseController
     }
     /**
      * @about Interface.
+     * @deprecated Unable to get its exact output!!
      */
     public function getsessionalAction ()
     {
@@ -45,7 +40,7 @@ class SessionalController extends Acadz_Base_BaseController
         $format = $request->getParam('format', 'json');
         if (1) {
             $values = array('department_id' => $this->department_id, 
-            'test_type_id' => 'SESS', 'test_id' => 1);
+            'test_type_id' => 'SESS', 'test_id' => $test_id);
             $model = new Acad_Model_Test_Sessional($values);
             $sessionals = $model->fetchAll();
             $result = array();
