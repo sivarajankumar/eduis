@@ -124,35 +124,33 @@ $(function(){
 	});
 	
 	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
-	//TODO session_startdate is different because its date from db server.
+	//FIXME session_startdate is in different format because its date from db server.
 	sessionStartdateObj= $.datepicker.parseDate('yy-mm-dd', session_startdate);
 	/* utility functions */
 	
 	
 	function noAttendanceDays(date) {
 			 var m = date.getMonth(), d = date.getDate(), y = date.getFullYear();
-			 if(date.getDay() == 0) 
-			 {
+			 if(date.getDay() == 0){
 				 return [false,'holiday','Sunday'] ;
 			 }
-			 if(holidays != null)
-			 {
-			 for (i = 0; i < holidays.length; i++) {
-				var datearr= holidays[i].split('-');
-				var ty=datearr[0];
-				var tm = datearr[1]-1;
-				var td = datearr[2];
-				var purpose = datearr[3];
-						 if( ((m == tm) && (y ==ty ) && (d==td))  || (date.getDay() == 0)) {
-							 if(date.getDay() == 0) 
-							 {
-								 return [false,'holiday','Sunday'] ;
-							 }
-				 	 return [false,'holiday',purpose] ;
-				 }
-			} 
+			 if(holidays){
+    			 for (i = 0; i < holidays.length; i++) {
+    				var datearr= holidays[i].split('-');
+    				var ty=datearr[0];
+    				var tm = datearr[1]-1;
+    				var td = datearr[2];
+    				var purpose = datearr[3];
+    						 if( ((m == tm) && (y ==ty ) && (d==td))  || (date.getDay() == 0)) {
+    							 if(date.getDay() == 0){
+    								 return [false,'holiday','Sunday'] ;
+    							 }
+    				 	 return [false,'holiday',purpose] ;
+    				 }
+    			}
 			}
 			 return [true ,, 'Working Day'];
+			 
 		}
 	
 		function noWeekendsOrHolidays(date) {
@@ -308,14 +306,14 @@ $("#datepicker1").datepicker(
 				if($("#prdlst").getGridParam("records") == 0)
 				{
 					$("#datepicker1").datepicker( "hide" );
-					hidePeriodColumns();
-					hideColumns();
+					dummy_hidePeriodColumns();
+					dummy_hideColumns();
 					alert("No periods on selected date");
 					return;
 					
 				}
 				
-				hideColumns(); 
+				dummy_hideColumns(); 
 				showPeriodColumns();
 				}
 		
@@ -335,7 +333,7 @@ function customDate(a) {
 }		
 		
 	
-	
+
 	//Student Grid
 	var initStudentGrid = function(){
 		$("#stulistgrid").jqGrid({
@@ -355,8 +353,7 @@ function customDate(a) {
 		});
 	};
 	
-	hideColumns(); 
-
+	dummy_hideColumns(); 
 	var initPeriodGrid = function(){
 		////// PERIOD GRID //////
 		jQuery("#prdlst").jqGrid({
@@ -407,7 +404,7 @@ function customDate(a) {
 				source_staff_id = $("#prdlst").getCell(period, 'staff_id');			
 				if($("#" + period).hasClass("adjusted"))
 				{
-					hideColumns();
+					dummy_hideColumns();
 					$("#stulistgrid").clearGridData();
 					$("#statusdiv").hide();
 					setDefault();
@@ -466,7 +463,7 @@ function customDate(a) {
 		                 'period_date' : period_date 
 		                 , 'period_id' : period_id},
 					success : 	function(response){
-				    hideColumns();
+				    dummy_hideColumns();
 					
 					setDefault();
 					totalstudent = 0;
@@ -516,7 +513,7 @@ function customDate(a) {
 						
 						if(studentlist.length  == 0)
 						{
-							hideColumns();
+							dummy_hideColumns();
 							setDefault();
 							totalstudent = 0;
 							alert('Students are not available');
@@ -649,7 +646,6 @@ function customDate(a) {
 		});
 		
 	};
-	
 	$('#iagree').attr('disabled', 'disabled');
 	jQuery("#btnmark").click( function() {
         if(group_info !=null)
@@ -698,7 +694,7 @@ function customDate(a) {
                  success: function(response) {
                      alert(response);
                      group_info=null;
-                     hideColumns();
+                     dummy_hideColumns();
                      $("#totalstudents").val('0');
                      $("#totalabsent").val('0');
                      $("#statusdiv").hide();
@@ -714,7 +710,7 @@ function customDate(a) {
 			{
 					alert("Attendance is marked successfully.");
 					group_info=null;
-                    hideColumns();
+                    dummy_hideColumns();
                     $("#totalstudents").val('0');
                     $("#totalabsent").val('0');
                     $("#statusdiv").hide();
@@ -724,7 +720,7 @@ function customDate(a) {
             error: function(request,error) {
                 alert("Period Attendance Not Exists");
                 group_info=null;
-                hideColumns();
+                dummy_hideColumns();
                 $("#totalstudents").val('0');
                 $("#totalabsent").val('0');
                 $("#statusdiv").hide();
@@ -741,7 +737,7 @@ function customDate(a) {
         }
     });
 	
-	hidePeriodColumns();	
+	//dummy_hidePeriodColumns();	
 		
 	$('#iagree').click(function(){
 		if($('#iagree').attr('checked'))
@@ -780,19 +776,31 @@ function selectAll(component)
 	updateStatus();
 	}
 }
+
+
 function hideColumns()
 {
 	
-	$("#stulistgrid").hideCol(["group1","group2" , "group3"]);
+	$("#stulistgrid").jqGrid('hideCol',["group1","group2" , "group3"]);
     
+}
+
+function dummy_hideColumns()
+{
+	
 }
 function hidePeriodColumns()
 {
-	$("#prdlst").hideCol(["subject_code","subject_mode_id" , "period_number" , "department_id","degree_id","semester_id"] );
+	$("#prdlst").jqGrid('hideCol',["subject_code","subject_mode_id" , "period_number" , "department_id","degree_id","semester_id"] );
+
+}
+function dummy_hidePeriodColumns()
+{
+	
 }
 function showPeriodColumns()
 {
-	$("#prdlst").showCol(["subject_code","subject_mode_id" , "period_number" , "department_id","degree_id","semester_id"] );
+	$("#prdlst").jqGrid('showCol',["subject_code","subject_mode_id" , "period_number" , "department_id","degree_id","semester_id"] );
 }
 
 function updateStatus(component){
@@ -819,6 +827,7 @@ function updateStatus(component){
 		}
 	}
 }
+
 function setDefault()
 {
 	$('#totalabsent').val('0');

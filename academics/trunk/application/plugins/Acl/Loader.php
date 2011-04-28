@@ -41,7 +41,10 @@ class Acad_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
                 $auth->authenticate($guestAdapter);
             }
             self::initUserAcl();
-            self::check();
+            if ('development' != strtolower(APPLICATION_ENV)) {
+                self::check();
+            }
+            
         } else {
             throw new Zend_Exception('Session is destroyed.', Zend_Log::WARN);
         }

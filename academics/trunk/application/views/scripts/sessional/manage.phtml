@@ -136,7 +136,7 @@ $(function(){
 	        	var selectOptionString = '<option value ="">Select one</option>';
 	        	
 				for ( conducted = 1; conducted <= jConducted.test_id; conducted++) {
-					selectOptionString += '<option  value ="'+jConducted.test_id+'" >'+jConducted.test_id+'</option>';
+					selectOptionString += '<option  value ="'+conducted+'" >'+conducted+'</option>';
 				}
 				if (conducted < jConducted.max_test_id) {
 					selectOptionString += '<option  value ="'+conducted+'" >'+conducted+'</option>';
@@ -173,7 +173,8 @@ $(function(){
 		colModel:[
 			{
 				name:'subject_code',
-        	    index:'subject_code'
+        	    index:'subject_code',
+                width: 50
             },
             {
 				name:'subject_name',
@@ -182,31 +183,72 @@ $(function(){
             {
                 name:'date_of_conduct',
                 index:'date_of_conduct',
-                editable: true
+                width: 50,
+                align : "center",
+                editable: true,
+                sorttype:"date",
+                formatter:"date",
+                formatoptions:{"srcformat":"Y-m-d","newformat":"Y-m-d"},
+                editoptions:{dataInit:function(elm){
+                    					serverDate = $.datepicker.parseDate('dd-mm-yy',
+                            											 $('#datetext').text());
+                                        jQuery(elm).datepicker({dateFormat:'yy-mm-dd',
+                                			minDate : serverDate,
+                                			closeText: 'Close', 
+                                			showButtonPanel: true,
+                                			constrainInput : true,
+                                			gotoCurrent: true});
+                                        //jQuery('.ui-datepicker').css({'font-size':'80%'});
+							},
+	                		readonly: true
+                }
             },
             {
                 name:'time', 
                 index:'time',
-                editable: true
+                editable: true,
+                width: 40,
+                align : "center",
+                editoptions:{dataInit:function(elm){
+                                	$(elm).timepicker({
+                                		//ampm: true,
+                                		hourMin: 8,
+                                		hourMax: 16,
+                                		hourGrid: 2,
+                                		minuteGrid: 10,
+                                		stepMinute: 10
+                                	});
+                                    //jQuery('.ui-timepicker').css({'font-size':'90%'});
+                		},
+                		readonly: true
+                }
             },
             {
                 name:'max_marks',
                 index:'max_marks',
+                width: 40,
+                align : "center",
+    			formatter:'number', 
+    			formatoptions:{decimalPlaces: 0},
                 editable: true
             },
             {
                 name:'pass_marks', 
                 index:'pass_marks',
+                width: 40,
+                align : "center",
+    			formatter:'number', 
+    			formatoptions:{decimalPlaces: 0},
                 editable: true
             },            
             ],
-        caption: "Manage Sessional Schedule  " ,
+        caption: "Manage Sessional Schedule" ,
         pager: gridPager,
         onSelectRow: function(id){
-            if(id && id!==lastSel){ 
+            /*if(id && id!==lastSel){ 
             	$(this).restoreRow(lastSel); 
                lastSel=id; 
-            }
+            }*/
             jQuery(this).editRow(id, true,
                     function(id){ //oneditfunc
                     	serverDate = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
@@ -224,10 +266,17 @@ $(function(){
                      'degree_id': deg_id,
                      'semester_id': sem_id,
                      'test_id' : sesnl_id,
-                     'subject_code': $('#'+id+' :nth-child(1)').text() } //extraparam
+                     'subject_code': $('#'+id+' :nth-child(2)').text() } //extraparam
                     ); 
           },
-        editurl:urlCRUD
+        editurl:urlCRUD,
+        rownumbers : true,
+        altRows: true,
+        //loadonce : true,
+        shrinkToFit : true,
+        forceFit : true,
+        hoverrows : false,
+        prmNames: {page: null, rows: null, sort: null, order: null, search: null}
 		});
 
 	$(gridTable).jqGrid('navGrid', 
@@ -270,3 +319,9 @@ $(function(){
 	});
 	
 </script>
+<?php
+$this->headLink()->appendStylesheet(
+'http://' . CDN_SERVER . '/plugins/timepicker/jquery-ui-timepicker.css');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/timepicker/jquery-ui-timepicker-addon.js');
+?>

@@ -165,10 +165,15 @@ class SessionalController extends Acadz_Base_BaseController
      */
     public function imodAction ()
     {
-        $model = new Acad_Model_Test_Sessional();
-        $string = $this->getRequest();
-        array_push($array, array('department_id' => $this->department_id));
-        //$insert = $model->save($array);
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        
+        $sessional = new Acad_Model_Test_Sessional($params);
+        $sessional->setTest_info_id($params['id']);
+        $result = $sessional->save();
+        if ($result) {
+            echo 'Successfully saved!! Result :'.var_export($result, true);
+        }
     }
     
     public function getconductedAction(){
