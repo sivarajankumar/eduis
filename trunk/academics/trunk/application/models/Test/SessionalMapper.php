@@ -47,6 +47,7 @@ class Acad_Model_Test_SessionalMapper
         return $this->_dbTable;
     }
     
+
     /**
      * Save a sessional datesheet
      * 
@@ -55,8 +56,37 @@ class Acad_Model_Test_SessionalMapper
      */
     public function save ($sessional)
     {
+        if ($sessional instanceof Acad_Model_Test_Sessional) {
+            $id = $sessional->getTest_info_id();
+            if ((string)$id === (string)(int)$id) {
+                $data['date_of_conduct'] = $sessional->getDate_of_conduct();
+                $data['time'] = $sessional->getTime();
+                $data['max_marks'] = $sessional->getMax_marks();
+                $data['pass_marks'] = $sessional->getPass_marks();
+                return $this->getDbTable()->update($data, "test_info_id = $id");
+            } else {
+                $data['date_of_conduct'] = $sessional->getDate_of_conduct();
+                $data['time'] = $sessional->getTime();
+                $data['max_marks'] = $sessional->getMax_marks();
+                $data['pass_marks'] = $sessional->getPass_marks();
+                
+                $data['department_id'] = $sessional->getDepartment_id();
+                $data['degree_id'] = $sessional->getDegree_id();
+                $data['semester_id'] = $sessional->getSemester_id();
+                $data['subject_code'] = $sessional->getSubject_code();
+                $data['test_id'] = $sessional->getTest_id();
+                
+                
+                $data['test_type_id'] = $sessional->getTest_type_id();
+                
+                $today = new Zend_Date();
+                $data['date_of_announcemnet'] = $today->toString('YYYY-MM-dd') ;
+                return $this->getDbTable()->insert($data);
+            }
+        }
         
     }
+    
     /**
      * Fecthes schedule of particular sessional if exists
      * 
@@ -91,15 +121,20 @@ class Acad_Model_Test_SessionalMapper
     					    , `academics`.`test`
                    INNER JOIN `academics`.`test_type` 
                          ON (`test`.`test_type_id` = `test_type`.`test_type_id`)
-                   WHERE (`subject_department`.`department_id` = "CSE"
-                          AND `subject_department`.`degree_id` ="BTECH"
-                          AND `subject_department`.`semester_id` =8
-                          AND `test`.`test_type_id` ="SESS"
-                          AND `test`.`test_id` =2
+                   WHERE (`subject_department`.`department_id` = ?
+                          AND `subject_department`.`degree_id` =?
+                          AND `subject_department`.`semester_id` =?
+                          AND `test`.`test_type_id` =?
+                          AND `test`.`test_id` =?
                           AND `subject_department`.`subject_code` =`subject`.`subject_code`);';
             
+                $data[] = $sessional->getDepartment_id();
+                $data[] = $sessional->getDegree_id();
+                $data[] = $sessional->getSemester_id();
+                $data[] = $sessional->getTest_type_id();
+                $data[] = $sessional->getTest_id();
                 $result = Zend_Db_Table::getDefaultAdapter()
-                                       ->query($sql)
+                                       ->query($sql,$data)
                                        ->fetchAll();
                            
             if ($result != null) {

@@ -106,7 +106,7 @@ class Acad_Model_Test_Sessional extends Acad_Model_Test_Generic
      */
     public function save()
     {
-       $this->getMapper()->save($this);
+       return $this->getMapper()->save($this);
     }
     
     /**

@@ -25,21 +25,29 @@ $(function(){
         colModel:[{name:'period_date',
             	   index:'period_date'
        			 },
-            {name:'period_number',index:'period_number',width: 50,align : "center"
-             },
-                {name:'subject_name',index:'subject_name',width : 300
-                },
-               {name: 'subject_mode_id',index: 'subject_mode_id',width : 100
-               },
-               {name : 'department_id',index : 'department_id',width : 70,align : "center"   
-               },
-               {name : 'degree_id',index : 'degree_id',width : 70,align : "center"  
-               },
-               {name : 'semester_id',index : 'semester_id',width : 70,align : "center"   
-               }
-	                
-             	
-            ],
+       			 {name:'period_number',
+                    index:'period_number',
+                    width: 50,
+                    align : "center"},
+                {name:'subject_name',
+                 	index:'subject_name',
+                 	width : 300},
+                {name: 'subject_mode_id',
+                	index: 'subject_mode_id',
+                	width : 100},
+                {name : 'department_id',
+                    index : 'department_id',
+                    width : 70,
+                    align : "center"},
+                {name : 'degree_id',
+                    index : 'degree_id',
+                    width : 70,
+                    align : "center"},
+                {name : 'semester_id',
+                    index : 'semester_id',
+                    width : 70,
+                    align : "center"}
+	         ],
             rownumbers : true,
             altRows: true,
             loadonce : true,
