@@ -169,6 +169,19 @@ class MarksController extends Acadz_Base_BaseController
             echo 'Successfully saved!! Affected: '.$result;
         }
     }
+    
+
+    /**
+     * 
+     * Enter description here ...
+     * insert data in database through SessionalMapper 
+     */
+    public function statsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        
+    }
 }
 
 

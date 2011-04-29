@@ -85,13 +85,6 @@ class Acad_Model_Course_Subject
         return $this->_subject_code;
     }
     /**
-     * Fetches all tests etc related to subject
-     */
-    public function getTest ()
-    {
-        return $this->getMapper()->fetchTest($this);
-    }
-    /**
      * Set subject department
      * @param string $department - subject department
      * @return Acad_Model_Course_Subject
@@ -182,6 +175,15 @@ class Acad_Model_Course_Subject
             $this->setFaculty();
         }
         return $this->_faculty;
+    }
+    
+
+    /**
+     * Fetches all tests etc related to subject
+     */
+    public function getTest ($locked = FALSE)
+    {
+        return $this->getMapper()->fetchTest($this, $locked);
     }
 }
 ?>

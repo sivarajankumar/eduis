@@ -89,12 +89,12 @@ class SubjectController extends Acadz_Base_BaseController
     public function gettestAction(){
         $request = $this->getRequest();
         $department = $request->getParam('department_id');
-        //@FIXME remove default value of subject code.
-        $subject_code = $request->getParam('subject_code','CSE-202E');
+        $subject_code = $request->getParam('subject_code');
+        $locked = $request->getParam('locked');
         $format = $this->getRequest()->getParam('format', 'json');
         $subject = new Acad_Model_Course_Subject();
         $subject->setSubject_code($subject_code)->setDepartment($department);
-        $result = $subject->getTest();
+        $result = $subject->getTest($locked);
         switch (strtolower($format)) {
             case 'json':
                 echo $this->_helper->json($result,false);
