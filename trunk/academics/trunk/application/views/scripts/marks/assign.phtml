@@ -96,6 +96,9 @@ $('#subjectTest').change(function(){
             if (test_info.is_locked == 1) {
             	$( "#lockMarks" ).attr('checked','checked').button( "option", "label", "Marks Locked" ).button( "disable" );
             	$( "#lbl_lockMarks" ).attr('aria-pressed','true');
+			} else if($( "#lockMarks" ).button( "option", "disabled" )){
+				$( "#lockMarks" ).attr('checked','').button( "option", "label", "Lock Marks" ).button( "enable" );
+            	$( "#lbl_lockMarks" ).attr('aria-pressed','false');
 			} //
         },
         error: function(event) {
