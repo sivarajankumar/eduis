@@ -529,6 +529,15 @@ WHERE (`test_info_id` = ?)';
         $bind['status'] = $data['status'];
         return Zend_Db_Table::getDefaultAdapter()->update('test_marks', $bind,$where);
     }
+
+    public function getMarks() {
+        $select = Zend_Db_Table::getDefaultAdapter()->select();
+        $select->from('test_marks',array('student_roll_no',
+        									'marks_scored',
+        									'status'))
+                ->where('test_info_id = ?',self::getTest_info_id());
+        return $select->query()->fetchAll(Zend_Db::FETCH_GROUP);
+    }
     
     
     public function __toArray() {

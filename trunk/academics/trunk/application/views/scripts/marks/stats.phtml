@@ -1,0 +1,185 @@
+<form id="selection-div">
+	<label for="facultySubject" accesskey="f" id="lbl_facultySubject">
+		Subject: <select id="facultySubject" name="facultySubject" tabindex="1" >
+	</select><span style="color: gray; " >(Select your subject)</span></label>
+	<br/><br/><label for="subjectTest" accesskey="s" id="lbl_subjectTest">
+		Test: <select id="subjectTest" name="subjectTest" tabindex="2"  disabled="disabled" >
+		<option>Select one</option>
+	</select></label><span style="color: gray; " >(Select test)</span>
+</form>
+			<!--<div class="clean">
+				<table id='myTableClean'>
+					<caption>Game players count</caption>
+					<thead>
+						<tr>
+							<th></th>
+							<th>Jan</th>
+							<th>Feb</th>
+
+							<th>Mar</th>
+							<th>Apr</th>
+							<th>May</th>
+							<th>Jun</th>
+							<th>Jul</th>
+							<th>Aug</th>
+
+							<th>Sep</th>
+							<th>Oct</th>
+							<th>Nov</th>
+							<th>Dec</th>
+						</tr>
+					</thead>
+						<tbody>
+
+						<tr>
+							<th>2010</th>
+							<td>125</td>
+							<td>185</td>
+							<td>327</td>
+							<td>359</td>
+
+							<td>376</td>
+							<td>398</td>
+							<td>0</td>
+							<td>0</td>
+							<td>0</td>
+							<td>0</td>
+
+							<td>0</td>
+							<td>0</td>
+						</tr>
+						<tr>
+							<th>2009</th>
+							<td>1167</td>
+							<td>1110</td>
+
+							<td>691</td>
+							<td>165</td>
+							<td>135</td>
+							<td>157</td>
+							<td>139</td>
+							<td>136</td>
+
+							<td>938</td>
+							<td>1120</td>
+							<td>55</td>
+							<td>55</td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+
+-->
+
+<div id="divForGraph"></div>
+
+<script type="text/javascript" language="javascript">
+var facultySubject;
+var slaveDepartment;
+var test_info;
+var lastSel;
+var gridTable = "#tblgrid";
+var gridPager = "#gridpager"; 
+
+var urlCRUD = "<? echo $this->url(array('controller' => 'marks', 
+										'action' => 'imod'))?>";
+										
+var urlFacultySubject = "<? echo $this->url(array('controller' => 'faculty', 
+                                            	'action' => 'getsubject'))?>";
+var subjectTest;
+var urlSubjectTest = "<? echo $this->url(array('controller' => 'subject', 
+												'action' => 'gettest'))?>";
+var stuMarks;
+var urlStuMarks = "<? echo $this->url(array('controller' => 'test', 
+												'action' => 'getstudents'))?>";
+$.ajax({
+    url : urlFacultySubject,
+    dataType : 'json',
+    success: function(jFacultySubject){
+    	var selectOptionString = '<option value ="">Select one</option>';
+		$.each(jFacultySubject, function (subjectCode, subjectInfo) {
+			$.each(subjectInfo, function (index, subject) {
+				selectOptionString += '<option value ="'+subjectCode+'">'+subject.subject_name+'</option>';
+			});
+		});
+        $('#facultySubject').html(selectOptionString);
+   },
+   error: function(event) {
+        alert(event.responseText);
+   }
+});//End ajax call.
+
+$(function(){
+$('#facultySubject').change(function(){
+	
+	facultySubject = $("#facultySubject").val();
+	
+	$.ajax({
+        url : urlSubjectTest,
+        data : {'subject_code':facultySubject,'department_id':slaveDepartment,'locked':true}, 
+        success: function(jSubjectTest){
+        	var selectOptionString = '<option value ="">Select one</option>';
+			$.each(jSubjectTest, function (index, test) {
+				selectOptionString += '<option  value ="'+test.test_info_id+'" >'+test.test_type_name+' '+test.test_id+'</option>';
+			});
+            $('#subjectTest').html(selectOptionString);
+            $('#subjectTest').attr('disabled',null);
+        },
+        error: function(event) {
+            alert(event.responseText);
+        }
+    });//End ajax call.
+    
+});//End #facultySubject change.
+
+
+$('#subjectTest').change(function(){
+	
+	subjectTest = $("#subjectTest").val();
+	
+	$.ajax({
+        url : urlStuMarks,
+        async : false,
+        data : {'test_info_id' : subjectTest}, 
+        success: function(jStuMarks){
+        	var stuRows = jStuMarks.rows;
+        	var arrayOfData = new Array(); 
+        	$.each(stuRows, function (index, stuRow) {
+            	//stuRow.cell[1]
+            	var roll = stuRow.cell[1];
+        		arrayOfData.push([stuRow.cell[2],roll.substr(-3,3)]);
+     		});
+        	$('#divForGraph').jqBarGraph({ data: arrayOfData,
+        		width: 2000,
+        		barSpace: 10 }); 
+        	/*var innerTable = '<caption>Sessional Marks</caption>';
+            var stuRows = jStuMarks.rows;
+             innerTable += '<thead><tr><th></th>';
+             $.each(stuRows, function (index, stuRow) {
+            	 			innerTable += '<th>'+stuRow.cell[1]+'</th>';
+
+                 });
+             innerTable += '</tr></thead><tbody><tr>';
+             innerTable += '<th>'+jStuMarks.test_info.test_type_id+'_'+jStuMarks.test_info.test_id+'</th>';
+             $.each(stuRows, function (index, stuRow) {
+  	 			innerTable += '<th>'+stuRow.cell[2]+'</th>';
+
+       		});
+             innerTable += '</tr></tbody>';
+             $(gridTable).html(innerTable);*/
+        },
+        error: function(event) {
+            alert(event.responseText);
+        }
+    });//End ajax call.
+    
+});//End #subjectTest change.
+
+
+});
+</script>
+<?php 
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/js/plugins/jqBarGraph.1.1.min.js');
+?>
