@@ -39,17 +39,20 @@ class TestController extends Acadz_Base_BaseController
     {
         $request = $this->getRequest();
         $test_info_id = $request->getParam('test_info_id');
-        $format = $request->getParam('format', 'grid');
+        $format = $request->getParam('format', 'json');
         if ($test_info_id) {
             $options = array('test_info_id' => $test_info_id);
-            $model = new Acad_Model_Test_Sessional($options);
-            $candidates = $model->getStudents();
+            $test = new Acad_Model_Test_Sessional($options);
+            $candidates['students'] = $test->getStudents();
+            $candidates['test_info'] = $test->__toArray();
             switch (strtolower($format)) {
                 case 'json':
-                    $this->_helper->logger($candidates);
                     echo $this->_helper->json($candidates, false);
                     return;
                 case 'grid':
+                    /*
+                     * @FIXME $candidates structure has been changed
+                     */
                     $valid = $request->getParam('nd');
                     $this->gridparam['page'] = $request->getParam('page', 1); // get the requested page
                     $this->gridparam['limit'] = $request->getParam('rows', 70); // rows limit in Grid
@@ -63,7 +66,7 @@ class TestController extends Acadz_Base_BaseController
                     $response->page = $this->gridparam['page'];
                     $response->total = 1;
                     $response->records = $this->_count;
-                    $response->test_info = $model->__toArray();
+                    $response->test_info = $test->__toArray();
                     echo $this->_helper->json($response, false);
                     return;
                 default:
