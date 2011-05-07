@@ -507,16 +507,15 @@ LIMIT 1';
 
     public function getStudents() {
         $sql = 'SELECT
-    `test_info_id`
-    , `student_roll_no`
-    , `marks_scored`
-    , `status`
-FROM
-    `academics`.`test_marks`
-WHERE (`test_info_id` = ?)';
+        `student_roll_no`
+        , `marks_scored`
+        , `status`
+    FROM
+        `academics`.`test_marks`
+    WHERE (`test_info_id` = ?)';
         
         $bind[] = self::getTest_info_id();
-        return Zend_Db_Table::getDefaultAdapter()->query($sql,$bind)->fetchAll();
+        return Zend_Db_Table::getDefaultAdapter()->query($sql,$bind)->fetchAll(Zend_Db::FETCH_UNIQUE);
     }
     
 
