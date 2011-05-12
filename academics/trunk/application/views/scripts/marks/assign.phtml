@@ -151,7 +151,10 @@ $(gridTable).jqGrid({
         	jQuery(this).editRow(id, true,
                     function(id){ //oneditfunc
                 			$("#"+id+" :input[type=text]").focus().select();
-            		}); 
+            		},
+            		null,
+            		null,
+            		{test_info_id : $('#subjectTest').val()}); 
         	
 		}
         
