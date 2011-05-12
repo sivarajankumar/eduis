@@ -45,28 +45,26 @@ class TestController extends Acadz_Base_BaseController
             $test = new Acad_Model_Test_Sessional($options);
             $candidates['students'] = $test->getStudents();
             $candidates['test_info'] = $test->__toArray();
+            $this->_helper->logger($candidates);
             switch (strtolower($format)) {
                 case 'json':
                     echo $this->_helper->json($candidates, false);
                     return;
                 case 'grid':
-                    /*
-                     * @FIXME $candidates structure has been changed
-                     */
                     $valid = $request->getParam('nd');
                     $this->gridparam['page'] = $request->getParam('page', 1); // get the requested page
                     $this->gridparam['limit'] = $request->getParam('rows', 70); // rows limit in Grid
-                    $this->_count = count($candidates);
+                    $this->_count = count($candidates['students']);
                     $response = new stdClass();
-                    foreach ($candidates as $key => $value) {
-                        $response->rows[$key]['id'] = $value['test_info_id'].'__'.$value['student_roll_no'];
-                        $response->rows[$key]['cell'] = array($value['test_info_id'], 
-                        $value['student_roll_no'], $value['marks_scored'], $value['status']);
+                    $count = 0;
+                    foreach ($candidates['students'] as $key => $value) {
+                        $response->rows[$count]['id'] = $key;
+                        $response->rows[$count++]['cell'] = array($key, $value['marks_scored'], $value['status']);
                     }
                     $response->page = $this->gridparam['page'];
                     $response->total = 1;
                     $response->records = $this->_count;
-                    $response->test_info = $test->__toArray();
+                    $response->test_info = $candidates['test_info'];
                     echo $this->_helper->json($response, false);
                     return;
                 default:

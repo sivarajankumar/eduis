@@ -51,25 +51,25 @@ echo $this->jQuery()->uiEnable();
  * set body color by -> style="background-image: url('<?php $cdnServer; ?>/css/themes/jqueryui/<?php echo $baseTheme;?>/images/ui-bg_glass_100_fdf5ce_1x400.png');"
  */
 ?>
-</head>
+</head> 
 
 <body>
-<div id="topContent"><span id="topRightInfo"> <span
-	class="ui-state-default ui-corner-bottom">Today&rsquo;s date: <span
+<div id="topContent" class="noprint" ><span id="topRightInfo"> <span
+	class="ui-state-default ui-corner-bottom noprint">Today&rsquo;s date: <span
 	id="datetext"><?php
 $date = new Zend_Date();
 echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span>
 <?php
 if (Zend_Auth::getInstance()->hasIdentity()) {
     ?>
-<span class="ui-state-default ui-corner-bottom">Hi! <span id="userName"><?php
+<span class="ui-state-default ui-corner-bottom noprint"><span  class="noprint" >Hi!</span> <span id="userName"><?php
     $authContent = Zend_Auth::getInstance()->getStorage()->read();
     echo $authContent['identity'];
     ?></span></span>
 <?php
     if ($authContent['identity'] != 'anon') {
         ?>
-	<span class="ui-state-default ui-corner-bl"><a id="logout"
+	<span class="ui-state-default ui-corner-bl noprint"><a id="logout"
 	href="<?php
         echo $this->url(
         array('controller' => 'authenticate', 'action' => 'logout'), 'default')?>">
@@ -90,7 +90,7 @@ Logout<span
 echo $cdnServer . '/images/logos/mainLogo_' . $baseTheme . '.png';
 ?>">
 
-<div id="divTopNav">
+<div id="divTopNav"  class="noprint" >
 <ul id="topnav" class="ui-widget">
 	<li><a href="http://<?php echo AUTH_SERVER?>" class="main">Home</a></li>
 	<li><!--<a href="#" class="main">Department</a>-->
