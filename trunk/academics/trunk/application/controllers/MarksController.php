@@ -139,10 +139,8 @@ class MarksController extends Acadz_Base_BaseController
         $params = array_diff($request->getParams(), $request->getUserParams());
         
         $sessional = new Acad_Model_Test_Sessional();
-        $pKey = explode('__', $params['id']);
+        $params['student_roll_no'] = $params['id'];
         unset($params['id']);
-        $params['test_info_id'] = $pKey[0];
-        $params['student_roll_no'] = $pKey[1];
         
         $sessional->setTest_info_id($params['test_info_id']);
         $result = $sessional->setMarks($params);

@@ -45,7 +45,7 @@ class TestController extends Acadz_Base_BaseController
             $test = new Acad_Model_Test_Sessional($options);
             $candidates['students'] = $test->getStudents();
             $candidates['test_info'] = $test->__toArray();
-            $this->_helper->logger($candidates);
+            //$this->_helper->logger($candidates);
             switch (strtolower($format)) {
                 case 'json':
                     echo $this->_helper->json($candidates, false);
