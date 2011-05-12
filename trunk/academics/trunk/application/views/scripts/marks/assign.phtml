@@ -86,7 +86,7 @@ $('#subjectTest').change(function(){
 	
 	$.ajax({
         url : urlCandidates,
-        data : {'test_info_id' : subjectTest}, 
+        data : {'test_info_id' : subjectTest, format:'grid'}, 
         success: function(jStudents){
         	var thegrid = jQuery(gridTable)[0];
         	test_info =  jStudents.test_info;
@@ -110,14 +110,8 @@ $('#subjectTest').change(function(){
 
 
 $(gridTable).jqGrid({
-	colNames:['Test id','Roll number','Marks Scored','Status'],
+	colNames:['Roll number','Marks Scored','Status'],
 	colModel:[
-		{
-			name:'test_info_id',
-    	    index:'test_info_id',
-            width: 50,
-            hidden : true
-        },
         {
 			name:'student_roll_no',
     	    index:'student_roll_no'
