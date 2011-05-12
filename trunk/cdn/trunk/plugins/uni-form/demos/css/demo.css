@@ -1,0 +1,36 @@
+﻿.uniForm h2 {
+	margin: 1em 0 1em 1.15em;
+}
+fieldset h3 {
+	margin: 1.5em -28px;
+	padding: 14px 28px;
+	line-height: 1;
+	background: #efefef;
+	color: #343434;
+}
+.uniForm {
+	width: 55%;
+	background: #fff;
+	margin: 28px auto;
+	padding: 28px;
+/* CSS3 */	border-radius: 12px;
+	-webkit-border-radius: 12px;
+	-moz-border-radius: 12px;
+	-o-border-radius: 12px;
+	-khtml-border-radius: 12px;
+}
+/* IE6 fixes for the page */
+* html form.uniForm {
+	overflow: hidden;
+}
+* html .header {
+	zoom: 1;
+	overflow: hidden;
+}
+* html .browse {
+	position: absolute;
+}
+/* Additions for validation */
+div.valid {
+	background: url(../../img/ok.png) 100% no-repeat;
+}
