@@ -1,0 +1,184 @@
+   
+    <!--[if lte ie 7]>
+      <style type="text/css" media="screen">
+        /* Move these to your IE6/7 specific stylesheet if possible */
+        .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+      </style>
+    <![endif]-->
+<div id="progressbar"></div>
+
+    <form action="javascript:submit();" class="uniForm">
+        <h2>Basic Information:</h2>
+        <hr/>
+        <div class="ctrlHolder noLabel">
+          <ul class="alternate">
+            <li><label for=""><em>*</em> First Name</label>
+          <input name="fname" id="fname" data-default-value="e.g. Ravi" size="10" maxlength="50" type="text" class="textInput required"/></li>
+            <li><label for=""> Middle Name</label>
+          <input name="mname" id="mname" data-default-value="e.g. Kumar" size="10" maxlength="50" type="text" class="textInput"/></li>
+            <li><label for=""> <em>*</em>Last Name</label>
+          <input name="lname" id="lname" data-default-value="e.g. Gupta" size="10" maxlength="50" type="text" class="textInput required"/></li>
+          </ul>
+          <p class="formHint">Full Name of candidate</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>Date of Birth</label>
+          <input name="dob" id="dob" data-default-value="31-12-1990" size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+          <p class="formHint">Birthday of <span class="cName" >Candidate</span></p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <p class="label">Gender</p>
+          <ul class="blockLabels alternate">
+            <li><label for=""><input name="gender" type="radio" value="M" checked="checked" title="Male" class="required">Male</label></li>
+            <li><label for=""><input  name="gender" type="radio" value="F" title="Female" class="required">Female</label></li>
+          </ul>
+          <p class="formHint">Gender</p>
+        </div>
+      
+        <div class="ctrlHolder">
+          <label for="">Nationality</label>
+          <select id="nationality" name="nationality" class="selectInput required">
+          		<option value="1" selected="selected" >INDIAN</option>
+          		<option value="2">NRI</option>
+  		  </select>
+          <p class="formHint">Nationality</p>
+        </div>
+        
+      
+        <div class="ctrlHolder">
+          <label for="">Blood Group</label>
+          <select id="bloodgp" name="bloodgp" class="selectInput required">
+          		<option value="A+" selected="selected" >A+</option>
+          		<option value="A-">A-</option>
+          		<option value="B+">B+</option>
+          		<option value="B-">B-</option>
+          		<option value="AB+">AB+</option>
+          		<option value="AB-">AB-</option>
+          		<option value="O+">O+</option>
+          		<option value="O-">O-</option>
+      	  </select>
+          <p class="formHint">Blood group of <span class="cName" >Candidate</span></p>
+        </div>
+        
+        
+        <div class="ctrlHolder">
+          <label for="">Religion</label>
+          <select id="religion" name="religion" class="selectInput required">
+          		<option value="1" selected="selected" >Hindu</option>
+          		<option value="2">Muslim</option>
+          		<option value="3">Sikh</option>
+          		<option value="4">Christian</option>
+      	  </select>
+          <p class="formHint">Religion of <span class="cName" >Candidate</span></p>
+        </div>
+        
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em> Father's name</label>
+          <input name="fatherName" id="fatherName" data-default-value="e.g. Sh. Madan Kumar" size="35" maxlength="50" type="text" class="textInput required"/>
+          <p class="formHint">Father's name of <span class="cName" >Candidate</span></p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em> Mother's name</label>
+          <input name="motherName" id="motherName" data-default-value="e.g. Smt. Sita Devi" size="35" maxlength="50" type="text" class="textInput required"/>
+          <p class="formHint">Mother's name of <span class="cName" >Candidate</span></p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>Email address</label>
+          <input name="email" id="email" data-default-value="e.g. ravigupta@gmail.com" size="35" maxlength="50" type="text" class="textInput required validateEmail"/>
+          <p class="formHint">A valid email address</p>
+        </div>
+      
+        <div class="ctrlHolder">
+          <label for=""><em>*</em> Email confirm</label>
+          <input name="email_confirm" id="email_confirm" data-default-value="i.e. same as above" size="35" maxlength="50" type="text" class="textInput required validateSameAs email"/>
+          <p class="formHint"></p>
+        </div>
+      <div class="buttonHolder">
+        <button type="submit" class="secondaryAction">Cancel and go back</button>
+        <button type="submit" class="primaryAction">Submit</button>
+      </div>
+
+    </form>
+	<script>
+	var urlBasicInfo = "<?php echo $this->url(array('controller' => 'applicationform', 'action' => 'setbasic'))?>";
+	var rollNo = "<?php echo $this->applicant->roll_no ?>";
+      $(function(){
+        $('form.uniForm').uniform({
+          prevent_submit : true
+        });
+
+        serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+        $("#dob").datepicker({
+        	dateFormat: 'dd-mm-yy',
+        	changeMonth: true,
+			changeYear: true,
+			yearRange: '-25:-10',
+			onClose : function(dateText, inst) {
+				this.focus();
+				}
+        });
+
+        $('#fname').change(function(){
+            var cName = this.value;
+        	$('.cName').text(cName);
+        });
+        $(function() {
+    		$( "#progressbar" ).progressbar({
+    			value: 0
+    		});
+    	});
+      });
+
+      function submit() {
+          $.ajax({
+              url : urlBasicInfo,
+              data : getValues(),
+              success: function(jStatus){
+            	  if (confirm("Basic info submitted.\nClick 'OK' to continue.\nor,'Cancel' to get back to application form steps.")){
+            		  window.location = "/applicationform/academic";
+            	  } else{
+                	  //window.location = "/applicationform";
+            	  }
+              },
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+                      console.log(response);
+                      }
+                  });
+      }
+
+      function getValues() {
+		var data = {
+				roll_no: rollNo,
+				first_name : $('#fname').val(),
+				middle_name : $('#mname').val(),
+				last_name : $('#lname').val(),
+				dob : $('#dob').val(),
+				blood_group_id : $('#bloodgp').val(),
+				gender : $('#gender').val(),
+				nationality : $('#nationality').val(),
+				religion_id : $('#religion').val(),
+				cast_id : $('#cast').val(),
+				father_name : $('#fatherName').val(),
+				mother_name : $('#motherName').val(),
+				contact_no : $('#contact').val(),
+				e_mail : $('#email').val()
+		};
+		return data;
+	}
+    </script>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>

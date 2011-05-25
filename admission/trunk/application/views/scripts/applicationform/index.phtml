@@ -1,0 +1,8 @@
+Roll number : <?php echo $this->applicant->roll_no ?>
+Appplication Basis : <?php echo ucfirst($this->applicant->application_basis) ?>
+<p>Following steps are required to submit application:</p>
+<ol>
+<?php foreach ($this->steps as $step) {
+    echo '<li><a href="'.$this->baseUrl("/applicationform/$step").'" >'.ucfirst($step).'</a></li>';
+} ?>
+</ol>

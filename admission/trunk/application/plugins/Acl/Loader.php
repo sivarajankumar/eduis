@@ -30,7 +30,8 @@ class Admsn_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
         $controllerName = strtolower($request->getControllerName());
         if (substr($actionName, 0, 4) == 'fill' or
          substr($actionName, 0, 3) == 'get' or
-         'authenticate' == strtolower($controllerName)or
+         'authenticate' == strtolower($controllerName) or
+         'index' == strtolower($controllerName) or
          'error' == strtolower($controllerName)) {
             return;
         }
@@ -50,6 +51,7 @@ class Admsn_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
         }
     }
 
+    
     /**
      * getCache() - Fetch cache from registry.
      *

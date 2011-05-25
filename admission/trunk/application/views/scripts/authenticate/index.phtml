@@ -1,0 +1,6 @@
+<?php
+$this->headTitle()->append("Authenticate");
+if ($this->form) {
+    $this->form->setAction($this->url());
+    echo $this->form;
+}

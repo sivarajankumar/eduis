@@ -1,43 +1,75 @@
-<style>
-    a:link,
-    a:visited
-    {
-        color: #0398CA;
-    }
+   
+    <!--[if lte ie 7]>
+      <style type="text/css" media="screen">
+        /* Move these to your IE6/7 specific stylesheet if possible */
+        .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+      </style>
+    <![endif]-->
 
-    span#zf-name
-    {
-        color: #91BE3F;
-    }
+    <form action="javascript:submit();" class="uniForm">
+        <fieldset>
+        <h3>Enroll</h3>
+        <div class="ctrlHolder">
+          <p class="label"><em>*</em>Application Basis</p>
+          <ul class="blockLabels">
+            <li><label for=""><input name="appBasis" type="radio" value="aieee" title="AIEEE" class="required">AIEEE</label></li>
+            <li><label for=""><input  name="appBasis" type="radio" value="twelth" title="10+2" class="required">10+2</label></li>
+            <li><label for=""><input  name="appBasis" type="radio" value="diploma" title="Diploma" class="required">Diploma</label></li>
+          </ul>
+          <p class="formHint">Basis of Application</p>
+        </div>
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>Roll number</label>
+          <input name="rollno" id="rollno"  size="35" maxlength="50" type="text" class="textInput required"/>
+          <p class="formHint">Roll number <span class="appBasis" >on above basis.</span></p>
+        </div>
+        <br/>
+      <div class="buttonHolder">
+        <button type="reset" class="secondaryAction">Reset the form</button>
+        <button type="submit" class="primaryAction">Proceed</button>
+      </div>
 
-    div#welcome
-    {
-        color: #FFFFFF;
-        background-image: url(http://framework.zend.com/images/bkg_header.jpg);
-        width:  600px;
-        height: 400px;
-        border: 2px solid #444444;
-        overflow: hidden;
-        text-align: center;
-    }
+        </fieldset>
+    </form>
+	<script>
+	var urlCheckRollno = "<?php echo $this->url(array('controller' => 'validate', 'action' => 'rollno'))?>";
+	var rollNo;
+	var basis;
+    $(function(){
+        $('form.uniForm').uniform({
+            prevent_submit : true
+        });
 
-    div#more-information
-    {
-        background-image: url(http://framework.zend.com/images/bkg_body-bottom.gif);
-        height: 100%;
-    }
-</style>
-<div id="welcome">
-    <h1>Welcome to the <span id="zf-name">Zend Framework!</span></h1>
+        $('input[name=appBasis]').change(function(){
+            basis = this.value;
+        	$('.appBasis').text(' of '+this.title);
+        });
+      });
 
-    <h3>This is your project's main page</h3>
-
-    <div id="more-information">
-        <p><img src="http://framework.zend.com/images/PoweredBy_ZF_4LightBG.png" /></p>
-        <p>
-            Helpful Links: <br />
-            <a href="http://framework.zend.com/">Zend Framework Website</a> |
-            <a href="http://framework.zend.com/manual/en/">Zend Framework Manual</a>
-        </p>
-    </div>
-</div>
+      function submit() {
+    	  rollNo = $('#rollno').val();
+          $.ajax({
+              url : urlCheckRollno,
+              dataType : 'json',
+              data : {roll_no: rollNo,
+                  	  application_basis:basis},
+              success: function(jStatus){
+            	  if (confirm("Application not submitted.\nClick 'OK' to continue.")){
+            		  window.location = "/applicationform";
+            	  }
+              },
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+                      console.log(response);
+                      }
+                  });
+      }
+    </script>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+?>
