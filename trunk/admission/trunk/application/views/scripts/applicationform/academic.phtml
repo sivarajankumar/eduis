@@ -1,0 +1,216 @@
+
+<!--[if lte ie 7]>
+      <style type="text/css" media="screen">
+        /* Move these to your IE6/7 specific stylesheet if possible */
+        .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+      </style>
+    <![endif]-->
+<div id="progressbar"></div>
+<form action="javascript:submit();" class="uniForm">
+<h2>Academic Information:</h2>
+<hr />
+      <?php 
+      $form = null;
+      $basis = strtolower($this->applicant->application_basis);
+      switch ($basis) {
+          case 'aieee':
+            $form .='<h3>AIEEE</h3>'.
+            '<div class="ctrlHolder">' .
+            '<label for=""><em>*</em>All India Rank (AIR)</label>'.
+            '<input name="ai_rank" id="ai_rank" data-default-value="450" size="35" maxlength="50" type="text" class="textInput required"/>'.
+            '<p class="formHint">All India Rank of <span class="cName" >Candidate</span></p>'.
+          '</div>'.
+          
+          '<div class="ctrlHolder">'.
+            '<label for=""><em>*</em>All India Category Rank</label>'.
+            '<input name="ai_cat_rank" id="ai_cat_rank" data-default-value="500" size="35" maxlength="50" type="text" class="textInput required"/>'.
+            '<p class="formHint">All India Category Rank of <span class="cName" >Candidate</span></p>'.
+          '</div>'.
+          
+          '<div class="ctrlHolder">'.
+            '<label for=""><em>*</em>State Rank</label>'.
+            '<input name="state_rank" id="state_rank" data-default-value="90" size="35" maxlength="50" type="text" class="textInput required"/>'.
+            '<p class="formHint">State Rank of <span class="cName" >Candidate</span></p>'.
+          '</div>'.
+          
+          '<div class="ctrlHolder">'.
+            '<label for=""><em>*</em>State Category Rank</label>'.
+            '<input name="state_cat_rank" id="state_cat_rank" data-default-value="2007" size="35" maxlength="50" type="text" class="textInput required"/>'.
+            '<p class="formHint">State Category Rank of <span class="cName" >Candidate</span></p>'.
+          '</div>';
+              
+          case 'twelth':
+              
+              $form .= '<h3>Twelfth Marks</h3>'.
+              
+              commonFields().
+          
+          '<div class="ctrlHolder">'.
+            '<label for=""><em>*</em>Board</label>'.
+            '<input name="board" id="board" data-default-value="CBSE" size="35" maxlength="50" type="text" class="textInput required"/>'.
+            '<p class="formHint">Board passed by <span class="cName" >Candidate</span></p>'.
+          '</div>'.
+          
+          '<div class="ctrlHolder">'.
+            '<label for="">School Rank</label>'.
+            '<input name="schoolRank" id="schoolrank" data-default-value="1" size="35" maxlength="50" type="text" class="textInput required"/>'.
+            '<p class="formHint">School rank of  <span class="cName" >Candidate</span></p>'.
+          '</div>';
+          break;
+          
+          case 'diploma':
+              
+              $form .= '<h3>Diploma Marks</h3>'.'<div class="ctrlHolder">' .
+            '<label for=""><em>*</em>Rank</label>'.
+            '<input name="rank" id="rank" data-default-value="450" size="35" maxlength="50" type="text" class="textInput required"/>'.
+            '<p class="formHint">Rank of <span class="cName" >Candidate</span></p>'.
+          '</div>'.
+
+            commonFields().
+          
+          '<div class="ctrlHolder">'.
+            '<label for=""><em>*</em>Diploma Roll Number</label>'.
+            '<input name="diploma_rollno" id="diploma_rollno" data-default-value="CBSE" size="35" maxlength="50" type="text" class="textInput required"/>'.
+            '<p class="formHint">Diploma Roll Number of <span class="cName" >Candidate</span></p>'.
+          '</div>'.
+          
+          '<div class="ctrlHolder">'.
+            '<label for="">Branch</label>'.
+            '<input name="branch" id="branch" data-default-value="1" size="35" maxlength="50" type="text" class="textInput required"/>'.
+            '<p class="formHint">Branch of  <span class="cName" >Candidate</span></p>'.
+          '</div>';
+          break;
+          default:
+              throw new Zend_Exception('The basis of enrollment is unknown.(i.e.'.var_export($basis,true).')',Zend_Log::WARN);
+      }
+      
+      function commonFields() {
+          return '<div class="ctrlHolder">' .
+            '<label for=""><em>*</em>Marks Obtained</label>'.
+            '<input name="marksObtained" id="marksObtained" data-default-value="450" size="35" maxlength="50" type="text" class="textInput required"/>'.
+            '<p class="formHint">Marks Obtained by <span class="cName" >Candidate</span></p>'.
+          '</div>'.
+          
+          '<div class="ctrlHolder">'.
+            '<label for=""><em>*</em>Total Marks</label>'.
+            '<input name="totalMarks" id="totalMarks" data-default-value="500" size="35" maxlength="50" type="text" class="textInput required"/>'.
+            '<p class="formHint">Total Marks of <span class="cName" >Candidate</span></p>'.
+          '</div>'.
+          
+          '<div class="ctrlHolder">'.
+            '<label for=""><em>*</em>Percentage</label>'.
+            '<input name="percentage" id="percentage" data-default-value="90" size="35" maxlength="50" type="text" class="textInput required"/>'.
+            '<p class="formHint">Percentage obtained by <span class="cName" >Candidate</span></p>'.
+          '</div>'.
+          
+          '<div class="ctrlHolder">'.
+            '<label for=""><em>*</em>Year of Passing</label>'.
+            '<input name="yearOfPassing" id="yop" data-default-value="2007" size="35" maxlength="50" type="text" class="textInput required"/>'.
+            '<p class="formHint">Passing year of <span class="cName" >Candidate</span></p>'.
+          '</div>';
+      }
+      
+      echo $form;
+      
+      
+      ?>
+      <div class="buttonHolder">
+<button type="submit" class="secondaryAction">Cancel and go back</button>
+<button type="submit" class="primaryAction">Submit</button>
+</div>
+</form>
+
+<script>
+	var urlBasicInfo = "<?php echo $this->url(array('controller' => 'applicationform', 'action' => 'setacademic'))?>";
+	var rollNo = "<?php echo $this->applicant->roll_no ?>";
+      $(function(){
+        $('form.uniForm').uniform({
+          prevent_submit : true
+        });
+
+        $('#fname').change(function(){
+            var cName = this.value;
+        	$('.cName').text(cName);
+        });
+        $(function() {
+    		$( "#progressbar" ).progressbar({
+    			value: 20
+    		});
+    	});
+      });
+
+      function submit() {
+          $.ajax({
+              url : urlBasicInfo,
+              data : getValues(),
+              success: function(jStatus){
+            	  if (confirm("Basic info submitted.\nClick 'OK' to continue.\nor,'Cancel' to get back to application form steps.")){
+            		  window.location = "/applicationform/academic";
+            	  } else{
+                	  window.location = "/applicationform";
+            	  }
+              },
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+                      console.log(response);
+                      }
+                  });
+      }
+      <?php 
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      ?>
+      
+
+      function getValues() {
+		var data = {
+				<?php 
+      $commonFields = 'marksObtained : $("#marksObtained").val(),
+    		  totalMarks : $("#totalMarks").val(),
+    		  percentage : $("#percentage").val(),
+    		  passing_year : $("#yop").val(),';
+	switch($basis){
+    	  case 'aieee':
+    	      echo 'ai_rank : $("#ai_rank").val(),
+    	      ai_cat_rank : $("#ai_cat_rank").val(),
+    	      state_rank : $("#state_rank").val(),
+    	      state_cat_rank : $("#state_cat_rank").val(),';
+    	  case 'twelth':
+    	      echo $commonFields.'
+    		  board : $("#board").val(),
+    		  school_rank : $("#schoolrank").val()';
+    		  break;
+    	  case 'diploma':
+    	      echo $commonFields.'
+    		  rank : $("#rank").val(),
+    		  diploma_roll : $("#diploma_rollno").val(),
+    		  branch : $("#branch").val()';
+              break;
+      }
+				?>
+		};
+		return data;
+	}
+    </script>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>

@@ -1,0 +1,110 @@
+   
+    <!--[if lte ie 7]>
+      <style type="text/css" media="screen">
+        /* Move these to your IE6/7 specific stylesheet if possible */
+        .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+      </style>
+    <![endif]-->
+
+    <form action="#" class="uniForm">
+        <h2>Addresses:</h2>
+        <hr/>
+        <fieldset>
+        <h3>Communication Address:</h3>
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>Pin Code</label>
+          <input name="c_pin" id="c_pin" data-default-value="125001" size="35" maxlength="10" type="text" class="textInput required validateInteger"/>
+          <p class="formHint">Pincode of communication address.</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>State/Territory</label>
+          <input name="c_state" id="c_state" data-default-value="Haryana" size="35" maxlength="50" type="text" class="textInput required"/>
+          <p class="formHint">State/Territory of communication address.</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>District</label>
+          <input name="c_district" id="c_district" data-default-value="Mohindergarh" size="35" maxlength="50" type="text" class="textInput required"/>
+          <p class="formHint">District of communication address.<br/>(It should be same as above if Union Territory)</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>City/Town/Village</label>
+          <input name="c_city" id="c_city" data-default-value="Narnaul" size="35" maxlength="50" type="text" class="textInput required"/>
+          <p class="formHint">City/Town/Village of communication address.<br/>(It may be same as District)</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>Address</label>
+          <textarea name="c_add" id="c_add" data-default-value="H.no. 3, PWD B&R Colony, Near Old court"  rows="25" cols="25"></textarea>
+          <p class="formHint">House number and Area etc.</p>
+        </div>
+        </fieldset>
+        
+        <div class="ctrlHolder noLabel">
+          <ul>
+            <li><label for=""><input name="sameAdd" id="sameAdd" value="sameAdd" data-default-value="Placeholder text" type="checkbox"/> Both addesess are same</label></li>
+          </ul>
+          <p class="formHint">Click if communication and permanent addresses are same.</p>
+        </div>
+
+        <fieldset>
+        <h3>Permanent Addresses:</h3>
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>Pin Code</label>
+          <input name="p_pin" id="p_pin" data-default-value="160027" size="35" maxlength="10" type="text" class="textInput required validateInteger"/>
+          <p class="formHint">Pincode of permanent address.</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>State/Territory</label>
+          <input name="p_state" id="p_state" data-default-value="Chandigarh" size="35" maxlength="50" type="text" class="textInput required"/>
+          <p class="formHint">State/Territory of permanent address.</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>District</label>
+          <input name="p_district" id="p_district" data-default-value="Chandigarh" size="35" maxlength="50" type="text" class="textInput required"/>
+          <p class="formHint">District of permanent address.<br/>(It should be same as above if Union Territory)</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>City/Town/Village</label>
+          <input name="p_city" id="p_city" data-default-value="Chandigarh" size="35" maxlength="50" type="text" class="textInput required"/>
+          <p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>Address</label>
+          <textarea name="p_add" id="p_add" data-default-value="H.no. 2135, Sector 9C"  rows="25" cols="25"></textarea>
+          <p class="formHint">House number and Area etc.</p>
+        </div>
+        </fieldset>
+      <div class="buttonHolder">
+        <button type="submit" class="secondaryAction">Cancel and go back</button>
+        <button type="submit" class="primaryAction">Submit</button>
+      </div>
+
+    </form>
+	<script>
+      $(function(){
+        $('form.uniForm').uniform({
+          prevent_submit : true
+        });
+
+        $("#c_state").autocomplete({
+            source: '/location/getstates'
+        });
+      });
+    </script>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
