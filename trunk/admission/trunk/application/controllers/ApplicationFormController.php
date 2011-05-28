@@ -35,9 +35,15 @@ class ApplicationFormController extends Admsnz_Base_BaseController
     
     public function academicAction ()
     {
-        //TODO Academic Information.
     }
-
+    
+    public function setacademicAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(TRUE);
+        $this->_helper->layout()->disableLayout();
+        print_r($this->getRequest()->getParams());
+    }
+    
     
     public function hostelAction ()
     {
@@ -47,7 +53,7 @@ class ApplicationFormController extends Admsnz_Base_BaseController
 
     public function busAction ()
     {
-        //TODO Hostel Section.
+        //TODO Bus Section.
     }
 
     public function addressAction ()
