@@ -5,89 +5,144 @@
         .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
       </style>
     <![endif]-->
+<div id="progressbar"></div>
 
-    <form action="#" class="uniForm">
-        <h2>Addresses:</h2>
+    <form action="javascript:submit();" class="uniForm">
+        <h2><?php $stepNo = 2;
+        echo ucfirst($this->steps[$stepNo]);?>:</h2>
         <hr/>
         <fieldset>
         <h3>Communication Address:</h3>
         <div class="ctrlHolder">
           <label for=""><em>*</em>Pin Code</label>
-          <input name="c_pin" id="c_pin" data-default-value="125001" size="35" maxlength="10" type="text" class="textInput required validateInteger"/>
+          <input name="c_pin" id="c_pin" value="<?php echo $this->applicant->c_pin ?>" data-default-value="e.g. 125001" size="35" maxlength="10" type="text" class="textInput required validateInteger"/>
           <p class="formHint">Pincode of communication address.</p>
         </div>
         
         <div class="ctrlHolder">
-          <label for=""><em>*</em>State/Territory</label>
-          <input name="c_state" id="c_state" data-default-value="Haryana" size="35" maxlength="50" type="text" class="textInput required"/>
+          <label for=""><em>*</em>State/Provience</label>
+          <input name="c_state" id="c_state" value="<?php echo $this->applicant->c_state ?>" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validateAlpha"/>
           <p class="formHint">State/Territory of communication address.</p>
         </div>
         
         <div class="ctrlHolder">
           <label for=""><em>*</em>District</label>
-          <input name="c_district" id="c_district" data-default-value="Mohindergarh" size="35" maxlength="50" type="text" class="textInput required"/>
+          <input name="c_district" id="c_district" value="<?php echo $this->applicant->c_district ?>" data-default-value="e.g. Mohindergarh" size="35" maxlength="50" type="text" class="textInput required validateAlpha"/>
           <p class="formHint">District of communication address.<br/>(It should be same as above if Union Territory)</p>
         </div>
         
         <div class="ctrlHolder">
           <label for=""><em>*</em>City/Town/Village</label>
-          <input name="c_city" id="c_city" data-default-value="Narnaul" size="35" maxlength="50" type="text" class="textInput required"/>
+          <input name="c_city" id="c_city" value="<?php echo $this->applicant->c_city ?>" data-default-value="e.g. Narnaul" size="35" maxlength="50" type="text" class="textInput required validateAlpha"/>
           <p class="formHint">City/Town/Village of communication address.<br/>(It may be same as District)</p>
         </div>
         
         <div class="ctrlHolder">
           <label for=""><em>*</em>Address</label>
-          <textarea name="c_add" id="c_add" data-default-value="H.no. 3, PWD B&R Colony, Near Old court"  rows="25" cols="25"></textarea>
+          <textarea name="c_add" id="c_add" data-default-value="e.g. H.no. 3, PWD B&R Colony, Near Old court"  class="validatePhrase"  rows="25" cols="25"><?php echo $this->applicant->c_add ?></textarea>
           <p class="formHint">House number and Area etc.</p>
         </div>
         </fieldset>
-        
+
+        <div class="ctrlHolder noLabel">
+        </div>
+                
         <div class="ctrlHolder noLabel">
           <ul>
-            <li><label for=""><input name="sameAdd" id="sameAdd" value="sameAdd" data-default-value="Placeholder text" type="checkbox"/> Both addesess are same</label></li>
+            <li><label for=""><input name="is_cp_same" id="is_cp_same" value="false" type="checkbox"/> Communication and Permanent Addesses are same.</label></li>
           </ul>
-          <p class="formHint">Click if communication and permanent addresses are same.</p>
+          <p class="formHint"><?php if ($this->applicant->is_cp_same) {
+              echo 'NOTE: Previously, you selected both addresses as same.';
+          } else {echo 'Click if both addresses are same.';}  ?>  </p>
         </div>
 
-        <fieldset>
-        <h3>Permanent Addresses:</h3>
+        <fieldset id="p_fset" >
+        <h3>Permanent Address:</h3>
         <div class="ctrlHolder">
           <label for=""><em>*</em>Pin Code</label>
-          <input name="p_pin" id="p_pin" data-default-value="160027" size="35" maxlength="10" type="text" class="textInput required validateInteger"/>
+          <input name="p_pin" id="p_pin" value="<?php echo $this->applicant->p_pin ?>" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput required validateInteger"/>
           <p class="formHint">Pincode of permanent address.</p>
         </div>
         
         <div class="ctrlHolder">
           <label for=""><em>*</em>State/Territory</label>
-          <input name="p_state" id="p_state" data-default-value="Chandigarh" size="35" maxlength="50" type="text" class="textInput required"/>
+          <input name="p_state" id="p_state" value="<?php echo $this->applicant->p_state ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validateAlpha"/>
           <p class="formHint">State/Territory of permanent address.</p>
         </div>
         
         <div class="ctrlHolder">
           <label for=""><em>*</em>District</label>
-          <input name="p_district" id="p_district" data-default-value="Chandigarh" size="35" maxlength="50" type="text" class="textInput required"/>
+          <input name="p_district" id="p_district" value="<?php echo $this->applicant->p_district ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validateAlpha"/>
           <p class="formHint">District of permanent address.<br/>(It should be same as above if Union Territory)</p>
         </div>
         
         <div class="ctrlHolder">
           <label for=""><em>*</em>City/Town/Village</label>
-          <input name="p_city" id="p_city" data-default-value="Chandigarh" size="35" maxlength="50" type="text" class="textInput required"/>
+          <input name="p_city" id="p_city" value="<?php echo $this->applicant->p_city ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validateAlpha"/>
           <p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
         </div>
         
         <div class="ctrlHolder">
           <label for=""><em>*</em>Address</label>
-          <textarea name="p_add" id="p_add" data-default-value="H.no. 2135, Sector 9C"  rows="25" cols="25"></textarea>
+          <textarea name="p_add" id="p_add"  data-default-value="e.g. H.no. 2135, Sector 9C"   class="validatePhrase"  rows="25" cols="25"><?php echo $this->applicant->p_add ?></textarea>
           <p class="formHint">House number and Area etc.</p>
         </div>
         </fieldset>
+        <?php 
+        if (isset($this->applicant->guardian_name)) { ?>
+        <fieldset>
+        <h3>Guardian Address:</h3>
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>Pin Code</label>
+          <input name="g_pin" id="g_pin" value="<?php echo $this->applicant->g_pin ?>" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput required validateInteger"/>
+          <p class="formHint">Pincode of permanent address.</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>State/Territory</label>
+          <input name="g_state" id="g_state" value="<?php echo $this->applicant->g_state ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validateAlpha"/>
+          <p class="formHint">State/Territory of permanent address.</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>District</label>
+          <input name="g_district" id="g_district" value="<?php echo $this->applicant->g_district ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validateAlpha"/>
+          <p class="formHint">District of permanent address.<br/>(It should be same as above if Union Territory)</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>City/Town/Village</label>
+          <input name="g_city" id="g_city" value="<?php echo $this->applicant->g_city ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validateAlpha"/>
+          <p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>Address</label>
+          <textarea name="g_add" id="g_add" data-default-value="e.g. H.no. 2135, Sector 9C"  class="validatePhrase" rows="25" cols="25"><?php echo $this->applicant->g_add ?></textarea>
+          <p class="formHint">House number and Area etc.</p>
+        </div>
+        </fieldset>
+        <?php } ?>
+        
+        
+        <div class="ctrlHolder">
+          <p class="label">Area</p>
+          <ul class="blockLabels alternate">
+            <li><label for=""><input name="urban" type="radio" value="true" checked="checked" title="Urban">Urban</label></li>
+            <li><label for=""><input  name="urban" type="radio" value="false" title="Rural">Rural</label></li>
+          </ul>
+          <p class="formHint">Area which you belong to</p>
+        </div>
+ 		<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+        
       <div class="buttonHolder">
-        <button type="submit" class="secondaryAction">Cancel and go back</button>
+        <button type="reset" class="secondaryAction">Reset</button>
         <button type="submit" class="primaryAction">Submit</button>
       </div>
 
     </form>
 	<script>
+	var urlAddressInfo = "<?php echo $this->url(array('controller' => 'applicationform', 'action' => 'set'.$this->steps[$stepNo]))?>";
       $(function(){
         $('form.uniForm').uniform({
           prevent_submit : true
@@ -96,7 +151,59 @@
         $("#c_state").autocomplete({
             source: '/location/getstates'
         });
+
+
+        $("#is_cp_same").click(function(){
+            if ($(this).is(':checked')) {
+            	$(this).val(true);
+            	$('#p_fset :input').remove();
+            	$('#p_fset').hide('slow');
+			} else {
+				$(this).val(false);
+				location.reload();
+			}
+            
+		});
+
+        $(function() {
+    		$( "#progressbar" ).progressbar({
+    			value: <?php echo (100/count($this->steps))*($stepNo+1); ?>
+    		});
+    	});
       });
+
+
+      function submit() {
+          $.ajax({
+              url : urlAddressInfo,
+              data : getValues(),
+              success: function(jStatus){
+                  $( "#submitStatus" ).html(jStatus).slideDown('slow', function(){
+                    	setTimeout(function(){
+                    		window.location = "/applicationform/<?php echo $this->steps[$stepNo+1];?> ";
+                        	},10000);
+                    });
+
+              },
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+                      console.log(response);
+                      }
+                  });
+      }
+      function getValues() {
+          var formData = {}; 
+          $('form.uniForm :input')
+          		.not('button,:input[value^="e.g."]')
+          		.each(function(){ 
+          			formData[this.name] = this.value; 
+              });
+
+
+          var urban = $('input:radio[name=urban]:checked').val();
+          formData.urban = urban; 
+		return formData;
+	}
     </script>
 <?php
 $this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');

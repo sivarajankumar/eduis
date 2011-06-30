@@ -1,0 +1,117 @@
+
+<!--[if lte ie 7]>
+      <style type="text/css" media="screen">
+        /* Move these to your IE6/7 specific stylesheet if possible */
+        .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+      </style>
+    <![endif]-->
+    <style>
+	#sortable { list-style-type: none; margin: 0; padding: 0; }
+	#sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; }
+	#sortable li span { position: absolute; margin-left: -1.3em; }
+	#content {background-color: #EFEFEF}
+	</style>
+<div id="progressbar"></div>
+
+<form action="javascript:submit();" class="uniForm">
+<h2><?php $stepNo = 4;
+        echo ucfirst($this->steps[$stepNo]);?>:</h2>
+        <hr/>
+<?php 
+      $basis = strtolower($this->applicant->application_basis);
+      if ('twelfth' == $basis) { ?>
+        <fieldset><h3>BRANCHES:</h3>
+        <p class="formHint">Sort the branches in order of preference</p>
+        <ul id="sortable" >
+        	<li id="BT" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Bio-Technology</li>
+        	<li id="CSE" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Computer Science and Engineering</li>
+        	<li id="ECE" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Electronics and Communication Engineering</li>
+        	<li id="ME" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Mechanical Engineering</li>
+        </ul>
+        </fieldset>
+        <?php } else { ?>
+            <fieldset><h3>Councelling Allotment:</h3>
+        <div class="ctrlHolder">
+          <label for="">Allotted Category</label>
+          <select id="allotted_category" name="allotted_category" class="selectInput required">
+          		<option value="BT" selected="selected" >not updated...</option>
+      	  </select>
+          <p class="formHint">Category allotted in councelling.</p>
+        </div>
+        <div class="ctrlHolder">
+          <label for="">Allotted Branch</label>
+          <select id="allotted_branch" name="allotted_branch" class="selectInput required">
+          		<option value="BT" selected="selected" >Bio-Technology</option>
+          		<option value="CSE">Computer Science and Engineering</option>
+          		<option value="ECE">Electronics and Communication Engineering</option>
+          		<option value="ME">Mechanical Engineering</option>
+      	  </select>
+          <p class="formHint">Branch allotted in councelling.</p>
+        </div>
+        </fieldset>
+        <?php  } ?>
+
+ 		<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+        
+      <div class="buttonHolder">
+        <button type="reset" class="secondaryAction">Reset</button>
+        <button type="submit" class="primaryAction">Submit</button>
+      </div>
+
+</form>
+
+<script>
+	var urlCouncellingInfo = "<?php echo $this->url(array('controller' => 'applicationform', 'action' => 'set'.$this->steps[$stepNo]))?>";
+      $(function(){
+        $('form.uniForm').uniform({
+          prevent_submit : true
+        });
+
+        $(function() {
+    		$( "#progressbar" ).progressbar({
+    			value: <?php echo (100/count($this->steps))*($stepNo+1); ?>
+    		});
+    	});
+      });
+
+      function submit() {
+          $.ajax({
+              url : urlAcadmicInfo,
+              data : getValues(),
+              success: function(jStatus){
+                  $( "#submitStatus" ).html(jStatus).slideDown('slow', function(){
+                    	setTimeout(function(){
+                    		window.location = "/applicationform/<?php echo $this->steps[$stepNo+1];?>";
+                        	},10000);
+                    });
+
+              },
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+                      console.log(response);
+                      }
+                  });
+      }
+      function getValues() {
+          var formData = {}; 
+          $('form.uniForm :input')
+          		.not('button')
+          		.each(function(){ 
+          			formData[this.name] = this.value; 
+              });
+
+          var choices = $('#sortable').sortable('toArray');
+          formData.choices = choices; 
+		return formData;
+	}
+    </script>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>

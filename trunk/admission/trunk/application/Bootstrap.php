@@ -36,8 +36,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $view = $this->getResource('View');
         $view->addHelperPath('ZendX/JQuery/View/Helper/', 
         'ZendX_JQuery_View_Helper');
-        //Set default document type.
-        $view->doctype('XHTML1_STRICT');
         // Set the initial title and separator:
         $view->headTitle('Admission')->setSeparator(' :: ');
     }
