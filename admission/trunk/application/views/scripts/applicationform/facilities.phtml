@@ -1,0 +1,117 @@
+
+<!--[if lte ie 7]>
+      <style type="text/css" media="screen">
+        /* Move these to your IE6/7 specific stylesheet if possible */
+        .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+      </style>
+    <![endif]-->
+<div id="progressbar"></div>
+<form action="javascript:submit();" class="uniForm">
+<h2><?php echo ucfirst($this->steps[$this->stepNo]);?>:</h2>
+<hr />
+
+        <div class="ctrlHolder noLabel">
+          <ul>
+            <li><label for=""><input name="hostel" id="hostel" value="false" type="checkbox"/> Apply for Hostel .</label></li>
+          </ul>
+          <p class="formHint"><?php if ($this->applicant->hostel) {
+              echo 'NOTE: Previously, you opted for hostel.';
+          } else {echo 'Click to opt for hostel.';}  ?>  </p>
+        </div>
+        
+        <div id="hostelDiv" >
+        </div>
+        
+        <div class="ctrlHolder noLabel">
+          <ul>
+            <li><label for=""><input name="bus" id="bus" value="false" type="checkbox"/> Apply for Bus facility.</label></li>
+          </ul>
+          <p class="formHint"><?php if ($this->applicant->hostel) {
+              echo 'NOTE: Previously, you opted for bus facility.';
+          } else {echo 'Click to opt for Bus facility.';}  ?>  </p>
+        </div>
+        
+        <div id="busDiv" >
+        </div>
+        <div id="submitStatus" style="display:none; padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+      
+      	<div class="buttonHolder">
+            <button type="submit" class="secondaryAction">Cancel and go back</button>
+            <button type="submit" class="primaryAction">Submit</button>
+    	</div>
+</form>
+
+	<script>
+	var urlAddressInfo = "<?php echo $this->url(array('controller' => 'applicationform', 'action' => 'set'.$this->steps[$this->stepNo]))?>";
+      $(function(){
+        $('form.uniForm').uniform({
+          prevent_submit : true
+        });
+
+        $("#c_state").autocomplete({
+            source: '/location/getstates'
+        });
+
+
+        $("#hostel").click(function(){
+            if ($(this).is(':checked')) {
+            	$(this).val(true);
+            	$('#p_fset :input').remove();
+            	$('#p_fset').hide('slow');
+			} else {
+				$(this).val(false);
+				location.reload();
+			}
+            
+		});
+
+        $(function() {
+    		$( "#progressbar" ).progressbar({
+    			value: <?php echo (100/count($this->steps))*($this->stepNo+1); ?>
+    		});
+    	});
+      });
+
+
+      function submit() {
+          $.ajax({
+              url : urlAddressInfo,
+              data : getValues(),
+              success: function(jStatus){
+                  $( "#submitStatus" ).html(jStatus).slideDown('slow', function(){
+                    	setTimeout(function(){
+                    		window.location = "/applicationform/<?php echo $this->steps[$this->stepNo+1];?> ";
+                        	},10000);
+                    });
+
+              },
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+                      console.log(response);
+                      }
+                  });
+      }
+      function getValues() {
+          var formData = {}; 
+          $('form.uniForm :input')
+          		.not('button,:input[value^="e.g."]')
+          		.each(function(){ 
+          			formData[this.name] = this.value; 
+              });
+
+
+          var urban = $('input:radio[name=urban]:checked').val();
+          formData.urban = urban; 
+		return formData;
+	}
+    </script>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>

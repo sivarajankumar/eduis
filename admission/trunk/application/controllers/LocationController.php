@@ -14,7 +14,7 @@ class LocationController extends Admsnz_Base_BaseController
         $states = $locator->getStates($term);
         $response = array();
         foreach ($states as $key => $state) {
-            $response[] = $state['states_name']." | ".$state['states_id'];
+            $response[] = $state['state_name']." | ".$state['states_id'];
         }
         $this->_helper->json($response);
         /*$logger = Zend_Registry::get('logger');

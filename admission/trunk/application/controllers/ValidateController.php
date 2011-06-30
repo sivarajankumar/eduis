@@ -16,7 +16,7 @@ class ValidateController extends Admsnz_Base_BaseController
         $status = $candidate->setRoll_no($rollNo)->exists();
         
         $applicant = new Zend_Session_Namespace('applicant');
-        
+        $applicant->unsetAll();
         if (isset($status['is_locked']) and $status['is_locked'] == 1) {
             throw new Zend_Exception($rollNo.' has locked the application.',Zend_Log::ERR);
         } elseif ($status) {
