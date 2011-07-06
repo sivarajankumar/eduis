@@ -12,27 +12,44 @@
 
         <div class="ctrlHolder noLabel">
           <ul>
-            <li><label for=""><input name="hostel" id="hostel" value="false" type="checkbox"/> Apply for Hostel .</label></li>
+            <li><label><input name="hostel" id="hostel" value="<?php echo (('true' === $this->applicant->hostel)?'true':'false');?>"  <?php echo (('true' === $this->applicant->hostel)?'checked="checked"':'');?> type="checkbox"/> Apply for Hostel .</label></li>
           </ul>
           <p class="formHint"><?php if ($this->applicant->hostel) {
               echo 'NOTE: Previously, you opted for hostel.';
           } else {echo 'Click to opt for hostel.';}  ?>  </p>
         </div>
         
-        <div id="hostelDiv" >
+        <div id="hostelDiv" <?php if (isset($this->applicant->hostel)) {
+                echo (($this->applicant->hostel)?'':'style="display:none;"');
+            } else {echo 'style="display:none;"';} ?> class="ctrlHolder">
+        Terms and condition...........
         </div>
         
         <div class="ctrlHolder noLabel">
           <ul>
-            <li><label for=""><input name="bus" id="bus" value="false" type="checkbox"/> Apply for Bus facility.</label></li>
+            <li><label><input name="bus" id="bus" value="<?php echo (('true' == $this->applicant->bus)?'true':'false');?>" <?php echo (('true' === $this->applicant->bus)?'checked="checked"':'');?> type="checkbox"/> Apply for Bus facility.</label></li>
           </ul>
-          <p class="formHint"><?php if ($this->applicant->hostel) {
+          <p class="formHint"><?php if ($this->applicant->bus) {
               echo 'NOTE: Previously, you opted for bus facility.';
           } else {echo 'Click to opt for Bus facility.';}  ?>  </p>
         </div>
         
-        <div id="busDiv" >
+        <div id="busDiv" <?php if (('true' === $this->applicant->bus)) {
+                echo (('true' === $this->applicant->bus)?'':'style="display:none;"');
+            } else {echo 'style="display:none;"';} ?> class="ctrlHolder">
+          <p class="label">Boarding Station:</p>
+          <ul class="blockLabels">
+            <li><label><input name="boarding_station" type="radio" value="a_city" <?php if (isset($this->applicant->boarding_station)) {
+                echo ('a_city' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');
+            } else {echo 'checked="checked"';} ?> title="Ambala City">Ambala City</label></li>
+            <li><label><input name="boarding_station" type="radio" value="a_cant" <?php echo ('a_cant' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Ambala Cantt"> Ambala Cantt</label></li>
+            <li><label><input name="boarding_station" type="radio" value="shabad" <?php echo ('shabad' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Shahabad"> Shahabad</label></li>
+            <li><label><input name="boarding_station" type="radio" value="saha" <?php echo ('saha' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Saha/Mithapur"> Saha/Mithapur</label></li>
+            <li><label><input name="boarding_station" type="radio" value="kkr" <?php echo ('kkr' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Kurukshetra"> Kurukshetra</label></li>
+          </ul>
+          <p class="formHint">Bus Facility</p>
         </div>
+        
         <div id="submitStatus" style="display:none; padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
       
       	<div class="buttonHolder">
@@ -53,23 +70,38 @@
         });
 
 
+
         $("#hostel").click(function(){
             if ($(this).is(':checked')) {
             	$(this).val(true);
-            	$('#p_fset :input').remove();
-            	$('#p_fset').hide('slow');
+                $( "#hostelDiv").slideDown();
 			} else {
 				$(this).val(false);
-				location.reload();
+                $( "#hostelDiv" ).slideUp('slow');
+			}
+		});
+
+        $("#bus").click(function(){
+            if ($(this).is(':checked')) {
+            	$(this).val(true);
+                $( "#busDiv" ).slideDown();
+            	
+			} else {
+				$(this).val(false);
+                $( "#busDiv" ).slideUp('slow');
 			}
             
 		});
-
+		
         $(function() {
     		$( "#progressbar" ).progressbar({
     			value: <?php echo (100/count($this->steps))*($this->stepNo+1); ?>
     		});
     	});
+
+
+
+    	
       });
 
 
@@ -82,7 +114,7 @@
                     	setTimeout(function(){
                     		window.location = "/applicationform/<?php echo $this->steps[$this->stepNo+1];?> ";
                         	},10000);
-                    });
+                  }).append('<br/><a href="/applicationform/<?php echo $this->steps[$this->stepNo-1];?>" >&lt;&lt;PREV</a>:<a href="/applicationform/<?php echo $this->steps[$this->stepNo+1];?>" >NEXT&gt;&gt;</a>');
 
               },
                   error: function(response) {
@@ -91,17 +123,22 @@
                       }
                   });
       }
+      
       function getValues() {
           var formData = {}; 
           $('form.uniForm :input')
-          		.not('button,:input[value^="e.g."]')
+          		.not('button,input:radio')
           		.each(function(){ 
           			formData[this.name] = this.value; 
               });
 
-
-          var urban = $('input:radio[name=urban]:checked').val();
-          formData.urban = urban; 
+          if ('true' == $('#bus').val()) {
+        	  var boarding_station = $('input:radio[name=boarding_station]:checked').val();
+              formData.boarding_station = boarding_station;
+          } else {
+              formData.boarding_station = null;
+          }
+          
 		return formData;
 	}
     </script>

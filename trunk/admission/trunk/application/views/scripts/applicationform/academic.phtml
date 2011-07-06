@@ -48,6 +48,11 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
             <input name="application_no" id="application_no" value="<?php echo $this->applicant->application_no ?>" data-default-value="e.g. A234834" size="35" maxlength="50" type="text" class="textInput validateAlphaNum"/>
             <p class="formHint">Application Number of AIEEE Form</p>
           </div>
+          <div class="ctrlHolder">
+            <label for=""><em>*</em>AIEEE Marks</label>
+            <input name="aieee_marks" id="aieee_marks" value="<?php echo $this->applicant->aieee_marks ?>" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+            <p class="formHint">Marks of AIEEE Form</p>
+          </div>
               </fieldset>
           <?php case 'twelfth': 
           
@@ -68,9 +73,9 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
           </div>
           
           <div class="ctrlHolder">
-            <label for=""><em>*</em>PCM Percentage</label>
-            <input name="PCM_percent" id="PCM_percent" value="<?php echo $this->applicant->PCM_percent ?>" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
-            <p class="formHint">Percentage obtained by <span class="cName" >Candidate</span> in Physics, Chemistry, Math</p>
+            <label for=""><em>*</em>PCM/PCB Percentage</label>
+            <input name="pcm_percent" id="pcm_percent" value="<?php echo $this->applicant->pcm_percent ?>" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
+            <p class="formHint">Percentage obtained by <span class="cName" >Candidate</span> in Physics, Chemistry, Math/Biology</p>
           </div>
             
           <div class="ctrlHolder">
@@ -83,6 +88,17 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
             <label for=""><em>*</em>Institution</label>
             <input name="institution" id="institution" value="<?php echo $this->applicant->institution ?>" data-default-value="e.g. Saraswati Senior Secondary School" size="35" maxlength="50" type="text" class="textInput required"/>
             <p class="formHint">Institution in 12th</p>
+          </div>
+          <div class="ctrlHolder">
+            <label for=""><em>*</em>City</label>
+            <input name="institution_city" id="institution_city" value="<?php echo $this->applicant->institution_city ?>" data-default-value="e.g. Ambala" size="35" maxlength="50" type="text" class="textInput required"/>
+            <p class="formHint">City of Institution</p>
+          </div>
+          
+          <div class="ctrlHolder">
+            <label for=""><em>*</em>State</label>
+            <input name="institution_state" id="institution_state" value="<?php echo $this->applicant->institution_state ?>" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required"/>
+            <p class="formHint">State of Institution</p>
           </div>
           <div class="ctrlHolder">
             <label for=""><em>*</em>Board</label>
@@ -125,13 +141,37 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
           
           <div class="ctrlHolder">
             <label for=""><em>*</em>Institution</label>
-            <input name="institution" id="institution" value="<?php echo $this->applicant->institution ?>" data-default-value="e.g. Govt. Polytechnic, Ambala" size="35" maxlength="50" type="text" class="textInput required"/>
+            <input name="institution" id="institution" value="<?php echo $this->applicant->institution ?>" data-default-value="e.g. Govt. Polytechnic" size="35" maxlength="50" type="text" class="textInput required"/>
             <p class="formHint">Institution in Diploma</p>
           </div>
+          
+          <div class="ctrlHolder">
+            <label for=""><em>*</em>City</label>
+            <input name="institution_city" id="institution_city" value="<?php echo $this->applicant->institution_city ?>" data-default-value="e.g. Ambala" size="35" maxlength="50" type="text" class="textInput required"/>
+            <p class="formHint">City of Institution</p>
+          </div>
+          
+          <div class="ctrlHolder">
+            <label for=""><em>*</em>State</label>
+            <input name="institution_state" id="institution_state" value="<?php echo $this->applicant->institution_state ?>" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required"/>
+            <p class="formHint">State of Institution</p>
+          </div>
+          
           <div class="ctrlHolder">
             <label for=""><em>*</em>Branch</label>
             <input name="branch" id="branch" value="<?php echo $this->applicant->branch ?>"  data-default-value="e.g. Computer Science" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
             <p class="formHint">Branch of  <span class="cName" >Candidate</span>(in full form only)</p>
+          </div>
+          
+          <div class="ctrlHolder">
+            <label for=""><em>*</em>University</label>
+            <input name="board" id="board" value="<?php echo $this->applicant->board ?>" data-default-value="e.g. KUK" size="35" maxlength="50" type="text" class="textInput required"/>
+            <p class="formHint">Education University in Diploma</p>
+          </div>
+          <div class="ctrlHolder">
+            <label for=""><em>*</em>LEET Marks</label>
+            <input name="leet_marks" id="leet_marks" value="<?php echo $this->applicant->leet_marks ?>" data-default-value="e.g. 120" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+            <p class="formHint">Marks of AIEEE Form</p>
           </div>
           </fieldset>
           <?php 
@@ -141,24 +181,24 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
       }
       ?>
       <fieldset>
-      <h3>Metric Information</h3>
+      <h3>Matric Information</h3>
 
         <div class="ctrlHolder">
             <label for=""><em>*</em>Marks Obtained</label>
-            <input name="metric_marks_obtained" id="metric_marks_obtained" value="<?php echo $this->applicant->metric_marks_obtained ?>" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+            <input name="matric_marks_obtained" id="matric_marks_obtained" value="<?php echo $this->applicant->matric_marks_obtained ?>" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
             <p class="formHint">Marks Obtained by <span class="cName" >Candidate</span></p>
           </div>
           
           <div class="ctrlHolder">
             <label for=""><em>*</em>Total Marks</label>
-            <input name="metric_total_marks" id="metric_total_marks" value="<?php echo $this->applicant->metric_total_marks ?>" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+            <input name="matric_total_marks" id="matric_total_marks" value="<?php echo $this->applicant->matric_total_marks ?>" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
             <p class="formHint">Total Marks</p>
           </div>
           <?php 
           /*
             <div class="ctrlHolder">
             <label for=""><em>*</em>Percentage</label>
-            <input name="metric_percentage" id="percentage" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required"/>
+            <input name="matric_percentage" id="percentage" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required"/>
             <p class="formHint">Percentage obtained by <span class="cName" >Candidate</span></p>
           </div>
            */
@@ -166,30 +206,42 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
          
           
           <div class="ctrlHolder">
-          <label for=""><em>*</em> Metric Roll no.</label>
-          <input name="metric_roll_no" id="metric_roll_no" value="<?php echo $this->applicant->metric_roll_no ?>" data-default-value="e.g. 10654" size="35" maxlength="20" type="text" class="textInput required"/>
-          <p class="formHint">Metric(10th) roll number of <?php echo $this->applicant->first_name?></p>
+          <label for=""><em>*</em> Matric Roll no.</label>
+          <input name="matric_roll_no" id="matric_roll_no" value="<?php echo $this->applicant->matric_roll_no ?>" data-default-value="e.g. 10654" size="35" maxlength="20" type="text" class="textInput required"/>
+          <p class="formHint">matric(10th) roll number of <?php echo $this->applicant->first_name?></p>
         </div>
         
           <div class="ctrlHolder">
             <label for=""><em>*</em>Institution</label>
-            <input name="metric_institution" id="metric_institution" value="<?php echo $this->applicant->metric_institution ?>" data-default-value="e.g. DAV Public School, Kanina" size="35" maxlength="50" type="text" class="textInput required"/>
+            <input name="matric_institution" id="matric_institution" value="<?php echo $this->applicant->matric_institution ?>" data-default-value="e.g. DAV Public School" size="35" maxlength="50" type="text" class="textInput required"/>
             <p class="formHint">Institution in 10th</p>
+          </div>
+          
+          <div class="ctrlHolder">
+            <label for=""><em>*</em>City</label>
+            <input name="matric_city" id="matric_city" value="<?php echo $this->applicant->matric_city ?>" data-default-value="e.g. Kanina" size="35" maxlength="50" type="text" class="textInput required"/>
+            <p class="formHint">City of Institution</p>
+          </div>
+          
+          <div class="ctrlHolder">
+            <label for=""><em>*</em>State</label>
+            <input name="matric_state" id="matric_state" value="<?php echo $this->applicant->matric_state ?>" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required"/>
+            <p class="formHint">State of Institution</p>
           </div>
           
         <div class="ctrlHolder">
           <label for=""><em>*</em> Board</label>
-          <input name="metric_board" id="metric_board" value="<?php echo $this->applicant->metric_board ?>" data-default-value="e.g. HSBE" size="35" maxlength="20" type="text" class="textInput required"/>
-          <p class="formHint">Education Board in metric(10th)</p>
+          <input name="matric_board" id="matric_board" value="<?php echo $this->applicant->matric_board ?>" data-default-value="e.g. HSBE" size="35" maxlength="20" type="text" class="textInput required"/>
+          <p class="formHint">Education Board in matric(10th)</p>
         </div>
         <div class="ctrlHolder">
           <label for=""><em>*</em> Passing year</label>
-          <input name="metric_passing_year" id="metric_pass_year" value="<?php echo $this->applicant->metric_passing_year ?>" data-default-value="e.g. 2005" size="35" maxlength="20" type="text" class="textInput required validateInteger"/>
-          <p class="formHint">Year in which <?php echo $this->applicant->first_name?> passed the metriculation.</p>
+          <input name="matric_passing_year" id="matric_passing_year" value="<?php echo $this->applicant->matric_passing_year ?>" data-default-value="e.g. 2005" size="35" maxlength="20" type="text" class="textInput required validateInteger"/>
+          <p class="formHint">Year in which <?php echo $this->applicant->first_name?> passed the matriculation.</p>
         </div>
         <div class="ctrlHolder">
           <label for="">School Rank</label>
-          <input name="metric_school_rank" id="metric_school_rank" value="<?php echo $this->applicant->metric_school_rank ?>" data-default-value="e.g. 3" size="35" maxlength="20" type="text" class="textInput validateInteger"/>
+          <input name="matric_school_rank" id="matric_school_rank" value="<?php echo $this->applicant->matric_school_rank ?>" data-default-value="e.g. 3" size="35" maxlength="20" type="text" class="textInput validateInteger"/>
           <p class="formHint">Mention school rank of <?php echo $this->applicant->first_name?> if applicable.</p>
         </div>
         </fieldset>
@@ -245,10 +297,8 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
 
 <script>
 	var urlAcadmicInfo = "<?php echo $this->url(array('controller' => 'applicationform', 'action' => 'set'.$this->steps[$stepNo]))?>";
-      $(function(){
 
-  		$( "#sortable" ).sortable();
-  		$( "#sortable" ).disableSelection();
+    $(function(){
   		
         $('form.uniForm').uniform({
           prevent_submit : true
@@ -259,8 +309,12 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
     			value: <?php echo (100/count($this->steps))*($stepNo+1); ?>
     		});
     	});
+		
       });
 
+    function calcPercent(marks,total) {
+        return ((marks/total)*100).toFixed(2);
+    }
       function submit() {
           $.ajax({
               url : urlAcadmicInfo,
@@ -270,7 +324,8 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
                     	setTimeout(function(){
                     		window.location = "/applicationform/<?php echo $this->steps[$stepNo+1];?> ";
                         	},10000);
-                    });
+                  }).append('<br/><a href="/applicationform/<?php echo $this->steps[$stepNo-1];?>" >&lt;&lt;PREV</a>:<a href="/applicationform/<?php echo $this->steps[$stepNo+1];?>" >NEXT&gt;&gt;</a>');
+
 
               },
                   error: function(response) {
@@ -295,6 +350,15 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
     
           var ever_disqualified = $('input:radio[name=ever_disqualified]:checked').val();
           formData.ever_disqualified = ever_disqualified;
+
+
+          var marks = parseInt($('#marks_obtained').val());
+          var total = parseInt($('#total_marks').val());
+          formData.percentage = calcPercent(marks,total);
+
+          marks = parseInt($('#matric_marks_obtained').val());
+          total = parseInt($('#matric_total_marks').val());
+          formData.matric_percentage = calcPercent(marks,total);
           
 		return formData;
 	}

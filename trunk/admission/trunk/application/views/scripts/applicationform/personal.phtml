@@ -92,6 +92,11 @@
         <fieldset>
         <h3>Parent/Guardian Information</h3>
         <div class="ctrlHolder">
+          <label for=""><em>*</em> Landline No.</label>
+          <input name="landline_no" id="landline_no" value="<?php echo $this->applicant->landline_no ?>"  data-default-value="e.g. 017226544331" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
+          <p class="formHint">Landline number, if available.</p>
+        </div>
+        <div class="ctrlHolder">
           <label for=""><em>*</em> Father's name</label>
           <input name="father_name" id="father_name" data-default-value="e.g. Sh. Madan Kumar" value="<?php echo $this->applicant->father_name ?>"  size="35" maxlength="50" type="text" class="textInput required"/>
           <p class="formHint">Father's name of <span class="cName" >Candidate</span></p>
@@ -105,10 +110,15 @@
         
         <div class="ctrlHolder">
           <label for=""><em>*</em> Father's contact</label>
-          <input name="father_contact" id="father_contact" value="<?php echo $this->applicant->father_contact ?>"  data-default-value="e.g. +919416123494" size="35" maxlength="50" type="text" class="textInput required"/>
+          <input name="father_contact" id="father_contact" value="<?php echo $this->applicant->father_contact ?>"  data-default-value="e.g. 9416123494" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
           <p class="formHint">Father's contact number, it should be a mobile number.</p>
         </div>
         
+        <div class="ctrlHolder">
+          <label for="">Father's Office Address</label>
+          <textarea name="father_office_add" id="father_office_add" data-default-value="e.g. PWD B and R Office, Near SDM office, Narnaul"  class="validatePhrase"  rows="25" cols="25"><?php echo $this->applicant->father_office_add ?></textarea>
+          <p class="formHint">Father's Office Address</p>
+        </div>
         <div class="ctrlHolder">
           <label for=""><em>*</em> Mother's name</label>
           <input name="mother_name" id="mother_name" value="<?php echo $this->applicant->mother_name ?>"  data-default-value="e.g. Smt. Sita Devi" size="35" maxlength="50" type="text" class="textInput required"/>
@@ -121,6 +131,11 @@
           <p class="formHint">Mother's occupation</p>
         </div>
         
+        <div class="ctrlHolder">
+          <label for="">Mother's Office Address</label>
+          <textarea name="mother_office_add" id="mother_office_add" data-default-value="e.g. H.no. 3, PWD B and R Colony, Near Old court"  class="validatePhrase"  rows="25" cols="25"><?php echo $this->applicant->mother_office_add ?></textarea>
+          <p class="formHint">Mother's Office Address (if applicable)</p>
+        </div>
         <div class="ctrlHolder">
           <label for="">Guardian's name (if any)</label>
           <input name="guardian_name" id="guardian_name" value="<?php echo $this->applicant->guardian_name ?>" data-default-value="e.g. Sh. Ravi Dutt" size="35" maxlength="50" type="text" class="textInput"/>
@@ -194,7 +209,7 @@
                     	setTimeout(function(){
                     		window.location = "/applicationform/<?php echo $this->steps[$stepNo+1]?>";
                         	},10000);
-                    } );
+                    }).append('<br/><a href="/applicationform/<?php echo $this->steps[$stepNo+1];?>" >NEXT&gt;&gt;</a>');
               },
                   error: function(response) {
                 	  $('#errorBox').text(response.responseText).parent().show();

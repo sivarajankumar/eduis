@@ -150,17 +150,7 @@ class ApplicationFormController extends Admsnz_Base_BaseController
 
     public function printAction ()
     {
+        $this->_helper->layout()->disableLayout();
         $this->view->assign('stepNo',5);
-    }
-    
-    public function hostelAction ()
-    {
-        //TODO Hostel Section.
-    }
-    
-
-    public function busAction ()
-    {
-        //TODO Bus Section.
     }
 }

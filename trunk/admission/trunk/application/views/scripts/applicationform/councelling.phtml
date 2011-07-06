@@ -9,7 +9,6 @@
 	#sortable { list-style-type: none; margin: 0; padding: 0; }
 	#sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; }
 	#sortable li span { position: absolute; margin-left: -1.3em; }
-	#content {background-color: #EFEFEF}
 	</style>
 <div id="progressbar"></div>
 
@@ -28,29 +27,53 @@
         	<li id="ECE" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Electronics and Communication Engineering</li>
         	<li id="ME" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Mechanical Engineering</li>
         </ul>
-        </fieldset>
+        <script type="text/javascript">
+  		$( "#sortable" ).sortable().disableSelection();
+        </script>
         <?php } else { ?>
             <fieldset><h3>Councelling Allotment:</h3>
         <div class="ctrlHolder">
-          <label for="">Allotted Category</label>
-          <select id="allotted_category" name="allotted_category" class="selectInput required">
-          		<option value="BT" selected="selected" >not updated...</option>
-      	  </select>
-          <p class="formHint">Category allotted in councelling.</p>
-        </div>
-        <div class="ctrlHolder">
           <label for="">Allotted Branch</label>
-          <select id="allotted_branch" name="allotted_branch" class="selectInput required">
-          		<option value="BT" selected="selected" >Bio-Technology</option>
+          <select id="allotted_branch" name="allotted_branch" class="selectInput">
+          		<option value="BT">Bio-Technology</option>
           		<option value="CSE">Computer Science and Engineering</option>
           		<option value="ECE">Electronics and Communication Engineering</option>
           		<option value="ME">Mechanical Engineering</option>
       	  </select>
           <p class="formHint">Branch allotted in councelling.</p>
         </div>
-        </fieldset>
         <?php  } ?>
 
+        <div class="ctrlHolder">
+          <label for="">Category</label>
+          <select id="allotted_category" name="allotted_category" class="selectInput required">
+          		<option value="AIC">AIC</option>
+          		<option value="HOGC">HOGC</option>
+          		<option value="SC">SC</option>
+          		<option value="BCA">BCA</option>
+          		<option value="BCB">BCB</option>
+          		<option value="FF">FF</option>
+          		<option value="KM">KM</option>
+          		<option value="EXM">EXM</option>
+          		<option value="HGST">HGST</option>
+          		<option value="PH">PH</option>
+      	  </select>
+          <p class="formHint">Category allotted in councelling.</p>
+        </div>
+        
+        </fieldset>
+            <fieldset><h3>Councelling Info:</h3>
+        <div class="ctrlHolder">
+          <label for="">Councelling Number</label>
+          <select id="councelling_no" name="councelling_no" class="selectInput">
+          		<option value="1">One</option>
+          		<!-- <option value="2">Two</option>
+          		<option value="3">Three</option>
+          		<option value="4">Four</option> -->
+      	  </select>
+          <p class="formHint">Applying for councelling number.</p>
+        </div>
+        </fieldset>
  		<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
         
       <div class="buttonHolder">
@@ -76,14 +99,14 @@
 
       function submit() {
           $.ajax({
-              url : urlAcadmicInfo,
+              url : urlCouncellingInfo,
               data : getValues(),
               success: function(jStatus){
                   $( "#submitStatus" ).html(jStatus).slideDown('slow', function(){
                     	setTimeout(function(){
                     		window.location = "/applicationform/<?php echo $this->steps[$stepNo+1];?>";
                         	},10000);
-                    });
+                    }).append('<br/><a href="/applicationform/<?php echo $this->steps[$stepNo-1];?>" >&lt;&lt;PREV</a>:<a href="/applicationform/<?php echo $this->steps[$stepNo+1];?>" >NEXT&gt;&gt;</a>');
 
               },
                   error: function(response) {
@@ -95,13 +118,14 @@
       function getValues() {
           var formData = {}; 
           $('form.uniForm :input')
-          		.not('button')
+          		.not('button,:input[value^="e.g."]')
           		.each(function(){ 
           			formData[this.name] = this.value; 
               });
-
+          <?php if ('twelfth' == $basis) { ?>
           var choices = $('#sortable').sortable('toArray');
           formData.choices = choices; 
+          <?php }?>
 		return formData;
 	}
     </script>
