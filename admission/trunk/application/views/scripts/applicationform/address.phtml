@@ -14,8 +14,8 @@
         <fieldset>
         <h3>Communication Address:</h3>
         <div class="ctrlHolder">
-          <label for=""><em>*</em>Pin Code</label>
-          <input name="c_pin" id="c_pin" value="<?php echo $this->applicant->c_pin ?>" data-default-value="e.g. 125001" size="35" maxlength="10" type="text" class="textInput required validateInteger"/>
+          <label for="">Pin Code</label>
+          <input name="c_pin" id="c_pin" value="<?php echo $this->applicant->c_pin ?>" data-default-value="e.g. 125001" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
           <p class="formHint">Pincode of communication address.</p>
         </div>
         
@@ -59,8 +59,8 @@
         <fieldset id="p_fset" >
         <h3>Permanent Address:</h3>
         <div class="ctrlHolder">
-          <label for=""><em>*</em>Pin Code</label>
-          <input name="p_pin" id="p_pin" value="<?php echo $this->applicant->p_pin ?>" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput required validateInteger"/>
+          <label for="">Pin Code</label>
+          <input name="p_pin" id="p_pin" value="<?php echo $this->applicant->p_pin ?>" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
           <p class="formHint">Pincode of permanent address.</p>
         </div>
         
@@ -182,7 +182,7 @@
                     	setTimeout(function(){
                     		window.location = "/applicationform/<?php echo $this->steps[$stepNo+1];?> ";
                         	},10000);
-                    });
+                  }).append('<br/><a href="/applicationform/<?php echo $this->steps[$stepNo-1];?>" >&lt;&lt;PREV</a>:<a href="/applicationform/<?php echo $this->steps[$stepNo+1];?>" >NEXT&gt;&gt;</a>');
 
               },
                   error: function(response) {

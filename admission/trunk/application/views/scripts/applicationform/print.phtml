@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ACE COUNSELING (<?php $curr = date("Y"); echo $curr; ?>)</title>
+<style type="text/css">
+div{
+	margin: 1em;
+	padding-bottom: 1em;
+}
+.letterhead {
+	margin-top: 0cm;
+	margin-right: 0cm;
+	margin-left: 0cm;	
+	text-align: center;
+	font-family: "Calibri","sans-serif";
+	padding: 0cm 0cm 1.0pt 0cm;
+}
+.letterhead p {
+	margin-top: 0cm;	
+	margin-bottom: 0cm;	
+	font-size: 12pt;
+	font-weight :bold;
+	line-height:normal;
+	font-family: "Cambria","serif";
+}
+.letterhead a {
+	text-decoration: none;
+	color: black;
+}
+.letterhead h1 {
+	margin-top: 0cm;	
+	margin-right: 0cm;
+	margin-bottom: 2pt;
+	margin-left: 0cm;
+	font-size: 14pt;
+	font-family: "Baskerville Old Face","serif";
+}
+.formData li{
+	clear: both;
+	padding-bottom: 1em;
+	page-break-before: auto;
+}
+.formData li table {
+	font-size: 0.8em;
+}
+hr {
+	color: red;
+}
+.infoHeader {
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+	font-family:sans-serif;
+	color:#888;
+	font-size:0.9em;
+	font-weight:bold;
+    text-transform: capitalize;
+}
+.infoContent {
+	clear:right;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+	text-align: right;
+	font-family:serif;
+	font-size:1.1em;
+    text-transform: capitalize;
+}
+</style>
+<?php 
+$baseUrl = $this->baseUrl();
+// Content Delievery Server i.e. static Files, e.g. CSS, JS, Themes and related images etc
+$cdnServer = 'http://'.CDN_SERVER;
+// Add most common Script files
+// Jquery
+$this->jQuery()->setLocalPath($cdnServer . '/js/jquery-1.5.min.js');
+// Jquery UI
+$this->jQuery()->setUiLocalPath($cdnServer . '/js/jquery-ui-1.8.6.custom.min.js');
+echo $this->jQuery()->uiEnable();
+?>
+</head>
+
+<body>
+<div class="letterhead" >
+<img src="<?php echo 'http://' . CDN_SERVER .  '/images/logos'; ?>/mainlogo.png" alt="ACE logo" />
+<h1> AMBALA COLLEGE OF ENGINEERING &amp; APPLIED RESEARCH (ACE)</h1>
+<p>Devsthali-(Near&nbsp;Mithapur)&nbsp;Ambala-Jagadhari&nbsp;Highway,&nbsp;P.O.&nbsp;SAMBHALKHA-133101(Ambala)</p>
+<p>Approved by Haryana Government and All India Council for Technical Education (AICTE)</p>
+<p>Affiliated to Kurukshetra University,&nbsp;Kurukshetra</p>
+<p>Ph: 0171-2821833, 2822001 - 003, Telefax: 2822002</p>
+<p>
+	<span>Website: <a href="http://www.ambalacollege.com">www.ambalacollege.com</a>, </span>
+	<span>Email: <a href="mailto:info@ambalacollege.com">info@ambalacollege.com</a></span>
+</p>
+</div>
+<hr />
+<h2 style="text-align: center;" >APPLICATION FORM FOR B.TECH ADMISSION <?php echo $curr.'-'.($curr+1); ?></h2>
+
+<fieldset>
+<legend>For Office Use Only</legend>
+<span style="float: left;">Form received on	:	______________________</span>
+<span style="float: right;">Registration No.	:	______________________ </span>
+</fieldset>
+<div style="padding-bottom: 2em;">
+<?php if (isset($this->applicant->choices)) {?>
+    <span class="infoHeader">BRANCH APPLIED FOR (In order of Preference)</span>:
+    <ol>
+    <?php foreach ($this->applicant->choices as $value) { ?>
+        <li style="float: left; width: <?php echo 100/count($this->applicant->choices);?>%;" ><?php echo $value; ?></li>
+    <?php } ?>
+    </ol>
+<?php } else { ?>
+    <span class="infoHeader">BRANCH ALLOTTED </span>: <span class="infoContent" style="font-weight: bolder;"><?php echo $this->applicant->allotted_branch?></span>
+<?php } ?>
+</div>
+<hr />
+<div>
+<ol class="formData">
+<?php 
+//some variables:
+$religion = array(1=>'Hindu','Muslim','Sikh','Christian');
+$station = array('a_city'=>'Ambala City','a_cant'=>'Ambala Cantt','kkr'=>'Kurukshetra','shabad'=>'Shahabad','saha'=>'Saha/Mithapur');
+$basis = strtolower($this->applicant->application_basis);
+?>
+<li><span class="infoHeader">Name</span>:<span class="infoContent "><?php echo $this->applicant->first_name.' '.$this->applicant->middle_name.' '.$this->applicant->last_name?></span> </li>
+<li><span class="infoHeader"><?php echo strtoupper($basis);?> Roll number</span>:<span class="infoContent "><?php echo $this->applicant->roll_no;?></span> </li>
+<li><span class="infoHeader"><?php echo strtoupper($basis);?> Rank</span>:<span class="infoContent ">
+	<?php if ('aieee' == $basis) { 
+	    echo $this->applicant->ai_rank.' (ALL INDIA, Overall)';
+	 } elseif ('diploma' == $basis) { 
+	    echo $this->applicant->diploma_rank;
+ }?></span> </li>
+<li><span class="infoHeader">Date of Birth</span>:<span class="infoContent "><?php $dob = new Zend_Date($this->applicant->dob,'YYYY-MM-dd'); echo $dob->toString('dd-MM-YYYY');?></span> </li>
+<li><span class="infoHeader">Gender</span>:<span class="infoContent "><?php echo ('m' == strtolower($this->applicant->gender))?'Male':'Female';?></span> </li>
+<li><span class="infoHeader">Nationality</span>:<span class="infoContent "><?php echo ('1' == $this->applicant->nationality_id)?'Indian':'NRI';?></span> </li>
+<li><span class="infoHeader">Blood Group</span>:<span class="infoContent "><?php echo $this->applicant->blood_group_id;?></span> </li>
+<li><span class="infoHeader">Religion</span>:<span class="infoContent "><?php echo $religion[$this->applicant->religion_id];?></span> </li>
+<li><span class="infoHeader">Category</span>:<span class="infoContent "><?php echo $this->applicant->allotted_category;?></span> </li>
+<li><span class="infoHeader">Father's name</span>:<span class="infoContent "><?php echo $this->applicant->father_name;?></span>
+<ol style="list-style: lower-roman; font-size: small;" >
+	<li><span class="infoHeader">Contact number</span>:<span class="infoContent"><?php echo $this->applicant->father_contact;?></span></li>
+	<?php if (isset($this->applicant->father_office_add)) { ?>
+	<li><span class="infoHeader">Landline number</span>:<span class="infoContent"><?php echo $this->applicant->landline_no;?></span></li>
+<?php } ?>
+</ol>
+</li>
+<?php if (isset($this->applicant->father_office_add)) { ?>
+<li><span class="infoHeader">Father's Office Address</span>:<span class="infoContent "><?php echo $this->applicant->father_office_add;?></span> </li>
+<?php } ?>
+<li><span class="infoHeader">Mother's name</span>:<span class="infoContent "><?php echo $this->applicant->mother_name;?></span> </li>
+<?php if (isset($this->applicant->mother_office_add)) { ?>
+<li><span class="infoHeader">Mother's Office Address</span>:<span class="infoContent "><?php echo $this->applicant->mother_office_add;?></span> </li>
+<?php } ?>
+<li><span class="infoHeader">Addess for Correspondence</span>:<span class="infoContent "> <?php echo $this->applicant->c_add.'; '.$this->applicant->c_city.'; District:'.$this->applicant->c_district.'; '.$this->applicant->c_state.'; PIN:'.$this->applicant->c_pin;?></span></li>
+<li><span class="infoHeader">Permanent Address</span>:<span class="infoContent "> <?php if ($this->applicant->is_cp_same) {
+    echo("--Same as Correspondence address--");
+} else echo $this->applicant->p_add.'; '.$this->applicant->p_city.'; District:'.$this->applicant->p_district.'; '.$this->applicant->p_state.'; PIN:'.$this->applicant->p_pin;?></span></li>
+<li><span class="infoHeader">E-mail</span>:<span class="infoContent "><?php echo $this->applicant->e_mail;?></span> </li>
+<li><span class="infoHeader">State Of Domicile</span>:<span class="infoContent "><?php echo $this->applicant->state_of_domicile;?></span> </li>
+<li><span class="infoHeader">Details of qualifying examination</span>:<span class="infoContent ">&nbsp;</span>
+<table style="width: 100%;border:1px;border-style:inset;"><tr>
+		<th>EXAM</th>
+		<th>BOARD / UNI.</th>
+		<th>INSTITUTION</th>
+		<th>STATE/UT</th>
+		<th>CITY</th>
+		<th>YEAR</th>
+		<th>ROLL NO.</th>
+		<th>%age</th>
+		</tr>
+	<tbody>
+	<?php 
+	if ('aieee' == $basis OR 'twelfth' == $basis) { ?>
+	    <tr>
+		<td>10+2</td>
+		<td><?php echo $this->applicant->board;?></td>
+		<td><?php echo $this->applicant->institution;?></td>
+		<td><?php echo $this->applicant->institution_state;?></td>
+		<td><?php echo $this->applicant->institution_city;?></td>
+		<td><?php echo $this->applicant->passing_year;?></td>
+		<td><?php echo $this->applicant->roll_no;?></td>
+		<td><?php echo $this->applicant->percentage;?>(Total), <?php echo $this->applicant->pcm_percent;?>(PCM/PCB)</td>
+		</tr>
+	<?php } else { ?>
+	    <tr>
+		<td>Diploma</td>
+		<td><?php echo $this->applicant->board;?></td>
+		<td><?php echo $this->applicant->institution;?></td>
+		<td><?php echo $this->applicant->institution_state;?></td>
+		<td><?php echo $this->applicant->institution_city;?></td>
+		<td><?php echo $this->applicant->passing_year;?></td>
+		<td><?php echo $this->applicant->roll_no;?></td>
+		<td><?php echo $this->applicant->percentage;?>(Total)</td>
+		</tr>
+	<?php }?>
+	</tbody>
+	
+</table></li>
+<div>
+<fieldset>
+<legend>For Office Use Only</legend>
+<span style="float: left;">Admitted to (Branch)  : _______________________________________________________________ </span>
+<table style="width: 100%;">
+		<tr>
+		<th style="border :1px;border-style: solid;">EXAM</th>
+		<th style="border:1px;border-style: solid;">MARKS</th>
+		<th style="border:1px;border-style: solid;">RANK</th>
+		</tr>
+	<tbody>
+	<?php if ('aieee' == $basis) { ?>
+	    <tr>
+		<td style="border:1px;border-style:solid;"><?php echo strtoupper($this->applicant->application_basis);?></td>
+		<td style="border:1px;border-style:solid;">&nbsp;</td>
+		<td style="border:1px;border-style:solid;">&nbsp;</td>
+		</tr >
+	<?php } elseif ('diploma' == $basis) { ?>
+	    <tr>
+		<td style="border:1px;border-style:solid;"><?php echo strtoupper($this->applicant->application_basis);?></td>
+		<td style="border:1px;border-style:solid;">&nbsp;</td>
+		<td style="border:1px;border-style:solid;">&nbsp;</td>
+		</tr>
+	<?php }?>
+	</tbody>
+</table>
+<span >PCM%:       _________________ </span><br/>
+<span >PCB%:       _________________ </span><br/>
+<span >Final Merit: _________________</span>
+</fieldset>
+</div>
+<li><span class="infoHeader">Marks percentage in 10th / equivalent exam</span>:<span class="infoContent "><?php echo $this->applicant->matric_percentage;?></span> </li>
+<li><span class="infoHeader">Details of compartments (if any)</span>:<span class="infoContent ">&nbsp; </span>
+<ol style="list-style: lower-roman; font-size: small;" ><?php if ('true' == strtolower($this->applicant->compartments)) {
+   echo '<li><span class="infoHeader">Subjects (compartments)</span> ___________________________________________________</li>';
+} else ?> <li><span class="infoHeader">Compartments:</span> <span class="infoContent">No</span></li>
+<li><span class="infoHeader">Passed in first attempt</span>:<span class="infoContent"><?php echo ('true' == strtolower($this->applicant->first_attempt))?'Yes':'No';?></span></li> </ol>  </li>
+
+<li><span class="infoHeader">Ever disqualified from exam/studies </span>:<span class="infoContent "><?php echo ('true' == strtolower($this->applicant->ever_disqualified))?'Yes':'No';?></span></li>
+<?php if (isset($this->applicant->guardian_name)) { ?>
+<li><span class="infoHeader">Guardian's Address</span>:<span class="infoContent "><?php echo $this->applicant->g_add.'; '.$this->applicant->g_city.'; District:'.$this->applicant->g_district.'; '.$this->applicant->g_state.'; PIN:'.$this->applicant->g_pin;?></span>
+<br/><span class="infoHeader">Relationship</span>:<span class="infoContent "><?php echo $this->applicant->guardian_relation;?></span>
+</li>
+        <?php }?>
+<li><span class="infoHeader">Annual Income of Father/Guardian</span>:<span class="infoContent ">INR. <?php echo $this->applicant->annual_income;?></span> </li>
+<li><span class="infoHeader">Area</span>:<span class="infoContent "><?php echo ('true' == strtolower($this->applicant->urban))?'Urban':'Rural';?></span> </li>
+<li><span class="infoHeader">Whether applied for Hostel</span>:<span class="infoContent "><?php echo ('true' == strtolower($this->applicant->hostel))?'Yes':'No';?></span> </li>
+
+<li><span class="infoHeader">Whether applied for Bus</span>:<span class="infoContent "><?php echo ('true' == strtolower($this->applicant->bus))?'Yes':'No';?></span>
+<?php if ('true' == strtolower($this->applicant->bus)) { ?>
+<br/><span class="infoHeader">Boarding Station</span>:<span class="infoContent "><?php echo $station[$this->applicant->boarding_station];?></span>
+        <?php }?>
+</li>
+<li>Undertaking for admission 
+ 
+<p>In case my son/daughter/ward is admitted, I undertake that I will make all the payments as laid down by 
+the concerned  Institute.  I solemnly declare  that  the  information provided by me  in  the admission  form  is 
+correct and I have not concealed any relevant facts. I undertake to abide by all the rules and instructions 
+of the University and the Institute. I am taking admission in the institute provisionally at my own risk and 
+responsibility subject to the confirmation of my eligibility by  the University. If at any stage, I am declared 
+ineligible and if my admission is cancelled by the University abinitio under the rules, I will have no claim 
+for it. Further, I undertake not to take part, in any political activity or any agitation whatsoever directly or 
+indirectly. </p>
+<p style="font-weight: bold;text-align: center;" >"I undertake that I shall not include in any act of ragging. I have never been engaged in unlawful activities"</p>
+<br/>
+<span style="float: left;" >Signature of Candidate</span>              <span style="float: right;" >Signature of Parents/Guardian</span> 
+
+</li>
+	</ol>
+
+</div>
+<script>
+$(document).ready(function() {
+    var max = 0;
+    $(".infoHeader").each(function(){
+        if ($(this).width() > max)
+            max = $(this).width();   
+    });
+    $(".infoHeader").width(max);
+});
+</script>
+</body>
+
+</html>
