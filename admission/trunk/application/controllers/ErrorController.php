@@ -30,15 +30,14 @@ class ErrorController extends Zend_Controller_Action
             if (0 <= $code and $code <= 8) {
                 $log->log($errors->exception->getMessage(),$code);
             } else {
-                $log->crit($errors->exception->getMessage());
+                $log->crit($errors->exception->getTraceAsString());
             }
         }
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->_helper->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender();
             $this->getResponse()->setHttpResponseCode(403);
-            $this->getResponse()->clearBody(); 
-            $this->getResponse()->setBody($errors->exception->getMessage());
+            echo $errors->exception->getMessage();
         } else {
             // conditionally display exceptions
             if ($this->getInvokeArg('displayExceptions') == true) {

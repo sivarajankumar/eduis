@@ -7,7 +7,7 @@
 <title>ACE COUNSELING (<?php $curr = date("Y"); echo $curr; ?>)</title>
 <style type="text/css">
 div{
-	margin: 1em;
+	margin-bottom: 1em;
 	padding-bottom: 1em;
 }
 .letterhead {
@@ -21,7 +21,7 @@ div{
 .letterhead p {
 	margin-top: 0cm;	
 	margin-bottom: 0cm;	
-	font-size: 12pt;
+	font-size: 10pt;
 	font-weight :bold;
 	line-height:normal;
 	font-family: "Cambria","serif";
@@ -95,14 +95,14 @@ echo $this->jQuery()->uiEnable();
 </p>
 </div>
 <hr />
-<h2 style="text-align: center;" >APPLICATION FORM FOR B.TECH ADMISSION <?php echo $curr.'-'.($curr+1); ?></h2>
+<h2 style="text-align: center;font-size: smaller;" >ADMISSION FORM FOR B.TECH ADMISSION <?php echo $curr.'-'.($curr+1); ?></h2>
 
 <fieldset>
 <legend>For Office Use Only</legend>
 <span style="float: left;">Form received on	:	______________________</span>
 <span style="float: right;">Registration No.	:	______________________ </span>
 </fieldset>
-<div style="padding-bottom: 2em;">
+<div>
 <?php if (isset($this->applicant->choices)) {?>
     <span class="infoHeader">BRANCH APPLIED FOR (In order of Preference)</span>:
     <ol>
@@ -120,7 +120,7 @@ echo $this->jQuery()->uiEnable();
 <?php 
 //some variables:
 $religion = array(1=>'Hindu','Muslim','Sikh','Christian');
-$station = array('a_city'=>'Ambala City','a_cant'=>'Ambala Cantt','kkr'=>'Kurukshetra','shabad'=>'Shahabad','saha'=>'Saha/Mithapur');
+$station = array('acity'=>'Ambala City','acant'=>'Ambala Cantt','kkr'=>'Kurukshetra','shabd'=>'Shahabad','saha'=>'Saha/Mithapur');
 $basis = strtolower($this->applicant->application_basis);
 ?>
 <li><span class="infoHeader">Name</span>:<span class="infoContent "><?php echo $this->applicant->first_name.' '.$this->applicant->middle_name.' '.$this->applicant->last_name?></span> </li>
@@ -128,8 +128,8 @@ $basis = strtolower($this->applicant->application_basis);
 <li><span class="infoHeader"><?php echo strtoupper($basis);?> Rank</span>:<span class="infoContent ">
 	<?php if ('aieee' == $basis) { 
 	    echo $this->applicant->ai_rank.' (ALL INDIA, Overall)';
-	 } elseif ('diploma' == $basis) { 
-	    echo $this->applicant->diploma_rank;
+	 } elseif ('leet' == $basis) { 
+	    echo $this->applicant->leet_rank;
  }?></span> </li>
 <li><span class="infoHeader">Date of Birth</span>:<span class="infoContent "><?php $dob = new Zend_Date($this->applicant->dob,'YYYY-MM-dd'); echo $dob->toString('dd-MM-YYYY');?></span> </li>
 <li><span class="infoHeader">Gender</span>:<span class="infoContent "><?php echo ('m' == strtolower($this->applicant->gender))?'Male':'Female';?></span> </li>
@@ -179,7 +179,7 @@ $basis = strtolower($this->applicant->application_basis);
 		<td><?php echo $this->applicant->institution_state;?></td>
 		<td><?php echo $this->applicant->institution_city;?></td>
 		<td><?php echo $this->applicant->passing_year;?></td>
-		<td><?php echo $this->applicant->roll_no;?></td>
+		<td><?php echo $this->applicant->board_roll;?></td>
 		<td><?php echo $this->applicant->percentage;?>(Total), <?php echo $this->applicant->pcm_percent;?>(PCM/PCB)</td>
 		</tr>
 	<?php } else { ?>
@@ -214,7 +214,7 @@ $basis = strtolower($this->applicant->application_basis);
 		<td style="border:1px;border-style:solid;">&nbsp;</td>
 		<td style="border:1px;border-style:solid;">&nbsp;</td>
 		</tr >
-	<?php } elseif ('diploma' == $basis) { ?>
+	<?php } elseif ('leet' == $basis) { ?>
 	    <tr>
 		<td style="border:1px;border-style:solid;"><?php echo strtoupper($this->applicant->application_basis);?></td>
 		<td style="border:1px;border-style:solid;">&nbsp;</td>
@@ -252,7 +252,7 @@ $basis = strtolower($this->applicant->application_basis);
 </li>
 <li>Undertaking for admission 
  
-<p>In case my son/daughter/ward is admitted, I undertake that I will make all the payments as laid down by 
+<p style="font-size: smaller; ">In case my son/daughter/ward is admitted, I undertake that I will make all the payments as laid down by 
 the concerned  Institute.  I solemnly declare  that  the  information provided by me  in  the admission  form  is 
 correct and I have not concealed any relevant facts. I undertake to abide by all the rules and instructions 
 of the University and the Institute. I am taking admission in the institute provisionally at my own risk and 

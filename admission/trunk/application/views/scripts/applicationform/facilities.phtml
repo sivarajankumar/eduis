@@ -14,7 +14,7 @@
           <ul>
             <li><label><input name="hostel" id="hostel" value="<?php echo (('true' === $this->applicant->hostel)?'true':'false');?>"  <?php echo (('true' === $this->applicant->hostel)?'checked="checked"':'');?> type="checkbox"/> Apply for Hostel .</label></li>
           </ul>
-          <p class="formHint"><?php if ($this->applicant->hostel) {
+          <p class="formHint"><?php if (('true' === $this->applicant->hostel)?true:false) {
               echo 'NOTE: Previously, you opted for hostel.';
           } else {echo 'Click to opt for hostel.';}  ?>  </p>
         </div>
@@ -29,7 +29,7 @@
           <ul>
             <li><label><input name="bus" id="bus" value="<?php echo (('true' == $this->applicant->bus)?'true':'false');?>" <?php echo (('true' === $this->applicant->bus)?'checked="checked"':'');?> type="checkbox"/> Apply for Bus facility.</label></li>
           </ul>
-          <p class="formHint"><?php if ($this->applicant->bus) {
+          <p class="formHint"><?php if (('true' === $this->applicant->bus)?true:false) {
               echo 'NOTE: Previously, you opted for bus facility.';
           } else {echo 'Click to opt for Bus facility.';}  ?>  </p>
         </div>
@@ -39,11 +39,11 @@
             } else {echo 'style="display:none;"';} ?> class="ctrlHolder">
           <p class="label">Boarding Station:</p>
           <ul class="blockLabels">
-            <li><label><input name="boarding_station" type="radio" value="a_city" <?php if (isset($this->applicant->boarding_station)) {
-                echo ('a_city' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');
+            <li><label><input name="boarding_station" type="radio" value="acity" <?php if (isset($this->applicant->boarding_station)) {
+                echo ('acity' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');
             } else {echo 'checked="checked"';} ?> title="Ambala City">Ambala City</label></li>
-            <li><label><input name="boarding_station" type="radio" value="a_cant" <?php echo ('a_cant' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Ambala Cantt"> Ambala Cantt</label></li>
-            <li><label><input name="boarding_station" type="radio" value="shabad" <?php echo ('shabad' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Shahabad"> Shahabad</label></li>
+            <li><label><input name="boarding_station" type="radio" value="acant" <?php echo ('acant' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Ambala Cantt"> Ambala Cantt</label></li>
+            <li><label><input name="boarding_station" type="radio" value="shabd" <?php echo ('shabd' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Shahabad"> Shahabad</label></li>
             <li><label><input name="boarding_station" type="radio" value="saha" <?php echo ('saha' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Saha/Mithapur"> Saha/Mithapur</label></li>
             <li><label><input name="boarding_station" type="radio" value="kkr" <?php echo ('kkr' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Kurukshetra"> Kurukshetra</label></li>
           </ul>

@@ -23,14 +23,14 @@ class Admsn_Model_Member_Candidate {
     /**
      * Get data mapper
      *
-     * Lazy loads Admsn_Model_Member_CandidateMapper instance if no mapper registered.
+     * Lazy loads Admsn_Model_Mapper_Member_Candidate instance if no mapper registered.
      * 
-     * @return Admsn_Model_Member_CandidateMapper
+     * @return Admsn_Model_Mapper_Member_Candidate
      */
     public function getMapper()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Admsn_Model_Member_CandidateMapper());
+            $this->setMapper(new Admsn_Model_Mapper_Member_Candidate());
         }
         return $this->_mapper;
     }
@@ -82,10 +82,24 @@ class Admsn_Model_Member_Candidate {
      * @return string|number $roll_no - roll number
      */
     public function getRoll_no(){
-        if (isset($this->_roll_no)&& $this->_roll_no) {
+        if (isset($this->_roll_no)) {
             return $this->_roll_no;
         }
         throw new Zend_Exception('Roll number is not set!!', Zend_Log::ERR);
+    }
+    
+
+    /**
+     * Set image number
+     * @param string|number $image_no - Image number
+     * @return mixed
+     */
+    public function setImage_no($image_no){
+          return $this->getMapper()
+                ->getDbTable()
+                ->getAdapter()
+                ->query('UPDATE `applicants` SET `image_no`=? WHERE `roll_no`=?;',
+                                array($image_no,self::getRoll_no()));
     }
 }
     

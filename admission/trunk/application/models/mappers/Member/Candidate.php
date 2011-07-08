@@ -7,7 +7,7 @@
  * @package    Admission
  * @subpackage Model
  */
-class Admsn_Model_Member_CandidateMapper
+class Admsn_Model_Mapper_Member_Candidate
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -18,7 +18,7 @@ class Admsn_Model_Member_CandidateMapper
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Admsn_Model_Member_CandidateMapper
+     * @return Admsn_Model_Mapper_Member_Candidate
      */
     public function setDbTable($dbTable)
     {
