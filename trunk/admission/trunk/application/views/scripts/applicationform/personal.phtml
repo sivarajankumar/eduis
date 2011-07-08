@@ -78,6 +78,12 @@
         </div>
         
         <div class="ctrlHolder">
+          <label for="">Cast</label>
+          <input name="cast" id="cast" value="<?php echo $this->applicant->cast ?>"  data-default-value="e.g. Arora" size="35" maxlength="12" type="text" class="textInput validatePhrase"/>
+          <p class="formHint">Cast of <span class="cName" >Candidate</span></p>
+        </div>
+        
+        <div class="ctrlHolder">
           <label for="">Email address</label>
           <input name="e_mail" id="e_mail" value="<?php echo $this->applicant->e_mail ?>" data-default-value="e.g. ravigupta@gmail.com"  size="35" maxlength="50" type="text" class="textInput validateEmail"/>
           <p class="formHint">A valid email address</p>
@@ -104,8 +110,13 @@
         
         <div class="ctrlHolder">
           <label for="">Father's occupation</label>
-          <input name="father_occupation" id="father_occupation" value="<?php echo $this->applicant->father_occupation ?>" data-default-value="e.g. Civil Engineer (Govt.)" size="35" maxlength="50" type="text" class="textInput"/>
+          <input name="father_occupation" id="father_occupation" value="<?php echo $this->applicant->father_occupation ?>" data-default-value="e.g. Teacher" size="35" maxlength="50" type="text" class="textInput"/>
           <p class="formHint">Father's occupation</p>
+        </div>
+        <div class="ctrlHolder">
+          <label for="">Father's designation</label>
+          <input name="father_designation" id="father_designation" value="<?php echo $this->applicant->father_designation ?>" data-default-value="e.g. Lecturer" size="35" maxlength="50" type="text" class="textInput"/>
+          <p class="formHint">Father's designation</p>
         </div>
         
         <div class="ctrlHolder">
@@ -127,8 +138,14 @@
         
         <div class="ctrlHolder">
           <label for="">Mother's occupation</label>
-          <input name="mother_occupation" id="mother_occupation" value="<?php echo $this->applicant->mother_occupation ?>" data-default-value="e.g. Housewife" size="35" maxlength="50" type="text" class="textInput"/>
+          <input name="mother_occupation" id="mother_occupation" value="<?php echo $this->applicant->mother_occupation ?>" data-default-value="e.g. Banking" size="35" maxlength="50" type="text" class="textInput"/>
           <p class="formHint">Mother's occupation</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for="">Mother's designation</label>
+          <input name="mother_designation" id="mother_designation" value="<?php echo $this->applicant->mother_designation ?>" data-default-value="e.g. Probationary officer" size="35" maxlength="50" type="text" class="textInput"/>
+          <p class="formHint">Mother's designation</p>
         </div>
         
         <div class="ctrlHolder">

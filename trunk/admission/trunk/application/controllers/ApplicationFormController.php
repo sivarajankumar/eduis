@@ -150,6 +150,10 @@ class ApplicationFormController extends Admsnz_Base_BaseController
 
     public function printAction ()
     {
+        if (!isset($this->applicant->saved)) {
+            $applicant = new Admsn_Model_DbTable_Applicant();
+            $this->applicant->saved = $applicant->save();
+        }
         $this->_helper->layout()->disableLayout();
         $this->view->assign('stepNo',5);
     }

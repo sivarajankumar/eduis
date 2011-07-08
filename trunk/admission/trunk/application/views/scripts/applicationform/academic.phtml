@@ -79,6 +79,11 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
           </div>
             
           <div class="ctrlHolder">
+          <label for=""><em>*</em> 10+2 Roll no.</label>
+          <input name="board_roll" id="board_roll" value="<?php echo $this->applicant->board_roll ?>" data-default-value="e.g. 2310654" size="35" maxlength="20" type="text" class="textInput"/>
+          <p class="formHint">10+2 roll number of <?php echo $this->applicant->first_name?></p>
+        </div>
+          <div class="ctrlHolder">
             <label for=""><em>*</em>Year of Passing</label>
             <input name="passing_year" id="passing_year" value="<?php echo $this->applicant->passing_year ?>" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput required validateInteger validateMax val-<?php echo date('Y');?>"/>
             <p class="formHint">Year in which <span class="cName" >Candidate</span> passed the 12th</p>
@@ -113,12 +118,12 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
           </div>
           </fieldset>
           <?php break; 
-          case 'diploma':?>
+          case 'leet':?>
           <fieldset>
           <h3>Diploma Marks</h3>
           <div class="ctrlHolder">
             <label for=""><em>*</em>Rank in DET</label>
-            <input name="diploma_rank" id="diploma_rank" value="<?php echo $this->applicant->diploma_rank ?>" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+            <input name="leet_rank" id="leet_rank" value="<?php echo $this->applicant->leet_rank ?>" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
             <p class="formHint">Rank of <span class="cName" >Candidate</span></p>
           </div>
           <div class="ctrlHolder">
@@ -171,7 +176,7 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
           <div class="ctrlHolder">
             <label for=""><em>*</em>LEET Marks</label>
             <input name="leet_marks" id="leet_marks" value="<?php echo $this->applicant->leet_marks ?>" data-default-value="e.g. 120" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
-            <p class="formHint">Marks of AIEEE Form</p>
+            <p class="formHint">Marks of LEET</p>
           </div>
           </fieldset>
           <?php 
