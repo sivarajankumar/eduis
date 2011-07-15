@@ -7,7 +7,8 @@
     <![endif]-->
 <div id="progressbar"></div>
 <form action="javascript:submit();" class="uniForm">
-<h2><?php echo ucfirst($this->steps[$this->stepNo]);?>:</h2>
+<h2><?php $stepNo = $this->stepNo;
+ echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$this->stepNo]);?>:</h2>
 <hr />
 
         <div class="ctrlHolder noLabel">

@@ -68,6 +68,11 @@ hr {
     text-transform: capitalize;
 }
 </style>
+<style type="text/css" media="print" >
+.noprint {
+	display:none;
+}
+</style>
 <?php 
 $baseUrl = $this->baseUrl();
 // Content Delievery Server i.e. static Files, e.g. CSS, JS, Themes and related images etc
@@ -82,6 +87,10 @@ echo $this->jQuery()->uiEnable();
 </head>
 
 <body>
+<h2 class="noprint"><?php
+$stepNo = $this->stepNo;
+echo 'Step '.($stepNo+1).'/'.count($this->steps).': PRINT THIS PAGE';?>:</h2>
+<hr class="noprint" />
 <div class="letterhead" >
 <img src="<?php echo 'http://' . CDN_SERVER .  '/images/logos'; ?>/mainlogo.png" alt="ACE logo" />
 <h1> AMBALA COLLEGE OF ENGINEERING &amp; APPLIED RESEARCH (ACE)</h1>
@@ -152,10 +161,10 @@ $basis = strtolower($this->applicant->application_basis);
 <?php if (isset($this->applicant->mother_office_add)) { ?>
 <li><span class="infoHeader">Mother's Office Address</span>:<span class="infoContent "><?php echo $this->applicant->mother_office_add;?></span> </li>
 <?php } ?>
-<li><span class="infoHeader">Addess for Correspondence</span>:<span class="infoContent "> <?php echo $this->applicant->c_add.'; '.$this->applicant->c_city.'; District:'.$this->applicant->c_district.'; '.$this->applicant->c_state.'; PIN:'.$this->applicant->c_pin;?></span></li>
-<li><span class="infoHeader">Permanent Address</span>:<span class="infoContent "> <?php if ($this->applicant->is_cp_same) {
+<li><span class="infoHeader">Addess for Correspondence</span>:<span class="infoContent "> <?php echo $this->applicant->c_add.'; '.$this->applicant->c_city.';'.$this->applicant->c_state.'; PIN:'.$this->applicant->c_pin;?></span></li>
+<li><span class="infoHeader">Permanent Address</span>:<span class="infoContent "> <?php if ('true'==strtolower($this->applicant->is_cp_same) OR true==strtolower($this->applicant->is_cp_same)) {
     echo("--Same as Correspondence address--");
-} else echo $this->applicant->p_add.'; '.$this->applicant->p_city.'; District:'.$this->applicant->p_district.'; '.$this->applicant->p_state.'; PIN:'.$this->applicant->p_pin;?></span></li>
+} else echo $this->applicant->p_add.'; '.$this->applicant->p_city.';'.$this->applicant->p_state.'; PIN:'.$this->applicant->p_pin;?></span></li>
 <li><span class="infoHeader">E-mail</span>:<span class="infoContent "><?php echo $this->applicant->e_mail;?></span> </li>
 <li><span class="infoHeader">State Of Domicile</span>:<span class="infoContent "><?php echo $this->applicant->state_of_domicile;?></span> </li>
 <li><span class="infoHeader">Details of qualifying examination</span>:<span class="infoContent ">&nbsp;</span>

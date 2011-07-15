@@ -15,11 +15,14 @@ class Admsn_Model_DbTable_Applicant extends Zend_Db_Table
         'allotted_category' => $this->applicant->allotted_category, 
         'allotted_branch' => $this->applicant->allotted_branch, 
         'state_of_domicile' => $this->applicant->state_of_domicile, 
-        'urban' => $this->applicant->urban, 
-        'hostel' => ('true' == $this->applicant->hostel) ? 1 : 0, 
-        'bus' => ('true' == $this->applicant->bus) ? 1 : 0, 
+        'urban' => ('true' == $this->applicant->urban or true == $this->applicant->urban) ? 1 : 0, 
+        'hostel' => ('true' == $this->applicant->hostel or true == $this->applicant->hostel) ? 1 : 0, 
+        'bus' => ('true' == $this->applicant->bus or true == $this->applicant->bus) ? 1 : 0, 
         'ever_disqualified' => $this->applicant->ever_disqualified, 
         'image_no' => $this->applicant->image_no, 
+        'councelling_fees' => $this->applicant->councelling_fees, 
+        'councelling_bank' => $this->applicant->councelling_bank, 
+        'councelling_type' => $this->applicant->councelling_type, 
         'specialities' => $this->applicant->specialities);
         
         $matric = array('roll_no' => $this->applicant->roll_no, 
@@ -46,31 +49,33 @@ class Admsn_Model_DbTable_Applicant extends Zend_Db_Table
         'e_mail' => $this->applicant->e_mail);
         
         $guardians = array('roll_no' => $this->applicant->roll_no, 
+        'landline_no' => $this->applicant->landline_no, 
         'father_name' => $this->applicant->father_name, 
-        'mother_name' => $this->applicant->mother_name, 
         'father_occupation' => $this->applicant->father_occupation, 
         'father_designation' => $this->applicant->father_designation, 
-        'mother_occupation' => $this->applicant->mother_occupation, 
-        'mother_occupation' => $this->applicant->mother_occupation, 
-        'father_contact' => $this->applicant->father_contact, 
         'father_office_add' => $this->applicant->father_office_add, 
+        'father_contact' => $this->applicant->father_contact, 
+        'mother_name' => $this->applicant->mother_name, 
+        'mother_occupation' => $this->applicant->mother_occupation, 
+        'mother_designation' => $this->applicant->mother_designation, 
+        'mother_office_add' => $this->applicant->mother_office_add,
         'guardian_name' => $this->applicant->guardian_name, 
         'guardian_contact' => $this->applicant->guardian_contact, 
         'guardian_relation' => $this->applicant->guardian_relation, 
-        'annual_income' => $this->applicant->annual_income, 
-        'mother_office_add' => $this->applicant->mother_office_add, 
-        'landline_no' => $this->applicant->landline_no);
+        'annual_income' => $this->applicant->annual_income);
         
         $address = array('roll_no' => $this->applicant->roll_no, 
         'c_pin' => $this->applicant->c_pin, 'c_city' => $this->applicant->c_city, 
         'c_state' => $this->applicant->c_state, 
         'c_add' => $this->applicant->c_add, 
-        'is_cp_same' => $this->applicant->is_cp_same, 
-        'p_pin' => $this->applicant->p_pin, 'p_city' => $this->applicant->p_city, 
+        'is_cp_same' => ('true' == strtolower($this->applicant->is_cp_same)  OR true==$this->applicant->is_cp_same) ? 1 : 0, 
+        'p_pin' => $this->applicant->p_pin,
+        'p_city' => $this->applicant->p_city, 
         'p_state' => $this->applicant->p_state, 
         'p_add' => $this->applicant->p_add, 
-        'has_guardian' => $this->applicant->has_guardian, 
-        'g_pin' => $this->applicant->g_pin, 'g_city' => $this->applicant->g_city, 
+        'has_guardian' => ('true' == strtolower($this->applicant->has_guardian)  OR true==$this->applicant->has_guardian) ? 1 : 0, 
+        'g_pin' => $this->applicant->g_pin,
+        'g_city' => $this->applicant->g_city, 
         'g_state' => $this->applicant->g_state, 
         'g_add' => $this->applicant->g_add);
         
@@ -144,30 +149,3 @@ class Admsn_Model_DbTable_Applicant extends Zend_Db_Table
         }
     }
 }
-
-/*
- CREATE  TABLE IF NOT EXISTS `admission`.`leet` (
-  `roll_no` VARCHAR(20) NOT NULL ,
-  `leet_rank` INT NOT NULL ,
-  `leet_marks` INT NULL ,
-  //`marks_obtained` INT NULL ,
-  //`total_marks` INT NULL ,
-  //`percentage` TINYINT NULL ,
-  //`remarks` INT NULL ,
-  //`passing_year` YEAR NULL ,
-  `branch` VARCHAR(45) NULL ,
-  //`board` VARCHAR(45) NULL ,
-  //`institution` VARCHAR(120) NULL ,
-  //`institution_city` VARCHAR(45) NULL ,
- // `institution_state` VARCHAR(4) NULL ,
-  `board_roll` VARCHAR(45) NULL ,
-  `migration_date` DATE NULL ,
-  PRIMARY KEY (`roll_no`) ,
-  INDEX `fk_diploma_applicants1` (`roll_no` ASC) ,
-  UNIQUE INDEX `diploma_rank_UNIQUE` (`leet_rank` ASC) ,
-  CONSTRAINT `fk_diploma_applicants1`
-    FOREIGN KEY (`roll_no` )
-    REFERENCES `admission`.`applicants` (`roll_no` )
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB
