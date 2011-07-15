@@ -77,6 +77,7 @@ class AuthenticateController extends Zend_Controller_Action
     }
     public function logoutAction ()
     {
+            $this->_helper->viewRenderer->setNoRender();
         $serverUrl = 'http://' . AUTH_SERVER . self::AUTH_PATH . '/logout';
         $client = new Zend_Http_Client($serverUrl, array('timeout' => 30));
         if (isset($_COOKIE[self::AUTH_SID])) {
@@ -99,5 +100,34 @@ class AuthenticateController extends Zend_Controller_Action
         }
         Zend_Auth::getInstance()->clearIdentity();
         Zend_Session::destroy();
+    }
+    public function googleAction() {
+        
+            //$this->_helper->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender();
+                        $my_calendar = 'http://www.google.com/calendar/feeds/default/private/full';
+                        if (! isset($_SESSION['cal_token'])) {
+                            if (isset($_GET['token'])) {
+                                // You can convert the single-use token to a session token.
+                                $session_token = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);
+                                // Store the session token in our session.
+                                $_SESSION['cal_token'] = $session_token;
+                            } else {
+                                // Display link to generate single-use token
+                                $googleUri = Zend_Gdata_AuthSub::getAuthSubTokenUri(
+                                'http://' . $_SERVER['SERVER_NAME'] .
+                                 $_SERVER['REQUEST_URI'], $my_calendar, 0, 1);
+                                echo "Click <a href='$googleUri'>here</a> " .
+                                 "to authorize this application.";
+                                exit();
+                            }
+                        }
+                        // Create an authenticated HTTP Client to talk to Google.
+                        $client = Zend_Gdata_AuthSub::getHttpClient(
+                        $_SESSION['cal_token']);
+                        // Create a Gdata object using the authenticated Http Client
+                        $cal = new Zend_Gdata_Calendar(
+                        $client);
+                        var_export($cal->getCalendarListFeed()->count());
     }
 }

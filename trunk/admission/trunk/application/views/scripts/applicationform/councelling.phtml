@@ -13,8 +13,8 @@
 <div id="progressbar"></div>
 
 <form action="javascript:submit();" class="uniForm">
-<h2><?php $stepNo = 4;
-        echo ucfirst($this->steps[$stepNo]);?>:</h2>
+<h2><?php $stepNo = $this->stepNo;
+        echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$stepNo]);?>:</h2>
         <hr/>
 <?php 
       $basis = strtolower($this->applicant->application_basis);
@@ -64,14 +64,39 @@
         </fieldset>
             <fieldset><h3>Councelling Info:</h3>
         <div class="ctrlHolder">
+          <label for="councelling_fees"><em>*</em>Councelling Fees Paid</label>
+          <input name="councelling_fees" id="councelling_fees" value="500" disabled="disabled"  size="35" maxlength="3" type="text" readonly="readonly" class="textInput required validateInteger"/>
+          <p class="formHint">Amount paid as councelling fees</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for="councelling_bank">Councelling fees Bank</label>
+          <select id="councelling_bank" name="councelling_bank" class="selectInput">
+          		<option value="PNB">PNB</option>
+          		<option value="AXIS">AXIS</option>
+      	  </select>
+          <p class="formHint">Bank in which councelling fees is submitted.</p>
+        </div>
+        
+        
+        <div class="ctrlHolder">
           <label for="">Councelling Number</label>
-          <select id="councelling_no" name="councelling_no" class="selectInput">
-          		<option value="1">One</option>
-          		<!-- <option value="2">Two</option>
+          <select id="councelling_no" name="councelling_no" class="selectInput" disabled="disabled" >
+          <!-- <option value="1">One</option> -->
+          		<option value="2">Two</option>
+          		<!-- <option value="1">One</option>
           		<option value="3">Three</option>
           		<option value="4">Four</option> -->
       	  </select>
           <p class="formHint">Applying for councelling number.</p>
+        </div>
+        <div class="ctrlHolder">
+          <label for="councelling_type">Councelling Type</label>
+          <select id="councelling_type" name="councelling_type" class="selectInput" disabled="disabled">
+          		<option value="EXTERNAL">EXTERNAL</option>
+          		<!-- <option value="INTERNAL">INTERNAL</option> -->
+      	  </select>
+          <p class="formHint"></p>
         </div>
         </fieldset>
  		<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>

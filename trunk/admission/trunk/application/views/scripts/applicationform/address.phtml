@@ -9,82 +9,89 @@
 
     <form action="javascript:submit();" class="uniForm">
         <h2><?php $stepNo = 2;
-        echo ucfirst($this->steps[$stepNo]);?>:</h2>
+        echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$stepNo]);?>:</h2>
         <hr/>
         <fieldset>
-        <h3>Communication Address:</h3>
-        <div class="ctrlHolder">
-          <label for="">Pin Code</label>
-          <input name="c_pin" id="c_pin" value="<?php echo $this->applicant->c_pin ?>" data-default-value="e.g. 125001" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
-          <p class="formHint">Pincode of communication address.</p>
-        </div>
         
-        <div class="ctrlHolder">
-          <label for=""><em>*</em>State/Provience</label>
-          <input name="c_state" id="c_state" value="<?php echo $this->applicant->c_state ?>" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-          <p class="formHint">State/Territory of communication address.</p>
-        </div>
-        
-        <div class="ctrlHolder">
-          <label for=""><em>*</em>District</label>
-          <input name="c_district" id="c_district" value="<?php echo $this->applicant->c_district ?>" data-default-value="e.g. Mohindergarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-          <p class="formHint">District of communication address.<br/>(It should be same as above if Union Territory)</p>
-        </div>
-        
-        <div class="ctrlHolder">
-          <label for=""><em>*</em>City/Town/Village</label>
-          <input name="c_city" id="c_city" value="<?php echo $this->applicant->c_city ?>" data-default-value="e.g. Narnaul" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-          <p class="formHint">City/Town/Village of communication address.<br/>(It may be same as District)</p>
-        </div>
-        
-        <div class="ctrlHolder">
-          <label for=""><em>*</em>Address</label>
-          <textarea name="c_add" id="c_add" data-default-value="e.g. H.no. 3, PWD B&R Colony, Near Old court"  class="validatePhrase"  rows="25" cols="25"><?php echo $this->applicant->c_add ?></textarea>
-          <p class="formHint">House number and Area etc.</p>
-        </div>
-        </fieldset>
-
         <div class="ctrlHolder noLabel">
         </div>
-                
+        
         <div class="ctrlHolder noLabel">
           <ul>
-            <li><label for=""><input name="is_cp_same" id="is_cp_same" value="false" type="checkbox"/> Communication and Permanent Addesses are same.</label></li>
+            <li><label for="is_cp_same"><input name="is_cp_same" id="is_cp_same" value="false" type="checkbox"/> Communication and Permanent Addesses are same.</label></li>
           </ul>
           <p class="formHint"><?php if ($this->applicant->is_cp_same) {
               echo 'NOTE: Previously, you selected both addresses as same.';
           } else {echo 'Click if both addresses are same.';}  ?>  </p>
         </div>
+        
+        <div class="ctrlHolder">
+          <p class="label">Area</p>
+          <ul class="blockLabels alternate">
+            <li><label ><input name="urban" type="radio" value="true" checked="checked" title="Urban">Urban</label></li>
+            <li><label ><input  name="urban" type="radio" value="false" title="Rural">Rural</label></li>
+          </ul>
+          <p class="formHint">Area which you belong to</p>
+        </div>
+        <h3>Communication Address:</h3>
+        <div class="ctrlHolder">
+          <label for="c_pin">Pin Code</label>
+          <input name="c_pin" id="c_pin" value="<?php echo $this->applicant->c_pin ?>" data-default-value="e.g. 125001" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
+          <p class="formHint">Pincode of communication address.</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for="c_state"><em>*</em>State/Provience</label>
+          <input name="c_state" id="c_state" value="<?php echo $this->applicant->c_state ?>" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+          <p class="formHint">State/Territory of communication address.</p>
+        </div>
+        <div class="ctrlHolder">
+          <label for=""><em>*</em>District</label>
+          <input name="c_district" id="c_district" value="<?php echo $this->applicant->c_district ?>" data-default-value="e.g. Mohindergarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+          <p class="formHint">District of communication address.<br/>(It should be same as above if Union Territory)</p>
+        </div>
+        <div class="ctrlHolder">
+          <label for="c_city"><em>*</em>City/Town/Village</label>
+          <input name="c_city" id="c_city" value="<?php echo $this->applicant->c_city ?>" data-default-value="e.g. Narnaul" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+          <p class="formHint">City/Town/Village of communication address.<br/>(It may be same as District)</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for="c_add"><em>*</em>Address</label>
+          <textarea name="c_add" id="c_add" data-default-value="e.g. H.no. 3, PWD B&R Colony, Near Old court"    rows="25" cols="25"><?php echo $this->applicant->c_add ?></textarea>
+          <p class="formHint">House number and Area etc.</p>
+        </div>
+        </fieldset>
+
+                
 
         <fieldset id="p_fset" >
         <h3>Permanent Address:</h3>
         <div class="ctrlHolder">
-          <label for="">Pin Code</label>
+          <label for="p_pin">Pin Code</label>
           <input name="p_pin" id="p_pin" value="<?php echo $this->applicant->p_pin ?>" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
           <p class="formHint">Pincode of permanent address.</p>
         </div>
         
         <div class="ctrlHolder">
-          <label for=""><em>*</em>State/Territory</label>
+          <label for="p_state"><em>*</em>State/Territory</label>
           <input name="p_state" id="p_state" value="<?php echo $this->applicant->p_state ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
           <p class="formHint">State/Territory of permanent address.</p>
         </div>
-        
         <div class="ctrlHolder">
-          <label for=""><em>*</em>District</label>
+          <label for="p_district"><em>*</em>District</label>
           <input name="p_district" id="p_district" value="<?php echo $this->applicant->p_district ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
           <p class="formHint">District of permanent address.<br/>(It should be same as above if Union Territory)</p>
         </div>
-        
         <div class="ctrlHolder">
-          <label for=""><em>*</em>City/Town/Village</label>
+          <label for="p_city"><em>*</em>City/Town/Village</label>
           <input name="p_city" id="p_city" value="<?php echo $this->applicant->p_city ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
           <p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
         </div>
         
         <div class="ctrlHolder">
-          <label for=""><em>*</em>Address</label>
-          <textarea name="p_add" id="p_add"  data-default-value="e.g. H.no. 2135, Sector 9C"   class="validatePhrase"  rows="25" cols="25"><?php echo $this->applicant->p_add ?></textarea>
+          <label for="p_add"><em>*</em>Address</label>
+          <textarea name="p_add" id="p_add"  data-default-value="e.g. H.no. 2135, Sector 9C"     rows="25" cols="25"><?php echo $this->applicant->p_add ?></textarea>
           <p class="formHint">House number and Area etc.</p>
         </div>
         </fieldset>
@@ -93,51 +100,40 @@
         <fieldset>
         <h3>Guardian Address:</h3>
         <div class="ctrlHolder">
-          <label for=""><em>*</em>Pin Code</label>
+          <label for="g_pin"><em>*</em>Pin Code</label>
           <input name="g_pin" id="g_pin" value="<?php echo $this->applicant->g_pin ?>" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput required validateInteger"/>
           <p class="formHint">Pincode of permanent address.</p>
         </div>
         
         <div class="ctrlHolder">
-          <label for=""><em>*</em>State/Territory</label>
+          <label for="g_state"><em>*</em>State/Territory</label>
           <input name="g_state" id="g_state" value="<?php echo $this->applicant->g_state ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
           <p class="formHint">State/Territory of permanent address.</p>
         </div>
-        
         <div class="ctrlHolder">
-          <label for=""><em>*</em>District</label>
+          <label for="g_district"><em>*</em>District</label>
           <input name="g_district" id="g_district" value="<?php echo $this->applicant->g_district ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
           <p class="formHint">District of permanent address.<br/>(It should be same as above if Union Territory)</p>
         </div>
-        
         <div class="ctrlHolder">
-          <label for=""><em>*</em>City/Town/Village</label>
+          <label for="g_city"><em>*</em>City/Town/Village</label>
           <input name="g_city" id="g_city" value="<?php echo $this->applicant->g_city ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
           <p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
         </div>
         
         <div class="ctrlHolder">
-          <label for=""><em>*</em>Address</label>
-          <textarea name="g_add" id="g_add" data-default-value="e.g. H.no. 2135, Sector 9C"  class="validatePhrase" rows="25" cols="25"><?php echo $this->applicant->g_add ?></textarea>
+          <label for="g_add"><em>*</em>Address</label>
+          <textarea name="g_add" id="g_add" data-default-value="e.g. H.no. 2135, Sector 9C"   rows="25" cols="25"><?php echo $this->applicant->g_add ?></textarea>
           <p class="formHint">House number and Area etc.</p>
         </div>
         </fieldset>
         <?php } ?>
         
-        
-        <div class="ctrlHolder">
-          <p class="label">Area</p>
-          <ul class="blockLabels alternate">
-            <li><label for=""><input name="urban" type="radio" value="true" checked="checked" title="Urban">Urban</label></li>
-            <li><label for=""><input  name="urban" type="radio" value="false" title="Rural">Rural</label></li>
-          </ul>
-          <p class="formHint">Area which you belong to</p>
-        </div>
  		<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
         
       <div class="buttonHolder">
         <button type="reset" class="secondaryAction">Reset</button>
-        <button type="submit" class="primaryAction">Submit</button>
+        <button type="submit" class="primaryAction">Next</button>
       </div>
 
     </form>
@@ -155,11 +151,11 @@
 
         $("#is_cp_same").click(function(){
             if ($(this).is(':checked')) {
-            	$(this).val(true);
+            	$(this).val('true');
             	$('#p_fset :input').remove();
             	$('#p_fset').hide('slow');
 			} else {
-				$(this).val(false);
+				$(this).val('false');
 				location.reload();
 			}
             

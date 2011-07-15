@@ -22,6 +22,7 @@ class IdimageController extends Zend_Controller_Action
         $candidate->setRoll_no($params['rollno']);
         $this->_helper->logger('Hi');
         $status = $candidate->setImage_no($params['image_no']);
+        $this->_helper->logger($status);
         if ($status) {
         echo 'Latest Update:<br/>';
         foreach ($params as $colName => $value) {

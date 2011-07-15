@@ -9,30 +9,30 @@
 
     <form action="javascript:submit();" class="uniForm">
         <h2><?php $stepNo = 0;
-        echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
+        echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$stepNo]);?> Information:</h2>
         <hr/>
         <div class="ctrlHolder noLabel">
           <ul class="alternate">
-            <li><label for=""><em>*</em> First Name</label>
-          <input name="first_name" id="first_name" data-default-value="e.g. Ravi" value="<?php echo $this->applicant->first_name ?>" size="10" maxlength="50" type="text" class="textInput required"/></li>
-            <li><label for=""> Middle Name</label>
-          <input name="middle_name" id="middle_name" data-default-value="e.g. Kumar" value="<?php echo $this->applicant->middle_name ?>"  size="10" maxlength="50" type="text" class="textInput"/></li>
-            <li><label for=""> <em>*</em>Last Name</label>
-          <input name="last_name" id="last_name" data-default-value="e.g. Gupta" value="<?php echo $this->applicant->last_name ?>"  size="10" maxlength="50" type="text" class="textInput required"/></li>
+            <li><label for="first_name"><em>*</em> First Name</label>
+          <input name="first_name" id="first_name" data-default-value="e.g. Ravi" value="<?php echo $this->applicant->first_name ?>" size="10" maxlength="50" type="text" class="textInput required validateAlpha"/></li>
+            <li><label for="middle_name"> Middle Name</label>
+          <input name="middle_name" id="middle_name" data-default-value="e.g. Kumar" value="<?php echo $this->applicant->middle_name ?>"  size="10" maxlength="50" type="text" class="textInput validateAlpha"/></li>
+            <li><label for="last_name"> Last Name</label>
+          <input name="last_name" id="last_name" data-default-value="e.g. Gupta" value="<?php echo $this->applicant->last_name ?>"  size="10" maxlength="50" type="text" class="textInput validateAlpha"/></li>
           </ul>
           <p class="formHint">Full Name of candidate</p>
         </div>
         
         <div class="ctrlHolder">
-          <label for=""><em>*</em>Date of Birth</label>
+          <label for="dob"><em>*</em>Date of Birth</label>
           <input name="dob" id="dob" data-default-value="1990-12-31" value="<?php echo $this->applicant->dob ?>"  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
-          <p class="formHint">Birthday of <span class="cName" >Candidate</span></p>
+          <p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
         </div>
         
         <div class="ctrlHolder">
           <p class="label">Gender</p>
           <ul class="blockLabels alternate">
-            <li><label for=""><input name="gender" type="radio" value="M" <?php if (isset($this->applicant->gender)) {
+            <li><label for="gender"><input name="gender" type="radio" value="M" <?php if (isset($this->applicant->gender)) {
                 echo ('m' == strtolower($this->applicant->gender)?'checked="checked"':'');
             } else {echo 'checked="checked"';} ?> title="Male">Male</label></li>
             <li><label for=""><input  name="gender" type="radio" value="F" <?php echo ('f' == strtolower($this->applicant->gender)?'checked="checked"':'');?> title="Female">Female</label></li>
@@ -41,7 +41,7 @@
         </div>
       
         <div class="ctrlHolder">
-          <label for="">Nationality</label>
+          <label for="nationality_id">Nationality</label>
           <select id="nationality_id" name="nationality_id" class="selectInput">
           		<option value="1" <?php echo (1 == $this->applicant->nationality_id?'selected="selected"':'');?> >INDIAN</option>
           		<option value="2" <?php echo (2 == $this->applicant->nationality_id?'selected="selected"':'');?> >NRI</option>
@@ -51,7 +51,7 @@
         
       
         <div class="ctrlHolder">
-          <label for="">Blood Group</label>
+          <label for="blood_group_id">Blood Group</label>
           <select id="blood_group_id" name="blood_group_id" class="selectInput">
           		<option value="A+" <?php echo ("a+" == strtolower($this->applicant->blood_group_id)?'selected="selected"':'');?> >A+</option>
           		<option value="A-" <?php echo ("a-" == strtolower($this->applicant->blood_group_id)?'selected="selected"':'');?> >A-</option>
@@ -67,7 +67,7 @@
         
         
         <div class="ctrlHolder">
-          <label for="">Religion</label>
+          <label for="religion_id">Religion</label>
           <select id="religion_id" name="religion_id" class="selectInput required">
           		<option value="1" <?php echo (1 == $this->applicant->religion_id?'selected="selected"':'');?> >Hindu</option>
           		<option value="2" <?php echo (2 == $this->applicant->religion_id?'selected="selected"':'');?> >Muslim</option>
@@ -78,8 +78,12 @@
         </div>
         
         <div class="ctrlHolder">
-          <label for="">Cast</label>
-          <input name="cast" id="cast" value="<?php echo $this->applicant->cast ?>"  data-default-value="e.g. Arora" size="35" maxlength="12" type="text" class="textInput validatePhrase"/>
+          <label for="cast">Cast</label>
+          <select id="cast" name="cast" class="selectInput required">
+          		<option value="GEN" <?php echo ('GEN' == $this->applicant->cast?'selected="selected"':'');?> >GEN</option>
+          		<option value="SC" <?php echo ('SC' == $this->applicant->cast?'selected="selected"':'');?> >SC</option>
+          		<option value="BC" <?php echo ('BC' == $this->applicant->cast?'selected="selected"':'');?> >BC</option>
+      	  </select>
           <p class="formHint">Cast of <span class="cName" >Candidate</span></p>
         </div>
         
@@ -90,7 +94,7 @@
         </div>
       
         <div class="ctrlHolder">
-          <label for="">Email confirm</label>
+          <label for="e_mail_confirm">Email confirm</label>
           <input name="e_mail_confirm" id="e_mail_confirm" data-default-value="i.e. same as above" value="<?php echo $this->applicant->e_mail ?>"  size="35" maxlength="50" type="text" class="textInput validateSameAs e_mail"/>
           <p class="formHint"></p>
         </div>
@@ -98,59 +102,59 @@
         <fieldset>
         <h3>Parent/Guardian Information</h3>
         <div class="ctrlHolder">
-          <label for=""><em>*</em> Landline No.</label>
+          <label for="landline_no"> Landline No.</label>
           <input name="landline_no" id="landline_no" value="<?php echo $this->applicant->landline_no ?>"  data-default-value="e.g. 017226544331" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
           <p class="formHint">Landline number, if available.</p>
         </div>
         <div class="ctrlHolder">
-          <label for=""><em>*</em> Father's name</label>
+          <label for="father_name"><em>*</em> Father's name</label>
           <input name="father_name" id="father_name" data-default-value="e.g. Sh. Madan Kumar" value="<?php echo $this->applicant->father_name ?>"  size="35" maxlength="50" type="text" class="textInput required"/>
           <p class="formHint">Father's name of <span class="cName" >Candidate</span></p>
         </div>
         
         <div class="ctrlHolder">
-          <label for="">Father's occupation</label>
+          <label for="father_occupation">Father's occupation</label>
           <input name="father_occupation" id="father_occupation" value="<?php echo $this->applicant->father_occupation ?>" data-default-value="e.g. Teacher" size="35" maxlength="50" type="text" class="textInput"/>
           <p class="formHint">Father's occupation</p>
         </div>
         <div class="ctrlHolder">
-          <label for="">Father's designation</label>
+          <label for="father_designation" >Father's designation</label>
           <input name="father_designation" id="father_designation" value="<?php echo $this->applicant->father_designation ?>" data-default-value="e.g. Lecturer" size="35" maxlength="50" type="text" class="textInput"/>
           <p class="formHint">Father's designation</p>
         </div>
         
         <div class="ctrlHolder">
-          <label for=""><em>*</em> Father's contact</label>
+          <label for="father_contact" > Father's contact</label>
           <input name="father_contact" id="father_contact" value="<?php echo $this->applicant->father_contact ?>"  data-default-value="e.g. 9416123494" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
           <p class="formHint">Father's contact number, it should be a mobile number.</p>
         </div>
         
         <div class="ctrlHolder">
-          <label for="">Father's Office Address</label>
-          <textarea name="father_office_add" id="father_office_add" data-default-value="e.g. PWD B and R Office, Near SDM office, Narnaul"  class="validatePhrase"  rows="25" cols="25"><?php echo $this->applicant->father_office_add ?></textarea>
+          <label for="father_office_add">Father's Office Address</label>
+          <textarea name="father_office_add" id="father_office_add" data-default-value="e.g. PWD B and R Office, Near SDM office, Narnaul"    rows="25" cols="25"><?php echo $this->applicant->father_office_add ?></textarea>
           <p class="formHint">Father's Office Address</p>
         </div>
         <div class="ctrlHolder">
-          <label for=""><em>*</em> Mother's name</label>
+          <label for="mother_name"><em>*</em> Mother's name</label>
           <input name="mother_name" id="mother_name" value="<?php echo $this->applicant->mother_name ?>"  data-default-value="e.g. Smt. Sita Devi" size="35" maxlength="50" type="text" class="textInput required"/>
           <p class="formHint">Mother's name of <span class="cName" >Candidate</span></p>
         </div>
         
         <div class="ctrlHolder">
-          <label for="">Mother's occupation</label>
+          <label for="mother_occupation">Mother's occupation</label>
           <input name="mother_occupation" id="mother_occupation" value="<?php echo $this->applicant->mother_occupation ?>" data-default-value="e.g. Banking" size="35" maxlength="50" type="text" class="textInput"/>
           <p class="formHint">Mother's occupation</p>
         </div>
         
         <div class="ctrlHolder">
-          <label for="">Mother's designation</label>
+          <label for="mother_designation">Mother's designation</label>
           <input name="mother_designation" id="mother_designation" value="<?php echo $this->applicant->mother_designation ?>" data-default-value="e.g. Probationary officer" size="35" maxlength="50" type="text" class="textInput"/>
           <p class="formHint">Mother's designation</p>
         </div>
         
         <div class="ctrlHolder">
-          <label for="">Mother's Office Address</label>
-          <textarea name="mother_office_add" id="mother_office_add" data-default-value="e.g. H.no. 3, PWD B and R Colony, Near Old court"  class="validatePhrase"  rows="25" cols="25"><?php echo $this->applicant->mother_office_add ?></textarea>
+          <label for="mother_office_add">Mother's Office Address</label>
+          <textarea name="mother_office_add" id="mother_office_add" data-default-value="e.g. H.no. 3, PWD B and R Colony, Near Old court"  rows="25" cols="25"><?php echo $this->applicant->mother_office_add ?></textarea>
           <p class="formHint">Mother's Office Address (if applicable)</p>
         </div>
         <div class="ctrlHolder">
@@ -160,19 +164,19 @@
         </div>
         
         <div class="ctrlHolder">
-          <label for="">Guardian's relation</label>
+          <label for="guardian_relation">Guardian's relation</label>
           <input name="guardian_relation" id="guardian_relation" value="<?php echo $this->applicant->guardian_relation ?>" data-default-value="e.g. Uncle" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
           <p class="formHint">Guardian's relationship with <span class="cName" >Candidate</span></p>
         </div>
         
         <div class="ctrlHolder">
-          <label for="">Guardian's contact number</label>
+          <label for="guardian_contact">Guardian's contact number</label>
           <input name="guardian_contact" id="guardian_contact" value="<?php echo $this->applicant->guardian_contact ?>" data-default-value="e.g. +919799123132" size="35" maxlength="50" type="text" class="textInput"/>
           <p class="formHint">Guardian's contact number, it should be a mobile number.</p>
         </div>
         
         <div class="ctrlHolder">
-          <label for=""><em>*</em>Annual Income</label>
+          <label for="annual_income"><em>*</em>Annual Income</label>
           <input name="annual_income" id="annual_income" value="<?php echo $this->applicant->annual_income ?>" data-default-value="e.g. 456000" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
           <p class="formHint">Annual Income of father or guardian.(in Rupees only, no comma or units etc.)</p>
         </div>
@@ -183,7 +187,7 @@
         
         <div class="buttonHolder">
         	<button type="submit" class="secondaryAction">Cancel and go back</button>
-        	<button type="submit" class="primaryAction">Submit</button>
+        	<button type="submit" class="primaryAction">Next</button>
     	</div>
 
     </form>

@@ -9,8 +9,8 @@
 
 <form action="javascript:submit();" class="uniForm">
 <h2><?php
-$stepNo = 1;
-echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
+$stepNo = $this->stepNo;
+echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$stepNo]);?> Information:</h2>
 <hr />
       <?php 
       $form = null;
@@ -296,7 +296,7 @@ echo ucfirst($this->steps[$stepNo]);?> Information:</h2>
       
       	<div class="buttonHolder">
             <button type="reset" class="secondaryAction">Reset</button>
-            <button type="submit" class="primaryAction">Submit</button>
+            <button type="submit" class="primaryAction">Next</button>
     	</div>
 </form>
 
