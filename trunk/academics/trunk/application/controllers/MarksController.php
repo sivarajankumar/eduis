@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Assign marks corresponding test id
+ * fetch marks of sessional and assignments
+ *
+ */
 class MarksController extends Acadz_Base_BaseController
 {
 
@@ -179,6 +183,67 @@ class MarksController extends Acadz_Base_BaseController
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         
+    }
+    /**
+     * View marks of selected sessional
+     * Enter description here ...
+     */
+    
+    public function sessionalAction()
+    {
+        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+        $department_id = $authInfo['department_id'];
+        $degree_id = $authInfo['degree_id'];
+        $sem = $authInfo['semester'];
+        $values = array('department_id'=>$department_id,'degree_id'=>$degree_id,'semester_id'=>$sem);
+        $model = new Acad_Model_Assessment_Sessional($values);
+        $marks = $model->fetchMarks();
+        
+        $request= $this->getRequest();
+        $testId = $request->getParam('test_id');
+        $result = array();
+        $header = $result[$marks->getTest_type_id()][$testId];
+        foreach ($marks as $key => $value)
+        {
+            $result[] = array($value->getSubject_code(),
+                              $value->getSubject_name(),
+                              $value->getMax_marks(),
+                              $value->getPass_marks(),
+                              $value->getMarks_scored(),
+                              $value->getRemarks());
+        }
+        $this->_helper->logger($result);
+        echo $this->_helper->json($result, false);
+    }
+    /**
+     * View marks of locked assignments
+     * Enter description here ...
+     */
+    public function assignmentAction()
+    {
+        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+        $department_id = $authInfo['department_id'];
+        $degree_id = $authInfo['degree_id'];
+        $sem = $authInfo['semester'];
+        $values = array('department_id'=>$department_id,'degree_id'=>$degree_id,'semester_id'=>$sem);
+        $model = new Acad_Model_Assessment_Assignment($values);
+        $marks = $model->fetchMarks();
+        
+        $request= $this->getRequest();
+        $result = array();
+        //$header = $result[$marks->getTest_type_id()][$marks->getTest_id()];
+        foreach ($marks as $key => $value)
+        {
+            $result[] = array($value->getTest_type_id(),
+                              $value->getTest_id(),
+                              $value->getSubject_code(),
+                              $value->getSubject_name(),
+                              $value->getMax_marks(),
+                              $value->getPass_marks(),
+                              $value->getMarks_scored());
+        }
+        $this->_helper->logger($result);
+        echo $this->_helper->json($result, false);
     }
 }
 
