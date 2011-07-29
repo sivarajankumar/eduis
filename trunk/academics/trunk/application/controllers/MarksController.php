@@ -204,7 +204,7 @@ class MarksController extends Acadz_Base_BaseController
         $degree_id = 'BTECH';
         $semester_id = '6';
         $rollno = '2308001';
-        $model = new Acad_Model_Assessment_Sessional();
+        $model = new Acad_Model_Asessment_Sessional();
         $result= $model->fetchMarks($degree_id,$department_id,$semester_id,$rollno);
         $response = new stdClass();
         $response->page = $this->gridparam['page'];
@@ -246,7 +246,7 @@ class MarksController extends Acadz_Base_BaseController
         $semester_id = '6';
         $rollno = '2308001';
        
-        $model = new Acad_Model_Assessment_Assignment();
+        $model = new Acad_Model_Asessment_Assignment();
         $result = $model->fetchMarks($degree_id,$department_id,$semester_id,$rollno);        
         $response = new stdClass();
         $response->page = $this->gridparam['page'];
