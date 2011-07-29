@@ -191,12 +191,19 @@ class MarksController extends Acadz_Base_BaseController
     
     public function sessionalAction()
     {
-        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-        $department_id = $authInfo['department_id'];
-        $degree_id = $authInfo['degree_id'];
-        $semester_id = $authInfo['semester'];
-        $rollno = $authInfo['user_id'];
-       
+//        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+//        $department_id = $authInfo['department_id'];
+//        $degree_id = $authInfo['degree_id'];
+//        $semester_id = $authInfo['semester'];
+//        $rollno = $authInfo['user_id'];
+/**
+ * 
+ * @todo dynamic entry of fields
+ */
+        $department_id = 'CSE';
+        $degree_id = 'BTECH';
+        $semester_id = '6';
+        $rollno = '2308001';
         $model = new Acad_Model_Assessment_Sessional();
         $result= $model->fetchMarks($degree_id,$department_id,$semester_id,$rollno);
         $response = new stdClass();
@@ -225,11 +232,19 @@ class MarksController extends Acadz_Base_BaseController
      */
     public function assignmentAction()
     {
-        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-        $department_id = $authInfo['department_id'];
-        $degree_id = $authInfo['degree_id'];
-        $semester_id = $authInfo['semester'];
-        $rollno = $authInfo['user_id'];
+//        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+//        $department_id = $authInfo['department_id'];
+//        $degree_id = $authInfo['degree_id'];
+//        $semester_id = $authInfo['semester'];
+//        $rollno = $authInfo['user_id'];
+/**
+ * 
+ * @todo dynamic entry of fields
+ */
+        $department_id = 'CSE';
+        $degree_id = 'BTECH';
+        $semester_id = '6';
+        $rollno = '2308001';
        
         $model = new Acad_Model_Assessment_Assignment();
         $result = $model->fetchMarks($degree_id,$department_id,$semester_id,$rollno);        
