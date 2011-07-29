@@ -194,27 +194,30 @@ class MarksController extends Acadz_Base_BaseController
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
         $department_id = $authInfo['department_id'];
         $degree_id = $authInfo['degree_id'];
-        $sem = $authInfo['semester'];
-       $id = $authInfo['user_id'];
-        $values = array('department_id'=>$department_id,'degree_id'=>$degree_id,'semester_id'=>$sem,'user_id'=>$id);
-        $model = new Acad_Model_Assessment_Sessional($values);
-        $marks = $model->fetchMarks();
+        $semester_id = $authInfo['semester'];
+        $rollno = $authInfo['user_id'];
+       
+        $model = new Acad_Model_Assessment_Sessional();
+        $result= $model->fetchMarks($degree_id,$department_id,$semester_id,$rollno);
+        $response = new stdClass();
+        $response->page = $this->gridparam['page'];
+        $response->total = $this->total_pages;
+        $response->records = $this->_count;
         
-        $request= $this->getRequest();
-        $testId = $request->getParam('test_id');
-        $result = array();
-        $header = $result[$marks->getTest_type_id()][$testId];
-        foreach ($marks as $key => $value)
+        foreach ($result as $key => $row)
         {
-            $result[] = array($value->getSubject_code(),
-                              $value->getSubject_name(),
-                              $value->getMax_marks(),
-                              $value->getPass_marks(),
-                              $value->getMarks_scored(),
-                              $value->getRemarks());
+            $response->rows[$key]['id']=$row['test_info_id'];
+            $response->rows[$key]['cell']=array(
+                                            $row['test_id'],
+                                            $row['subject_code'],
+                                            $row['subject_name'],
+                                            $row['max_marks'],
+                                            $row['pass_marks'],
+                                            $row['marks_scored'],
+                                            $row['status']);
         }
-        $this->_helper->logger($result);
-        echo $this->_helper->json($result, false);
+        $this->_helper->logger($response);
+        echo $this->_helper->json($response);
     }
     /**
      * View marks of locked assignments
@@ -225,28 +228,29 @@ class MarksController extends Acadz_Base_BaseController
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
         $department_id = $authInfo['department_id'];
         $degree_id = $authInfo['degree_id'];
-        $sem = $authInfo['semester'];
-        $id = $authInfo['user_id'];
-        $values = array('department_id'=>$department_id,'degree_id'=>$degree_id,'semester_id'=>$sem,'user_id'=>$id);
-        $model = new Acad_Model_Assessment_Assignment($values);
-        $marks = $model->fetchMarks();
+        $semester_id = $authInfo['semester'];
+        $rollno = $authInfo['user_id'];
+       
+        $model = new Acad_Model_Assessment_Assignment();
+        $result = $model->fetchMarks($degree_id,$department_id,$semester_id,$rollno);        
+        $response = new stdClass();
+        $response->page = $this->gridparam['page'];
+        $response->total = $this->total_pages;
+        $response->records = $this->_count;
         
-        $request= $this->getRequest();
-        $result = array();
-        //$header = $result[$marks->getTest_type_id()][$marks->getTest_id()];
-        foreach ($marks as $key => $value)
+        foreach ($result as $key => $row)
         {
-            $result[] = array($value->getTest_type_id(),
-                              $value->getTest_id(),
-                              $value->getSubject_code(),
-                              $value->getSubject_name(),
-                              $value->getMax_marks(),
-                              $value->getPass_marks(),
-                              $value->getMarks_scored());
+            $response->rows[$key]['id']=$row['test_info_id'];
+            $response->rows[$key]['cell']=array(
+                                            $row['test_id'],
+                                            $row['subject_code'],
+                                            $row['subject_name'],
+                                            $row['max_marks'],
+                                            $row['pass_marks'],
+                                            $row['marks_scored'],
+                                            $row['status']);
         }
-        $this->_helper->logger($result);
-        echo $this->_helper->json($result, false);
+        $this->_helper->logger($response);
+        echo $this->_helper->json($response);
     }
 }
-
-
