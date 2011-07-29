@@ -44,6 +44,7 @@ class Acad_Model_Asessment_AssignmentMapper
     {
         $sql = 'SELECT
     `subject`.`subject_name`
+    ,`test_info`.`test_id`
     , `test_info`.`subject_code`
     , `test_info`.`test_info_id`
     , `test_marks`.`status`
@@ -55,7 +56,7 @@ FROM
     `academics`.`test_info`
     INNER JOIN `academics`.`subject` 
         ON (`test_info`.`subject_code` = `subject`.`subject_code`)
-WHERE (`test_info`.`degree_id` =?`
+WHERE (`test_info`.`degree_id` =?
     AND `test_info`.`department_id` =?
     AND `test_info`.`semester_id` =?
     AND `test_info`.`test_type_id` =?
