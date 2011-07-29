@@ -195,7 +195,8 @@ class MarksController extends Acadz_Base_BaseController
         $department_id = $authInfo['department_id'];
         $degree_id = $authInfo['degree_id'];
         $sem = $authInfo['semester'];
-        $values = array('department_id'=>$department_id,'degree_id'=>$degree_id,'semester_id'=>$sem);
+       $id = $authInfo['user_id'];
+        $values = array('department_id'=>$department_id,'degree_id'=>$degree_id,'semester_id'=>$sem,'user_id'=>$id);
         $model = new Acad_Model_Assessment_Sessional($values);
         $marks = $model->fetchMarks();
         
@@ -225,7 +226,8 @@ class MarksController extends Acadz_Base_BaseController
         $department_id = $authInfo['department_id'];
         $degree_id = $authInfo['degree_id'];
         $sem = $authInfo['semester'];
-        $values = array('department_id'=>$department_id,'degree_id'=>$degree_id,'semester_id'=>$sem);
+        $id = $authInfo['user_id'];
+        $values = array('department_id'=>$department_id,'degree_id'=>$degree_id,'semester_id'=>$sem,'user_id'=>$id);
         $model = new Acad_Model_Assessment_Assignment($values);
         $marks = $model->fetchMarks();
         
