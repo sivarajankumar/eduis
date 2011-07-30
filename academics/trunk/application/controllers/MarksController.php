@@ -191,6 +191,7 @@ class MarksController extends Acadz_Base_BaseController
     
     public function sessionalAction()
     {
+        $this->_helper->viewRenderer->setNoRender(false);
          $this->_helper->layout()->enableLayout();
 //        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
 //        $department_id = $authInfo['department_id'];
@@ -205,16 +206,16 @@ class MarksController extends Acadz_Base_BaseController
         $degree_id = 'BTECH';
         $semester_id = '6';
         $rollno = '2308001';
-         $name = 'Prarthana';
-         $this->view->assign('name',$name);
+        $name = 'Prarthana';
+        $this->view->assign('name',$name);
         $this->view->assign('rollno',$rollno);
         $this->view->assign('sem',$semester_id);
         $this->view->assign('degree',$degree_id);
         $this->view->assign('deptt',$department_id);
-        $model = new Acad_Model_Asessment_Sessional();
+        $model = new Acad_Model_Assessment_Sessional();
         $result= $model->fetchMarks($degree_id,$department_id,$semester_id,$rollno);
         $this->view->assign('marks',$result);
-       // $response = new stdClass();
+        //$response = new stdClass();
         /*$response->page = $this->gridparam['page'];
         $response->total = $this->total_pages;
         $response->records = $this->_count;*/
@@ -240,6 +241,7 @@ class MarksController extends Acadz_Base_BaseController
      */
     public function assignmentAction()
     {
+        $this->_helper->viewRenderer->setNoRender(false);
           $this->_helper->layout()->enableLayout();
 //        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
 //        $department_id = $authInfo['department_id'];
@@ -260,14 +262,14 @@ class MarksController extends Acadz_Base_BaseController
         $this->view->assign('sem',$semester_id);
         $this->view->assign('degree',$degree_id);
         $this->view->assign('deptt',$department_id);
-        $model = new Acad_Model_Asessment_Sessional();
+        $model = new Acad_Model_Assessment_Assignment();
         $result= $model->fetchMarks($degree_id,$department_id,$semester_id,$rollno);
         $this->view->assign('marks',$result);
         /*$response->page = $this->gridparam['page'];
         $response->total = $this->total_pages;
         $response->records = $this->_count;*/
-        
-        /*foreach ($result as $key => $row)
+      /*  
+        foreach ($result as $key => $row)
         {
             $response->rows[$key]['id']=$row['test_info_id'];
             $response->rows[$key]['cell']=array(
