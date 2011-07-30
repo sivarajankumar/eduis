@@ -567,5 +567,85 @@ WHERE (`test_info_id` = ?)';
         
         return Zend_Db_Table::getDefaultAdapter()->update('test_info', $bind,$where);
     }
+    /**
+     *  fetches the schedule of a unlocked asessment with highest test_id
+     */
+    public function fetchSchedule ($deg, $dep, $sem)
+    {
+        $type = $this->test_type_id;
+        $sql = 'SELECT 
+        ,`test_info`.`test_info_id`
+        ,`test_info`.`is_optional`
+        ,`test_info`.`date_of_announcement`
+        , `test_info`.`remarks`
+    , `test_info`.`pass_marks`
+    , `test_info`.`max_marks`
+    , `test_info`.`date_of_conduct`
+    , `test_info`.`time`
+    , `test_info`.`test_id`
+    , `subject`.`subject_code`
+    , `subject`.`subject_name`
+        FROM
+    `academics`.`subject`
+    INNER JOIN `academics`.`test_info` 
+        ON (`subject`.`subject_code` = `test_info`.`subject_code`)
+        WHERE (`test_info`.`degree_id` =?
+        AND `test_info`.`department_id` =?
+        AND `test_info`.`semester_id` =?
+        AND `test_info`.`test_type_id` =?
+        AND `test_info`.`test_id` =?)';
+        $bind = array($deg, $dep, $sem, $type, 
+        $this->getHighestUnlockedTestId($deg, $dep, $sem, $type));
+        $result = $this->getDbTable()
+            ->getAdapter()
+            ->query($sql, $bind)
+            ->fetchAll();
+        return $result;
+        /*$select = new Zend_Db_Table();
+        $cols = array('test_info_id','is_optional','date_of_announcement','remarks','pass_marks','max_marks','date_of_conduct','time','test_id');
+        $select->getDefaultAdapter()
+        ->select()
+        ->from('test_info',$cols)
+        ->joinInner('subject',' subject.subject_code = test_info.subject_code',array('subject_code','subject_name'))
+        ->where('degree_id =?',$deg)
+        ->where('department_id =?',$dep)
+        ->where('semester_id =?',$sem)
+        ->where('test_type_id =?',$type);
+        $test_ids=$this->getHighestUnlockedTestId($deg, $dep, $sem,$numIds);
+        ->where('test_id =?',$test_id)
+        ->where('department_id =?',$dep);*/
+    }
+    
+    /**
+     *gets the highest test_id of an unlocked assessment 
+     */
+    public function getHighestUnlockedTestId($deg,$dep, $sem)
+    {
+      $type = $this->test_type_id;
+      /*$select = new Zend_Db_Table();
+        $select->getDefaultAdapter()
+        ->select()
+        ->from('test_info','test_id')
+        ->where('degree_id = ?',$deg)
+        ->where('department_id` = ?',$dep)
+        ->where('semester_id = ?',$sem)->order(as);*/
+       $sql = '(SELECT
+        `test_id`
+        FROM
+        `academics`.`test_info`
+        WHERE (`degree_id` = ?
+        AND `department_id` = ?
+        AND `semester_id` = ?
+        AND `test_type_id` = ?
+        AND `is_locked` =?)
+        ORDER BY `test_id` DESC
+        LIMIT 1)';
+        $bind = array($deg, $dep, $sem, $type, 0);
+        $result = $this->getDbTable()
+        ->getAdapter()
+        ->query($sql, $bind)
+        ->fetchAll();
+        return $result;
+    }
 }
 ?>
