@@ -41,12 +41,12 @@ class ScheduleController extends Acadz_Base_BaseController
         $this->view->assign('sem',$semester_id);
         $this->view->assign('degree',$degree_id);
         $this->view->assign('deptt',$department_id);
-        /*$values = array('department_id'=>$department_id,'degree_id'=>$degree_id,'semester_id'=>$sem,'user_id'=>$id);
-        $model = new Acad_Model_Assessment_Sessional($values);
-        $schedule = $model->fetchSchedule();
+        $model = new Acad_Model_Assessment_Sessional();
+        $schedule = $model->fetchSchedule($degree_id,$department_id,$semester_id);
+        $this->view->assign('schedule',$schedule);
+        print_r($schedule);
         
-        
-        
+        /*
             $result = array();
             $header = $result[$schedule->getTest_type_id()][$schedule->getTest_id()];
             foreach ($schedule as $key => $value) 
@@ -59,6 +59,7 @@ class ScheduleController extends Acadz_Base_BaseController
             }
             $this->_helper->logger($result);
             echo $this->_helper->json($result, false);*/
+            
     } 
     
     /**
@@ -102,6 +103,10 @@ class ScheduleController extends Acadz_Base_BaseController
         $this->view->assign('sem',$semester_id);
         $this->view->assign('degree',$degree_id);
         $this->view->assign('deptt',$department_id);
+        $model = new Acad_Model_Assessment_Assignment();
+        $schedule = $model->fetchSchedule($degree_id,$department_id,$semester_id);
+        $this->view->assign('schedule',$schedule);
+         print_r($schedule);
     }
     
 }
