@@ -222,12 +222,12 @@ class Acad_Model_Assessment_SessionalMapper
             ;
         }
     */
-        $sql = 'SELECT
+        /*$sql = 'SELECT
     `subject`.`subject_name`
     ,`test_info`.`test_id`
     , `test_info`.`subject_code`
     , `test_info`.`test_info_id`
-    , `test_marks`.`status`
+    , `test_marks`.`zz`
     , `test_marks`.`marks_scored`
     , `test_info`.`pass_marks`
     , `test_info`.`max_marks`
@@ -246,6 +246,35 @@ WHERE (`test_info`.`degree_id` =?
         $result = $this->getDbTable()
             ->getAdapter()
             ->query($sql, $bind)->fetchAll();
+        return $result;*/
+        $sql = 'SELECT
+    `subject`.`subject_name`
+    ,`subject`.`subject_code`
+    ,`test_info`.`test_info_id`
+    , `test_info`.`test_id`
+    , `test_info`.`test_type_id`
+    , `test_info`.`pass_marks`
+    , `test_info`.`max_marks`
+    , `test_marks`.`student_roll_no`
+    , `test_marks`.`marks_scored`
+    , `test_marks`.`status`
+FROM
+    `academics`.`subject`
+    INNER JOIN `academics`.`test_info` 
+        ON (`subject`.`subject_code` = `test_info`.`subject_code`)
+    INNER JOIN `academics`.`test_marks` 
+        ON (`test_info`.`test_info_id` = `test_marks`.`test_info_id`)
+WHERE (`test_info`.`degree_id` =?
+    AND `test_info`.`department_id` =?
+    AND `test_info`.`semester_id` =?
+    AND `test_info`.`test_type_id` =?
+    AND `test_info`.`is_locked` =?
+    AND `test_marks`.`student_roll_no` =?)';
+        $bind = array($deg, $dep, $sem, $type, 1, $stuRoll);
+        $result = $this->getDbTable()
+            ->getAdapter()
+            ->query($sql, $bind)
+            ->fetchAll();
         return $result;
     }
 }
