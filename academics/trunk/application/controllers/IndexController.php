@@ -12,8 +12,17 @@ class IndexController extends Acadz_Base_BaseController
      */
     public function indexAction ()
     {
-        echo '<pre>';
-        print_r($_REQUEST);
+        $this->_helper->layout()->enableLayout();
+        $department_id = 'CSE';
+        $degree_id = 'BTECH';
+        $semester_id = '6';
+        $rollno = '2308001';
+        $name = 'Prarthana';
+        $this->view->assign('name',$name);
+        $this->view->assign('rollno',$rollno);
+        $this->view->assign('sem',$semester_id);
+        $this->view->assign('degree',$degree_id);
+        $this->view->assign('deptt',$department_id);
     }
 }
 ?>
