@@ -15,18 +15,33 @@ class ScheduleController extends Acadz_Base_BaseController
      */
     public function indexAction()
     {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
+        //$this->_helper->viewRenderer->setNoRender(false);
+        //$this->_helper->layout()->enableLayout();
         
     }
-    public function SessionalAction()
+    public function sessionalAction()
     {
-        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-        $department_id = $authInfo['department_id'];
-        $degree_id = $authInfo['degree_id'];
-        $sem = $authInfo['semester'];
-        $id = $authInfo['user_id'];
-        $values = array('department_id'=>$department_id,'degree_id'=>$degree_id,'semester_id'=>$sem,'user_id'=>$id);
+         $this->_helper->layout()->enableLayout();
+//        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+//        $department_id = $authInfo['department_id'];
+//        $degree_id = $authInfo['degree_id'];
+//        $semester_id = $authInfo['semester'];
+//        $rollno = $authInfo['user_id'];
+/**
+ * 
+ * @todo dynamic entry of fields
+ */
+        $department_id = 'CSE';
+        $degree_id = 'BTECH';
+        $semester_id = '6';
+        $rollno = '2308001';
+         $name = 'Prarthana';
+         $this->view->assign('name',$name);
+        $this->view->assign('rollno',$rollno);
+        $this->view->assign('sem',$semester_id);
+        $this->view->assign('degree',$degree_id);
+        $this->view->assign('deptt',$department_id);
+        /*$values = array('department_id'=>$department_id,'degree_id'=>$degree_id,'semester_id'=>$sem,'user_id'=>$id);
         $model = new Acad_Model_Assessment_Sessional($values);
         $schedule = $model->fetchSchedule();
         
@@ -43,16 +58,16 @@ class ScheduleController extends Acadz_Base_BaseController
                             $value->getTime());
             }
             $this->_helper->logger($result);
-            echo $this->_helper->json($result, false);
+            echo $this->_helper->json($result, false);*/
     } 
     
     /**
      * fetches the schedule of unlocked assignments
      * date of conduct refers to date of submission
      */
-    public function AssignmentAction()
+    public function assignmentAction()
     {
-        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+       /* $authInfo = Zend_Auth::getInstance()->getStorage()->read();
         $department_id = $authInfo['department_id'];
         $degree_id = $authInfo['degree_id'];
         $sem = $authInfo['semester'];
@@ -76,7 +91,17 @@ class ScheduleController extends Acadz_Base_BaseController
                             $value->getTime());
             }
             $this->_helper->logger($result);
-            echo $this->_helper->json($result, false);
+            echo $this->_helper->json($result, false);*/
+         $department_id = 'CSE';
+        $degree_id = 'BTECH';
+        $semester_id = '6';
+        $rollno = '2308001';
+         $name = 'Prarthana';
+         $this->view->assign('name',$name);
+        $this->view->assign('rollno',$rollno);
+        $this->view->assign('sem',$semester_id);
+        $this->view->assign('degree',$degree_id);
+        $this->view->assign('deptt',$department_id);
     }
     
 }
