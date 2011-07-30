@@ -1,0 +1,46 @@
+<div id="selection-div"class="ui-widget-content ui-corner-all" style="float:inherit; width:1264px; height:125px; padding:4px" >
+<h3>
+<label for="degree_select" accesskey="S" id="lbl_degree_id" style="padding: 0.4em; ">
+Personal information
+</label>
+</h3><p><span style="float:left; ">Name:<?php echo $this->name;?></span>
+<span style="float:right;  ">Degree:<?php echo $this->degree;?>
+<br><br>Department:<?php echo $this->deptt;?><br><br>
+Semester:<?php echo $this->sem;?></span>
+<br><br><br><span style="float:left; ">Roll Number:<?php echo $this->rollno;?></span>
+</p>
+</div>
+
+<div id="sess" ><span style="float:left; "><h3>Sessional 1<?php echo '<td>'.$value['test_id'].'</td>'; ?>
+</h3></span><span style="float:right;  "><h3>Date of announcement: '<td>'.$value['date_of_announcemnet'].'</td><?php ?></h3>
+</span></div>
+<br><br><br><br><br>
+<table id="sessionalSchedule" cellspacing="10" cellpadding="10">
+	<tr>
+		<th>  </th>
+		<th>Subject Name</th>
+		<th> Subject Code</th>
+		<th>Date</th>
+		<th>Time</th>
+		<th>Max Marks</th>
+		<th>Pass Marks</th>
+		<th>Is_Optional</th>
+		<th>Remarks</th>
+		</tr>
+		
+		<?php
+		/* 
+		foreach ($this->marks as $key=>$value)
+		{
+		    echo '<tr id='.$value["test_info_id"].'>';
+		    echo '<td>'.$value['subject_name'].'</td>';
+		    echo '<td>'.$value['subject_code'].'</td>';
+		    echo '<td>'.$value['date_of_conduct'].'</td>';
+		    echo '<td>'.$value['time'].'</td>';
+		    echo '<td>'.$value['max_marks'].'</td>';
+		    echo '<td>'.$value['pass_marks'].'</td>';
+		    echo '<td>'.$value['is_optional'].'</td>';
+		     echo '<td>'.$value['remarks'].'</td>';
+		    echo '</tr>';
+		}*/?>
+		</table>
