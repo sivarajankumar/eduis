@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_Asessment_SessionalMapper
+class Acad_Model_Assessment_SessionalMapper
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Acad_Model_Asessment_SessionalMapper
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Acad_Model_Asessment_SessionalMapper
+     * @return Acad_Model_Assessment_SessionalMapper
      */
     public function setDbTable ($dbTable)
     {
@@ -25,7 +25,7 @@ class Acad_Model_Asessment_SessionalMapper
     /**
      * Get registered Zend_Db_Table instance
      *
-     * Lazy loads Acad_Model_Asessment_Sessional if no instance registered
+     * Lazy loads Acad_Model_Assessment_Sessional if no instance registered
      * 
      * @return Zend_Db_Table_Abstract
      */
@@ -39,12 +39,12 @@ class Acad_Model_Asessment_SessionalMapper
     /**
      * Save a sessional datesheet
      * 
-     * @param  array|Acad_Model_Asessment_Sessional
+     * @param  array|Acad_Model_Assessment_Sessional
      * @return void
      */
     public function save ($sessional)
     {
-        if ($sessional instanceof Acad_Model_Asessment_Sessional) {
+        if ($sessional instanceof Acad_Model_Assessment_Sessional) {
             $id = $sessional->getTest_info_id();
             if ((string) $id === (string) (int) $id) {
                 $data['date_of_conduct'] = $sessional->getDate_of_conduct();
@@ -111,20 +111,19 @@ class Acad_Model_Asessment_SessionalMapper
      * Fecthes schedule of particular sessional if exists
      * 
      * Otherwise, it will create partial schedule for further completion
-     * @param Acad_Model_Asessment_Sessional
-     * @return array Acad_Model_Asessment_Sessional with status
+     * @param Acad_Model_Assessment_Sessional
+     * @return array Acad_Model_Assessment_Sessional with status
      * Status => true defines requested sessional for particular class already exists.
      * Status => false defines requested sessional for particular class donot exists and is newly prepared.
      */
-    public function fetchSchedule (Acad_Model_Asessment_Sessional $sessional)
+    public function fetchSchedule (Acad_Model_Assessment_Sessional $sessional)
+    {$check = $this->fetchAll($sessional);
+    if (0 != count($check))
     {
-        //$logger = Zend_Registry::get('logger');
-        $check = $this->fetchAll($sessional);
-        //$logger->debug($check);
-        if (0 != count($check)) {
-            return array('data' => $check, 'exists' => true);
-        } else {
-            $sql = 'SELECT `subject_department`.`department_id`
+        return array('data' => $check, 'exists' => true);
+    } else 
+    {
+        $sql = 'SELECT `subject_department`.`department_id`
     						, `subject_department`.`degree_id`
     						, `subject_department`.`semester_id`
   							, `subject_department`.`subject_code`
@@ -154,7 +153,7 @@ class Acad_Model_Asessment_SessionalMapper
             if ($result != null) {
                 $entries = array();
                 foreach ($result as $row) {
-                    $entry = new Acad_Model_Asessment_Sessional();
+                    $entry = new Acad_Model_Assessment_Sessional();
                     $entry->setOptions($row)->setMapper($this);
                     $entries[] = $entry;
                 }
@@ -168,19 +167,14 @@ class Acad_Model_Asessment_SessionalMapper
     /**
      * Fetches all the entries for perticular sessional
      * 
-     * @param Acad_Model_Asessment_Sessional
-     * @return array Acad_Model_Asessment_Sessional
+     * @param Acad_Model_Assessment_Sessional
+     * @return array Acad_Model_Assessment_Sessional
      */
-    public function fetchAll (Acad_Model_Asessment_Sessional $sessional)
+    public function fetchAll (Acad_Model_Assessment_Sessional $sessional)
     {
-        //$logger = Zend_Registry::get('logger');
-        $sql = $this->getDbTable()
-            ->getDefaultAdapter()
-            ->select()
-            ->from($this->getDbTable()
-            ->info('name'))
-            ->joinInner('subject', 
-        '`test_info`.`subject_code` = `subject`.`subject_code`', 'subject_name')
+        $sql = $this->getDbTable()->getDefaultAdapter()->select()
+            ->from($this->getDbTable()->info('name'))
+            ->joinInner('subject','`test_info`.`subject_code` = `subject`.`subject_code`', 'subject_name')
             ->where('department_id = ?', $sessional->getDepartment_id())
             ->//            ->where('degree_id = ?', $sessional->getDegree_id())
         where('test_type_id = ?', $sessional->getTest_type_id());
@@ -196,7 +190,7 @@ class Acad_Model_Asessment_SessionalMapper
         if ($resultSet != NULL) {
             $entries = array();
             foreach ($resultSet as $row) {
-                $entry = new Acad_Model_Asessment_Sessional();
+                $entry = new Acad_Model_Assessment_Sessional();
                 $entry->setOptions($row)->setMapper($this);
                 $entries[] = $entry;
             }
@@ -251,7 +245,7 @@ WHERE (`test_info`.`degree_id` =?
         $bind = array($deg, $dep, $sem, $type, 1, $stuRoll);
         $result = $this->getDbTable()
             ->getAdapter()
-            ->query($sql, $bind);
+            ->query($sql, $bind)->fetchAll();
         return $result;
     }
 }

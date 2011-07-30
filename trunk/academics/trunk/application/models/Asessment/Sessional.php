@@ -1,14 +1,14 @@
 <?php
-class Acad_Model_Asessment_Sessional extends Acad_Model_Asessment_Abstract
+class Acad_Model_Assessment_Sessional extends Acad_Model_Assessment_Abstract
 {
     /**
-     * Static Variable defining the type of Asessment
+     * Static Variable defining the type of Assessment
      * 
      */
     protected $test_type_id='SESS';
     /**
      * Sessional Mapper
-     * @var Acad_Model_Asessment_SessionalMapper
+     * @var Acad_Model_Assessment_SessionalMapper
      */
     protected $_mapper;
      /**
@@ -23,8 +23,8 @@ class Acad_Model_Asessment_Sessional extends Acad_Model_Asessment_Abstract
     protected $_status;
     /**
      * Set Sessional Mapper
-     * @param Acad_Model_Asessment_SessionalMapper $mapper - Sessional Mapper
-     * @return Acad_Model_Asessment_Sessional
+     * @param Acad_Model_Assessment_SessionalMapper $mapper - Sessional Mapper
+     * @return Acad_Model_Assessment_Sessional
      */
     public function setMapper($mapper){
         $this->_mapper=$mapper;
@@ -33,11 +33,11 @@ class Acad_Model_Asessment_Sessional extends Acad_Model_Asessment_Abstract
     
     /**
      * Get Sessional Mapper
-     * @return Acad_Model_Asessment_SessionalMapper $mapper - Sessional Mapper
+     * @return Acad_Model_Assessment_SessionalMapper $mapper - Sessional Mapper
      */
     public function getMapper(){
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Asessment_SessionalMapper());
+            $this->setMapper(new Acad_Model_Assessment_SessionalMapper());
         }
         return $this->_mapper;
     }
@@ -165,7 +165,7 @@ class Acad_Model_Asessment_Sessional extends Acad_Model_Asessment_Abstract
  	/**
      * Fetch all entries
      * 
-     * @return array of Acad_Model_Asessment_Sessional
+     * @return array of Acad_Model_Assessment_Sessional
      */
     public function fetchAll()
     {

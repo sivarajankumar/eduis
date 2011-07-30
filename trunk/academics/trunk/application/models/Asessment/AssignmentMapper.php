@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_Asessment_AssignmentMapper
+class Acad_Model_Assessment_AssignmentMapper
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Acad_Model_Asessment_AssignmentMapper
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Acad_Model_Asessment_AssignmentMapper
+     * @return Acad_Model_Assessment_AssignmentMapper
      */
     public function setDbTable ($dbTable)
     {
@@ -25,7 +25,7 @@ class Acad_Model_Asessment_AssignmentMapper
     /**
      * Get registered Zend_Db_Table instance
      *
-     * Lazy loads Acad_Model_Asessment_Assignment if no instance registered
+     * Lazy loads Acad_Model_Assessment_Assignment if no instance registered
      * 
      * @return Zend_Db_Table_Abstract
      */
@@ -65,7 +65,7 @@ WHERE (`test_info`.`degree_id` =?
         $bind = array($deg, $dep, $sem, $type, 1, $stuRoll);
         $result = $this->getDbTable()
             ->getAdapter()
-            ->query($sql, $bind);
+            ->query($sql, $bind)->fetchAll();
         return $result;
     }
 }

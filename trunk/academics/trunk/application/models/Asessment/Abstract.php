@@ -1,5 +1,5 @@
 <?php
-abstract class Acad_Model_Asessment_Abstract
+abstract class Acad_Model_Assessment_Abstract
 {
     
     /**
@@ -132,7 +132,7 @@ abstract class Acad_Model_Asessment_Abstract
     /**
      * Set test info id
      * @param int $testInfoId - test info id
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     public function setTest_info_id($testInfoId){
         $this->_test_info_id=$testInfoId;        
@@ -155,7 +155,7 @@ abstract class Acad_Model_Asessment_Abstract
     /**
      * Set department id
      * @param string $departmentid - department id
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     public function setDepartment_id($departmentid){
         $this->_department_id=$departmentid;
@@ -174,7 +174,7 @@ abstract class Acad_Model_Asessment_Abstract
     /**
      * Set degree id
      * @param string $degreeid - degree id
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     public function setDegree_id($degreeid){
         $this->_degree_id=$degreeid;
@@ -192,7 +192,7 @@ abstract class Acad_Model_Asessment_Abstract
     /**
      * Set semester id
      * @param int $semesterid - semester id
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     public function setSemester_id($semesterid){
         $this->_semester_id=$semesterid;
@@ -210,7 +210,7 @@ abstract class Acad_Model_Asessment_Abstract
     /**
      * Set subject code
      * @param array
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     public function setSubject_code($subjectcode){
         $this->_subject_code=$subjectcode;
@@ -228,7 +228,7 @@ abstract class Acad_Model_Asessment_Abstract
     /**
      * Set subject name
      * @param array
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     public function setSubject_name($subjectname){
         $this->_subject_name=$subjectname;
@@ -247,7 +247,7 @@ abstract class Acad_Model_Asessment_Abstract
     /**
      * Set test type id
      * @param string $testtypeid - test type id
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     protected function _setTest_type_id($testtypeid){
         $this->_test_type_id=$testtypeid;
@@ -266,7 +266,7 @@ abstract class Acad_Model_Asessment_Abstract
     /**
      * Set test id
      * @param int $testid - test id
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     public function setTest_id($testid){
         $this->_test_id=$testid;
@@ -284,7 +284,7 @@ abstract class Acad_Model_Asessment_Abstract
 	/**
      * Set Time of conduct/submission
      * @param str $time - Time of conduct/submission
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     public function setTime($time){
         $this->_time = $time;
@@ -302,7 +302,7 @@ abstract class Acad_Model_Asessment_Abstract
     /**
      * Set date of announcement
      * @param date $dateofannouncement - date of announcement
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     public function setDate_of_coduct($dateofannouncement){
         $this->_date_of_announcement = $dateofannouncement;
@@ -320,7 +320,7 @@ abstract class Acad_Model_Asessment_Abstract
     /**
      * Set date of conduct
      * @param date $dateofconduct - date of conduct
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     public function setDate_of_conduct($dateofconduct){
         $this->_date_of_conduct = $dateofconduct;
@@ -374,7 +374,7 @@ abstract class Acad_Model_Asessment_Abstract
     /**
      * Set remarks
      * @param string $remark - remarks
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     public function setRemark($remarks){
         $this->_remarks = $remarks;
@@ -392,7 +392,7 @@ abstract class Acad_Model_Asessment_Abstract
 	/**
      * Set is optional
      * @param string $isoptional - is optional
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     public function setIs_optional($isoptional){
         $this->_is_optional = $isoptional;
@@ -411,7 +411,7 @@ abstract class Acad_Model_Asessment_Abstract
 	/**
      * Set as locked
      * @param string $islocked - is locked
-     * @return Acad_Model_Asessment_Abstract
+     * @return Acad_Model_Assessment_Abstract
      */
     public function setIs_locked($islocked){
         $this->_is_locked = $islocked;

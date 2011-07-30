@@ -1,14 +1,14 @@
 <?php
-class Acad_Model_Asessment_Assignment extends Acad_Model_Asessment_Abstract
+class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
 {
     /**
-     * Static Variable defining the type of Asessment
+     * Static Variable defining the type of Assessment
      * 
      */
     protected $test_type_id='ASNMT';
     /**
      * Assignment Mapper
-     * @var Acad_Model_Asessment_AssignmentMapper
+     * @var Acad_Model_Assessment_AssignmentMapper
      */
     protected $_mapper;
      /**
@@ -23,8 +23,8 @@ class Acad_Model_Asessment_Assignment extends Acad_Model_Asessment_Abstract
     protected $_status;
     /**
      * Set Assignment Mapper
-     * @param Acad_Model_Asessment_AssignmentMapper $mapper - Assignment Mapper
-     * @return Acad_Model_Asessment_Assignment
+     * @param Acad_Model_Assessment_AssignmentMapper $mapper - Assignment Mapper
+     * @return Acad_Model_Assessment_Assignment
      */
     public function setMapper($mapper){
         $this->_mapper=$mapper;
@@ -33,11 +33,11 @@ class Acad_Model_Asessment_Assignment extends Acad_Model_Asessment_Abstract
     
     /**
      * Get Assignment Mapper
-     * @return Acad_Model_Asessment_AssignmentMapper $mapper - Assignment Mapper
+     * @return Acad_Model_Assessment_AssignmentMapper $mapper - Assignment Mapper
      */
     public function getMapper(){
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Asessment_AssignmentMapper());
+            $this->setMapper(new Acad_Model_Assessment_AssignmentMapper());
         }
         return $this->_mapper;
     }
@@ -165,7 +165,7 @@ class Acad_Model_Asessment_Assignment extends Acad_Model_Asessment_Abstract
  	/**
      * Fetch all entries
      * 
-     * @return array of Acad_Model_Asessment_Assignment
+     * @return array of Acad_Model_Assessment_Assignment
      */
     public function fetchAll()
     {
