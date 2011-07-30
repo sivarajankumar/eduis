@@ -12,7 +12,7 @@ Semester:<?php echo $this->sem;?></span>
 </div>
 <table id="sessionalMarks" cellspacing="10" cellpadding="10">
 	<tr>
-		<th>  </th>
+		
 		<th>Sessional</th>
 		<th> Subject</th>
 		<th>Max Marks</th>
@@ -25,7 +25,7 @@ Semester:<?php echo $this->sem;?></span>
 		foreach ($this->marks as $key=>$value)
 		{
 		    echo '<tr id='.$value["test_info_id"].'>';
-		    
+		     echo "";
 		    echo '<td>'.$value['test_id'].'</td>';
 		     echo '<td>'.$value['subject_name'].'</td>';
 		    echo '<td>'.$value['max_marks'].'</td>';
