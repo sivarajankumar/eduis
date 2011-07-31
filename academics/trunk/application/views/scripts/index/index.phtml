@@ -26,7 +26,12 @@ Semester:<?php echo $this->sem;?></span>
         <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/marks/sessional' ?>">Sessional</a></li> 
         <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/marks/assignment' ?>">Assignments</a></li> 
         </ul>
-    <li><a href="<?php echo 'http://'.LIBRARY_SERVER.'/member/accountinfo' ?>">Library</a></li> 
+    <li>Library
+    	<ul>
+    	<li><a href="<?php echo 'http://'.LIBRARY_SERVER.'/member' ?>">Library Account</a></li>
+    	<li><a href="<?php echo 'http://'.LIBRARY_SERVER.'/search' ?>">Search Book</a></li> 
+    	</ul>
+    </li>	
   </ul>
   </div>
   <style type="text/css">
