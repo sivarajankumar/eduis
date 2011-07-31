@@ -1,0 +1,320 @@
+<?php
+$this->headLink()->appendStylesheet(
+'http://' . CDN_SERVER . '/plugins/baloon/bt/jquery.bt.css');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/baloon/bt/jquery.bt.min.js');
+?>
+<br/>
+<div id="member-area" style="width: 49%; float: left; display: none;">
+<fieldset class="ui-widget-content  ui-corner-all"><legend
+	class="ui-widget-header ui-corner-all">Member Info</legend>
+	<table style="width: 100%;">
+		<tr>
+			<td><div id="memberInfoBasic" class="ui-helper-reset"></div></td>
+			<td style="width: 3.5cm;"><div id="memberInfoImage" class="ui-helper-reset">:IMAGE:</div></td>
+		</tr>
+	</table>
+</fieldset>
+</div>
+
+<div id="bookArea" style="width: 49%; float: right; display: none;">
+<fieldset class="ui-widget-content  ui-corner-all"><legend
+	class="ui-widget-header ui-corner-all">Issued Documents List</legend>
+<div id="bookInfo">&nbsp;</div>
+</fieldset>
+</div>
+<div id="bookDetail" style="display: none;">&nbsp; </div>
+
+<script type="text/javascript">
+var imgServer = 'http://localhost/';
+var imgType = '.jpg';
+var urlMemberInfo = "<?php echo $this->url ( array ('controller' => 'member', 'action' => 'getaccountdetail' ))?>";
+var urlMemberLimit = "<?php echo $this->url ( array ('controller' => 'membershiplimit', 'action' => 'getmembershiplimit' ))?>";
+var urlBookDetail = "<?php echo $this->url ( array ('controller' => 'book', 'action' => 'getbook' ))?>";
+var objMemberInfo = null;
+var objMemberType = {};
+var objBookMoreInfo = null;
+var objBookInfo = null ;
+
+//jQueryfy buttons
+$("button").button();
+var showMember = function(){
+	member_id = '<?php echo $this->id?>';
+    if(member_id.length > 0){
+		fetchMemberInfo(member_id);
+    } else {
+    	resetMemberSection();
+        resetBookSection();
+    }
+};
+$(function(){
+	//Initial Cursor position
+    //$("#member_id").focus();
+    var aa = showMember();
+});
+
+/*
+ * Fetch Member Information
+ */
+var fetchMemberInfo = function(member_id){
+        $.ajax({
+            url : urlMemberInfo,
+            ifModified : true,
+            dataType : "json",
+            data : {'member_id' : member_id },
+            success : function(member){
+                if(member.member_type_id)
+                    {
+                    {
+                    	 
+                    		var memberInfoBasic = {};
+                            memberInfoBasic.name = member.info.first_name;
+                            memberInfoBasic.deptt = member.info.department_id;
+                            memberInfoBasic.degree = member.info.degree_id;
+                            memberInfoBasic.semester = member.info.semester_id;
+                      
+                    }
+                    objMemberInfo = member;
+                    if(!(objMemberType[objMemberInfo.membership_type_id])){
+                        fetchMemberLimit(member_id);
+                    }
+                    processIssuedList(member.issued);
+                    //Fetch Member Photo.
+                    //fetchMemberPhoto(member_id);
+                    $('#memberInfoBasic').html('');
+                    traverse(memberInfoBasic,'#memberInfoBasic');
+                    $("#member-area").slideDown("slow");
+                    
+                }else{
+                    //$('#member_id').val('');
+                    resetMemberSection();
+                    alert('Recieved member information is incompatible!!');
+                }
+            },
+            error: function(xhr, text){
+                alert(xhr.responseText);
+                resetMemberSection();
+            }
+        });
+};
+
+
+/*
+ * Fetch Member Photo
+ * TODO still pending...
+ */
+/*
+var fetchMemberPhoto = function(member_id, imgId){
+	//Set Default location of img.
+	imgId = typeof(imgId) != 'undefined' ? imgId : '#imgMember';
+	switch((objMemberInfo.member_type_id).toUpperCase()){
+
+	case 'STUDENT' : 
+		imgLoc = 'images/';
+		break;
+	default :
+		alert('Member photo can not be fetched');
+	}
+
+    imgPath = imgServer+imgLoc;
+    $(imgId).attr({
+        alt: member_id,
+        title: objMemberInfo.info.first_name,
+        src : imgPath+member_id+imgType
+      });
+};
+
+*/
+
+/*
+ * Fetch Member Account Type Information
+ */
+var fetchMemberLimit = function(){
+        $.ajax({
+            url : urlMemberLimit,
+            async : false,
+            dataType : "json",
+            data : {'membership_type' : objMemberInfo.membership_type_id },
+            success : function(memberLimit){
+                if(memberLimit){
+                    objMemberType[objMemberInfo.membership_type_id] = memberLimit;
+                }else{
+                    resetMemberSection();
+                    alert('Recieved member account information is incompatible!!');
+                }
+            },
+            error: function(xhr, text){
+                alert(xhr.responseText);
+            }
+        });
+};
+
+
+/*
+ * Fetch book information on basis of accession number.
+ * 
+ */
+var processIssuedList = function(issued){
+	if (issued.length) {
+		$('#bookInfo').html('');
+		//alert(issued.length);
+		$.each(issued, function (index, book) {
+			var bookInfo = {};
+			//bookInfo['Document'] = book.document_type_id;
+			bookInfo['Acc no.'] = '<label class="issuedAccNo">'+book.acc_no+'</label>';
+			
+			issueDate = $.datepicker.parseDate('yy-mm-dd', book.issue_date);
+			bookInfo['Issued Date'] = issueDate.toLocaleDateString();
+			
+			returnDate = $.datepicker.parseDate('yy-mm-dd', book.issue_date);
+			maxdays = objMemberType[objMemberInfo.membership_type_id][book.document_type_id].day_limit;
+			returnDate.setDate(parseInt(returnDate.getDate())+parseInt(maxdays));
+			bookInfo['Return date'] = returnDate.toLocaleDateString();
+			
+			traverse(bookInfo,'#bookInfo');
+			if (issued.length != parseInt(index+1)) {
+				$('#bookInfo').append('<div class="infoDiv ui-state-highlight ui-corner-all" ></div>');
+			}
+		});
+
+		$('.issuedAccNo:parent').bt({
+			preBuild:function(){
+				acc_no = $(this).text();
+		  		$.ajax({
+		            url : urlBookDetail,
+		            async : false,
+		            dataType : "json",
+		            data : {'acc_no' : acc_no },
+		            success : function(jBook){
+			            var bookStr = '<div>ISBN: <b>'+jBook.isbn_id+'</b></div>';
+			            bookStr += '<div>Title: <b>'+jBook.title+'</b></div>';
+			            bookStr += jBook.author ? '<div>Author: <b>'+jBook.author+'</b></div>':"";
+			            bookStr += jBook.edition ? '<div>Edition: <b>'+jBook.edition+'</b></div>':"";
+			            bookStr += jBook.volume ? '<div>Volume: <b>'+jBook.volume+'</b></div>':"";
+			            bookStr += jBook.year ? '<div>Year: <b>'+jBook.year+'</b></div>':"";
+		            	$('#bookDetail').html(bookStr);
+		            },
+		            error: function(xhr, text){
+		            	$('#bookDetail').text('ERROR: xhr.responseText');
+		               // alert(xhr.responseText);
+		            }
+		        });
+				},
+				contentSelector:  "$('#bookDetail').html()",
+			  showTip: function(box){
+				    $(box).fadeIn(500);
+			  },
+			  hideTip: function(box, callback){
+			    $(box).animate({opacity: 0}, 500);
+			  },
+			  shrinkToFit: true,
+			  hoverIntentOpts: {
+			    interval: 100,
+			    timeout: 1000
+			  },
+			closeWhenOthersOpen: true,
+			fill: '#FFF',
+		    cornerRadius: 10,
+		    strokeWidth: 0,
+		    shadow: true,
+		    shadowOffsetX: 3,
+		    shadowOffsetY: 3,
+		    shadowBlur: 8,
+		    shadowColor: 'rgba(0,0,0,.9)',
+		    shadowOverlap: false,
+		    noShadowOpts: {strokeStyle: '#999', strokeWidth: 2},
+		    positions: ['left', 'top'],
+		    cssStyles: {
+		        fontFamily: '"lucida grande",tahoma,verdana,arial,sans-serif', 
+		        fontSize: '0.91em'
+		      }
+		  	});
+	  	
+	} else {
+		$('#bookInfo').html('<p>No book currently issued.</p>');
+	}
+
+	
+  	
+    $("#bookArea").slideDown("slow");
+};
+
+/**
+ * ---- Other Helper Functions ----
+ */
+/*
+ * Toggle books info div
+ */
+var toggleBookInfo = function(){
+	$('#moreBookInfo').slideToggle();
+	$('a#moreInfo').slideToggle("slow");
+	$('a#lessInfo').slideToggle("slow");
+};
+
+/*
+ * Toggle Account Info div
+ */
+var toggleAccountInfo = function(){
+    $('#fset_accountInfo').slideToggle();
+    $('a#moreAccInfo').slideToggle("slow");
+    $('a#lessAccInfo').slideToggle("slow");
+};
+
+var resetBookSection = function(){
+    $("#acc_no").val('');
+    $("#bookArea").hide();
+    $("#lbl_acc_no").hide();
+    $("#divIssue").hide();
+    $('#cbkVerify').attr("checked", '');
+    $("#member_id").focus().select();
+};
+
+var resetBookInfoArea = function(){
+    $("#acc_no").val('').focus();
+    $("#bookArea").fadeOut("slow");
+    $("#divIssue").slideUp();
+};
+
+var resetMemberSection = function(){
+	//$('#member_id').val('');
+    $("#member-area").fadeOut('slow');
+    $("#member_id").focus().select();
+    $("#divIssue").slideUp();
+};
+
+/*
+ * Paste json object data into a div.
+ */
+var traverse = function(jsonObj, targetDiv, clean){
+	//if (typeof clean === 'undefined') clean = false;
+	$.each(jsonObj, function (key, value) {
+		if( value && typeof value == "object" ) {
+			prepareSelectOption(value, targetDiv);
+		} else if( value && typeof value == "string" ) {
+			if(clean){
+				key = key.replace('_', ' ');
+				key = key.replace('id', '');
+			}
+			$(targetDiv).append('<div class="infoDiv" ><span class="infoHeader" >'+key+' : </span><span class="infoContent ui-state-highlight ui-corner-all">'+value+'</span></div>');
+		}
+	});
+};
+
+function scroll(destination){
+	$('html, body').animate({
+	scrollTop: $(destination).offset().top
+	}, 1000);
+}
+/*
+ * Wait for a while.
+ */
+function wait(millis) {
+        var date = new Date();
+        var curDate = null;
+
+        do { curDate = new Date(); } 
+        while(curDate-date < millis);
+}
+
+
+</script>
