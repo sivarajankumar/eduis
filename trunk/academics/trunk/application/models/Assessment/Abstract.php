@@ -570,9 +570,10 @@ WHERE (`test_info_id` = ?)';
     /**
      *  fetches the schedule of a unlocked asessment with highest test_id
      */
-    public function fetchSchedule ($deg, $dep, $sem, $numIds)
+    public function fetchSchedule ($deg, $dep, $sem, $numIds=null)
     {
         $type = $this->test_type_id;
+        echo " ".$deg." ".$dep." ".$sem." ".$numIds."</br>";
         /*$sql = 'SELECT 
         ,`test_info`.`test_info_id`
         ,`test_info`.`is_optional`
@@ -611,25 +612,31 @@ WHERE (`test_info_id` = ?)';
         ->where('degree_id =?',$deg)
         ->where('department_id =?',$dep)
         ->where('semester_id =?',$sem)
-        ->where('test_type_id =?',$type)
-        ->where('department_id =?',$dep);
+        ->where('test_type_id =?',$type);
         $testIds=$this->getHighestUnlockedTestId($deg, $dep, $sem,$numIds);
+        echo "<pre>";
+        print_r($testIds);
+        echo  "</pre>";
+        echo "</br>";
         if(isset($numIds))
         {
         foreach ($testIds as $testId)
         {
-            $select->where('test_id =?',$testId);
+            $sql->where('test_id =?',$testId);
         }
         }
-        $fetchAll = $adapterClass->getDefaultAdapter()->query($select)->fetchAll();
-        
-        
-    }
+        $fetchAll = $adapterClass->getDefaultAdapter()->query($sql)->fetchAll();
+        echo "<pre>";
+        print_r($fetchAll);
+        echo  "</pre>";
+        echo "</br>";
+        return $fetchAll;
+     }
     
     /**
      *gets the highest test_id of an unlocked assessment 
      */
-    public function getHighestUnlockedTestId($deg,$dep, $sem,$numIds)
+    public function getHighestUnlockedTestId($deg,$dep, $sem,$numIds=NULL)
     {
         $type = $this->test_type_id;
         $adapterClass = new Zend_Db_Table();
@@ -637,10 +644,11 @@ WHERE (`test_info_id` = ?)';
         ->select()
         ->from('test_info','test_id')
         ->where('degree_id = ?',$deg)
-        ->where('department_id` = ?',$dep)
+        ->where('department_id = ?',$dep)
         ->where('semester_id = ?',$sem)
         ->limit($numIds,0)
-        ->order('test_id DESC');
+        ->order('test_id DESC')
+        ->group('test_id');
         $fetchAll = $adapterClass->getDefaultAdapter()->query($sql)->fetchAll();
         /*$sql = '(SELECT
         `test_id`

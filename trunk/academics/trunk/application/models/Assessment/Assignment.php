@@ -151,6 +151,13 @@ class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
     {
         return $this->_status;
     }
+     /**
+     * This function gets the test_id corresponding to latest umarked sessional
+     */
+    public function getMaxUnlockedTestId($deg,$dep, $sem)
+    {
+        return $this->getMaxUnlockedTestId($deg, $dep, $sem,$this->test_type_id);
+    }
     
     /**
      * Function fectSchedule
@@ -158,8 +165,9 @@ class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
      * Otherwise, it will create partial schedule for further completion
      * @return  
      */
-    public function fetchSchedule(){
-        return $this->getMapper()->fetchSchedule($this);
+    public function fetchSchedule($deg,$dep,$sem,$numIds=NULL){
+        $result =parent::fetchSchedule($deg,$dep,$sem,$numIds=NULL);
+        return $result;
     }
     
  	/**

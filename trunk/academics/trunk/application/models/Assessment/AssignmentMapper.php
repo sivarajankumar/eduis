@@ -72,4 +72,24 @@ WHERE (`test_info`.`degree_id` =?
             ->fetchAll();
         return $result;
     }
+public function getMaxUnlockedTestId($deg,$dep, $sem,$type)
+    {
+        $sql = '(SELECT
+    `test_id`
+FROM
+    `academics`.`test_info`
+WHERE (`degree_id` = ?
+    AND `department_id` = ?
+    AND `semester_id` = ?
+    AND `test_type_id` = ?
+    AND `is_locked` =?)
+    ORDER BY `test_id` DESC
+    LIMIT 1)';
+        $bind = array($deg, $dep, $sem, $type, 0);
+        $result = $this->getDbTable()
+            ->getAdapter()
+            ->query($sql, $bind)
+            ->fetchAll();
+        return $result;
+    }
 }
