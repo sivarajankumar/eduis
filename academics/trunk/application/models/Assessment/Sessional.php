@@ -151,18 +151,14 @@ class Acad_Model_Assessment_Sessional extends Acad_Model_Assessment_Abstract
     {
         return $this->_status;
     }
-    
     /**
-     * Function fectSchedule
-     * Fecthes scedule of particular sessional if exists
-     * Otherwise, it will create partial schedule for further completion
-     * @return  
+     * This function gets the test_id corresponding to latest umarked sessional
      */
-    public function fetchSchedule(){
-        return $this->getMapper()->fetchSchedule($this);
+    public function getMaxUnlockedTestId($deg,$dep, $sem)
+    {
+        return $this->getMaxUnlockedTestId($deg, $dep, $sem,$this->test_type_id);
     }
-    
- 	/**
+    /**
      * Fetch all entries
      * 
      * @return array of Acad_Model_Assessment_Sessional

@@ -116,14 +116,13 @@ class Acad_Model_Assessment_SessionalMapper
      * Status => true defines requested sessional for particular class already exists.
      * Status => false defines requested sessional for particular class donot exists and is newly prepared.
      */
-    public function fetchSchedule (Acad_Model_Assessment_Sessional $sessional)
-    {$check = $this->fetchAll($sessional);
-    if (0 != count($check))
+    /*public function fetchSchedule (Acad_Model_Assessment_Sessional $sessional)
     {
-        return array('data' => $check, 'exists' => true);
-    } else 
-    {
-        $sql = 'SELECT `subject_department`.`department_id`
+        $check = $this->fetchAll($sessional);
+        if (0 != count($check)) {
+            return array('data' => $check, 'exists' => true);
+        } else {
+            $sql = 'SELECT `subject_department`.`department_id`
     						, `subject_department`.`degree_id`
     						, `subject_department`.`semester_id`
   							, `subject_department`.`subject_code`
@@ -163,18 +162,22 @@ class Acad_Model_Assessment_SessionalMapper
                 Zend_Log::ERR);
             }
         }
-    }
+    }*/
     /**
      * Fetches all the entries for perticular sessional
      * 
      * @param Acad_Model_Assessment_Sessional
      * @return array Acad_Model_Assessment_Sessional
      */
-    public function fetchAll (Acad_Model_Assessment_Sessional $sessional)
+   /* public function fetchAll (Acad_Model_Assessment_Sessional $sessional)
     {
-        $sql = $this->getDbTable()->getDefaultAdapter()->select()
-            ->from($this->getDbTable()->info('name'))
-            ->joinInner('subject','`test_info`.`subject_code` = `subject`.`subject_code`', 'subject_name')
+        $sql = $this->getDbTable()
+            ->getDefaultAdapter()
+            ->select()
+            ->from($this->getDbTable()
+            ->info('name'))
+            ->joinInner('subject', 
+        '`test_info`.`subject_code` = `subject`.`subject_code`', 'subject_name')
             ->where('department_id = ?', $sessional->getDepartment_id())
             ->//            ->where('degree_id = ?', $sessional->getDegree_id())
         where('test_type_id = ?', $sessional->getTest_type_id());
@@ -198,57 +201,13 @@ class Acad_Model_Assessment_SessionalMapper
         } else {
             return null;
         }
-    }
+    }*/
+    
+    
     public function fetchMarks ($deg, $dep, $sem, $stuRoll, $type)
-    { /*
-        $sql = $this->getDbTable()
-            ->getAdapter()
-            ->select()
-            ->from($this->getDbTable()
-            ->info('name'), array('test_info_id', 'test_id'))
-            ->where('degree_id= ?', $deg)
-            ->where('department_id= ?', $dep)
-            ->where('semester_id= ?', $sem)
-            ->where('test_type_id= ?', $type)
-            ->where('is_locked = ?', 1)
-            ->order('test_id');
-        if ($type) {
-            $sql->where($cond);
-        } else {
-            $sql->columns('type_id');
-        }
-        $testId = $sql->query()->fetchAll();
-        foreach ($$testId as $row => $value) {
-            ;
-        }
-    */
-        /*$sql = 'SELECT
-    `subject`.`subject_name`
-    ,`test_info`.`test_id`
-    , `test_info`.`subject_code`
-    , `test_info`.`test_info_id`
-    , `test_marks`.`zz`
-    , `test_marks`.`marks_scored`
-    , `test_info`.`pass_marks`
-    , `test_info`.`max_marks`
-FROM
-    `academics`.`test_marks`, 
-    `academics`.`test_info`
-    INNER JOIN `academics`.`subject` 
-        ON (`test_info`.`subject_code` = `subject`.`subject_code`)
-WHERE (`test_info`.`degree_id` =?
-    AND `test_info`.`department_id` =?
-    AND `test_info`.`semester_id` =?
-    AND `test_info`.`test_type_id` =?
-    AND `test_info`.`is_locked` =?
-    AND `test_marks`.`student_roll_no` =?)';
-        $bind = array($deg, $dep, $sem, $type, 1, $stuRoll);
-        $result = $this->getDbTable()
-            ->getAdapter()
-            ->query($sql, $bind)->fetchAll();
-        return $result;*/
+    {
         $sql = 'SELECT
-    `subject`.`subject_name`
+        subject`.`subject_name`
     ,`subject`.`subject_code`
     ,`test_info`.`test_info_id`
     , `test_info`.`test_id`
