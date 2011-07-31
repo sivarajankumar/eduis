@@ -1,4 +1,4 @@
-<div id="selection-div"class="ui-widget-content ui-corner-all" style="float:inherit; width:1000px; height:125px; padding:4px" >
+<div id="selection-div"class="ui-widget-content ui-corner-all" style="float:inherit; width:1264px; height:250px; padding:4px" >
 <h3>
 <label for="degree_select" accesskey="S" id="lbl_degree_id" style="padding: 0.4em; ">
 Personal information
@@ -8,21 +8,19 @@ Personal information
 <br><br>Department:<?php echo $this->deptt;?><br><br>
 Semester:<?php echo $this->sem;?></span>
 <br><br><br><span style="float:left; ">Roll Number:<?php echo $this->rollno;?></span>
-</p>
-</div>
-<br>
-<br>
-<div id="stuMenu" >
+<br><br><br>
+<center><h3>ACADEMIC DETAILS</h3></center>
+<br><br><div id="stuMenu" >
 <ul> 
     <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/studentattendance' ?>">Attendance</a></li> 
     <li>Datesheet
-      <ul> 
+      <br><ul> 
         <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/schedule/sessional' ?>">Sessional</a></li> 
         <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/schedule/assignment' ?>">Assignments</a></li> 
       </ul> 
     </li> 
     <li>Marks
-      <ul> 
+      <br><ul> 
         <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/marks/sessional' ?>">Sessional</a></li> 
         <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/marks/assignment' ?>">Assignments</a></li> 
         </ul>
@@ -34,45 +32,45 @@ Semester:<?php echo $this->sem;?></span>
     </li>	
   </ul>
   </div>
+</p>
+
+</div>
+
   <style type="text/css">
-#stuMenu ul {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-	width: 150px;
-	}
-#stuMenu ul li {
-	position: relative;
-	}
-#stuMenu li ul {
-	position: absolute;
-	left: 149px;
-	top: 0;
-	display: none;
-	}
-#stuMenu ul li  {
-	display: block;
-	text-decoration: none;
-	color: #777;
-	background: #fff;
-	padding: 5px;
-	border: 1px solid #ccc;
-	border-bottom: 0;
-	}
-	#stuMenu ul {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-	width: 150px;
-	border-bottom: 1px solid #ccc;
-	}
-#stuMenu li:hover ul { display: block; }
-#stuMenu a{
-	display: block;
+
+#stuMenu  ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  }
+  
+  #stuMenu  li {
+  float: left;
+  position: relative;
+  width: 10em;
+  }
+   #stuMenu li ul {
+  display: none;
+  position: ; 
+  top: 1em;
+  left: 0;
+  }
+#stuMenu  a{
+	
 	text-decoration: none;
 	background: #fff;
 	color: #777;
 }
-#stuMenu li:hover ul { display: block; }
+ #stuMenu ul li  {
+	
+	text-decoration: none;
+	color: #777;
+	background: #fff;
+	padding: 5px;
+	
+	}
+ #stuMenu  li:hover ul, li.over ul{ display: block; }
+  
+  
 	
 </style>
