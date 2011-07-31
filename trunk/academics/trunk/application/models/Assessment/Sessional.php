@@ -167,6 +167,14 @@ class Acad_Model_Assessment_Sessional extends Acad_Model_Assessment_Abstract
     {
        return $this->getMapper()->fetchAll($this);
     }
+    /**
+     * Function fectSchedule
+     *   
+     */
+    public function fetchSchedule($deg,$dep,$sem,$numIds=NULL){
+        $result =parent::fetchSchedule($deg,$dep,$sem,$numIds=NULL);
+        return $result;
+    }
      public function fetchMarks($deg,$dep,$sem,$stuRoll)
      {
          return $this->getMapper()->fetchMarks($deg,$dep,$sem,$stuRoll,$this->test_type_id);

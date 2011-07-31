@@ -161,9 +161,7 @@ class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
     
     /**
      * Function fectSchedule
-     * Fecthes scedule of particular Assignment if exists
-     * Otherwise, it will create partial schedule for further completion
-     * @return  
+     *   
      */
     public function fetchSchedule($deg,$dep,$sem,$numIds=NULL){
         $result =parent::fetchSchedule($deg,$dep,$sem,$numIds=NULL);
