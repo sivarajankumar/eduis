@@ -573,7 +573,7 @@ WHERE (`test_info_id` = ?)';
     public function fetchSchedule ($deg, $dep, $sem, $numIds=null)
     {
         $type = $this->test_type_id;
-        echo " ".$deg." ".$dep." ".$sem." ".$numIds."</br>";
+        //echo " ".$deg." ".$dep." ".$sem." ".$numIds."</br>";
         /*$sql = 'SELECT 
         ,`test_info`.`test_info_id`
         ,`test_info`.`is_optional`
@@ -615,7 +615,7 @@ WHERE (`test_info_id` = ?)';
         ->where('test_type_id =?',$type);
         $testIds=$this->getHighestUnlockedTestId($deg, $dep, $sem,$numIds);
         echo "<pre>";
-        print_r($testIds);
+       // print_r($testIds);
         echo  "</pre>";
         echo "</br>";
         if(isset($numIds))
@@ -627,7 +627,7 @@ WHERE (`test_info_id` = ?)';
         }
         $fetchAll = $adapterClass->getDefaultAdapter()->query($sql)->fetchAll();
         echo "<pre>";
-        print_r($fetchAll);
+      //  print_r($fetchAll);
         echo  "</pre>";
         echo "</br>";
         return $fetchAll;
