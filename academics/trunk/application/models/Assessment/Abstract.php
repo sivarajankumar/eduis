@@ -539,10 +539,6 @@ WHERE (`test_info_id` = ?)';
     public function fetchSchedule ($deg, $dep, $sem, $numIds = null)
     {
         $type = $this->test_type_id;
-        if(isset($numIds))
-        {
-            $numId=$numIds;
-        }
         $select = new Zend_Db_Table();
         $cols = array('test_info_id', 'is_optional', 'date_of_announcement', 
         'remarks', 'pass_marks', 'max_marks', 'date_of_conduct', 'time', 
@@ -558,7 +554,7 @@ WHERE (`test_info_id` = ?)';
             ->where('department_id =?', $dep)
             ->where('semester_id =?', $sem)
             ->where('test_type_id =?', $type);
-        $testIds = $this->getHighestTestIds($deg, $dep, $sem, $type, $numId);
+        $testIds = $this->getHighestTestIds($deg, $dep, $sem, $type, $numIds);
         foreach ($testIds as $value) {
             $test[] = "test_id='$value'";
         }
