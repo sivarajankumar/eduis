@@ -563,11 +563,7 @@ WHERE (`test_info_id` = ?)';
         $fetchAll = $adapterClass->getDefaultAdapter()
             ->query($sql)
             ->fetchAll();
-        echo "<pre>";
-        print_r($fetchAll);
-        echo "</pre>";
-        echo "</br>";
-        return $fetchAll;
+            return $fetchAll;
     }
     /**
      *This function gets the test_ids corresponding to latest locked
