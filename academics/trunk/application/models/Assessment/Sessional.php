@@ -1,4 +1,9 @@
 <?php
+/**
+ * The Sessional Class
+ * @author ACEIS TEAM
+ *
+ */
 class Acad_Model_Assessment_Sessional extends Acad_Model_Assessment_Abstract
 {
     /**
@@ -152,11 +157,12 @@ class Acad_Model_Assessment_Sessional extends Acad_Model_Assessment_Abstract
         return $this->_status;
     }
     /**
-     * This function gets the test_id corresponding to latest umarked sessional
+     * This function gets the test_ids corresponding to latest locked
+     * or !locked sessional as a/q to params
      */
-    public function getMaxUnlockedTestId($deg,$dep, $sem)
+    public function getHighestTestIds ($deg, $dep, $sem, $type, $numIds = null,$lock = 1)
     {
-        return $this->getMaxUnlockedTestId($deg, $dep, $sem,$this->test_type_id);
+        return (parent::getHighestTestIds ($deg, $dep, $sem, $type=$this->test_type_id, $numIds = null,$lock = 1));
     }
     /**
      * Fetch all entries
@@ -172,6 +178,7 @@ class Acad_Model_Assessment_Sessional extends Acad_Model_Assessment_Abstract
      *   
      */
     public function fetchSchedule($deg,$dep,$sem,$numIds=NULL){
+        
         $result =parent::fetchSchedule($deg,$dep,$sem,$numIds=NULL);
         return $result;
     }

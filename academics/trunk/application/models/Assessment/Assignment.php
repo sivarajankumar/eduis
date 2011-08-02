@@ -1,4 +1,9 @@
 <?php
+/**
+ * The Assignment Class
+ * @author ACEIS TEAM
+ *
+ */
 class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
 {
     /**
@@ -53,7 +58,7 @@ class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
         if (is_array($options)) {
             $this->setOptions($options);
         }
-        self::_setTest_type_id('SESS');
+        self::_setTest_type_id('ASNMT');
     }
     
     
@@ -151,24 +156,15 @@ class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
     {
         return $this->_status;
     }
-     /**
-     * This function gets the test_id corresponding to latest umarked sessional
-     */
-    public function getMaxUnlockedTestId($deg,$dep, $sem)
-    {
-        return $this->getMaxUnlockedTestId($deg, $dep, $sem,$this->test_type_id);
-    }
-    
     /**
-     * Function fectSchedule
-     *   
+     * This function gets the test_ids corresponding to latest locked
+     * or !locked Assignment as a/q to params
      */
-    public function fetchSchedule($deg,$dep,$sem,$numIds=NULL){
-        $result =parent::fetchSchedule($deg,$dep,$sem,$numIds=NULL);
-        return $result;
+    public function getHighestTestIds ($deg, $dep, $sem, $type, $numIds = null,$lock = 1)
+    {
+        return (parent::getHighestTestIds ($deg, $dep, $sem, $type=$this->test_type_id, $numIds = null,$lock = 1));
     }
-    
- 	/**
+    /**
      * Fetch all entries
      * 
      * @return array of Acad_Model_Assessment_Assignment
@@ -176,6 +172,15 @@ class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
     public function fetchAll()
     {
        return $this->getMapper()->fetchAll($this);
+    }
+    /**
+     * Function fectSchedule
+     *   
+     */
+    public function fetchSchedule($deg,$dep,$sem,$numIds=NULL){
+        
+        $result =parent::fetchSchedule($deg,$dep,$sem,$numIds=NULL);
+        return $result;
     }
      public function fetchMarks($deg,$dep,$sem,$stuRoll)
      {
