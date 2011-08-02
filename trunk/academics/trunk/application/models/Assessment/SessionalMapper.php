@@ -209,7 +209,7 @@ class Acad_Model_Assessment_SessionalMapper
     }*/
     
     
-    public function fetchMarks ($dep, $deg, $sem, $stuRoll, $type)
+    public function fetchMarks ($dep, $deg, $sem, $testType=NULL,$stuRoll)
     {
         $sql = 'SELECT
         `subject`.`subject_name`
@@ -234,7 +234,7 @@ WHERE (`test_info`.`degree_id` =?
     AND `test_info`.`test_type_id` =?
     AND `test_info`.`is_locked` =?
     AND `test_marks`.`student_roll_no` =?)';
-        $bind = array($deg, $dep, $sem, $type, 1, $stuRoll);
+        $bind = array($deg, $dep, $sem, $testType, 1, $stuRoll);
         $result = $this->getDbTable()
             ->getAdapter()
             ->query($sql, $bind)
