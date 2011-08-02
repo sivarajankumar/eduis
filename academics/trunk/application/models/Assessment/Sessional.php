@@ -190,7 +190,7 @@ class Acad_Model_Assessment_Sessional extends Acad_Model_Assessment_Abstract
      public function fetchMarks($dep,$deg,$sem,$stuRoll)
      {
          $testType = self::getTest_type_id();
-         return $this->getMapper()->fetchMarks($dep,$deg,$sem,$stuRoll,$testType);
+         return $this->getMapper()->fetchMarks($dep,$deg,$sem,$testType,$stuRoll);
      }
 }
 ?>
