@@ -1,4 +1,9 @@
 <?php
+/**
+ * Mapper Class for SESSIONAL
+ * @author ACEIS TEAM
+ *
+ */
 class Acad_Model_Assessment_SessionalMapper
 {
     /**
@@ -207,7 +212,7 @@ class Acad_Model_Assessment_SessionalMapper
     public function fetchMarks ($deg, $dep, $sem, $stuRoll, $type)
     {
         $sql = 'SELECT
-        subject`.`subject_name`
+        `subject`.`subject_name`
     ,`subject`.`subject_code`
     ,`test_info`.`test_info_id`
     , `test_info`.`test_id`
