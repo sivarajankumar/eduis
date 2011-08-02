@@ -10,7 +10,7 @@ class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
      * Static Variable defining the type of Assessment
      * 
      */
-    protected $test_type_id='ASNMT';
+    protected $_test_type_id='ASNMT';
     /**
      * Assignment Mapper
      * @var Acad_Model_Assessment_AssignmentMapper
@@ -160,9 +160,10 @@ class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
      * This function gets the test_ids corresponding to latest locked
      * or !locked Assignment as a/q to params
      */
-    public function getHighestTestIds ($deg, $dep, $sem, $type, $numIds = null,$lock = 1)
+    public function getHighestTestIds ($dep, $deg, $sem, $testType=NULL,$numIds =NULL,$lock = NULL)
     {
-        return (parent::getHighestTestIds ($deg, $dep, $sem, $type=$this->test_type_id, $numIds = null,$lock = 1));
+        $testType = self::getTest_type_id();
+        return (parent::getHighestTestIds ($dep, $deg, $sem, $testType, $numIds,$lock));
     }
     /**
      * Fetch all entries
@@ -174,17 +175,20 @@ class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
        return $this->getMapper()->fetchAll($this);
     }
     /**
-     * Function fectSchedule
+     * Function to get data to show as Schedule
      *   
      */
-    public function fetchSchedule($deg,$dep,$sem,$numIds=NULL){
-        
-        $result =parent::fetchSchedule($deg,$dep,$sem,$numIds=NULL);
+    public function fetchSchedule($dep,$deg,$sem,$numIds=NULL){
+        $testType = self::getTest_type_id();
+        $result =parent::fetchSchedule($deg,$dep,$sem,$testType,$numIds);
         return $result;
     }
-     public function fetchMarks($deg,$dep,$sem,$stuRoll)
+    
+    
+     public function fetchMarks($dep,$deg,$sem,$stuRoll)
      {
-         return $this->getMapper()->fetchMarks($deg,$dep,$sem,$stuRoll,$this->test_type_id);
+         $testType = self::getTest_type_id();
+         return $this->getMapper()->fetchMarks($dep,$deg,$sem,$stuRoll,$testType);
      }
 }
 ?>
