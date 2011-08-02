@@ -106,7 +106,7 @@ class ScheduleController extends Acadz_Base_BaseController
         $model = new Acad_Model_Assessment_Assignment();
         $schedule = $model->fetchSchedule($degree_id,$department_id,$semester_id);
         $this->view->assign('schedule',$schedule);
-         print_r($schedule);
+         
     }
     
 }
