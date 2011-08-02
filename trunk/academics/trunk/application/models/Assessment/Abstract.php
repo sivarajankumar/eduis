@@ -536,9 +536,8 @@ WHERE (`test_info_id` = ?)';
     /**
      * fetches the schedule of a unlocked asessment with highest test_id
      */
-    public function fetchSchedule ($deg, $dep, $sem, $numIds = null)
+    public function fetchSchedule ($dep,$deg,$sem,$testType,$numIds = null)
     {
-        $type = $this->test_type_id;
         $select = new Zend_Db_Table();
         $cols = array('test_info_id', 'is_optional', 'date_of_announcement', 
         'remarks', 'pass_marks', 'max_marks', 'date_of_conduct', 'time', 
@@ -553,23 +552,30 @@ WHERE (`test_info_id` = ?)';
             ->where('degree_id =?', $deg)
             ->where('department_id =?', $dep)
             ->where('semester_id =?', $sem)
-            ->where('test_type_id =?', $type);
-        $testIds = $this->getHighestTestIds($deg, $dep, $sem, $type, $numIds);
-        foreach ($testIds as $value) {
-            $test[] = "test_id='$value'";
-        }
-        $stringForWhereClause = implode(' or ', $test);
-        $sql->where($stringForWhereClause);
+            ->where('test_type_id =?', $testType);
+        $testIds = $this->getHighestTestIds($dep, $deg, $sem,$testType , $numIds);
+        if (count($testIds)) {
+            foreach ($testIds as $value) {
+                $test[] = "test_id='$value'";
+            }
+            $stringForWhereClause = implode(' or ', $test);
+            $sql->where($stringForWhereClause);
+            
         $fetchAll = $adapterClass->getDefaultAdapter()
             ->query($sql)
             ->fetchAll();
-        return $fetchAll;
+            
+            return $fetchAll;
+        } else {
+            $logger = Zend_Registry::get('logger');
+            $logger->debug('No test ID returned');
+        }
     }
     /**
      *This function gets the test_ids corresponding to latest locked
      * or !locked Assessment as a/q to params
      */
-    public function getHighestTestIds ($deg, $dep, $sem, $type, $numIds= null,$lock = 1)
+    public function getHighestTestIds ($dep, $deg, $sem, $testType=NULL, $numIds = NULL, $lock = NULL)
     {
         $adapterClass = new Zend_Db_Table();
         $sql = $adapterClass->getDefaultAdapter()
@@ -578,20 +584,29 @@ WHERE (`test_info_id` = ?)';
             ->where('degree_id = ?', $deg)
             ->where('department_id = ?', $dep)
             ->where('semester_id = ?', $sem)
-            ->where('test_type_id = ?', $type)
+            ->where('test_type_id = ?', $testType)
             ->order('test_id DESC');
-        if ($lock === 0) {
+            
+        if ($lock or is_null($lock)) {
+            $sql->where('is_locked = 1');
+        } else {
             $sql->where('is_locked = 0');
         }
-        if ($lock === 1) {
-            $sql->where('is_locked = 1');
+        
+        if (is_null($numIds) and $testType=='SESS') {
+            $sql->limit(1,0);
+        }elseif (isset($numIds)){
+            $sql->limit($numIds,0);
         }
-        if (is_null($numIds) and $type === 'SESS') {
-            $sql->limit(1);
-        }
+        
+        
         $fetchAll = $adapterClass->getDefaultAdapter()
             ->query($sql)
             ->fetchAll(Zend_Db::FETCH_COLUMN);
+            
+            $logger = Zend_Registry::get('logger');
+            $logger->debug($fetchAll);
+            
         return array_values($fetchAll);
     }
 }

@@ -209,7 +209,7 @@ class Acad_Model_Assessment_AssignmentMapper
     }*/
     
     
-    public function fetchMarks ($deg, $dep, $sem, $stuRoll, $type)
+    public function fetchMarks ($dep, $deg, $sem, $stuRoll, $type)
     {
         $sql = 'SELECT
         `subject`.`subject_name`
