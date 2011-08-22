@@ -5,7 +5,7 @@
  * @author
  * @version 
  */
-class NoAttendanceDayController extends Acadz_Base_BaseController
+class NoattendancedayController extends Acadz_Base_BaseController
 {
     /**
      * The default action - show the home page

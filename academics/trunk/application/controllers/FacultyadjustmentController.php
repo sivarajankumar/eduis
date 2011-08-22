@@ -1,5 +1,5 @@
 <?php
-class FacultyAdjustmentController extends Acadz_Base_BaseController
+class FacultyadjustmentController extends Acadz_Base_BaseController
 {
     /**
      * @about Interface.
