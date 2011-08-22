@@ -1,5 +1,5 @@
 <?php
-class TimeTableController extends Acadz_Base_BaseController
+class TimetableController extends Acadz_Base_BaseController
 {
     protected $objsubject;
     protected $department_id;

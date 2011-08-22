@@ -1,5 +1,5 @@
 <?php
-class SubjectModeController extends Acadz_Base_BaseController
+class SubjectmodeController extends Acadz_Base_BaseController
 {
     /*
      * @about Interface.

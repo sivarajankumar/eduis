@@ -3,7 +3,8 @@ class StudentattendanceController extends Acadz_Base_BaseController
 {
     public function init ()
     {
-        $session_startdate = Acad_Model_DbTable_AcademicSession::getSessionStartDate();
+        //$session_startdate = Acad_Model_DbTable_AcademicSession::getSessionStartDate();
+        $session_startdate = '2011-08-04';
         $this->view->assign('session_startdate', $session_startdate);
         if (Zend_Auth::getInstance()->hasIdentity()) {
             $authInfo = Zend_Auth::getInstance()->getStorage()->read();
@@ -19,6 +20,14 @@ class StudentattendanceController extends Acadz_Base_BaseController
         $this->_helper->layout()->enableLayout();
         $this->view->assign('controller', $this->_request->getControllerName());
         $this->view->assign('module', $this->_request->getModuleName());
+        $this->view->assign('staff_id', $this->identity);
+    }
+    
+
+    public function markAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
         $this->view->assign('staff_id', $this->identity);
     }
     /**

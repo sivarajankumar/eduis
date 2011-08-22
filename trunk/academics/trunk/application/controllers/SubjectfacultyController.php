@@ -1,5 +1,5 @@
 <?php
-class SubjectFacultyController extends Acadz_Base_BaseController
+class SubjectfacultyController extends Acadz_Base_BaseController
 {
     public function init() {
         

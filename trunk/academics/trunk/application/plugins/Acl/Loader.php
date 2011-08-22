@@ -18,19 +18,22 @@
 class Acad_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
 {
     const GUEST = 'guest';
+    
     /**
-     * preDispatch() - Check the access privilage of user.
+     * dispatchLoopStartup() - Check the access privilage of user.
      *
      * @param  Zend_Controller_Request_Abstract $request
      * @return boolean 
      * @throws Zend_Exception on access denied.
      */
-    public function preDispatch (Zend_Controller_Request_Abstract $request) {
+    public function dispatchLoopStartup (
+    Zend_Controller_Request_Abstract $request)
+    {
         $actionName = strtolower($request->getActionName());
         $controllerName = strtolower($request->getControllerName());
         if (substr($actionName, 0, 4) == 'fill' or
          substr($actionName, 0, 3) == 'get' or
-         'authenticate' == strtolower($controllerName)or
+         'authenticate' == strtolower($controllerName) or
          'error' == strtolower($controllerName)) {
             return;
         }
@@ -41,41 +44,38 @@ class Acad_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
                 $auth->authenticate($guestAdapter);
             }
             self::initUserAcl();
-            if ('development' != strtolower(APPLICATION_ENV)) {
-                self::check();
-            }
-            
+            self::check();
         } else {
             throw new Zend_Exception('Session is destroyed.', Zend_Log::WARN);
         }
     }
-
     /**
      * getCache() - Fetch cache from registry.
      *
      * @param  string $cacheName
      * @return Zend_Cache
      */
-    public static function getCache ($cacheName = 'database') {
+    public static function getCache ($cacheName = 'database')
+    {
         return Zend_Registry::get('cacheManager')->getCache($cacheName);
     }
-
     /**
      * getDb() - Fetch cache from registry.
      *
      * @return Zend_Db_Adapter_Pdo_Mysql
      */
-    public static function getDb () {
+    public static function getDb ()
+    {
         return Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource(
         'db');
     }
-
     /**
      * initUserAcl() - Bind user specific ACL with user session.
      *
      * @return Zend_Acl
      */
-    protected function initUserAcl () {
+    protected function initUserAcl ()
+    {
         $authContent = Zend_Auth::getInstance()->getStorage()->read();
         if (! is_array($authContent)) {
             Zend_Registry::get('logger')->debug('Fresh visitor');
@@ -97,23 +97,25 @@ class Acad_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
             }
             $acl = $commonAcl['acl'];
             $userInfo = $remoteAcl->userInfo;
-            $userRoles = array_intersect($userInfo['roles'], $commonAcl['dbRoles']);
-            Zend_Registry::get('logger')->debug('Module Roles of '.$userInfo['identity']);
+            $userRoles = array_intersect($userInfo['roles'], 
+            $commonAcl['dbRoles']);
+            Zend_Registry::get('logger')->debug(
+            'Module Roles of ' . $userInfo['identity']);
             Zend_Registry::get('logger')->debug($userRoles);
             $acl->addRole($userInfo['identity'], $userRoles);
             $userInfo['acl'] = $acl;
             Zend_Auth::getInstance()->getStorage()->write($userInfo);
             Zend_Registry::get('logger')->debug(
-            $userInfo['identity'].' specific ACL saved in session.');
+            $userInfo['identity'] . ' specific ACL saved in session.');
         }
     }
-
     /**
      * initAcl() - Initialize common ACL and save to cache.
      *
      * @return Zend_Acl
      */
-    protected static function initAcl () {
+    protected static function initAcl ()
+    {
         $cache = self::getCache();
         $db = self::getDb();
         $selectRes = new Zend_Db_Select($db);
@@ -146,13 +148,11 @@ class Acad_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
                 $acl->allow($role, $res);
             }
         }
-        $commonAcl = array('acl'=>$acl, 'dbRoles' => $dbRoles);
+        $commonAcl = array('acl' => $acl, 'dbRoles' => $dbRoles);
         $cache->save($commonAcl, 'commonAcl');
         Zend_Registry::get('logger')->debug('Common ACL cached.');
-        
         return $commonAcl;
     }
-
     /*
 	 * getUserRoles() - Fetch User roles from database.
 	 *
@@ -185,45 +185,52 @@ class Acad_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
 		$userRole ['roles'] [] = self::GUEST;
 		return $userRole;
 	}*/
-    public function check () {
+    public function check ()
+    {
         $request = $this->_request;
         $authContent = Zend_Auth::getInstance()->getStorage()->read();
-        
         //Zend_Registry::get('logger')->debug($authContent);
         if ($_COOKIE['last'] == $authContent['last']) {
             if (isset($authContent['acl'])) {
                 $userAcl = $authContent['acl'];
                 if ($userAcl instanceof Zend_Acl) {
                     $reqResource = strtolower(
-                    $request->getModuleName() . '_' . $request->getControllerName() .
-                     '_' . $request->getActionName());
-                    try {
-                        if ($userAcl->has($reqResource)) {
-                            if ($userAcl->isAllowed($authContent['identity'], 
-                            $reqResource)) {
-                                return true;
-                            } else {
-                                throw new Zend_Exception(
+                    $request->getModuleName() . '_' .
+                     $request->getControllerName() . '_' .
+                     $request->getActionName());
+                    if ($userAcl->has($reqResource)) {
+                        if ($userAcl->isAllowed($authContent['identity'], 
+                        $reqResource)) {
+                            return true;
+                        } else {
+                            if ('development' != strtolower(APPLICATION_ENV)) {
+                                throw new Exception(
                                 'ACL denied "' .
                                  str_ireplace('_', '/', $reqResource) . '" to ' .
-                                 $authContent['identity']. ' at '.$_SERVER['REMOTE_ADDR'], Zend_Log::ERR);
+                                 $authContent['identity'] . ' at ' .
+                                 $_SERVER['REMOTE_ADDR'], Zend_Log::ALERT);
                             }
-                        } else {
-                            throw new Zend_Exception(
+                            Zend_Registry::get('logger')->notice(
+                            'ACL ERROR: BLOCKED BY ACL. BUT FUNCTIONAL DUE TO DEVELOPMENT ENV.');
+                        }
+                    } else {
+                        if ('development' != strtolower(APPLICATION_ENV)) {
+                            throw new Exception(
                             'RESOURCE "' . str_ireplace('_', '/', $reqResource) .
                              '" is not found in ACL', Zend_Log::WARN);
                         }
-                    } catch (Zend_Exception $e) {
-                        $error = new stdClass();
-                        $error->request = $this->_request;
-                        $error->exception = $e;
-                        $this->_request->setParam('aclError', $error);
-                        $request->setControllerName('error');
-                        $request->setActionName('noaccess');
+                        Zend_Registry::get('logger')->notice(
+                        'ACL ERROR: RESOURCE "' .
+                         str_ireplace('_', '/', $reqResource) .
+                         '" is not found in ACL');
                     }
+                } else {
+                    throw new Exception(
+                    'Not a valid instance of ACL. var_export(userACL)=>' .
+                     var_export($userAcl, true), Zend_Log::ERR);
                 }
             } else {
-                throw new Zend_Exception('User Acl not found.', Zend_Log::ERR);
+                throw new Exception('User Acl not found.', Zend_Log::ERR);
             }
         } else {
             Zend_Auth::getInstance()->clearIdentity();
@@ -232,6 +239,5 @@ class Acad_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
             $remoteAcl->redirectedFrom = $this->getRequest()->getParams();
             $this->getResponse()->setRedirect('/authenticate', 303);
         }
-        
     }
 }
