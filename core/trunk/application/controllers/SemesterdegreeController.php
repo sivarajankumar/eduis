@@ -9,7 +9,7 @@
  * To manage semester in a degree.
  *
  */
-class SemesterDegreeController extends Corez_Base_BaseController
+class SemesterdegreeController extends Corez_Base_BaseController
 {
     /*
      * @about Interface.
@@ -134,7 +134,7 @@ class SemesterDegreeController extends Corez_Base_BaseController
         $format = $request->getParam('format', 'json');
         $masterDepartment = $request->getParam('masterDepartment');
         $slaveDepartment = $request->getParam('slaveDepartment');
-        if (isset($masterDepartment) and isset($slaveDepartment)) {
+        if (isset($masterDepartment)) {
             $result = Core_Model_DbTable_SemesterDegree::slaveDegree(
             $masterDepartment, $slaveDepartment);
             switch (strtolower($format)) {
