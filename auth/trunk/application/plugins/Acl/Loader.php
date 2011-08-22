@@ -169,42 +169,45 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
         $request = $this->_request;
         $authContent = Zend_Auth::getInstance()->getStorage()->read();
         //if ($_COOKIE['last'] == $authContent['last']) {
-            if (isset($authContent['acl'])) {
-                $userAcl = $authContent['acl'];
-                if ($userAcl instanceof Zend_Acl) {
-                    $reqResource = strtolower(
-                    $request->getModuleName() . '_' .
-                     $request->getControllerName() . '_' .
-                     $request->getActionName());
-                    try {
-                        if ($userAcl->has($reqResource)) {
-                            if ($userAcl->isAllowed($authContent['identity'], 
-                            $reqResource)) {
-                                return true;
-                            } else {
-                                throw new Zend_Exception(
-                                'ACL denied "' .
-                                 str_ireplace('_', '/', $reqResource) . '" to ' .
-                                 $authContent['identity'] . ' at ' .
-                                 $_SERVER['REMOTE_ADDR'], Zend_Log::ERR);
-                            }
-                        } else {
-                            throw new Zend_Exception(
-                            'RESOURCE "' . str_ireplace('_', '/', $reqResource) .
-                             '" is not found in ACL', Zend_Log::WARN);
+        if (isset($authContent['acl'])) {
+            $userAcl = $authContent['acl'];
+            if ($userAcl instanceof Zend_Acl) {
+                $reqResource = strtolower(
+                $request->getModuleName() . '_' . $request->getControllerName() .
+                 '_' . $request->getActionName());
+                if ($userAcl->has($reqResource)) {
+                    if ($userAcl->isAllowed($authContent['identity'], 
+                    $reqResource)) {
+                        return true;
+                    } else {
+                        if ('development' != strtolower(APPLICATION_ENV)) {
+                            throw new Exception(
+                            'ACL denied "' . str_ireplace('_', '/', 
+                            $reqResource) . '" to ' . $authContent['identity'] .
+                             ' at ' . $_SERVER['REMOTE_ADDR'], Zend_Log::ALERT);
                         }
-                    } catch (Zend_Exception $e) {
-                        $error = new stdClass();
-                        $error->request = $this->_request;
-                        $error->exception = $e;
-                        $this->_request->setParam('aclError', $error);
-                        $request->setControllerName('error');
-                        $request->setActionName('noaccess');
+                        Zend_Registry::get('logger')->notice(
+                        'ACL ERROR: BLOCKED BY ACL. BUT FUNCTIONAL DUE TO DEVELOPMENT ENV.');
                     }
+                } else {
+                    if ('development' != strtolower(APPLICATION_ENV)) {
+                        throw new Exception(
+                        'RESOURCE "' . str_ireplace('_', '/', $reqResource) .
+                         '" is not found in ACL', Zend_Log::WARN);
+                    }
+                    Zend_Registry::get('logger')->notice(
+                    'ACL ERROR: RESOURCE "' .
+                     str_ireplace('_', '/', $reqResource) .
+                     '" is not found in ACL');
                 }
             } else {
-                throw new Zend_Exception('User Acl not found.', Zend_Log::ERR);
+                throw new Exception(
+                'Not a valid instance of ACL. var_export(userACL)=>' .
+                 var_export($userAcl, true), Zend_Log::ERR);
             }
+        } else {
+            throw new Exception('User Acl not found.', Zend_Log::ERR);
+        }
         /*} else {
             $this->getResponse()->setRedirect('/authenticate/logout', 303);
         }*/
