@@ -586,10 +586,10 @@ WHERE (`test_info_id` = ?)';
             ->where('semester_id = ?', $sem)
             ->where('test_type_id = ?', $testType)
             ->order('test_id DESC');
-        if ($lock or is_null($lock)) {
-            $sql->where('is_locked = 1');
-        } else {
+        if (is_null($lock)) {
             $sql->where('is_locked = 0');
+        } else {
+            $sql->where('is_locked = 1');
         }
         if (is_null($numIds) and $testType == 'SESS') {
             $sql->limit(1, 0);
