@@ -38,6 +38,7 @@ Semester:<?php echo $this->sem;?></span>
  
 <center><table id="corner" cellspacing="10" cellpadding="10">
 <tr>
+		<th>Assignment Number</th>
 		<th>Subject Name</th>
 		<th> Subject Code</th>
 		<th>Date</th>
@@ -50,7 +51,8 @@ Semester:<?php echo $this->sem;?></span>
 		foreach ($this->schedule as $key=>$value)
 		{
 		    echo '<tr id='.$value["test_info_id"].'>';
-		  
+		    
+		    echo '<td>'.$value['test_id'].'</td>';
 		    echo '<td>'.$value['subject_name'].'</td>';
 		    echo '<td>'.$value['subject_code'].'</td>';
 		    echo '<td>'.$value['date_of_conduct'].'</td>';

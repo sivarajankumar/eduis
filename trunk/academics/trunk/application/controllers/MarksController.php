@@ -213,7 +213,7 @@ class MarksController extends Acadz_Base_BaseController
         $this->view->assign('degree',$degree_id);
         $this->view->assign('deptt',$department_id);
         $model = new Acad_Model_Assessment_Sessional();
-        $result= $model->fetchMarks($degree_id,$department_id,$semester_id,$rollno);
+        $result= $model->fetchMarks($department_id,$degree_id,$semester_id,$rollno);
         $this->view->assign('marks',$result);
         //$response = new stdClass();
         /*$response->page = $this->gridparam['page'];
