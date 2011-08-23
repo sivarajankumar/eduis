@@ -3,8 +3,7 @@ class StudentattendanceController extends Acadz_Base_BaseController
 {
     public function init ()
     {
-        //$session_startdate = Acad_Model_DbTable_AcademicSession::getSessionStartDate();
-        $session_startdate = '2011-08-04';
+        $session_startdate = Acad_Model_DbTable_AcademicSession::getSessionStartDate();
         $this->view->assign('session_startdate', $session_startdate);
         if (Zend_Auth::getInstance()->hasIdentity()) {
             $authInfo = Zend_Auth::getInstance()->getStorage()->read();
@@ -12,15 +11,15 @@ class StudentattendanceController extends Acadz_Base_BaseController
             $this->identity = $authInfo['identity'];
             $staff_id = $authInfo['identity'];
         }
+        $this->view->assign('controller', $this->_request->getControllerName());
+        $this->view->assign('module', $this->_request->getModuleName());
+        $this->view->assign('staff_id', $this->identity);
         parent::init();
     }
     public function indexAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $this->view->assign('controller', $this->_request->getControllerName());
-        $this->view->assign('module', $this->_request->getModuleName());
-        $this->view->assign('staff_id', $this->identity);
     }
     
 
@@ -130,6 +129,37 @@ class StudentattendanceController extends Acadz_Base_BaseController
         } else {
             echo ("Hey, Nice class!! All are present.");
         }
+    }
+    
+    public function markattendanceAction() {
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $this->_helper->viewRenderer->setNoRender(TRUE);
+        $this->_helper->layout()->disableLayout();
+        foreach ($params as $colName => $value) {
+            $value = is_array($value)?$value:htmlentities(trim($value));
+            $this->applicant->$colName = $value;
+        }
+        
+        $period_dateobj = new Zend_Date($request->getParam('period_date'), 
+        'dd-MMM-yyyy');
+        $period_date = $period_dateobj->toString('YYYY-MM-dd HH:mm:ss');
+        $params['period_date'] = $period_date;
+        $params['weekday_number'] = $period_dateobj->get(Zend_Date::DAY_SHORT);
+        $model = new Acad_Model_Member_Student();
+        try {
+            $insertId = $model->setAttendence($params);
+            echo 'Attendance successfully marked with period ID:'.$insertId;
+        } catch (Exception $e) {
+            $this->_helper->logger->debug($e->getMessage());
+            throw new Zend_Exception('Sorry, unable to process the request', Zend_Log::ERR);
+        }/*
+        echo 'Following information recieved:<br/>';
+        foreach ($params as $colName => $value) {
+            
+            $value = is_array($value)?var_export($value,true):htmlentities(trim($value));
+            echo '<b>'.ucwords(str_ireplace('_', ' ', $colName)).'</b> : '.$value.'<br/>';
+        }*/
     }
     ////////////////
     /**

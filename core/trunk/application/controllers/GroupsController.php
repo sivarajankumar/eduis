@@ -71,6 +71,11 @@ class GroupsController extends Corez_Base_BaseController
                 case 'json':
                     $this->_helper->json($result);
                     return;
+                case 'jsonp':
+                    $callback = $this->getRequest()->getParam('callback');
+                    echo $callback . '(' . $this->_helper->json($result, false) .
+                     ')';
+                    return;
                 case 'select':
                     echo '<select>';
                     echo '<option value="">Select one</option>';

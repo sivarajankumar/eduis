@@ -17,12 +17,12 @@ class PeriodattendanceController extends Acadz_Base_BaseController
     protected $objStudentAttendance;
     public function init ()
     {
-        $this->objPeriodAttendance = new Acad_Model_DbTable_PeriodAttendance();
-        $this->objStudentAttendance = new Acad_Model_DbTable_StudentAttendance();
         parent::init();
     }
     public function getisperiodtakenAction ()
     {
+        $this->objPeriodAttendance = new Acad_Model_DbTable_PeriodAttendance();
+        $this->objStudentAttendance = new Acad_Model_DbTable_StudentAttendance();
         $request = $this->getRequest();
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout()->disableLayout();
@@ -55,6 +55,7 @@ class PeriodattendanceController extends Acadz_Base_BaseController
     }
     public function markperiodattendanceAction ()
     {
+        $this->objPeriodAttendance = new Acad_Model_DbTable_PeriodAttendance();
         //try{
         $request = $this->getRequest();
         $timetable_ids = $request->getParam('timetable_ids');
@@ -127,6 +128,42 @@ class PeriodattendanceController extends Acadz_Base_BaseController
             $class->setDepartment($period->getDepartment())
             ->setDegree($period->getDegree())
             ->setSemester($period->getSemester());
+            $studentList = Acad_Model_ClassMapper::fetchSemesterStudents(
+            $class, $group_id);
+            $totalstudents = $totalstudents + count($studentList);
+            if ($totalrows < count($studentList)) {
+                $totalrows = count($studentList);
+            }
+            $resultSet[$group_id] = array("group_number" => $group_number, 
+            "students" => $studentList);
+        }
+        $resultSet['totalrows'] = $totalrows;
+        $resultSet['totalstudents'] = $totalstudents;
+        echo $this->_helper->json($resultSet,false);
+    }
+    
+
+    public function getstudentsAction ()
+    {
+        $request = $this->getRequest();
+		$department_id = $request->getParam ( 'department_id' );
+		$degree_id = $request->getParam ( 'degree_id' );
+		$semester_id = $request->getParam ( 'semester_id' );
+        $groups = Acad_Model_DbTable_Groups::getClassGroups(
+            $department_id, $degree_id);
+            
+        $studentList = array();
+        $resultSet = array();
+        $resultSet['totalgroups'] = count($groups);
+        $resultSet['group_id'] = $groups;
+        $totalrows = 0;
+        $totalstudents = 0;
+        foreach ($groups as $key => $group_id) {
+            $group_number = substr($group_id, strlen($group_id) - 1);
+            $class = new Acad_Model_Class();
+            $class->setDepartment($department_id)
+            ->setDegree($degree_id)
+            ->setSemester($semester_id);
             $studentList = Acad_Model_ClassMapper::fetchSemesterStudents(
             $class, $group_id);
             $totalstudents = $totalstudents + count($studentList);

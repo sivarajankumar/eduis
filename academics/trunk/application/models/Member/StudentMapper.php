@@ -10,7 +10,7 @@
  * @package    QuickStart
  * @subpackage Model
  */
-class Acad_Model_StudentMapper
+class Acad_Model_Member_StudentMapper
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -45,7 +45,7 @@ class Acad_Model_StudentMapper
     public function getDbTable()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Default_Model_DbTable_Guestbook');
+            $this->setDbTable('Acad_Model_DbTable_StudentAttendance2');
         }
         return $this->_dbTable;
     }
