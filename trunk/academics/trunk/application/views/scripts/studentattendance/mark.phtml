@@ -11,18 +11,6 @@
 	color: blue;
 }
 
-.adjustment {
-	color: blue;
-}
-
-.adjusted {
-	background-color: #CCC;
-}
-
-.nonattendanceday {
-	background-color: maroon;
-}
-
 .aligncenter {
 	width: 50%;
 	margin-left: auto;
@@ -34,8 +22,8 @@
 	padding: 0.1em;
 }
 </style>
-<div id="markattendanceDiv" class="ui-state-highlight ui-corner-all"  style="padding :1em 0 0 0; text-align: center; " >
-<form id="markattendance" class="ui-corner-all"  action="javascript:submit(this);"  >
+<div id="markattendanceDiv" class="ui-state-default ui-corner-all"  style="padding :1em 0 0 0; text-align: center; " >
+<form id="markattendance" class="ui-corner-all" >
 
 			<label><select id="department_id" name="department_id">
 			<option value="-1" >Department</option>
@@ -52,7 +40,11 @@
     			<option value="-1" >Semester</option>
 			</select></label>
 			
-    		<label><input type="text" id="period_date" readonly="readonly" value="<?php
+			<label><select id="group_id" name="group_id" disabled="disabled" >
+			<option value="-1" >Group</option>
+			</select></label>
+			
+    		<label><input type="text" id="period_date" name="period_date" readonly="readonly" value="<?php
 $date = new Zend_Date();
 echo $date->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-all" style="text-align: center"></input></label>
     		<label><select id="period_number" name="period_number">
@@ -79,28 +71,26 @@ echo $date->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-al
     			</select></label>
     			
 			
-    		<label><select id="subject_code" name="subject_code">
-			<option value="-1" >Subject Code</option>
-			</select></label>
-			<label><select id="subject_mode_id" name="subject_mode_id">
-			<option value="-1" >Subject Mode</option>
-			</select></label>
-			<label><select id="group_id" name="group_id">
-			<option value="-1" >Group</option>
-			</select></label>
 			<label title="Period Type" ><select id="period_type" name="period_type" title="Period Type" >
 			<option value="REGULAR" >REGULAR</option>
 			<option value="ADJUSTMENT" >ADJUSTMENT</option>
 			<option value="EXTRA CLASS" >EXTRA CLASS</option>
 			</select></label>
+			<br/>
+    		<label><select id="subject_code" name="subject_code" style="width: 25em;"  disabled="disabled" >
+			<option value="-1" >Subject Code</option>
+			</select></label>
+			<label><select id="subject_mode_id" name="subject_mode_id"  disabled="disabled" >
+			<option value="-1" >Subject Mode</option>
+			</select></label>
 			<div style="padding :0.2em 0 0 0; position: relative; top: 0.8em; " >
-			<button type="submit" name="estate_type" value="project">Search</button>
+			<button type="submit" name="go" value="go">Go</button>
 			<button type="reset" value="reset">Reset</button>
 			</div>
 </form>
 
 </div>
-
+<div style="clear: both;" >&nbsp;</div>
 <table id="stulistgrid" class="scroll"
 	cellpadding="0" cellspacing="0"></table>
 
@@ -119,7 +109,8 @@ echo $date->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-al
 		<td><?php echo $this->formLabel('iagree', 'I Agree')?></td>
 		<td><?php echo $this->formCheckbox('iagree', 'I Agree', array('tabindex' => '150'))?>
 		</td>
-		<td>&nbsp;<?php echo $this->formButton('btnmark', 'Submit Attendance', array('tabindex' => '151', 'size' => '70%' ))?></td>
+		<td>&nbsp;
+			<button type="button" name="btnmark" id="btnmark" tabindex="151" style="size: 0.7em;"  value="btnmark" disabled="disabled" >Submit Attendance</button></td>
 	</tr>
 </table>
 </form>
@@ -132,10 +123,14 @@ var urlDegree = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controll
 var urlSemester = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 'action' => 'getsessionsemester'))?>";
 var urlSemesterSubject = "<?php echo $this->url(array('module' => $this->module, 'controller' => 'subjectdepartment', 'action' => 'getsemsubject'))?>";
 var urlSubjectMode = "<?php echo $this->url(array('module' => $this->module, 'controller' => 'subjectmode', 'action' => 'getactivesubjectmode'))?>";
-
+var urlGroups = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'groups', 'action' => 'getgroup'))?>";
+var urlStudents = "<?php echo $this->url(array('controller' => 'periodattendance', 'action' => 'getstudents'))?>";
 //Some global variables:
+var session_startdate = '<?php echo $this->session_startdate;?>';
 var semSubjects = {};
-
+var isStudentGridInit = false;
+var group_info=null;
+var global_Info=null;
 
 $(function(){
 	$("#department_id").change(function(){
@@ -152,7 +147,7 @@ $(function(){
 		
 		if (-1 != programme_id) {
 			var department_id = $("#department_id").val();
-			var selectString = updateSemester(department_id, programme_id, '#semester_id');
+			updateSemester(department_id, programme_id, '#semester_id');
             
 		} else {
 			// Should reset subject, group etc.
@@ -165,7 +160,20 @@ $(function(){
 		if (-1 != semester_id) {
 			var department_id = $("#department_id").val();
 			var programme_id = $("#programme_id").val();
-			var selectString = updateSemesterSubject(department_id, programme_id, semester_id, '#subject_code');
+			updateSemesterSubject(department_id, programme_id, semester_id, '#subject_code');
+			updateGroups(department_id, programme_id, '#group_id');
+            
+		} else {
+			// Should reset subject, group etc.
+		}
+	});
+
+
+	$("#subject_code").change(function(){
+		var subject_code = $(this).val();
+		
+		if (-1 != subject_code) {
+			updateSubjectMode(subject_code, '#subject_mode_id');
             
 		} else {
 			// Should reset subject, group etc.
@@ -189,8 +197,6 @@ $(function(){
 	    $.ajax({
 	        url : urlDegree,
 	        dataType : 'jsonp',
-	        crossDomain : true,
-	        async:true,
 	        data : {'masterDepartment': department_id, 'format' : 'jsonp' },
 	        success: function(jDegree){
 	        	var selectOptionString = '<option value ="-1">Programme</option>';
@@ -243,167 +249,212 @@ $(function(){
               	$.each(jSemSubjects, function (subjectCode, subjectInfo) {
       				selectOptionString += '<option value ="'+subjectCode+'">'+subjectInfo[0].subject_name+' | '+subjectCode+'</option>';
       			});
-                $(elementId).html(selectOptionString);
+                $(elementId).html(selectOptionString).prop('disabled', '');
                 },
                 error: function(event) {
-                    alert(event.responseText);
-                    }
+	                console.log(event.responseText);
+                }
                 });
 	}
 
 
 	function updateSubjectMode(subject_code, elementId){
+		//Update Subject Mode
+	      var selectOptionString = '<option value ="">Subject Mode</option>';
+	      $.each(semSubjects[subject_code], function (index, subject) {
+		      	selectOptionString += '<option title="'+subject.group_together+'" duration="'+subject.suggested_duration+'" value ="'+subject.subject_mode_id+'">'+subject.subject_mode_id+'</option>';
+		      });
+	      
+	      $(elementId).html(selectOptionString).prop('disabled', '');
+	}
+
+
+	function updateGroups(department_id, programme_id, elementId){
 
         //Update Subject Code
         $.ajax({
-            url : urlSemesterSubject,
-            dataType : 'json',
+            url : urlGroups,
+            dataType : 'jsonp',
             data : {department_id: department_id,
                     degree_id : programme_id,
-                    semester_id: semester_id},
-            success: function(jSemSubjects){
-                semSubjects = jSemSubjects;
-					var selectOptionString = '<option value ="-1">Subject Code</option>';
-              	$.each(jSemSubjects, function (subjectCode, subjectInfo) {
-      				selectOptionString += '<option value ="'+subjectCode+'">'+subjectInfo[0].subject_name+' | '+subjectCode+'</option>';
+					format : 'jsonp'},
+            success: function(jGroups){
+                var selectOptionString = '<option value ="-1">Group</option>';
+                selectOptionString += '<option value ="ALL">ALL</option>';
+              	$.each(jGroups, function (index, group_id) {
+      				selectOptionString += '<option value ="'+group_id+'">'+group_id+'</option>';
       			});
-                $(elementId).html(selectOptionString);
+                $(elementId).html(selectOptionString).prop('disabled', '');
                 },
                 error: function(event) {
-                    alert(event.responseText);
+	                console.log(event.responseText);
                     }
                 });
 	}
 
 
-	
-var session_startdate = '<?php echo $this->session_startdate;?>';
-var baseurl="<?php echo $this->url(array('controller' => $this->controller, 'action' => 'fillperiodgrid'), 'default', true)?>";
-var adjustmentUrl = "<?php echo $this->url( array('controller' => 'facultyadjustment', 'action' => 'gettodayadjustments'), 'default', true)?>";
-var periodStudentsUrl = "<?php echo $this->url(array('controller' => 'periodattendance', 'action' => 'getperiodstudents'), 'default', true)?>";
-var periodAttendanceUrl="<?php echo $this->url(array('controller' => 'periodattendance', 'action' => 'markperiodattendance'), 'default', true)?>";
-var studentAttendanceUrl="<?php echo $this->url(array('controller' => $this->controller, 'action' => 'markabsent'), 'default', true)?>";
-var isPeriodTakenUrl="<?php echo $this->url(array('controller' => 'periodattendance', 'action' => 'getisperiodtaken'), 'default', true)?>";
-var adjPeriodStudentUrl="<?php echo $this->url(array('controller' => $this->controller, 'action' => 'filladjustmentgroup'), 'default', true)?>";
-var holidayUrl = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'holiday', 'action' => 'getholidays'), 'default', true)?>";
+////////////////////
+//	Grid functions.
+////////////////////
+//Student Grid
+var initStudentGrid = function(){
+	$("#stulistgrid").jqGrid({
+		datatype: "local",
+		colNames:['Group 1','Group 2' , 'Group 3'],
+		colModel:[ {name:'group1',index:'group1', width:100},
+					{name:'group2',index:'group2', width:100},
+					{name:'group3',index:'group3', width:100}],
+		caption: "Students",
+		hoverrows : false,
+		onCellSelect : function(rowid,icol,content){
+			return false;
+		},
+		beforeSelectRow: function(rowid, e) {
+			return false;
+		}
+	});
 
+	isStudentGridInit = true;
+};
 
-    
-serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
-// @FIXME session_startdate is in different format because its date from db server.
-sessionStartdateObj= $.datepicker.parseDate('yy-mm-dd', session_startdate);
-
-$("#period_date").datepicker({
-	minDate : sessionStartdateObj,
-	maxDate : serverDateObj,
-	dateFormat: 'dd-mm-yy',
-	showButtonPanel: true
-});
-	
-	$('#iagree').attr('disabled', 'disabled');
-	jQuery("#btnmark").click( function() {
-        if(group_info !=null)
-        {
-        var cnt=0;
-        var timetable_ids = "";
-        var msg = "Total Students:" + $("#totalstudents").val() + "\n" + " Absent Students:" +  $("#totalabsent").val() +"\n" +"Submit Attendance?";
-        if (confirm(msg))
-        {
-            
-        for(cnt=0;cnt < group_info.length;cnt++)
-        {
-            timetable_ids = timetable_ids + "timetable_id:" + group_info[cnt]['timetable_id']  + " ";
-            if(subject_mode_id == 'LEC')
-            {
-                break;
-            }
-        }
-
-        var studentlst = "";
-        var tmptimetable_id;
-        var roll_no;
-        $("#stulistgrid").find("input:checked").each(function(i) {
-             roll_no=$(this).attr( "id");
-             tmptimetable_id=$(this).parents("span:first").attr("id");
-             if(tmptimetable_id){
-                 studentlst =  studentlst + "timetable_id:" + tmptimetable_id + "#student_roll_no:" + roll_no +" ";
-             }     
-           });
-         
-           
-        $.ajax({
-            type: "GET",
-            url: periodAttendanceUrl ,
-            async : false,
-            data: {timetable_ids : timetable_ids , period_date : period_date , staff_id : staff_id },
-            success: function(request) {
-
-			if(studentlst.length > 0)
+function getStudents(department_id, degree_id, semester_id) {
+	var stuGrid = $("#stulistgrid");
+	stuGrid.clearGridData();
+	//Get List Of Students In Selected Period
+	$.ajax({
+		url: urlStudents,
+		data : {'department_id' : department_id,
+             'degree_id' : degree_id, 
+             'semester_id' :  semester_id },
+		success : 	function(response){
+		totalstudent = 0;
+		             		
+		global_Info = response;
+		totalstudents = global_Info.totalstudents;
+		$('#totalstudents').val(totalstudents);
+		var cnt = 0;
+		var studentlist;
+		var totalrows = global_Info.totalrows;
+		
+		for(tmp=0;tmp <= totalrows ;tmp++){
+			var data = { group1 :   "" };
+			stuGrid.jqGrid('addRowData',tmp,data);
+		}
+		
+		group_info = global_Info.group_id;
+		var totalgroups = global_Info.totalgroups;
+		for(cnt=0;cnt < totalgroups ; cnt++){
+			var group_id=	global_Info.group_id[cnt];
+		    var group_number = group_id.substring(group_id.length-1);
+		    switch (eval(group_number)){
+			    case 1 : 
+				    var data = { group1 : '<input type="checkbox"  class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
+				    stuGrid.jqGrid('setRowData',0, data);
+				    break;
+                case 2 :
+                    var data = { group2 : '<input type="checkbox" class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
+                    stuGrid.jqGrid('setRowData',0, data);
+                    break;
+                case 3 :
+                    var data = { group3 : '<input type="checkbox" class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
+                    stuGrid.jqGrid('setRowData',0, data);
+                    break;
+                default : alert('Unknown group_number :'+group_number);
+		    }			
+		}
+		
+		for(cnt=0;cnt < totalgroups ; cnt++){
+			var group_id = global_Info.group_id[cnt];
+			var stucnt=0;
+			var group_number = group_id.substring(group_id.length-1);
+			
+			studentlist = response[group_id]['students'];
+			stuGrid.setLabel("group" + group_number, group_id);
+			stuGrid.showCol("group"+ group_number);
+			
+			if(studentlist.length  == 0)
 			{
-           	 $.ajax({
-                 type: "GET",
-                 url: studentAttendanceUrl ,
-                 async : false,
-                 data: {studentlst : studentlst , period_date : period_date },
-                 success: function(response) {
-                     alert(response);
-                     group_info=null;
-                     dummy_hideColumns();
-                     $("#totalstudents").val('0');
-                     $("#totalabsent").val('0');
-                     $("#statusdiv").hide();
-                 },
-                 
-                 error: function(request,error) {
-                     alert(request);
-                 }
-                 });
+				totalstudent = 0;
+				alert('Students are not available');
+				return;
+			}
+			
 
+			for( stucnt=0;stucnt <studentlist.length ; stucnt++ ){
+
+                switch (eval(group_number)){
+                    case 1 :
+                        var data = { group1 :'<span id="span_' + studentlist[stucnt]['student_roll_no'] + '">' + 
+                        		                 '<input type="checkbox"  id=' + studentlist[stucnt]['student_roll_no'] + ' tabindex="'+ (stucnt+25) +'">' +
+                        		                 '<label for="' + studentlist[stucnt]['student_roll_no'] + '">  ' +  
+                        		                                 studentlist[stucnt]['student_roll_no'] + "  " + studentlist[stucnt]['first_name'] + ' ' + studentlist[stucnt]['last_name'] +
+                        		                 '</label>'+
+                        		             '</span>'} ;
+                        stuGrid.jqGrid('setRowData',stucnt+1, data);
+                        stuGrid.jqGrid('setCell',stucnt+1, 
+                        		                  'group1', 
+                        		                  "", 
+                        		                  "", 
+                        		                  {title: studentlist[stucnt]['first_name'] + "  "  + studentlist[stucnt]['last_name'] });
+                    break;
+                    case 2 :
+                        var data = { group2 :'<span id="span_' + studentlist[stucnt]['student_roll_no'] + '">' + 
+                                '<input type="checkbox"  id=' + studentlist[stucnt]['student_roll_no'] + ' tabindex="'+ (stucnt+60) +'">' +
+                                '<label for="' + studentlist[stucnt]['student_roll_no'] + '">  ' +  
+                                                studentlist[stucnt]['student_roll_no'] + "  " + studentlist[stucnt]['first_name'] + ' ' + studentlist[stucnt]['last_name'] + 
+                                '</label>'+
+                            '</span>'} ;
+		               stuGrid.jqGrid('setRowData',stucnt+1, data);
+		               stuGrid.jqGrid('setCell',stucnt+1, 
+		                                         'group2', 
+		                                         "", 
+		                                         "", 
+		                                         {title: studentlist[stucnt]['first_name'] + "  "  + studentlist[stucnt]['last_name'] });
+		               break;
+                    case 3 :
+                        var data = { group3 :'<span id="span_' + studentlist[stucnt]['student_roll_no'] + '">' + 
+                                '<input type="checkbox"  id=' + studentlist[stucnt]['student_roll_no'] + ' tabindex="'+ (stucnt+90) +'">' +
+                                '<label for="' + studentlist[stucnt]['student_roll_no'] + '">  ' +  
+                                                studentlist[stucnt]['student_roll_no'] + "  " + studentlist[stucnt]['first_name'] + ' ' + studentlist[stucnt]['last_name'] +
+                                '</label>'+
+                            '</span>'} ;
+                       stuGrid.jqGrid('setRowData',stucnt+1, data);
+                       stuGrid.jqGrid('setCell',stucnt+1, 
+                                                 'group3', 
+                                                 "", 
+                                                 "", 
+                                                 {title: studentlist[stucnt]['first_name'] + "  "  + studentlist[stucnt]['last_name'] });
+                       break;
+                    default : alert('Unknown group_number :'+group_number);
+                }
 			}
-			else
-			{
-					alert("Attendance is marked successfully.");
-					group_info=null;
-                    dummy_hideColumns();
-                    $("#totalstudents").val('0');
-                    $("#totalabsent").val('0');
-                    $("#statusdiv").hide();
-			}
-				   
-            },
-            error: function(request,error) {
-                alert("Period Attendance Not Exists");
-                group_info=null;
-                dummy_hideColumns();
-                $("#totalstudents").val('0');
-                $("#totalabsent").val('0');
-                $("#statusdiv").hide();
-                return;
-            }
-            });
-       
-        }
-        else
-        {
-            $("#btnmark").hide();
-            $('#iagree').attr('checked',0); 
-        }
+			
+			
+		}
+		var destination = $('#stulistgrid').offset().top;
+		$("html,body").animate({ scrollTop: destination-40}, 1500, 'swing', function() {
+			$("#statusdiv").show('highlight',null,'slow');
+		});
+		
+		$('#iagree').removeAttr('disabled');
+				
+
+		$('#stulistgrid input[type=checkbox]').customInput();
+	    $('#stulistgrid input[type=checkbox]').not('.checkGroup').bind("click", function(e){
+	    	updateStatus(this);
+	      });
+
+	    $('#stulistgrid input[type=checkbox][class=checkGroup]').bind("click", function(e){
+				selectAll(this);
+          });
+
+	},
+    error: function(event) {
+        console.log(event.responseText);
         }
     });
 	
-	//dummy_hidePeriodColumns();	
-		
-	$('#iagree').click(function(){
-		if($('#iagree').attr('checked'))
-		{
-			$("#btnmark").show();	
-		}
-		else
-		{
-			$("#btnmark").hide();	
-		}
-		});
-	
+}
 
 function selectAll(component)
 {
@@ -414,7 +465,7 @@ function selectAll(component)
 		var studentlist= global_Info[group_id]['students'];
 	for(var stucnt=0;stucnt < studentlist.length ; stucnt++ )
 	{
-			$("#" + studentlist[stucnt]['student_roll_no']).attr("checked",checked);
+			$("#" + studentlist[stucnt]['student_roll_no']).prop("checked",checked);
 			if(checked)
 			{
 				$('label[for='+studentlist[stucnt]['student_roll_no']+']').addClass('checked');
@@ -431,56 +482,103 @@ function selectAll(component)
 	}
 }
 
+function updateMark(checkbox) {
+	if(checkbox){
+		if(checkbox.checked){
+			$(checkbox).parent("label:first").addClass("checked");
+		} else {
+			$(checkbox).parent("label:first").removeClass("checked");
+			$(checkbox).parent("label:first").removeClass("focus");
+			
+		}
+	} else {
+		console.log('Need a checkbox element.');
 
-function hideColumns()
-{
-	
-	$("#stulistgrid").jqGrid('hideCol',["group1","group2" , "group3"]);
-    
-}
-
-function dummy_hideColumns()
-{
-	
-}
-function hidePeriodColumns()
-{
-	$("#prdlst").jqGrid('hideCol',["subject_code","subject_mode_id" , "period_number" , "department_id","degree_id","semester_id"] );
-
-}
-function dummy_hidePeriodColumns()
-{
-	
-}
-function showPeriodColumns()
-{
-	$("#prdlst").jqGrid('showCol',["subject_code","subject_mode_id" , "period_number" , "department_id","degree_id","semester_id"] );
+	}
 }
 
 function updateStatus(component){
 	var allcheck=0;
 	if(group_info != null){
-		for(cnt = 0 ;cnt < group_info.length ;cnt++ ){
-			if($("#" + group_info[cnt]['group_id']).attr("checked")){
-				allcheck++;
-			}		
-		}
+		var absentMarked= $("#stulistgrid").find("input:checked").not('.checkGroup').length;
+		$('#totalabsent').val( absentMarked);
 		
-		var cnt=0;
-		var tmp= $("#stulistgrid").find("input:checked").length - allcheck;
-		$('#totalabsent').val( tmp);
-		
-		if(component){
-			if(component.checked){
-				$(component).parent("label:first").addClass("checked");
-			} else {
-				$(component).parent("label:first").removeClass("checked");
-				$(component).parent("label:first").removeClass("focus");
-				
-			}
-		}
 	}
 }
+
+
+var studentAttendanceUrl="<?php echo $this->url(array('controller' => $this->controller, 'action' => 'markattendance'))?>";
+
+
+    
+serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+// @FIXME session_startdate is in different format because its date from db server.
+sessionStartdateObj= $.datepicker.parseDate('yy-mm-dd', session_startdate);
+
+$("#period_date").datepicker({
+	minDate : sessionStartdateObj,
+	maxDate : serverDateObj,
+	dateFormat: 'dd-mm-yy',
+	showButtonPanel: true
+});
+	
+	$("#btnmark").click(function() {
+        if(group_info !=null){
+            var msg = "Total Students:" + $("#totalstudents").val() + "\n" + " Absent Students:" +  $("#totalabsent").val() +"\n" +"Submit Attendance?";
+            if (confirm(msg)){
+                $.ajax({
+                    url: studentAttendanceUrl ,
+                     data: getValues(),
+                     success: function(response) {
+                         alert(response);
+                         $( "#submitStatus" ).html(jStatus).slideDown('slow', function(){
+                            	setTimeout(function(){
+                            		window.location.reload();
+                                	},1000);
+                            }).append('<br/>Page should refresh itself.');
+                         resetgrid();
+                     },
+                     error: function(request,error) {
+                         alert(request);
+                     }
+                  });
+            }
+            else{
+                $("#btnmark").attr('disabled','disabled');
+                $('#iagree').attr('checked',false); 
+            }
+        }
+    });
+
+      function getValues() {
+          var formData = {}; 
+          $('#markattendance :input')
+          		.not('button,:input[value^="-1"]')
+          		.each(function(){ 
+          			formData[this.name] = this.value; 
+              });
+
+          var absentee = new Array();
+          var absenteeSet = $("#stulistgrid").find("input:checked").not('.checkGroup');
+          absenteeSet.each(function(i) {
+              var rollNo = $(this).attr("id");
+          	absentee.push(rollNo);
+          });
+          formData.absentee = absentee;
+		return formData;
+	}
+    	
+	$('#iagree').click(function(){
+		if($('#iagree').prop('checked'))
+		{
+			$("#btnmark").prop('disabled', '');	
+		}
+		else
+		{
+			$("#btnmark").prop('disabled', 'disabled');
+		}
+		});
+	
 
 function setDefault()
 {
@@ -489,6 +587,25 @@ function setDefault()
 	$('#iagree').attr('checked',0);	
 	$('#totalstudents').val('0');
 }
+
+function resetgrid() {
+	setDefault();
+	$("#stulistgrid").clearGridData();
+}
+
+$('#markattendance').bind("submit", function(e){
+	e.preventDefault();
+	if (!isStudentGridInit) {
+		initStudentGrid();
+	}
+	
+	var department_id = $("#department_id").val();
+	var programme_id = $("#programme_id").val();
+	var semester_id = $("#semester_id").val();
+	
+	getStudents(department_id, programme_id, semester_id);
+ });
+
 });
 </script>
 <?php

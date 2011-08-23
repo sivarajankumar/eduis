@@ -32,6 +32,63 @@ class Acad_Model_Member_Student extends Acad_Model_Member_Generic {
         
     }
 	
+    public function setAttendence($data)
+    {
+        $periodArray = array('period_date' => 0,
+        						'department_id' => 0,
+        						'programme_id' => 0,
+        						'semester_id' => 0,
+        						'group_id' => 0,
+        						'subject_code' => 0,
+        						'subject_mode_id' => 0,
+        						'duration' => 0,
+        						'weekday_number' => 0,
+        						'period_number' => 0,
+        						'period_type' => 0,
+        						'faculty_id' => 0);
+        $studentattArray = array_diff_key($data, $periodArray);
+        
+        $periodArray = array_diff_key($data, $studentattArray);
+        
+        try {
+            Zend_Db_Table::getDefaultAdapter()
+                ->beginTransaction();
+                
+            $periodModel = new Acad_Model_DbTable_PeriodAttendance2();
+            $attendance_id = $periodModel->insert($periodArray);
+            
+            $absentees = $studentattArray['absentee'];
+            unset($studentattArray['absentee']);
+            
+            //$this->logger->debug($data);
+            
+            
+            $status = 'ABSENT';
+            $sql = 'INSERT INTO `academics`.`student_attendance2`
+            (`attendance_id`,
+             `student_roll_no`,
+             `status`)
+VALUES ';
+            $multi = array();
+            foreach ($absentees as $key => $student_roll_no) {
+                $multi[]= "($attendance_id,'$student_roll_no','$status')";
+            }
+            $sql .= implode(',', $multi);
+            
+            Zend_Registry::get('logger')->debug($sql);
+            //$this->logger->debug($sql);
+            $affected = Zend_Db_Table::getDefaultAdapter()->query($sql);
+            
+            Zend_Db_Table::getDefaultAdapter()->commit();
+            return $attendance_id;
+        } catch (Exception $e) {
+            Zend_Registry::get('logger')->debug($e->getMessage());
+            Zend_Db_Table::getDefaultAdapter()->rollBack();
+            throw $e;
+        }
+        
+    }
+	
 /**
      * Set data mapper
      * 
@@ -54,7 +111,7 @@ class Acad_Model_Member_Student extends Acad_Model_Member_Generic {
     public function getMapper()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_StudentMapper());
+            $this->setMapper(new Acad_Model_Member_StudentMapper());
         }
         return $this->_mapper;
     }
