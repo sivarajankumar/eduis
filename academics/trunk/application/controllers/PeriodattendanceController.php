@@ -149,8 +149,12 @@ class PeriodattendanceController extends Acadz_Base_BaseController
 		$department_id = $request->getParam ( 'department_id' );
 		$degree_id = $request->getParam ( 'degree_id' );
 		$semester_id = $request->getParam ( 'semester_id' );
-        $groups = Acad_Model_DbTable_Groups::getClassGroups(
-            $department_id, $degree_id);
+		$group_id = $request->getParam ( 'group_id' );
+		if ('ALL' == strtoupper($group_id) or !isset($group_id)) {
+        $groups = Acad_Model_DbTable_Groups::getClassGroups($department_id, $degree_id);
+		} else {
+		    $groups = array($group_id);
+		}
             
         $studentList = array();
         $resultSet = array();

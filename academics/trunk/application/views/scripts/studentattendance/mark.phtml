@@ -23,11 +23,10 @@
 }
 </style>
 <div id="markattendanceDiv" class="ui-state-default ui-corner-all"  style="padding :1em 0 0 0; text-align: center; " >
-<form id="markattendance" class="ui-corner-all" >
+<form id="markattendance" class="ui-corner-all" style="width: 70%;padding: 0 14% 0 15%" >
 
 			<label><select id="department_id" name="department_id">
 			<option value="-1" >Department</option>
-			<option value="APPSC" >Applied Science</option>
 			<option value="BT" >Biotech</option>
 			<option value="CSE" >Computer</option>
 			<option value="ECE" >Electronics</option>
@@ -58,6 +57,14 @@ echo $date->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-al
     			<option value="7" >7</option>
     			<option value="8" >8</option>
 			</select></label>
+			<br/>
+			
+    		<label><select id="subject_code" name="subject_code" style="width: 25em;"  disabled="disabled" >
+			<option value="-1" >Subject Code</option>
+			</select></label>
+			<label><select id="subject_mode_id" name="subject_mode_id"  disabled="disabled" >
+			<option value="-1" >Subject Mode</option>
+			</select></label>
 			<label><select id="duration" name="duration">
     			<option value="-1" >Duration</option>
     			<option value="1" >1</option>
@@ -70,18 +77,10 @@ echo $date->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-al
     			<option value="8" >8</option>
     			</select></label>
     			
-			
 			<label title="Period Type" ><select id="period_type" name="period_type" title="Period Type" >
 			<option value="REGULAR" >REGULAR</option>
 			<option value="ADJUSTMENT" >ADJUSTMENT</option>
 			<option value="EXTRA CLASS" >EXTRA CLASS</option>
-			</select></label>
-			<br/>
-    		<label><select id="subject_code" name="subject_code" style="width: 25em;"  disabled="disabled" >
-			<option value="-1" >Subject Code</option>
-			</select></label>
-			<label><select id="subject_mode_id" name="subject_mode_id"  disabled="disabled" >
-			<option value="-1" >Subject Mode</option>
 			</select></label>
 			<div style="padding :0.2em 0 0 0; position: relative; top: 0.8em; " >
 			<button type="submit" name="go" value="go">Go</button>
@@ -179,7 +178,16 @@ $(function(){
 			// Should reset subject, group etc.
 		}
 	});
-	
+
+
+	$("#subject_mode_id").bind('change',function(){
+		var duration = $('#'+this.id+' :selected').attr('duration');
+		/**
+		* @TODO Update Duration Automatically.
+		*/
+		$("#duration option[selected]").removeAttr("selected");
+		$("#duration option[value='"+duration+"']").attr("selected", "selected");
+	});
 ////////////////////
 //	Element updation functions.
 ////////////////////
@@ -204,9 +212,11 @@ $(function(){
 					selectOptionString += '<option value ="'+degree.degree_id+'">'+degree.degree_id+'</option>';
 				});
 				$(elementId).html(selectOptionString).prop('disabled', '');
+				//$(elementId).trigger('');
             },
             error: function(event) {
                 console.log(event.responseText);
+                alert(event.responseText);
                 }
             });
 	}
@@ -223,6 +233,8 @@ $(function(){
 					format : 'jsonp'},
 			success: function(jSemesters){
 						var selectOptionString = '<option value ="-1">Semester</option>';
+						//Line below is just a "jugaad".
+						selectOptionString += '<option value ="1">1</option>';
 	                	$.each(jSemesters, function (index, semester) {
 	        				selectOptionString += '<option value ="'+semester.semester_id+'">'+semester.semester_id+'</option>';
 	        			});
@@ -230,6 +242,7 @@ $(function(){
 	            },
 	            error: function(event) {
 	                console.log(event.responseText);
+	                alert(event.responseText);
 	                }
 	            });
 	}
@@ -253,21 +266,10 @@ $(function(){
                 },
                 error: function(event) {
 	                console.log(event.responseText);
+	                alert(event.responseText);
                 }
                 });
 	}
-
-
-	function updateSubjectMode(subject_code, elementId){
-		//Update Subject Mode
-	      var selectOptionString = '<option value ="">Subject Mode</option>';
-	      $.each(semSubjects[subject_code], function (index, subject) {
-		      	selectOptionString += '<option title="'+subject.group_together+'" duration="'+subject.suggested_duration+'" value ="'+subject.subject_mode_id+'">'+subject.subject_mode_id+'</option>';
-		      });
-	      
-	      $(elementId).html(selectOptionString).prop('disabled', '');
-	}
-
 
 	function updateGroups(department_id, programme_id, elementId){
 
@@ -288,9 +290,39 @@ $(function(){
                 },
                 error: function(event) {
 	                console.log(event.responseText);
+	                alert(event.responseText);
                     }
                 });
 	}
+
+	function updateSubjectMode(subject_code, elementId){
+
+		//Update Subject Mode
+	    var selectOptionString = '<option value ="-1">Subject Mode</option>';
+		if (semSubjects[subject_code].length > 1) {
+		      $.each(semSubjects[subject_code], function (index, subject) {
+			      	selectOptionString += '<option together="'+subject.group_together+'" duration="'+subject.suggested_duration+'" value ="'+subject.subject_mode_id+'">'+subject.subject_mode_id+'</option>';
+			      });
+		      $(elementId).html(selectOptionString).prop('disabled', '');
+		    var selectedGroup = $('#group_id').val();
+			$("#subject_mode_id option:selected").removeAttr("selected");
+			if ( 'ALL' == selectedGroup) {
+				$("#subject_mode_id option[together='1']").attr("selected", "selected");
+			    $("#subject_mode_id").trigger('change');
+			} else {
+				$("#subject_mode_id option[together='0']:first").attr("selected", "selected");
+			    $("#subject_mode_id").trigger('change');
+			}
+		} else {
+			selectOptionString += '<option together="'+semSubjects[subject_code][0].group_together+'" duration="'+semSubjects[subject_code][0].suggested_duration+'" value ="'+semSubjects[subject_code][0].subject_mode_id+'">'+semSubjects[subject_code][0].subject_mode_id+'</option>';
+		    $(elementId).html(selectOptionString).prop('disabled', '');
+		    
+			$("#subject_mode_id option:selected").removeAttr("selected");
+			$("#subject_mode_id option[value='"+semSubjects[subject_code][0].subject_mode_id+"']").attr("selected", "selected");
+		    $("#subject_mode_id").trigger('change');
+		}
+	}
+
 
 
 ////////////////////
@@ -317,15 +349,20 @@ var initStudentGrid = function(){
 	isStudentGridInit = true;
 };
 
-function getStudents(department_id, degree_id, semester_id) {
+function getStudents(department_id, degree_id, semester_id, group_id) {
+	hideColumns();
 	var stuGrid = $("#stulistgrid");
 	stuGrid.clearGridData();
+	var data = {'department_id' : department_id,
+            'degree_id' : degree_id, 
+            'semester_id' :  semester_id};
+	if ('ALL' != group_id.toUpperCase()) {
+		data.group_id = group_id ;
+	}
 	//Get List Of Students In Selected Period
 	$.ajax({
 		url: urlStudents,
-		data : {'department_id' : department_id,
-             'degree_id' : degree_id, 
-             'semester_id' :  semester_id },
+		data : data,
 		success : 	function(response){
 		totalstudent = 0;
 		             		
@@ -343,25 +380,6 @@ function getStudents(department_id, degree_id, semester_id) {
 		
 		group_info = global_Info.group_id;
 		var totalgroups = global_Info.totalgroups;
-		for(cnt=0;cnt < totalgroups ; cnt++){
-			var group_id=	global_Info.group_id[cnt];
-		    var group_number = group_id.substring(group_id.length-1);
-		    switch (eval(group_number)){
-			    case 1 : 
-				    var data = { group1 : '<input type="checkbox"  class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
-				    stuGrid.jqGrid('setRowData',0, data);
-				    break;
-                case 2 :
-                    var data = { group2 : '<input type="checkbox" class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
-                    stuGrid.jqGrid('setRowData',0, data);
-                    break;
-                case 3 :
-                    var data = { group3 : '<input type="checkbox" class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
-                    stuGrid.jqGrid('setRowData',0, data);
-                    break;
-                default : alert('Unknown group_number :'+group_number);
-		    }			
-		}
 		
 		for(cnt=0;cnt < totalgroups ; cnt++){
 			var group_id = global_Info.group_id[cnt];
@@ -369,16 +387,29 @@ function getStudents(department_id, degree_id, semester_id) {
 			var group_number = group_id.substring(group_id.length-1);
 			
 			studentlist = response[group_id]['students'];
-			stuGrid.setLabel("group" + group_number, group_id);
-			stuGrid.showCol("group"+ group_number);
-			
-			if(studentlist.length  == 0)
-			{
-				totalstudent = 0;
-				alert('Students are not available');
-				return;
+			if(studentlist.length != 0){
+    		    switch (eval(group_number)){
+    			    case 1 : 
+    				    var data = { group1 : '<input type="checkbox"  class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
+    				    stuGrid.jqGrid('setRowData',0, data);
+    				    break;
+                    case 2 :
+                        var data = { group2 : '<input type="checkbox" class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
+                        stuGrid.jqGrid('setRowData',0, data);
+                        break;
+                    case 3 :
+                        var data = { group3 : '<input type="checkbox" class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
+                        stuGrid.jqGrid('setRowData',0, data);
+                        break;
+                    default : alert('Unknown group_number :'+group_number);
+    		    }
+				stuGrid.setLabel("group" + group_number, group_id);
+				stuGrid.showCol("group"+ group_number);
+			} else{
+				//totalstudent = 0;
+				console.log('Students are not available in group_id '+group_id);
+				//return;
 			}
-			
 
 			for( stucnt=0;stucnt <studentlist.length ; stucnt++ ){
 
@@ -451,6 +482,7 @@ function getStudents(department_id, degree_id, semester_id) {
 	},
     error: function(event) {
         console.log(event.responseText);
+        alert(event.responseText);
         }
     });
 	
@@ -538,8 +570,9 @@ $("#period_date").datepicker({
                             }).append('<br/>Page should refresh itself.');
                          resetgrid();
                      },
-                     error: function(request,error) {
-                         alert(request);
+                     error: function(event) {
+                         console.log(event.responseText);
+                         alert(event.responseText);
                      }
                   });
             }
@@ -593,8 +626,25 @@ function resetgrid() {
 	$("#stulistgrid").clearGridData();
 }
 
+function hideColumns()
+{
+	
+	$("#stulistgrid").jqGrid('hideCol',["group1","group2" , "group3"]);
+    
+}
+
 $('#markattendance').bind("submit", function(e){
+
 	e.preventDefault();
+    var formData = {}; 
+    var status = $('#markattendance :input[value="-1"]');
+    if(status.length > 0){
+    	status.each(function(){
+        		var missingInput = $('#'+this.id+' :selected').text();
+        		alert('"'+missingInput+'" is required.');
+    			return false;
+        });
+    } else{
 	if (!isStudentGridInit) {
 		initStudentGrid();
 	}
@@ -602,8 +652,10 @@ $('#markattendance').bind("submit", function(e){
 	var department_id = $("#department_id").val();
 	var programme_id = $("#programme_id").val();
 	var semester_id = $("#semester_id").val();
+	var group_id = $("#group_id").val();
 	
-	getStudents(department_id, programme_id, semester_id);
+	getStudents(department_id, programme_id, semester_id,group_id);
+    }
  });
 
 });

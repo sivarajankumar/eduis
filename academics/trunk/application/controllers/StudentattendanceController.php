@@ -1,6 +1,7 @@
 <?php
 class StudentattendanceController extends Acadz_Base_BaseController
 {
+    public $identity;
     public function init ()
     {
         $session_startdate = Acad_Model_DbTable_AcademicSession::getSessionStartDate();
@@ -21,8 +22,6 @@ class StudentattendanceController extends Acadz_Base_BaseController
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
     }
-    
-
     public function markAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -130,30 +129,41 @@ class StudentattendanceController extends Acadz_Base_BaseController
             echo ("Hey, Nice class!! All are present.");
         }
     }
-    
-    public function markattendanceAction() {
+    public function markattendanceAction ()
+    {
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
         foreach ($params as $colName => $value) {
-            $value = is_array($value)?$value:htmlentities(trim($value));
+            $value = is_array($value) ? $value : htmlentities(trim($value));
             $this->applicant->$colName = $value;
         }
-        
         $period_dateobj = new Zend_Date($request->getParam('period_date'), 
         'dd-MMM-yyyy');
         $period_date = $period_dateobj->toString('YYYY-MM-dd HH:mm:ss');
         $params['period_date'] = $period_date;
-        $params['weekday_number'] = $period_dateobj->get(Zend_Date::DAY_SHORT);
+        $params['weekday_number'] = $period_dateobj->get(
+        Zend_Date::WEEKDAY_DIGIT);
+        $params['faculty_id'] = $this->identity;
         $model = new Acad_Model_Member_Student();
         try {
             $insertId = $model->setAttendence($params);
-            echo 'Attendance successfully marked with period ID:'.$insertId;
+            echo 'Attendance successfully marked with period ID: ' . $insertId .
+             ".\n Kindly note down this Id in case of any mistake.";
         } catch (Exception $e) {
             $this->_helper->logger->debug($e->getMessage());
-            throw new Zend_Exception('Sorry, unable to process the request', Zend_Log::ERR);
-        }/*
+            switch ($e->getCode()) {
+                case 23000:
+                    throw new Zend_Exception(
+                    'Attendance has been already marked.', Zend_Log::ERR);
+                    break;
+                default:
+                    throw new Zend_Exception(
+                    'Sorry, unable to process the request', Zend_Log::ERR);
+                    break;
+            }
+        } /*
         echo 'Following information recieved:<br/>';
         foreach ($params as $colName => $value) {
             
@@ -340,9 +350,8 @@ class StudentattendanceController extends Acadz_Base_BaseController
         'staff_id') : $this->identity;
         $faculty->setMemberId($staff_id);
         $result = $faculty->listUnMarkedAttendance();
-        echo $this->_helper->json($result,false);
+        echo $this->_helper->json($result, false);
     }
-    
     /**
      * Unmarked in class
      */
@@ -351,7 +360,6 @@ class StudentattendanceController extends Acadz_Base_BaseController
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
     }
-
     public function getclassunmarkedattAction ()
     {
         $request = $this->getRequest();
@@ -362,7 +370,6 @@ class StudentattendanceController extends Acadz_Base_BaseController
         $class->setDepartment($department)
             ->setDegree($degree)
             ->setSemester($semester);
-        
         $result = $class->getUnmarkedAttendance();
         $response = new stdClass();
         $response->page = 1;
@@ -370,9 +377,8 @@ class StudentattendanceController extends Acadz_Base_BaseController
         $response->records = count($result);
         $response->rows = $result;
         echo $this->_helper->json($response, false);
-        //$this->_helper->logger($result);
+         //$this->_helper->logger($result);
     }
-    
 }
 
 
