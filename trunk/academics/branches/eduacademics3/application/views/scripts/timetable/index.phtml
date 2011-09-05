@@ -1,0 +1,793 @@
+<h3 align="center">Time Table</h3>
+
+<?php
+if (count($this->slaveDepartment) > 1) {
+    ?>
+<p>Choose Department:</p>
+<form><select id="slaveDepartmentList">
+<?php
+    foreach ($this->slaveDepartment as $num => $dept) {
+        echo '<option value="' . $dept . '">' . $dept . '</option>';
+    }
+    ?>
+</select></form>
+
+<?php
+}
+?>
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+	style="color: red"></span></div>
+
+<div id="currentStatus" style="display: none;" title="Current status of period" >
+<p >&nbsp;</p>
+<br/><label><input id="noCurrentStatus" type="checkbox"/> Click to avoid this pop-up for now.</label>
+</div>
+<div id="periodStatus" style="display: none;" title="New status of period" >
+<p >&nbsp;</p>
+</div>
+<script type="text/javascript">
+var urlDegreeCombo = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 'action' => 'getslavedegree'), 'default', true)?>";
+var urlSemesterCombo = "<?php
+echo 'http://' . CORE_SERVER . $this->url(
+array('controller' => 'semesterdegree', 'action' => 'getsessionsemester'), 
+'default', true)?>";
+var urlDayCombo = "<?php
+echo 'http://' . CORE_SERVER .
+ $this->url(array('controller' => 'weekday', 'action' => 'getweekday'), 
+'default', true)?>";
+
+// Period Based Links
+var urlPeriodCombo = "<?php
+echo $this->url(
+array('module' => $this->module, 'controller' => 'period', 
+'action' => 'getperiod'), 'default', true)?>";
+var urlPeriodStatus = "<?php
+echo $this->url(
+array('module' => $this->module, 'controller' => $this->controller, 
+'action' => 'getperiodstatus'), 'default', true)?>";
+
+// Subject Based links
+var urlSemesterSubjectCombo = "<?php
+echo $this->url(
+array('module' => $this->module, 'controller' => 'subjectdepartment', 
+'action' => 'getsemsubject'), 'default', true)?>";
+var urlSubjectModeCombo = "<?php
+echo $this->url(
+array('module' => $this->module, 'controller' => 'subjectmode', 
+'action' => 'getactivesubjectmode'), 'default', true)?>";
+var urlSubjectFacultyCombo = "<?php
+echo $this->url(
+array('module' => $this->module, 'controller' => 'subjectfaculty', 
+'action' => 'getsubjectfaculty'), 'default', true)?>";
+
+// Groups Related Links
+var urlGroupsCombo = "<?php
+echo $this->url(array('controller' => 'groups', 'action' => 'getgroup'), 
+'default', true)?>";
+var urlPartialAvailableGroups = "<?php
+echo $this->url(
+array('module' => $this->module, 'controller' => $this->controller, 
+'action' => 'getavailablegroup'), 'default', true)?>";
+var urlGroupsTogoether = "<?php
+echo $this->url(
+array('module' => $this->module, 'controller' => 'subjectmode', 
+'action' => 'getisgrouptogether'), 'default', true)?>";
+
+
+var urlBlockCombo = "<?php
+echo $this->url(array('controller' => 'block', 'action' => 'getblock'), 
+'default', true)?>";
+var urlRoomCombo = "<?php
+echo $this->url(array('controller' => 'room', 'action' => 'getroom'), 'default', 
+true)?>";
+var urlNoMoreValid = "<?php
+echo $this->url(
+array('module' => 'department', 'controller' => 'timetable', 
+'action' => 'endvalid'), 'default', true)?>";
+var urlFillGrid = "<?php
+echo $this->url(
+array('module' => $this->module, 'controller' => $this->controller, 
+'action' => 'fillgrid'), 'default', true)?>";
+var urlCRUD = "<?php
+echo $this->url(
+array('module' => $this->module, 'controller' => $this->controller, 
+'action' => 'crud'), 'default', true)?>";
+
+var urlCheckDuration ="<?php
+echo $this->url(
+array('module' => $this->module, 'controller' => $this->controller, 
+'action' => 'isvalidduration'), 'default', true)?>";
+
+//Global Variable to check period status.
+var periodState = '';
+const PARTIAL = 'PARTIAL';
+const FULL = 'FULL';
+const EMPTY = 'EMPTY';
+var degreeSem = {};
+var semSubjects = {};
+var gPeriodStatus = '';
+var showPopUp = true;
+var slaveDepartment = '';
+</script>
+
+<script type="text/javascript">
+var masterDepartment = "<?php
+echo $this->masterDepartment?>";
+<?php
+if (count($this->slaveDepartment) > 1) {
+    ?>
+	var slaveDepartment = $('#slaveDepartmentList').val();
+	$('#slaveDepartmentList').change(function() {
+		slaveDepartment = $('#slaveDepartmentList').val();
+		});
+<?php
+} else {
+    ?>
+	var slaveDepartment = "<?php echo $this->masterDepartment?>";
+<?php
+}
+?>
+</script>
+<script type="text/javascript">
+$(function(){
+	var gridTable = "#tblgrid";
+    var gridPager = "#gridpager";
+	$(gridTable).jqGrid({url : urlFillGrid,
+			colNames:['Department',
+						'Degree',
+						'Semester',
+						'Weekday',
+						'Period',
+						'Subject Code',
+						'Subject Mode' ,
+                        'Group',
+						'Faculty',
+						'Duration',
+						'Periods Covered',
+						'Valid From',
+						'Valid Upto',
+						'Block',
+						'Room'],
+			colModel:[{name:'department_id',
+                            index:'department_id'},
+                      {name:'degree_id',
+							index:'degree_id',
+							editable: true,
+			                edittype: 'select', 
+			                editoptions:{
+			                    value : {'':'Select one'},
+                                dataInit : function (e){
+                                	//Update Degree in Selected Department
+		                            $.ajax({
+		                                url : urlDegreeCombo,
+	                                    dataType : 'jsonp',
+		                                data : {'masterDepartment': masterDepartment,'slaveDepartment' : slaveDepartment, 'format' : 'jsonp' },
+	                                    success: function(jDegree){
+		                                	var selectOptionString = '<option value ="">Select one</option>';
+	                	        			$.each(jDegree, function (index, degree) {
+	                	        				selectOptionString += '<option value ="'+degree.degree_id+'">'+degree.degree_id+'</option>';
+	                	        			});
+	                                        $('#degree_id').html(selectOptionString);
+		                                    },
+		                                    error: function(event) {
+		                                        alert(event.responseText);
+		                                        }
+		                                    });
+                                },
+								dataEvents: [{
+									type: 'change',
+									fn: function(e) {
+									if(e.target.value){
+									//Update Semester in Selected Degree
+									$.ajax({
+										url : urlSemesterCombo,
+	                                    dataType : 'jsonp',
+										data : {department_id: masterDepartment,
+												degree_id : this.value, 'format' : 'jsonp'},
+										success: function(jSemesters){
+	    											var selectOptionString = '<option value ="">Select one</option>';
+	    	                                    	$.each(jSemesters, function (index, semester) {
+	    	                	        				selectOptionString += '<option value ="'+semester.semester_id+'">'+semester.semester_id+'</option>';
+	    	                	        			});
+	    	                                    	$('#semester_id').html(selectOptionString).attr('disabled', '');
+	                                        },
+	                                        error: function(event) {
+	                                            alert(event.responseText);
+	                                            }
+	                                        });
+									} else {
+										initDisabled();
+				                    }
+	                               }
+				                    
+	                            }]                 
+			                }
+		                
+						},
+
+						{name:'semester_id',
+							index:'semester_id',
+							editable: true,
+                            edittype: 'select',
+                            editoptions:{
+							  value : {'':'Select one'},
+                              dataEvents: [{
+                                  type: 'change',
+                                  fn: function(e) {
+                                  //Update Weekdays list
+                                	  var selectOptionString = '<option value ="">Select one</option>';
+									  var weekday={1:"Monday",2:"Tuesday",3:"Wednesday",4:"Thursday",5:"Friday",6:"Saturday"};
+                                	$.each(weekday, function (index, weekday) {
+            	        				selectOptionString += '<option value ="'+index+'">'+weekday+'</option>';
+            	        			});
+                                  $('#weekday_number').html(selectOptionString).attr('disabled', '');
+
+                                  
+                                  //Update Subject Code
+                                  $.ajax({
+                                      url : urlSemesterSubjectCombo,
+                                      dataType : 'json',
+                                      data : {department_id: slaveDepartment,
+                                              degree_id : $('#degree_id').val(),
+                                              semester_id: e.target.value},
+                                      success: function(jSemSubjects){
+                                          semSubjects = jSemSubjects;
+											var selectOptionString = '<option value ="">Select one</option>';
+	                                    	$.each(jSemSubjects, function (subjectCode, subjectInfo) {
+	                	        				selectOptionString += '<option value ="'+subjectCode+'">'+subjectInfo[0].subject_name+' | '+subjectCode+'</option>';
+	                	        			});
+                                          $('#subject_code').html(selectOptionString);
+                                          },
+                                          error: function(event) {
+                                              alert(event.responseText);
+                                              }
+                                          });
+                                 }
+                              }]                 
+                            }
+						},
+                        {name:'weekday_number',
+                            index:'weekday_number',
+                            editable: true,
+                            edittype: 'select',
+                            editoptions:{
+							value : {'':'Select one'},
+                            dataEvents: [{
+                                type: 'change',
+                                fn: function(e) {
+
+                    		        $('#showPeriodStatus').hide();
+                                //Update Period Number
+                                $.ajax({
+                                    url : urlPeriodCombo,
+                                    dataType : 'json',
+                                    data : {department_id: slaveDepartment,
+                                            degree_id : $('#degree_id').val(),
+                                            semester_id: $('#semester_id').val(),
+                                            weekday_number : this.value},
+                                            success: function(jPeriods){
+    											var selectOptionString = '<option value ="">Select one</option>';
+    	                                    	$.each(jPeriods, function (index, period) {
+    	                	        				selectOptionString += '<option value ="'+period.period_id+'">'+period.period_number+'</option>';
+    	                	        			});
+                                        $('#period_id').html(selectOptionString).attr('disabled', '');
+                                        $('#period_id + span').html('').removeClass();
+                                        },
+                                        error: function(event) {
+                                            alert(event.responseText);
+                                            }
+                                        });
+                               }
+                            }]                 
+                            }
+                        },
+                        {name:'period_id',
+                            index:'period_number',
+                            editable: true,
+                            edittype: 'select',
+                            editoptions:{
+                              value : {'':'Select one'},
+                              dataEvents: [{
+                                  type: 'change',
+                                  fn: processPeriod
+                              }]                 
+                           }
+                        },
+                        {name:'subject_code',
+                            index:'subject_code',
+                            editable: true,
+                            edittype: 'select',
+                            editoptions:{
+                        	  style: "width: 350px",
+                              value : {'':'Select one'},
+                              dataEvents: [{
+                                  type: 'change',
+                                  fn: processSubject
+                              }]
+                            }
+                        },
+                        {name:'subject_mode_id',
+                            index:'subject_mode_id',
+                            editable: true,
+                            edittype: 'select',
+                            editoptions:{
+                              value : {'':'Select one'},
+                              dataEvents: [{
+                                  type: 'change',
+                                  fn: function(e) {
+                            	  
+                                  //Update Faculty
+                                  $.ajax({
+                                      url : urlSubjectFacultyCombo,
+                                      dataType : 'json',
+                                      data : {subject_code: $('#subject_code').val(),
+                                              subject_mode_id : this.value,
+                                              department_id : slaveDepartment },
+                                      success: function(jFaculties){
+                                          var selectOptionString = '';
+                                          if (jFaculties.length) {
+                                              if(jFaculties.length > 1){
+                                                  selectOptionString = '<option value ="">Select one</option>';
+                                                  $('#staff_id').attr('disabled', '');
+                                                  } else{
+                                                      $('#staff_id').attr('disabled', 'disabled');
+                                                  }
+                                              $.each(jFaculties, function (index, faculty) {
+                                                  selectOptionString += '<option value ="'+faculty.staff_id+'">'+faculty.staff_id+'</option>';
+                                                  });
+                                              $('#staff_id').html(selectOptionString)
+                                              $('#staff_id + span').html('').removeClass();;
+                                              } else {
+                                            	  $('#staff_id + span').html('<a href="/subjectfaculty">Add faculty</a>').addClass('ui-state-highlight');
+                                              }
+                                                  
+                                          },
+                                          error: function(event) {
+                                              alert(event.responseText);
+                                              }
+                                          });
+                                  //
+                                  var allGroups = $('#subject_mode_id option:selected').attr('title');
+                                  if (eval(allGroups)) {
+                                	  $('#group_id').attr('value', 'ALL').attr('disabled', 'disabled');
+    								} else {
+    	                              	  $('#group_id').attr('value', '').attr('disabled', '');
+    								}
+
+    								var duration = $('#subject_mode_id option:selected').attr('duration');
+    								$('#period_duration').val(duration);
+                                 }
+                              }]                 
+                            }
+                        },
+                        {name:'group_id',
+                            index:'group_id',
+                            editable: true,
+                            edittype: 'select',
+                            editoptions:{
+                              value : {'':'Select one'}
+                           }
+                        },
+                        {name:'staff_id',
+                            index:'staff_id',
+                            editable: true,
+                            edittype: 'select',
+                            editoptions:{
+                              value : {'':'Select one'}
+                           }
+                        },
+                        {name:'period_duration',
+                            index:'period_duration',
+                            hidden: true,
+                            formatter:'integer',
+                            editable: true,
+                            editoptions:{
+                        	  size: 12,
+                              value : '1'
+                           },
+                           editrules:{
+                        	   edithidden: true,
+                               required:true,
+                               integer: true,
+                               minValue : 1,
+                               custom: true,
+                               custom_func : checkDuration
+                           },
+                           formoptions:{
+                        	   elmsuffix:'continous period(s). Update "Suggested Duration" in <a href="/subject" >Subject</a>'
+                           }
+                        },
+                        {name:'periods_covered',
+                            index:'periods_covered',
+                            hidden: false
+                        },
+                        {name:'valid_from',
+                            index:'valid_from',
+                            hidden: true,
+                            formatter:'date',
+                            sorttype:'date',
+                            editable: true,
+                            editrules:{
+                                edithidden: true
+                            },
+                            editoptions:{
+                        	  size: 12,
+                              readonly: "readonly"
+                           },
+                           formoptions:{rowpos:1, colpos:2}
+                        },
+                        {name:'valid_upto',
+                            index:'valid_upto',
+                            hidden: true,
+                            formatter:'date',
+                            sorttype:'date',
+                            editable: false,
+                            editoptions:{
+                        	  size: 12
+                           }
+                        },
+                        {name:'block_id',
+                            index:'block_id',
+                            editable: false,
+                            hidden: true /*,
+                            edittype: 'select',
+                            editoptions:{
+                                dataUrl:urlBlockCombo,
+                                buildSelect : function(jBlocks){
+                            	jBlocks = $.parseJSON(jBlocks.responseText);
+                            	var selectString = '<select><option value ="">Select one</option>';
+                            	$.each(jBlocks, function (index, block) {
+                                	selectString += '<option value ="'+block.block_id+'">'+block.block_name+'</option>';
+                                });
+                                selectString += '</select>';
+                                return selectString;
+                                },
+                                dataEvents: [{
+                                    type: 'change',
+                                    fn: function(e) {
+                                    //Update Room on Block Select
+                                   $.ajax({
+                                        url : urlRoomCombo,
+                                        data : { block_id: this.value },
+                                        success: function(jRooms){
+                                            var selectOptionString = '<option value ="">Select one</option>';
+                                            $.each(jRooms, function (index, room) {
+                                  			selectOptionString += '<option value ="'+room.room_id+'">'+room.room_type_id+' '+room.room_id+'</option>';
+                                  		});
+                                            $('#room_id').html(selectOptionString);
+                                            },
+                                            error: function(event) {
+                                                alert(event.responseText);
+                                                }
+                                            });
+                                   }
+                                }]
+                                } */
+                        },
+                        {name:'room_id',
+                            index:'room_id',
+                            editable: false,
+                            hidden: true /*,
+                            edittype: 'select',
+                            editoptions:{
+                              value : {'':'Select one'}
+                            }
+                            */
+                        }
+						
+					],
+			caption: 'Current Timetable' ,
+			sortname: 'weekday_number',
+			multiselect: true,
+			pager: gridPager, 
+			editurl: urlCRUD,
+			rowNum : 10
+		});
+
+	
+    $(gridTable).jqGrid('navGrid', gridPager, {
+        add : true,
+        edit : false,
+        view : false,
+        search : false,
+        refresh : false
+    }, // options
+            {
+        /*
+                width : 600,
+                savekey : [ true, 113 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true,
+                reloadAfterSubmit : false
+                */
+            }, // edit options
+            {
+                width : 758,
+                bottominfo : '<div id="submitStatus" style="display:none;" class="ui-state-highlight ui-corner-all" ></div>',
+                savekey : [ true, 113 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true,
+                clearAfterAdd : false,
+                reloadAfterSubmit : false,
+                onInitializeForm : function(formId) {
+                    $('#period_id').after('<span></span><a id="showPeriodStatus" style="display:none;text-align: center;" href="javascript:void(0)"> Details</a>');
+                    $('#staff_id').after('<span></span>')
+                    $('#showPeriodStatus').click(function(){
+                		popUpInfo(gPeriodStatus, 'periodStatus', true, true);
+                	});
+                    var minDate = getToday();
+                    var maxDate = getToday();
+                	minDate.setDate(minDate.getDate()+1);
+                	maxDate.setDate(maxDate.getDate()+7);
+                    $('#valid_from').datepicker({
+            			dateFormat: 'dd/mm/yy',
+                        firstDay: 1,
+                        minDate : minDate,
+                        maxDate : maxDate,
+                        hideIfNoPrevNext: true,
+                        beforeShowDay: disableHolidays
+                        }); 
+                    
+                },
+                beforeShowForm : function(formId) {
+                	var day = getToday();
+                	day.setDate(day.getDate()+1);
+                	var TodayStr = $.datepicker.formatDate('dd/mm/yy', day);
+                	$("#valid_from").val(TodayStr);
+                	$("#period_duration").val(1);
+                	initForm();
+                },
+                onClose : function(formId) {
+                	$("#slaveDepartmentList").attr('disabled', '');
+                },
+                afterSubmit : function(response, postdata) {
+                    var success = false;
+                    if(200 == response.status){
+                    	$('#period_id').val('');
+                    	$('#period_id + span').html('').removeClass();
+        		        $('#showPeriodStatus').hide();
+                        $("#group_id").attr('disabled', 'disabled').val('');
+                        $("#subject_code").attr('disabled', 'disabled').val('');
+                        $("#subject_mode_id").attr('disabled', 'disabled').val('');
+                        $("#staff_id").attr('disabled', 'disabled').html('<option value="">Select one</option>').val('');
+                        $( "#submitStatus" ).text(' Submitted successfully!!').toggle( 'blind', '', 'slow', function(){
+                        	setTimeout(function(){$( "#submitStatus" ).toggle( 'blind', '', 1000)},3000);
+                        } );
+                    	success = true;
+                    }
+                    return [success,'Inserted...',response.responseText];
+                },
+                onclickSubmit : function(params, posdata) {
+                	return {department_id : slaveDepartment,period : $("#period_id option:selected").text()};
+                },
+                errorTextFormat : function(xhr) {
+                	return xhr.responseText;
+                }
+            }, // add options
+            {
+                reloadAfterSubmit : false,
+                jqModal : false,
+                closeOnEscape : true
+            } // del options
+         );
+
+	 addPager(gridTable, gridPager);
+	 
+	 jQuery(gridTable).jqGrid('navButtonAdd', gridPager, {
+	        caption : "Upcoming",
+	        title : "Show Upcoming Timetable",
+	        buttonicon : 'ui-icon-calendar',
+	        onClickButton : function() {
+	            var gridURL = jQuery(gridTable).jqGrid('getGridParam','url');
+	            gridURL +='?upcoming=TRUE';
+	            jQuery(gridTable).jqGrid('setGridParam',{url: gridURL}).jqGrid('setCaption',"Upcoming Timetable").trigger("reloadGrid");
+	            //$("#fetchTimeTable").html('<b>Upcoming</b>');
+	            /*if(ttids.length > 0){
+		            var msg = 'Are you sure? Do you want to in-validate selected enteries?';
+	            	if(confirm( msg )){
+		            	$.ajax({
+                        url : urlNoMoreValid,
+                        type : 'GET',
+                        data : { nomorevalid: ttids.toString() },
+                        success: function(data){
+                            alert('Selected entries are removed from schedule.');
+                            jQuery(gridTable).trigger("reloadGrid");
+                            },
+                            error: function(event) {
+                                alert(event.responseText);
+                                }
+                            });
+	                }
+                    
+	            } else {
+		            alert('Select a row!');
+	            }*/
+	        }
+	 });
+
+
+	$('#noCurrentStatus').click(function(){
+		if(showPopUp){
+			showPopUp = false;
+		} else {
+			showPopUp = true;
+		}
+	});
+
+	$('#noPeriodStatus').click(function(){
+		if(showPopUp){
+			showPopUp = false;
+		} else {
+			showPopUp = true;
+		}
+	});
+	
+
+	 
+});
+/////////////////////////////////////////////////////////////////////////////////////
+
+var initForm = function(){
+	 //$("#editmodtblgrid select:not(#degree_id)").attr('disabled', 'disabled');
+	$("select:not(#degree_id)").attr('disabled', 'disabled');
+	 $('#period_id + span').html('').removeClass();
+	 $('#showPeriodStatus').hide();
+};
+
+
+	var checkDuration = function(periodDuration, property){
+		var periodSelected = parseInt($("#period_id option:selected").text());
+		var periodMaxAllowed = parseInt($("#period_id option:last").text());
+		var calculatedMaxPeriod = periodSelected + parseInt(periodDuration) - 1;
+		if( calculatedMaxPeriod > periodMaxAllowed){
+			return [false, 'Period duration cannot exceed '+eval(periodMaxAllowed - periodSelected + 1)+ '. '];
+		} else{
+			return [true];
+		}
+		
+	};
+
+
+	var getToday = function(){
+		 var todayDateStr = $('#datetext').text();
+		 var today = $.datepicker.parseDate('dd-mm-yy', todayDateStr);
+		 return today;
+	};
+
+	var disableHolidays = function(date){
+		if(date.getDay() == 0) 
+		 {
+			 return [false,'','Sunday'] ;
+		 }
+		return [true ,, 'Working Day'];
+	};
+
+var processPeriod = function(e){
+	    //Check Period Status
+	    $.ajax({
+	        url : urlPeriodStatus,
+	        data : {period_id : this.value},
+	        dataType : 'json',
+	        success: function(periodStatus){
+		        $('#period_id + span').html('').removeClass();
+		        $('#showPeriodStatus').hide();
+	            $("#group_id").val('');
+	            $("#subject_code").attr('disabled', '').val('');
+	            $("#subject_mode_id").attr('disabled', '').val('');
+	            $("#staff_id").html('<option value="">Select one</option>');
+
+	            gPeriodStatus = periodStatus;
+	            periodState = periodStatus.STATUS;
+        		
+	            switch(periodState){
+	            case PARTIAL:
+	                $('#period_id + span').html(' The period is partially occupied.').addClass('ui-state-highlight');
+	                $('#showPeriodStatus').show();
+	                if (1 == periodStatus.availableGroups.length) {
+		                $("#group_id").attr('disabled', 'disabled');
+					} else {
+		                var selectOptionString = '<option value ="">Select one</option>';
+					}
+	                $.each(periodStatus.availableGroups, function (index, group) {
+	              		selectOptionString += '<option value ="'+group+'">'+group+'</option>';
+	              	});
+	                $('#group_id').html(selectOptionString);
+	                break;
+	            case FULL:
+	                $("#group_id").attr('disabled', 'disabled');
+	                $("#subject_code").attr('disabled', 'disabled');
+	                $("#subject_mode_id").attr('disabled', 'disabled');
+	                $("#staff_id").attr('disabled', 'disabled');
+	                $('#period_id + span').html('Already occupied.').addClass('ui-state-error');
+		            $('#showPeriodStatus').show();
+            		popUpInfo(gPeriodStatus, 'periodStatus', true, true);
+	                break;
+	             case EMPTY:
+	            	 var selectOptionString = '<option value ="">Select one</option>';
+	            	 selectOptionString += '<option value="ALL">ALL</option>';
+		                $.each(periodStatus.maxGroups, function (index, group) {
+		              		selectOptionString += '<option value ="'+group+'">'+group+'</option>';
+		              	});
+		                $('#group_id').html(selectOptionString);
+	                 break;
+	             default:
+	                 alert('Period status is unkonwn');
+	            }
+
+	            /*
+	            * Current period Information if not empty.
+	            */
+	            var status = periodStatus.currentStatus;
+	            popUpInfo(status, 'currentStatus', true, showPopUp);
+	        	
+	        	            
+	            },
+	            error: function(event) {
+	                alert(event.responseText);
+	                }
+	            });
+	   };
+
+	var popUpInfo = function(status, popUpDiv, popUp, processPopUp){
+
+        if ((status.STATUS != EMPTY) & processPopUp) {
+        	var txt = $('#period_id :selected').text();
+        	dialogString = 'Period '+txt+' is ';
+            if(status.STATUS == PARTIAL){
+            	dialogString += 'partially occupied.';
+            } else {
+            	dialogString += 'fully occupied.';
+            }
+            dialogString += '<ol>';
+            $.each(status.periodStatus, function (index, period) {
+            	dialogString += '<li><ul><li>'+period.subject_mode_id+' of '
+            					+period.subject_code+'</li>'
+            					+'<li>'+period.group_id+' group by '+period.staff_id+'</li>';
+				
+				if(period.periods_covered.split(',').length > 1 ){
+					dialogString += '<li>Periods: '+period.periods_covered+'</li>';
+				}
+				dialogString += '</ul></li><br/>';
+            	
+          	});
+            dialogString += '</ol>';
+        	$("#"+popUpDiv+" > p ").html(dialogString);
+        	if(popUp){
+            	$("#"+popUpDiv).dialog({ zIndex: 100001 });
+        	}
+		}
+	}
+
+	var processSubject = function(e){
+		  $('#staff_id').attr('disabled', 'disabled');
+		  $("#group_id").attr('disabled', 'disabled');
+		  $('#staff_id').html('<option  value ="">Select one</option>');
+	      //Update Subject Mode
+	      var selectOptionString = '<option value ="">Select one</option>';
+	      if(EMPTY == gPeriodStatus.STATUS){
+	      $.each(semSubjects[e.target.value], function (index, subject) {
+		      	selectOptionString += '<option title="'+subject.group_together+'" duration="'+subject.suggested_duration+'" value ="'+subject.subject_mode_id+'">'+subject.subject_mode_id+'</option>';
+		      });
+	      } else {
+		      $.each(semSubjects[e.target.value], function (index, subject) {
+			      if(0 == subject.group_together){
+			      	selectOptionString += '<option title="'+subject.group_together+'" duration="'+subject.suggested_duration+'" value ="'+subject.subject_mode_id+'">'+subject.subject_mode_id+'</option>';
+			      }
+			  });
+	      }
+	      
+	      $('#subject_mode_id').html(selectOptionString);
+      };
+	   
+///////////////////Experiment/////////////////////
+var mkSelectGroup = function(jGroups){
+	$.each(jGroups, function (index, group) {
+		selectOptionString += '<option value ="'+period.period_id+'">'+period.period_number+'</option>';
+	});
+$('#period_id').html(selectOptionString);
+};
+</script>
