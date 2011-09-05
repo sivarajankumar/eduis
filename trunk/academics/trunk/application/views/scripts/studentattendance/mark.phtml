@@ -1,4 +1,4 @@
-<style>
+<style async="true" >
 .holiday {
 	background-color: maroon;
 	color: red;
@@ -25,6 +25,10 @@
 <div id="markattendanceDiv" class="ui-state-default ui-corner-all"  style="padding :1em 0 0 0; text-align: center; " >
 <form id="markattendance" class="ui-corner-all" style="width: 70%;padding: 0 14% 0 15%" >
 
+    		<label><input type="text" id="period_date" name="period_date" readonly="readonly" value="<?php
+$date = new Zend_Date();
+echo $date->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-all" style="text-align: center"></input></label>
+
 			<label><select id="department_id" name="department_id">
 			<option value="-1" >Department</option>
 			<option value="BT" >Biotech</option>
@@ -39,14 +43,13 @@
     			<option value="-1" >Semester</option>
 			</select></label>
 			
-			<label><select id="group_id" name="group_id" disabled="disabled" >
-			<option value="-1" >Group</option>
+			<label title="Period Type" ><select id="period_type" name="period_type" title="Period Type" >
+			<option value="REGULAR" >REGULAR</option>
+			<option value="ADJUSTMENT" >ADJUSTMENT</option>
+			<option value="EXTRA CLASS" >EXTRA CLASS</option>
 			</select></label>
-			
-    		<label><input type="text" id="period_date" name="period_date" readonly="readonly" value="<?php
-$date = new Zend_Date();
-echo $date->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-all" style="text-align: center"></input></label>
-    		<label><select id="period_number" name="period_number">
+			<br/>
+			<label><select id="period_number" name="period_number">
 			<option value="-1" >Period Number</option>
     			<option value="1" >1</option>
     			<option value="2" >2</option>
@@ -57,11 +60,14 @@ echo $date->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-al
     			<option value="7" >7</option>
     			<option value="8" >8</option>
 			</select></label>
-			<br/>
 			
+			<label><select id="group_id" name="group_id" disabled="disabled" >
+			<option value="-1" >Group</option>
+			</select></label>
     		<label><select id="subject_code" name="subject_code" style="width: 25em;"  disabled="disabled" >
 			<option value="-1" >Subject Code</option>
 			</select></label>
+			
 			<label><select id="subject_mode_id" name="subject_mode_id"  disabled="disabled" >
 			<option value="-1" >Subject Mode</option>
 			</select></label>
@@ -77,11 +83,8 @@ echo $date->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-al
     			<option value="8" >8</option>
     			</select></label>
     			
-			<label title="Period Type" ><select id="period_type" name="period_type" title="Period Type" >
-			<option value="REGULAR" >REGULAR</option>
-			<option value="ADJUSTMENT" >ADJUSTMENT</option>
-			<option value="EXTRA CLASS" >EXTRA CLASS</option>
-			</select></label>
+			
+			
 			<div style="padding :0.2em 0 0 0; position: relative; top: 0.8em; " >
 			<button type="submit" name="go" value="go">Go</button>
 			<button type="reset" value="reset">Reset</button>
@@ -116,7 +119,7 @@ echo $date->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-al
 &nbsp;
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" async="true" defer="defer" >
 $("#statusdiv").hide();
 var urlDegree = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 'action' => 'getslavedegree'))?>";
 var urlSemester = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 'action' => 'getsessionsemester'))?>";
@@ -167,6 +170,17 @@ $(function(){
 		}
 	});
 
+	$("#group_id").change(function(){
+		var selectedGroup = $(this).val();
+		
+		if ( 'ALL' == selectedGroup) {
+			$("#subject_mode_id option[together='1']").attr("selected", "selected");
+		    $("#subject_mode_id").trigger('change');
+		} else {
+			$("#subject_mode_id option[together='0']:first").attr("selected", "selected");
+		    $("#subject_mode_id").trigger('change');
+		}
+	});
 
 	$("#subject_code").change(function(){
 		var subject_code = $(this).val();
@@ -180,7 +194,7 @@ $(function(){
 	});
 
 
-	$("#subject_mode_id").bind('change',function(){
+	$("#subject_mode_id").change(function(){
 		var duration = $('#'+this.id+' :selected').attr('duration');
 		/**
 		* @TODO Update Duration Automatically.
@@ -234,7 +248,7 @@ $(function(){
 			success: function(jSemesters){
 						var selectOptionString = '<option value ="-1">Semester</option>';
 						//Line below is just a "jugaad".
-						selectOptionString += '<option value ="1">1</option>';
+						//selectOptionString += '<option value ="1">1</option>';
 	                	$.each(jSemesters, function (index, semester) {
 	        				selectOptionString += '<option value ="'+semester.semester_id+'">'+semester.semester_id+'</option>';
 	        			});
@@ -357,7 +371,7 @@ function getStudents(department_id, degree_id, semester_id, group_id) {
             'degree_id' : degree_id, 
             'semester_id' :  semester_id};
 	if ('ALL' != group_id.toUpperCase()) {
-		data.group_id = group_id ;
+		data.group_id = group_id;
 	}
 	//Get List Of Students In Selected Period
 	$.ajax({
@@ -463,8 +477,8 @@ function getStudents(department_id, degree_id, semester_id, group_id) {
 			
 		}
 		var destination = $('#stulistgrid').offset().top;
-		$("html,body").animate({ scrollTop: destination-40}, 1500, 'swing', function() {
-			$("#statusdiv").show('highlight',null,'slow');
+		$("html,body").animate({ scrollTop: destination-40}, 'slow', function() {
+			$("#statusdiv").show();
 		});
 		
 		$('#iagree').removeAttr('disabled');
@@ -645,7 +659,7 @@ $('#markattendance').bind("submit", function(e){
     			return false;
         });
     } else{
-	if (!isStudentGridInit) {
+	if (isStudentGridInit == false) {
 		initStudentGrid();
 	}
 	
@@ -662,7 +676,7 @@ $('#markattendance').bind("submit", function(e){
 </script>
 <?php
 $this->headLink()->appendStylesheet(
-'http://' . CDN_SERVER . '/plugins/checkbox/filament/filament.css');
+'http://' . CDN_SERVER . '/plugins/checkbox/filament/filament.css', null,array('async'=>'true', 'defer'=>'defer'));
 $this->headScript()->appendFile(
-'http://' . CDN_SERVER . '/plugins/checkbox/filament/customInput.js');
+'http://' . CDN_SERVER . '/plugins/checkbox/filament/customInput.js', null,array('async'=>'true', 'defer'=>'defer'));
 ?>

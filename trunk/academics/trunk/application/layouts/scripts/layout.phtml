@@ -13,6 +13,7 @@ $baseUrl = $this->baseUrl();
 $cdnServer = 'http://'.CDN_SERVER;
 // Images of users, events etc
 $imageServer = $baseUrl;
+$this->headScript()->setAllowArbitraryAttributes(true);
 // Add most common CSS files
 $this->headLink()->prependStylesheet(
 $cdnServer . '/css/layouts/'.$module.'/default.css');
@@ -21,12 +22,12 @@ $this->jQuery()->addStylesheet(
 $cdnServer . '/css/themes/jqueryui/' . $baseTheme . '/jquery-ui-1.8.6.custom.css');
 // Add most common Script files
 $this->headScript()->prependFile(
-$cdnServer . '/js/plugins/jquery.hoverIntent.minified.js');
+$cdnServer . '/js/plugins/jquery.hoverIntent.minified.js', null,array('async'=>'true', 'defer'=>'defer'));
 // Jquery
-$this->jQuery()->setLocalPath($cdnServer . '/js/jquery-1.6.2.min.js');
+$this->jQuery()->setLocalPath($cdnServer . '/js/jquery-1.6.2.min.js', null,array('async'=>'true', 'defer'=>'defer'));
 // Jquery UI
 $this->jQuery()->setUiLocalPath(
-$cdnServer . '/js/jquery-ui-1.8.6.custom.min.js');
+$cdnServer . '/js/jquery-ui-1.8.6.custom.min.js', null,array('async'=>'true', 'defer'=>'defer'));
 /*
  * Adding JqGrid as default grid.
  */
@@ -35,14 +36,14 @@ $this->headLink()
     ->//Select multiple columns from column chooser
 appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.multiselect.css');
 $this->headScript()->appendFile(
-$cdnServer . '/plugins/jqgrid/js/ui.multiselect.js');
+$cdnServer . '/plugins/jqgrid/js/ui.multiselect.js', null,array('async'=>'true', 'defer'=>'defer'));
 // This is compressed version of jqGrid 3.6, It has all plugins in one file only
 $this->headScript()->appendFile(
-$cdnServer . '/plugins/jqgrid/js/i18n/grid.locale-en.js');
+$cdnServer . '/plugins/jqgrid/js/i18n/grid.locale-en.js', null,array('async'=>'true', 'defer'=>'defer'));
 $this->headScript()->appendFile(
-$cdnServer . '/plugins/jqgrid/jquery.jqGrid.min.js');
+$cdnServer . '/plugins/jqgrid/jquery.jqGrid.min.js', null,array('async'=>'true', 'defer'=>'defer'));
 // Gloabal Settings for JqGrid
-$this->headScript()->appendFile($cdnServer . '/plugins/jqgrid/jqGrid.global.js');
+$this->headScript()->appendFile($cdnServer . '/plugins/jqgrid/jqGrid.global.js', null,array('async'=>'true', 'defer'=>'defer'));
 echo $this->headMeta();
 echo $this->headTitle();
 echo $this->headLink();

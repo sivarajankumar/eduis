@@ -54,7 +54,6 @@ class Acad_Model_Member_Student extends Acad_Model_Member_Generic
                     $multi[] = "($attendance_id,'$student_roll_no','$status')";
                 }
                 $sql .= implode(',', $multi);
-                Zend_Registry::get('logger')->debug($sql);
                 //$this->logger->debug($sql);
                 $affected = Zend_Db_Table::getDefaultAdapter()->query(
                 $sql);
