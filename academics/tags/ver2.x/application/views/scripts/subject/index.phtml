@@ -1,0 +1,158 @@
+<?php
+/**
+ *
+ * @category   EduIS
+ * @package    Default
+ * @subpackage Subject
+ * @since	   0.1
+ */
+/*
+ * List of all Subjects.
+ */
+?>
+<h3 align="center">List of All Subjects</h3>
+<div class="gridstyle">
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+	style="color: red"></span></div>
+<script type="text/javascript">
+var urlSubjectType = "<?=$this->url ( array ('module' => $this->module, 'controller' => 'subjecttype', 'action' => 'getsubjecttype' ), 'default', true )?>";
+
+$(function(){
+    var gridTable = "#tblgrid";
+    var gridPager = "#gridpager";
+    var urlFillGrid = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid' ), 'default', true )?>";
+    var urlCRUD = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud' ), 'default', true )?>";
+    $(gridTable).jqGrid({
+        url : urlFillGrid,
+        colNames:['Subject Code','Abbr','Name','Subject Type', 'Is Optional','Lec/Week','Tut/Week','Prc/Week','Suggested Duration'],
+        colModel:[
+			{name:'subject_code',
+				index:'subject_code',
+				editable: true},
+			{name:'abbr',
+				index:'abbr',
+				editable: true},
+			{name:'subject_name',
+				index:'subject_name',
+				editable:true},
+			{name:'subject_type_id',
+				index:'subject_type_id',
+				editable: true,
+	            edittype: 'select',
+	            editoptions:{
+		            dataUrl:urlSubjectType,
+		            buildSelect : function(jSubType){
+	        			var jSubType = $.parseJSON(jSubType);
+	        			var selectString = '<select><option value ="">Select one</option>';
+	        			$.each(jSubType, function (index, subType) {
+	        				selectString += '<option value ="'+subType.subject_type_id+'">'+subType.description+'</option>';
+	        			});
+	        			selectString += '</select>';
+	            		return selectString;
+	            	},
+		             dataEvents: [{
+			                type: 'change',
+			                fn: function(e) {
+			            	 if('PR' === this.value){
+			            		 $('#lecture_per_week').val('0');
+			            		 $('#tutorial_per_week').val('0');
+			            		 $('#practical_per_week').val('1');
+			            		 $('#suggested_duration').val('3');
+			            	 } else{
+			            		 $('#lecture_per_week').val('');
+			            		 $('#tutorial_per_week').val('1');
+			            		 $('#practical_per_week').val('0');
+			            		 $('#suggested_duration').val('1');
+				            	 
+			            	 }
+			               }
+			            }]
+            	}},
+			{name:'is_optional',
+	            index:'is_optional',
+				editable: true,
+                edittype: 'select', 
+                editoptions:{
+                    value : {'0':'No','1':'Yes'}                   
+                }},
+            {name:'lecture_per_week',
+	            index:'lecture_per_week',
+				editable: true,
+                editrules:{
+	             	   //edithidden: true,
+	                    required:true,
+	                    integer: true,
+	                    minValue : 0
+	                }},
+            {name:'tutorial_per_week',
+	            index:'tutorial_per_week',
+				editable: true,
+                editrules:{
+	             	   //edithidden: true,
+	                    required:true,
+	                    integer: true,
+	                    minValue : 0
+	                }},
+            {name:'practical_per_week',
+	            index:'practical_per_week',
+				editable: true,
+                editrules:{
+	             	   //edithidden: true,
+	                    required:true,
+	                    integer: true,
+	                    minValue : 0
+	                }},
+            {name:'suggested_duration',
+	            index:'suggested_duration',
+				editable: true,
+                editrules:{
+	             	   //edithidden: true,
+	                    required:true,
+	                    integer: true,
+	                    minValue : 1
+	                }}
+	            ],
+            caption: "Subjects" ,
+            sortname: "subject_code",
+            pager: gridPager,
+            rowNum : 10,
+            editurl:urlCRUD
+        });
+
+    $(gridTable).jqGrid('navGrid', gridPager, {
+        add : true,
+        edit : true,
+        del : false,
+        view : false,
+        search : false,
+        refresh : false
+    }, // options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true
+            }, // edit options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true,
+                clearAfterAdd : true //Default is true, make false if needed
+            }, // add options
+            {
+                reloadAfterSubmit : false,
+                jqModal : false,
+                closeOnEscape : true
+            } // del options
+         );
+
+    addPager(gridTable, gridPager); 
+    
+});
+</script>

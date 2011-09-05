@@ -1,0 +1,333 @@
+<h3 align="center">Manage Sessionals</h3>
+<div id="main_div">
+
+	<div id="selection-div"class="ui-widget-content ui-corner-all" style="width:20em; height:5em; padding:4px" >
+	
+		<label for="degree_select" accesskey="S" id="lbl_degree_id" style="padding: 0.4em; float: left;">
+			Degree:</label>&nbsp;
+		<select id="degree_select" tabindex="1" >
+		</select>
+		
+		<br />&nbsp;<br />
+		
+		<?php
+		    if(count($this->slaveDepartment)>1){
+		    ?>    	    
+		        <label for="slave_dept_select" accesskey="S" id="lbl_class_id" style="padding: 0.4em; float: left;" >
+			    Choose Department:</label>&nbsp;
+	
+				<select id="slave_dept_select" tabindex="2" disabled="disabled">
+					<option>Select department</option>
+				</select>
+		<?php
+		    }
+		    else{ 
+		?>
+			<label for="class_select" accesskey="S" id="lbl_class_id" style="padding: 0.4em; float: left;" >
+				Class:</label>&nbsp;
+			<select id="class_select" tabindex="2" disabled="disabled">
+				<option>Select one</option>
+			</select>
+		<?php
+		    } 
+		?>
+		
+		<br />&nbsp;<br />
+		<label for="sesnl_select" accesskey="N" id="lbl_class_id" style="padding: 0.4em; float: left;" >
+				Sessional:</label>&nbsp;
+			<select id="sesnl_select" tabindex="3" disabled="disabled">
+				<option>Select one</option>
+			</select>
+			&nbsp;<br />
+	</div> <!-- End selection-div -->
+	<br />
+	
+	<div id="sessional-schedule-div" style="display">
+	
+		<table id="tblgrid" class="scroll"></table>
+		<div id="gridpager" class="scroll" style="text-align: center;"></div>
+		
+	</div><!-- End sessioanl-schedule-div -->
+
+</div> <!-- End main_div -->
+
+
+<script type="text/javascript" language="javascript">
+var dep_id = "<?php echo $this->masterDepartment?>";
+//TODO remove hard code.
+var slaveDepartment = 'CSE';
+var gridTable = "#tblgrid";
+var gridPager = "#gridpager"; 
+var deg_id;
+var sem_id;
+var sesnl_id;
+var lastSel;
+
+$(function(){
+    
+    
+    var urlFillGrid = "<? echo $this->url(array(
+												'controller' => 'sessional', 
+												'action' => 'fillgrid'))?>";
+												
+    var urlCRUD = "<? echo $this->url(array('controller' => 'sessional', 
+											'action' => 'imod'))?>";
+										
+	var urlDegreeCombo = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 
+																				'action' => 'getslavedegree'), 
+																				'default', true)?>";
+																				
+	var urlFetchActiveClasses = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 
+																				'action' => 'getsessionsemester'), 
+																				'default', true)?>";
+
+	var urlFetchConducted = "<? echo $this->url(array('controller' => 'sessional', 
+                                                		'action' => 'getconducted'))?>";
+		
+	$.ajax({
+        url : urlDegreeCombo,
+        dataType : 'jsonp',
+        data : {'masterDepartment': dep_id,'slaveDepartment' : slaveDepartment, 'format' : 'jsonp' },
+        success: function(jDegree){
+        	var selectOptionString = '<option value ="">Select one</option>';
+			$.each(jDegree, function (index, degree) {
+				selectOptionString += '<option value ="'+degree.degree_id+'">'+degree.degree_id+'</option>';
+			});
+            $('#degree_select').html(selectOptionString);
+       },
+       error: function(event) {
+            alert(event.responseText);
+       }
+    });//End ajax call.
+    
+	$('#degree_select').change(function(){
+		
+		deg_id = $("#degree_select").val();
+		
+		$.ajax({
+	        url : urlFetchActiveClasses,
+	        dataType : 'jsonp',
+	        data : {'degree_id' : deg_id ,'department_id' : slaveDepartment, 'format' : 'jsonp'}, 
+	        success: function(jClass){
+	        	var selectOptionString = '<option value ="">Select one</option>';
+				$.each(jClass, function (index, jclass) {
+					selectOptionString += '<option  value ="'+jclass.semester_id+'" >'+jclass.semester_id+'</option>';
+				});
+	            $('#class_select').html(selectOptionString);
+	            $('#class_select').attr('disabled',null);
+	        },
+	        error: function(event) {
+	            alert(event.responseText);
+	        }
+	    });//End ajax call.
+        	
+	});//End #degree_select change.
+
+
+	$('#class_select').change(function(){
+
+		sem_id = $("#class_select").val();
+		
+		$.ajax({
+	        url : urlFetchConducted,
+	        dataType : 'json',
+	        data : {'degree_id' : deg_id ,'department_id' : slaveDepartment, 'semester_id': sem_id}, 
+	        success: function(jConducted){
+		        var conducted = 1;
+	        	var selectOptionString = '<option value ="">Select one</option>';
+	        	if(jConducted){
+    				for ( conducted = 1 ; conducted <= jConducted.test_id; conducted++) {
+    					selectOptionString += '<option  value ="'+conducted+'" >'+conducted+'</option>';
+    				}
+    				if (conducted <= jConducted.max_test_id) {
+    					selectOptionString += '<option  value ="'+conducted+'" >'+conducted+'</option>';
+    				}
+	        	} else {
+	        		selectOptionString += '<option  value ="'+conducted+'" >'+conducted+'</option>';
+	        	}
+	        	
+				
+	            $('#sesnl_select').html(selectOptionString);
+	            $('#sesnl_select').attr('disabled',null);
+	        },
+	        error: function(event) {
+	            alert(event.responseText);
+	        }
+	    });//End ajax call.
+        	
+	});//End #degree_select change.
+	
+	$('#sesnl_select').change(function(){
+		sesnl_id = $("#sesnl_select").val();
+
+		$(gridTable).jqGrid('setGridParam',
+				            {
+             					postData:{
+                 					       'department_id':slaveDepartment,
+                 					       'degree_id':deg_id,
+                 					       'semester_id':sem_id,
+                 					       'test_id':sesnl_id
+                 					     },
+                 			    url: urlFillGrid
+                            }
+                            ).trigger("reloadGrid");
+		
+	});//End #degree_select change.
+	
+	$(gridTable).jqGrid({
+		colNames:['Subject Code','Subject Name','Date of conduct','Time','Max Marks','Pass Marks'],
+		colModel:[
+			{
+				name:'subject_code',
+        	    index:'subject_code',
+                width: 50
+            },
+            {
+				name:'subject_name',
+        	    index:'subject_name'
+            },
+            {
+                name:'date_of_conduct',
+                index:'date_of_conduct',
+                width: 50,
+                align : "center",
+                editable: true,
+                sorttype:"date",
+                formatter:"date",
+                formatoptions:{"srcformat":"Y-m-d","newformat":"Y-m-d"},
+                editoptions:{dataInit:function(elm){
+                    					serverDate = $.datepicker.parseDate('dd-mm-yy',
+                            											 $('#datetext').text());
+                                        jQuery(elm).datepicker({dateFormat:'yy-mm-dd',
+                                			minDate : serverDate,
+                                			closeText: 'Close', 
+                                			showButtonPanel: true,
+                                			constrainInput : true,
+                                			gotoCurrent: true});
+                                        //jQuery('.ui-datepicker').css({'font-size':'80%'});
+							},
+	                		readonly: true
+                }
+            },
+            {
+                name:'time', 
+                index:'time',
+                editable: true,
+                width: 40,
+                align : "center",
+                editoptions:{dataInit:function(elm){
+                                	$(elm).timepicker({
+                                		//ampm: true,
+                                		hourMin: 8,
+                                		hourMax: 16,
+                                		hourGrid: 2,
+                                		minuteGrid: 10,
+                                		stepMinute: 10
+                                	});
+                                    //jQuery('.ui-timepicker').css({'font-size':'90%'});
+                		},
+                		readonly: true
+                }
+            },
+            {
+                name:'max_marks',
+                index:'max_marks',
+                width: 40,
+                align : "center",
+    			formatter:'number', 
+    			formatoptions:{decimalPlaces: 0},
+                editable: true
+            },
+            {
+                name:'pass_marks', 
+                index:'pass_marks',
+                width: 40,
+                align : "center",
+    			formatter:'number', 
+    			formatoptions:{decimalPlaces: 0},
+                editable: true
+            },            
+            ],
+        caption: "Manage Sessional Schedule" ,
+        pager: gridPager,
+        onSelectRow: function(id){
+            if(id && id!==lastSel){ 
+            	$(this).restoreRow(lastSel); 
+               lastSel=id; 
+            }
+            jQuery(this).editRow(id, true,
+                    function(id){ //oneditfunc
+                    	serverDate = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+                    	var strSesnlDate = $('#'+id+'_date_of_conduct').val();
+                    	var sesnlDate= $.datepicker.parseDate('yy-mm-dd', strSesnlDate);
+                    	if(strSesnlDate){
+                    		if (serverDate >= sesnlDate) {
+                        		$(this).restoreRow(id);
+            				}
+                    	}
+                    },
+                    false, //succesfunc
+                    false, //url
+                    {'department_id': slaveDepartment,
+                     'degree_id': deg_id,
+                     'semester_id': sem_id,
+                     'test_id' : sesnl_id,
+                     'subject_code': $('#'+id+' :nth-child(2)').text() } //extraparam
+                    ); 
+          },
+        editurl:urlCRUD,
+        rownumbers : true,
+        altRows: true,
+        //loadonce : true,
+        shrinkToFit : true,
+        forceFit : true,
+        hoverrows : false,
+        prmNames: {page: null, rows: null, sort: null, order: null, search: null}
+		});
+
+	$(gridTable).jqGrid('navGrid', 
+						gridPager, 
+						{
+        					add : false,
+        					del : false,
+        					edit : false,
+       						view : false,
+        					search : false,
+        					refresh : false
+    					}, // options
+    					
+            			{
+                			width : 400,
+                			savekey : [ true, 13 ],
+                			navkeys : [ true, 38, 40 ],
+                			jqModal : false,
+                			closeOnEscape : true
+            			}, // edit options
+            			
+            			{
+            			    width : 400,
+                			savekey : [ true, 13 ],
+                			navkeys : [ true, 38, 40 ],
+                			jqModal : false,
+                			closeOnEscape : true,
+                			clearAfterAdd : true //Default is true, make false if needed
+            			}, // add options
+            			
+            			{
+                			reloadAfterSubmit : false,
+                			jqModal : false,
+                			closeOnEscape : true
+            			} // del options
+ 	).jqGrid('gridResize');
+    
+    addPager(gridTable, gridPager); 
+    
+	});
+	
+</script>
+<?php
+$this->headLink()->appendStylesheet(
+'http://' . CDN_SERVER . '/plugins/timepicker/jquery-ui-timepicker.css');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/timepicker/jquery-ui-timepicker-addon.js');
+?>
