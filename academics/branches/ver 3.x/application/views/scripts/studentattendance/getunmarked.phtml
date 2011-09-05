@@ -1,0 +1,109 @@
+<style type="text/css">
+.alingcenter {
+	width: 40%;
+	margin-left: auto;
+	margin-right: auto;
+}
+}
+</style>
+<h3 align="center" style="line-height: 20%">UnMarked Attendance</h3>
+<div class="gridstyle">
+<table id="status_grid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+	style="color: red"></span></div>
+<script type="text/javascript">
+var urlUnmarkedAttendance = "<?php echo $this->url (array ('controller' => 'studentattendance',  'action' => 'getunmarkedatt' ))?>";
+
+$(function(){
+    var gridTable = "#status_grid";
+    var gridPager = "#gridpager";
+    $(gridTable).jqGrid({
+        datatype : "local",
+        colNames:['Period Date','Period','Subject','Subject Mode','Dept','Degree','Semester'],
+        colModel:[{name:'period_date',
+            	   index:'period_date'
+       			 },
+       			 {name:'period_number',
+                    index:'period_number',
+                    width: 50,
+                    align : "center"},
+                {name:'subject_name',
+                 	index:'subject_name',
+                 	width : 300},
+                {name: 'subject_mode_id',
+                	index: 'subject_mode_id',
+                	width : 100},
+                {name : 'department_id',
+                    index : 'department_id',
+                    width : 70,
+                    align : "center"},
+                {name : 'degree_id',
+                    index : 'degree_id',
+                    width : 70,
+                    align : "center"},
+                {name : 'semester_id',
+                    index : 'semester_id',
+                    width : 70,
+                    align : "center"}
+	         ],
+            rownumbers : true,
+            altRows: true,
+            loadonce : true,
+            shrinkToFit : true,
+            forceFit : true,
+            hoverrows : false,
+            rowNum: 70,
+            prmNames: {page: null, rows: null, sort: null, order: null, search: null, nd: null},
+        caption: "Unmarked attendance"
+	}).jqGrid('gridResize');
+    
+	$.ajax({
+		type: "GET",
+		url:  urlUnmarkedAttendance,
+		dataType : "json",
+		async :  false,
+		success: function(response) {
+				for(var cnt = 0;cnt <  response.length ;cnt++){
+				var data = {
+							period_date : response[cnt]['period_date'],
+							period_number : response[cnt]['period_number'],	 
+							subject_name : response[cnt]['subject_name'], 
+							subject_mode_id : response[cnt]['subject_mode_name'], 
+							department_id : response[cnt]['department_id'], 
+							degree_id : response[cnt]['degree_id'], 
+							semester_id : response[cnt]['semester_id']
+							};
+				$("#status_grid").addRowData(response[cnt]['timetable_id'],data);
+
+				 $("#status_grid").setCell(response[cnt]['timetable_id'], 
+                         'period_number', 
+                         "", 
+                         "", 
+                         {title: response[cnt]['period_id']});
+                 
+				$("#status_grid").setCell(response[cnt]['timetable_id'], 
+					                 'subject_name', 
+					                 "", 
+					                 "", 
+					                 {title: response[cnt]['subject_code'] });
+				$("#status_grid").setCell(response[cnt]['timetable_id'], 
+					                 'subject_mode_id', 
+					                 "", 
+					                 "", 
+					                 {title: response[cnt]['subject_mode_id']  });
+				 				}
+
+				
+						
+		},
+		
+		error: function(request,error) {
+			alert("Bad Request: "+ request+ " " + error);
+		}
+			
+	});
+      
+});
+</script>

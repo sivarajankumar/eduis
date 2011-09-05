@@ -1,0 +1,344 @@
+<style>
+<!--
+.arrow-right {
+        width: 30;
+        height: 100;
+        border-top: 100px solid transparent;
+        border-bottom: 100px solid transparent;
+        border-left:30px solid #eee;
+		clear: none;
+}
+
+.arrow-left {
+        width: 0;
+        height: 0;
+        border-top: 100px solid transparent;
+        border-bottom: 100px solid transparent; 
+        border-right:30px solid #eee;
+		clear: none;
+}
+
+
+-->
+</style>
+<style media="print">
+<!--
+.noprint {
+	display:none;
+}
+-->
+</style>
+<form class="noprint" id="subjectForm"><label for="facultySubject" accesskey="f"
+	id="lbl_facultySubject"> Subject: <select id="facultySubject"
+	name="facultySubject" tabindex="1">
+</select></label> <br />
+<br />
+<div id="subjectTestDiv" style="display: none"></div>
+<input id="showStat" type="button" value="Show Stat" />
+</form>
+
+<a id="panLeft" class="noprint" style="text-decoration: none; display:none;" href="javascript: panLeft();"><span class="arrow-left"></span></a>
+<div id="placeholder"></div>
+<a id="panRight" class="noprint" style="text-decoration: none; display:none;" href="javascript: panRight();"><span class="arrow-right"></span></a>
+
+
+<div id="overview"
+	style="margin-left: 50px; margin-top: 20px; width: 450px; height: 70px"></div>
+
+<script type="text/javascript" language="javascript">
+var facultySubject;
+var slaveDepartment;
+var plot;
+var lastSel;
+var gridTable = "#tblgrid";
+var gridPager = "#gridpager"; 
+var placeholder = $("#placeholder");
+var overviewholder = $("#overview");
+
+var testSets = {};
+var statData = [];
+var students = [];
+
+var maxPossibleStu = parseInt(70);
+var maxPossibleMarks = parseInt(100);
+
+var pHolderWidth = (placeholder.parent().width()*parseInt(80))/100;
+placeholder.width(pHolderWidth).height(400);
+var urlCRUD = "<?
+echo $this->url(array('controller' => 'marks', 'action' => 'imod'))?>";
+										
+var urlFacultySubject = "<?
+echo $this->url(array('controller' => 'faculty', 'action' => 'getsubject'))?>";
+
+var urlSubjectTest = "<?
+echo $this->url(array('controller' => 'subject', 'action' => 'gettest'))?>";
+
+var urlStuMarks = "<?
+echo $this->url(array('controller' => 'test', 'action' => 'getstudents'))?>";
+$.ajax({
+    url : urlFacultySubject,
+    dataType : 'json',
+    success: function(jFacultySubject){
+    	var selectOptionString = '<option value ="">Select one</option>';
+		$.each(jFacultySubject, function (subjectCode, subjectInfo) {
+			$.each(subjectInfo, function (index, subject) {
+				selectOptionString += '<option value ="'+subjectCode+'">'+subject.subject_name+'</option>';
+			});
+		});
+        $('#facultySubject').html(selectOptionString);
+   },
+   error: function(event) {
+        alert(event.responseText);
+   }
+});//End ajax call.
+
+$(function(){
+
+var options = {
+        // the color theme used for graphs
+        colors: ["#edc240", "#4da74d", "#9440ed", "#afd8f8", "#cb4b4b"],
+        legend: {
+            backgroundOpacity: 0.65 // set to 0 to avoid background
+        },
+        xaxis: {autoscaleMargin: 0.0005, // margin in % to add if auto-setting min/max
+            min:-1,
+            tickDecimals: 0, // no. of decimals, null means auto 
+            tickFormatter: tickFormatter, // fn: number -> string
+            //zoomRange: [0, 10],
+            panRange: [-1, maxPossibleStu] 
+        	},
+        yaxis: {min:0,
+            	tickDecimals: 0, // no. of decimals, null means auto 
+                tickSize: 2,  // number or [number, "unit"]
+                //zoomRange: [0, 10],
+                panRange: [0, maxPossibleMarks]
+            	},
+        //zoom: {interactive: true},
+        //pan: {interactive: true},
+		multiplebars: true,
+	    series: {
+    	    bars: { show: true, 
+        	    	barWidth: 0.2, 
+        	    	align:'center' }
+			//threshold: {below:{limit: 10,color: "rgb(20, 20, 30)"}}
+        	    	
+		},
+        selection: { mode: "x" },
+        grid: { markings: markings,
+                //clickable: true,
+                hoverable: true }
+    };
+
+var overviewOptions = {
+        // the color theme used for graphs
+        colors: ["#edc240", "#4da74d", "#9440ed", "#afd8f8", "#cb4b4b"],
+        xaxis: {min:-1,
+            tickFormatter: tickFormatter // fn: number -> string
+    	},
+        yaxis: {min:0
+    	},
+        series: {
+            lines: { show: true, lineWidth: 1 },
+            shadowSize: 0
+        },
+        legend: {
+            show: false
+        },
+        selection: { mode: "x" }
+    };
+	$('#facultySubject').change(function(){
+		testSets = {};
+		facultySubject = $("#facultySubject").val();
+		if (facultySubject.length) {
+			$.ajax({
+		        url : urlSubjectTest,
+		        data : {'subject_code':facultySubject,'department_id':slaveDepartment,'locked':true}, 
+		        success: function(jSubjectTest){
+			        var htmltest = {};
+			        $.each(jSubjectTest, function (index, test) {
+						testSets[test.test_type_id] = {};
+						htmltest[test.test_type_id] = [test.test_type_name];
+					});
+
+	        		console.log(htmltest);
+
+			        $.each(htmltest, function (testType, htmltst) {
+						$("#subjectForm > #subjectTestDiv").html('');
+						var fieldSet = '<fieldset><legend>'+htmltst+'</legend>';
+				        $.each(jSubjectTest, function (index, test) {
+				        	if(test.test_type_id == testType){
+								fieldSet += '<label>'+testType+' '+this.test_id+'<input type="checkbox" name="'+testType+'"  value ="'+this.test_info_id+'" /></label>';
+								
+								htmltst.push(this);
+							}
+						});
+
+				        fieldSet += '</fieldset>';
+						$("#subjectForm > #subjectTestDiv").append(fieldSet).show('slow');
+					});
+
+					/*
+					$.each(htmltest, function (testType, test) {
+						var fieldSet = '<fieldset><legend>'+test.test_type_name+'</legend>';
+						fieldSet += '<label>'+testType+' '+test.test_id+'<input type="checkbox" name="'+testType+'"  value ="'+test.test_info_id+'" /></label>';
+						fieldSet = '</fieldset>';
+						$("#selection-div").append(fieldSet);
+					});
+					*/
+					$('#subjectTestDiv input[type="checkbox"]').bind('click',function(){
+						//var tmp = $(this).attr('name');
+						//var testType = tmp.substring(0,tmp.indexOf('_'));
+						var testType = $(this).attr('name');
+						var testInfoId = $(this).val();
+						if($(this).is(':checked')) {
+						if (testSets[testType][testInfoId] == null) {
+								$.ajax({
+							        url : urlStuMarks,
+							        async : false,
+							        data : {'test_info_id' : testInfoId}, 
+							        success: function(jStuMarks){
+	    					        		testSets[testType][testInfoId] = jStuMarks;
+							        		console.log("testSets updated!!");
+							        		console.log(testSets);
+							        },
+							        error: function(event) {
+							            alert(event.responseText);
+							        }
+							    });//End ajax call.
+						} else {
+			        		console.log("Test ID '"+testInfoId+"' is already in cache");
+						}
+					} else {
+						delete testSets[testType][testInfoId];
+					}
+						
+					});//End #subjectTest change.
+		        },
+		        error: function(event) {
+		            alert(event.responseText);
+		        }
+		    });//End ajax call.
+		} else {
+			// TASK: Reset dependents
+		}
+		
+	    
+	});//End #facultySubject change.
+
+
+$('#showStat').click(function(){
+	processData(testSets['SESS']);
+	
+	
+	/////////////////////////////////////////////////
+	// plot!
+    plot = $.plot(placeholder, statData, options);
+
+    overview = $.plot(overviewholder, statData, overviewOptions );
+
+    ////// Now, connect the two /////////////////
+    
+    placeholder.bind("plotselected", function (event, ranges) {
+    	
+    	if (ranges.xaxis.to > maxPossibleStu)
+            ranges.xaxis.to = maxPossibleStu;
+    	// clamp the zooming to prevent eternal zoom
+        if (ranges.xaxis.to - ranges.xaxis.from < 9)
+            ranges.xaxis.to = ranges.xaxis.from + 9;
+        if (ranges.yaxis.to - ranges.yaxis.from < 9)
+            ranges.yaxis.to = ranges.yaxis.from + 9;
+        
+        // do the zooming
+        plot = $.plot(placeholder, statData,
+                      $.extend(true, {}, options, {
+                          xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to }
+                      }));
+
+        //don't fire event on the overview to prevent eternal loop
+        overview.setSelection(ranges, true);
+    });
+    
+    overviewholder.bind("plotselected", function (event, ranges) {
+        plot.setSelection(ranges);
+    });
+
+    $("#panLeft").show().position({
+      	 my: "right",
+      	 at: "left",
+      	 of: placeholder, // or $("#otherdiv)
+      	 collision: "fit"
+      	});
+      $("#panRight").show().position({
+      	 my: "left",
+      	 at: "right",
+      	 of: placeholder, // or $("#otherdiv)
+      	 collision: "fit"
+      	});
+}); //End #Stat Click.
+
+function processData(testCategory){
+	statData = new Array();
+	var count = 0;
+	$.each(testCategory, function (index, test) {
+		//statData[count] = {};
+		var label = this.test_info.test_type_id+'-'+this.test_info.test_id
+					+'(Max:'+this.test_info.max_marks+')';
+		var data = [];
+		var testStudents = [];
+		var stuIndex = 0;
+		$.each(test.students, function (rollNo, marksInfo) {
+			data.push([stuIndex,parseInt(marksInfo.marks_scored)]);
+			testStudents.push([parseInt(rollNo)]);
+			stuIndex++;
+		});
+		passMarks = parseInt(test.test_info.pass_marks);
+		statData[count] = {label: label,
+							data: data,
+							threshold: {below:{
+								limit: passMarks,
+								color: "rgb(200, 20, 30)"}
+							}
+    					};
+		students[count] = testStudents; //Although these will be same but what if a student leave in middle?
+		count++;
+	});
+}
+function tickFormatter(index){
+    roll = (students[0][index])? students[0][index]: ''; 
+    return roll;
+}
+function markings(axes) {
+    var markings = [];
+    $.each(students[0], function (index, roll) {
+        markings.push({ xaxis: { from: roll, to: roll } });
+	});
+    
+    return markings;
+}
+
+});
+
+
+function panLeft() {
+	var axes = plot.pan({ left: -20 });
+	if(axes){
+		console.log(axes);
+	}
+}
+function panRight() {
+	plot.pan({ left: 20 });
+}
+</script>
+<?php
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/js/plugins/flot/jquery.flot.js');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/js/plugins/flot/jquery.flot.multi.js');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/js/plugins/flot/jquery.flot.selection.js');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/js/plugins/flot/jquery.flot.threshold.js');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/js/plugins/flot/jquery.flot.navigate.min.js');
+?>
+
