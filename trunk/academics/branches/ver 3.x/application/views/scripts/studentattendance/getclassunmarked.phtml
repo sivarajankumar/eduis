@@ -1,0 +1,230 @@
+<h3 align="center">Un marked periods in class</h3>
+<div id="main_div">
+
+	<div id="selection-div"class="ui-widget-content ui-corner-all" style="width:50em; padding:4px">
+	
+	<label accesskey="D" id="lbl_department_id" style="padding: 0.4em; float: left;">
+			Department:&nbsp;<select id="department_id" tabindex="1" ></select></label>
+		<br />&nbsp;<br />
+		<label for="degree_id" accesskey="E" id="lbl_degree_id" style="padding: 0.4em;">
+			Degree:&nbsp;
+		<select id="degree_id" tabindex="2" >
+		<option value ="">Select one</option>
+		</select></label>
+		&nbsp;<br />
+		<label accesskey="S" id="lbl_class_id" style="padding: 0.4em;" >
+			Class:&nbsp;
+		<select id="class_select" tabindex="3" disabled="disabled">
+			<option>Select one</option>
+		</select></label>
+	</div> <!-- End selection-div -->
+	<br />
+	
+	<div id="sessional-schedule-div" style="display">
+	
+		<table id="tblgrid" class="scroll"></table>
+		<div id="gridpager" class="scroll" style="text-align: center;"></div>
+		
+	</div><!-- End sessioanl-schedule-div -->
+
+</div> <!-- End main_div -->
+<div id="facultyDetail" style="display: none;">&nbsp;</div>
+
+<script type="text/javascript" language="javascript">
+var department_id	= '';
+var urlFacultyDetail = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'staff', 
+	'action' => 'getinfo'))?>";
+
+$(function(){
+    var gridTable = "#tblgrid";
+    var gridPager = "#gridpager";
+    var urlFillGrid = "<? echo $this->url(array('controller' => 'studentattendance', 
+												'action' => 'getclassunmarkedatt'))?>";
+										
+	var urlDeptCombo = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'degreedepartment', 
+												'action' => 'getdepartment'))?>";
+													
+	var urlDegreeCombo = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 
+												'action' => 'getslavedegree'))?>";
+														
+var urlFetchActiveClasses = "<?php echo 'http://' . CORE_SERVER . $this->url(array('controller' => 'semesterdegree', 
+																				'action' => 'getsessionsemester'))?>";
+
+
+$(gridTable).jqGrid({
+	datatype:'local',
+	jsonReader : {
+	      cell: "",
+	      repeatitems: false,
+	      id: ""
+	   },
+	colNames:['Faculty Id','Subject Name','Mode','Total','Pending'],
+	colModel:[{
+		name:'staff_id',
+    	    index:'staff_id'},
+        {name:'subject_name',
+    	    index:'subject_name'
+        },
+        {name:'subject_mode_name',
+            index:'subject_mode_name'
+        },
+        {name:'total', 
+            index:'total',
+    			align: 'center',
+    			formatter:'number', 
+    			formatoptions:{decimalPlaces: 0}
+        },
+        {name:'pending', 
+            index:'pending',
+    			align: 'center',
+    			formatter:'number', 
+    			formatoptions:{decimalPlaces: 0}
+        }],
+    caption: "Unmarked periods in class" ,
+    /*onSelectRow: function(id){
+    	$('#'+id+' td:first-child').bt({
+			  contentSelector:  "fetchFaculty($(this).text());",
+			  showTip: function(box){
+				    $(box).fadeIn(500);
+			  },
+			  hideTip: function(box, callback){
+			    $(box).animate({opacity: 0}, 500);
+			  },
+			//trigger: 'none',
+			shrinkToFit: true,
+			closeWhenOthersOpen: true,
+			fill: '#FFF',
+		    cornerRadius: 10,
+		    strokeWidth: 0,
+		    shadow: true,
+		    shadowOffsetX: 3,
+		    shadowOffsetY: 3,
+		    shadowBlur: 8,
+		    shadowColor: 'rgba(0,0,0,.9)',
+		    shadowOverlap: false,
+		    noShadowOpts: {strokeStyle: '#999', strokeWidth: 2},
+		    positions: ['left', 'top'],
+		    cssStyles: {
+    		    "z-index":'99999',
+		        fontFamily: '"lucida grande",tahoma,verdana,arial,sans-serif', 
+		        fontSize: '0.91em'
+		      }
+	  	}).btOn();
+     },*/
+    rownumbers : true,
+    altRows: true,
+    loadonce : true,
+    shrinkToFit : true,
+    forceFit : true,
+    hoverrows : false,
+    rowNum: 70,
+    prmNames: {page: null, rows: null, sort: null, order: null, search: null, nd: null}
+	});
+
+
+	$.ajax({
+        url : urlDeptCombo,
+        dataType : 'jsonp',
+        data : {'format' : 'jsonp' },
+        success: function(jDegree){
+        	var selectOptionString = '<option value ="">Select one</option>';
+			$.each(jDegree, function (index, department) {
+				selectOptionString += '<option value ="'+department.department_id+'">'+department.department_name+'</option>';
+			});
+            $('#department_id').html(selectOptionString);
+       },
+       error: function(event) {
+            alert(event.responseText);
+       }
+    });//End ajax call.
+
+
+	$('#department_id').change(function(){
+		department_id = $("#department_id").val();
+    	$.ajax({
+            url : urlDegreeCombo,
+            dataType : 'jsonp',
+            data : {'masterDepartment': department_id,'slaveDepartment' : department_id, 'format' : 'jsonp' },
+            success: function(jDegree){
+            	var selectOptionString = '<option value ="">Select one</option>';
+    			$.each(jDegree, function (index, degree) {
+    				selectOptionString += '<option value ="'+degree.degree_id+'">'+degree.degree_id+'</option>';
+    			});
+                $('#degree_id').html(selectOptionString);
+           },
+           error: function(event) {
+                alert(event.responseText);
+           }
+        });//End ajax call.
+
+	});//End #department_id change.
+    
+	$('#degree_id').change(function(){
+		var deg_id = $("#degree_id").val();
+		
+		$.ajax({
+	        url : urlFetchActiveClasses,
+	        dataType : 'jsonp',
+	        data : {'degree_id' : deg_id ,'department_id' : department_id, 'format' : 'jsonp'}, 
+	        success: function(jClass){
+	        	var selectOptionString = '<option value ="">Select one</option>';
+				$.each(jClass, function (index, jclass) {
+					selectOptionString += '<option>'+jclass.semester_id+'</option>';
+				});
+	            $('#class_select').html(selectOptionString);
+	            $('#class_select').attr('disabled',null);
+	        },
+	        error: function(event) {
+	            alert(event.responseText);
+	        }
+	    });//End ajax call.
+        	
+	});//End #degree_select change.
+
+	$('#class_select').change(function(){
+		$(gridTable).jqGrid('setGridParam',
+				            {postData:{
+             					       'department_id':department_id,
+             					       'degree_id':$("#degree_id").val(),
+             					       'semester_id':$(this).val()
+                 					     },
+             			    url: urlFillGrid,
+             	  			datatype: 'json'
+                            }).trigger("reloadGrid");
+		
+	});//End #degree_select change.
+	
+
+    
+});
+
+function fetchFaculty(faculty_id) {
+	var tip = 'name...';
+	$.ajax({
+        url : urlFacultyDetail,
+        async : false,
+        cache: true,
+        dataType : "jsonp",
+        crossDomain : true,
+        data : {'staff_id' : faculty_id, 'format' : 'jsonp' },
+        success : function(jFaculty){
+        	var middle_name = jFaculty.middle_name ? " "+jFaculty.middle_name:"";
+        	var last_name = jFaculty.last_name ? " "+jFaculty.last_name:"";
+            var facultyStr = '<div>Name: <b>'+jFaculty.first_name+middle_name+last_name+'</b></div>';
+            facultyStr += '<div>Department: <b>'+jFaculty.department_id+'</b></div>';
+        	tip = facultyStr;
+        },
+        error: function(xhr, text){
+        	$('#facultyDetail').text('ERROR: xhr.responseText');
+           // alert(xhr.responseText);
+        }
+    });
+    return tip;
+}
+</script>
+<?php 
+$this->headLink()->appendStylesheet(
+'http://' . CDN_SERVER . '/plugins/baloon/bt/jquery.bt.css');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/baloon/bt/jquery.bt.min.js');
+?>
