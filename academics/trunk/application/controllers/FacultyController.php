@@ -43,5 +43,16 @@ class FacultyController extends Acadz_Base_BaseController
         }
         header("HTTP/1.1 400 Bad Request");
     }
+    
+    public function markedattendanceAction() {
+        $request = $this->getRequest();
+        //$faculty_id = $request->getParam('faculty_id');
+        $department = $request->getParam('department_id');
+        $programme = $request->getParam('programme_id');
+        $semester = $request->getParam('semester_id');
+        $subject_code = $request->getParam('subject_code');
+        $subject_mode_id = $request->getParam('subject_mode_id');
+        
+    }
 }
 
