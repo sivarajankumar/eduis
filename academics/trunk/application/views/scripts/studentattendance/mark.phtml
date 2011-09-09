@@ -363,10 +363,31 @@ var initStudentGrid = function(){
 	isStudentGridInit = true;
 };
 
+
+$('#markattendance').bind("submit", function(e){
+	e.preventDefault();
+    var formData = {}; 
+    var status = $('#markattendance :input[value="-1"]');
+    if(status.length > 0){
+    	status.each(function(){
+        		var missingInput = $('#'+this.id+' :selected').text();
+        		alert('"'+missingInput+'" is required.');
+    			return false;
+        });
+    } else{
+	
+	var department_id = $("#department_id").val();
+	var programme_id = $("#programme_id").val();
+	var semester_id = $("#semester_id").val();
+	var group_id = $("#group_id").val();
+	
+	getStudents(department_id, programme_id, semester_id,group_id);
+    }
+ });
+
+
 function getStudents(department_id, degree_id, semester_id, group_id) {
-	hideColumns();
 	var stuGrid = $("#stulistgrid");
-	stuGrid.clearGridData();
 	var data = {'department_id' : department_id,
             'degree_id' : degree_id, 
             'semester_id' :  semester_id};
@@ -378,6 +399,13 @@ function getStudents(department_id, degree_id, semester_id, group_id) {
 		url: urlStudents,
 		data : data,
 		success : 	function(response){
+			
+			if (isStudentGridInit == false) {
+				initStudentGrid();
+			}
+			hideColumns();
+			stuGrid.clearGridData();
+			
 		totalstudent = 0;
 		             		
 		global_Info = response;
@@ -402,7 +430,8 @@ function getStudents(department_id, degree_id, semester_id, group_id) {
 			
 			studentlist = response[group_id]['students'];
 			if(studentlist.length != 0){
-    		    switch (eval(group_number)){
+				var groupNumber = eval(group_number);
+    		    switch (groupNumber){
     			    case 1 : 
     				    var data = { group1 : '<input type="checkbox"  class="checkGroup" id="'  + group_id + '"  tabindex="'+ (cnt+1) +'"><label for="'  + group_id + '"><b> Mark '+group_id+' absent<b/></label>'} ;
     				    stuGrid.jqGrid('setRowData',0, data);
@@ -417,17 +446,18 @@ function getStudents(department_id, degree_id, semester_id, group_id) {
                         break;
                     default : alert('Unknown group_number :'+group_number);
     		    }
-				stuGrid.setLabel("group" + group_number, group_id);
-				stuGrid.showCol("group"+ group_number);
+				stuGrid.setLabel("group" + groupNumber, group_id);
+				stuGrid.showCol("group"+ groupNumber);
 			} else{
 				//totalstudent = 0;
-				console.log('Students are not available in group_id '+group_id);
-				//return;
+				//if(console){
+				//	console.log('Students are not available in group_id '+group_id);
+				//}//return;
 			}
 
 			for( stucnt=0;stucnt <studentlist.length ; stucnt++ ){
 
-                switch (eval(group_number)){
+                switch (groupNumber){
                     case 1 :
                         var data = { group1 :'<span id="span_' + studentlist[stucnt]['student_roll_no'] + '">' + 
                         		                 '<input type="checkbox"  id=' + studentlist[stucnt]['student_roll_no'] + ' tabindex="'+ (stucnt+25) +'">' +
@@ -476,13 +506,6 @@ function getStudents(department_id, degree_id, semester_id, group_id) {
 			
 			
 		}
-		var destination = $('#stulistgrid').offset().top;
-		$("html,body").animate({ scrollTop: destination-40}, 'slow', function() {
-			$("#statusdiv").show();
-		});
-		
-		$('#iagree').removeAttr('disabled');
-				
 
 		$('#stulistgrid input[type=checkbox]').customInput();
 	    $('#stulistgrid input[type=checkbox]').not('.checkGroup').bind("click", function(e){
@@ -492,6 +515,16 @@ function getStudents(department_id, degree_id, semester_id, group_id) {
 	    $('#stulistgrid input[type=checkbox][class=checkGroup]').bind("click", function(e){
 				selectAll(this);
           });
+	    $("#statusdiv").show();
+	    /*
+		var destination = $('#stulistgrid').offset().top;
+		$("html,body").animate({ scrollTop: destination-40}, 'slow', function() {
+			$("#statusdiv").show();
+		});
+		*/
+		$('#iagree').removeAttr('disabled');
+				
+
 
 	},
     error: function(event) {
@@ -577,11 +610,13 @@ $("#period_date").datepicker({
                      data: getValues(),
                      success: function(response) {
                          alert(response);
-                         $( "#submitStatus" ).html(jStatus).slideDown('slow', function(){
+                         /*
+                         $( "#submitStatus" ).html(response).slideDown('slow', function(){
                             	setTimeout(function(){
                             		window.location.reload();
                                 	},1000);
                             }).append('<br/>Page should refresh itself.');
+                         */
                          resetgrid();
                      },
                      error: function(event) {
@@ -616,7 +651,8 @@ $("#period_date").datepicker({
 	}
     	
 	$('#iagree').click(function(){
-		if($('#iagree').prop('checked'))
+		var checked  = $('#iagree').prop('checked');
+		if(checked)
 		{
 			$("#btnmark").prop('disabled', '');	
 		}
@@ -629,10 +665,9 @@ $("#period_date").datepicker({
 
 function setDefault()
 {
-	$('#totalabsent').val('0');
-	$("#btnmark").hide();
-	$('#iagree').attr('checked',0);	
-	$('#totalstudents').val('0');
+	$('#totalabsent,#totalstudents').val('0');
+	$('#iagree').prop('checked', false).trigger('click');
+    $("#statusdiv").hide();
 }
 
 function resetgrid() {
@@ -647,36 +682,11 @@ function hideColumns()
     
 }
 
-$('#markattendance').bind("submit", function(e){
-
-	e.preventDefault();
-    var formData = {}; 
-    var status = $('#markattendance :input[value="-1"]');
-    if(status.length > 0){
-    	status.each(function(){
-        		var missingInput = $('#'+this.id+' :selected').text();
-        		alert('"'+missingInput+'" is required.');
-    			return false;
-        });
-    } else{
-	if (isStudentGridInit == false) {
-		initStudentGrid();
-	}
-	
-	var department_id = $("#department_id").val();
-	var programme_id = $("#programme_id").val();
-	var semester_id = $("#semester_id").val();
-	var group_id = $("#group_id").val();
-	
-	getStudents(department_id, programme_id, semester_id,group_id);
-    }
- });
-
 });
 </script>
 <?php
 $this->headLink()->appendStylesheet(
-'http://' . CDN_SERVER . '/plugins/checkbox/filament/filament.css', null,array('async'=>'true', 'defer'=>'defer'));
+'http://' . CDN_SERVER . '/plugins/checkbox/filament/filament.css');
 $this->headScript()->appendFile(
-'http://' . CDN_SERVER . '/plugins/checkbox/filament/customInput.js', null,array('async'=>'true', 'defer'=>'defer'));
+'http://' . CDN_SERVER . '/plugins/checkbox/filament/customInput.js');
 ?>
