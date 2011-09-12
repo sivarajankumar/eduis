@@ -128,6 +128,11 @@ class Acad_Model_Exam_Aissce
     {
         $this->_migration_date = $_migration_date;
     }
+    /**
+     * Set Aissce Mapper
+     * @param Acad_Model_Mapper_Exam_Aissce $mapper - Subject Mapper
+     * @return Acad_Model_Exam_Aissce
+     */
     public function setMapper ($mapper)
     {
         $this->_mapper = $mapper;
@@ -135,12 +140,12 @@ class Acad_Model_Exam_Aissce
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Exam_AissceMapper
+     * @return Acad_Model_Mapper_Exam_Aissce
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Exam_AissceMapper());
+            $this->setMapper(new Acad_Model_Mapper_Exam_Aissce());
         }
         return $this->_mapper;
     }
