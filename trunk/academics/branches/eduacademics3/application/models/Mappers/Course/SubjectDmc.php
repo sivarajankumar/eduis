@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_Course_SubjectDmcMapper
+class Acad_Model_Mapper_Course_SubjectDmc
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Acad_Model_Course_SubjectDmcMapper
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Acad_Model_Course_SubjectDmcMapper
+     * @return Acad_Model_Mapper_Course_SubjectDmc
      */
     public function setDbTable (Zend_Db_Table_Abstract $dbTable)
     {
@@ -108,5 +108,13 @@ WHERE (`dmc_record`.`subject_code` = ?
             }
             return $result;
         }
+    }
+    /**
+     * @todo
+     * @param Acad_Model_Course_SubjectDmc $subjectDmc
+     */
+    public function fetchMemberId( Acad_Model_Course_SubjectDmc $subjectDmc)
+    {
+        
     }
 }

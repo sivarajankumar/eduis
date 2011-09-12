@@ -1,10 +1,5 @@
 <?php
-/**
- * Mapper Class for SESSIONAL
- * @author ACEIS TEAM
- *
- */
-class Acad_Model_Assessment_SessionalMapper
+class Acad_Model_Mapper_Assessment_Assignment
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -14,7 +9,7 @@ class Acad_Model_Assessment_SessionalMapper
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Acad_Model_Assessment_SessionalMapper
+     * @return Acad_Model_Mapper_Assessment_Assignment
      */
     public function setDbTable ($dbTable)
     {
@@ -30,7 +25,7 @@ class Acad_Model_Assessment_SessionalMapper
     /**
      * Get registered Zend_Db_Table instance
      *
-     * Lazy loads Acad_Model_Assessment_Sessional if no instance registered
+     * Lazy loads Acad_Model_Assessment_Assignment if no instance registered
      * 
      * @return Zend_Db_Table_Abstract
      */
@@ -42,38 +37,38 @@ class Acad_Model_Assessment_SessionalMapper
         return $this->_dbTable;
     }
     /**
-     * Save a sessional datesheet
+     * Save a assignment datesheet
      * 
-     * @param  array|Acad_Model_Assessment_Sessional
+     * @param  array|Acad_Model_Assessment_Assignment
      * @return void
      */
-    public function save ($sessional)
+    public function save ($assignment)
     {
-        if ($sessional instanceof Acad_Model_Assessment_Sessional) {
-            $id = $sessional->getTest_info_id();
+        if ($assignment instanceof Acad_Model_Assessment_Assignment) {
+            $id = $assignment->getTest_info_id();
             if ((string) $id === (string) (int) $id) {
-                $data['date_of_conduct'] = $sessional->getDate_of_conduct();
-                $data['time'] = $sessional->getTime();
-                $data['max_marks'] = $sessional->getMax_marks();
-                $data['pass_marks'] = $sessional->getPass_marks();
+                $data['date_of_conduct'] = $assignment->getDate_of_conduct();
+                $data['time'] = $assignment->getTime();
+                $data['max_marks'] = $assignment->getMax_marks();
+                $data['pass_marks'] = $assignment->getPass_marks();
                 return $this->getDbTable()->update($data, "test_info_id = $id");
             } else {
-                $data['date_of_conduct'] = $sessional->getDate_of_conduct();
-                $data['time'] = $sessional->getTime();
-                $data['max_marks'] = $sessional->getMax_marks();
-                $data['pass_marks'] = $sessional->getPass_marks();
-                $data['department_id'] = $sessional->getDepartment_id();
-                $data['degree_id'] = $sessional->getDegree_id();
-                $data['semester_id'] = $sessional->getSemester_id();
-                $data['subject_code'] = $sessional->getSubject_code();
-                $data['test_id'] = $sessional->getTest_id();
-                $data['test_type_id'] = $sessional->getTest_type_id();
+                $data['date_of_conduct'] = $assignment->getDate_of_conduct();
+                $data['time'] = $assignment->getTime();
+                $data['max_marks'] = $assignment->getMax_marks();
+                $data['pass_marks'] = $assignment->getPass_marks();
+                $data['department_id'] = $assignment->getDepartment_id();
+                $data['degree_id'] = $assignment->getDegree_id();
+                $data['semester_id'] = $assignment->getSemester_id();
+                $data['subject_code'] = $assignment->getSubject_code();
+                $data['test_id'] = $assignment->getTest_id();
+                $data['test_type_id'] = $assignment->getTest_type_id();
                 $today = new Zend_Date();
                 $data['date_of_announcemnet'] = $today->toString('YYYY-MM-dd');
                 $class = new Acad_Model_Class();
-                $class->setDepartment($sessional->getDepartment_id())
-                    ->setDegree($sessional->getDegree_id())
-                    ->setSemester($sessional->getSemester_id());
+                $class->setDepartment($assignment->getDepartment_id())
+                    ->setDegree($assignment->getDegree_id())
+                    ->setSemester($assignment->getSemester_id());
                 $studentInfo = $class->getStudents();
                 $candidates = array();
                 $cols = array('test_info_id', 'student_roll_no');
@@ -113,17 +108,17 @@ class Acad_Model_Assessment_SessionalMapper
         }
     }
     /**
-     * Fecthes schedule of particular sessional if exists
+     * Fecthes schedule of particular assignment if exists
      * 
      * Otherwise, it will create partial schedule for further completion
-     * @param Acad_Model_Assessment_Sessional
-     * @return array Acad_Model_Assessment_Sessional with status
-     * Status => true defines requested sessional for particular class already exists.
-     * Status => false defines requested sessional for particular class donot exists and is newly prepared.
+     * @param Acad_Model_Assessment_Assignment
+     * @return array Acad_Model_Assessment_Assignment with status
+     * Status => true defines requested assignment for particular class already exists.
+     * Status => false defines requested assignment for particular class donot exists and is newly prepared.
      */
-    /*public function fetchSchedule (Acad_Model_Assessment_Sessional $sessional)
+    /*public function fetchSchedule (Acad_Model_Assessment_Assignment $assignment)
     {
-        $check = $this->fetchAll($sessional);
+        $check = $this->fetchAll($assignment);
         if (0 != count($check)) {
             return array('data' => $check, 'exists' => true);
         } else {
@@ -148,33 +143,33 @@ class Acad_Model_Assessment_SessionalMapper
                           AND `test`.`test_type_id` =?
                           AND `test`.`test_id` =?
                           AND `subject_department`.`subject_code` =`subject`.`subject_code`);';
-            $data[] = $sessional->getDepartment_id();
-            $data[] = $sessional->getDegree_id();
-            $data[] = $sessional->getSemester_id();
-            $data[] = $sessional->getTest_type_id();
-            $data[] = $sessional->getTest_id();
+            $data[] = $assignment->getDepartment_id();
+            $data[] = $assignment->getDegree_id();
+            $data[] = $assignment->getSemester_id();
+            $data[] = $assignment->getTest_type_id();
+            $data[] = $assignment->getTest_id();
             $result = Zend_Db_Table::getDefaultAdapter()->query($sql, $data)->fetchAll();
             if ($result != null) {
                 $entries = array();
                 foreach ($result as $row) {
-                    $entry = new Acad_Model_Assessment_Sessional();
+                    $entry = new Acad_Model_Assessment_Assignment();
                     $entry->setOptions($row)->setMapper($this);
                     $entries[] = $entry;
                 }
                 return array('data' => $entries, 'exists' => false);
             } else {
-                return new Zend_Exception('Invalid sessional paramter', 
+                return new Zend_Exception('Invalid assignment paramter', 
                 Zend_Log::ERR);
             }
         }
     }*/
     /**
-     * Fetches all the entries for perticular sessional
+     * Fetches all the entries for perticular assignment
      * 
-     * @param Acad_Model_Assessment_Sessional
-     * @return array Acad_Model_Assessment_Sessional
+     * @param Acad_Model_Assessment_Assignment
+     * @return array Acad_Model_Assessment_Assignment
      */
-   /* public function fetchAll (Acad_Model_Assessment_Sessional $sessional)
+    /* public function fetchAll (Acad_Model_Assessment_Assignment $assignment)
     {
         $sql = $this->getDbTable()
             ->getDefaultAdapter()
@@ -183,22 +178,22 @@ class Acad_Model_Assessment_SessionalMapper
             ->info('name'))
             ->joinInner('subject', 
         '`test_info`.`subject_code` = `subject`.`subject_code`', 'subject_name')
-            ->where('department_id = ?', $sessional->getDepartment_id())
-            ->//            ->where('degree_id = ?', $sessional->getDegree_id())
-        where('test_type_id = ?', $sessional->getTest_type_id());
+            ->where('department_id = ?', $assignment->getDepartment_id())
+            ->//            ->where('degree_id = ?', $assignment->getDegree_id())
+        where('test_type_id = ?', $assignment->getTest_type_id());
         //->where('date_of_conduct > CURRENT_DATE');
-        if ($sessional->getTest_id()) {
-            $sql->where('test_id =?', $sessional->getTest_id());
+        if ($assignment->getTest_id()) {
+            $sql->where('test_id =?', $assignment->getTest_id());
         }
-        if ($sessional->getSemester_id()) {
-            $sql->where('semester_id = ?', $sessional->getSemester_id());
+        if ($assignment->getSemester_id()) {
+            $sql->where('semester_id = ?', $assignment->getSemester_id());
         }
         $resultSet = $sql->query()->fetchAll();
         //$logger->debug($resultSet);
         if ($resultSet != NULL) {
             $entries = array();
             foreach ($resultSet as $row) {
-                $entry = new Acad_Model_Assessment_Sessional();
+                $entry = new Acad_Model_Assessment_Assignment();
                 $entry->setOptions($row)->setMapper($this);
                 $entries[] = $entry;
             }
@@ -207,8 +202,6 @@ class Acad_Model_Assessment_SessionalMapper
             return null;
         }
     }*/
-    
-    
     public function fetchMarks ($dep, $deg, $sem, $testType=NULL,$stuRoll)
     {
         $sql = 'SELECT
@@ -239,6 +232,6 @@ WHERE (`test_info`.`degree_id` =?
             ->getAdapter()
             ->query($sql, $bind)
             ->fetchAll();
-        return $result;
+            return $result;
     }
 }

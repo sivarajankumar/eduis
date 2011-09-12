@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_Programme_Diploma
+class Acad_Model_Exam_Diploma
 {
     protected $_u_regn_no;
     protected $_marks_obtained;
@@ -119,6 +119,11 @@ class Acad_Model_Programme_Diploma
     {
         $this->_migration_date = $_migration_date;
     }
+    /**
+     * Set Subject Mapper
+     * @param Acad_Model_Mapper_Exam_Diploma $mapper
+     * @return Acad_Model_Exam_Diploma
+     */
     public function setMapper ($mapper)
     {
         $this->_mapper = $mapper;
@@ -131,7 +136,7 @@ class Acad_Model_Programme_Diploma
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Programme_DiplomaMapper());
+            $this->setMapper(new Acad_Model_Mapper_Exam_Diploma());
         }
         return $this->_mapper;
     }
