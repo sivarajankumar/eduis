@@ -136,6 +136,11 @@ class Tnp_Model_Profile_Components_Experience
     {
         $this->_description = $_description;
     }
+    /**
+     * Set Subject Mapper
+     * @param Tnp_Model_Mapper_Profile_Components_Experience $mapper
+     * @return Tnp_Model_Profile_Components_Experience
+     */
     public function setMapper ($mapper)
     {
         $this->_mapper = $mapper;
@@ -143,13 +148,13 @@ class Tnp_Model_Profile_Components_Experience
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Profile_Components_ExperienceMapper
+     * @return Tnp_Model_Mapper_Profile_Components_Experience
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
             $this->setMapper(
-            new Tnp_Model_Profile_Components_ExperienceMapper());
+            new Tnp_Model_Mapper_Profile_Components_Experience());
         }
         return $this->_mapper;
     }

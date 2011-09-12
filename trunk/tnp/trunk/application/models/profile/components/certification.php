@@ -74,6 +74,11 @@ class Tnp_Model_Profile_Components_Certification
     {
         $this->_complete_date = $_complete_date;
     }
+    /**
+     * Set Subject Mapper
+     * @param Tnp_Model_Mapper_Profile_Components_Certification $mapper
+     * @return Tnp_Model_Profile_Components_Certification
+     */
     public function setMapper ($mapper)
     {
         $this->_mapper = $mapper;
@@ -81,13 +86,13 @@ class Tnp_Model_Profile_Components_Certification
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Profile_Components_CertificationMapper
+     * @return Tnp_Model_Mapper_Profile_Components_Certification
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
             $this->setMapper(
-            new Tnp_Model_Profile_Components_CertificationMapper());
+            new Tnp_Model_Mapper_Profile_Components_Certification());
         }
         return $this->_mapper;
     }
