@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_Programme_DiplomaMapper
+class Acad_Model_Mapper_Exam_Aissce
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Acad_Model_Programme_DiplomaMapper
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Acad_Model_Programme_DiplomaMapper
+     * @return Acad_Model_Mapper_Exam_Aissce
      */
     public function setDbTable (Zend_Db_Table_Abstract $dbTable)
     {
@@ -29,7 +29,7 @@ class Acad_Model_Programme_DiplomaMapper
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Acad_Model_Programme_Diploma');
+            $this->setDbTable('Acad_Model_DbTable_Address');
         }
         return $this->_dbTable;
     }
@@ -40,14 +40,14 @@ class Acad_Model_Programme_DiplomaMapper
     public function save ()
     {}
     /**
-     * fetches Diploma details of a member
+     * fetches AISSCE Exam details
+     * @param Acad_Model_Exam_Aissce $aissce
      *@todo make memberId as basis
-     *@param Acad_Model_Programme_Diploma $diploma
      */
-    public function fetchMemberExamDetails (Acad_Model_Programme_Diploma $diploma)
+    public function fetchMemberExamDetails (Acad_Model_Exam_Aissce $aissce)
     {
-        $u_regn_no = $diploma->getU_regn_no();
-        $adapter = $this->getDbTable()->getDefaultAdapter();
+        $u_regn_no = $aissce->getU_regn_no();
+    	$adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
             ->from($this->getDbTable()
             ->info('NAME'))
@@ -63,10 +63,10 @@ class Acad_Model_Programme_DiplomaMapper
     }
     /**
      * returns REGISTRATION NUMBER
-     * @param Acad_Model_Programme_Diploma $searchParams
+     * @param Acad_Model_Exam_Aissce $searchParams
      * @todo return memberIds
      */
-    public function fetchMemberId (Acad_Model_Programme_Diploma $searchParams)
+    public function fetchMemberId (Acad_Model_Exam_Aissce $searchParams)
     {
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
@@ -85,20 +85,20 @@ class Acad_Model_Programme_DiplomaMapper
         if (isset($searchParams->getPercentage())) {
             $select->where('percentage = ?', $searchParams->getPercentage());
         }
-        if (isset($searchParams->getRemarks())) {
-            $select->where('remarks = ?', $searchParams->getRemarks());
+        if (isset($searchParams->getPcm_percent())) {
+            $select->where('pcm_percent = ?', $searchParams->getPcm_percent());
         }
         if (isset($searchParams->getPassing_year())) {
             $select->where('passing_year = ?', $searchParams->getPassing_year());
-        }
-        if (isset($searchParams->getBranch())) {
-            $select->where('branch = ?', $searchParams->getBranch());
         }
         if (isset($searchParams->getBoard())) {
             $select->where('board = ?', $searchParams->getBoard());
         }
         if (isset($searchParams->getSchool_rank())) {
             $select->where('school_rank = ?', $searchParams->getSchool_rank());
+        }
+        if (isset($searchParams->getRemarks())) {
+            $select->where('remarks = ?', $searchParams->getRemarks());
         }
         if (isset($searchParams->getInstitution())) {
             $select->where('institution = ?', $searchParams->getInstitution());

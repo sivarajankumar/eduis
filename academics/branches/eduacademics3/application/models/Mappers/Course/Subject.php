@@ -5,7 +5,7 @@
  * Data Mapper pattern to persist data.
  * 
  */
-class Acad_Model_Course_SubjectMapper
+class Acad_Model_Mapper_Course_Subject
 {
     /**
      * @var Acad_Model_DbTable_Subject
@@ -15,7 +15,7 @@ class Acad_Model_Course_SubjectMapper
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Acad_Model_DbTable_Subject $dbTable 
-     * @return Acad_Model_Course_SubjectMapper
+     * @return Acad_Model_Mapper_Course_Subject
      */
     public function setDbTable ($dbTable)
     {

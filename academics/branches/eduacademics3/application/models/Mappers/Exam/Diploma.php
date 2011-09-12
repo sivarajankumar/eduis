@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_Programme_DiplomaMapper
+class Acad_Model_Mapper_Exam_Diploma
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Acad_Model_Programme_DiplomaMapper
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Acad_Model_Programme_DiplomaMapper
+     * @return Acad_Model_Mapper_Exam_Diploma
      */
     public function setDbTable (Zend_Db_Table_Abstract $dbTable)
     {
@@ -29,7 +29,7 @@ class Acad_Model_Programme_DiplomaMapper
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Acad_Model_Programme_Diploma');
+            $this->setDbTable('Acad_Model_DbTable_Diploma');
         }
         return $this->_dbTable;
     }
@@ -42,9 +42,9 @@ class Acad_Model_Programme_DiplomaMapper
     /**
      * fetches Diploma details of a member
      *@todo make memberId as basis
-     *@param Acad_Model_Programme_Diploma $diploma
+     *@param Acad_Model_Exam_Diploma $diploma
      */
-    public function fetchMemberExamDetails (Acad_Model_Programme_Diploma $diploma)
+    public function fetchMemberExamDetails (Acad_Model_Exam_Diploma $diploma)
     {
         $u_regn_no = $diploma->getU_regn_no();
         $adapter = $this->getDbTable()->getDefaultAdapter();
@@ -63,10 +63,10 @@ class Acad_Model_Programme_DiplomaMapper
     }
     /**
      * returns REGISTRATION NUMBER
-     * @param Acad_Model_Programme_Diploma $searchParams
+     * @param Acad_Model_Exam_Diploma $searchParams
      * @todo return memberIds
      */
-    public function fetchMemberId (Acad_Model_Programme_Diploma $searchParams)
+    public function fetchMemberId (Acad_Model_Exam_Diploma $searchParams)
     {
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
