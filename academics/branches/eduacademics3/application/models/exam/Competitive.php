@@ -74,6 +74,11 @@ class Acad_Model_Exam_Competitive
     {
         $this->_all_india_rank = $_all_india_rank;
     }
+    /**
+     * Set Subject Mapper
+     * @param Acad_Model_Mapper_Exam_Competitive $mapper
+     * @return Acad_Model_Exam_Competitive
+     */
     public function setMapper ($mapper)
     {
         $this->_mapper = $mapper;
@@ -86,7 +91,7 @@ class Acad_Model_Exam_Competitive
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Exam_CompetitiveMapper());
+            $this->setMapper(new Acad_Model_Mapper_Exam_Competitive());
         }
         return $this->_mapper;
     }
