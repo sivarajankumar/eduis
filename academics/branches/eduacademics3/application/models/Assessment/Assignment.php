@@ -13,7 +13,7 @@ class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
     protected $_test_type_id='ASNMT';
     /**
      * Assignment Mapper
-     * @var Acad_Model_Assessment_AssignmentMapper
+     * @var Acad_Model_Mapper_Assessment_Assignment
      */
     protected $_mapper;
      /**
@@ -28,7 +28,7 @@ class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
     protected $_status;
     /**
      * Set Assignment Mapper
-     * @param Acad_Model_Assessment_AssignmentMapper $mapper - Assignment Mapper
+     * @param Acad_Model_Mapper_Assessment_Assignment $mapper - Assignment Mapper
      * @return Acad_Model_Assessment_Assignment
      */
     public function setMapper($mapper){
@@ -38,11 +38,11 @@ class Acad_Model_Assessment_Assignment extends Acad_Model_Assessment_Abstract
     
     /**
      * Get Assignment Mapper
-     * @return Acad_Model_Assessment_AssignmentMapper $mapper - Assignment Mapper
+     * @return Acad_Model_Mapper_Assessment_Assignment $mapper - Assignment Mapper
      */
     public function getMapper(){
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Assessment_AssignmentMapper());
+            $this->setMapper(new Acad_Model_Mapper_Assessment_Assignment());
         }
         return $this->_mapper;
     }
