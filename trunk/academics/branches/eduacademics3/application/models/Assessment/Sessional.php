@@ -15,7 +15,7 @@ class Acad_Model_Assessment_Sessional extends Acad_Model_Assessment_Abstract
     
     /**
      * Sessional Mapper
-     * @var Acad_Model_Assessment_SessionalMapper
+     * @var Acad_Model_Mapper_Assessment_Sessional
      */
     protected $_mapper;
      /**
@@ -30,7 +30,7 @@ class Acad_Model_Assessment_Sessional extends Acad_Model_Assessment_Abstract
     protected $_status;
     /**
      * Set Sessional Mapper
-     * @param Acad_Model_Assessment_SessionalMapper $mapper - Sessional Mapper
+     * @param Acad_Model_Mapper_Assessment_Sessional $mapper - Sessional Mapper
      * @return Acad_Model_Assessment_Sessional
      */
     public function setMapper($mapper){
@@ -40,11 +40,11 @@ class Acad_Model_Assessment_Sessional extends Acad_Model_Assessment_Abstract
     
     /**
      * Get Sessional Mapper
-     * @return Acad_Model_Assessment_SessionalMapper $mapper - Sessional Mapper
+     * @return Acad_Model_Mapper_Assessment_Sessional $mapper - Sessional Mapper
      */
     public function getMapper(){
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Assessment_SessionalMapper());
+            $this->setMapper(new Acad_Model_Mapper_Assessment_Sessional());
         }
         return $this->_mapper;
     }
