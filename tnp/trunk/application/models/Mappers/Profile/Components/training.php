@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Profile_Components_TrainingMapper
+class Tnp_Model_Mapper_Profile_Components_Training
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Profile_Components_TrainingMapper
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Profile_Components_TrainingMapper
+     * @return Tnp_Model_Mapper_Profile_Components_Training
      */
     public function setDbTable (Zend_Db_Table_Abstract $dbTable)
     {

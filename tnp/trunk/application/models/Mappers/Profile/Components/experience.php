@@ -1,5 +1,10 @@
 <?php
-class Tnp_Model_Profile_Components_CertificationMapper
+/**
+ * @todo incomplete and non sense model :-P
+ * Enter description here ...
+ * 
+ */
+class Tnp_Model_Mapper_Profile_Components_Experience
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +14,7 @@ class Tnp_Model_Profile_Components_CertificationMapper
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Profile_Components_CertificationMapper
+     * @return Tnp_Model_Mapper_Profile_Components_Experience
      */
     public function setDbTable (Zend_Db_Table_Abstract $dbTable)
     {
@@ -29,7 +34,7 @@ class Tnp_Model_Profile_Components_CertificationMapper
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Tnp_Model_DbTable_StudentCertification');
+            $this->setDbTable('Tnp_Model_DbTable_StudentExperience');
         }
         return $this->_dbTable;
     }
@@ -41,28 +46,21 @@ class Tnp_Model_Profile_Components_CertificationMapper
     {}
     /**
      * 
-     * @param Tnp_Model_Profile_Components_Certification $certification
+     * @param Tnp_Model_Profile_Components_Experience $experience
      */
-    public function fetchCertificationDetails (
-    Tnp_Model_Profile_Components_Certification $certification)
+    public function fetchExperienceDetails (
+    Tnp_Model_Profile_Components_Experience $experience)
     {
-        $sql = 'SELECT
-    `student_certification`.`certification_id`
-    , `student_certification`.`start_date`
-    , `student_certification`.`complete_date`
-    , `student_certification`.`u_regn_no`
-    , `certification`.`certification_name`
-    , `technical_fields`.`technical_field_name`
-    , `technical_fields`.`technical_sector`
-FROM
-    `tnp`.`student_certification`
-    INNER JOIN `tnp`.`certification` 
-        ON (`student_certification`.`certification_id` = `certification`.`certification_id`)
-    INNER JOIN `tnp`.`technical_fields` 
-        ON (`certification`.`technical_field_id` = `technical_fields`.`technical_field_id`)
-WHERE (`student_certification`.`u_regn_no` = ?)';
-        $bind[] = $certification->getU_regn_no();
-        $fetchall = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchAll();
+        $u_regn_no = $experience->getU_regn_no();
+        $cols = array(student_experience_id, u_regn_no, industry_id, 
+        functional_area_id, role_id, experience_months, experience_year, 
+        organisation, start_date, end_date, is_parttime, description);
+        $adapter = $this->getDbTable()->getDefaultAdapter();
+        $select = $adapter->select()
+            ->from($this->getDbTable()
+            ->info('NAME'), $cols)
+            ->where('u_regn_no = ?', $u_regn_no);
+        $fetchall = $adapter->fetchAll($select);
         $result = array();
         foreach ($fetchall as $row) {
             foreach ($row as $columnName => $columnValue) {
@@ -73,7 +71,7 @@ WHERE (`student_certification`.`u_regn_no` = ?)';
     }
     /**
      * 
-     * @param Tnp_Model_Profile_Components_Certification $searchParams
+     * @param Tnp_Model_Profile_Components_Experience $experience
      */
     public function fetchMemberId (
     Tnp_Model_Profile_Components_Certification $searchParams)
@@ -119,23 +117,12 @@ WHERE (`student_certification`.`u_regn_no` = ?)';
         }
     }
     /**
-     * 
+     *@todo 
      * @param Tnp_Model_Profile_Components_Certification $certification
      */
     public function fetchTechFieldId (
-    Tnp_Model_Profile_Components_Certification $certification)
-    {
-        $sql = 'SELECT
-    `technical_field_id`
-FROM
-    `tnp`.`technical_fields`
-WHERE (`technical_field_name` = ?
-    AND `technical_sector` = ?)';
-        $bind[] = $certification->getTechnical_field_name();
-        $bind[] = $certification->getTechnical_sector();
-        $techFieldId = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchColumn();
-        $certification->setTechnical_field_id($techFieldId);
-    }
+    Tnp_Model_Profile_Components_Certification $experience)
+    {}
     /**
      * 
      * @param Tnp_Model_Profile_Components_Certification $certification

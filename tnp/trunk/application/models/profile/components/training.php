@@ -92,6 +92,11 @@ class Tnp_Model_Profile_Components_Training
     {
         $this->_u_regn_no = $_u_regn_no;
     }
+    /**
+     * Set Subject Mapper
+     * @param Tnp_Model_Mapper_Profile_Components_Training $mapper
+     * @return Tnp_Model_Profile_Components_Training
+     */
     public function setMapper ($mapper)
     {
         $this->_mapper = $mapper;
@@ -104,7 +109,7 @@ class Tnp_Model_Profile_Components_Training
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Profile_Components_TrainingMapper());
+            $this->setMapper(new Tnp_Model_Mapper_Profile_Components_Training());
         }
         return $this->_mapper;
     }
