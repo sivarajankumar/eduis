@@ -110,6 +110,11 @@ class Acad_Model_Exam_Aisse
     {
         $this->_matric_state = $_matric_state;
     }
+    /**
+     * Set Aisse Mapper
+     * @param Acad_Model_Mapper_Exam_Aisse $mapper - Aisse Mapper
+     * @return Acad_Model_Exam_Aisse
+     */
     public function setMapper ($mapper)
     {
         $this->_mapper = $mapper;
@@ -122,7 +127,7 @@ class Acad_Model_Exam_Aisse
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Exam_AisseMapper());
+            $this->setMapper(new Acad_Model_Mapper_Exam_Aisse());
         }
         return $this->_mapper;
     }
