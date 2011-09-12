@@ -115,19 +115,24 @@ class Core_Model_Relative
         return $this->$method();
     }
     /**
+     * Set Mapper
+     * @param Core_Model_Mapper_Relative $mapper
+     * @return Core_Model_Relative
+     */
+    public function setMapper ($_mapper)
+    {
+        $this->_mapper = $_mapper;
+    }
+    /**
      * 
-     * @return Core_Model_RelativeMapper
+     * @return Core_Model_Mapper_Relative
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Core_Model_RelativeMapper());
+            $this->setMapper(new Core_Model_Mapper_Relative());
         }
         return $this->_mapper;
-    }
-    public function setMapper ($_mapper)
-    {
-        $this->_mapper = $_mapper;
     }
     /**
      * used to init an object
@@ -146,7 +151,7 @@ class Core_Model_Relative
     }
     public function getInfo ()
     {
-    	$info = $this->getMapper()->fetchRelativeInfo($this);
+        $info = $this->getMapper()->fetchRelativeInfo($this);
         $this->setOptions($info);
     }
     /**

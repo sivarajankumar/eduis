@@ -1,5 +1,5 @@
 <?php
-class Core_Model_AddressMapper
+class Core_Model_Mapper_Address
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Core_Model_AddressMapper
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Core_Model_Member_AddressMapper
+     * @return Core_Model_Mapper_Address
      */
     public function setDbTable (Zend_Db_Table_Abstract $dbTable)
     {

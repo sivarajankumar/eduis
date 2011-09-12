@@ -74,6 +74,11 @@ class Core_Model_Address
     {
         $this->_address = $_address;
     }
+    /**
+     * Set Mapper
+     * @param Core_Model_Mapper_Address $mapper
+     * @return Core_Model_Address
+     */
     public function setMapper ($mapper)
     {
         $this->_mapper = $mapper;
@@ -81,12 +86,12 @@ class Core_Model_Address
     }
     /**
      * gets the mapper from the object class
-     * @return Core_Model_AddressMapper
+     * @return Core_Model_Mapper_Address
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Core_Model_AddressMapper());
+            $this->setMapper(new Core_Model_Mapper_Address());
         }
         return $this->_mapper;
     }
