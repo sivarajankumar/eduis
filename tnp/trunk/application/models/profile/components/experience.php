@@ -137,7 +137,7 @@ class Tnp_Model_Profile_Components_Experience
         $this->_description = $_description;
     }
     /**
-     * Set Subject Mapper
+     * Set Mapper
      * @param Tnp_Model_Mapper_Profile_Components_Experience $mapper
      * @return Tnp_Model_Profile_Components_Experience
      */
