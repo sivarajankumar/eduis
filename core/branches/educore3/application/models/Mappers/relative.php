@@ -1,5 +1,5 @@
 <?php
-class Core_Model_RelativeMapper
+class Core_Model_Mapper_Relative
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Core_Model_RelativeMapper
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Core_Model_RelativeMapper
+     * @return Core_Model_Mapper_Relative
      */
     public function setDbTable ($dbTable)
     {
@@ -36,7 +36,7 @@ class Core_Model_RelativeMapper
     public function save ()
     {}
     /**
-     * fetches information about a relative
+     *fetches information about a relative
      *@param Core_Model_Relative $relative
      */
     public function fetchRelativeInfo (Core_Model_Relative $relative)

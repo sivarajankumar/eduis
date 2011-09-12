@@ -218,6 +218,11 @@ class Core_Model_Member_Student
     {
         $this->_image_no = $_image_no;
     }
+    /**
+     * Set Mapper
+     * @param Core_Model_Mapper_Member_Student $mapper
+     * @return Core_Model_Mapper_Member_Student
+     */
     public function setMapper ($mapper)
     {
         $this->_mapper = $mapper;
@@ -230,7 +235,7 @@ class Core_Model_Member_Student
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Core_Model_Member_StudentMapper());
+            $this->setMapper(new Core_Model_Mapper_Member_Student());
         }
         return $this->_mapper;
     }
@@ -296,7 +301,7 @@ class Core_Model_Member_Student
      */
     public function getStudentInfo ()
     {
-    	$options = $this->getMapper()->fetchStudentInfo($this);
+        $options = $this->getMapper()->fetchStudentInfo($this);
         $this->setOptions($options);
     }
 }
