@@ -93,7 +93,7 @@ class Tnp_Model_Profile_Components_Training
         $this->_u_regn_no = $_u_regn_no;
     }
     /**
-     * Set Subject Mapper
+     * Set Mapper
      * @param Tnp_Model_Mapper_Profile_Components_Training $mapper
      * @return Tnp_Model_Profile_Components_Training
      */

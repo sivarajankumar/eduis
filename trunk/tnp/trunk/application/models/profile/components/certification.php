@@ -75,7 +75,7 @@ class Tnp_Model_Profile_Components_Certification
         $this->_complete_date = $_complete_date;
     }
     /**
-     * Set Subject Mapper
+     * Set Mapper
      * @param Tnp_Model_Mapper_Profile_Components_Certification $mapper
      * @return Tnp_Model_Profile_Components_Certification
      */
