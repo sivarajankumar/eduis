@@ -42,13 +42,13 @@ class Acad_Model_Course_Subject
     protected $_faculty;
     /**
      * Subject Mapper
-     * @var Acad_Model_Course_SubjectMapper
+     * @var Acad_Model_Mapper_Course_Subject
      */
     protected $_mapper;
     /**
      * Set Subject Mapper
-     * @param Acad_Model_Course_SubjectMapper $mapper - Subject Mapper
-     * @return Acad_Model_Test_Sessional
+     * @param Acad_Model_Mapper_Course_Subject $mapper - Subject Mapper
+     * @return Acad_Model_Course_Subject
      */
     public function setMapper ($mapper)
     {
@@ -57,12 +57,12 @@ class Acad_Model_Course_Subject
     }
     /**
      * Get Subject Mapper
-     * @return Acad_Model_Course_SubjectMapper $mapper - Subject Mapper
+     * @return Acad_Model_Mapper_Course_Subject $mapper - Subject Mapper
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Course_SubjectMapper());
+            $this->setMapper(new Acad_Model_Mapper_Course_Subject());
         }
         return $this->_mapper;
     }
