@@ -118,6 +118,11 @@ class Acad_Model_Course_SubjectDmc
 	public function setScaled_marks($_scaled_marks) {
 		$this->_scaled_marks = $_scaled_marks;
 	}
+	/**
+	 * 
+	 * @param Acad_Model_Mapper_Course_SubjectDmc $mapper
+	 * @return Acad_Model_Course_SubjectDmc
+	 */
 	public function setMapper ($mapper)
     {
         $this->_mapper = $mapper;
@@ -125,13 +130,13 @@ class Acad_Model_Course_SubjectDmc
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Course_SubjectDmcMapper
+     * @return Acad_Model_Mapper_Course_SubjectDmc
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
             $this->setMapper(
-            new Acad_Model_Course_SubjectDmcMapper());
+            new Acad_Model_Mapper_Course_SubjectDmc());
         }
         return $this->_mapper;
     }
@@ -150,7 +155,7 @@ class Acad_Model_Course_SubjectDmc
         $this->$method($value);
     }
     /**
-     * @todo getVerified by hmnt sir
+     * 
      * @throws Zend_Exception
      */
     public function __get ($name)
@@ -212,7 +217,7 @@ class Acad_Model_Course_SubjectDmc
         return $this->getMapper()->fetchMemberId($this);
     }
     /**
-     * @todo think of a better name
+     * 
      * gets the marks of student in a subject..
      * by deafult includes all appear types
      */
