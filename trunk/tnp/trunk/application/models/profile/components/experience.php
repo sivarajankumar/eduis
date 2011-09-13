@@ -182,19 +182,14 @@ class Tnp_Model_Profile_Components_Experience
         if ('mapper' == $name || ! method_exists($this, $method)) {
             throw new Zend_Exception('Invalid property specified');
         } else {
-            if (! isset($this->$name)) {
+            if (isset($this->$name)) {
+                return $this->$method();
+            } else {
                 $fetchMethodName = 'fetch' . $name;
                 if (method_exists($this->getMapper(), $fetchMethodName)) {
-                    $result = $this->getMapper()->$fetchMethodName;
-                    $setMethodName = 'set' . $name;
-                    $this->$setMethodName($result);
+                    $this->getMapper()->$fetchMethodName;
                     return $this->$method();
-                } else {
-                    throw new Zend_Exception(
-                    'Value not set for'.$name);
                 }
-            } else {
-                return $this->$method();
             }
         }
     }
