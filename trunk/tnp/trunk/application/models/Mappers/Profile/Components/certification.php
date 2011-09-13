@@ -122,36 +122,46 @@ WHERE (`student_certification`.`u_regn_no` = ?)';
      * 
      * @param Tnp_Model_Profile_Components_Certification $certification
      */
-    public function fetchTechFieldId (
+    public function fetchTechnical_field_id (
     Tnp_Model_Profile_Components_Certification $certification)
     {
-        $sql = 'SELECT
-    `technical_field_id`
-FROM
-    `tnp`.`technical_fields`
-WHERE (`technical_field_name` = ?
-    AND `technical_sector` = ?)';
-        $bind[] = $certification->getTechnical_field_name();
-        $bind[] = $certification->getTechnical_sector();
-        $techFieldId = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchColumn();
-        $certification->setTechnical_field_id($techFieldId);
+        $technicalFieldName = $certification->getTechnical_field_name();
+        $technicalSector = $certification->getTechnical_sector();
+        if (! isset($technicalFieldName) and ! isset($technicalSector)) {
+            $logger = Zend_Registry::get('logger');
+            $logger->debug(
+            'Insufficient Params.. Techsector, TechFieldName both are required');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('technical_fields', 'technical_field_id')
+                ->where('technical_field_name = ?', $technicalFieldName)
+                ->where('technical_sector = ?', $technicalSector);
+            $techFieldId = $select->query()->fetchColumn();
+            $certification->setTechnical_field_id($techFieldId);
+        }
     }
     /**
      * 
      * @param Tnp_Model_Profile_Components_Certification $certification
      */
-    public function fetchCertificationId (
+    public function fetchCertification_id (
     Tnp_Model_Profile_Components_Certification $certification)
     {
-        $sql = 'SELECT
-    `certification_id`
-FROM
-    `tnp`.`certification`
-WHERE (`certification_name` = ?
-    AND `technical_field_id` = ?)';
-        $bind[] = $certification->getCertification_name();
-        $bind[] = $certification->getTechnical_field_id();
-        $certId = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchColumn();
-        $certification->setCertification_id($certId);
+        $certName = $certification->getCertification_name();
+        $technicalFieldId = $certification->getTechnical_field_id();
+        if (! isset($certName) and ! isset($technicalFieldId)) {
+            $logger = Zend_Registry::get('logger');
+            $logger->debug(
+            'Insufficient Params.. certificationName, TechFieldId both are required');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('certification', 'certification_id')
+                ->where('certification_name = ?', $certName)
+                ->where('technical_field_id = ?', $technicalFieldId);
+            $certId = $select->query()->fetchColumn();
+            $certification->setCertification_id($certId);
+        }
     }
 }

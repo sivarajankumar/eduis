@@ -1,6 +1,6 @@
 <?php
 /**
- * @todo incomplete and non sense model :-P
+ * @todo incomplete
  * Enter description here ...
  * 
  */
@@ -70,75 +70,151 @@ class Tnp_Model_Mapper_Profile_Components_Experience
         return $result;
     }
     /**
-     * 
+     * @todo
      * @param Tnp_Model_Profile_Components_Experience $experience
      */
     public function fetchMemberId (
-    Tnp_Model_Profile_Components_Certification $searchParams)
+    Tnp_Model_Profile_Components_Experience $searchParams)
     {
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
             ->info('NAME')), 'u_regn_no');
-        $techFieldName = isset($searchParams->getTechnical_field_name());
-        $techSector = isset($searchParams->getTechnical_sector());
-        $certiName = isset($searchParams->getCertification_name());
-        $searchPreReq = self::searchPreRequisite($techFieldName, $techSector, 
-        $certiName);
+        $industryName = isset($searchParams->getIndustry_name());
+        $industryId = isset($searchParams->getIndustry_id());
+        $functionalAreaName = isset($searchParams->getFunctional_area_name());
+        $functionalAreaId = isset($searchParams->getFunctional_area_id());
+        $roleName = isset($searchParams->getRole_name());
+        $roleId = isset($searchParams->getRole_id());
+        // todo
+        $searchPreReq = '';
         if ($searchPreReq == true) {
-            self::fetchTechFieldId($searchParams);
-            self::fetchCertificationId($searchParams);
-            $select->where('certification_id = ?', 
-            $searchParams->getCertification_id());
+            // do this
         }
-        if (isset($searchParams->getStart_date())) {
-            $select->where('start_date = ?', $searchParams->getStart_date());
-        }
-        if (isset($searchParams->getComplete_date())) {
-            $select->where('complete_date = ?', 
-            $searchParams->getComplete_date());
-        }
-        return $select->query()->fetchColumn();
+         //return $select->query()->fetchColumn();
     }
-    protected function searchPreRequisite ($techFieldName, $techSector, 
-    $certiName)
-    {
-        //search cant be made by using only one of techSec or TechFieldName.. both have to be specified
-        //reason :we are looking for members with certification course ex: ccna(certName) in networking(field name) of CSE(techField)
-        // this function cannot be used to search students with certification in hardware field of CSE and ECE sector together
-        if (! ($techFieldName) or ! ($techSector) or
-         ! ($certiName)) {
-            $logger = Zend_Registry::get('logger');
-            $logger->debug(
-            'Insufficient Params.. Techsector, TechFieldName, CetificationName are all required');
-            return false;
-        } else {
-            return true;
-        }
-    }
-    /**
-     *@todo 
-     * @param Tnp_Model_Profile_Components_Certification $certification
-     */
-    public function fetchTechFieldId (
-    Tnp_Model_Profile_Components_Certification $experience)
-    {}
     /**
      * 
-     * @param Tnp_Model_Profile_Components_Certification $certification
+     * @todo decide the params
+     * @param Tnp_Model_Profile_Components_Experience $params
      */
-    public function fetchCertificationId (
-    Tnp_Model_Profile_Components_Certification $certification)
+    protected function searchPreRequisite (
+    Tnp_Model_Profile_Components_Experience $experience)
+    {}
+    /**
+     *@todo 
+     * @param Tnp_Model_Profile_Components_Experience $experience
+     */
+    public function fetchIndustry_id (
+    Tnp_Model_Profile_Components_Experience $experience)
     {
-        $sql = 'SELECT
-    `certification_id`
-FROM
-    `tnp`.`certification`
-WHERE (`certification_name` = ?
-    AND `technical_field_id` = ?)';
-        $bind[] = $certification->getCertification_name();
-        $bind[] = $certification->getTechnical_field_id();
-        $certId = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchColumn();
-        $certification->setCertification_id($certId);
+        $industryName = $experience->getIndustry_name();
+        if (! isset($industryName)) {
+            $logger = Zend_Registry::get('logger');
+            $logger->debug('Insufficient Params.. industryName is required');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('industries', 'industry_id')
+                ->where('industry_name = ?', $industryName);
+            $industryId = $select->query()->fetchColumn();
+            $experience->setIndustry_id($industryId);
+        }
+    }
+    /**
+     * 
+     * @param Tnp_Model_Profile_Components_Experience $experience
+     */
+    public function fetchIndustry_name (
+    Tnp_Model_Profile_Components_Experience $experience)
+    {
+        $industryId = $experience->getIndustry_id();
+        if (! isset($industryId)) {
+            $logger = Zend_Registry::get('logger');
+            $logger->debug('Insufficient Params.. industryId is required');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('industries', 'industry_name')
+                ->where('industry_id = ?', $industryId);
+            $industryName = $select->query()->fetchColumn();
+            $experience->setIndustry_name($industryName);
+        }
+    }
+    /**
+     * 
+     * @param Tnp_Model_Profile_Components_Experience $experience
+     */
+    public function fetchFunctional_area_id (
+    Tnp_Model_Profile_Components_Experience $experience)
+    {
+        $functionalAreaName = $experience->getFunctional_area_name();
+        if (! isset($functionalAreaName)) {
+            $logger = Zend_Registry::get('logger');
+            $logger->debug(
+            'Insufficient Params.. functionalAreaName is required');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('functional_area', 'functional_area_id')
+                ->where('functional_area_name = ?', $functionalAreaName);
+            $functionalAreaId = $select->query()->fetchColumn();
+            $experience->setFunctional_area_id($functionalAreaId);
+        }
+    }
+    /**
+     * 
+     * @param Tnp_Model_Profile_Components_Experience $experience
+     */
+    public function fetchFunctional_area_name (
+    Tnp_Model_Profile_Components_Experience $experience)
+    {
+        $functionalAreaId = $experience->getFunctional_area_id();
+        if (! isset($functionalAreaId)) {
+            $logger = Zend_Registry::get('logger');
+            $logger->debug('Insufficient Params.. functionalAreaId is required');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('functional_area', 'functional_area_name')
+                ->where('functional_area_id = ?', $functionalAreaId);
+            $functionalAreaName = $select->query()->fetchColumn();
+            $experience->setFunctional_area_name($functionalAreaName);
+        }
+    }
+    /**
+     * 
+     * @param Tnp_Model_Profile_Components_Experience $experience
+     */
+    public function fetchRole_id (
+    Tnp_Model_Profile_Components_Experience $experience)
+    {
+        $roleName = $experience->getRole_name();
+        $adapter = $this->getDbTable()->getDefaultAdapter();
+        $select = $adapter->select()
+            ->from('roles', 'role_id')
+            ->where('role_name = ?', $roleName);
+        $roleId = $select->query()->fetchColumn();
+        $experience->setRole_id($roleId);
+    }
+    /**
+     * 
+     * @param Tnp_Model_Profile_Components_Experience $experience
+     */
+    public function fetchRole_name (
+    Tnp_Model_Profile_Components_Experience $experience)
+    {
+        $roleId = $experience->getRole_id();
+        if (! isset($roleId)) {
+            $logger = Zend_Registry::get('logger');
+            $logger->debug('Insufficient Params.. roleId is required');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('roles', 'role_name')
+                ->where('role_id = ?', $roleId);
+            $roleName = $select->query()->fetchColumn();
+            $experience->setRole_name($roleName);
+        }
     }
 }
