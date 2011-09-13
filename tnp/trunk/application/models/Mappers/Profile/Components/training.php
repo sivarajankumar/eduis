@@ -89,8 +89,8 @@ WHERE (`student_training`.`u_regn_no` = ?)';
         $searchPreReq = self::searchPreRequisite($techFieldName, $techSector, 
         $trainingTech);
         if ($searchPreReq == true) {
-            self::fetchTechFieldId($searchParams);
-            self::fetchTrainingId($searchParams);
+            self::fetchTechnical_field_id($searchParams);
+            self::fetchTraining_id($searchParams);
             $select->where('training_id = ?', $searchParams->getTraining_id());
         }
         if (isset($searchParams->getStart_date())) {
@@ -122,36 +122,46 @@ WHERE (`student_training`.`u_regn_no` = ?)';
      * 
      * @param Tnp_Model_Profile_Components_Training $training
      */
-    public function fetchTechFieldId (
+    public function fetchTechnical_field_id (
     Tnp_Model_Profile_Components_Training $training)
     {
-        $sql = 'SELECT
-    `technical_field_id`
-FROM
-    `tnp`.`technical_fields`
-WHERE (`technical_field_name` = ?
-    AND `technical_sector` = ?)';
-        $bind[] = $training->getTechnical_field_name();
-        $bind[] = $training->getTechnical_sector();
-        $techFieldId = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchColumn();
-        $training->setTechnical_field_id($techFieldId);
+        $technicalFieldName = $training->getTechnical_field_name();
+        $technicalSector = $training->getTechnical_sector();
+        if (!isset($technicalFieldName) and ! isset($technicalSector)) {
+            $logger = Zend_Registry::get('logger');
+            $logger->debug(
+            'Insufficient Params.. Techsector, TechFieldName both are required');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('technical_fields', 'technical_field_id')
+                ->where('technical_field_name = ?', $technicalFieldName)
+                ->where('technical_sector = ?', $technicalSector);
+            $techFieldId = $select->query()->fetchColumn();
+            $training->setTechnical_field_id($techFieldId);
+        }
     }
     /**
      * 
      * @param Tnp_Model_Profile_Components_Training $training
      */
-    public function fetchTrainingId (
+    public function fetchTraining_id (
     Tnp_Model_Profile_Components_Training $training)
     {
-        $sql = 'SELECT
-    `training_id`
-FROM
-    `tnp`.`training`
-WHERE (`training_technology` = ?
-    AND `technical_field_id` = ?)';
-        $bind[] = $training->getTraining_technology();
-        $bind[] = $training->getTechnical_field_id();
-        $trainingId = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchColumn();
-        $training->setTraining_id($trainingId);
+        $trainingTechnology = $training->getTraining_technology();
+        $technicalFieldId = $training->getTechnical_field_id();
+        if (! isset($trainingTechnology) and  !isset($technicalFieldId)) {
+            $logger = Zend_Registry::get('logger');
+            $logger->debug(
+            'Insufficient Params.. trainingTechnology, technicalFieldId both are required');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('training', 'training_id')
+                ->where('training_technology = ?', $trainingTechnology)
+                ->where('technical_field_id = ?', $technicalFieldId);
+            $trainingId = $select->query()->fetchColumn();
+            $training->setTraining_id($trainingId);
+        }
     }
 }
