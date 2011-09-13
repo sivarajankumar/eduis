@@ -160,23 +160,18 @@ class Acad_Model_Course_SubjectDmc
      */
     public function __get ($name)
     {
-        $method = 'get' . $name;
+    $method = 'get' . $name;
         if ('mapper' == $name || ! method_exists($this, $method)) {
             throw new Zend_Exception('Invalid property specified');
         } else {
-            if (! isset($this->$name)) {
+            if (isset($this->$name)) {
+                return $this->$method();
+            } else {
                 $fetchMethodName = 'fetch' . $name;
                 if (method_exists($this->getMapper(), $fetchMethodName)) {
-                    $result = $this->getMapper()->$fetchMethodName;
-                    $setMethodName = 'set' . $name;
-                    $this->$setMethodName($result);
+                    $this->getMapper()->$fetchMethodName;
                     return $this->$method();
-                } else {
-                    throw new Zend_Exception(
-                    'Value not set for'.$name);
                 }
-            } else {
-                return $this->$method();
             }
         }
     }
