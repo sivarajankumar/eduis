@@ -110,7 +110,7 @@ WHERE (`dmc_record`.`subject_code` = ?
         }
     }
     /**
-     * @todo
+     * @todo incomplete
      * @param Acad_Model_Course_SubjectDmc $subjectDmc
      */
     public function fetchMemberId( Acad_Model_Course_SubjectDmc $subjectDmc)
