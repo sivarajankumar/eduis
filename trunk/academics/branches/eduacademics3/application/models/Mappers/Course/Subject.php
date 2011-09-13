@@ -58,7 +58,6 @@ class Acad_Model_Mapper_Course_Subject
     }
     /**
      * Fetches only those semesters in which subject is taught
-     * 
      * @param Acad_Model_Course_Subject $subject
      * @return array of department,degree,semester in which subject is taught
      */
