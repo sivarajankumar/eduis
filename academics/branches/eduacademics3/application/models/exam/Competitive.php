@@ -114,8 +114,17 @@ class Acad_Model_Exam_Competitive
         $method = 'get' . $name;
         if ('mapper' == $name || ! method_exists($this, $method)) {
             throw new Zend_Exception('Invalid property specified');
+        } else {
+            if (isset($this->$name)) {
+                return $this->$method();
+            } else {
+                $fetchMethodName = 'fetch' . $name;
+                if (method_exists($this->getMapper(), $fetchMethodName)) {
+                    $this->getMapper()->$fetchMethodName;
+                    return $this->$method();
+                }
+            }
         }
-        return $this->$method();
     }
     /**
      * used to init an object
