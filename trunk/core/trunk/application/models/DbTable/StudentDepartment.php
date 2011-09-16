@@ -70,7 +70,8 @@ class Core_Model_DbTable_StudentDepartment extends Corez_Base_Model
         array('student_roll_no', 'first_name', 'last_name'))
             ->where('`batsem`.department_id = ?', $department)
             ->where('`batsem`.degree_id = ?', $degree)
-            ->where('`batsem`.semester_id = ?', $semester);
+            ->where('`batsem`.semester_id = ?', $semester)
+            ->where('`studept`.`is_active` = 1');
         if (isset($group)) {
             $sql->where("`studept`.group_id = ?", $group);
         } else {
