@@ -87,7 +87,7 @@ abstract class Acad_Model_Member_Generic {
 	 * Set object state
 	 * 
 	 * @param  array $options 
-	 * @return Lib_Model_Member_Generic
+	 * @return Acad_Model_Member_Generic
 	 */
 	public function setOptions(array $options) {
 		$methods = get_class_methods ( $this );
@@ -103,7 +103,7 @@ abstract class Acad_Model_Member_Generic {
 	/**
 	 * Set member identification
 	 * @param string|int $memberId
-	 * @return Lib_Model_Member_Generic
+	 * @return Acad_Model_Member_Generic
 	 */
 	public function setMemberId($memberId = null) {
 	    
@@ -134,7 +134,7 @@ abstract class Acad_Model_Member_Generic {
 	/**
 	 * Set member type
 	 * @param string $memberType
-	 * @return Lib_Model_Member_Generic
+	 * @return Acad_Model_Member_Generic
 	 */
 	public function setMemberType($memberType) {
 		
@@ -152,7 +152,7 @@ abstract class Acad_Model_Member_Generic {
 	/**
 	 * Set if member is active
 	 * @param bool $isActive
-	 * @return Lib_Model_Member_Generic
+	 * @return Acad_Model_Member_Generic
 	 */
 	public function setIsActive($isActive = 1) {
 		

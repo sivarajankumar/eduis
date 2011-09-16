@@ -46,32 +46,37 @@ class Acad_Model_Member_FacultyMapper
         }
         return $this->_dbTable;
     }
-    public function listMarkedAttendance (Acad_Model_Member_Faculty $faculty)
+    public function listMarkedAttendance (Acad_Model_Member_Faculty $faculty, 
+                                        $periodDate = NULL, 
+                                        $department = NULL, 
+                                        $programme = NULL, 
+                                        $semester = NULL, 
+                                        $limit = 25)
     {
-        $sql = 'SELECT
-              `period_attendance`.`period_date`,
-              `period_attendance`.`marked_date`,
-              `period`.`period_number`,
-              LOWER(`subject`.subject_name) AS subject_name,
-              `period`.`department_id`,
-              `period`.`degree_id`,
-              `period`.`semester_id`,
-              `timetable`.`group_id`
-            FROM
-                `period_attendance`
-                INNER JOIN `timetable` 
-                    ON (`period_attendance`.`timetable_id` = `timetable`.`timetable_id`)
-                INNER JOIN `period` 
-                    ON (`timetable`.`period_id` = `period`.`period_id`)
-                INNER JOIN `subject` 
-                    ON (`subject`.`subject_code` = `timetable`.`subject_code`)
-            WHERE (`period_attendance`.`marked_date` IS NOT NULL
-                   AND `timetable`.`staff_id` = ?)
-            ORDER BY `period_attendance`.`period_date` DESC LIMIT 20';
-        return $this->getDbTable()
-            ->getAdapter()
-            ->query($sql, $faculty->getMemberId())
-            ->fetchAll();
+        $faculty_id = $faculty->getMemberId();
+        $select = Zend_Db_Table::getDefaultAdapter()->select()
+                    ->from('period_attendance2',
+                                    array('attendance_id',
+                                            'period_date',
+                                            'department_id',
+                                            'programme_id',
+                                            'semester_id',
+                                            'group_id',
+                                            'subject_code',
+                                            'subject_mode_id',
+                                            'duration',
+                                            'weekday_number',
+                                            'period_number',
+                                            'period_type',
+                                            'marked_date'))
+                    ->join('student_attendance2', 
+                    		'`period_attendance2`.`attendance_id` = `student_attendance2`.`attendance_id`',
+                        array('COUNT(`student_attendance2`.`student_roll_no`) AS absent'))
+                    ->where('faculty_id = ?',$faculty_id)
+                    ->group('period_attendance2.attendance_id')
+                    ->order('period_date DESC')
+                    ->limit($limit);
+        return $select->query()->fetchAll();
     }
     public function listUnMarkedAttendance (Acad_Model_Member_Faculty $faculty, $department_id = null)
     {

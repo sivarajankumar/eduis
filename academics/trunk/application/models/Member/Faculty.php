@@ -1,6 +1,5 @@
 <?php
 /** 
- * @author Babita
  * @version 3.0
  * 
  */
@@ -38,6 +37,29 @@ class Acad_Model_Member_Faculty extends Acad_Model_Member_Generic
         }
         return $this->_mapper;
     }
+    
+    
+	/**
+	 * Set Faculty ID
+	 * 
+	 * @param  string|int $faculty_id 
+	 * @return Acad_Model_Member_Faculty
+	 */
+    public function setFacultyId($faculty_id) {
+        return self::setMemberId($faculty_id);
+    }
+    
+
+    
+	/**
+	 * Get Faculty ID
+	 * 
+	 * @return string|int
+	 */
+    public function getFacultyId() {
+        return self::getMemberId();
+    }
+    
     /**
      * Get Faculty Subjects
      * @param Acad_Model_Class $class = null
@@ -47,6 +69,9 @@ class Acad_Model_Member_Faculty extends Acad_Model_Member_Generic
         return $this->getMapper()->fetchSubjects($this,$class, $showModes);
     }
     
+    /**
+     * List of all periods marked.
+     */
     public function listMarkedAttendance() {
         return $this->getMapper()->listMarkedAttendance($this);
     }

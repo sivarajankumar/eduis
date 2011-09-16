@@ -1,6 +1,7 @@
 <?php
 class FacultyController extends Acadz_Base_BaseController
 {
+    
     public function getsubjectAction (){
         $request = $this->getRequest();
         //$faculty_id = $request->getParam('faculty_id');
@@ -45,8 +46,19 @@ class FacultyController extends Acadz_Base_BaseController
     }
     
     public function markedattendanceAction() {
+        
         $request = $this->getRequest();
-        //$faculty_id = $request->getParam('faculty_id');
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        if (Zend_Auth::getInstance()->hasIdentity()) {
+            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+            $faculty_id = $authInfo['identity'];
+            
+            $faculty = new Acad_Model_Member_Faculty();
+            $marked = $faculty->setFacultyId($faculty_id)->listMarkedAttendance();
+            $this->view->assign('marked', $marked);
+        }
+        
         $department = $request->getParam('department_id');
         $programme = $request->getParam('programme_id');
         $semester = $request->getParam('semester_id');
