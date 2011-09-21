@@ -46,12 +46,62 @@ class Core_Model_Mapper_Member_Student
     public function fetchStudentInfo (Core_Model_Member_Student $student)
     {
         $member_id = $student->getMember_id();
-    	$adapter = $this->getDbTable()->getDefaultAdapter();
+        $adapter = $this->getDbTable()->getDefaultAdapter();
+        /*$colA = array('reg_no', 'cast_id', 'nationality_id', 'religion_id', 
+        'first_name', 'middle_name', 'last_name', 'dob', 'gender', 'contact_no', 
+        'e_mail', 'marital_status', 'councelling_no', 'admission_date', 
+        'alloted_category', 'alloted_branch', 'state_of_domicile', 'urban', 
+        'hostel', 'bus', 'image_no', 'blood_group');
         $select = $adapter->select()
             ->from($this->getDbTable()
-            ->info('NAME'))
+            ->info('NAME'), $colA)
             ->where('member_id = ?', $member_id);
         $fetchall = $adapter->fetchAll($select);
+        $result = array();
+        foreach ($fetchall as $row) {
+            foreach ($row as $columnName => $columnValue) {
+                $result[$columnName] = $columnValue;
+            }
+        }
+        */
+        $sql = 'SELECT
+    `student_personal`.`reg_no`
+    , `student_personal`.`cast_id`
+    , `student_personal`.`nationality_id`
+    , `student_personal`.`religion_id`
+    , `student_personal`.`first_name`
+    , `student_personal`.`middle_name`
+    , `student_personal`.`last_name`
+    , `student_personal`.`dob`
+    , `student_personal`.`gender`
+    , `student_personal`.`contact_no`
+    , `student_personal`.`e_mail`
+    , `student_personal`.`marital_status`
+    , `student_personal`.`councelling_no`
+    , `student_personal`.`admission_date`
+    , `student_personal`.`alloted_category`
+    , `student_personal`.`alloted_branch`
+    , `student_personal`.`state_of_domicile`
+    , `student_personal`.`urban`
+    , `student_personal`.`hostel`
+    , `student_personal`.`bus`
+    , `student_personal`.`image_no`
+    , `student_personal`.`blood_group`
+    , `student_department`.`department_id`
+    , `student_department`.`prgramme_id`
+    , `student_department`.`batch_start`
+    , `student_department`.`group_id`
+    , `student_semester`.`semster_id`
+    , `student_personal`.`member_id`
+FROM
+    `core`.`student_department`
+    INNER JOIN `core`.`student_personal` 
+        ON (`student_department`.`member_id` = `student_personal`.`member_id`)
+    INNER JOIN `core`.`student_semester` 
+        ON (`student_semester`.`member_id` = `student_department`.`member_id`)
+WHERE (`student_personal`.`member_id` = ?)';
+        $bind[] = $member_id;
+        $fetchall = $adapter->query($sql, $bind);
         $result = array();
         foreach ($fetchall as $row) {
             foreach ($row as $columnName => $columnValue) {
@@ -61,13 +111,41 @@ class Core_Model_Mapper_Member_Student
         return $result;
     }
     /**
+     * @todo when rollNOs are not unique additional params like programme semester must be set.
+     * fetches memberId of a student
+     *@param Core_Model_Member_Student $student
+     */
+    public function fetchMember_id (Core_Model_Member_Student $student)
+    {
+        $roll_no = $student->getStudent_roll_no();
+        $adapter = $this->getDbTable()->getDefaultAdapter();
+        $select = $adapter->select()
+            ->from('student_semester', 'member_id')
+            ->where('roll_no = ?', $roll_no);
+        return $adapter->fetchCol($select);
+    }
+    /**
+     *fetches Roll Number of a student
+     *@param Core_Model_Member_Student $student
+     */
+public function fetchStudent_roll_no (Core_Model_Member_Student $student)
+    {
+        $memberId = $student->getMember_id();
+        $adapter = $this->getDbTable()->getDefaultAdapter();
+        $select = $adapter->select()
+            ->from('student_semester','roll_no')
+            ->where('member_id = ?', $memberId);
+        return $adapter->fetchCol($select);
+    }
+    /**
      * Enter description here ...
      * @param Core_Model_Member_Student $searchParams
      */
     public function fetchStudents (Core_Model_Member_Student $searchParams)
     {
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()->from(($this->getDbTable()
+        $select = $adapter->select()->from(
+        ($this->getDbTable()
             ->info('NAME')), 'member_id');
         // if model were to contain cast_name we would use
         // join in the if statement        
