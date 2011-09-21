@@ -15,115 +15,116 @@ class Acad_Model_Course_SubjectDmc
     protected $_total_marks;
     protected $_scaled_marks;
     protected $_mapper;
-	public function getU_regn_no() {
-		return $this->_u_regn_no;
-	}
-
-	public function setU_regn_no($_u_regn_no) {
-		$this->_u_regn_no = $_u_regn_no;
-	}
-
-	public function getSubject_code() {
-		return $this->_subject_code;
-	}
-
-	public function setSubject_code($_subject_code) {
-		$this->_subject_code = $_subject_code;
-	}
-
-	public function getMarks() {
-		return $this->_marks;
-	}
-
-	public function setMarks($_marks) {
-		$this->_marks = $_marks;
-	}
-
-	public function getAppear_type() {
-		return $this->_appear_type;
-	}
-
-	public function setAppear_type($_appear_type) {
-		$this->_appear_type = $_appear_type;
-	}
-
-	public function getDmc_id() {
-		return $this->_dmc_id;
-	}
-
-	public function setDmc_id($_dmc_id) {
-		$this->_dmc_id = $_dmc_id;
-	}
-
-	public function getCustody_date() {
-		return $this->_custody_date;
-	}
-
-	public function setCustody_date($_custody_date) {
-		$this->_custody_date = $_custody_date;
-	}
-
-	public function getIs_granted() {
-		return $this->_is_granted;
-	}
-
-	public function setIs_granted($_is_granted) {
-		$this->_is_granted = $_is_granted;
-	}
-
-	public function getGrant_date() {
-		return $this->_grant_date;
-	}
-
-	public function setGrant_date($_grant_date) {
-		$this->_grant_date = $_grant_date;
-	}
-
-	public function getRecieving_date() {
-		return $this->_recieving_date;
-	}
-
-	public function setRecieving_date($_recieving_date) {
-		$this->_recieving_date = $_recieving_date;
-	}
-
-	public function getIs_copied() {
-		return $this->_is_copied;
-	}
-
-	public function setIs_copied($_is_copied) {
-		$this->_is_copied = $_is_copied;
-	}
-
-	public function getDispatch_date() {
-		return $this->_dispatch_date;
-	}
-
-	public function setDispatch_date($_dispatch_date) {
-		$this->_dispatch_date = $_dispatch_date;
-	}
-
-	public function getTotal_marks() {
-		return $this->_total_marks;
-	}
-
-	public function setTotal_marks($_total_marks) {
-		$this->_total_marks = $_total_marks;
-	}
-
-	public function getScaled_marks() {
-		return $this->_scaled_marks;
-	}
-
-	public function setScaled_marks($_scaled_marks) {
-		$this->_scaled_marks = $_scaled_marks;
-	}
-	/**
-	 * 
-	 * @param Acad_Model_Mapper_Course_SubjectDmc $mapper
-	 * @return Acad_Model_Course_SubjectDmc
-	 */
-	public function setMapper ($mapper)
+    public function getU_regn_no ()
+    {
+        return $this->_u_regn_no;
+    }
+    public function setU_regn_no ($_u_regn_no)
+    {
+        $this->_u_regn_no = $_u_regn_no;
+    }
+    public function getSubject_code ()
+    {
+        return $this->_subject_code;
+    }
+    public function setSubject_code ($_subject_code)
+    {
+        $this->_subject_code = $_subject_code;
+    }
+    public function getMarks ()
+    {
+        return $this->_marks;
+    }
+    public function setMarks ($_marks)
+    {
+        $this->_marks = $_marks;
+    }
+    public function getAppear_type ()
+    {
+        return $this->_appear_type;
+    }
+    public function setAppear_type ($_appear_type)
+    {
+        $this->_appear_type = $_appear_type;
+    }
+    public function getDmc_id ()
+    {
+        return $this->_dmc_id;
+    }
+    public function setDmc_id ($_dmc_id)
+    {
+        $this->_dmc_id = $_dmc_id;
+    }
+    public function getCustody_date ()
+    {
+        return $this->_custody_date;
+    }
+    public function setCustody_date ($_custody_date)
+    {
+        $this->_custody_date = $_custody_date;
+    }
+    public function getIs_granted ()
+    {
+        return $this->_is_granted;
+    }
+    public function setIs_granted ($_is_granted)
+    {
+        $this->_is_granted = $_is_granted;
+    }
+    public function getGrant_date ()
+    {
+        return $this->_grant_date;
+    }
+    public function setGrant_date ($_grant_date)
+    {
+        $this->_grant_date = $_grant_date;
+    }
+    public function getRecieving_date ()
+    {
+        return $this->_recieving_date;
+    }
+    public function setRecieving_date ($_recieving_date)
+    {
+        $this->_recieving_date = $_recieving_date;
+    }
+    public function getIs_copied ()
+    {
+        return $this->_is_copied;
+    }
+    public function setIs_copied ($_is_copied)
+    {
+        $this->_is_copied = $_is_copied;
+    }
+    public function getDispatch_date ()
+    {
+        return $this->_dispatch_date;
+    }
+    public function setDispatch_date ($_dispatch_date)
+    {
+        $this->_dispatch_date = $_dispatch_date;
+    }
+    public function getTotal_marks ()
+    {
+        return $this->_total_marks;
+    }
+    public function setTotal_marks ($_total_marks)
+    {
+        $this->_total_marks = $_total_marks;
+    }
+    public function getScaled_marks ()
+    {
+        return $this->_scaled_marks;
+    }
+    public function setScaled_marks ($_scaled_marks)
+    {
+        $this->_scaled_marks = $_scaled_marks;
+    }
+    /**
+     * 
+     * @param Acad_Model_Mapper_Course_SubjectDmc $mapper
+     * @return Acad_Model_Course_SubjectDmc
+     */
+    public function setMapper ($mapper)
     {
         $this->_mapper = $mapper;
         return $this;
@@ -135,8 +136,7 @@ class Acad_Model_Course_SubjectDmc
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(
-            new Acad_Model_Mapper_Course_SubjectDmc());
+            $this->setMapper(new Acad_Model_Mapper_Course_SubjectDmc());
         }
         return $this->_mapper;
     }
@@ -160,19 +160,9 @@ class Acad_Model_Course_SubjectDmc
      */
     public function __get ($name)
     {
-    $method = 'get' . $name;
+        $method = 'get' . $name;
         if ('mapper' == $name || ! method_exists($this, $method)) {
             throw new Zend_Exception('Invalid property specified');
-        } else {
-            if (isset($this->$name)) {
-                return $this->$method();
-            } else {
-                $fetchMethodName = 'fetch' . $name;
-                if (method_exists($this->getMapper(), $fetchMethodName)) {
-                    $this->getMapper()->$fetchMethodName;
-                    return $this->$method();
-                }
-            }
         }
     }
     /**
@@ -216,9 +206,9 @@ class Acad_Model_Course_SubjectDmc
      * gets the marks of student in a subject..
      * by deafult includes all appear types
      */
-    public function getMarksHistory(){
+    public function getMarksHistory ()
+    {
         return $this->getMapper()->fetchMarksHistory($this);
-        
     }
     /**
      * gets the details of a SubjectDMC
@@ -230,5 +220,4 @@ class Acad_Model_Course_SubjectDmc
         $options = $this->getMapper()->fetchDetails($this);
         $this->setOptions($options);
     }
-
 }
