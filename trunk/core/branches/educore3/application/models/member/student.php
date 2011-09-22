@@ -521,7 +521,8 @@ class Core_Model_Member_Student
     }
     protected function fetchMemberId ()
     {
-        if (isset($this->getStudent_roll_no())) {
+        $roll_number = $this->getStudent_roll_no();
+        if (isset($roll_number)) {
             $result = $this->getMapper()->fetchMember_id();
             $this->setMember_id($result);
         } else {
@@ -530,7 +531,8 @@ class Core_Model_Member_Student
     }
     protected function fetchRollNumber ()
     {
-        if (isset($this->getMember_id())) {
+        $member_id = $this->getMember_id();
+        if (isset($member_id)) {
             $result = $this->getMapper()->fetchStudent_roll_no();
             $this->setStudent_roll_no($result);
         } else {
