@@ -521,9 +521,9 @@ class Core_Model_Member_Student
     }
     protected function fetchMemberId ()
     {
-        $roll_number = $this->getStudent_roll_no();
-        if (isset($roll_number)) {
-            $result = $this->getMapper()->fetchMember_id();
+        $roll_no = $this->getStudent_roll_no();
+        if (isset($roll_no)) {
+            $result = $this->getMapper()->fetchMember_id($this);
             $this->setMember_id($result);
         } else {
             throw new Exception('You must set RollNumber first');
@@ -533,7 +533,7 @@ class Core_Model_Member_Student
     {
         $member_id = $this->getMember_id();
         if (isset($member_id)) {
-            $result = $this->getMapper()->fetchStudent_roll_no();
+            $result = $this->getMapper()->fetchStudent_roll_no($this);
             $this->setStudent_roll_no($result);
         } else {
             throw new Exception('You must set MemberId first');

@@ -6,7 +6,7 @@
  * @subpackage StudentPersonal
  * @since	   0.1
  */
-class Core_Model_DbTable_StudentPersonal extends Corez_Base_Model
+class Core_Model_DbTable_StudentPersonal extends Zend_Db_Table_Abstract
 {
     protected $_name = 'student_personal';
 }

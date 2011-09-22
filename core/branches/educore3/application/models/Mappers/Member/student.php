@@ -128,12 +128,12 @@ WHERE (`student_personal`.`member_id` = ?)';
      *fetches Roll Number of a student
      *@param Core_Model_Member_Student $student
      */
-public function fetchStudent_roll_no (Core_Model_Member_Student $student)
+    public function fetchStudent_roll_no (Core_Model_Member_Student $student)
     {
         $memberId = $student->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
-            ->from('student_semester','roll_no')
+            ->from('student_semester', 'roll_no')
             ->where('member_id = ?', $memberId);
         return $adapter->fetchCol($select);
     }
@@ -147,85 +147,100 @@ public function fetchStudent_roll_no (Core_Model_Member_Student $student)
         $select = $adapter->select()->from(
         ($this->getDbTable()
             ->info('NAME')), 'member_id');
+        $reg_no = $searchParams->getReg_no();
+        $cast_id = $searchParams->getCast_id();
+        $blood_group_id = $searchParams->getBlood_group_id();
+        $nationality_id = $searchParams->getBlood_group_id();
+        $religion_id = $searchParams->getReligion_id();
+        $first_name = $searchParams->getFirst_name();
+        $first_name = $searchParams->getFirst_name();
+        $middle_name = $searchParams->getMiddle_name();
+        $last_name = $searchParams->getLast_name();
+        $dob = $searchParams->getDob();
+        $gender = $searchParams->getGender();
+        $contact_no = $searchParams->getContact_no();
+        $email_id = $searchParams->getE_mail();
+        $marrital_status = $searchParams->getMarital_status();
+        $councelling_no = $searchParams->getCouncelling_no();
+        $admission_date = $searchParams->getAdmission_date();
+        $alloted_category = $searchParams->getAlloted_category();
+        $alloted_branch = $searchParams->getAlloted_branch();
+        $state_of_domicile = $searchParams->getState_of_domicile();
+        $urban = $searchParams->getUrban();
+        $hostel = $searchParams->getHostel();
+        $bus = $searchParams->getHostel();
+        $image_no = $searchParams->getImage_no();
         // if model were to contain cast_name we would use
         // join in the if statement        
-        if (isset($searchParams->getReg_no())) {
-            $select->where('regn_no = ?', $searchParams->getReg_no());
+        if (isset($reg_no)) {
+            $select->where('regn_no = ?', $reg_no);
         }
-        if (isset($searchParams->getCast_id())) {
-            $select->where('cast_id = ?', $searchParams->getCast_id());
+        if (isset($cast_id)) {
+            $select->where('cast_id = ?', $cast_id);
         }
-        if (isset($searchParams->getBlood_group_id())) {
-            $select->where('blood_group_id = ?', 
-            $searchParams->getBlood_group_id());
+        if (isset($blood_group_id)) {
+            $select->where('blood_group_id = ?', $blood_group_id);
         }
-        if (isset($searchParams->getNationality_id())) {
-            $select->where('nationality_id = ?', 
-            $searchParams->getNationality_id());
+        if (isset($nationality_id)) {
+            $select->where('nationality_id = ?', $nationality_id);
         }
-        if (isset($searchParams->getReligion_id())) {
-            $select->where('religion_id= ?', $searchParams->getReligion_id());
+        if (isset($religion_id)) {
+            $select->where('religion_id= ?', $religion_id);
         }
         /*if (isset($searchParams->getStudent_roll_no())) {
             $select->where('student_roll_no = ?', 
             $searchParams->getStudent_roll_no());
         }*/
-        if (isset($searchParams->getFirst_name())) {
-            $select->where('first_name = ?', $searchParams->getFirst_name());
+        if (isset($first_name)) {
+            $select->where('first_name = ?', $first_name);
         }
-        if (isset($searchParams->getMiddle_name())) {
-            $select->where('middle_name = ?', $searchParams->getMiddle_name());
+        if (isset($middle_name)) {
+            $select->where('middle_name = ?', $middle_name);
         }
-        if (isset($searchParams->getLast_name())) {
-            $select->where('last_name= ?', $searchParams->getLast_name());
+        if (isset($last_name)) {
+            $select->where('last_name= ?', $last_name);
         }
-        if (isset($searchParams->getDob())) {
-            $select->where('dob = ?', $searchParams->getDob());
+        if (isset($dob)) {
+            $select->where('dob = ?', $dob);
         }
-        if (isset($searchParams->getGender())) {
-            $select->where('gender = ?', $searchParams->getGender());
+        if (isset($gender)) {
+            $select->where('gender = ?', $gender);
         }
-        if (isset($searchParams->getContact_no())) {
-            $select->where('contact_no = ?', $searchParams->getContact_no());
+        if (isset($contact_no)) {
+            $select->where('contact_no = ?', $contact_no);
         }
-        if (isset($searchParams->getE_mail())) {
-            $select->where('e_mail= ?', $searchParams->getE_mail());
+        if (isset($email_id)) {
+            $select->where('e_mail= ?', $email_id);
         }
-        if (isset($searchParams->getMarital_status())) {
-            $select->where('marital_status = ?', 
-            $searchParams->getMarital_status());
+        if (isset($marrital_status)) {
+            $select->where('marital_status = ?', $marrital_status);
         }
-        if (isset($searchParams->getCouncelling_no())) {
-            $select->where('councelling_no = ?', 
-            $searchParams->getCouncelling_no());
+        if (isset($councelling_no)) {
+            $select->where('councelling_no = ?', $councelling_no);
         }
-        if (isset($searchParams->getAdmission_date())) {
-            $select->where('admission_date = ?', 
-            $searchParams->getAdmission_date());
+        if (isset($admission_date)) {
+            $select->where('admission_date = ?', $admission_date);
         }
-        if (isset($searchParams->getAlloted_category())) {
-            $select->where('alloted_category = ?', 
-            $searchParams->getAlloted_category());
+        if (isset($alloted_category)) {
+            $select->where('alloted_category = ?', $alloted_category);
         }
-        if (isset($searchParams->getAlloted_branch())) {
-            $select->where('alloted_branch = ?', 
-            $searchParams->getAlloted_branch());
+        if (isset($alloted_branch)) {
+            $select->where('alloted_branch = ?', $alloted_branch);
         }
-        if (isset($searchParams->getState_of_domicile())) {
-            $select->where('state_of_domicile = ?', 
-            $searchParams->getState_of_domicile());
+        if (isset($state_of_domicile)) {
+            $select->where('state_of_domicile = ?', $state_of_domicile);
         }
-        if (isset($searchParams->getUrban())) {
-            $select->where('urban= ?', $searchParams->getUrban());
+        if (isset($urban)) {
+            $select->where('urban= ?', $urban);
         }
-        if (isset($searchParams->getHostel())) {
-            $select->where('hostel= ?', $searchParams->getHostel());
+        if (isset($hostel)) {
+            $select->where('hostel= ?', $hostel);
         }
-        if (isset($searchParams->getBus())) {
-            $select->where('bus= ?', $searchParams->getBus());
+        if (isset($bus)) {
+            $select->where('bus= ?', $bus);
         }
-        if (isset($searchParams->getImage_no())) {
-            $select->where('image_no = ?', $searchParams->getImage_no());
+        if (isset($image_no)) {
+            $select->where('image_no = ?', $image_no);
         }
         return $select->query()->fetchColumn();
     }
