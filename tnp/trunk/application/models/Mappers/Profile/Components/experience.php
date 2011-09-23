@@ -16,7 +16,7 @@ class Tnp_Model_Mapper_Profile_Components_Experience
      * @param  Zend_Db_Table_Abstract $dbTable 
      * @return Tnp_Model_Mapper_Profile_Components_Experience
      */
-    public function setDbTable (Zend_Db_Table_Abstract $dbTable)
+    public function setDbTable ($dbTable)
     {
         if (is_string($dbTable)) {
             $dbTable = new $dbTable();
@@ -80,12 +80,12 @@ class Tnp_Model_Mapper_Profile_Components_Experience
         $select = $adapter->select()->from(
         ($this->getDbTable()
             ->info('NAME')), 'u_regn_no');
-        $industryName = isset($searchParams->getIndustry_name());
-        $industryId = isset($searchParams->getIndustry_id());
-        $functionalAreaName = isset($searchParams->getFunctional_area_name());
-        $functionalAreaId = isset($searchParams->getFunctional_area_id());
-        $roleName = isset($searchParams->getRole_name());
-        $roleId = isset($searchParams->getRole_id());
+        $industryName = $searchParams->getIndustry_name();
+        $industryId = $searchParams->getIndustry_id();
+        $functionalAreaName = $searchParams->getFunctional_area_name();
+        $functionalAreaId = $searchParams->getFunctional_area_id();
+        $roleName = $searchParams->getRole_name();
+        $roleId = $searchParams->getRole_id();
         // todo
         $searchPreReq = '';
         if ($searchPreReq == true) {

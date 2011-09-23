@@ -11,7 +11,7 @@ class Tnp_Model_Mapper_Profile_Components_Certification
      * @param  Zend_Db_Table_Abstract $dbTable 
      * @return Tnp_Model_Mapper_Profile_Components_Certification
      */
-    public function setDbTable (Zend_Db_Table_Abstract $dbTable)
+    public function setDbTable ($dbTable)
     {
         if (is_string($dbTable)) {
             $dbTable = new $dbTable();
@@ -73,43 +73,41 @@ WHERE (`student_certification`.`u_regn_no` = ?)';
     }
     /**
      * 
-     * @param Tnp_Model_Profile_Components_Certification $searchParams
+     * @param Tnp_Model_Profile_Components_Certification $certification
      */
     public function fetchMemberId (
-    Tnp_Model_Profile_Components_Certification $searchParams)
+    Tnp_Model_Profile_Components_Certification $certification)
     {
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
             ->info('NAME')), 'u_regn_no');
-        $techFieldName = isset($searchParams->getTechnical_field_name());
-        $techSector = isset($searchParams->getTechnical_sector());
-        $certiName = isset($searchParams->getCertification_name());
-        $searchPreReq = self::searchPreRequisite($techFieldName, $techSector, 
-        $certiName);
+        $searchPreReq = self::searchPreRequisite($certification);
         if ($searchPreReq == true) {
-            self::fetchTechFieldId($searchParams);
-            self::fetchCertificationId($searchParams);
+            self::fetchTechFieldId($certification);
+            self::fetchCertificationId($certification);
             $select->where('certification_id = ?', 
-            $searchParams->getCertification_id());
+            $certification->getCertification_id());
         }
-        if (isset($searchParams->getStart_date())) {
-            $select->where('start_date = ?', $searchParams->getStart_date());
+        if (isset($certification->getStart_date())) {
+            $select->where('start_date = ?', $certification->getStart_date());
         }
-        if (isset($searchParams->getComplete_date())) {
+        if (isset($certification->getComplete_date())) {
             $select->where('complete_date = ?', 
-            $searchParams->getComplete_date());
+            $certification->getComplete_date());
         }
         return $select->query()->fetchColumn();
     }
-    protected function searchPreRequisite ($techFieldName, $techSector, 
-    $certiName)
+    protected function searchPreRequisite ($certification)
     {
         //search cant be made by using only one of techSec or TechFieldName.. both have to be specified
         //reason :we are looking for members with certification course ex: ccna(certName) in networking(field name) of CSE(techField)
         // this function cannot be used to search students with certification in hardware field of CSE and ECE sector together
-        if (! ($techFieldName) or ! ($techSector) or
-         ! ($certiName)) {
+        $techFieldName = $certification->getTechnical_field_name();
+        $techSector = $certification->getTechnical_sector();
+        $certiName = $certification->getCertification_name();
+        if (! isset($techFieldName) or ! isset($techSector) or
+         ! isset($certiName)) {
             $logger = Zend_Registry::get('logger');
             $logger->debug(
             'Insufficient Params.. Techsector, TechFieldName, CetificationName are all required');
@@ -148,9 +146,9 @@ WHERE (`student_certification`.`u_regn_no` = ?)';
     public function fetchCertification_id (
     Tnp_Model_Profile_Components_Certification $certification)
     {
-        $certName = $certification->getCertification_name();
+        $certificationName = $certification->getCertification_name();
         $technicalFieldId = $certification->getTechnical_field_id();
-        if (! isset($certName) and ! isset($technicalFieldId)) {
+        if (! isset($certificationName) and ! isset($technicalFieldId)) {
             $logger = Zend_Registry::get('logger');
             $logger->debug(
             'Insufficient Params.. certificationName, TechFieldId both are required');
@@ -158,7 +156,7 @@ WHERE (`student_certification`.`u_regn_no` = ?)';
             $adapter = $this->getDbTable()->getDefaultAdapter();
             $select = $adapter->select()
                 ->from('certification', 'certification_id')
-                ->where('certification_name = ?', $certName)
+                ->where('certification_name = ?', $certificationName)
                 ->where('technical_field_id = ?', $technicalFieldId);
             $certId = $select->query()->fetchColumn();
             $certification->setCertification_id($certId);
