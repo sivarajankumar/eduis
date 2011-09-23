@@ -11,7 +11,7 @@ class Acad_Model_Mapper_Exam_Diploma
      * @param  Zend_Db_Table_Abstract $dbTable 
      * @return Acad_Model_Mapper_Exam_Diploma
      */
-    public function setDbTable (Zend_Db_Table_Abstract $dbTable)
+    public function setDbTable ($dbTable)
     {
         if (is_string($dbTable)) {
             $dbTable = new $dbTable();
@@ -72,49 +72,60 @@ class Acad_Model_Mapper_Exam_Diploma
         $select = $adapter->select()->from(
         ($this->getDbTable()
             ->info('NAME')), 'u_regn_no');
-        if (isset($searchParams->getBoard_roll())) {
-            $select->where('board_roll = ?', $searchParams->getBoard_roll());
+            $board_roll =$searchParams->getBoard_roll();
+            $marks_obtained =$searchParams->getMarks_obtained();
+            $percentage =$searchParams->getPercentage();
+            $total_marks =$searchParams->getTotal_marks();
+            $remarks =$searchParams->getRemarks();
+            $passing_year =$searchParams->getPassing_year();
+            $branch =$searchParams->getBranch();
+            $board =$searchParams->getBoard();
+            $institution =$searchParams->getInstitution();
+            $institution_city =$searchParams->getInstitution_city();
+            $migration_date =$searchParams->getMigration_date();
+            $institution_state =$searchParams->getInstitution_state();
+            
+    if (isset($board_roll)) {
+            $select->where('board_roll = ?', $board_roll);
         }
-        if (isset($searchParams->getMarks_obtained())) {
+        if (isset($marks_obtained)) {
             $select->where('marks_obtained = ?', 
-            $searchParams->getMarks_obtained());
+            $marks_obtained);
         }
-        if (isset($searchParams->getTotal_marks())) {
-            $select->where('total_marks = ?', $searchParams->getTotal_marks());
+        if (isset($total_marks)) {
+            $select->where('total_marks = ?', $total_marks);
         }
-        if (isset($searchParams->getPercentage())) {
-            $select->where('percentage = ?', $searchParams->getPercentage());
+        if (isset($percentage)) {
+            $select->where('percentage = ?', $percentage);
         }
-        if (isset($searchParams->getRemarks())) {
-            $select->where('remarks = ?', $searchParams->getRemarks());
+        if (isset($remarks)) {
+            $select->where('remarks = ?', $remarks);
         }
-        if (isset($searchParams->getPassing_year())) {
-            $select->where('passing_year = ?', $searchParams->getPassing_year());
+        if (isset($passing_year)) {
+            $select->where('passing_year = ?', $passing_year);
         }
-        if (isset($searchParams->getBranch())) {
-            $select->where('branch = ?', $searchParams->getBranch());
+        if (isset($branch)) {
+            $select->where('branch = ?', $branch);
         }
-        if (isset($searchParams->getBoard())) {
-            $select->where('board = ?', $searchParams->getBoard());
+        if (isset($board)) {
+            $select->where('board = ?', $board);
         }
-        if (isset($searchParams->getSchool_rank())) {
-            $select->where('school_rank = ?', $searchParams->getSchool_rank());
+        if (isset($institution)) {
+            $select->where('institution = ?', $institution);
         }
-        if (isset($searchParams->getInstitution())) {
-            $select->where('institution = ?', $searchParams->getInstitution());
-        }
-        if (isset($searchParams->getInstitution_city())) {
+        if (isset($institution_city)) {
             $select->where('institution_city = ?', 
-            $searchParams->getInstitution_city());
+            $institution_city);
         }
-        if (isset($searchParams->getInstitution_state())) {
+        if (isset($institution_state)) {
             $select->where('institution_state = ?', 
-            $searchParams->getInstitution_state());
+            $institution_state);
         }
-        if (isset($searchParams->getMigration_date())) {
+        if (isset($migration_date)) {
             $select->where('migration_date = ?', 
-            $searchParams->getMigration_date());
+            $migration_date);
         }
+        
         return $select->query()->fetchColumn();
     }
 }

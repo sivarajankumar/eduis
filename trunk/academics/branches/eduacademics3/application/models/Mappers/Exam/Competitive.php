@@ -11,7 +11,7 @@ class Acad_Model_Mapper_Exam_Competitive
      * @param  Zend_Db_Table_Abstract $dbTable 
      * @return Acad_Model_Mapper_Exam_Competitive
      */
-    public function setDbTable (Zend_Db_Table_Abstract $dbTable)
+    public function setDbTable ($dbTable)
     {
         if (is_string($dbTable)) {
             $dbTable = new $dbTable();
@@ -44,10 +44,11 @@ class Acad_Model_Mapper_Exam_Competitive
      *@todo make memberId as basis
      *@param Acad_Model_Exam_Competitive $competitiveExam
      */
-    public function fetchMemberExamDetails (Acad_Model_Exam_Competitive $competitiveExam)
+    public function fetchMemberExamDetails (
+    Acad_Model_Exam_Competitive $competitiveExam)
     {
         $u_regn_no = $competitiveExam->getU_regn_no();
-    	$adapter = $this->getDbTable()->getDefaultAdapter();
+        $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
             ->from($this->getDbTable()
             ->info('NAME'))
@@ -77,28 +78,34 @@ class Acad_Model_Mapper_Exam_Competitive
         $select = $adapter->select()->from(
         ($this->getDbTable()
             ->info('NAME')), 'u_regn_no');
-        if (($searchParams->getCompetitive_exam_name()) or
-         isset($searchParams->getCompetitive_exam_abbr())) {
+        $competitive_exam_name = $searchParams->getCompetitive_exam_name();
+        $competitive_exam_abbr = $searchParams->getCompetitive_exam_abbr();
+        if (isset($competitive_exam_name) or isset($competitive_exam_abbr)) {
             $logger = Zend_Registry::get('logger');
             $logger->debug(
             'Can not use Competitive_exam_name or Competitive_exam_abbr.Please use Competitive_exam_id');
         }
-        if (isset($searchParams->getCompetitive_exam_id())) {
+        $competitive_exam_id = $searchParams->getCompetitive_exam_id();
+        $exam_roll_no = $searchParams->getExam_roll_no();
+        $exam_date = $searchParams->getExam_date();
+        $total_score = $searchParams->getTotal_score();
+        $all_india_rank = $searchParams->getAll_india_rank();
+        if (isset($competitive_exam_id)) {
             $select->where('competitive_exam_id = ?', 
-            $searchParams->getCompetitive_exam_id());
+            $competitive_exam_id);
         }
-        if (isset($searchParams->getExam_roll_no())) {
-            $select->where('exam_roll_no = ?', $searchParams->getExam_roll_no());
+        if (isset($exam_roll_no)) {
+            $select->where('exam_roll_no = ?', $exam_roll_no);
         }
-        if (isset($searchParams->getExam_date())) {
-            $select->where('exam_date = ?', $searchParams->getExam_date());
+        if (isset($exam_date)) {
+            $select->where('exam_date = ?', $exam_date);
         }
-        if (isset($searchParams->getTotal_score())) {
-            $select->where('total_score = ?', $searchParams->getTotal_score());
+        if (isset($total_score)) {
+            $select->where('total_score = ?', $total_score);
         }
-        if (isset($searchParams->getAll_india_rank())) {
+        if (isset($all_india_rank)) {
             $select->where('all_india_rank = ?', 
-            $searchParams->getAll_india_rank());
+            $all_india_rank);
         }
         return $select->query()->fetchColumn();
     }
