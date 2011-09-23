@@ -11,7 +11,7 @@ class Core_Model_Mapper_Member_Student
      * @param  Zend_Db_Table_Abstract $dbTable 
      * @return Core_Model_Mapper_Member_Student
      */
-    public function setDbTable (Zend_Db_Table_Abstract $dbTable)
+    public function setDbTable ($dbTable)
     {
         if (is_string($dbTable)) {
             $dbTable = new $dbTable();
@@ -47,23 +47,6 @@ class Core_Model_Mapper_Member_Student
     {
         $member_id = $student->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        /*$colA = array('reg_no', 'cast_id', 'nationality_id', 'religion_id', 
-        'first_name', 'middle_name', 'last_name', 'dob', 'gender', 'contact_no', 
-        'e_mail', 'marital_status', 'councelling_no', 'admission_date', 
-        'alloted_category', 'alloted_branch', 'state_of_domicile', 'urban', 
-        'hostel', 'bus', 'image_no', 'blood_group');
-        $select = $adapter->select()
-            ->from($this->getDbTable()
-            ->info('NAME'), $colA)
-            ->where('member_id = ?', $member_id);
-        $fetchall = $adapter->fetchAll($select);
-        $result = array();
-        foreach ($fetchall as $row) {
-            foreach ($row as $columnName => $columnValue) {
-                $result[$columnName] = $columnValue;
-            }
-        }
-        */
         $sql = 'SELECT
     `student_personal`.`reg_no`
     , `student_personal`.`cast_id`
@@ -139,39 +122,37 @@ WHERE (`student_personal`.`member_id` = ?)';
     }
     /**
      * Enter description here ...
-     * @param Core_Model_Member_Student $searchParams
+     * @param Core_Model_Member_Student $student
      */
-    public function fetchStudents (Core_Model_Member_Student $searchParams)
+    public function fetchStudents (Core_Model_Member_Student $student)
     {
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
             ->info('NAME')), 'member_id');
-        $reg_no = $searchParams->getReg_no();
-        $cast_id = $searchParams->getCast_id();
-        $blood_group_id = $searchParams->getBlood_group_id();
-        $nationality_id = $searchParams->getBlood_group_id();
-        $religion_id = $searchParams->getReligion_id();
-        $first_name = $searchParams->getFirst_name();
-        $first_name = $searchParams->getFirst_name();
-        $middle_name = $searchParams->getMiddle_name();
-        $last_name = $searchParams->getLast_name();
-        $dob = $searchParams->getDob();
-        $gender = $searchParams->getGender();
-        $contact_no = $searchParams->getContact_no();
-        $email_id = $searchParams->getE_mail();
-        $marrital_status = $searchParams->getMarital_status();
-        $councelling_no = $searchParams->getCouncelling_no();
-        $admission_date = $searchParams->getAdmission_date();
-        $alloted_category = $searchParams->getAlloted_category();
-        $alloted_branch = $searchParams->getAlloted_branch();
-        $state_of_domicile = $searchParams->getState_of_domicile();
-        $urban = $searchParams->getUrban();
-        $hostel = $searchParams->getHostel();
-        $bus = $searchParams->getHostel();
-        $image_no = $searchParams->getImage_no();
-        // if model were to contain cast_name we would use
-        // join in the if statement        
+        $reg_no = $student->getReg_no();
+        $cast_id = $student->getCast_id();
+        $blood_group_id = $student->getBlood_group_id();
+        $nationality_id = $student->getBlood_group_id();
+        $religion_id = $student->getReligion_id();
+        $first_name = $student->getFirst_name();
+        $first_name = $student->getFirst_name();
+        $middle_name = $student->getMiddle_name();
+        $last_name = $student->getLast_name();
+        $dob = $student->getDob();
+        $gender = $student->getGender();
+        $contact_no = $student->getContact_no();
+        $email_id = $student->getE_mail();
+        $marrital_status = $student->getMarital_status();
+        $councelling_no = $student->getCouncelling_no();
+        $admission_date = $student->getAdmission_date();
+        $alloted_category = $student->getAlloted_category();
+        $alloted_branch = $student->getAlloted_branch();
+        $state_of_domicile = $student->getState_of_domicile();
+        $urban = $student->getUrban();
+        $hostel = $student->getHostel();
+        $bus = $student->getHostel();
+        $image_no = $student->getImage_no();
         if (isset($reg_no)) {
             $select->where('regn_no = ?', $reg_no);
         }
@@ -187,10 +168,6 @@ WHERE (`student_personal`.`member_id` = ?)';
         if (isset($religion_id)) {
             $select->where('religion_id= ?', $religion_id);
         }
-        /*if (isset($searchParams->getStudent_roll_no())) {
-            $select->where('student_roll_no = ?', 
-            $searchParams->getStudent_roll_no());
-        }*/
         if (isset($first_name)) {
             $select->where('first_name = ?', $first_name);
         }
