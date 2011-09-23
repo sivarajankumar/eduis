@@ -11,7 +11,7 @@ class Acad_Model_Mapper_Course_SubjectDmc
      * @param  Zend_Db_Table_Abstract $dbTable 
      * @return Acad_Model_Mapper_Course_SubjectDmc
      */
-    public function setDbTable (Zend_Db_Table_Abstract $dbTable)
+    public function setDbTable ($dbTable)
     {
         if (is_string($dbTable)) {
             $dbTable = new $dbTable();

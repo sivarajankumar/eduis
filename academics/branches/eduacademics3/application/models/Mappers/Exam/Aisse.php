@@ -11,7 +11,7 @@ class Acad_Model_Mapper_Exam_Aisse
      * @param  Zend_Db_Table_Abstract $dbTable 
      * @return Acad_Model_Mapper_Exam_Aisse
      */
-    public function setDbTable (Zend_Db_Table_Abstract $dbTable)
+    public function setDbTable ($dbTable)
     {
         if (is_string($dbTable)) {
             $dbTable = new $dbTable();
@@ -72,46 +72,57 @@ class Acad_Model_Mapper_Exam_Aisse
         $select = $adapter->select()->from(
         ($this->getDbTable()
             ->info('NAME')), 'u_regn_no');
-        if (isset($searchParams->getMatric_board())) {
-            $select->where('matric_board = ?', $searchParams->getMatric_board());
+            $matric_board =$searchParams->getMatric_board();
+            $matric_roll_no = $searchParams->getMatric_roll_no();
+            $matric_marks_obtained = $searchParams->getMatric_marks_obtained();
+            $matric_total_marks = $searchParams->getMatric_total_marks();
+            $matric_percentage = $searchParams->getMatric_percentage();
+            $matric_passing_year = $searchParams->getMatric_passing_year();
+            $matric_school_rank = $searchParams->getMatric_school_rank();
+            $matric_remarks = $searchParams->getMatric_remarks();
+            $matric_institution = $searchParams->getMatric_institution(); 
+            $matric_city = $searchParams->getMatric_city();
+            $matric_state = $searchParams->getMatric_state();
+        if (isset($matric_board)) {
+            $select->where('matric_board = ?', $matric_board);
         }
-        if (isset($searchParams->getMatric_roll_no())) {
+        if (isset($matric_roll_no)) {
             $select->where('matric_roll_no = ?', 
-            $searchParams->getMatric_roll_no());
+            $matric_roll_no);
         }
-        if (isset($searchParams->getMatric_marks_obtained())) {
+        if (isset($matric_marks_obtained)) {
             $select->where('matric_marks_obtained = ?', 
-            $searchParams->getMatric_marks_obtained());
+            $matric_marks_obtained);
         }
-        if (isset($searchParams->getMatric_total_marks())) {
+        if (isset($matric_total_marks)) {
             $select->where('matric_total_marks = ?', 
-            $searchParams->getMatric_total_marks());
+            $matric_total_marks);
         }
-        if (isset($searchParams->getMatric_percentage())) {
+        if (isset($matric_percentage)) {
             $select->where('matric_percentage = ?', 
-            $searchParams->getMatric_percentage());
+            $matric_percentage);
         }
-        if (isset($searchParams->getMatric_passing_year())) {
+        if (isset($matric_passing_year)) {
             $select->where('matric_passing_year = ?', 
-            $searchParams->getMatric_passing_year());
+            $matric_passing_year);
         }
-        if (isset($searchParams->getMatric_school_rank())) {
+        if (isset($matric_school_rank)) {
             $select->where('matric_school_rank = ?', 
-            $searchParams->getMatric_school_rank());
+            $matric_school_rank);
         }
-        if (isset($searchParams->getMatric_remarks())) {
+        if (isset($matric_remarks)) {
             $select->where('matric_remarks = ?', 
-            $searchParams->getMatric_remarks());
+            $matric_remarks);
         }
-        if (isset($searchParams->getMatric_institution())) {
+        if (isset($matric_institution)) {
             $select->where('matric_institution = ?', 
-            $searchParams->getMatric_institution());
+            $matric_institution);
         }
-        if (isset($searchParams->getMatric_city())) {
-            $select->where('matric_city = ?', $searchParams->getMatric_city());
+        if (isset($matric_city)) {
+            $select->where('matric_city = ?', $matric_city);
         }
-        if (isset($searchParams->getMatric_state())) {
-            $select->where('matric_state = ?', $searchParams->getMatric_state());
+        if (isset($matric_state)) {
+            $select->where('matric_state = ?',$matric_state);
         }
         return $select->query()->fetchColumn();
     }
