@@ -105,7 +105,7 @@ WHERE (`student_personal`.`member_id` = ?)';
         $select = $adapter->select()
             ->from('student_semester', 'member_id')
             ->where('roll_no = ?', $roll_no);
-        return $adapter->fetchCol($select);
+        return $select->query()->fetchColumn();
     }
     /**
      *fetches Roll Number of a student
@@ -118,7 +118,7 @@ WHERE (`student_personal`.`member_id` = ?)';
         $select = $adapter->select()
             ->from('student_semester', 'roll_no')
             ->where('member_id = ?', $memberId);
-        return $adapter->fetchCol($select);
+        return $select->query()->fetchColumn();
     }
     /**
      * Enter description here ...
