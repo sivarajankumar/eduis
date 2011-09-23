@@ -11,7 +11,7 @@ class Tnp_Model_Mapper_Profile_Components_Training
      * @param  Zend_Db_Table_Abstract $dbTable 
      * @return Tnp_Model_Mapper_Profile_Components_Training
      */
-    public function setDbTable (Zend_Db_Table_Abstract $dbTable)
+    public function setDbTable ($dbTable)
     {
         if (is_string($dbTable)) {
             $dbTable = new $dbTable();
@@ -83,33 +83,40 @@ WHERE (`student_training`.`u_regn_no` = ?)';
         $select = $adapter->select()->from(
         ($this->getDbTable()
             ->info('NAME')), 'u_regn_no');
-        $techFieldName = isset($searchParams->getTechnical_field_name());
-        $techSector = isset($searchParams->getTechnical_sector());
-        $trainingTech = isset($searchParams->getTraining_technology());
-        $searchPreReq = self::searchPreRequisite($techFieldName, $techSector, 
-        $trainingTech);
+        //
+        $searchPreReq = self::searchPreRequisite($searchParams);
+        //
+        $training_id = $searchParams->getTraining_id();
+        $start_date = $searchParams->getStart_date();
+        $complete_date = $searchParams->getComplete_date();
         if ($searchPreReq == true) {
             self::fetchTechnical_field_id($searchParams);
             self::fetchTraining_id($searchParams);
-            $select->where('training_id = ?', $searchParams->getTraining_id());
+            $select->where('training_id = ?', $training_id);
         }
-        if (isset($searchParams->getStart_date())) {
-            $select->where('start_date = ?', $searchParams->getStart_date());
+        if (isset($start_date)) {
+            $select->where('start_date = ?', $start_date);
         }
-        if (isset($searchParams->getComplete_date())) {
-            $select->where('complete_date = ?', 
-            $searchParams->getComplete_date());
+        if (isset($complete_date)) {
+            $select->where('complete_date = ?', $complete_date);
         }
         return $select->query()->fetchColumn();
     }
-    protected function searchPreRequisite ($techFieldName, $techSector, 
-    $trainingTech)
+    /**
+     * 
+     * Enter description here ...
+     * @param Tnp_Model_Profile_Components_Training $searchParams
+     */
+    protected function searchPreRequisite ($training)
     {
         //search cant be made by using only one of techSec or TechFieldName.. both have to be specified
         //reason :we are looking for members with certification course ex: ccna(certName) in networking(field name) of CSE(techField)
         // this function cannot be used to search students with certification in hardware field of CSE and ECE sector together
-        if (! ($techFieldName) or ! ($techSector) or
-         ! ($trainingTech)) {
+        $techFieldName = $training->getTechnical_field_name();
+        $techSector = $training->getTechnical_sector();
+        $trainingTech = $training->getTraining_technology();
+        if (! isset($techFieldName) or ! isset($techSector) or
+         ! isset($trainingTech)) {
             $logger = Zend_Registry::get('logger');
             $logger->debug(
             'Insufficient Params.. Techsector, TechFieldName, TrainingTech name are all required');
@@ -127,7 +134,7 @@ WHERE (`student_training`.`u_regn_no` = ?)';
     {
         $technicalFieldName = $training->getTechnical_field_name();
         $technicalSector = $training->getTechnical_sector();
-        if (!isset($technicalFieldName) and ! isset($technicalSector)) {
+        if (! isset($technicalFieldName) and ! isset($technicalSector)) {
             $logger = Zend_Registry::get('logger');
             $logger->debug(
             'Insufficient Params.. Techsector, TechFieldName both are required');
@@ -150,7 +157,7 @@ WHERE (`student_training`.`u_regn_no` = ?)';
     {
         $trainingTechnology = $training->getTraining_technology();
         $technicalFieldId = $training->getTechnical_field_id();
-        if (! isset($trainingTechnology) and  !isset($technicalFieldId)) {
+        if (! isset($trainingTechnology) and ! isset($technicalFieldId)) {
             $logger = Zend_Registry::get('logger');
             $logger->debug(
             'Insufficient Params.. trainingTechnology, technicalFieldId both are required');
