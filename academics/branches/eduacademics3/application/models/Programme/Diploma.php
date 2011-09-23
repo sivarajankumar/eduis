@@ -131,7 +131,7 @@ class Acad_Model_Programme_Diploma
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Programme_DiplomaMapper());
+            $this->setMapper(new Acad_Model_Mapper_Exam_Diploma());
         }
         return $this->_mapper;
     }
