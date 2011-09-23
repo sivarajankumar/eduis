@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_DbTable_TestMarks extends Acadz_Base_Model
+class Acad_Model_DbTable_TestMarks extends Zend_Db_Table_Abstract
 {
     protected $_name = 'test_marks';
 }
