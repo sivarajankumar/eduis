@@ -84,7 +84,7 @@ FROM
         ON (`student_semester`.`member_id` = `student_department`.`member_id`)
 WHERE (`student_personal`.`member_id` = ?)';
         $bind[] = $member_id;
-        $fetchall = $adapter->query($sql, $bind)->fetchAll();
+        $fetchall = $adapter->query($sql,$bind)->fetchAll();
         $result = array();
         foreach ($fetchall as $row) {
             foreach ($row as $columnName => $columnValue) {
