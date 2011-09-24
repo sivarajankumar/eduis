@@ -16,7 +16,7 @@ class Acad_Model_ClassMapper
             $dbTable = new $dbTable();
         }
         if (! $dbTable instanceof Zend_Db_Table_Abstract) {
-            throw new Zend_Exception('Invalid table data gateway provided');
+            throw new Exception('Invalid table data gateway provided');
         }
         $this->_dbTable = $dbTable;
         return $this;
@@ -76,7 +76,7 @@ class Acad_Model_ClassMapper
      * 
      * @param Acad_Model_Class $class
      * @param string $group that belongs to class.
-     * @throws Zend_Exception
+     * @throws Exception
      * @return array class students.
      */
     public static function fetchSemesterStudents (Acad_Model_Class $class, 
@@ -108,7 +108,7 @@ class Acad_Model_ClassMapper
             if ($response->isError()) {
                 $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
                  $response->getMessage();
-                throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+                throw new Exception($remoteErr, Zend_Log::ERR);
             } else {
                 $jsonContent = $response->getBody();
                 $students = Zend_Json_Decoder::decode($jsonContent);

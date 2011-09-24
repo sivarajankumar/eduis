@@ -107,7 +107,7 @@ class Acad_Model_Department
         if (isset($this->_department)) {
             $department = $this->_department;
         } else {
-            throw new Zend_Exception(
+            throw new Exception(
             'Unable to determine "department" to get faculty list.', 
             Zend_Log::ERR);
         }

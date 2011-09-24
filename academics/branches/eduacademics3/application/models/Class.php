@@ -53,7 +53,7 @@ class Acad_Model_Class
             $authInfo = Zend_Auth::getInstance()->getStorage()->read();
             $this->_department = $authInfo['department_id'];
         } else {
-            throw new Zend_Exception('Could not determine department', 
+            throw new Exception('Could not determine department', 
             Zend_Log::ERR);
         }
         return $this;
@@ -97,7 +97,7 @@ class Acad_Model_Class
         if ($semester != null) {
             $this->_semester = $semester;
         } else {
-            throw new Zend_Exception('Could not determine semester of class', 
+            throw new Exception('Could not determine semester of class', 
             Zend_Log::ERR);
         }
         return $this;

@@ -103,9 +103,9 @@ class Acad_Model_Test_SessionalMapper
                      . 'VALUES ' . implode(', ', $candidates);
                 try {
                     $this->getDbTable()->getAdapter()->query($sql);
-                } catch (Zend_Exception $e) {
+                } catch (Exception $e) {
                     $this->getDbTable()->getAdapter()->rollBack();
-                    throw new Zend_Exception('Can not get students\' list. Error Msg :'.$e->getMessage(),Zend_Log::ERR);
+                    throw new Exception('Can not get students\' list. Error Msg :'.$e->getMessage(),Zend_Log::ERR);
                 }
                 $this->getDbTable()->getAdapter()->commit();
                 return $id;
@@ -177,7 +177,7 @@ class Acad_Model_Test_SessionalMapper
                 
             }
             else {
-                return new Zend_Exception('Invalid sessional paramter',Zend_Log::ERR);
+                return new Exception('Invalid sessional paramter',Zend_Log::ERR);
             }
         }
     }
