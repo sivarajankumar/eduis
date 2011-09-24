@@ -97,7 +97,7 @@ class Acad_Model_Course_Subject
             $authInfo = Zend_Auth::getInstance()->getStorage()->read();
             $this->_department = $authInfo['department_id'];
         } else {
-            throw new Zend_Exception('Could not determine department', 
+            throw new Exception('Could not determine department', 
             Zend_Log::ERR);
         }
         return $this;

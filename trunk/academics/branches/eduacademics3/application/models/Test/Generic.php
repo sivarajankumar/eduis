@@ -153,7 +153,7 @@ abstract class Acad_Model_Test_Generic
         if (isset($this->_test_info_id)) {
             return $this->_test_info_id;
         }
-        throw new Zend_Exception("The object's primary key (i.e. _test_info_id) is not set.",Zend_Log::ERR);
+        throw new Exception("The object's primary key (i.e. _test_info_id) is not set.",Zend_Log::ERR);
     }
     
     

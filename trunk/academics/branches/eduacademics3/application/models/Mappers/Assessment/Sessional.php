@@ -92,11 +92,11 @@ class Acad_Model_Mapper_Assessment_Sessional
                     $this->getDbTable()
                         ->getAdapter()
                         ->query($sql);
-                } catch (Zend_Exception $e) {
+                } catch (Exception $e) {
                     $this->getDbTable()
                         ->getAdapter()
                         ->rollBack();
-                    throw new Zend_Exception(
+                    throw new Exception(
                     'Can not get students\' list. Error Msg :' . $e->getMessage(), 
                     Zend_Log::ERR);
                 }
@@ -158,7 +158,7 @@ class Acad_Model_Mapper_Assessment_Sessional
                 }
                 return array('data' => $entries, 'exists' => false);
             } else {
-                return new Zend_Exception('Invalid sessional paramter', 
+                return new Exception('Invalid sessional paramter', 
                 Zend_Log::ERR);
             }
         }
