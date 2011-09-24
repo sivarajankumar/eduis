@@ -331,7 +331,9 @@ class Acad_Model_Course_SubjectDmc
         $options = $this->getMapper()->fetchDetails($this);
         $this->setOptions($options);
     }
-    protected function semesterDmc(){
+    protected function getSemesterDmc(){
+        $options = $this->getMapper()->fetchSemesterDmc($this);
+        $this->setOptions($options);
         
     }
 }
