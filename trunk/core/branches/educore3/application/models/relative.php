@@ -102,7 +102,7 @@ class Core_Model_Relative
     {
         $method = 'set' . $name;
         if ('mapper' == $name || ! method_exists($this, $method)) {
-            throw new Zend_Exception('Invalid property specified');
+            throw new Exception('Invalid property specified');
         }
         $this->$method($value);
     }
@@ -110,7 +110,7 @@ class Core_Model_Relative
     {
         $method = 'get' . $name;
         if ('mapper' == $name || ! method_exists($this, $method)) {
-            throw new Zend_Exception('Invalid property specified');
+            throw new Exception('Invalid property specified');
         }
         return $this->$method();
     }
