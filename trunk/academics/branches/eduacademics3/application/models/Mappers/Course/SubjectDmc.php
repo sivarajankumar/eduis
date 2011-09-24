@@ -72,7 +72,7 @@ class Acad_Model_Mapper_Course_SubjectDmc
     {
         $semester_id = $subjectDmc->getSemster_id();
         $dmc_id = $subjectDmc->getDmc_id();
-        if (! isset($semester_id) or !isset($dmc_id)) {
+        if (! isset($semester_id) or ! isset($dmc_id)) {
             throw new Exception(
             'No semester_id and Dmc_id is set.Please provide semester_id and Dmc_id both');
         } else {
@@ -154,14 +154,20 @@ FROM
 WHERE (`dmc_record`.`member_id` = ?)';
         $bind[] = $member_id;
         $fetchall = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchAll();
-        $result = array();
+        $passedSemestersDmcIds = array();
+        $passedSemesters = array();
         foreach ($fetchall as $row) {
             foreach ($row as $columnName => $columnValue) {
                 if ($columnName == 'dmc_id') {
-                    $result[] = $columnValue;
+                    $passedSemestersDmcIds[] = $columnValue;
+                }
+                if ($columnName == 'semester_id') {
+                    $passedSemesters[] = $columnValue;
                 }
             }
         }
+        $result = array('passedSemestersDmcIds'=>$passedSemestersDmcIds,
+         'passedSemesters'=>$passedSemesters);
         return $result;
     }
     /**
