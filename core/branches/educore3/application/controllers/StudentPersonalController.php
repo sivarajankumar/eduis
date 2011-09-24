@@ -18,14 +18,14 @@ class StudentPersonalController extends Corez_Base_BaseController
      public function getprofileAction() 
     {
     
-        $model = new Core_Model_Member_Student();  
-        
-       /* if (Zend_Auth::getInstance()->hasIdentity()) 
+        $model = new Core_Model_Member_Student(); 
+        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+        $member_id = $authInfo['member_id']; 
+       /* 
+       if (isset($member_id) 
         {
-            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-            $this->_roll_no = $authInfo['roll_no'];
-            $this->_member_id = $authInfo['member_id'];
-            $model->setMember_id($this->_member_id);
+           
+            $model->setMember_id($member_id);
             $model->getStudentInfo();
             
         }
@@ -37,7 +37,7 @@ class StudentPersonalController extends Corez_Base_BaseController
         }
         else 
         {
-           throw new Exception('..................ABE ROLL NUMBER DAAL...........');
+           throw new Exception('..................ABE ROLL NUMBER DAAL...........',Zend_Log::ERR);
         }
         */
        $this->_roll_no = '2308009'; 
