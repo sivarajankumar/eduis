@@ -1,7 +1,7 @@
 <?php
 class Acad_Model_Course_SubjectDmc
 {
-    protected $_u_regn_no;
+    protected $_member_id;
     protected $_subject_code;
     protected $_marks;
     protected $_appear_type;
