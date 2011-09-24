@@ -55,7 +55,7 @@ class Acad_Model_Mapper_Course_SubjectDmc
             $adapter = $this->getDbTable()->getDefaultAdapter();
             $select = $adapter->select()
                 ->from('dmc_record', 'marks')
-                ->where('u_regn_no = ?', $member_id)
+                ->where('member_id = ?', $member_id)
                 ->where('subject_code', $subjCode);
             if (isset($appearType)) {
                 $select->where('appear_type = ?', $appearType);
@@ -70,31 +70,20 @@ class Acad_Model_Mapper_Course_SubjectDmc
      */
     public function fetchSemesterDmc (Acad_Model_Course_SubjectDmc $subjectDmc)
     {
-        $member_id = $subjectDmc->getMember_id();
         $semester_id = $subjectDmc->getSemster_id();
-        if (! isset($member_id)) {
+        $dmc_id = $subjectDmc->getDmc_id();
+        if (! isset($semester_id) or !isset($dmc_id)) {
             throw new Exception(
-            'No member_id set.Please provide member_id first');
+            'No semester_id and Dmc_id is set.Please provide semester_id and Dmc_id both');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
             $requiedFields = array('total_marks', 'scaled_marks', 
             'marks_obtained');
-            $sql = 'SELECT
-    `dmc_total_marks`.`total_marks`
-    , `dmc_total_marks`.`scaled_marks`
-    , `dmc_record`.`marks_obtained`
-FROM
-    `academics`.`dmc_total_marks`
-    INNER JOIN `academics`.`dmc_record` 
-        ON (`dmc_total_marks`.`dmc_id` = `dmc_record`.`dmc_id`)
-WHERE (`dmc_record`.`member_id` = ?
-AND `dmc_total_marks`.`semester_id` = ?)';
-            $bind = array();
-            $bind[] = $member_id;
-            $bind[] = $semester_id;
-            //more than one dmc id may be returned.. as is the case for students who are all clear but still 
-            //applying for reval
-            $fetchall = $adapter->query($sql, $bind)->fetchAll();
+            $select = $adapter->select()
+                ->from('dmc_total_marks', $requiedFields)
+                ->where('dmc_id = ?', $dmc_id)
+                ->where('semester_id = ?', $semester_id);
+            $fetchall = $select->query()->fetchAll();
             $result = array();
             foreach ($fetchall as $row) {
                 foreach ($row as $columnName => $columnValue) {
@@ -127,14 +116,14 @@ AND `dmc_total_marks`.`semester_id` = ?)';
     , `dmc_info`.`recieving_date`
     , `dmc_info`.`is_copied`
     , `dmc_info`.`dispatch_date`
-    , `dmc_info`.`u_regn_no`
+    , `dmc_info`.`member_id`
 FROM
     `academics`.`dmc_record`
     INNER JOIN `academics`.`dmc_info` 
         ON (`dmc_record`.`dmc_id` = `dmc_info`.`dmc_id`)
 WHERE (`dmc_record`.`subject_code` = ?
     AND `dmc_record`.`marks` = ?
-    AND `dmc_info`.`u_regn_no` = ?)';
+    AND `dmc_info`.`member_id` = ?)';
             $bind[] = $subjCode;
             $bind[] = $marks;
             $bind[] = $member_id;
@@ -147,6 +136,33 @@ WHERE (`dmc_record`.`subject_code` = ?
             }
             return $result;
         }
+    }
+    /**
+     * 
+     * @param Acad_Model_Course_SubjectDmc $subjectDmc
+     */
+    public function fetchPassedSemestersDmcIds (
+    Acad_Model_Course_SubjectDmc $subjectDmc)
+    {
+        $member_id = $subjectDmc->getMember_id();
+        $sql = 'SELECT
+    `dmc_total_marks`.`dmc_id`
+FROM
+    `academics`.`dmc_total_marks`
+    INNER JOIN `academics`.`dmc_record` 
+        ON (`dmc_total_marks`.`dmc_id` = `dmc_record`.`dmc_id`)
+WHERE (`dmc_record`.`member_id` = ?)';
+        $bind[] = $member_id;
+        $fetchall = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchAll();
+        $result = array();
+        foreach ($fetchall as $row) {
+            foreach ($row as $columnName => $columnValue) {
+                if ($columnName == 'dmc_id') {
+                    $result[] = $columnValue;
+                }
+            }
+        }
+        return $result;
     }
     /**
      * @todo incomplete

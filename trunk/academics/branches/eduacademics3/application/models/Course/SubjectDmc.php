@@ -326,14 +326,23 @@ class Acad_Model_Course_SubjectDmc
      * PreRequistes - either (regNo, subCode AND marks must be set)
      * or (dmcId must be set)
      */
-    protected function getDetails ()
+    public  function getDetails ()
     {
         $options = $this->getMapper()->fetchDetails($this);
         $this->setOptions($options);
     }
-    protected function getSemesterDmc(){
+    public  function getSemesterDmc(){
         $options = $this->getMapper()->fetchSemesterDmc($this);
         $this->setOptions($options);
+        
+    }
+    /**
+     * returns an array containing dmcIds of semesters passed by student  
+     * Enter description here ...
+     */
+    public function getPassedSemestersDmcIds()
+    {
+        return $this->getMapper()->fetchPassedSemestersDmcIds($this);
         
     }
 }
