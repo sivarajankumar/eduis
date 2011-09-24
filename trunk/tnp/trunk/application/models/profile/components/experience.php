@@ -168,19 +168,19 @@ class Tnp_Model_Profile_Components_Experience
     {
         $method = 'set' . $name;
         if ('mapper' == $name || ! method_exists($this, $method)) {
-            throw new Zend_Exception('Invalid property specified');
+            throw new Exception('Invalid property specified');
         }
         $this->$method($value);
     }
     /**
      * @todo getVerified by hmnt sir
-     * @throws Zend_Exception
+     * @throws Exception
      */
     public function __get ($name)
     {
         $method = 'get' . $name;
         if ('mapper' == $name || ! method_exists($this, $method)) {
-            throw new Zend_Exception('Invalid property specified');
+            throw new Exception('Invalid property specified');
         } else {
             if (isset($this->$name)) {
                 return $this->$method();
