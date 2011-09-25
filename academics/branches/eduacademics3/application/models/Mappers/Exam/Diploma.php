@@ -46,12 +46,12 @@ class Acad_Model_Mapper_Exam_Diploma
      */
     public function fetchMemberExamDetails (Acad_Model_Exam_Diploma $diploma)
     {
-        $u_regn_no = $diploma->getU_regn_no();
+        $member_id = $diploma->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
             ->from($this->getDbTable()
             ->info('NAME'))
-            ->where('u_regn_no = ?', $u_regn_no);
+            ->where('member_id = ?', $member_id);
         $fetchall = $adapter->fetchAll($select);
         $result = array();
         foreach ($fetchall as $row) {
@@ -71,26 +71,24 @@ class Acad_Model_Mapper_Exam_Diploma
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
-            ->info('NAME')), 'u_regn_no');
-            $board_roll =$searchParams->getBoard_roll();
-            $marks_obtained =$searchParams->getMarks_obtained();
-            $percentage =$searchParams->getPercentage();
-            $total_marks =$searchParams->getTotal_marks();
-            $remarks =$searchParams->getRemarks();
-            $passing_year =$searchParams->getPassing_year();
-            $branch =$searchParams->getBranch();
-            $board =$searchParams->getBoard();
-            $institution =$searchParams->getInstitution();
-            $institution_city =$searchParams->getInstitution_city();
-            $migration_date =$searchParams->getMigration_date();
-            $institution_state =$searchParams->getInstitution_state();
-            
-    if (isset($board_roll)) {
+            ->info('NAME')), 'member_id');
+        $board_roll = $searchParams->getBoard_roll();
+        $marks_obtained = $searchParams->getMarks_obtained();
+        $percentage = $searchParams->getPercentage();
+        $total_marks = $searchParams->getTotal_marks();
+        $remarks = $searchParams->getRemarks();
+        $passing_year = $searchParams->getPassing_year();
+        $branch = $searchParams->getBranch();
+        $board = $searchParams->getBoard();
+        $institution = $searchParams->getInstitution();
+        $institution_city = $searchParams->getInstitution_city();
+        $migration_date = $searchParams->getMigration_date();
+        $institution_state = $searchParams->getInstitution_state();
+        if (isset($board_roll)) {
             $select->where('board_roll = ?', $board_roll);
         }
         if (isset($marks_obtained)) {
-            $select->where('marks_obtained = ?', 
-            $marks_obtained);
+            $select->where('marks_obtained = ?', $marks_obtained);
         }
         if (isset($total_marks)) {
             $select->where('total_marks = ?', $total_marks);
@@ -114,18 +112,14 @@ class Acad_Model_Mapper_Exam_Diploma
             $select->where('institution = ?', $institution);
         }
         if (isset($institution_city)) {
-            $select->where('institution_city = ?', 
-            $institution_city);
+            $select->where('institution_city = ?', $institution_city);
         }
         if (isset($institution_state)) {
-            $select->where('institution_state = ?', 
-            $institution_state);
+            $select->where('institution_state = ?', $institution_state);
         }
         if (isset($migration_date)) {
-            $select->where('migration_date = ?', 
-            $migration_date);
+            $select->where('migration_date = ?', $migration_date);
         }
-        
         return $select->query()->fetchColumn();
     }
 }

@@ -46,12 +46,12 @@ class Acad_Model_Mapper_Exam_Aissce
      */
     public function fetchMemberExamDetails (Acad_Model_Exam_Aissce $aissce)
     {
-        $u_regn_no = $aissce->getU_regn_no();
+        $member_id = $aissce->getMember_id();
     	$adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
             ->from($this->getDbTable()
             ->info('NAME'))
-            ->where('u_regn_no = ?', $u_regn_no);
+            ->where('member_id = ?', $member_id);
         $fetchall = $adapter->fetchAll($select);
         $result = array();
         foreach ($fetchall as $row) {
@@ -62,7 +62,7 @@ class Acad_Model_Mapper_Exam_Aissce
         return $result;
     }
     /**
-     * returns REGISTRATION NUMBER
+     * returns member_id
      * @param Acad_Model_Exam_Aissce $searchParams
      * @todo return memberIds
      */
@@ -71,7 +71,7 @@ class Acad_Model_Mapper_Exam_Aissce
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
-            ->info('NAME')), 'u_regn_no');
+            ->info('NAME')), 'member_id');
             $board_roll = $searchParams->getBoard_roll();
             $marks_obtained = $searchParams->getMarks_obtained();
             $total_marks = $searchParams->getTotal_marks();

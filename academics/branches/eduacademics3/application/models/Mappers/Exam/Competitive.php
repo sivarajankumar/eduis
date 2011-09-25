@@ -47,7 +47,7 @@ class Acad_Model_Mapper_Exam_Competitive
     public function fetchMemberExamDetails (
     Acad_Model_Exam_Competitive $competitiveExam)
     {
-        $u_regn_no = $competitiveExam->getU_regn_no();
+        $member_id = $competitiveExam->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
             ->from($this->getDbTable()
@@ -55,9 +55,9 @@ class Acad_Model_Mapper_Exam_Competitive
             ->joinInner('competitive_exam', 
         'student_competitive_exam.competitive_exam_id = competitive_exam.competitive_exam_id', 
         array('competitive_exam_name', 'competitive_exam_abbr', 
-        'competitive_exam_id', 'u_regn_no', 'exam_roll_no', 'exam_date', 
+        'competitive_exam_id', 'member_id', 'exam_roll_no', 'exam_date', 
         'total_score', 'all_india_rank'))
-            ->where('u_regn_no = ?', $u_regn_no);
+            ->where('member_id = ?', $member_id);
         $fetchall = $adapter->fetchAll($select);
         $result = array();
         foreach ($fetchall as $row) {
@@ -77,7 +77,7 @@ class Acad_Model_Mapper_Exam_Competitive
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
-            ->info('NAME')), 'u_regn_no');
+            ->info('NAME')), 'member_id');
         $competitive_exam_name = $searchParams->getCompetitive_exam_name();
         $competitive_exam_abbr = $searchParams->getCompetitive_exam_abbr();
         if (isset($competitive_exam_name) or isset($competitive_exam_abbr)) {
@@ -91,8 +91,7 @@ class Acad_Model_Mapper_Exam_Competitive
         $total_score = $searchParams->getTotal_score();
         $all_india_rank = $searchParams->getAll_india_rank();
         if (isset($competitive_exam_id)) {
-            $select->where('competitive_exam_id = ?', 
-            $competitive_exam_id);
+            $select->where('competitive_exam_id = ?', $competitive_exam_id);
         }
         if (isset($exam_roll_no)) {
             $select->where('exam_roll_no = ?', $exam_roll_no);
@@ -104,8 +103,7 @@ class Acad_Model_Mapper_Exam_Competitive
             $select->where('total_score = ?', $total_score);
         }
         if (isset($all_india_rank)) {
-            $select->where('all_india_rank = ?', 
-            $all_india_rank);
+            $select->where('all_india_rank = ?', $all_india_rank);
         }
         return $select->query()->fetchColumn();
     }

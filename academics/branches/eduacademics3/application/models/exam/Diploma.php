@@ -1,7 +1,7 @@
 <?php
 class Acad_Model_Exam_Diploma
 {
-    protected $_u_regn_no;
+    protected $_member_id;
     protected $_marks_obtained;
     protected $_total_marks;
     protected $_percentage;
@@ -15,15 +15,16 @@ class Acad_Model_Exam_Diploma
     protected $_board_roll;
     protected $_migration_date;
     protected $_mapper;
-    public function getU_regn_no ()
-    {
-        return $this->_u_regn_no;
-    }
-    public function setU_regn_no ($_u_regn_no)
-    {
-        $this->_u_regn_no = $_u_regn_no;
-    }
-    public function getMarks_obtained ()
+    
+    public function getMember_id() {
+		return $this->_member_id;
+	}
+
+	public function setMember_id($_member_id) {
+		$this->_member_id = $_member_id;
+	}
+
+	public function getMarks_obtained ()
     {
         return $this->_marks_obtained;
     }

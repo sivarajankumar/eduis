@@ -1,7 +1,7 @@
 <?php
 class Acad_Model_Exam_Aissce
 {
-    protected $_u_regn_no;
+    protected $_member_id;
     protected $_board_roll;
     protected $_marks_obtained;
     protected $_total_marks;
@@ -16,15 +16,21 @@ class Acad_Model_Exam_Aissce
     protected $_institution_state;
     protected $_migration_date;
     protected $_mapper;
-    public function getU_regn_no ()
-    {
-        return $this->_u_regn_no;
-    }
-    public function setU_regn_no ($_u_regn_no)
-    {
-        $this->_u_regn_no = $_u_regn_no;
-    }
-    public function getBoard_roll ()
+    /**
+	 * @return the $_member_id
+	 */
+	public function getMember_id() {
+		return $this->_member_id;
+	}
+
+	/**
+	 * @param field_type $_member_id
+	 */
+	public function setMember_id($_member_id) {
+		$this->_member_id = $_member_id;
+	}
+
+	public function getBoard_roll ()
     {
         return $this->_board_roll;
     }
