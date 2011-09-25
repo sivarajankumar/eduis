@@ -4,7 +4,7 @@ class Acad_Model_Exam_Competitive
     protected $_competitive_exam_name;
     protected $_competitive_exam_abbr;
     protected $_competitive_exam_id;
-    protected $_u_regn_no;
+    protected $_member_id;
     protected $_exam_roll_no;
     protected $_exam_date;
     protected $_total_score;
@@ -34,13 +34,13 @@ class Acad_Model_Exam_Competitive
     {
         $this->_competitive_exam_id = $_competitive_exam_id;
     }
-    public function getU_regn_no ()
+    public function getMember_id ()
     {
-        return $this->_u_regn_no;
+        return $this->_member_id;
     }
-    public function setU_regn_no ($_u_regn_no)
+    public function setMember_id ($_member_id)
     {
-        $this->_u_regn_no = $_u_regn_no;
+        $this->_member_id = $_member_id;
     }
     public function getExam_roll_no ()
     {

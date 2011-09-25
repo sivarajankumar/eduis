@@ -23,7 +23,7 @@ class Acad_Model_Mapper_Course_Subject
             $dbTable = new $dbTable();
         }
         if (! $dbTable instanceof Zend_Db_Table_Abstract) {
-            throw new Zend_Exception('Invalid table data gateway provided');
+            throw new Exception('Invalid table data gateway provided');
         }
         $this->_dbTable = $dbTable;
         return $this;

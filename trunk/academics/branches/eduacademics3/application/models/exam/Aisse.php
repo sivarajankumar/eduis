@@ -1,7 +1,7 @@
 <?php
 class Acad_Model_Exam_Aisse
 {
-    protected $_u_regn_no;
+    protected $_member_id;
     protected $_matric_marks_obtained;
     protected $_matric_total_marks;
     protected $_matric_percentage;
@@ -14,13 +14,13 @@ class Acad_Model_Exam_Aisse
     protected $_matric_city;
     protected $_matric_state;
     protected $_mapper;
-    public function getU_regn_no ()
+    public function getMember_id ()
     {
-        return $this->_u_regn_no;
+        return $this->_member_id;
     }
-    public function setU_regn_no ($_u_regn_no)
+    public function setMember_id ($_member_id)
     {
-        $this->_u_regn_no = $_u_regn_no;
+        $this->_member_id = $_member_id;
     }
     public function getMatric_marks_obtained ()
     {

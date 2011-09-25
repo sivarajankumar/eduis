@@ -60,7 +60,14 @@ class Acad_Model_Mapper_Course_SubjectDmc
             if (isset($appearType)) {
                 $select->where('appear_type = ?', $appearType);
             }
-            return $select->query()->fetchColumn();
+            $fetchall = $select->query()->fetchAll();
+            $result = array();
+            foreach ($fetchall as $row) {
+                foreach ($row as $columnName => $columnValue) {
+                    $result[$columnName] = $columnValue;
+                }
+            }
+            return $result;
         }
     }
     /**
