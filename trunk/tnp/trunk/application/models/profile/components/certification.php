@@ -6,12 +6,16 @@ class Tnp_Model_Profile_Components_Certification
     protected $_technical_field_id;
     protected $_technical_field_name;
     protected $_technical_sector;
-    protected $_u_regn_no;
+    protected $_member_id;
     protected $_start_date;
     protected $_complete_date;
     protected $_mapper;
     public function getCertification_id ()
     {
+        $certification_id = $this->_certification_id;
+        if (! isset($certification_id)) {
+            $this->findCertificationId();
+        }
         return $this->_certification_id;
     }
     public function setCertification_id ($_certification_id)
@@ -20,6 +24,10 @@ class Tnp_Model_Profile_Components_Certification
     }
     public function getCertification_name ()
     {
+        $certification_name = $this->_certification_name;
+        if (! isset($certification_name)) {
+            $this->getCertificationDetails();
+        }
         return $this->_certification_name;
     }
     public function setCertification_name ($_certification_name)
@@ -28,6 +36,10 @@ class Tnp_Model_Profile_Components_Certification
     }
     public function getTechnical_field_id ()
     {
+        $technical_field_id = $this->_technical_field_id;
+        if (! isset($technical_field_id)) {
+            $this->findTechnical_field_id();
+        }
         return $this->_technical_field_id;
     }
     public function setTechnical_field_id ($_technical_field_id)
@@ -36,6 +48,10 @@ class Tnp_Model_Profile_Components_Certification
     }
     public function getTechnical_field_name ()
     {
+        $technical_field_name = $this->_technical_field_name;
+        if (! isset($technical_field_name)) {
+            $this->getTechnicalFieldDetails();
+        }
         return $this->_technical_field_name;
     }
     public function setTechnical_field_name ($_technical_field_name)
@@ -50,13 +66,13 @@ class Tnp_Model_Profile_Components_Certification
     {
         $this->_technical_sector = $_technical_sector;
     }
-    public function getU_regn_no ()
+    public function getMember_id ()
     {
-        return $this->_u_regn_no;
+        return $this->_member_id;
     }
-    public function setU_regn_no ($_u_regn_no)
+    public function setMember_id ($_member_id)
     {
-        $this->_u_regn_no = $_u_regn_no;
+        $this->_member_id = $_member_id;
     }
     public function getStart_date ()
     {
@@ -165,9 +181,31 @@ class Tnp_Model_Profile_Components_Certification
      * controller,
      * first set univ reg no first and then call getter functions to retrieve properties.
      */
-    public function getDetails ()
+    public function getMemberCertificationDetails ()
+    {
+        $options = $this->getMapper()->fetchMemberCertificationDetails($this);
+        $this->setOptions($options);
+    }
+    public function getMemberCertificationIds ()
+    {
+        return $this->getMapper()->fetchMemberCertificationIds($this);
+    }
+    public function getCertificationDetails ()
     {
         $options = $this->getMapper()->fetchCertificationDetails($this);
         $this->setOptions($options);
+    }
+    public function getTechnicalFieldDetails ()
+    {
+        $options = $this->getMapper()->fetchTechnicalFieldDetails($this);
+        $this->setOptions($options);
+    }
+    protected function findCertificationId ()
+    {
+        $this->getMapper()->fetchCertification_id($this);
+    }
+    protected function findTechnical_field_id ()
+    {
+        $this->getMapper()->fetchTechnical_field_id($this);
     }
 }

@@ -43,33 +43,41 @@ class Tnp_Model_Mapper_Profile_Components_Certification
      * 
      * @param Tnp_Model_Profile_Components_Certification $certification
      */
-    public function fetchCertificationDetails (
+    public function fetchMemberCertificationDetails (
     Tnp_Model_Profile_Components_Certification $certification)
     {
-        $sql = 'SELECT
-    `student_certification`.`certification_id`
-    , `student_certification`.`start_date`
-    , `student_certification`.`complete_date`
-    , `student_certification`.`u_regn_no`
-    , `certification`.`certification_name`
-    , `technical_fields`.`technical_field_name`
-    , `technical_fields`.`technical_sector`
-FROM
-    `tnp`.`student_certification`
-    INNER JOIN `tnp`.`certification` 
-        ON (`student_certification`.`certification_id` = `certification`.`certification_id`)
-    INNER JOIN `tnp`.`technical_fields` 
-        ON (`certification`.`technical_field_id` = `technical_fields`.`technical_field_id`)
-WHERE (`student_certification`.`u_regn_no` = ?)';
-        $bind[] = $certification->getU_regn_no();
-        $fetchall = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchAll();
-        $result = array();
-        foreach ($fetchall as $row) {
-            foreach ($row as $columnName => $columnValue) {
-                $result[$columnName] = $columnValue;
+        $member_id = $certification->getMember_id();
+        $certificationId = $certification->getCertification_id();
+        if (! isset($member_id) or ! isset($certificationId)) {
+            throw new Exception(
+            'Please provide member_id and certificationID both');
+        } else {
+            $sql = 'SELECT
+            `student_certification`.`start_date`
+            , `student_certification`.`complete_date`
+            , `student_certification`.`member_id`
+            , `certification`.`certification_name`
+            , `technical_fields`.`technical_field_name`
+            , `technical_fields`.`technical_sector`
+            FROM
+            `tnp`.`student_certification`
+            INNER JOIN `tnp`.`certification`
+            ON (`student_certification`.`certification_id` = `certification`.`certification_id`)
+            INNER JOIN `tnp`.`technical_fields`
+            ON (`certification`.`technical_field_id` = `technical_fields`.`technical_field_id`)
+            WHERE (`student_certification`.`member_id` = ?
+            AND `student_certification`.`certification_id` = ?)';
+            $bind[] = $member_id;
+            $bind[] = $certificationId;
+            $fetchall = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchAll();
+            $result = array();
+            foreach ($fetchall as $row) {
+                foreach ($row as $columnName => $columnValue) {
+                    $result[$columnName] = $columnValue;
+                }
             }
+            return $result;
         }
-        return $result;
     }
     /**
      * 
@@ -81,7 +89,7 @@ WHERE (`student_certification`.`u_regn_no` = ?)';
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
-            ->info('NAME')), 'u_regn_no');
+            ->info('NAME')), 'member_id');
         $searchPreReq = self::searchPreRequisite($certification);
         if ($searchPreReq == true) {
             self::fetchTechFieldId($certification);
@@ -120,12 +128,39 @@ WHERE (`student_certification`.`u_regn_no` = ?)';
      * 
      * @param Tnp_Model_Profile_Components_Certification $certification
      */
+    public function fetchMemberCertificationIds (
+    Tnp_Model_Profile_Components_Certification $certification)
+    {
+        $member_id = $certification->getMember_id();
+        if (! isset($member_id)) {
+            throw new Exception('Please set memberId first');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('student_certification', 'certification_id')
+                ->where('member_id = ?', $member_id);
+            $fetchall = $select->query()->fetchAll();
+            $certificationIds = array();
+            foreach ($fetchall as $row) {
+                foreach ($row as $columnName => $columnValue) {
+                    if ($columnName == 'certification_id') {
+                        $certificationIds[] = $columnValue;
+                    }
+                }
+            }
+            return $certificationIds;
+        }
+    }
+    /**
+     * 
+     * @param Tnp_Model_Profile_Components_Certification $certification
+     */
     public function fetchTechnical_field_id (
     Tnp_Model_Profile_Components_Certification $certification)
     {
         $technicalFieldName = $certification->getTechnical_field_name();
         $technicalSector = $certification->getTechnical_sector();
-        if (! isset($technicalFieldName) and ! isset($technicalSector)) {
+        if (! isset($technicalFieldName) or ! isset($technicalSector)) {
             $logger = Zend_Registry::get('logger');
             $logger->debug(
             'Insufficient Params.. Techsector, TechFieldName both are required');
@@ -148,9 +183,8 @@ WHERE (`student_certification`.`u_regn_no` = ?)';
     {
         $certificationName = $certification->getCertification_name();
         $technicalFieldId = $certification->getTechnical_field_id();
-        if (! isset($certificationName) and ! isset($technicalFieldId)) {
-            $logger = Zend_Registry::get('logger');
-            $logger->debug(
+        if (! isset($certificationName) or ! isset($technicalFieldId)) {
+            throw new Exception(
             'Insufficient Params.. certificationName, TechFieldId both are required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
@@ -160,6 +194,59 @@ WHERE (`student_certification`.`u_regn_no` = ?)';
                 ->where('technical_field_id = ?', $technicalFieldId);
             $certId = $select->query()->fetchColumn();
             $certification->setCertification_id($certId);
+        }
+    }
+    /**
+     * 
+     * @param Tnp_Model_Profile_Components_Certification $certification
+     */
+    public function fetchCertificationDetails (
+    Tnp_Model_Profile_Components_Certification $certification)
+    {
+        $certificationId = $certification->getCertification_id();
+        if (! isset($certificationId)) {
+            throw new Exception('Insufficient Params.. certificationId not set');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $requiredFields = array('certification_name', 'technical_field_id');
+            $select = $adapter->select()
+                ->from('certification', $requiredFields)
+                ->where('certification_id = ?', $certificationId);
+            $fetchall = $select->query()->fetchAll();
+            $result = array();
+            foreach ($fetchall as $row) {
+                foreach ($row as $columnName => $columnValue) {
+                    $result[$columnName] = $columnValue;
+                }
+            }
+            return $result;
+        }
+    }
+    /**
+     * 
+     * @param Tnp_Model_Profile_Components_Certification $certification
+     */
+    public function fetchTechnicalFieldDetails (
+    Tnp_Model_Profile_Components_Certification $certification)
+    {
+        $technical_field_id = $certification->getTechnical_field_id();
+        if (! isset($technical_field_id)) {
+            throw new Exception(
+            'Insufficient Params.. technical_field_id not set');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $requiredFields = array('technical_field_name', 'technical_sector');
+            $select = $adapter->select()
+                ->from('technical_fields', $requiredFields)
+                ->where('technical_field_id = ?', $technical_field_id);
+            $fetchall = $select->query()->fetchAll();
+            $result = array();
+            foreach ($fetchall as $row) {
+                foreach ($row as $columnName => $columnValue) {
+                    $result[$columnName] = $columnValue;
+                }
+            }
+            return $result;
         }
     }
 }

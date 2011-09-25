@@ -48,18 +48,45 @@ class Tnp_Model_Mapper_Profile_Components_Experience
      * 
      * @param Tnp_Model_Profile_Components_Experience $experience
      */
-    public function fetchExperienceDetails (
+    public function fetchMemberExperienceIds (
     Tnp_Model_Profile_Components_Experience $experience)
     {
-        $u_regn_no = $experience->getU_regn_no();
-        $cols = array(student_experience_id, u_regn_no, industry_id, 
+        $member_id = $experience->getMember_id();
+        if (! isset($member_id)) {
+            throw new Exception('Please set memberId first');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('student_experience', 'student_experience_id')
+                ->where('member_id = ?', $member_id);
+            $fetchall = $select->query()->fetchAll();
+            $experienceIds = array();
+            foreach ($fetchall as $row) {
+                foreach ($row as $columnName => $columnValue) {
+                    if ($columnName == 'student_experience_id') {
+                        $experienceIds[] = $columnValue;
+                    }
+                }
+            }
+            return $experienceIds;
+        }
+    }
+    /**
+     * 
+     * @param Tnp_Model_Profile_Components_Experience $experience
+     */
+    public function fetchMemberExperienceDetails (
+    Tnp_Model_Profile_Components_Experience $experience)
+    {
+        $member_id = $experience->getMember_id();
+        $cols = array(student_experience_id, member_id, industry_id, 
         functional_area_id, role_id, experience_months, experience_year, 
         organisation, start_date, end_date, is_parttime, description);
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
             ->from($this->getDbTable()
             ->info('NAME'), $cols)
-            ->where('u_regn_no = ?', $u_regn_no);
+            ->where('member_id = ?', $member_id);
         $fetchall = $adapter->fetchAll($select);
         $result = array();
         foreach ($fetchall as $row) {
@@ -79,7 +106,7 @@ class Tnp_Model_Mapper_Profile_Components_Experience
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
-            ->info('NAME')), 'u_regn_no');
+            ->info('NAME')), 'member_id');
         $industryName = $searchParams->getIndustry_name();
         $industryId = $searchParams->getIndustry_id();
         $functionalAreaName = $searchParams->getFunctional_area_name();
@@ -110,8 +137,7 @@ class Tnp_Model_Mapper_Profile_Components_Experience
     {
         $industryName = $experience->getIndustry_name();
         if (! isset($industryName)) {
-            $logger = Zend_Registry::get('logger');
-            $logger->debug('Insufficient Params.. industryName is required');
+            throw new Exception('Insufficient Params.. industryName is required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
             $select = $adapter->select()
@@ -130,8 +156,7 @@ class Tnp_Model_Mapper_Profile_Components_Experience
     {
         $industryId = $experience->getIndustry_id();
         if (! isset($industryId)) {
-            $logger = Zend_Registry::get('logger');
-            $logger->debug('Insufficient Params.. industryId is required');
+            throw new Exception('Insufficient Params.. industryId is required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
             $select = $adapter->select()
@@ -150,8 +175,7 @@ class Tnp_Model_Mapper_Profile_Components_Experience
     {
         $functionalAreaName = $experience->getFunctional_area_name();
         if (! isset($functionalAreaName)) {
-            $logger = Zend_Registry::get('logger');
-            $logger->debug(
+            throw new Exception(
             'Insufficient Params.. functionalAreaName is required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
@@ -171,8 +195,8 @@ class Tnp_Model_Mapper_Profile_Components_Experience
     {
         $functionalAreaId = $experience->getFunctional_area_id();
         if (! isset($functionalAreaId)) {
-            $logger = Zend_Registry::get('logger');
-            $logger->debug('Insufficient Params.. functionalAreaId is required');
+            throw new Exception(
+            'Insufficient Params.. functionalAreaId is required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
             $select = $adapter->select()
@@ -206,8 +230,7 @@ class Tnp_Model_Mapper_Profile_Components_Experience
     {
         $roleId = $experience->getRole_id();
         if (! isset($roleId)) {
-            $logger = Zend_Registry::get('logger');
-            $logger->debug('Insufficient Params.. roleId is required');
+            throw new Exception('Insufficient Params.. roleId is required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
             $select = $adapter->select()
