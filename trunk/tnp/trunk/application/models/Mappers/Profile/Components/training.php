@@ -43,7 +43,7 @@ class Tnp_Model_Mapper_Profile_Components_Training
      * 
      * @param Tnp_Model_Profile_Components_Training $training
      */
-    public function fetchTrainingDetails (
+    public function fetchMemberTrainingDetails (
     Tnp_Model_Profile_Components_Training $training)
     {
         $sql = 'SELECT
@@ -61,8 +61,8 @@ FROM
         ON (`student_training`.`training_id` = `training`.`training_id`)
     INNER JOIN `tnp`.`technical_fields` 
         ON (`training`.`technical_field_id` = `technical_fields`.`technical_field_id`)
-WHERE (`student_training`.`u_regn_no` = ?)';
-        $bind[] = $training->getU_regn_no();
+WHERE (`student_training`.`member_id` = ?)';
+        $bind[] = $training->getMember_id();
         $fetchall = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchAll();
         $result = array();
         foreach ($fetchall as $row) {
@@ -74,6 +74,33 @@ WHERE (`student_training`.`u_regn_no` = ?)';
     }
     /**
      * 
+     * @param Tnp_Model_Profile_Components_Training $training
+     */
+    public function fetchMemberTrainingIds (
+    Tnp_Model_Profile_Components_Training $training)
+    {
+        $member_id = $training->getMember_id();
+        if (! isset($member_id)) {
+            throw new Exception('Insufficient Params.. $member_id is not set');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('student_training', 'training_id')
+                ->where('member_id = ?', $member_id);
+            $fetchall = $select->query()->fetchAll();
+            $training_ids = array();
+            foreach ($fetchall as $row) {
+                foreach ($row as $columnName => $columnValue) {
+                    if ($columnName == 'training_id') {
+                        $training_ids[] = $columnValue;
+                    }
+                }
+            }
+            return $training_ids;
+        }
+    }
+    /**
+     * 
      * @param Tnp_Model_Profile_Components_Training $searchParams
      */
     public function fetchMemberId (
@@ -82,7 +109,7 @@ WHERE (`student_training`.`u_regn_no` = ?)';
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
-            ->info('NAME')), 'u_regn_no');
+            ->info('NAME')), 'member_id');
         //
         $searchPreReq = self::searchPreRequisite($searchParams);
         //
@@ -117,8 +144,7 @@ WHERE (`student_training`.`u_regn_no` = ?)';
         $trainingTech = $training->getTraining_technology();
         if (! isset($techFieldName) or ! isset($techSector) or
          ! isset($trainingTech)) {
-            $logger = Zend_Registry::get('logger');
-            $logger->debug(
+            throw new Exception(
             'Insufficient Params.. Techsector, TechFieldName, TrainingTech name are all required');
             return false;
         } else {
@@ -135,8 +161,7 @@ WHERE (`student_training`.`u_regn_no` = ?)';
         $technicalFieldName = $training->getTechnical_field_name();
         $technicalSector = $training->getTechnical_sector();
         if (! isset($technicalFieldName) and ! isset($technicalSector)) {
-            $logger = Zend_Registry::get('logger');
-            $logger->debug(
+            throw new Exception(
             'Insufficient Params.. Techsector, TechFieldName both are required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
@@ -152,14 +177,40 @@ WHERE (`student_training`.`u_regn_no` = ?)';
      * 
      * @param Tnp_Model_Profile_Components_Training $training
      */
+    public function fetchTechnicalFieldDetails (
+    Tnp_Model_Profile_Components_Training $training)
+    {
+        $technical_field_id = $training->getTechnical_field_id();
+        if (! isset($technical_field_id)) {
+            throw new Exception(
+            'Insufficient Params.. technical_field_id not set');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $requiredFields = array('technical_field_name', 'technical_sector');
+            $select = $adapter->select()
+                ->from('technical_fields', $requiredFields)
+                ->where('technical_field_id = ?', $technical_field_id);
+            $fetchall = $select->query()->fetchAll();
+            $result = array();
+            foreach ($fetchall as $row) {
+                foreach ($row as $columnName => $columnValue) {
+                    $result[$columnName] = $columnValue;
+                }
+            }
+            return $result;
+        }
+    }
+    /**
+     * 
+     * @param Tnp_Model_Profile_Components_Training $training
+     */
     public function fetchTraining_id (
     Tnp_Model_Profile_Components_Training $training)
     {
         $trainingTechnology = $training->getTraining_technology();
         $technicalFieldId = $training->getTechnical_field_id();
         if (! isset($trainingTechnology) and ! isset($technicalFieldId)) {
-            $logger = Zend_Registry::get('logger');
-            $logger->debug(
+            throw new Exception(
             'Insufficient Params.. trainingTechnology, technicalFieldId both are required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
@@ -169,6 +220,32 @@ WHERE (`student_training`.`u_regn_no` = ?)';
                 ->where('technical_field_id = ?', $technicalFieldId);
             $trainingId = $select->query()->fetchColumn();
             $training->setTraining_id($trainingId);
+        }
+    }
+    /**
+     * 
+     * @param Tnp_Model_Profile_Components_Training $training
+     */
+    public function fetchTrainingDetails (
+    Tnp_Model_Profile_Components_Training $training)
+    {
+        $trainingId = $training->getTraining_id();
+        if (! isset($trainingId)) {
+            throw new Exception('Insufficient Params.. trainingId not set');
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $requiredFields = array('training_technology', 'technical_field_id');
+            $select = $adapter->select()
+                ->from('training', $requiredFields)
+                ->where('training_id = ?', $trainingId);
+            $fetchall = $select->query()->fetchAll();
+            $result = array();
+            foreach ($fetchall as $row) {
+                foreach ($row as $columnName => $columnValue) {
+                    $result[$columnName] = $columnValue;
+                }
+            }
+            return $result;
         }
     }
 }
