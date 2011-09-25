@@ -97,12 +97,13 @@ class Tnp_Model_Mapper_Profile_Components_Certification
             $select->where('certification_id = ?', 
             $certification->getCertification_id());
         }
-        if (isset($certification->getStart_date())) {
-            $select->where('start_date = ?', $certification->getStart_date());
+        $start_date = $certification->getStart_date();
+        if (isset($start_date)) {
+            $select->where('start_date = ?', $start_date);
         }
-        if (isset($certification->getComplete_date())) {
-            $select->where('complete_date = ?', 
-            $certification->getComplete_date());
+        $complete_date = $certification->getComplete_date();
+        if (isset($complete_date)) {
+            $select->where('complete_date = ?', $complete_date);
         }
         return $select->query()->fetchColumn();
     }
