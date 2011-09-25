@@ -50,8 +50,7 @@ class Acad_Model_Mapper_Exam_Competitive
         $member_id = $competitiveExam->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
-            ->from($this->getDbTable()
-            ->info('NAME'))
+            ->from('competitive_exam')
             ->joinInner('competitive_exam', 
         'student_competitive_exam.competitive_exam_id = competitive_exam.competitive_exam_id', 
         array('competitive_exam_name', 'competitive_exam_abbr', 
@@ -75,9 +74,7 @@ class Acad_Model_Mapper_Exam_Competitive
     public function fetchMemberId (Acad_Model_Exam_Competitive $searchParams)
     {
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()->from(
-        ($this->getDbTable()
-            ->info('NAME')), 'member_id');
+        $select = $adapter->select()->from('competitive_exam', 'member_id');
         $competitive_exam_name = $searchParams->getCompetitive_exam_name();
         $competitive_exam_abbr = $searchParams->getCompetitive_exam_abbr();
         if (isset($competitive_exam_name) or isset($competitive_exam_abbr)) {
