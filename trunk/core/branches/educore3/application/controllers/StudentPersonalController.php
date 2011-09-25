@@ -4,6 +4,8 @@ class StudentPersonalController extends Corez_Base_BaseController
     /*
      * @about Interface.
      */
+    protected $_member_id;
+    protected $_roll_no;
     public function indexAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
