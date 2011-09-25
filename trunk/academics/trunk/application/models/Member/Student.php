@@ -40,9 +40,13 @@ class Acad_Model_Member_Student extends Acad_Model_Member_Generic
             Zend_Db_Table::getDefaultAdapter()->beginTransaction();
             $periodModel = new Acad_Model_DbTable_PeriodAttendance2();
             $attendance_id = $periodModel->insert($periodArray);
-            $absentees = $studentattArray['absentee'];
-            unset($studentattArray['absentee']);
-            //$this->logger->debug($data);
+            $absentees = null;
+            if (isset($studentattArray['absentee'])) {
+                $absentees = $studentattArray['absentee'];
+                unset($studentattArray['absentee']);
+            } else {
+                Zend_Registry::get('logger')->debug('Nobody absent in this period.');
+            }
             if (count($absentees)) {
                 $status = 'ABSENT';
                 $sql = 'INSERT INTO `academics`.`student_attendance2`
