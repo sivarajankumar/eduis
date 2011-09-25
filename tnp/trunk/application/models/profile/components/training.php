@@ -10,7 +10,7 @@ class Tnp_Model_Profile_Components_Training
     protected $_start_date;
     protected $_completion_date;
     protected $_training_semester;
-    protected $_u_regn_no;
+    protected $_member_id;
     protected $_mapper;
     public function getTraining_id ()
     {
@@ -48,10 +48,6 @@ class Tnp_Model_Profile_Components_Training
     {
         return $this->_training_semester;
     }
-    public function getU_regn_no ()
-    {
-        return $this->_u_regn_no;
-    }
     public function setTraining_id ($_training_id)
     {
         $this->_training_id = $_training_id;
@@ -88,9 +84,13 @@ class Tnp_Model_Profile_Components_Training
     {
         $this->_training_semester = $_training_semester;
     }
-    public function setU_regn_no ($_u_regn_no)
+    public function getMember_id ()
     {
-        $this->_u_regn_no = $_u_regn_no;
+        return $this->_member_id;
+    }
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
     }
     /**
      * Set Mapper

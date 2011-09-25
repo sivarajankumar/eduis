@@ -2,7 +2,7 @@
 class Tnp_Model_Profile_Components_Experience
 {
     protected $_student_experience_id;
-    protected $_u_regn_no;
+    protected $_member_id;
     protected $_industry_id;
     protected $_industry_name;
     protected $_functional_area_id;
@@ -24,16 +24,20 @@ class Tnp_Model_Profile_Components_Experience
     {
         $this->_student_experience_id = $_student_experience_id;
     }
-    public function getU_regn_no ()
+    public function getMember_id ()
     {
-        return $this->_u_regn_no;
+        return $this->_member_id;
     }
-    public function setU_regn_no ($_u_regn_no)
+    public function setMember_id ($_member_id)
     {
-        $this->_u_regn_no = $_u_regn_no;
+        $this->_member_id = $_member_id;
     }
     public function getIndustry_id ()
     {
+        $industry_id = $this->_industry_id;
+        if (! isset($industry_id)) {
+            $this->findIndustry_id();
+        }
         return $this->_industry_id;
     }
     public function setIndustry_id ($_industry_id)
@@ -42,6 +46,10 @@ class Tnp_Model_Profile_Components_Experience
     }
     public function getIndustry_name ()
     {
+        $industry_name = $this->_industry_name;
+        if (! isset($industry_name)) {
+            $this->findIndustry_name();
+        }
         return $this->_industry_name;
     }
     public function setIndustry_name ($_industry_name)
@@ -50,6 +58,10 @@ class Tnp_Model_Profile_Components_Experience
     }
     public function getFunctional_area_id ()
     {
+        $functional_area_id = $this->_functional_area_id;
+        if (! isset($functional_area_id)) {
+            $this->findFunctional_area_id();
+        }
         return $this->_functional_area_id;
     }
     public function setFunctional_area_id ($_functional_area_id)
@@ -58,6 +70,10 @@ class Tnp_Model_Profile_Components_Experience
     }
     public function getFunctional_area_name ()
     {
+        $functional_area_name = $this->_functional_area_name;
+        if (! isset($functional_area_name)) {
+            $this->findFunctional_area_name();
+        }
         return $this->_functional_area_name;
     }
     public function setFunctional_area_name ($_functional_area_name)
@@ -66,6 +82,10 @@ class Tnp_Model_Profile_Components_Experience
     }
     public function getRole_id ()
     {
+        $role_id = $this->_role_id;
+        if (! isset($role_id)) {
+            $this->findRole_id();
+        }
         return $this->_role_id;
     }
     public function setRole_id ($_role_id)
@@ -74,6 +94,10 @@ class Tnp_Model_Profile_Components_Experience
     }
     public function getRole_name ()
     {
+        $role_name = $this->_role_name;
+        if (! isset($role_name)) {
+            $this->findRole_name();
+        }
         return $this->_role_name;
     }
     public function setRole_name ($_role_name)
@@ -229,9 +253,37 @@ class Tnp_Model_Profile_Components_Experience
     {
         return $this->getMapper()->fetchMemberId($this);
     }
-    protected function getExperienceDetails ()
+    public function getMemberExperienceDetails ()
     {
-        $options = $this->getMapper()->fetchExperienceDetails($this);
+        $options = $this->getMapper()->fetchMemberExperienceDetails($this);
         $this->setOptions($options);
+    }
+    public function getMemberExperienceIds ()
+    {
+        return $this->getMapper()->fetchMemberExperienceIds($this);
+    }
+    protected function findIndustry_id ()
+    {
+        $this->getMapper()->fetchIndustry_id($this);
+    }
+    protected function findIndustry_name ()
+    {
+        $this->getMapper()->fetchIndustry_name($this);
+    }
+    protected function findFunctional_area_id ()
+    {
+        $this->getMapper()->fetchFunctional_area_id($this);
+    }
+    protected function findFunctional_area_name ()
+    {
+        $this->getMapper()->fetchFunctional_area_name($this);
+    }
+    protected function findRole_id ()
+    {
+        $this->getMapper()->fetchRole_id($this);
+    }
+    protected function findRole_name ()
+    {
+        $this->getMapper()->fetchRole_name($this);
     }
 }
