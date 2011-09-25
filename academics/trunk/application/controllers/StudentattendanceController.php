@@ -149,8 +149,15 @@ class StudentattendanceController extends Acadz_Base_BaseController
         $model = new Acad_Model_Member_Student();
         try {
             $insertId = $model->setAttendence($params);
-            echo 'Attendance successfully marked with period ID: ' . $insertId .
-             ".\n Kindly note down this Id in case of any mistake.";
+            if ($insertId) {
+                if (! isset($params['absentee'])) {
+                    echo ("Hey, Nice class!! All are present.\n");
+                }
+                echo 'Attendance marked successfully with period ID: ' .$insertId .
+                 ".\n Kindly note down this Id in case of any mistake.";
+            } else {
+                echo 'Attendance could not be submitted this time. Please try again.';
+            }
         } catch (Exception $e) {
             $this->_helper->logger->debug($e->getMessage());
             switch ($e->getCode()) {
@@ -163,13 +170,7 @@ class StudentattendanceController extends Acadz_Base_BaseController
                     'Sorry, unable to process the request', Zend_Log::ERR);
                     break;
             }
-        } /*
-        echo 'Following information recieved:<br/>';
-        foreach ($params as $colName => $value) {
-            
-            $value = is_array($value)?var_export($value,true):htmlentities(trim($value));
-            echo '<b>'.ucwords(str_ireplace('_', ' ', $colName)).'</b> : '.$value.'<br/>';
-        }*/
+        }
     }
     ////////////////
     /**

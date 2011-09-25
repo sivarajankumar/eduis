@@ -46,6 +46,17 @@ class Acad_Model_Member_FacultyMapper
         }
         return $this->_dbTable;
     }
+    
+    /**
+     * 
+     * Enter description here ...
+     * @param Acad_Model_Member_Faculty $faculty
+     * @param date $periodDate
+     * @param string $department
+     * @param string $programme
+     * @param int $semester
+     * @param string $limit
+     */
     public function listMarkedAttendance (Acad_Model_Member_Faculty $faculty, 
                                         $periodDate = NULL, 
                                         $department = NULL, 
