@@ -29,7 +29,7 @@ class Acad_Model_Mapper_Exam_Aissce
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Acad_Model_DbTable_Address');
+            $this->setDbTable('Acad_Model_DbTable_Aissce');
         }
         return $this->_dbTable;
     }
