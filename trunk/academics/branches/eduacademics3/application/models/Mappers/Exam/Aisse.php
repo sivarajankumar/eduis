@@ -49,8 +49,7 @@ class Acad_Model_Mapper_Exam_Aisse
         $member_id = $aisse->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
-            ->from($this->getDbTable()
-            ->info('NAME'))
+            ->from('matric_info')
             ->where('member_id = ?', $member_id);
         $fetchall = $adapter->fetchAll($select);
         $result = array();
@@ -69,9 +68,7 @@ class Acad_Model_Mapper_Exam_Aisse
     public function fetchMemberId (Acad_Model_Exam_Aisse $searchParams)
     {
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()->from(
-        ($this->getDbTable()
-            ->info('NAME')), 'member_id');
+        $select = $adapter->select()->from('matric_info', 'member_id');
         $matric_board = $searchParams->getMatric_board();
         $matric_roll_no = $searchParams->getMatric_roll_no();
         $matric_marks_obtained = $searchParams->getMatric_marks_obtained();

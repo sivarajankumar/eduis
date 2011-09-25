@@ -49,8 +49,7 @@ class Acad_Model_Mapper_Exam_Diploma
         $member_id = $diploma->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
-            ->from($this->getDbTable()
-            ->info('NAME'))
+            ->from('diploma')
             ->where('member_id = ?', $member_id);
         $fetchall = $adapter->fetchAll($select);
         $result = array();
@@ -69,9 +68,7 @@ class Acad_Model_Mapper_Exam_Diploma
     public function fetchMemberId (Acad_Model_Exam_Diploma $searchParams)
     {
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()->from(
-        ($this->getDbTable()
-            ->info('NAME')), 'member_id');
+        $select = $adapter->select()->from('diploma', 'member_id');
         $board_roll = $searchParams->getBoard_roll();
         $marks_obtained = $searchParams->getMarks_obtained();
         $percentage = $searchParams->getPercentage();

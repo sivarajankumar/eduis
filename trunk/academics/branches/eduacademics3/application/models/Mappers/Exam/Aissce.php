@@ -47,10 +47,9 @@ class Acad_Model_Mapper_Exam_Aissce
     public function fetchMemberExamDetails (Acad_Model_Exam_Aissce $aissce)
     {
         $member_id = $aissce->getMember_id();
-    	$adapter = $this->getDbTable()->getDefaultAdapter();
+        $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
-            ->from($this->getDbTable()
-            ->info('NAME'))
+            ->from('twelfth')
             ->where('member_id = ?', $member_id);
         $fetchall = $adapter->fetchAll($select);
         $result = array();
@@ -69,28 +68,25 @@ class Acad_Model_Mapper_Exam_Aissce
     public function fetchMemberId (Acad_Model_Exam_Aissce $searchParams)
     {
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()->from(
-        ($this->getDbTable()
-            ->info('NAME')), 'member_id');
-            $board_roll = $searchParams->getBoard_roll();
-            $marks_obtained = $searchParams->getMarks_obtained();
-            $total_marks = $searchParams->getTotal_marks();
-            $percentage = $searchParams->getPercentage();
-            $pcm_percent = $searchParams->getPcm_percent();
-            $passing_year = $searchParams->getPassing_year();
-            $board = $searchParams->getBoard();
-            $school_rank = $searchParams->getSchool_rank();
-            $remarks = $searchParams->getRemarks();
-            $institution = $searchParams->getInstitution();
-            $institution_city = $searchParams->getInstitution_city();
-            $institution_state = $searchParams->getInstitution_state();
-            $migration_date = $searchParams->getMigration_date();
+        $select = $adapter->select()->from('twelfth', 'member_id');
+        $board_roll = $searchParams->getBoard_roll();
+        $marks_obtained = $searchParams->getMarks_obtained();
+        $total_marks = $searchParams->getTotal_marks();
+        $percentage = $searchParams->getPercentage();
+        $pcm_percent = $searchParams->getPcm_percent();
+        $passing_year = $searchParams->getPassing_year();
+        $board = $searchParams->getBoard();
+        $school_rank = $searchParams->getSchool_rank();
+        $remarks = $searchParams->getRemarks();
+        $institution = $searchParams->getInstitution();
+        $institution_city = $searchParams->getInstitution_city();
+        $institution_state = $searchParams->getInstitution_state();
+        $migration_date = $searchParams->getMigration_date();
         if (isset($board_roll)) {
             $select->where('board_roll = ?', $board_roll);
         }
         if (isset($marks_obtained)) {
-            $select->where('marks_obtained = ?', 
-            $marks_obtained);
+            $select->where('marks_obtained = ?', $marks_obtained);
         }
         if (isset($total_marks)) {
             $select->where('total_marks = ?', $total_marks);
@@ -117,16 +113,13 @@ class Acad_Model_Mapper_Exam_Aissce
             $select->where('institution = ?', $institution);
         }
         if (isset($institution_city)) {
-            $select->where('institution_city = ?', 
-            $institution_city);
+            $select->where('institution_city = ?', $institution_city);
         }
         if (isset($institution_state)) {
-            $select->where('institution_state = ?', 
-            $institution_state);
+            $select->where('institution_state = ?', $institution_state);
         }
         if (isset($migration_date)) {
-            $select->where('migration_date = ?', 
-            $migration_date);
+            $select->where('migration_date = ?', $migration_date);
         }
         return $select->query()->fetchColumn();
     }
