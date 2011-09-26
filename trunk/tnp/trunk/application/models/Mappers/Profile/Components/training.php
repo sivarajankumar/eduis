@@ -46,31 +46,30 @@ class Tnp_Model_Mapper_Profile_Components_Training
     public function fetchMemberTrainingDetails (
     Tnp_Model_Profile_Components_Training $training)
     {
-        $sql = 'SELECT
-    `training`.`training_id`
-    , `training`.`training_technology`
-    , `technical_fields`.`technical_field_name`
-    , `technical_fields`.`technical_sector`
-    , `student_training`.`training_institute`
-    , `student_training`.`start_date`
-    , `student_training`.`completion_date`
-    , `student_training`.`training_semester`
-FROM
-    `tnp`.`student_training`
-    INNER JOIN `tnp`.`training` 
-        ON (`student_training`.`training_id` = `training`.`training_id`)
-    INNER JOIN `tnp`.`technical_fields` 
-        ON (`training`.`technical_field_id` = `technical_fields`.`technical_field_id`)
-WHERE (`student_training`.`member_id` = ?)';
-        $bind[] = $training->getMember_id();
-        $fetchall = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchAll();
-        $result = array();
-        foreach ($fetchall as $row) {
-            foreach ($row as $columnName => $columnValue) {
-                $result[$columnName] = $columnValue;
+        $member_id = $training->getMember_id();
+        $training_id = $training->getTraining_id();
+        if (! isset($member_id) or ! isset($training_id)) {
+            throw new Exception(
+            'Either memberId or trainingId has not been provided..Please provide both  ', 
+            Zend_Log::ERR);
+        } else {
+            $required_fields = array('training_institute', 'start_date', 
+            'completion_date', 'training_semester');
+            $adapter = $this->getDbTable()->getAdapter();
+            $select = $adapter->select()
+                ->from($this->getDbTable()
+                ->info('name'), $required_fields)
+                ->where('member_id', $member_id)
+                ->where('training_id = ?', $training_id);
+            $fetchall = $select->query()->fetchAll();
+            $result = array();
+            foreach ($fetchall as $row) {
+                foreach ($row as $columnName => $columnValue) {
+                    $result[$columnName] = $columnValue;
+                }
             }
+            return $result;
         }
-        return $result;
     }
     /**
      * 
@@ -85,7 +84,8 @@ WHERE (`student_training`.`member_id` = ?)';
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
             $select = $adapter->select()
-                ->from('student_training', 'training_id')
+                ->from($this->getDbTable()
+                ->info('name'), 'training_id')
                 ->where('member_id = ?', $member_id);
             $fetchall = $select->query()->fetchAll();
             $training_ids = array();
@@ -109,7 +109,7 @@ WHERE (`student_training`.`member_id` = ?)';
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
-            ->info('NAME')), 'member_id');
+            ->info('name')), 'member_id');
         //
         $searchPreReq = self::searchPreRequisite($searchParams);
         //

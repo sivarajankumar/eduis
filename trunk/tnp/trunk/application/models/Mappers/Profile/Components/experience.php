@@ -57,7 +57,8 @@ class Tnp_Model_Mapper_Profile_Components_Experience
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
             $select = $adapter->select()
-                ->from('student_experience', 'student_experience_id')
+                ->from($this->getDbTable()
+                ->info('name'), 'student_experience_id')
                 ->where('member_id = ?', $member_id);
             $fetchall = $select->query()->fetchAll();
             $experienceIds = array();
@@ -85,7 +86,7 @@ class Tnp_Model_Mapper_Profile_Components_Experience
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
             ->from($this->getDbTable()
-            ->info('NAME'), $cols)
+            ->info('name'), $cols)
             ->where('member_id = ?', $member_id);
         $fetchall = $adapter->fetchAll($select);
         $result = array();
@@ -106,7 +107,7 @@ class Tnp_Model_Mapper_Profile_Components_Experience
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
-            ->info('NAME')), 'member_id');
+            ->info('name')), 'member_id');
         $industryName = $searchParams->getIndustry_name();
         $industryId = $searchParams->getIndustry_id();
         $functionalAreaName = $searchParams->getFunctional_area_name();
@@ -196,7 +197,7 @@ class Tnp_Model_Mapper_Profile_Components_Experience
         $functionalAreaId = $experience->getFunctional_area_id();
         if (! isset($functionalAreaId)) {
             throw new Exception(
-            'Insufficient Params.. functionalAreaId is required');
+            'Insufficient Params.. functionalAreaId is required', Zend_Log::ERR);
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
             $select = $adapter->select()

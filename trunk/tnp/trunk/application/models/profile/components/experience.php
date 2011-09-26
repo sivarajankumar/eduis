@@ -258,30 +258,51 @@ class Tnp_Model_Profile_Components_Experience
         $options = $this->getMapper()->fetchMemberExperienceDetails($this);
         $this->setOptions($options);
     }
+    /**
+     * Enter description here ...
+     */
     public function getMemberExperienceIds ()
     {
         return $this->getMapper()->fetchMemberExperienceIds($this);
     }
+    /**
+     * Enter description here ...
+     */
     protected function findIndustry_id ()
     {
         $this->getMapper()->fetchIndustry_id($this);
     }
+    /**
+     * Enter description here ...
+     */
     protected function findIndustry_name ()
     {
         $this->getMapper()->fetchIndustry_name($this);
     }
+    /**
+     * Enter description here ...
+     */
     protected function findFunctional_area_id ()
     {
         $this->getMapper()->fetchFunctional_area_id($this);
     }
+    /**
+     * Enter description here ...
+     */
     protected function findFunctional_area_name ()
     {
         $this->getMapper()->fetchFunctional_area_name($this);
     }
+    /**
+     * Enter description here ...
+     */
     protected function findRole_id ()
     {
         $this->getMapper()->fetchRole_id($this);
     }
+    /**
+     * Enter description here ...
+     */
     protected function findRole_name ()
     {
         $this->getMapper()->fetchRole_name($this);
