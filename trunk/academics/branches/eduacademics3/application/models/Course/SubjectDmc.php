@@ -325,9 +325,9 @@ class Acad_Model_Course_SubjectDmc
      * gets the marks of student in a subject..
      * by deafult includes all appear types
      */
-    public function getMarksHistory ()
+    public function getSubjectMarksHistory ()
     {
-        return $this->getMapper()->fetchMarksHistory($this);
+        return $this->getMapper()->fetchSubjectMarksHistory($this);
     }
     /**
      * gets the details of a SubjectDMC
@@ -342,8 +342,8 @@ class Acad_Model_Course_SubjectDmc
     public function getPassedSemesters ()
     {
         $semester_dmc_records = $this->getSem_dmc_records();
-        if(sizeof($semester_dmc_records) == 0){
-        $this->getMapper()->fetchPassedSemestersInfo($this);
+        if (sizeof($semester_dmc_records) == 0) {
+            $this->getMapper()->fetchPassedSemestersInfo($this);
         }
         $sem_dmc_records = $this->getSem_dmc_records();
         Zend_Registry::get('logger')->debug($sem_dmc_records);
