@@ -6,7 +6,21 @@ class StudentController extends Zend_Controller_Action
     {
         /* Initialize action controller here */
     }
-    public function indexAction ()
+    /**
+	 * @return the $_member_id
+	 */
+	public function getMember_id() {
+		return $this->_member_id;
+	}
+
+	/**
+	 * @param field_type $_member_id
+	 */
+	public function setMember_id($_member_id) {
+		$this->_member_id = $_member_id;
+	}
+
+	public function indexAction ()
     {
         // action body
     }
@@ -22,35 +36,31 @@ class StudentController extends Zend_Controller_Action
         $response = array();
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        /*$authInfo = Zend_Auth::getInstance()->getStorage()->read();
-        $member_id = $authInfo['member_id']; */
-        /* 
-       if (isset($member_id) 
+        /*
+         * $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+        $auth_member_id = $authInfo['member_id'];
+        if (isset($auth_member_id) )
         {
-           
-            $degreemodel->setMember_id($member_id);
-
-            
+            $this->setMember_id($member_id);
         }
         elseif ($this->getRequest()->getParam('roll_no'))
         {
-            $degreemodel->setStudent_roll_no($this->_roll_no);
-            $degreemodel->getMember_id();
-            
+            $model->setStudent_roll_no($this->_roll_no);
+            $model->getMember_id();
         }
         else 
         {
            throw new Exception('..................ABE ROLL NUMBER DAAL...........',Zend_Log::ERR);
-        }
-        */
-        /*
-   * DEGREE DETAILS
-   */
+        }*/
+        
+/*
+ * DEGREE DETAILS
+*/
         $degreemodel = new Acad_Model_Course_SubjectDmc();
-        $member_id = $this->_member_id = '1';
+        $this->setMember_id('1');
+        $member_id = $this->getMember_id();
         $degreemodel->setMember_id($member_id);
         $PassedSemesters = $degreemodel->getPassedSemesters();
-        $this->_helper->logger($PassedSemesters);
        
         $result = array();
         foreach ($PassedSemesters as $sem) 
@@ -68,7 +78,7 @@ class StudentController extends Zend_Controller_Action
             'scaled_marks' => $scaled_marks, 'percentage' => $percentage);
         }
         $response['degree'] = $result;
-        /*
+/*
  * TWELFTH DETAILS
  */
         $twelfthmodel = new Acad_Model_Exam_Aissce();
@@ -87,7 +97,7 @@ class StudentController extends Zend_Controller_Action
         'marks_obtained' => $marks_obtained, 'total_marks' => $total_marks, 
         'percentage' => $percentage, 'pcm_percentage' => $pcm_percentage);
         $response['twelfth'] = $twelfthresult;
-        /*
+ /*
  * TENTH DETAILS
  */
         $tenthmodel = new Acad_Model_Exam_Aisse();
@@ -106,8 +116,12 @@ class StudentController extends Zend_Controller_Action
         'total_marks' => $tenth_total_marks, 'percentage' => $tenth_percentage);
         $response['tenth'] = $tenthresult;
         
-        print_r($response);
-        /*$callback = $this->getRequest()->getParam('callback');
-echo $callback.'('.$this->_helper->json($response,false).')';*/
+/*
+ * RESPONSE
+ */
+        //print_r($response);
+        $this->_helper->logger($response);
+        $callback = $this->getRequest()->getParam('callback');
+        echo $callback.'('.$this->_helper->json($response,false).')';
     }
 }
