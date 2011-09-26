@@ -57,6 +57,8 @@ class StudentPersonalController extends Corez_Base_BaseController
        'dob'=>$model->getDob(),
        'email'=>$model->getE_mail());
        print_r($info);
+       $callback = $this->getRequest()->getParam('callback');
+       echo $callback.'('.$this->_helper->json($info,false).')';
        //$this->_helper->json($info);
     }
 }
