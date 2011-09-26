@@ -341,12 +341,10 @@ class Acad_Model_Course_SubjectDmc
     }
     public function getPassedSemesters ()
     {
+        $this->getMapper()->fetchPassedSemestersInfo($this);
         $sem_dmc_records = $this->getSem_dmc_records();
-        if (! isset($sem_dmc_records)) {
-            $this->getMapper()->fetchPassedSemestersInfo($this);
-        } else {
-            return array_keys($sem_dmc_records);
-        }
+        Zend_Registry::get('logger')->debug($sem_dmc_records);
+        return array_keys($sem_dmc_records);
     }
     public function getSemesterDmc ()
     {
