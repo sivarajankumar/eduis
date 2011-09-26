@@ -14,11 +14,18 @@ class StudentController extends Zend_Controller_Action
         // action body
     }
 
+    /*
+     * returns whole academic profile of student
+     */
     public function getprofileAction()
     
     {
+/*
+ * @return array
+ * returns final array of arrays 
+ */
 $response = array();
-         $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         /*$authInfo = Zend_Auth::getInstance()->getStorage()->read();
         $member_id = $authInfo['member_id']; */
@@ -41,6 +48,10 @@ $response = array();
            throw new Exception('..................ABE ROLL NUMBER DAAL...........',Zend_Log::ERR);
         }
         */
+        
+  /*
+   * DEGREE DETAILS
+   */      
        $degreemodel = new Acad_Model_Course_SubjectDmc();
        $member_id = $this->_member_id = '1'; 
        $degreemodel->setMember_id($member_id);
@@ -71,6 +82,10 @@ $response = array();
        }
        
 $response['degree'] = $result;
+
+ /*
+ * TWELFTH DETAILS
+ */ 
        
 $twelfthmodel = new Acad_Model_Exam_Aissce();
            $twelfthmodel->setMember_id($member_id);
@@ -98,6 +113,10 @@ $twelfthmodel = new Acad_Model_Exam_Aissce();
        
 $response['twelfth'] = $twelfthresult;
 
+ /*
+ * TENTH DETAILS
+ */ 
+
 $tenthmodel = new Acad_Model_Exam_Aisse();
            $tenthmodel->setMember_id($member_id);
            $tenthmodel->getMemberExamDetails();
@@ -122,13 +141,10 @@ $tenthmodel = new Acad_Model_Exam_Aisse();
        
 $response['tenth'] = $tenthresult;
 
-print_r($response);
-echo '<br>';
-print_r($response);
-///$this->_helper->json($response);
-echo '<br>';
+$callback = $this->getRequest()->getParam('callback');
+echo $callback.'('.$this->_helper->json($response,false).')';
        
        
-;}
+}
 
 }
