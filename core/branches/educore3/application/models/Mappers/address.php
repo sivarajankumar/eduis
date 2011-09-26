@@ -49,7 +49,7 @@ class Core_Model_Mapper_Address
     	$adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
             ->from($this->getDbTable()
-            ->info('NAME'))
+            ->info('name'))
             ->where('member_id = ?', $member_id);
         $fetchall = $adapter->fetchAll($select);
         $result = array();
@@ -69,7 +69,7 @@ class Core_Model_Mapper_Address
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
-            ->info('NAME')), 'member_id');
+            ->info('name')), 'member_id');
         if (isset($searchParams->getAdress_type())) {
             $select->where('adress_type = ?', $searchParams->getAdress_type());
         }
