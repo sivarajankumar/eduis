@@ -50,26 +50,16 @@ class Tnp_Model_Mapper_Profile_Components_Certification
         $certificationId = $certification->getCertification_id();
         if (! isset($member_id) or ! isset($certificationId)) {
             throw new Exception(
-            'Please provide member_id and certificationID both');
+            'Please provide both member_id and certificationID first. ');
         } else {
-            $sql = 'SELECT
-            `student_certification`.`start_date`
-            , `student_certification`.`complete_date`
-            , `student_certification`.`member_id`
-            , `certification`.`certification_name`
-            , `technical_fields`.`technical_field_name`
-            , `technical_fields`.`technical_sector`
-            FROM
-            `tnp`.`student_certification`
-            INNER JOIN `tnp`.`certification`
-            ON (`student_certification`.`certification_id` = `certification`.`certification_id`)
-            INNER JOIN `tnp`.`technical_fields`
-            ON (`certification`.`technical_field_id` = `technical_fields`.`technical_field_id`)
-            WHERE (`student_certification`.`member_id` = ?
-            AND `student_certification`.`certification_id` = ?)';
-            $bind[] = $member_id;
-            $bind[] = $certificationId;
-            $fetchall = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchAll();
+            $required_fields = array('start_date', 'complete_date');
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from($this->getDbTable()
+                ->info('name'), $required_fields)
+                ->where('member_id = ?', $member_id)
+                ->where('certification_id = ?', $certificationId);
+            $fetchall = $select->query()->fetchAll();
             $result = array();
             foreach ($fetchall as $row) {
                 foreach ($row as $columnName => $columnValue) {
@@ -86,39 +76,43 @@ class Tnp_Model_Mapper_Profile_Components_Certification
     public function fetchMemberId (
     Tnp_Model_Profile_Components_Certification $certification)
     {
+        $certificationIds = $certification->getCertification_id();
+        $searchPreReq = self::searchPreRequisite($certification);
+        $start_date = $certification->getStart_date();
+        $complete_date = $certification->getComplete_date();
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
-            ->info('NAME')), 'member_id');
-        $searchPreReq = self::searchPreRequisite($certification);
+            ->info('name')), 'member_id');
         if ($searchPreReq == true) {
-            self::fetchTechFieldId($certification);
-            self::fetchCertificationId($certification);
-            $select->where('certification_id = ?', 
-            $certification->getCertification_id());
+            self::fetchTechnical_field_id($certification);
+            self::fetchCertification_id($certification);
+            $select->where('certification_id = ?', $certificationIds);
         }
-        $start_date = $certification->getStart_date();
         if (isset($start_date)) {
             $select->where('start_date = ?', $start_date);
         }
-        $complete_date = $certification->getComplete_date();
         if (isset($complete_date)) {
             $select->where('complete_date = ?', $complete_date);
         }
         return $select->query()->fetchColumn();
     }
+    /**
+     * 
+     */
     protected function searchPreRequisite ($certification)
     {
-        //search cant be made by using only one of techSec or TechFieldName.. both have to be specified
-        //reason :we are looking for members with certification course ex: ccna(certName) in networking(field name) of CSE(techField)
-        // this function cannot be used to search students with certification in hardware field of CSE and ECE sector together
+        /**
+         * @todo search cant be made by using only one of techSec or TechFieldName.. both have to be specified
+         *reason :we are looking for members with certification course ex: ccna(certName) in networking(field name) of CSE(techField)
+         *this function cannot be used to search students with certification in hardware field of CSE and ECE sector together 
+         */
         $techFieldName = $certification->getTechnical_field_name();
         $techSector = $certification->getTechnical_sector();
         $certiName = $certification->getCertification_name();
         if (! isset($techFieldName) or ! isset($techSector) or
          ! isset($certiName)) {
-            $logger = Zend_Registry::get('logger');
-            $logger->debug(
+            throw new Exception(
             'Insufficient Params.. Techsector, TechFieldName, CetificationName are all required');
             return false;
         } else {
@@ -138,7 +132,8 @@ class Tnp_Model_Mapper_Profile_Components_Certification
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
             $select = $adapter->select()
-                ->from('student_certification', 'certification_id')
+                ->from($this->getDbTable()
+                ->info('name'), 'certification_id')
                 ->where('member_id = ?', $member_id);
             $fetchall = $select->query()->fetchAll();
             $certificationIds = array();
@@ -162,8 +157,7 @@ class Tnp_Model_Mapper_Profile_Components_Certification
         $technicalFieldName = $certification->getTechnical_field_name();
         $technicalSector = $certification->getTechnical_sector();
         if (! isset($technicalFieldName) or ! isset($technicalSector)) {
-            $logger = Zend_Registry::get('logger');
-            $logger->debug(
+            throw new Exception(
             'Insufficient Params.. Techsector, TechFieldName both are required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();

@@ -60,6 +60,10 @@ class Tnp_Model_Profile_Components_Certification
     }
     public function getTechnical_sector ()
     {
+        $technical_sector = $this->_technical_sector;
+        if (! isset($technical_sector)) {
+            $this->getTechnicalFieldDetails();
+        }
         return $this->_technical_sector;
     }
     public function setTechnical_sector ($_technical_sector)
