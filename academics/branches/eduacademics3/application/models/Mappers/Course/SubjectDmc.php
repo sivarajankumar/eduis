@@ -126,20 +126,18 @@ WHERE (`dmc_record`.`subject_code` = ?
      * @todo join
      * @param Acad_Model_Course_SubjectDmc $subjectDmc
      */
-    protected function fetchPassedSemestersInfo (
+    public function fetchPassedSemestersInfo (
     Acad_Model_Course_SubjectDmc $subjectDmc)
     {
         $member_id = $subjectDmc->getMember_id();
         $requiredFields = array('semester_id', 'dmc_id', 'marks_obtained', 
-        'dmc_total_marks');
+        'total_marks');
         $adapter = $this->getDbTable()->getAdapter();
-        $table_name = $this->getDbTable()
-            ->info('name');
         $select = $adapter->select()
-            ->from($table_name)
-            ->joinInner('dmc_record', 'dmc_info.dmc_id = dmc_record.dmc_id');
+            ->from('dmc_total_marks',$requiredFields)
+            ->joinInner('dmc_record', 'dmc_total_marks.dmc_id = dmc_record.dmc_id',null);
         $semester_dmc_records = array();
-        $semester_dmc_records = $select->query()->fetch(Zend_Db::FETCH_UNIQUE);
+        $semester_dmc_records = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         $subjectDmc->setSem_dmc_records($semester_dmc_records);
     }
     /**
