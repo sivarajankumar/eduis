@@ -129,7 +129,7 @@ WHERE (`student_personal`.`member_id` = ?)';
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
-            ->info('NAME')), 'member_id');
+            ->info('name')), 'member_id');
         $reg_no = $student->getReg_no();
         $cast_id = $student->getCast_id();
         $blood_group_id = $student->getBlood_group_id();

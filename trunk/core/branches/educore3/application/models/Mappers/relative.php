@@ -43,13 +43,14 @@ class Core_Model_Mapper_Relative
     {
         $member_id = $relative->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
+        $required_fields = array('member_id', 'relation_id', 'relation_name', 
+        'name', 'occupation', 'designation', 'office_add', 'contact', 
+        'annual_income', 'landline_no');
         $select = $adapter->select()
             ->from($this->getDbTable()
-            ->info('NAME'))
+            ->info('name'))
             ->joinInner('relations', 
-        'relatives.relation_id = relations.relation_id', 
-        array('member_id', 'relation_id', 'relation_name', 'name', 'occupation', 
-        'designation', 'office_add', 'contact', 'annual_income', 'landline_no'))
+        'relatives.relation_id = relations.relation_id', $required_fields)
             ->where('member_id = ?', $member_id);
         $fetchall = $adapter->fetchAll($select);
         $result = array();
@@ -69,7 +70,7 @@ class Core_Model_Mapper_Relative
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
-            ->info('NAME')), 'member_id');
+            ->info('name')), 'member_id');
         if (isset($searchParams->getRelation_id())) {
             $select->where('relation_id = ?', $searchParams->getRelation_id());
         }
