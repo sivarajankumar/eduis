@@ -71,41 +71,19 @@ class Acad_Model_Mapper_Course_SubjectDmc
         }
     }
     /**
-     * fetches Students's Detailed Marks Sheet of a Semester.
-     * 
-     * @param Acad_Model_Course_SubjectDmc $subjectDmc
-     */
-    public function fetchSemesterDmc (Acad_Model_Course_SubjectDmc $subjectDmc)
-    {
-        $semester_id = $subjectDmc->getSemster_id();
-        $dmc_id = $subjectDmc->getDmc_id();
-        if (! isset($semester_id) or ! isset($dmc_id)) {
-            throw new Exception(
-            'No semester_id and Dmc_id is set.Please provide semester_id and Dmc_id both');
-        } else {
-            $adapter = $this->getDbTable()->getDefaultAdapter();
-            $requiedFields = array('total_marks', 'scaled_marks', 
-            'marks_obtained');
-            $select = $adapter->select()
-                ->from('dmc_total_marks', $requiedFields)
-                ->where('dmc_id = ?', $dmc_id)
-                ->where('semester_id = ?', $semester_id);
-            $fetchall = $select->query()->fetchAll();
-            $result = array();
-            foreach ($fetchall as $row) {
-                foreach ($row as $columnName => $columnValue) {
-                    $result[$columnName] = $columnValue;
-                }
-            }
-            return $result;
-        }
-    }
-    /**
-     * 
+     * @todo  
+     *  
      * @param Acad_Model_Course_SubjectDmc $subjectDmc
      */
     public function fetchDetails (Acad_Model_Course_SubjectDmc $subjectDmc)
     {
+        /**
+         * call getmarks history and add following to query 
+         * where marks = (marks[0] or marks[1]
+         * and get all dmc ids corresponding to a appear type
+         * @var unknown_type
+         */
+
         $member_id = $subjectDmc->getMember_id();
         $subjCode = $subjectDmc->getSubject_code();
         $marks = $subjectDmc->getMarks();
@@ -145,37 +123,24 @@ WHERE (`dmc_record`.`subject_code` = ?
         }
     }
     /**
-     * 
+     * @todo join
      * @param Acad_Model_Course_SubjectDmc $subjectDmc
      */
-    public function fetchPassedSemestersDmcIds (
+    protected function fetchPassedSemestersInfo (
     Acad_Model_Course_SubjectDmc $subjectDmc)
     {
         $member_id = $subjectDmc->getMember_id();
-        $sql = 'SELECT
-    `dmc_total_marks`.`dmc_id`
-FROM
-    `academics`.`dmc_total_marks`
-    INNER JOIN `academics`.`dmc_record` 
-        ON (`dmc_total_marks`.`dmc_id` = `dmc_record`.`dmc_id`)
-WHERE (`dmc_record`.`member_id` = ?)';
-        $bind[] = $member_id;
-        $fetchall = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetchAll();
-        $passedSemestersDmcIds = array();
-        $passedSemesters = array();
-        foreach ($fetchall as $row) {
-            foreach ($row as $columnName => $columnValue) {
-                if ($columnName == 'dmc_id') {
-                    $passedSemestersDmcIds[] = $columnValue;
-                }
-                if ($columnName == 'semester_id') {
-                    $passedSemesters[] = $columnValue;
-                }
-            }
-        }
-        $result = array('passedSemestersDmcIds'=>$passedSemestersDmcIds,
-         'passedSemesters'=>$passedSemesters);
-        return $result;
+        $requiredFields = array('semester_id', 'dmc_id', 'marks_obtained', 
+        'dmc_total_marks');
+        $adapter = $this->getDbTable()->getAdapter();
+        $table_name = $this->getDbTable()
+            ->info('name');
+        $select = $adapter->select()
+            ->from($table_name)
+            ->joinInner('dmc_record', 'dmc_info.dmc_id = dmc_record.dmc_id');
+        $semester_dmc_records = array();
+        $semester_dmc_records = $select->query()->fetch(Zend_Db::FETCH_UNIQUE);
+        $subjectDmc->setSem_dmc_records($semester_dmc_records);
     }
     /**
      * @todo incomplete
