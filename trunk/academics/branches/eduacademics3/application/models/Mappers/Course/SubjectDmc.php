@@ -91,18 +91,16 @@ class Acad_Model_Mapper_Course_SubjectDmc
             throw new Exception(
             'Insufficient data provided..  memberId, subCode and subjMarks are ALL required');
         } else {
-            $sql = 'SELECT
-    `dmc_record`.`subject_code`
-    , `dmc_record`.`marks`
-    , `dmc_record`.`appear_type`
-    , `dmc_info`.`custody_date`
-    , `dmc_info`.`is_granted`
-    , `dmc_info`.`grant_date`
-    , `dmc_info`.`recieving_date`
-    , `dmc_info`.`is_copied`
-    , `dmc_info`.`dispatch_date`
-    , `dmc_info`.`member_id`
-FROM
+             $requiredFields = array('subject_code', 'marks', 'appear_type', 
+        'custody_date','custody_date','is_granted','grant_date','recieving_date','is_copied','dispatch_date','member_id');
+           $adapter = $this->getDbTable()->getAdapter();
+        $table_name = $this->getDbTable()
+            ->info('name');
+        $select = $adapter->select()
+            ->from($table_name)
+            ->joinInner('dmc_record', 'dmc_info.dmc_id = dmc_record.dmc_id');
+            
+/*FROM
     `academics`.`dmc_record`
     INNER JOIN `academics`.`dmc_info` 
         ON (`dmc_record`.`dmc_id` = `dmc_info`.`dmc_id`)
@@ -119,7 +117,7 @@ WHERE (`dmc_record`.`subject_code` = ?
                     $result[$columnName] = $columnValue;
                 }
             }
-            return $result;
+            return $result;*/
         }
     }
     /**
@@ -138,6 +136,7 @@ WHERE (`dmc_record`.`subject_code` = ?
             ->joinInner('dmc_record', 'dmc_total_marks.dmc_id = dmc_record.dmc_id',null);
         $semester_dmc_records = array();
         $semester_dmc_records = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        //Zend_Registry::get('logger')->debug($semester_dmc_records);
         $subjectDmc->setSem_dmc_records($semester_dmc_records);
     }
     /**
