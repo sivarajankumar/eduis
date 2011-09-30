@@ -80,7 +80,7 @@ class Acad_Model_Member_FacultyMapper
                                             'period_number',
                                             'period_type',
                                             'marked_date'))
-                    ->join('student_attendance2', 
+                    ->joinLeft('student_attendance2', 
                     		'`period_attendance2`.`attendance_id` = `student_attendance2`.`attendance_id`',
                         array('COUNT(`student_attendance2`.`student_roll_no`) AS absent'))
                     ->where('faculty_id = ?',$faculty_id)
