@@ -128,7 +128,7 @@ class Acad_Model_Mapper_Course_SubjectDmc
      * @todo incomplete
      * @param Acad_Model_Course_SubjectDmc $subjectDmc
      */
-    public function fetchDmcDispatch (Acad_Model_Course_SubjectDmc $subjectDmc)
+    public function fetchMemberDmcRecords (Acad_Model_Course_SubjectDmc $subjectDmc)
     {
         /**
          * returns dmcId as key and other fields as values
