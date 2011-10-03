@@ -2,34 +2,69 @@
 #MyProfileDiv label {
 	padding: 0.1em;
 }
+
 span {
-    color: #444444;
-    font-weight: normal;
+	color: #444444;
+	font-weight: normal;
 }
 </style>
-<div id="markattendanceDiv" class="ui-state-default ui-corner-all"  style="padding :1em 0 0 0; text-align: center; " >My Profile
-<br><br><table id="corner" cellspacing="10" cellpadding="10" align="center">
-<tr>
-<th class="ui-widget-content ui-corner-all" style="text-align: center">
-<a class="personal_detail_link" href="#">Personal Details</a></th>
+<div id="MyProfileDiv" class="ui-state-default ui-corner-all"
+	style="padding: 1em 0 0 0; text-align: center;">My Profile <br>
+<br>
+<table id="corner" cellspacing="10" cellpadding="10" align="center">
+	<tr>
 		<th class="ui-widget-content ui-corner-all" style="text-align: center">
-<a class="academic_detail_link" href="#"> Academic Details </a></th>
+		<a class="personal_detail_link" href="#">Personal Details</a></th>
 		<th class="ui-widget-content ui-corner-all" style="text-align: center">
-<a class="career_detail_link" href="#">Career Details</a></th>
-	</tr></table>
+		<a class="academic_detail_link" href="#"> Academic Details </a></th>
+		<th class="ui-widget-content ui-corner-all" style="text-align: center">
+		<a class="career_detail_link" href="#">Career Details</a></th>
+	</tr>
+</table>
 </div>
 
 <br>
 <div class="" id="myProfileDiv"></div>
 
+<script>
+	$(function() {
+		$( "#tabs" ).tabs();
+	});
+	</script>
 
+
+
+<div class="demo">
+
+<div id="tabs">
+	<ul>
+		<li><a href="#tabs-1">Personal Details</a></li>
+		<li><a class="academic_detail_link" href="#tabs-2">Academic Details</a></li>
+		<li><a class="career_detail_link" href="#tabs-3">Career Details</a></li>
+	</ul>
+	<div id="tabs-1">
+	</div>
+	<div id="tabs-2">
+	</div>
+	<div id="tabs-3">
+		<p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
+		<p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+	</div>
+</div>
+
+</div>
 
 <script type="text/javascript">
+var urlfetchdpersonaldetail = "<?php
+echo 'http://' . CORE_SERVER . '/student/getprofile'?>";
+var urlfetchacademicdetail = "<?php
+echo 'http://' . ACADEMIC_SERVER . '/student/getprofile'?>";
+var urlfetchcareerdetail = "<?php
+echo 'http://' . TNP_SERVER . '/student/getprofile'?>";
 $(function(){
-	var urlfetchdetail = "<?php echo 'http://'.CORE_SERVER.'/student/getprofile' ?>"; //rename to studentpersonal
-
+	
 	$.ajax({
-    	url : urlfetchdetail,
+    	url : urlfetchdpersonaldetail,
         dataType : 'jsonp',
         data : {format:'jsonp'},
         success: function(personal_detail){
@@ -45,26 +80,101 @@ $(function(){
                 	table_string += '<td>'+value+'</td></tr>';
                 }
             });
-            $('#myProfileDiv').html(table_string);
+            $('#tabs-1').html(table_string);
           },
        error: function(event) {
             alert(event.responseText);
        }
     });//End ajax call.
+
+	
 });
+
 
 $(".personal_detail_link").click(function(){
 	location.reload(true);
 });
 
 $(".academic_detail_link").click(function(){
-	//alert("academic clicked");
-	$('#myProfileDiv').html("academic_detail_link");
+	//$('#myProfileDiv').html("academic_detail_link");
+	
+	$.ajax({
+    	url : urlfetchacademicdetail,
+        dataType : 'jsonp',
+        data : {format:'jsonp'},
+        success: function(academic_detail){
+        	var degree = academic_detail['degree'];
+        	var twelfth = academic_detail['twelfth'];
+        	var tenth = academic_detail['tenth'];
+
+        	table_string = '<table  width="100%" cellspacing="0" cellpadding="3" border="0">';
+        	 
+        	$.each(academic_detail,function(index,programme){
+        		table_string += '<tr><h1><td>'+index.toUpperCase()+'</td></h1></tr>';
+        		if(index=='degree')
+        		{
+            		$.each(programme,function(index,semester){
+            			
+                		$.each(semester,function(index,value){
+                			if(value==null)
+                            {
+                  	         table_string += '';
+                            } 
+          		        else
+                           {
+              		         table_string += '<tr><td>'+index.toUpperCase()+'</td>';
+                  	         table_string += '<td>'+value+'</td></tr>';
+							}
+                    });});
+        		}
+        		else{
+           			$.each(programme,function(index,value){
+                 		if(value==null)
+                          {
+                	         table_string += '';
+                          } 
+        		        else
+                         {
+            		         table_string += '<tr><td>'+index.toUpperCase()+'</td>';
+                	         table_string += '<td>'+value+'</td></tr>';
+                         }
+                   });
+                   }
+     	});
+        
+       	 $('#tabs-2').html(table_string);
+        },
+        error: function(event) {
+             alert(event.responseText);
+        }
+     });
 });
 
 $(".career_detail_link").click(function(){
-	//alert("academic clicked");
-	$('#myProfileDiv').html("career_detail_link");
+	//$('#myProfileDiv').html("career_detail_link");
+	$.ajax({
+    	url : urlfetchcareerdetail,
+        dataType : 'jsonp',
+        data : {format:'jsonp'},
+        success: function(academic_detail){
+        	table_string = '<table  width="100%" cellspacing="0" cellpadding="3" border="0">';
+        	$.each(academic_detail,function(index,value){
+        		if(value==null)
+                {
+                	table_string += '';
+                } 
+        		else
+                {
+            		table_string += '<tr><td>'+index.toUpperCase()+'</td>';
+                	table_string += '<td>'+value+'</td></tr>';
+                }
+            }); 
+        	
+       	 $('#myProfileDiv').html(table_string);
+        },
+        error: function(event) {
+             alert(event.responseText);
+        }
+     });
 });
-
 </script>
