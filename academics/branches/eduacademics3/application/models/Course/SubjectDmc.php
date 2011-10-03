@@ -310,8 +310,8 @@ class Acad_Model_Course_SubjectDmc
     {
         return $this->getMapper()->fetchPassedSemestersInfo($this);
     }
-    public function getDmcDispatch ()
+    public function getMemberDmcRecord ()
     {
-        return $this->getMapper()->fetchDmcDispatch($this);
+        return $this->getMapper()->fetchMemberDmcRecord($this);
     }
 }
