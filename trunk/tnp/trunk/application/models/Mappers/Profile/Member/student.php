@@ -75,7 +75,7 @@ class Tnp_Model_Mapper_Profile_Member_Student
             $adapter = $this->getDbTable()->getDefaultAdapter();
             $required_fields = array('skill_name', 'skill_field');
             $select = $adapter->select()
-                ->from('student_skills', $required_fields)
+                ->from('skills', $required_fields)
                 ->where('skill_id = ?', $skill_id);
             $skill_details = array();
             $skill_details = $select->query()->fetchAll();
