@@ -136,25 +136,20 @@ class Tnp_Model_Mapper_Test_Employability
      */
     public function fetchSectionRecord ($test)
     {
-        $test_section_id = $test->getTest_section_id();
         $member_id = $test->getMember_id();
         $employability_test_id = $test->getEmployability_test_id();
-        if (! isset($test_section_id) or ! isset($member_id) or
-         ! isset($employability_test_id)) {
-            $error = 'All three properties(section id, member id and testid) must be set';
+        if (! isset($member_id) or ! isset($employability_test_id)) {
+            $error = 'All three properties(member id and testid) must be set';
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = array('section_marks', 'section_percentile');
+            $required_fields = array('test_section_id', 'section_marks', 
+            'section_percentile');
             $select = $adapter->select()
                 ->from('employability_test_section', $required_fields)
-                ->where('test_section_id = ?', $test_section_id);
+                ->where('member_id = ?', $member_id);
             $section_record = array();
             $section_record = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            $section_marks = array_keys($section_record);
-            $section_percentile = $section_record[0];
-            $test->setSection_marks($section_marks);
-            $test->setSection_percentile($section_percentile);
         }
     }
     /**
