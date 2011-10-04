@@ -73,6 +73,7 @@ class Tnp_Model_Mapper_Test_Employability
             $select = $adapter->select()
                 ->from('employability_test', $required_fields)
                 ->where('employability_test_id = ?', $employability_test_id);
+            $test_Details = array();
             $test_Details = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
             $test_name = array_keys($test_Details);
             $date_of_conduct = $test_name[0];
@@ -120,6 +121,7 @@ class Tnp_Model_Mapper_Test_Employability
             $select = $adapter->select()
                 ->from('employability_test_section', $required_fields)
                 ->where('test_section_id = ?', $test_section_id);
+            $test_Details = array();
             $test_Details = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
             $test_name = array_keys($test_Details);
             $test_section_name = $test_name[0];
@@ -147,6 +149,7 @@ class Tnp_Model_Mapper_Test_Employability
             $select = $adapter->select()
                 ->from('employability_test_section', $required_fields)
                 ->where('test_section_id = ?', $test_section_id);
+            $section_record = array();
             $section_record = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
             $section_marks = array_keys($section_record);
             $section_percentile = $section_record[0];
@@ -168,16 +171,16 @@ class Tnp_Model_Mapper_Test_Employability
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = array('test_regn_no', 'test_total_score','test_percentile');
+            $required_fields = array('employability_test_id', 'test_regn_no', 
+            'test_total_score', 'test_percentile');
             $select = $adapter->select()
-                ->from('employability_test_section', $required_fields)
-                ->where('employability_test_id = ?', $employability_test_id)
+                ->from($this->getDbTable()
+                ->info('name'), $required_fields)
                 ->where('member_id = ?', $member_id);
-            $record = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            $test_regn_no = array_keys($record);
-            $percentile = $test_regn_no[0]['test_percentile'];
-            $test->setSection_marks($section_marks);
-            $test->setSection_percentile($section_percentile);
+            $member_test_record = array();
+            $member_test_record = $select->query()->fetchAll(
+            Zend_Db::FETCH_UNIQUE);
+            return $member_test_record;
         }
     }
 }

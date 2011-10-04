@@ -288,17 +288,6 @@ class Tnp_Model_Profile_Member_Student
         }
         return $this;
     }
-    public function getMemberSkillIds ()
-    {
-        $this->initMember_skills();
-        $possessed_skills_ids = array_keys($this->getSkills_possessed());
-        if (sizeof($possessed_skills_ids) == 0) {
-            $error = 'No skills registered for ' . $this->getMember_id();
-            throw new Exception($error);
-        } else {
-            return $possessed_skills_ids;
-        }
-    }
     public function initCoCuricular ()
     {
         $options = $this->getMapper()->fetchCoCuricular($this);
@@ -314,19 +303,38 @@ class Tnp_Model_Profile_Member_Student
         $options = $this->getMapper()->fetchProfileStatus($this);
         $this->setOptions($options);
     }
-    /**
-     * @return the $_languages_known
-     */
-    protected function getLanguages_known ()
+    public function getMemberSkillIds ()
     {
-        return $this->_languages_known;
+        $this->initMember_skills();
+        $possessed_skills_ids = array_keys($this->getSkills_possessed());
+        if (sizeof($possessed_skills_ids) == 0) {
+            $error = 'No skills registered for ' . $this->getMember_id();
+            throw new Exception($error);
+        } else {
+            return $possessed_skills_ids;
+        }
     }
-    /**
-     * @return the $_languages_known
-     */
-    protected function getSkills_possessed ()
+    public function initSkillDescription ()
     {
-        return $this->_skills_possessed;
+        $options = $this->getMapper()->fetchSkillDescription($this);
+        $this->setOptions($options);
+    }
+    public function getMemberLanguageKnownIds ()
+    {
+        $this->initLanguages_Known();
+        $language_skills_ids = array_keys($this->getLanguages_known());
+        if (sizeof($language_skills_ids) == 0) {
+            $error = 'languages known are not registered for ' .
+             $this->getMember_id();
+            throw new Exception($error);
+        } else {
+            return $language_skills_ids;
+        }
+    }
+    public function initLanguageDescription ()
+    {
+        $options = $this->getMapper()->fetchLanguageDescription($this);
+        $this->setOptions($options);
     }
     protected function initSkills_possessed ()
     {
@@ -335,12 +343,9 @@ class Tnp_Model_Profile_Member_Student
             $this->_skills_possessed = $skills_possessed;
         }
     }
-    protected function initLanguages_Known ()
+    protected function getSkills_possessed ()
     {
-        if (sizeof($this->_languages_known) == 0) {
-            $languages_known = $this->getMapper()->fetchLanguagesKnown($this);
-            $this->_languages_known = $languages_known;
-        }
+        return $this->_skills_possessed;
     }
     protected function initSkillProficiency ()
     {
@@ -354,6 +359,10 @@ class Tnp_Model_Profile_Member_Student
             $error = 'No skill entries exist for Skill Id ' . $skill_id;
             throw new Exception($error);
         }
+    }
+    protected function getLanguages_known ()
+    {
+        return $this->_languages_known;
     }
     protected function initLanguageProficiency ()
     {
