@@ -16,6 +16,7 @@ class Tnp_Model_Profile_Components_Experience
     protected $_end_date;
     protected $_is_parttime;
     protected $_description;
+    protected $_mapper;
     public function getStudent_experience_id ()
     {
         return $this->_student_experience_id;
@@ -196,25 +197,11 @@ class Tnp_Model_Profile_Components_Experience
         }
         $this->$method($value);
     }
-    /**
-     * @todo getVerified by hmnt sir
-     * @throws Exception
-     */
     public function __get ($name)
     {
         $method = 'get' . $name;
         if ('mapper' == $name || ! method_exists($this, $method)) {
             throw new Exception('Invalid property specified');
-        } else {
-            if (isset($this->$name)) {
-                return $this->$method();
-            } else {
-                $fetchMethodName = 'fetch' . $name;
-                if (method_exists($this->getMapper(), $fetchMethodName)) {
-                    $this->getMapper()->$fetchMethodName;
-                    return $this->$method();
-                }
-            }
         }
     }
     /**
