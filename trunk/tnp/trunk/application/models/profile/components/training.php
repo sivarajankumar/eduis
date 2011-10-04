@@ -234,12 +234,19 @@ class Tnp_Model_Profile_Components_Training
      */
     public function getMemberTrainingDetails ()
     {
-        $options = $this->getMapper()->fetchTrainingDetails($this);
-        $this->setOptions($options);
+        $member_training_details = $this->getMapper()
+        ->fetchMemberTrainingDetails($this);
+        $this->setOptions($member_training_details);
+        $training_details = $this->getMapper()
+        ->fetchTrainingDetails($this);
+        $this->setOptions($training_details);
+        $member_training_field_details = $this->getMapper()
+        ->fetchTechnicalFieldDetails($this);
+        $this->setOptions($member_training_field_details);
     }
     public function getMemberTrainingIds ()
     {
-        $options = $this->getMapper()->fetchMemberTrainingIds($this);
-        $this->setOptions($options);
+        return $this->getMapper()->fetchMemberTrainingIds($this);
+        
     }
 }

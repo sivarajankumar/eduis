@@ -10,7 +10,7 @@ class Tnp_Model_Profile_Components_Experience
     protected $_role_id;
     protected $_role_name;
     protected $_experience_months;
-    protected $_experience_year;
+    protected $_experience_years;
     protected $_organisation;
     protected $_start_date;
     protected $_end_date;
@@ -113,13 +113,13 @@ class Tnp_Model_Profile_Components_Experience
     {
         $this->_experience_months = $_experience_months;
     }
-    public function getExperience_year ()
+    public function getExperience_years ()
     {
-        return $this->_experience_year;
+        return $this->_experience_years;
     }
-    public function setExperience_year ($_experience_year)
+    public function setExperience_years ($_experience_years)
     {
-        $this->_experience_year = $_experience_year;
+        $this->_experience_years = $_experience_years;
     }
     public function getOrganisation ()
     {

@@ -80,9 +80,9 @@ class Tnp_Model_Mapper_Profile_Components_Experience
     Tnp_Model_Profile_Components_Experience $experience)
     {
         $member_id = $experience->getMember_id();
-        $cols = array(student_experience_id, member_id, industry_id, 
-        functional_area_id, role_id, experience_months, experience_year, 
-        organisation, start_date, end_date, is_parttime, description);
+        $cols = array('student_experience_id', 'member_id', 'industry_id', 
+        'functional_area_id', 'role_id', 'experience_months', 'experience_years', 
+        'organisation', 'start_date', 'end_date', 'is_parttime', 'description');
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $select = $adapter->select()
             ->from($this->getDbTable()
