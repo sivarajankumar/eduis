@@ -160,9 +160,8 @@ class Tnp_Model_Mapper_Test_Employability
     public function fetchRecord ($test)
     {
         $member_id = $test->getMember_id();
-        $employability_test_id = $test->getEmployability_test_id();
-        if (isset($member_id) or ! isset($employability_test_id)) {
-            $error = 'Both properties(member id and testid) must be set';
+        if (isset($member_id)) {
+            $error = 'member id must be set';
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
