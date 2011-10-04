@@ -25,6 +25,10 @@ class Acad_Model_Course_SubjectDmc
     protected $_mapper;
     public function getConsidered_dmc_records ()
     {
+        $considered_dmc_records = $this->_considered_dmc_records;
+        if (sizeof($considered_dmc_records) == 0) {
+            $this->getMapper()->fetchPassedSemestersInfo($this);
+        }
         return $this->_considered_dmc_records;
     }
     public function setConsidered_dmc_records ($_considered_dmc_records)
@@ -279,21 +283,18 @@ class Acad_Model_Course_SubjectDmc
     public function getPassedSemesters ()
     {
         $considered_dmc_records = $this->getConsidered_dmc_records();
-        if (sizeof($considered_dmc_records) == 0) {
-            $this->getMapper()->fetchPassedSemestersInfo($this);
-        }
-        return array_keys($this->getConsidered_dmc_records());
+        return array_keys($considered_dmc_records);
     }
     public function getSemesterDmc ()
     {
-        $sem_dmc_records = $this->getSem_dmc_records();
+        $considered_dmc_records = $this->getConsidered_dmc_records();
         $semester_id = $this->getSemster_id();
         if (! isset($semester_id)) {
             throw new Exception('Please provide semester id first', 
             Zend_Log::ERR);
         } else {
-            if (array_key_exists($semester_id, $sem_dmc_records)) {
-                $options = $sem_dmc_records[$semester_id];
+            if (array_key_exists($semester_id, $considered_dmc_records)) {
+                $options = $considered_dmc_records[$semester_id];
                 $this->setOptions($options);
             } else {
                 $error = 'Sorry, ' . $this->getMember_id() . ' Your DMC for ' .
