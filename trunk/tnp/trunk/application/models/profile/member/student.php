@@ -313,7 +313,7 @@ class Tnp_Model_Profile_Member_Student
     }
     public function getMemberSkillIds ()
     {
-        $this->initMember_skills();
+        $this->initSkills_possessed();
         $possessed_skills_ids = array_keys($this->getSkills_possessed());
         if (sizeof($possessed_skills_ids) == 0) {
             $error = 'No skills registered for ' . $this->getMember_id();
@@ -330,13 +330,13 @@ class Tnp_Model_Profile_Member_Student
     public function getMemberLanguageKnownIds ()
     {
         $this->initLanguages_known();
-        $language_skills_ids = array_keys($this->getLanguages_known());
-        if (sizeof($language_skills_ids) == 0) {
+        $language_ids = array_keys($this->getLanguages_known());
+        if (sizeof($language_ids) == 0) {
             $error = 'languages known are not registered for ' .
              $this->getMember_id();
             throw new Exception($error);
         } else {
-            return $language_skills_ids;
+            return $language_ids;
         }
     }
     public function initLanguageDescription ()
