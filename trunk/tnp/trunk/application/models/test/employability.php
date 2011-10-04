@@ -3,8 +3,8 @@ class Tnp_Model_Test_Employability
 {
     protected $_member_id;
     protected $_u_regn_no;
-    protected $_member_test_record;
-    protected $__member_test_section_record;
+    protected $_member_test_record = array();
+    protected $_member_test_section_record = array();
     //
     protected $_test_name;
     protected $_date_of_conduct;
@@ -273,11 +273,11 @@ class Tnp_Model_Test_Employability
      * 
      * 
      */
-    public function getSectionRecord ()
+    public function initSectionRecord ()
     {
-    $test_section_record = $this->getMember_test_section_record();
-    $section_id = $this->getTest_section_id();
-        if (array_key_exists($section_id,$test_section_record)) {
+        $test_section_record = $this->getMember_test_section_record();
+        $section_id = $this->getTest_section_id();
+        if (!array_key_exists($section_id, $test_section_record)) {
             $error = 'No Employability Test\'s Section record exists for ' .
              $this->getMember_id();
             throw new Exception($error);
@@ -285,7 +285,6 @@ class Tnp_Model_Test_Employability
             $options = $test_section_record[$section_id];
             $this->setOptions($options);
         }
-    
     }
     /**
      * fetches the test record of a member, viz totalScore and totalPercentile
@@ -306,7 +305,8 @@ class Tnp_Model_Test_Employability
     }
     public function getMemberTestIds ()
     {
-        $member_test_ids = array_keys($this->getMember_test_record());
+        $member_test_record = $this->getMember_test_record();
+        $member_test_ids = array_keys($member_test_record);
         if (sizeof($member_test_ids) == 0) {
             $error = 'No Employability Test record exists for ' .
              $this->getMember_id();
@@ -317,7 +317,9 @@ class Tnp_Model_Test_Employability
     }
     public function getMemberTestSectionIds ()
     {
-        $test_section_ids = array_keys($this->getMember_test_section_record());
+        $member_test_section_record = $this->getMember_test_section_record();
+        $test_section_ids = array_keys($member_test_section_record);
+        //Zend_Registry::get('logger')->debug($test_section_ids);
         if (sizeof($test_section_ids) == 0) {
             $error = 'No Employability Test\'s Section record exists for ' .
              $this->getMember_id();
@@ -326,5 +328,4 @@ class Tnp_Model_Test_Employability
             return $test_section_ids;
         }
     }
-    
 }
