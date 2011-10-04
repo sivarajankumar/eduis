@@ -113,10 +113,17 @@ class Acad_Model_Mapper_Course_SubjectDmc
             ->from('dmc_total_marks', $requiredFields)
             ->joinInner('dmc_record', 
         'dmc_total_marks.dmc_id = dmc_record.dmc_id', null)
-            ->where('member_id = ?',$member_id);
-        $member_dmc_records = array();
-        $member_dmc_records = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        $subjectDmc->setMember_dmc_records($member_dmc_records);
+            ->where('member_id = ?', $member_id);
+        $considered_dmc_records = array();
+        $considered_dmc_records = $select->query()->fetchAll(
+        Zend_Db::FETCH_UNIQUE);
+        Zend_Registry::get('logger')->debug($considered_dmc_records);
+        if(sizeof($considered_dmc_records) == 0)
+        {
+            throw new Exception('No passed semesters');
+        }
+        
+        $subjectDmc->setConsidered_dmc_records($considered_dmc_records);
     }
     /**
      * @todo incomplete
@@ -128,7 +135,8 @@ class Acad_Model_Mapper_Course_SubjectDmc
      * @todo incomplete
      * @param Acad_Model_Course_SubjectDmc $subjectDmc
      */
-    public function fetchMemberDmcRecords (Acad_Model_Course_SubjectDmc $subjectDmc)
+    public function fetchMemberDmcRecords (
+    Acad_Model_Course_SubjectDmc $subjectDmc)
     {
         /**
          * returns dmcId as key and other fields as values
@@ -163,11 +171,11 @@ WHERE (`internal_marks`.`member_id` = ?
         $programme_id = $subjectDmc->getProgramme_id();
         $semester_id = $subjectDmc->getSemster_id();
         $appear_type = $subjectDmc->getAppear_type();*/
-        $member_id ='1';
-        $department_id ='cse';
-        $programme_id='btech';
-        $semester_id ='7';
-        $appear_type ='REGULAR';
+        $member_id = '1';
+        $department_id = 'cse';
+        $programme_id = 'btech';
+        $semester_id = '7';
+        $appear_type = 'REGULAR';
         $select = $adapter->select()
             ->from('dmc_record', $dmcRecordFields)
             ->joinInner('internal_marks', $cond, $internalMarksFields)
