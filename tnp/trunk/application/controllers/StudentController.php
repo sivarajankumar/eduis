@@ -123,7 +123,7 @@ class StudentController extends Zend_Controller_Action
             $section_ids = $test_model->getMemberTestSectionIds();
             foreach ($section_ids as $section_id) {
                 $test_model->setTest_section_id($section_id);
-                $test_model->getSectionRecord();
+                $test_model->initSectionRecord();
                 $section_marks = $test_model->getSection_marks();
                 $section_name = $test_model->getTest_section_name();
                 $section_percentile = $test_model->getSection_percentile();
@@ -142,30 +142,41 @@ class StudentController extends Zend_Controller_Action
             'test_reg_no' => $test_reg_no, 'sections' => $section_result);
         }
         $response['test'] = $test_result;
-        print_r($response['test']);
         /*
          * LANGUAGE KNOWN DETAILS
          */
-        /* $stu_model = new Tnp_Model_Profile_Member_Student();
+        $stu_model = new Tnp_Model_Profile_Member_Student();
         $stu_model->setMember_id($memberId);
         $lang_result = array();
-        $langIds = $stu_model->getLanguage_id();*/
+        $langIds = $stu_model->getMemberLanguageKnownIds();
+        foreach ($langIds as $id) {
+            $stu_model->setLanguage_id($id);
+            $stu_model->initLanguageDescription();
+            $lang_name = $stu_model->getLanguage_name();
+            $lang_prof = $stu_model->getLanguage_proficiency();
+            $lang_result[$id] = array('lang_name' => $lang_name, 
+            'lang_prof' => $lang_prof);
+        }
+        $response['languages'] = $lang_result;
         /*
          * SKILL DETAILS
          */
-        /*  
-        $skill_result = array ();
+        $skill_result = array();
         $skill_ids = $stu_model->getMemberSkillIds();
-        
-        foreach ($skill_ids as $id)
-        {
-        	$stu_model->setSkill_id($id);
-        	$stu_model->
-        	
-        	$skill_name = $stu_model->getSkill_name();
-        	
-        }*/
+        foreach ($skill_ids as $id) {
+            $stu_model->setSkill_id($id);
+            $stu_model->initSkillDescription();
+            $skill_name = $stu_model->getSkill_name();
+            $skill_prof = $stu_model->getSkill_proficiency();
+            $skill_field = $stu_model->getSkill_field();
+            $skill_result[$id] = array('skill_name' => $skill_name, 
+            'skill_prof' => $skill_prof, 'skill_field' => $skill_field);
+        }
+        $response['skillset'] = $skill_result;
         Zend_Registry::get('logger')->debug($response);
+        
+        $callback = $this->getRequest()->getParam('callback');
+        echo $callback.'('.$this->_helper->json($response,false).')';
     }
 }
 
