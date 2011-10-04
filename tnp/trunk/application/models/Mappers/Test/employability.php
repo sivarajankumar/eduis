@@ -38,7 +38,7 @@ class Tnp_Model_Mapper_Test_Employability
      * Enter description here ...
      * @param Tnp_Model_Test_Employability $test
      */
-    public function fetchTestId ($test)
+    public function fetchTestId (Tnp_Model_Test_Employability $test)
     {
         $test_name = $test->getTest_name();
         $date_of_conduct = $test->getDate_of_conduct();
@@ -61,7 +61,7 @@ class Tnp_Model_Mapper_Test_Employability
      * Enter description here ...
      * @param Tnp_Model_Test_Employability $test
      */
-    public function fetchTestDetails ($test)
+    public function fetchTestDetails (Tnp_Model_Test_Employability $test)
     {
         $employability_test_id = $test->getEmployability_test_id();
         if (! isset($employability_test_id)) {
@@ -86,7 +86,7 @@ class Tnp_Model_Mapper_Test_Employability
      * Enter description here ...
      * @param Tnp_Model_Test_Employability $test
      */
-    public function fetchTestSectionId ($test)
+    public function fetchTestSectionId (Tnp_Model_Test_Employability $test)
     {
         $test_name = $test->getTest_name();
         $section_name = $test->getTest_section_name();
@@ -109,7 +109,7 @@ class Tnp_Model_Mapper_Test_Employability
      * Enter description here ...
      * @param Tnp_Model_Test_Employability $test
      */
-    public function fetchTestSectionDetails ($test)
+    public function fetchTestSectionDetails (Tnp_Model_Test_Employability $test)
     {
         $test_section_id = $test->getTest_section_id();
         if (! isset($test_section_id)) {
@@ -134,22 +134,24 @@ class Tnp_Model_Mapper_Test_Employability
      * Enter description here ...
      * @param Tnp_Model_Test_Employability $test
      */
-    public function fetchSectionRecord ($test)
+    public function fetchSectionRecord (Tnp_Model_Test_Employability $test)
     {
         $member_id = $test->getMember_id();
         $employability_test_id = $test->getEmployability_test_id();
         if (! isset($member_id) or ! isset($employability_test_id)) {
-            $error = 'All three properties(member id and testid) must be set';
+            $error = 'Both properties(member id and testid) must be set';
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
             $required_fields = array('test_section_id', 'section_marks', 
             'section_percentile');
             $select = $adapter->select()
-                ->from('employability_test_section', $required_fields)
+                ->from('employability_test_section_score', $required_fields)
                 ->where('member_id = ?', $member_id);
             $section_record = array();
             $section_record = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            //Zend_Registry::get('logger')->debug($section_record);
+            return $section_record;
         }
     }
     /**
@@ -157,10 +159,10 @@ class Tnp_Model_Mapper_Test_Employability
      * fetches the test record of a member
      * @param Tnp_Model_Test_Employability $test
      */
-    public function fetchRecord ($test)
+    public function fetchRecord (Tnp_Model_Test_Employability $test)
     {
         $member_id = $test->getMember_id();
-        if (isset($member_id)) {
+        if (! isset($member_id)) {
             $error = 'member id must be set';
             throw new Exception($error);
         } else {
@@ -174,6 +176,7 @@ class Tnp_Model_Mapper_Test_Employability
             $member_test_record = array();
             $member_test_record = $select->query()->fetchAll(
             Zend_Db::FETCH_UNIQUE);
+            //Zend_Registry::get('logger')->debug($member_test_record);
             return $member_test_record;
         }
     }
