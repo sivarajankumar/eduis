@@ -4,6 +4,7 @@ class Tnp_Model_Test_Employability
     protected $_member_id;
     protected $_u_regn_no;
     protected $_member_test_record;
+    protected $__member_test_section_record;
     //
     protected $_test_name;
     protected $_date_of_conduct;
@@ -34,7 +35,22 @@ class Tnp_Model_Test_Employability
     protected function setMember_test_record ($_member_test_record)
     {
         $this->_member_test_record = $_member_test_record;
+    } //
+    protected function getMember_test_section_record ()
+    {
+        if (sizeof($this->_member_test_section_record) == 0) {
+            $member_test_section_record = $this->getMapper()->fetchSectionRecord(
+            $this);
+            $this->setMember_test_section_record($member_test_section_record);
+        }
+        return $this->_member_test_section_record;
     }
+    protected function setMember_test_section_record (
+    $_member_test_section_record)
+    {
+        $this->_member_test_section_record = $_member_test_section_record;
+    }
+    //
     public function getMember_id ()
     {
         return $this->_member_id;
@@ -259,7 +275,17 @@ class Tnp_Model_Test_Employability
      */
     public function getSectionRecord ()
     {
-        $this->getMapper()->fetchSectionRecord($this);
+    $test_section_record = $this->getMember_test_section_record();
+    $section_id = $this->getTest_section_id();
+        if (array_key_exists($section_id,$test_section_record)) {
+            $error = 'No Employability Test\'s Section record exists for ' .
+             $this->getMember_id();
+            throw new Exception($error);
+        } else {
+            $options = $test_section_record[$section_id];
+            $this->setOptions($options);
+        }
+    
     }
     /**
      * fetches the test record of a member, viz totalScore and totalPercentile
@@ -289,4 +315,16 @@ class Tnp_Model_Test_Employability
             return $member_test_ids;
         }
     }
+    public function getMemberTestSectionIds ()
+    {
+        $test_section_ids = array_keys($this->getMember_test_section_record());
+        if (sizeof($test_section_ids) == 0) {
+            $error = 'No Employability Test\'s Section record exists for ' .
+             $this->getMember_id();
+            throw new Exception($error);
+        } else {
+            return $test_section_ids;
+        }
+    }
+    
 }
