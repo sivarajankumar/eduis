@@ -59,7 +59,6 @@ class StudentController extends Zend_Controller_Action
             'certi_start_date' => $certi_start_date, 
             'certi_complete_date' => $certi_complete_date);
         }
-        Zend_Registry::get('logger')->debug($certi_result);
         $response['certifications'] = $certi_result;
         /*
  * EXPERIENCE DETAILS
@@ -98,7 +97,6 @@ class StudentController extends Zend_Controller_Action
         foreach ($tr_ids as $id) {
             $tr_model->setTraining_id($id);
             $tr_model->getMemberTrainingDetails();
-
             $tr_field = $tr_model->getTechnical_field_name();
             $tr_sector = $tr_model->getTechnical_sector();
             $tr_technology = $tr_model->getTraining_technology();
@@ -112,7 +110,61 @@ class StudentController extends Zend_Controller_Action
             'tr_start' => $tr_start, 'tr_end' => $tr_end, 'tr_sem' => $tr_sem);
         }
         $response['training'] = $tr_result;
-        print_r($response);
+        /*
+         * EMPLOYIBILITY TEST
+         */
+        $section_result = array();
+        $test_result = array();
+        $test_model = new Tnp_Model_Test_Employability();
+        $test_model->setMember_id($memberId);
+        $test_ids = $test_model->getMemberTestIds();
+        foreach ($test_ids as $test_id) {
+            $test_model->setEmployability_test_id($test_id);
+            $section_ids = $test_model->getMemberTestSectionIds();
+            foreach ($section_ids as $section_id) {
+                $test_model->setTest_section_id($section_id);
+                $test_model->getSectionRecord();
+                $section_marks = $test_model->getSection_marks();
+                $section_name = $test_model->getTest_section_name();
+                $section_percentile = $test_model->getSection_percentile();
+                $section_result[$section_id] = array(
+                'section_name' => $section_name, 
+                'section_marks' => $section_marks, 
+                'section_percentile' => $section_percentile);
+            }
+            $test_model->getMemberTestRecord();
+            $test_name = $test_model->getTest_name();
+            $test_marks = $test_model->getTest_total_score();
+            $test_percentile = $test_model->getTest_percentile();
+            $test_reg_no = $test_model->getTest_regn_no();
+            $test_result[$test_id] = array('test_name' => $test_name, 
+            'test_marks' => $test_marks, 'test_percentile' => $test_percentile, 
+            'test_reg_no' => $test_reg_no, 'sections' => $section_result);
+        }
+        $response['test'] = $test_result;
+        print_r($response['test']);
+        /*
+         * LANGUAGE KNOWN DETAILS
+         */
+        /* $stu_model = new Tnp_Model_Profile_Member_Student();
+        $stu_model->setMember_id($memberId);
+        $lang_result = array();
+        $langIds = $stu_model->getLanguage_id();*/
+        /*
+         * SKILL DETAILS
+         */
+        /*  
+        $skill_result = array ();
+        $skill_ids = $stu_model->getMemberSkillIds();
+        
+        foreach ($skill_ids as $id)
+        {
+        	$stu_model->setSkill_id($id);
+        	$stu_model->
+        	
+        	$skill_name = $stu_model->getSkill_name();
+        	
+        }*/
         Zend_Registry::get('logger')->debug($response);
     }
 }
