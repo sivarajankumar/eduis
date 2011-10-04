@@ -19,6 +19,14 @@ class Tnp_Model_Profile_Member_Student
     protected $_activities;
     protected $_hobbies;
     protected $_mapper;
+    protected function getLanguages_known ()
+    {
+        return $this->_languages_known;
+    }
+    protected function getSkills_possessed ()
+    {
+        return $this->_skills_possessed;
+    }
     /**
      * @return the $_member_id
      */
@@ -248,7 +256,7 @@ class Tnp_Model_Profile_Member_Student
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_Member_Student());
+            $this->setMapper(new Tnp_Model_Mapper_Profile_Member_Student());
         }
         return $this->_mapper;
     }
@@ -321,7 +329,7 @@ class Tnp_Model_Profile_Member_Student
     }
     public function getMemberLanguageKnownIds ()
     {
-        $this->initLanguages_Known();
+        $this->initLanguages_known();
         $language_skills_ids = array_keys($this->getLanguages_known());
         if (sizeof($language_skills_ids) == 0) {
             $error = 'languages known are not registered for ' .
@@ -336,16 +344,19 @@ class Tnp_Model_Profile_Member_Student
         $options = $this->getMapper()->fetchLanguageDescription($this);
         $this->setOptions($options);
     }
+    protected function initLanguages_known ()
+    {
+        if (sizeof($this->_languages_known) == 0) {
+            $languages_known = $this->getMapper()->fetchLanguagesKnown($this);
+            $this->_languages_known = $languages_known;
+        }
+    }
     protected function initSkills_possessed ()
     {
         if (sizeof($this->_skills_possessed) == 0) {
             $skills_possessed = $this->getMapper()->fetchSkillsPossessed($this);
             $this->_skills_possessed = $skills_possessed;
         }
-    }
-    protected function getSkills_possessed ()
-    {
-        return $this->_skills_possessed;
     }
     protected function initSkillProficiency ()
     {
@@ -360,13 +371,8 @@ class Tnp_Model_Profile_Member_Student
             throw new Exception($error);
         }
     }
-    protected function getLanguages_known ()
-    {
-        return $this->_languages_known;
-    }
     protected function initLanguageProficiency ()
     {
-        $this->initLanguages_Known();
         $language_id = $this->getLanguage_id();
         $languages_known = $this->getLanguages_known();
         if (array_key_exists($language_id, $languages_known)) {

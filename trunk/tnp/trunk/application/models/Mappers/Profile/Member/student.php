@@ -4,7 +4,7 @@
  * Enter description here ...
  * 
  */
-class Tnp_Model_Mapper_Member_Student
+class Tnp_Model_Mapper_Profile_Member_Student
 {
     /**
      * @var Zend_Db_Table_Abstract
