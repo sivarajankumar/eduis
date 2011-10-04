@@ -99,7 +99,7 @@ class Tnp_Model_Mapper_Profile_Member_Student
             throw new Exception('Insufficient Params.. Member\'s Id is required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
-            $required_fields = array('language_id', 'proficeincy');
+            $required_fields = array('language_id', 'proficiency');
             $select = $adapter->select()
                 ->from('student_language', $required_fields)
                 ->where('member_id = ?', $member_id);
