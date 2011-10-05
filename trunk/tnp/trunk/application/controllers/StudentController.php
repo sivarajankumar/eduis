@@ -85,7 +85,7 @@ class StudentController extends Zend_Controller_Action
             'exp_organisation' => $exp_organisation, 'exp_start' => $exp_start, 
             'exp_compeltion' => $exp_compeltion, 'part_time' => $part_time);
         }
-        Zend_Registry::get('logger')->debug($exp_result);
+        //Zend_Registry::get('logger')->debug($exp_result);
         $response['experience'] = $exp_result;
         /*
  * TRAINING DETAILS
@@ -175,8 +175,8 @@ class StudentController extends Zend_Controller_Action
         $response['skillset'] = $skill_result;
         Zend_Registry::get('logger')->debug($response);
         
-        $callback = $this->getRequest()->getParam('callback');
-        echo $callback.'('.$this->_helper->json($response,false).')';
+       /* $callback = $this->getRequest()->getParam('callback');
+        echo $callback.'('.$this->_helper->json($response,false).')';*/
     }
 }
 
