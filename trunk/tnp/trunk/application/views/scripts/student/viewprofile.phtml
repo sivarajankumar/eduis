@@ -8,7 +8,7 @@ span {
 	font-weight: normal;
 }
 </style>
-<div id="MyProfileDiv" class="ui-state-default ui-corner-all"
+<!-- <div id="MyProfileDiv" class="ui-state-default ui-corner-all"
 	style="padding: 1em 0 0 0; text-align: center;">My Profile <br>
 <br>
 <table id="corner" cellspacing="10" cellpadding="10" align="center">
@@ -23,9 +23,9 @@ span {
 </table>
 </div>
 
-<br>
-<div class="" id="myProfileDiv"></div>
 
+<div class="" id="myProfileDiv"></div>-->
+<br>
 <script>
 	$(function() {
 		$( "#tabs" ).tabs();
@@ -34,7 +34,7 @@ span {
 
 
 
-<div class="demo">
+<div class="demo"><center><h2>My Profile</h3></center>
 
 <div id="tabs">
 	<ul>
@@ -47,8 +47,7 @@ span {
 	<div id="tabs-2">
 	</div>
 	<div id="tabs-3">
-		<p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
-		<p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+		
 	</div>
 </div>
 
@@ -61,6 +60,8 @@ var urlfetchacademicdetail = "<?php
 echo 'http://' . ACADEMIC_SERVER . '/student/getprofile'?>";
 var urlfetchcareerdetail = "<?php
 echo 'http://' . TNP_SERVER . '/student/getprofile'?>";
+var getSchedule = "<?php echo $this->url(array('controller' => 'student', 
+    'action' => 'getprofile'))?>";
 $(function(){
 	
 	$.ajax({
@@ -69,7 +70,17 @@ $(function(){
         data : {format:'jsonp'},
         success: function(personal_detail){
             table_string = '<table  width="100%" cellspacing="0" cellpadding="3" border="0">';
-            $.each(personal_detail,function(index,value){
+            var memberInfoBasic = {};
+            memberInfoBasic.name = personal_detail.first_name;
+            //memberInfoBasic.deptt = personal_detail.last_name;
+            memberInfoBasic.regn_no = personal_detail.regn_no;
+            memberInfoBasic.gender = personal_detail.gender;
+            memberInfoBasic.phone_no =personal_detail.phone_no;
+            memberInfoBasic.dob = personal_detail.dob;
+            memberInfoBasic.semester = personal_detail.email;
+            //memberInfoBasic.type = member.member_type_id;
+
+            /*$.each(personal_detail,function(index,value){
                 if(value==null)
                 {
                 	table_string += '';
@@ -79,8 +90,13 @@ $(function(){
             		table_string += '<tr><td>'+index.toUpperCase()+'</td>';
                 	table_string += '<td>'+value+'</td></tr>';
                 }
-            });
-            $('#tabs-1').html(table_string);
+            });*/
+            $('#memberInfoBasic').html('');
+            traverse(memberInfoBasic,'#memberInfoBasic');
+    
+            $('#tabs-1').html('');
+            traverse(memberInfoBasic,'#tabs-1');
+            
           },
        error: function(event) {
             alert(event.responseText);
@@ -114,7 +130,6 @@ $(".academic_detail_link").click(function(){
         		if(index=='degree')
         		{
             		$.each(programme,function(index,semester){
-            			
                 		$.each(semester,function(index,value){
                 			if(value==null)
                             {
@@ -141,7 +156,6 @@ $(".academic_detail_link").click(function(){
                    });
                    }
      	});
-        
        	 $('#tabs-2').html(table_string);
         },
         error: function(event) {
@@ -150,31 +164,89 @@ $(".academic_detail_link").click(function(){
      });
 });
 
-$(".career_detail_link").click(function(){
-	//$('#myProfileDiv').html("career_detail_link");
+$(".career_detail_link").click(function(){	
 	$.ajax({
-    	url : urlfetchcareerdetail,
+    	url : getSchedule,
         dataType : 'jsonp',
         data : {format:'jsonp'},
-        success: function(academic_detail){
+        success: function(career_detail){
         	table_string = '<table  width="100%" cellspacing="0" cellpadding="3" border="0">';
-        	$.each(academic_detail,function(index,value){
-        		if(value==null)
-                {
-                	table_string += '';
-                } 
-        		else
-                {
-            		table_string += '<tr><td>'+index.toUpperCase()+'</td>';
-                	table_string += '<td>'+value+'</td></tr>';
-                }
-            }); 
-        	
-       	 $('#myProfileDiv').html(table_string);
+        	var certification_obj = career_detail.certifications;
+        	var experience_obj = career_detail.experience;
+        	var training_obj = career_detail.training;
+        	var languages_obj = career_detail.languages;
+        	var skillset_obj = career_detail.skillset;
+			if(certification_obj!=null)
+			{
+				table_string +='<th><b>Certification</b></th><tr></tr>';
+        		$.each(certification_obj,function(certification_number,certification_detail){
+        			$.each(certification_detail,function(index,value){
+        				table_string += '<td>'+index.toUpperCase()+'</td>';
+        	        	table_string += '<td>'+value+'</td></tr>';
+        			});
+        		});
+			}
+			if(experience_obj!=null)
+			{
+        		table_string +='<th><b>Experience</b></th><tr></tr>';
+        		$.each(experience_obj,function(experience_number,experience_detail){
+        			$.each(experience_detail,function(index,value){
+        				table_string += '<tr><td>'+index.toUpperCase()+'</td>';
+        	    	    table_string += '<td>'+value+'</td></tr>';
+        			});
+        		});
+			}
+			if(training_obj!=null)
+			{
+				table_string +='<th><b>Training</b></th><tr></tr>';
+        		$.each(training_obj,function(training_number,training_detail){
+        			$.each(training_detail,function(index,value){
+        				table_string += '<td>'+index.toUpperCase()+'</td>';
+        	        	table_string += '<td>'+value+'</td></tr>';
+        			});
+        		});
+			}
+			if(languages_obj!=null)
+			{
+				table_string +='<th><b>Languages</b></th><tr></tr>';
+        		$.each(languages_obj,function(languages_number,languages_detail){
+        			$.each(languages_detail,function(index,value){
+        				table_string += '<td>'+index.toUpperCase()+'</td>';
+        	        	table_string += '<td>'+value+'</td></tr>';
+        			});
+        		});
+			}
+			if(skillset_obj!=null)
+			{
+				table_string +='<th><b>Skillset</b></th><tr></tr>';
+        		$.each(skillset_obj,function(skillset_number,skillset_detail){
+        			$.each(skillset_detail,function(index,value){
+        				table_string += '<td>'+index.toUpperCase()+'</td>';
+        	        	table_string += '<td>'+value+'</td></tr>';
+        			});
+        		});
+			}
+        
+       	 $('#tabs-3').html(table_string);
         },
         error: function(event) {
              alert(event.responseText);
         }
      });
 });
+
+var traverse = function(jsonObj, targetDiv, clean){
+	//if (typeof clean === 'undefined') clean = false;
+	$.each(jsonObj, function (key, value) {
+		if( value && typeof value == "object" ) {
+			prepareSelectOption(value, targetDiv);
+		} else if( value && typeof value == "string" ) {
+			if(clean){
+				key = key.replace('_', ' ');
+				key = key.replace('id', '');
+			}
+			$(targetDiv).append('<div class="infoDiv" ><span class="infoHeader" >'+key+' : </span><span class="infoContent  ui-corner-all">'+value+'</span></div>');
+		}
+	});
+};
 </script>
