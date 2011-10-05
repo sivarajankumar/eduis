@@ -75,9 +75,10 @@ class Tnp_Model_Mapper_Test_Employability
                 ->where('employability_test_id = ?', $employability_test_id);
             $test_Details = array();
             $test_Details = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            $test_name = array_keys($test_Details);
-            $date_of_conduct = $test_name[0]['date_of_conduct'];
-            $test->setTest_name($test_name['0']);
+            $test_name_array = array_keys($test_Details);
+            $test_name = $test_name_array[0];
+            $test->setTest_name($test_name);
+            $date_of_conduct = $test_Details[$test_name]['date_of_conduct'];
             $test->setDate_of_conduct($date_of_conduct);
         }
     }
@@ -123,8 +124,8 @@ class Tnp_Model_Mapper_Test_Employability
                 ->where('test_section_id = ?', $test_section_id);
             $test_Details = array();
             $test_Details = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            $test_name = array_keys($test_Details);
-            $test_section_name = $test_name[0]['test_section_name'];
+            $test_name_array = array_keys($test_Details);
+            $test_section_name = $test_name_array[0]['test_section_name'];
             $test->setTest_name($test_name[0]);
             $test->setTest_section_name($test_section_name);
         }
