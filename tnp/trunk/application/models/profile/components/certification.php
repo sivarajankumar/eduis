@@ -1,6 +1,7 @@
 <?php
 class Tnp_Model_Profile_Components_Certification
 {
+    protected $_member_certifications_info = array();
     protected $_certification_id;
     protected $_certification_name;
     protected $_technical_field_id;
@@ -10,11 +11,26 @@ class Tnp_Model_Profile_Components_Certification
     protected $_start_date;
     protected $_complete_date;
     protected $_mapper;
+    protected function getMember_certifications_info ()
+    {
+        $member_certifications_info = $this->_member_certifications_info;
+        if (sizeof($member_certifications_info) == 0) {
+            $member_certifications_info = $this->getMapper()->fetchMemberCertificationInfo(
+            $this);
+            $this->setMember_certifications_info($member_certifications_info);
+        }
+        return $this->_member_certifications_info;
+    }
+    protected function setMember_certifications_info (
+    $_member_certifications_info)
+    {
+        $this->_member_certifications_info = $_member_certifications_info;
+    }
     public function getCertification_id ()
     {
         $certification_id = $this->_certification_id;
         if (! isset($certification_id)) {
-            $this->findCertificationId();
+            $this->getMapper()->fetchCertification_id($this);
         }
         return $this->_certification_id;
     }
@@ -24,10 +40,6 @@ class Tnp_Model_Profile_Components_Certification
     }
     public function getCertification_name ()
     {
-        $certification_name = $this->_certification_name;
-        if (! isset($certification_name)) {
-            $this->getCertificationDetails();
-        }
         return $this->_certification_name;
     }
     public function setCertification_name ($_certification_name)
@@ -38,7 +50,7 @@ class Tnp_Model_Profile_Components_Certification
     {
         $technical_field_id = $this->_technical_field_id;
         if (! isset($technical_field_id)) {
-            $this->findTechnical_field_id();
+            $this->getMapper()->fetchTechnical_field_id($this);
         }
         return $this->_technical_field_id;
     }
@@ -48,10 +60,6 @@ class Tnp_Model_Profile_Components_Certification
     }
     public function getTechnical_field_name ()
     {
-        $technical_field_name = $this->_technical_field_name;
-        if (! isset($technical_field_name)) {
-            $this->getTechnicalFieldDetails();
-        }
         return $this->_technical_field_name;
     }
     public function setTechnical_field_name ($_technical_field_name)
@@ -60,10 +68,6 @@ class Tnp_Model_Profile_Components_Certification
     }
     public function getTechnical_sector ()
     {
-        $technical_sector = $this->_technical_sector;
-        if (! isset($technical_sector)) {
-            $this->getTechnicalFieldDetails();
-        }
         return $this->_technical_sector;
     }
     public function setTechnical_sector ($_technical_sector)
@@ -170,36 +174,40 @@ class Tnp_Model_Profile_Components_Certification
         return $this->getMapper()->fetchMemberId($this);
     }
     /**
-     * Gets certification information
-     * You cant use it directly in 
-     * controller,
-     * first set univ reg no first and then call getter functions to retrieve properties.
+     * 
+     * Enter description here ...
      */
-    public function getMemberCertificationDetails ()
+    public function initMemberCertificationInfo ()
     {
-        $options = $this->getMapper()->fetchMemberCertificationDetails($this);
-        $this->setOptions($options);
+        $certifications_info = $this->getMember_certifications_info();
+        $certifications_id = $this->getCertification_id();
+        if (! isset($certifications_id)) {
+            $error = 'No Certification Id provided';
+            throw new Exception($error);
+        } else {
+            if (! array_key_exists($certifications_id, $certifications_info)) {
+                $error = 'Certification Id : ' . $certifications_id . 'for user ' .
+                 $this->getMember_id() . ' is invalid';
+                throw new Exception($error);
+            } else {
+                $options = $certifications_info[$certifications_id];
+                $this->setOptions($options);
+            }
+        }
     }
     public function getMemberCertificationIds ()
     {
-        return $this->getMapper()->fetchMemberCertificationIds($this);
+        $certifications_info = $this->getMember_certifications_info();
+        return array_keys($certifications_info);
     }
-    public function getCertificationDetails ()
+    public function initCertificationInfo ()
     {
-        $options = $this->getMapper()->fetchCertificationDetails($this);
+        $options = $this->getMapper()->fetchCertificationInfo($this);
         $this->setOptions($options);
     }
-    public function getTechnicalFieldDetails ()
+    public function initTechnicalFieldInfo ()
     {
-        $options = $this->getMapper()->fetchTechnicalFieldDetails($this);
+        $options = $this->getMapper()->fetchTechnicalFieldInfo($this);
         $this->setOptions($options);
-    }
-    protected function findCertificationId ()
-    {
-        $this->getMapper()->fetchCertification_id($this);
-    }
-    protected function findTechnical_field_id ()
-    {
-        $this->getMapper()->fetchTechnical_field_id($this);
     }
 }

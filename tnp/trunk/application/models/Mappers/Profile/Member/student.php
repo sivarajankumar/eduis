@@ -42,7 +42,7 @@ class Tnp_Model_Mapper_Profile_Member_Student
      * 
      * @param Tnp_Model_Profile_Member_Student $student
      */
-    public function fetchSkillsPossessed (
+    public function fetchSkillsPossessedInfo (
     Tnp_Model_Profile_Member_Student $student)
     {
         $member_id = $student->getMember_id();
@@ -50,13 +50,14 @@ class Tnp_Model_Mapper_Profile_Member_Student
             throw new Exception('Insufficient Params.. Member\'s Id is required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
-            $required_fields = array('skill_id', 'proficiency');
+            $required_fields = array('skill_id', 'proficiency as skill_proficiency');
             $select = $adapter->select()
                 ->from('student_skills', $required_fields)
                 ->where('member_id = ?', $member_id);
             $skills_possessed = array();
             $skills_possessed = $select->query()->fetchAll(
             Zend_Db::FETCH_UNIQUE);
+            //Zend_Registry::get('logger')->debug($skills_possessed);
             return $skills_possessed;
         }
     }
@@ -64,8 +65,7 @@ class Tnp_Model_Mapper_Profile_Member_Student
      * 
      * @param Tnp_Model_Profile_Member_Student $student
      */
-    public function fetchSkillDescription (
-    Tnp_Model_Profile_Member_Student $student)
+    public function fetchSkillInfo (Tnp_Model_Profile_Member_Student $student)
     {
         $skill_id = $student->getSkill_id();
         if (! isset($skill_id)) {
@@ -73,25 +73,20 @@ class Tnp_Model_Mapper_Profile_Member_Student
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
-            $required_fields = array('skill_name', 'skill_field');
+            $required_fields = array('skill_id', 'skill_name', 'skill_field');
             $select = $adapter->select()
                 ->from('skills', $required_fields)
                 ->where('skill_id = ?', $skill_id);
             $skill_details = array();
-            $skill_details = $select->query()->fetchAll();
-            foreach ($skill_details as $row) {
-                foreach ($row as $columnName => $columnValue) {
-                    $result[$columnName] = $columnValue;
-                }
-            }
-            return $result;
+            $skill_details = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            return $skill_details[$skill_id];
         }
     }
     /**
      * 
      * @param Tnp_Model_Profile_Member_Student $student
      */
-    public function fetchLanguagesKnown (
+    public function fetchLanguagesKnownInfo (
     Tnp_Model_Profile_Member_Student $student)
     {
         $member_id = $student->getMember_id();
@@ -99,12 +94,13 @@ class Tnp_Model_Mapper_Profile_Member_Student
             throw new Exception('Insufficient Params.. Member\'s Id is required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
-            $required_fields = array('language_id', 'proficiency');
+            $required_fields = array('language_id', 'proficiency as language_proficiency');
             $select = $adapter->select()
                 ->from('student_language', $required_fields)
                 ->where('member_id = ?', $member_id);
             $languages_known = array();
             $languages_known = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            //Zend_Registry::get('logger')->debug($languages_known);
             return $languages_known;
         }
     }
@@ -112,8 +108,7 @@ class Tnp_Model_Mapper_Profile_Member_Student
      * 
      * @param Tnp_Model_Profile_Member_Student $student
      */
-    public function fetchLanguageDescription (
-    Tnp_Model_Profile_Member_Student $student)
+    public function fetchLanguageInfo (Tnp_Model_Profile_Member_Student $student)
     {
         $languages_id = $student->getLanguage_id();
         if (! isset($languages_id)) {
@@ -121,25 +116,22 @@ class Tnp_Model_Mapper_Profile_Member_Student
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
-            $required_fields = array('language_name');
+            $required_fields = array('language_id', 'language_name');
             $select = $adapter->select()
                 ->from('languages', $required_fields)
                 ->where('language_id = ?', $languages_id);
             $language_details = array();
-            $language_details = $select->query()->fetchAll();
-            foreach ($language_details as $row) {
-                foreach ($row as $columnName => $columnValue) {
-                    $result[$columnName] = $columnValue;
-                }
-            }
-            return $result;
+            $language_details = $select->query()->fetchAll(
+            Zend_Db::FETCH_UNIQUE);
+            return $language_details[$languages_id];
         }
     }
     /**
      * 
      * @param Tnp_Model_Profile_Member_Student $student
      */
-    public function fetchCoCuricular (Tnp_Model_Profile_Member_Student $student)
+    public function fetchCoCuricularInfo (
+    Tnp_Model_Profile_Member_Student $student)
     {
         $member_id = $student->getMember_id();
         if (! isset($member_id)) {
@@ -147,25 +139,22 @@ class Tnp_Model_Mapper_Profile_Member_Student
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
-            $required_fields = array('achievements' . 'activities', 'hobbies');
+            $required_fields = array('member_id', 'achievements' . 'activities', 
+            'hobbies');
             $select = $adapter->select()
                 ->from('co_curicullar', $required_fields)
                 ->where('member_id = ?', $member_id);
             $co_curicular_details = array();
-            $co_curicular_details = $select->query()->fetchAll();
-            foreach ($co_curicular_details as $row) {
-                foreach ($row as $columnName => $columnValue) {
-                    $result[$columnName] = $columnValue;
-                }
-            }
-            return $result;
+            $co_curicular_details = $select->query()->fetchAll(
+            Zend_Db::FETCH_UNIQUE);
+            return $co_curicular_details[$member_id];
         }
     }
     /**
      * 
      * @param Tnp_Model_Profile_Member_Student $student
      */
-    public function fetchProfileStatus (
+    public function fetchJobPreferredInfo (
     Tnp_Model_Profile_Member_Student $student)
     {
         $member_id = $student->getMember_id();
@@ -174,25 +163,21 @@ class Tnp_Model_Mapper_Profile_Member_Student
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
-            $required_fields = array('exists' . 'is_locked', 'last_updated_on');
+            $required_fields = array('member_id', 'type');
             $select = $adapter->select()
-                ->from('profile_status', $required_fields)
+                ->from('job_preferred', $required_fields)
                 ->where('member_id = ?', $member_id);
-            $co_curicular_details = array();
-            $co_curicular_details = $select->query()->fetchAll();
-            foreach ($co_curicular_details as $row) {
-                foreach ($row as $columnName => $columnValue) {
-                    $result[$columnName] = $columnValue;
-                }
-            }
-            return $result;
+            $job_preferred_info = $select->query()->fetchAll(
+            Zend_Db::FETCH_UNIQUE);
+            return $job_preferred_info[member_id];
         }
     }
     /**
      * 
      * @param Tnp_Model_Profile_Member_Student $student
      */
-    public function fetchJobPreferred (Tnp_Model_Profile_Member_Student $student)
+    public function fetchProfileStatusInfo (
+    Tnp_Model_Profile_Member_Student $student)
     {
         $member_id = $student->getMember_id();
         if (! isset($member_id)) {
@@ -200,11 +185,15 @@ class Tnp_Model_Mapper_Profile_Member_Student
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
-            $required_fields = array('type');
+            $required_fields = array('member_id', 'exists' . 'is_locked', 
+            'last_updated_on');
             $select = $adapter->select()
-                ->from('job_preferred', $required_fields)
+                ->from('profile_status', $required_fields)
                 ->where('member_id = ?', $member_id);
-            return $select->query()->fetchColumn();
+            $profile_status_info = array();
+            $profile_status_info = $select->query()->fetchAll(
+            Zend_Db::FETCH_UNIQUE);
+            return $profile_status_info[$member_id];
         }
     }
 }
