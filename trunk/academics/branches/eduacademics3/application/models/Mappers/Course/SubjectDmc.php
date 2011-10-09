@@ -106,7 +106,7 @@ class Acad_Model_Mapper_Course_SubjectDmc
     Acad_Model_Course_SubjectDmc $subjectDmc)
     {
         $member_id = $subjectDmc->getMember_id();
-        $requiredFields = array('semester_id', 'dmc_id', 'marks_obtained', 
+        $requiredFields = array('semester_id', 'dmc_id', 'marks_obtained', 'scaled_marks',
         'total_marks');
         $adapter = $this->getDbTable()->getAdapter();
         $select = $adapter->select()
