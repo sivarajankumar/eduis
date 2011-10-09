@@ -61,7 +61,7 @@ class Tnp_Model_Mapper_Test_Employability
      * Enter description here ...
      * @param Tnp_Model_Test_Employability $test
      */
-    public function fetchTestDetails (Tnp_Model_Test_Employability $test)
+    public function fetchTestInfo (Tnp_Model_Test_Employability $test)
     {
         $employability_test_id = $test->getEmployability_test_id();
         if (! isset($employability_test_id)) {
@@ -69,17 +69,14 @@ class Tnp_Model_Mapper_Test_Employability
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = array('test_name', 'date_of_conduct');
+            $required_fields = array('employability_test_id', 'test_name', 
+            'date_of_conduct');
             $select = $adapter->select()
                 ->from('employability_test', $required_fields)
                 ->where('employability_test_id = ?', $employability_test_id);
-            $test_Details = array();
-            $test_Details = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            $test_name_array = array_keys($test_Details);
-            $test_name = $test_name_array[0];
-            $test->setTest_name($test_name);
-            $date_of_conduct = $test_Details[$test_name]['date_of_conduct'];
-            $test->setDate_of_conduct($date_of_conduct);
+            $test_info = array();
+            $test_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            return $test_info[$employability_test_id];
         }
     }
     /**
@@ -110,7 +107,7 @@ class Tnp_Model_Mapper_Test_Employability
      * Enter description here ...
      * @param Tnp_Model_Test_Employability $test
      */
-    public function fetchTestSectionDetails (Tnp_Model_Test_Employability $test)
+    public function fetchTestSectionInfo (Tnp_Model_Test_Employability $test)
     {
         $test_section_id = $test->getTest_section_id();
         if (! isset($test_section_id)) {
@@ -118,16 +115,15 @@ class Tnp_Model_Mapper_Test_Employability
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = array('test_name', 'test_section_name');
+            $required_fields = array('test_section_id', 'test_name', 
+            'test_section_name');
             $select = $adapter->select()
                 ->from('employability_test_section', $required_fields)
                 ->where('test_section_id = ?', $test_section_id);
-            $test_Details = array();
-            $test_Details = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            $test_name_array = array_keys($test_Details);
-            $test_section_name = $test_name_array[0]['test_section_name'];
-            $test->setTest_name($test_name[0]);
-            $test->setTest_section_name($test_section_name);
+            $test_section_info = array();
+            $test_section_info = $select->query()->fetchAll(
+            Zend_Db::FETCH_UNIQUE);
+            return $test_section_info[$test_section_id];
         }
     }
     /**
@@ -135,7 +131,7 @@ class Tnp_Model_Mapper_Test_Employability
      * Enter description here ...
      * @param Tnp_Model_Test_Employability $test
      */
-    public function fetchSectionRecord (Tnp_Model_Test_Employability $test)
+    public function fetchMemberSectionRecord (Tnp_Model_Test_Employability $test)
     {
         $member_id = $test->getMember_id();
         $employability_test_id = $test->getEmployability_test_id();
@@ -160,7 +156,7 @@ class Tnp_Model_Mapper_Test_Employability
      * fetches the test record of a member
      * @param Tnp_Model_Test_Employability $test
      */
-    public function fetchRecord (Tnp_Model_Test_Employability $test)
+    public function fetchMemberTestRecord (Tnp_Model_Test_Employability $test)
     {
         $member_id = $test->getMember_id();
         if (! isset($member_id)) {
@@ -177,7 +173,6 @@ class Tnp_Model_Mapper_Test_Employability
             $member_test_record = array();
             $member_test_record = $select->query()->fetchAll(
             Zend_Db::FETCH_UNIQUE);
-            //Zend_Registry::get('logger')->debug($member_test_record);
             return $member_test_record;
         }
     }

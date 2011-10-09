@@ -1,6 +1,7 @@
 <?php
 class Tnp_Model_Profile_Components_Experience
 {
+    protected $_member_experiences_info = array();
     protected $_student_experience_id;
     protected $_member_id;
     protected $_industry_id;
@@ -17,6 +18,20 @@ class Tnp_Model_Profile_Components_Experience
     protected $_is_parttime;
     protected $_description;
     protected $_mapper;
+    public function getMember_experiences_info ()
+    {
+        $member_experiences_info = $this->_member_experiences_info;
+        if (sizeof($member_experiences_info) == 0) {
+            $member_experiences_info = $this->getMapper()->fetchMemberExperienceInfo(
+            $this);
+            $this->setMember_experiences_info($member_experiences_info);
+        }
+        return $this->_member_experiences_info;
+    }
+    public function setMember_experiences_info ($_member_experiences_info)
+    {
+        $this->_member_experiences_info = $_member_experiences_info;
+    }
     public function getStudent_experience_id ()
     {
         return $this->_student_experience_id;
@@ -37,7 +52,7 @@ class Tnp_Model_Profile_Components_Experience
     {
         $industry_id = $this->_industry_id;
         if (! isset($industry_id)) {
-            $this->findIndustry_id();
+            $this->getMapper()->fetchIndustry_id($this);
         }
         return $this->_industry_id;
     }
@@ -47,10 +62,6 @@ class Tnp_Model_Profile_Components_Experience
     }
     public function getIndustry_name ()
     {
-        $industry_name = $this->_industry_name;
-        if (! isset($industry_name)) {
-            $this->findIndustry_name();
-        }
         return $this->_industry_name;
     }
     public function setIndustry_name ($_industry_name)
@@ -61,7 +72,7 @@ class Tnp_Model_Profile_Components_Experience
     {
         $functional_area_id = $this->_functional_area_id;
         if (! isset($functional_area_id)) {
-            $this->findFunctional_area_id();
+            $this->getMapper()->fetchFunctional_area_id($this);
         }
         return $this->_functional_area_id;
     }
@@ -71,10 +82,6 @@ class Tnp_Model_Profile_Components_Experience
     }
     public function getFunctional_area_name ()
     {
-        $functional_area_name = $this->_functional_area_name;
-        if (! isset($functional_area_name)) {
-            $this->findFunctional_area_name();
-        }
         return $this->_functional_area_name;
     }
     public function setFunctional_area_name ($_functional_area_name)
@@ -85,7 +92,7 @@ class Tnp_Model_Profile_Components_Experience
     {
         $role_id = $this->_role_id;
         if (! isset($role_id)) {
-            $this->findRole_id();
+            $this->getMapper()->fetchRole_id($this);
         }
         return $this->_role_id;
     }
@@ -95,10 +102,6 @@ class Tnp_Model_Profile_Components_Experience
     }
     public function getRole_name ()
     {
-        $role_name = $this->_role_name;
-        if (! isset($role_name)) {
-            $this->findRole_name();
-        }
         return $this->_role_name;
     }
     public function setRole_name ($_role_name)
@@ -240,58 +243,42 @@ class Tnp_Model_Profile_Components_Experience
     {
         return $this->getMapper()->fetchMemberId($this);
     }
-    public function getMemberExperienceDetails ()
+    public function initMemberExperienceDetails ()
     {
-        $options = $this->getMapper()->fetchMemberExperienceDetails($this);
-        $this->setOptions($options);
+        $member_experiences_info = $this->getMember_experiences_info();
+        $experience_id = $this->getStudent_experience_id();
+        if (! isset($experience_id)) {
+            $error = 'No Experience Id provided';
+            throw new Exception($error);
+        } else {
+            if (! array_key_exists($experience_id, $member_experiences_info)) {
+                $error = 'Experience Id : ' . $experience_id . 'for user ' .
+                 $this->getMember_id() . ' is invalid';
+                throw new Exception($error);
+            } else {
+                $options = $member_experiences_info[$experience_id];
+                $this->setOptions($options);
+            }
+        }
     }
-    /**
-     * Enter description here ...
-     */
     public function getMemberExperienceIds ()
     {
-        return $this->getMapper()->fetchMemberExperienceIds($this);
+        $member_experiences_info = $this->getMember_experiences_info();
+        return array_keys($member_experiences_info);
     }
-    /**
-     * Enter description here ...
-     */
-    protected function findIndustry_id ()
+    public function initIndustryInfo ()
     {
-        $this->getMapper()->fetchIndustry_id($this);
+        $options = $this->getMapper()->fetchIndustryInfo($this);
+        $this->setOptions($options);
     }
-    /**
-     * Enter description here ...
-     */
-    protected function findIndustry_name ()
+    public function initFunctionalAreaInfo ()
     {
-        $this->getMapper()->fetchIndustry_name($this);
+        $options = $this->getMapper()->fetchFunctionalAreaInfo($this);
+        $this->setOptions($options);
     }
-    /**
-     * Enter description here ...
-     */
-    protected function findFunctional_area_id ()
+    public function initRoleInfo ()
     {
-        $this->getMapper()->fetchFunctional_area_id($this);
-    }
-    /**
-     * Enter description here ...
-     */
-    protected function findFunctional_area_name ()
-    {
-        $this->getMapper()->fetchFunctional_area_name($this);
-    }
-    /**
-     * Enter description here ...
-     */
-    protected function findRole_id ()
-    {
-        $this->getMapper()->fetchRole_id($this);
-    }
-    /**
-     * Enter description here ...
-     */
-    protected function findRole_name ()
-    {
-        $this->getMapper()->fetchRole_name($this);
+        $options = $this->getMapper()->fetchRoleInfo($this);
+        $this->setOptions($options);
     }
 }
