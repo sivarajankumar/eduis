@@ -1,26 +1,39 @@
 <?php
+/**
+ * StudentController
+ * 
+ * @author team eduis
+ * @version 3
+ */
 class StudentController extends Zend_Controller_Action
 {
     protected $_member_id;
+    /**
+     * The default action - show the home page
+     */
     public function init ()
     {
         /* Initialize action controller here */
     }
     /**
-	 * @return the $_member_id
-	 */
-	public function getMember_id() {
-		return $this->_member_id;
-	}
-
-	/**
-	 * @param field_type $_member_id
-	 */
-	public function setMember_id($_member_id) {
-		$this->_member_id = $_member_id;
-	}
-
-	public function indexAction ()
+     * @todo Consider :if you dont want any other class to call this function
+     * make it private
+     * dont allow even view to acess it
+     * cause it is for internal functioning only
+     * @return the $_member_id
+     */
+    public function getMember_id ()
+    {
+        return $this->_member_id;
+    }
+    /**
+     * @param field_type $_member_id
+     */
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
+    }
+    public function indexAction ()
     {
         // action body
     }
@@ -29,16 +42,10 @@ class StudentController extends Zend_Controller_Action
      */
     public function getprofileAction ()
     {
-        /*
- * @return array
- * returns final array of arrays 
- */
         $response = array();
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        /*
-         * $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-        $auth_member_id = $authInfo['member_id'];
+        /*$auth_member_id = $authInfo['member_id'];
         if (isset($auth_member_id) )
         {
             $this->setMember_id($member_id);
@@ -52,76 +59,82 @@ class StudentController extends Zend_Controller_Action
         {
            throw new Exception('..................ABE ROLL NUMBER DAAL...........',Zend_Log::ERR);
         }*/
-        
-/*
- * DEGREE DETAILS
-*/
-        $degreemodel = new Acad_Model_Course_SubjectDmc();
-        $this->setMember_id('1');
-        $member_id = $this->getMember_id();
-        $degreemodel->setMember_id($member_id);
-        $PassedSemesters = $degreemodel->getPassedSemesters();
-       
-        $result = array();
-        foreach ($PassedSemesters as $sem) 
-        {
-            $degreemodel->setSemster_id($sem);
-            $degreemodel->getSemesterDmc();
-            
-            $total_marks = $degreemodel->getTotal_marks();
-            $marks_obtained = $degreemodel->getMarks_obtained();
-            $scaled_marks = $degreemodel->getScaled_marks();
-            $dmc_id = $degreemodel->getDmc_id();
+        $this->setMember_id(1);
+        /**
+         * DEGREE DETAILS
+         */
+        $degree = new Acad_Model_Course_SubjectDmc();
+        $passed_semesters = array();
+        $degree->setMember_id($this->getMember_id());
+        $passed_semesters = $degree->getPassedSemesters();
+        $passed_semesters = array();
+        $passed_semesters = $degree->getPassedSemesters();
+        $dmc = array();
+        foreach ($passed_semesters as $passed_semester) {
+            $degree->setSemster_id($passed_semester);
+            $degree->initSemesterDmcConsidered();
+            $dmc_id = $degree->getDmc_id();
+            $marks_obtained = $degree->getMarks_obtained();
+            $total_marks = $degree->getTotal_marks();
+            $scaled_marks = $degree->getScaled_marks();
             $percentage = ($marks_obtained / $total_marks) * 100;
-            $result[$sem] = array('dmc_id' => $dmc_id, 'semester_id' => $sem, 
+            $dmc[$passed_semester] = array('dmc_id' => $dmc_id, 
+            'semester_id' => $passed_semester, 
             'marks_obtained' => $marks_obtained, 'total_marks' => $total_marks, 
             'scaled_marks' => $scaled_marks, 'percentage' => $percentage);
         }
-        $response['degree'] = $result;
-/*
- * TWELFTH DETAILS
- */
-        $twelfthmodel = new Acad_Model_Exam_Aissce();
-        $twelfthmodel->setMember_id($member_id);
-        $twelfthmodel->getMemberExamDetails();
-        $twelfth_roll_no = $twelfthmodel->getBoard_roll();
-        $total_marks = $twelfthmodel->getTotal_marks();
-        $marks_obtained = $twelfthmodel->getMarks_obtained();
-        $percentage = $twelfthmodel->getPercentage();
-        $pcm_percentage = $twelfthmodel->getPcm_percent();
-        $yop = $twelfthmodel->getPassing_year();
-        $board = $twelfthmodel->getBoard();
-        $institution = $twelfthmodel->getInstitution();
+        $response['degree'] = $dmc;
+             Zend_Registry::get('logger')->debug($response['degree'] );
+        /**
+         * TWELFTH DETAILS
+         */
+        $twelfth = new Acad_Model_Exam_Aissce();
+        $twelfth->setMember_id($this->getMember_id());
+        $twelfth->initMemberExamInfo();
+        $twelfth_roll_no = $twelfth->getBoard_roll_no();
+        $total_marks = $twelfth->getTotal_marks();
+        $marks_obtained = $twelfth->getMarks_obtained();
+        $percentage = $twelfth->getPercentage();
+        $pcm_percentage = $twelfth->getPcm_percent();
+        $yop = $twelfth->getPassing_year();
+        $city = $twelfth->getInstitution_city();
+        $state = $twelfth->getInstitution_state();
+        $board = $twelfth->getBoard();
+        $institution = $twelfth->getInstitution();
         $twelfthresult = array('twelfth_roll_no' => $twelfth_roll_no, 
         'institution' => $institution, 'board' => $board, 'yop' => $yop, 
         'marks_obtained' => $marks_obtained, 'total_marks' => $total_marks, 
-        'percentage' => $percentage, 'pcm_percentage' => $pcm_percentage);
+        'percentage' => $percentage, 'pcm_percentage' => $pcm_percentage, 
+        'city' => $city, 'state' => $state);
         $response['twelfth'] = $twelfthresult;
- /*
- * TENTH DETAILS
- */
+        Zend_Registry::get('logger')->debug($response['twelfth'] );
+        /**
+         * TENTH DETAILS
+         */
         $tenthmodel = new Acad_Model_Exam_Aisse();
-        $tenthmodel->setMember_id($member_id);
-        $tenthmodel->getMemberExamDetails();
-        $tenth_roll_no = $tenthmodel->getMatric_roll_no();
-        $tenth_total_marks = $tenthmodel->getMatric_total_marks();
-        $tenth_marks_obtained = $tenthmodel->getMatric_marks_obtained();
-        $tenth_percentage = $tenthmodel->getMatric_percentage();
-        $tenth_yop = $tenthmodel->getMatric_passing_year();
-        $tenth_board = $tenthmodel->getMatric_board();
-        $tenth_institution = $tenthmodel->getMatric_institution();
+        $tenthmodel->setMember_id($this->getMember_id());
+        $tenthmodel->initMemberExamInfo();
+        $tenth_roll_no = $tenthmodel->getBoard_roll_no();
+        $tenth_total_marks = $tenthmodel->getTotal_marks();
+        $tenth_marks_obtained = $tenthmodel->getMarks_obtained();
+        $tenth_percentage = $tenthmodel->getPercentage();
+        $state = $twelfth->getInstitution_state();
+        $tenth_yop = $tenthmodel->getPassing_year();
+        $tenth_board = $tenthmodel->getBoard();
+        $city = $tenthmodel->getInstitution_city();
+        $tenth_institution = $tenthmodel->getInstitution();
         $tenthresult = array('tenth_roll_no' => $tenth_roll_no, 
         'institution' => $tenth_institution, 'board' => $tenth_board, 
         'yop' => $tenth_yop, 'marks_obtained' => $tenth_marks_obtained, 
-        'total_marks' => $tenth_total_marks, 'percentage' => $tenth_percentage);
+        'total_marks' => $tenth_total_marks, 'percentage' => $tenth_percentage, 
+        'city' => $city, 'state' => $state);
         $response['tenth'] = $tenthresult;
-        
-/*
- * RESPONSE
- */
-        //print_r($response);
-        $this->_helper->logger($response);
-        $callback = $this->getRequest()->getParam('callback');
-        echo $callback.'('.$this->_helper->json($response,false).')';
+        Zend_Registry::get('logger')->debug($response['tenth']);
+    /**
+     * RESPONSE
+     */
+        //Zend_Registry::get('logger')->debug($response);
+    /*$callback = $this->getRequest()->getParam('callback');
+        echo $callback.'('.$this->_helper->json($response,false).')';*/
     }
 }
