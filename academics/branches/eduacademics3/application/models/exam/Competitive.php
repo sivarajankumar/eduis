@@ -1,10 +1,10 @@
 <?php
 class Acad_Model_Exam_Competitive
 {
-    protected $_competitive_exam_name;
-    protected $_competitive_exam_abbr;
-    protected $_competitive_exam_id;
     protected $_member_id;
+    protected $_exam_name;
+    protected $_exam_abbr;
+    protected $_exam_id;
     protected $_exam_roll_no;
     protected $_exam_date;
     protected $_total_score;
@@ -12,7 +12,7 @@ class Acad_Model_Exam_Competitive
     protected $_mapper;
     public function getCompetitive_exam_name ()
     {
-        return $this->_competitive_exam_name;
+        return $this->_exam_name;
     }
     public function setCompetitive_exam_name ($_competitive_exam_name)
     {
@@ -154,9 +154,9 @@ class Acad_Model_Exam_Competitive
      * controller,
      * first setMember_id and then call getter functions to retrieve properties.
      */
-    public function getMemberExamDetails ()
+    public function initMemberExamInfo ()
     {
-        $options = $this->getMapper()->fetchMemberExamDetails($this);
+        $options = $this->getMapper()->fetchMemberExamInfo($this);
         $this->setOptions($options);
     }
 }

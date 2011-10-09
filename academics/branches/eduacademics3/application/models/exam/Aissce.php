@@ -2,7 +2,7 @@
 class Acad_Model_Exam_Aissce
 {
     protected $_member_id;
-    protected $_board_roll;
+    protected $_board_roll_no;
     protected $_marks_obtained;
     protected $_total_marks;
     protected $_percentage;
@@ -16,27 +16,27 @@ class Acad_Model_Exam_Aissce
     protected $_institution_state;
     protected $_migration_date;
     protected $_mapper;
-    /**
-	 * @return the $_member_id
-	 */
-	public function getMember_id() {
-		return $this->_member_id;
-	}
-
-	/**
-	 * @param field_type $_member_id
-	 */
-	public function setMember_id($_member_id) {
-		$this->_member_id = $_member_id;
-	}
-
-	public function getBoard_roll ()
+    public function getBoard_roll_no ()
     {
-        return $this->_board_roll;
+        return $this->_board_roll_no;
     }
-    public function setBoard_roll ($_board_roll)
+    public function setBoard_roll_no ($_board_roll_no)
     {
-        $this->_board_roll = $_board_roll;
+        $this->_board_roll_no = $_board_roll_no;
+    }
+    /**
+     * @return the $_member_id
+     */
+    public function getMember_id ()
+    {
+        return $this->_member_id;
+    }
+    /**
+     * @param field_type $_member_id
+     */
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
     }
     public function getMarks_obtained ()
     {
@@ -217,6 +217,7 @@ class Acad_Model_Exam_Aissce
     public function initMemberExamInfo ()
     {
         $options = $this->getMapper()->fetchMemberExamInfo($this);
+        //Zend_Registry::get('logger')->debug($options);
         $this->setOptions($options);
     }
 }

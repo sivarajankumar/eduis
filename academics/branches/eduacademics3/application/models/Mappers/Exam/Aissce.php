@@ -48,7 +48,7 @@ class Acad_Model_Mapper_Exam_Aissce
     {
         $member_id = $aissce->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $required_fields = array('member_id', 'board_roll', 'marks_obtained', 
+        $required_fields = array('member_id', 'board_roll_no', 'marks_obtained', 
         'total_marks', 'percentage', 'pcm_percent', 'board', 'school_rank', 
         'remarks', 'institution', 'institution_city', 'institution_state', 
         'migration_date');
