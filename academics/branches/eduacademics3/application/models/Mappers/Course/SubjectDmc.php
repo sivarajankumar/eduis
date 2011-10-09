@@ -99,7 +99,7 @@ class Acad_Model_Mapper_Course_SubjectDmc
         }
     }
     /**
-     * @todo join
+     * 
      * @param Acad_Model_Course_SubjectDmc $subjectDmc
      */
     public function fetchPassedSemestersInfo (
@@ -112,18 +112,17 @@ class Acad_Model_Mapper_Course_SubjectDmc
         $select = $adapter->select()
             ->from('dmc_total_marks', $requiredFields)
             ->joinInner('dmc_record', 
-        'dmc_total_marks.dmc_id = dmc_record.dmc_id', null)
+        'dmc_total_marks.dmc_id = dmc_record.dmc_id', 'member_id')
             ->where('member_id = ?', $member_id);
         $considered_dmc_records = array();
         $considered_dmc_records = $select->query()->fetchAll(
         Zend_Db::FETCH_UNIQUE);
-        Zend_Registry::get('logger')->debug($considered_dmc_records);
-        if(sizeof($considered_dmc_records) == 0)
-        {
-            throw new Exception('No passed semesters');
+        //Zend_Registry::get('logger')->debug($considered_dmc_records);
+        if (sizeof($considered_dmc_records) == 0) {
+            throw new Exception(
+            'No passed semesters record exist for ' . $subjectDmc->getMember_id());
         }
-        
-        $subjectDmc->setConsidered_dmc_records($considered_dmc_records);
+        return $considered_dmc_records;
     }
     /**
      * @todo incomplete
@@ -138,44 +137,18 @@ class Acad_Model_Mapper_Course_SubjectDmc
     public function fetchMemberDmcRecords (
     Acad_Model_Course_SubjectDmc $subjectDmc)
     {
-        /**
-         * returns dmcId as key and other fields as values
-         * add optional appear type clause in select
-         */
-        /*$sql = 'SELECT
-        `dmc_record`.`dmc_id`
-        ,`dmc_record`.`appear_type`
-    ,`internal_marks`.`subject_code`
-    , `internal_marks`.`marks_scored`
-    , `internal_marks`.`marks_suggested`
-    , `dmc_record`.`marks`
-    FROM
-    `academics`.`internal_marks`
-    INNER JOIN `academics`.`dmc_record` 
-        ON (`internal_marks`.`member_id` = `dmc_record`.`member_id`) AND (`internal_marks`.`subject_code` = `dmc_record`.`subject_code`)
-WHERE (`internal_marks`.`member_id` = ?
-    AND `internal_marks`.`semester_id` = ?)';
-        $bind = array('1', '8');
-        //keep adding where clause ex: add where dmcId = 23
-        $result = Zend_Db_Table::getDefaultAdapter()->query($sql, $bind)->fetch(
-        Zend_Db::FETCH_UNIQUE);
-        Zend_Registry::get('logger')->debug($result);
-        return $result;*/
-        $internalMarksFields = array('subject_code', 'marks_scored', 
-        'marks_suggested');
-        $dmcRecordFields = array('dmc_id', 'appear_type', 'marks');
+        $dmcRecordFields = array('dmc_id', 'appear_type', 
+        'marks as marks_scored_uexam');
+        $internalMarksFields = array('subject_code', 
+        'marks_scored as marks_scored_internal', 
+        'marks_suggested as marks_suggested_internal');
         $cond = 'internal_marks.member_id = dmc_record.member_id AND internal_marks.subject_code = dmc_record.subject_code';
         $adapter = $this->getDbTable()->getAdapter();
-        /*$member_id = $subjectDmc->getMember_id();
+        $member_id = $subjectDmc->getMember_id();
         $department_id = $subjectDmc->getDepartment_id();
         $programme_id = $subjectDmc->getProgramme_id();
         $semester_id = $subjectDmc->getSemster_id();
-        $appear_type = $subjectDmc->getAppear_type();*/
-        $member_id = '1';
-        $department_id = 'cse';
-        $programme_id = 'btech';
-        $semester_id = '7';
-        $appear_type = 'REGULAR';
+        $appear_type = $subjectDmc->getAppear_type();
         $select = $adapter->select()
             ->from('dmc_record', $dmcRecordFields)
             ->joinInner('internal_marks', $cond, $internalMarksFields)
@@ -185,7 +158,7 @@ WHERE (`internal_marks`.`member_id` = ?
             ->where('semester_id = ?', $semester_id)
             ->where('appear_type = ?', $appear_type);
         $memberDmcRecords = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        //Zend_Registry::get('logger')->debug($memberDmcRecords);
+        Zend_Registry::get('logger')->debug($memberDmcRecords);
         return $memberDmcRecords;
     }
 }
