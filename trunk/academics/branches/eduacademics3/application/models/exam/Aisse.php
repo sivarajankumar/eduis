@@ -5,15 +5,39 @@ class Acad_Model_Exam_Aisse
     protected $_marks_obtained;
     protected $_total_marks;
     protected $_percentage;
-    protected $_roll_no;
+    protected $_board_roll_no;
     protected $_board;
     protected $_passing_year;
     protected $_school_rank;
     protected $_remarks;
     protected $_institution;
-    protected $_city;
-    protected $_state;
+    protected $_institution_city;
+    protected $_institution_state;
     protected $_mapper;
+    public function getInstitution_city ()
+    {
+        return $this->_institution_city;
+    }
+    public function getInstitution_state ()
+    {
+        return $this->_institution_state;
+    }
+    public function setInstitution_city ($_institution_city)
+    {
+        $this->_institution_city = $_institution_city;
+    }
+    public function setInstitution_state ($_institution_state)
+    {
+        $this->_institution_state = $_institution_state;
+    }
+    public function getBoard_roll_no ()
+    {
+        return $this->_board_roll_no;
+    }
+    public function setBoard_roll_no ($_board_roll_no)
+    {
+        $this->_board_roll_no = $_board_roll_no;
+    }
     public function getMember_id ()
     {
         return $this->_member_id;
@@ -29,10 +53,6 @@ class Acad_Model_Exam_Aisse
     public function getPercentage ()
     {
         return $this->_percentage;
-    }
-    public function getRoll_no ()
-    {
-        return $this->_roll_no;
     }
     public function getBoard ()
     {
@@ -54,14 +74,6 @@ class Acad_Model_Exam_Aisse
     {
         return $this->_institution;
     }
-    public function getCity ()
-    {
-        return $this->_city;
-    }
-    public function getState ()
-    {
-        return $this->_state;
-    }
     public function setMember_id ($_member_id)
     {
         $this->_member_id = $_member_id;
@@ -77,10 +89,6 @@ class Acad_Model_Exam_Aisse
     public function setPercentage ($_percentage)
     {
         $this->_percentage = $_percentage;
-    }
-    public function setRoll_no ($_roll_no)
-    {
-        $this->_roll_no = $_roll_no;
     }
     public function setBoard ($_board)
     {
@@ -101,14 +109,6 @@ class Acad_Model_Exam_Aisse
     public function setInstitution ($_institution)
     {
         $this->_institution = $_institution;
-    }
-    public function setCity ($_city)
-    {
-        $this->_city = $_city;
-    }
-    public function setState ($_state)
-    {
-        $this->_state = $_state;
     }
     /**
      * Set Aisse Mapper

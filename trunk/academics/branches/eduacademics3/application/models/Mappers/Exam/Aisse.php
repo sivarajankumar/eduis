@@ -48,9 +48,9 @@ class Acad_Model_Mapper_Exam_Aisse
     {
         $member_id = $aisse->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $required_fields = array('member_id', 'board', 'roll_no', 
-        'marks_obtained', 'percentage', 'passing_year', 'school_rank', 'remarks', 
-        'institution', 'city', 'state');
+        $required_fields = array('member_id', 'board', 'board_roll_no', 
+        'marks_obtained','total_marks', 'percentage', 'passing_year', 'school_rank', 'remarks', 
+        'institution', 'institution_city', 'institution_state');
         $select = $adapter->select()
             ->from('matric_info',$required_fields)
             ->where('member_id = ?', $member_id);

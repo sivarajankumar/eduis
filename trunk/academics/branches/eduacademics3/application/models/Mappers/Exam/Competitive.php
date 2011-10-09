@@ -41,30 +41,23 @@ class Acad_Model_Mapper_Exam_Competitive
     {}
     /**
      * fetches Competitive Exam details
-     *@todo make memberId as basis
+     *
      *@param Acad_Model_Exam_Competitive $competitiveExam
      */
-    public function fetchMemberExamDetails (
+    public function fetchMemberExamInfo (
     Acad_Model_Exam_Competitive $competitiveExam)
     {
         $member_id = $competitiveExam->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
+        $student_competitive_exam_fields = array('exam_id', 'exam_roll_no', 
+        'exam_date', 'total_score', 'all_india_rank');
+        $competitive_exam_fields = array();
         $select = $adapter->select()
-            ->from('competitive_exam')
-            ->joinInner('competitive_exam', 
-        'student_competitive_exam.competitive_exam_id = competitive_exam.competitive_exam_id', 
-        array('competitive_exam_name', 'competitive_exam_abbr', 
-        'competitive_exam_id', 'member_id', 'exam_roll_no', 'exam_date', 
-        'total_score', 'all_india_rank'))
+            ->from($this->getDbTable()->info('name'),$student_competitive_exam_fields)
             ->where('member_id = ?', $member_id);
-        $fetchall = $adapter->fetchAll($select);
-        $result = array();
-        foreach ($fetchall as $row) {
-            foreach ($row as $columnName => $columnValue) {
-                $result[$columnName] = $columnValue;
-            }
-        }
-        return $result;
+        $competitive_exam_info = $adapter->fetchAll(Zend_Db::FETCH_UNIQUE);
+        
+        return $competitive_exam_info;
     }
     /**
      * returns REGISTRATION NUMBER
