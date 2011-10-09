@@ -1,8 +1,17 @@
 <?php
+/**
+ * @todo complete member_dmc_record func
+ * Enter description here ...
+ * @author OMEGA
+ *
+ */
 class Acad_Model_Course_SubjectDmc
 {
     protected $_considered_dmc_records = array();
     protected $_member_dmc_records = array();
+    protected $_marks_scored_internal;
+    protected $_marks_scored_uexam;
+    
     protected $_member_id;
     //
     protected $_semster_id;
@@ -23,23 +32,47 @@ class Acad_Model_Course_SubjectDmc
     protected $_total_marks;
     protected $_scaled_marks;
     protected $_mapper;
-    public function getConsidered_dmc_records ()
+    public function getMarks_scored_internal() {
+		return $this->_marks_scored_internal;
+	}
+
+	public function setMarks_scored_internal($_marks_scored_internal) {
+		$this->_marks_scored_internal = $_marks_scored_internal;
+	}
+
+	public function getMarks_scored_uexam() {
+		return $this->_marks_scored_uexam;
+	}
+
+	public function setMarks_scored_uexam($_marks_scored_uexam) {
+		$this->_marks_scored_uexam = $_marks_scored_uexam;
+	}
+
+	protected function getConsidered_dmc_records ()
     {
         $considered_dmc_records = $this->_considered_dmc_records;
         if (sizeof($considered_dmc_records) == 0) {
-            $this->getMapper()->fetchPassedSemestersInfo($this);
+            $considered_dmc_records = $this->getMapper()->fetchPassedSemestersInfo(
+            $this);
+            $this->setConsidered_dmc_records($considered_dmc_records);
         }
         return $this->_considered_dmc_records;
     }
-    public function setConsidered_dmc_records ($_considered_dmc_records)
+    protected function setConsidered_dmc_records ($_considered_dmc_records)
     {
         $this->_considered_dmc_records = $_considered_dmc_records;
     }
-    public function getMember_dmc_records ()
+    protected function getMember_dmc_records ()
     {
+        $member_dmc_records = $this->_member_dmc_records;
+        if (sizeof($member_dmc_records) == 0) {
+            $member_dmc_records = $this->getMapper()->fetchMemberDmcRecords(
+            $this);
+            $this->setMember_dmc_records($member_dmc_records);
+        }
         return $this->_member_dmc_records;
     }
-    public function setMember_dmc_records ($_member_dmc_records)
+    protected function setMember_dmc_records ($_member_dmc_records)
     {
         $this->_member_dmc_records = $_member_dmc_records;
     }
@@ -285,7 +318,7 @@ class Acad_Model_Course_SubjectDmc
         $considered_dmc_records = $this->getConsidered_dmc_records();
         return array_keys($considered_dmc_records);
     }
-    public function getSemesterDmc ()
+    public function initSemesterDmcConsidered ()
     {
         $considered_dmc_records = $this->getConsidered_dmc_records();
         $semester_id = $this->getSemster_id();
@@ -307,9 +340,10 @@ class Acad_Model_Course_SubjectDmc
      * returns an array containing dmcIds of semesters passed by student  
      * Enter description here ...
      */
-    public function getPassedSemestersInfo ()
+    public function getMemberDmcIds ()
     {
-        return $this->getMapper()->fetchPassedSemestersInfo($this);
+        $member_dmc_records = $this->getMember_dmc_records();
+        return array_keys($member_dmc_records);
     }
     public function getMemberDmcRecord ()
     {

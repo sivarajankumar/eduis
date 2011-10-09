@@ -214,9 +214,9 @@ class Acad_Model_Exam_Aissce
      * controller,
      * first setMember_id and then call getter functions to retrieve properties.
      */
-    public function getMemberExamDetails ()
+    public function initMemberExamInfo ()
     {
-        $options = $this->getMapper()->fetchMemberExamDetails($this);
+        $options = $this->getMapper()->fetchMemberExamInfo($this);
         $this->setOptions($options);
     }
 }

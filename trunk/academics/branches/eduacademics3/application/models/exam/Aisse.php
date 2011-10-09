@@ -2,113 +2,113 @@
 class Acad_Model_Exam_Aisse
 {
     protected $_member_id;
-    protected $_matric_marks_obtained;
-    protected $_matric_total_marks;
-    protected $_matric_percentage;
-    protected $_matric_roll_no;
-    protected $_matric_board;
-    protected $_matric_passing_year;
-    protected $_matric_school_rank;
-    protected $_matric_remarks;
-    protected $_matric_institution;
-    protected $_matric_city;
-    protected $_matric_state;
+    protected $_marks_obtained;
+    protected $_total_marks;
+    protected $_percentage;
+    protected $_roll_no;
+    protected $_board;
+    protected $_passing_year;
+    protected $_school_rank;
+    protected $_remarks;
+    protected $_institution;
+    protected $_city;
+    protected $_state;
     protected $_mapper;
     public function getMember_id ()
     {
         return $this->_member_id;
     }
+    public function getMarks_obtained ()
+    {
+        return $this->_marks_obtained;
+    }
+    public function getTotal_marks ()
+    {
+        return $this->_total_marks;
+    }
+    public function getPercentage ()
+    {
+        return $this->_percentage;
+    }
+    public function getRoll_no ()
+    {
+        return $this->_roll_no;
+    }
+    public function getBoard ()
+    {
+        return $this->_board;
+    }
+    public function getPassing_year ()
+    {
+        return $this->_passing_year;
+    }
+    public function getSchool_rank ()
+    {
+        return $this->_school_rank;
+    }
+    public function getRemarks ()
+    {
+        return $this->_remarks;
+    }
+    public function getInstitution ()
+    {
+        return $this->_institution;
+    }
+    public function getCity ()
+    {
+        return $this->_city;
+    }
+    public function getState ()
+    {
+        return $this->_state;
+    }
     public function setMember_id ($_member_id)
     {
         $this->_member_id = $_member_id;
     }
-    public function getMatric_marks_obtained ()
+    public function setMarks_obtained ($_marks_obtained)
     {
-        return $this->_matric_marks_obtained;
+        $this->_marks_obtained = $_marks_obtained;
     }
-    public function setMatric_marks_obtained ($_matric_marks_obtained)
+    public function setTotal_marks ($_total_marks)
     {
-        $this->_matric_marks_obtained = $_matric_marks_obtained;
+        $this->_total_marks = $_total_marks;
     }
-    public function getMatric_total_marks ()
+    public function setPercentage ($_percentage)
     {
-        return $this->_matric_total_marks;
+        $this->_percentage = $_percentage;
     }
-    public function setMatric_total_marks ($_matric_total_marks)
+    public function setRoll_no ($_roll_no)
     {
-        $this->_matric_total_marks = $_matric_total_marks;
+        $this->_roll_no = $_roll_no;
     }
-    public function getMatric_percentage ()
+    public function setBoard ($_board)
     {
-        return $this->_matric_percentage;
+        $this->_board = $_board;
     }
-    public function setMatric_percentage ($_matric_percentage)
+    public function setPassing_year ($_passing_year)
     {
-        $this->_matric_percentage = $_matric_percentage;
+        $this->_passing_year = $_passing_year;
     }
-    public function getMatric_roll_no ()
+    public function setSchool_rank ($_school_rank)
     {
-        return $this->_matric_roll_no;
+        $this->_school_rank = $_school_rank;
     }
-    public function setMatric_roll_no ($_matric_roll_no)
+    public function setRemarks ($_remarks)
     {
-        $this->_matric_roll_no = $_matric_roll_no;
+        $this->_remarks = $_remarks;
     }
-    public function getMatric_board ()
+    public function setInstitution ($_institution)
     {
-        return $this->_matric_board;
+        $this->_institution = $_institution;
     }
-    public function setMatric_board ($_matric_board)
+    public function setCity ($_city)
     {
-        $this->_matric_board = $_matric_board;
+        $this->_city = $_city;
     }
-    public function getMatric_passing_year ()
+    public function setState ($_state)
     {
-        return $this->_matric_passing_year;
-    }
-    public function setMatric_passing_year ($_matric_passing_year)
-    {
-        $this->_matric_passing_year = $_matric_passing_year;
-    }
-    public function getMatric_school_rank ()
-    {
-        return $this->_matric_school_rank;
-    }
-    public function setMatric_school_rank ($_matric_school_rank)
-    {
-        $this->_matric_school_rank = $_matric_school_rank;
-    }
-    public function getMatric_remarks ()
-    {
-        return $this->_matric_remarks;
-    }
-    public function setMatric_remarks ($_matric_remarks)
-    {
-        $this->_matric_remarks = $_matric_remarks;
-    }
-    public function getMatric_institution ()
-    {
-        return $this->_matric_institution;
-    }
-    public function setMatric_institution ($_matric_institution)
-    {
-        $this->_matric_institution = $_matric_institution;
-    }
-    public function getMatric_city ()
-    {
-        return $this->_matric_city;
-    }
-    public function setMatric_city ($_matric_city)
-    {
-        $this->_matric_city = $_matric_city;
-    }
-    public function getMatric_state ()
-    {
-        return $this->_matric_state;
-    }
-    public function setMatric_state ($_matric_state)
-    {
-        $this->_matric_state = $_matric_state;
+        $this->_state = $_state;
     }
     /**
      * Set Aisse Mapper
@@ -122,7 +122,7 @@ class Acad_Model_Exam_Aisse
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Exam_AisseMapper
+     * @return Acad_Model_Mapper_Exam_Aisse
      */
     public function getMapper ()
     {
@@ -190,9 +190,9 @@ class Acad_Model_Exam_Aisse
      * controller,
      * first setMember_id and then call getter functions to retrieve properties.
      */
-    public function getMemberExamDetails ()
+    public function initMemberExamInfo ()
     {
-        $options = $this->getMapper()->fetchMemberExamDetails($this);
+        $options = $this->getMapper()->fetchMemberExamInfo($this);
         $this->setOptions($options);
     }
 }

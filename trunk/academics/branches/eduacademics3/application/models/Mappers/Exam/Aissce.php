@@ -40,25 +40,24 @@ class Acad_Model_Mapper_Exam_Aissce
     public function save ()
     {}
     /**
-     * fetches AISSCE Exam details
+     * fetches AISSCE Exam info
      * @param Acad_Model_Exam_Aissce $aissce
      *@todo make memberId as basis
      */
-    public function fetchMemberExamDetails (Acad_Model_Exam_Aissce $aissce)
+    public function fetchMemberExamInfo (Acad_Model_Exam_Aissce $aissce)
     {
         $member_id = $aissce->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
+        $required_fields = array('member_id', 'board_roll', 'marks_obtained', 
+        'total_marks', 'percentage', 'pcm_percent', 'board', 'school_rank', 
+        'remarks', 'institution', 'institution_city', 'institution_state', 
+        'migration_date');
         $select = $adapter->select()
             ->from('twelfth')
             ->where('member_id = ?', $member_id);
-        $fetchall = $adapter->fetchAll($select);
-        $result = array();
-        foreach ($fetchall as $row) {
-            foreach ($row as $columnName => $columnValue) {
-                $result[$columnName] = $columnValue;
-            }
-        }
-        return $result;
+        $member_exam_info = array();
+        $member_exam_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $member_exam_info[$member_id];
     }
     /**
      * returns member_id
