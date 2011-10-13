@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_Exam_Diploma
+class Acad_Model_Programme_Diploma
 {
     protected $_member_id;
     protected $_discipline_id;
@@ -139,8 +139,8 @@ class Acad_Model_Exam_Diploma
 
 	/**
      * Set Subject Mapper
-     * @param Acad_Model_Mapper_Exam_Diploma $mapper
-     * @return Acad_Model_Exam_Diploma
+     * @param Acad_Model_Mapper_Programme_Diploma $mapper
+     * @return Acad_Model_Programme_Diploma
      */
     public function setMapper ($mapper)
     {
@@ -149,12 +149,12 @@ class Acad_Model_Exam_Diploma
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Mapper_Exam_Diploma
+     * @return Acad_Model_Mapper_Programme_Diploma
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Mapper_Exam_Diploma());
+            $this->setMapper(new Acad_Model_Mapper_Programme_Diploma());
         }
         return $this->_mapper;
     }

@@ -1,212 +1,139 @@
 <?php
-class Acad_Model_Programme_Diploma
+class Acad_Model_Mapper_Programme_Diploma
 {
-    protected $_u_regn_no;
-    protected $_marks_obtained;
-    protected $_total_marks;
-    protected $_percentage;
-    protected $_remarks;
-    protected $_passing_year;
-    protected $_branch;
-    protected $_board;
-    protected $_institution;
-    protected $_institution_city;
-    protected $_institution_state;
-    protected $_board_roll;
-    protected $_migration_date;
-    protected $_mapper;
-    public function getU_regn_no ()
+    /**
+     * @var Zend_Db_Table_Abstract
+     */
+    protected $_dbTable;
+    /**
+     * Specify Zend_Db_Table instance to use for data operations
+     * 
+     * @param  Zend_Db_Table_Abstract $dbTable 
+     * @return Acad_Model_Mapper_Programme_Diploma
+     */
+    public function setDbTable ($dbTable)
     {
-        return $this->_u_regn_no;
-    }
-    public function setU_regn_no ($_u_regn_no)
-    {
-        $this->_u_regn_no = $_u_regn_no;
-    }
-    public function getMarks_obtained ()
-    {
-        return $this->_marks_obtained;
-    }
-    public function setMarks_obtained ($_marks_obtained)
-    {
-        $this->_marks_obtained = $_marks_obtained;
-    }
-    public function getTotal_marks ()
-    {
-        return $this->_total_marks;
-    }
-    public function setTotal_marks ($_total_marks)
-    {
-        $this->_total_marks = $_total_marks;
-    }
-    public function getPercentage ()
-    {
-        return $this->_percentage;
-    }
-    public function setPercentage ($_percentage)
-    {
-        $this->_percentage = $_percentage;
-    }
-    public function getRemarks ()
-    {
-        return $this->_remarks;
-    }
-    public function setRemarks ($_remarks)
-    {
-        $this->_remarks = $_remarks;
-    }
-    public function getPassing_year ()
-    {
-        return $this->_passing_year;
-    }
-    public function setPassing_year ($_passing_year)
-    {
-        $this->_passing_year = $_passing_year;
-    }
-    public function getBranch ()
-    {
-        return $this->_branch;
-    }
-    public function setBranch ($_branch)
-    {
-        $this->_branch = $_branch;
-    }
-    public function getBoard ()
-    {
-        return $this->_board;
-    }
-    public function setBoard ($_board)
-    {
-        $this->_board = $_board;
-    }
-    public function getInstitution ()
-    {
-        return $this->_institution;
-    }
-    public function setInstitution ($_institution)
-    {
-        $this->_institution = $_institution;
-    }
-    public function getInstitution_city ()
-    {
-        return $this->_institution_city;
-    }
-    public function setInstitution_city ($_institution_city)
-    {
-        $this->_institution_city = $_institution_city;
-    }
-    public function getInstitution_state ()
-    {
-        return $this->_institution_state;
-    }
-    public function setInstitution_state ($_institution_state)
-    {
-        $this->_institution_state = $_institution_state;
-    }
-    public function getBoard_roll ()
-    {
-        return $this->_board_roll;
-    }
-    public function setBoard_roll ($_board_roll)
-    {
-        $this->_board_roll = $_board_roll;
-    }
-    public function getMigration_date ()
-    {
-        return $this->_migration_date;
-    }
-    public function setMigration_date ($_migration_date)
-    {
-        $this->_migration_date = $_migration_date;
-    }
-    public function setMapper ($mapper)
-    {
-        $this->_mapper = $mapper;
+        if (is_string($dbTable)) {
+            $dbTable = new $dbTable();
+        }
+        if (! $dbTable instanceof Zend_Db_Table_Abstract) {
+            throw new Exception('Invalid table data gateway provided');
+        }
+        $this->_dbTable = $dbTable;
         return $this;
     }
     /**
-     * gets the mapper from the object class
-     * @return Acad_Model_Programme_DiplomaMapper
+     * Get registered Zend_Db_Table instance
+     * @return Zend_Db_Table_Abstract
      */
-    public function getMapper ()
+    public function getDbTable ()
     {
-        if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Mapper_Exam_Diploma());
+        if (null === $this->_dbTable) {
+            $this->setDbTable('Acad_Model_DbTable_Diploma');
         }
-        return $this->_mapper;
-    }
-    public function __construct (array $options = null)
-    {
-        if (is_array($options)) {
-            $this->setOptions($options);
-        }
-    }
-    public function __set ($name, $value)
-    {
-        $method = 'set' . $name;
-        if ('mapper' == $name || ! method_exists($this, $method)) {
-            throw new Exception('Invalid property specified');
-        }
-        $this->$method($value);
-    }
-    public function __get ($name)
-    {
-        $method = 'get' . $name;
-        if ('mapper' == $name || ! method_exists($this, $method)) {
-            throw new Exception('Invalid property specified');
-        } else {
-            if (isset($this->$name)) {
-                return $this->$method();
-            } else {
-                $fetchMethodName = 'fetch' . $name;
-                if (method_exists($this->getMapper(), $fetchMethodName)) {
-                    $this->getMapper()->$fetchMethodName;
-                    return $this->$method();
-                }
-            }
-        }
+        return $this->_dbTable;
     }
     /**
-     * used to init an object
-     * @param array $options
-     */
-    public function setOptions ($options)
-    {
-        $methods = get_class_methods($this);
-        foreach ($options as $key => $value) {
-            $method = 'set' . ucfirst($key);
-            if (in_array($method, $methods)) {
-                $this->$method($value);
-            }
-        }
-        return $this;
-    }
-    /**
+     * 
      * @todo
-     * Enter description here ...
      */
     public function save ()
+    {}
+    /**
+     * Fetches Diploma Details of a student
+     * @param Acad_Model_Programme_Diploma $diploma
+     */
+    public function fetchMemberExamInfo (Acad_Model_Programme_Diploma $diploma)
     {
-        $this->getMapper()->save($this);
+        $member_id = $diploma->getMember_id();
+        $adapter = $this->getDbTable()->getDefaultAdapter();
+        $required_fields = array('member_id', 'discipline_id', 'board_roll_no', 
+        'marks_obtained', 'total_marks', 'percentage', 'passing_year', 'remarks', 
+        'university', 'institution', 'city_id', 'state_id', 'migration_date');
+        $select = $adapter->select()
+            ->from($this->getDbTable()
+            ->info('name'), $required_fields)
+            ->where('member_id = ?', $member_id);
+        $member_exam_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $member_exam_info[$member_id];
     }
     /**
-     * first set properties of object, according to which you want
-     * to search,using constructor, then call the search function
+     * Fetches Discipline Information ,viz, Name in this case
+     * @param Acad_Model_Programme_Diploma $diploma
+     */
+    public function fetchDisciplineInfo (Acad_Model_Programme_Diploma $diploma)
+    {
+        $discipline_id = $diploma->getDiscipline_id();
+        if (! isset($discipline_id)) {
+            $error = 'Please provide the Discipline Id';
+            throw new Exception($error);
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $required_fields = array('discipline_id', 'name as discipline_name');
+            $select = $adapter->select()
+                ->from('discipline', $required_fields)
+                ->where('discipline_id = ?', $discipline_id);
+            $discipline_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            return $discipline_info[$discipline_id];
+        }
+    }
+    /**
      * 
+     * @param Acad_Model_Programme_Diploma $searchParams
+     * @todo return memberIds
      */
-    public function search ()
+    public function fetchMemberId (Acad_Model_Programme_Diploma $searchParams)
     {
-        return $this->getMapper()->fetchMemberId($this);
-    }
-    /**
-     * Gets Diploma information of a member
-     * You cant use it directly in 
-     * controller,
-     * first setMember_id and then call getter functions to retrieve properties.
-     */
-    public function getMemberExamDetails ()
-    {
-        $options = $this->getMapper()->fetchMemberExamDetails($this);
-        $this->setOptions($options);
+        $adapter = $this->getDbTable()->getDefaultAdapter();
+        $select = $adapter->select()->from('diploma', 'member_id');
+        $board_roll = $searchParams->getBoard_roll();
+        $marks_obtained = $searchParams->getMarks_obtained();
+        $percentage = $searchParams->getPercentage();
+        $total_marks = $searchParams->getTotal_marks();
+        $remarks = $searchParams->getRemarks();
+        $passing_year = $searchParams->getPassing_year();
+        $branch = $searchParams->getBranch();
+        $board = $searchParams->getBoard();
+        $institution = $searchParams->getInstitution();
+        $institution_city = $searchParams->getInstitution_city();
+        $migration_date = $searchParams->getMigration_date();
+        $institution_state = $searchParams->getInstitution_state();
+        if (isset($board_roll)) {
+            $select->where('board_roll = ?', $board_roll);
+        }
+        if (isset($marks_obtained)) {
+            $select->where('marks_obtained = ?', $marks_obtained);
+        }
+        if (isset($total_marks)) {
+            $select->where('total_marks = ?', $total_marks);
+        }
+        if (isset($percentage)) {
+            $select->where('percentage = ?', $percentage);
+        }
+        if (isset($remarks)) {
+            $select->where('remarks = ?', $remarks);
+        }
+        if (isset($passing_year)) {
+            $select->where('passing_year = ?', $passing_year);
+        }
+        if (isset($branch)) {
+            $select->where('branch = ?', $branch);
+        }
+        if (isset($board)) {
+            $select->where('board = ?', $board);
+        }
+        if (isset($institution)) {
+            $select->where('institution = ?', $institution);
+        }
+        if (isset($institution_city)) {
+            $select->where('institution_city = ?', $institution_city);
+        }
+        if (isset($institution_state)) {
+            $select->where('institution_state = ?', $institution_state);
+        }
+        if (isset($migration_date)) {
+            $select->where('migration_date = ?', $migration_date);
+        }
+        return $select->query()->fetchColumn();
     }
 }
