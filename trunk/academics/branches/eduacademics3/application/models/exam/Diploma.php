@@ -10,21 +10,36 @@ class Acad_Model_Exam_Diploma
     protected $_branch;
     protected $_board;
     protected $_institution;
-    protected $_institution_city;
-    protected $_institution_state;
+    protected $_city_id;
+    protected $_state_id;
     protected $_board_roll;
     protected $_migration_date;
     protected $_mapper;
-    
-    public function getMember_id() {
-		return $this->_member_id;
-	}
-
-	public function setMember_id($_member_id) {
-		$this->_member_id = $_member_id;
-	}
-
-	public function getMarks_obtained ()
+    public function getCity_id ()
+    {
+        return $this->_city_id;
+    }
+    public function setCity_id ($_city_id)
+    {
+        $this->_city_id = $_city_id;
+    }
+    public function getState_id ()
+    {
+        return $this->_state_id;
+    }
+    public function setState_id ($_state_id)
+    {
+        $this->_state_id = $_state_id;
+    }
+    public function getMember_id ()
+    {
+        return $this->_member_id;
+    }
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
+    }
+    public function getMarks_obtained ()
     {
         return $this->_marks_obtained;
     }
@@ -87,22 +102,6 @@ class Acad_Model_Exam_Diploma
     public function setInstitution ($_institution)
     {
         $this->_institution = $_institution;
-    }
-    public function getInstitution_city ()
-    {
-        return $this->_institution_city;
-    }
-    public function setInstitution_city ($_institution_city)
-    {
-        $this->_institution_city = $_institution_city;
-    }
-    public function getInstitution_state ()
-    {
-        return $this->_institution_state;
-    }
-    public function setInstitution_state ($_institution_state)
-    {
-        $this->_institution_state = $_institution_state;
     }
     public function getBoard_roll ()
     {

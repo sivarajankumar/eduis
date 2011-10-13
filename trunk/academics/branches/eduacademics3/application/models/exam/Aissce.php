@@ -12,11 +12,27 @@ class Acad_Model_Exam_Aissce
     protected $_school_rank;
     protected $_remarks;
     protected $_institution;
-    protected $_institution_city;
-    protected $_institution_state;
+    protected $_city_id;
+    protected $_state_id;
     protected $_migration_date;
     protected $_mapper;
-    public function getBoard_roll_no ()
+    public function getCity_id() {
+		return $this->_city_id;
+	}
+
+	public function setCity_id($_city_id) {
+		$this->_city_id = $_city_id;
+	}
+
+	public function getState_id() {
+		return $this->_state_id;
+	}
+
+	public function setState_id($_state_id) {
+		$this->_state_id = $_state_id;
+	}
+
+	public function getBoard_roll_no ()
     {
         return $this->_board_roll_no;
     }
@@ -110,22 +126,7 @@ class Acad_Model_Exam_Aissce
     {
         $this->_institution = $_institution;
     }
-    public function getInstitution_city ()
-    {
-        return $this->_institution_city;
-    }
-    public function setInstitution_city ($_institution_city)
-    {
-        $this->_institution_city = $_institution_city;
-    }
-    public function getInstitution_state ()
-    {
-        return $this->_institution_state;
-    }
-    public function setInstitution_state ($_institution_state)
-    {
-        $this->_institution_state = $_institution_state;
-    }
+    
     public function getMigration_date ()
     {
         return $this->_migration_date;

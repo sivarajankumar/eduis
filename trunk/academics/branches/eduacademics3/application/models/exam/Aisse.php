@@ -11,24 +11,24 @@ class Acad_Model_Exam_Aisse
     protected $_school_rank;
     protected $_remarks;
     protected $_institution;
-    protected $_institution_city;
-    protected $_institution_state;
+    protected $_city_id;
+    protected $_state_id;
     protected $_mapper;
-    public function getInstitution_city ()
+    public function getCity_id ()
     {
-        return $this->_institution_city;
+        return $this->_city_id;
     }
-    public function getInstitution_state ()
+    public function setCity_id ($_city_id)
     {
-        return $this->_institution_state;
+        $this->_city_id = $_city_id;
     }
-    public function setInstitution_city ($_institution_city)
+    public function getState_id ()
     {
-        $this->_institution_city = $_institution_city;
+        return $this->_state_id;
     }
-    public function setInstitution_state ($_institution_state)
+    public function setState_id ($_state_id)
     {
-        $this->_institution_state = $_institution_state;
+        $this->_state_id = $_state_id;
     }
     public function getBoard_roll_no ()
     {
