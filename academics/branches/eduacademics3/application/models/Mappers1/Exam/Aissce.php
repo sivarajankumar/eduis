@@ -50,7 +50,7 @@ class Acad_Model_Mapper_Exam_Aissce
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $required_fields = array('member_id', 'board_roll_no', 'marks_obtained', 
         'total_marks', 'percentage', 'pcm_percent', 'board', 'school_rank', 
-        'remarks', 'institution', 'institution_city', 'institution_state', 
+        'remarks', 'institution', 'city_id', 'state_id', 
         'migration_date');
         $select = $adapter->select()
             ->from('twelfth')
