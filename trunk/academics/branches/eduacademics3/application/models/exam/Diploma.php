@@ -2,6 +2,8 @@
 class Acad_Model_Exam_Diploma
 {
     protected $_member_id;
+    protected $_discipline_id;
+    protected $_discipline_name;
     protected $_marks_obtained;
     protected $_total_marks;
     protected $_percentage;
@@ -15,111 +17,127 @@ class Acad_Model_Exam_Diploma
     protected $_board_roll;
     protected $_migration_date;
     protected $_mapper;
-    public function getCity_id ()
-    {
-        return $this->_city_id;
-    }
-    public function setCity_id ($_city_id)
-    {
-        $this->_city_id = $_city_id;
-    }
-    public function getState_id ()
-    {
-        return $this->_state_id;
-    }
-    public function setState_id ($_state_id)
-    {
-        $this->_state_id = $_state_id;
-    }
-    public function getMember_id ()
-    {
-        return $this->_member_id;
-    }
-    public function setMember_id ($_member_id)
-    {
-        $this->_member_id = $_member_id;
-    }
-    public function getMarks_obtained ()
-    {
-        return $this->_marks_obtained;
-    }
-    public function setMarks_obtained ($_marks_obtained)
-    {
-        $this->_marks_obtained = $_marks_obtained;
-    }
-    public function getTotal_marks ()
-    {
-        return $this->_total_marks;
-    }
-    public function setTotal_marks ($_total_marks)
-    {
-        $this->_total_marks = $_total_marks;
-    }
-    public function getPercentage ()
-    {
-        return $this->_percentage;
-    }
-    public function setPercentage ($_percentage)
-    {
-        $this->_percentage = $_percentage;
-    }
-    public function getRemarks ()
-    {
-        return $this->_remarks;
-    }
-    public function setRemarks ($_remarks)
-    {
-        $this->_remarks = $_remarks;
-    }
-    public function getPassing_year ()
-    {
-        return $this->_passing_year;
-    }
-    public function setPassing_year ($_passing_year)
-    {
-        $this->_passing_year = $_passing_year;
-    }
-    public function getBranch ()
-    {
-        return $this->_branch;
-    }
-    public function setBranch ($_branch)
-    {
-        $this->_branch = $_branch;
-    }
-    public function getBoard ()
-    {
-        return $this->_board;
-    }
-    public function setBoard ($_board)
-    {
-        $this->_board = $_board;
-    }
-    public function getInstitution ()
-    {
-        return $this->_institution;
-    }
-    public function setInstitution ($_institution)
-    {
-        $this->_institution = $_institution;
-    }
-    public function getBoard_roll ()
-    {
-        return $this->_board_roll;
-    }
-    public function setBoard_roll ($_board_roll)
-    {
-        $this->_board_roll = $_board_roll;
-    }
-    public function getMigration_date ()
-    {
-        return $this->_migration_date;
-    }
-    public function setMigration_date ($_migration_date)
-    {
-        $this->_migration_date = $_migration_date;
-    }
-    /**
+    public function getMember_id() {
+		return $this->_member_id;
+	}
+
+	public function setMember_id($_member_id) {
+		$this->_member_id = $_member_id;
+	}
+
+	public function getDiscipline_id() {
+		return $this->_discipline_id;
+	}
+
+	public function setDiscipline_id($_discipline_id) {
+		$this->_discipline_id = $_discipline_id;
+	}
+
+	public function getDiscipline_name() {
+		return $this->_discipline_name;
+	}
+
+	public function setDiscipline_name($_discipline_name) {
+		$this->_discipline_name = $_discipline_name;
+	}
+
+	public function getMarks_obtained() {
+		return $this->_marks_obtained;
+	}
+
+	public function setMarks_obtained($_marks_obtained) {
+		$this->_marks_obtained = $_marks_obtained;
+	}
+
+	public function getTotal_marks() {
+		return $this->_total_marks;
+	}
+
+	public function setTotal_marks($_total_marks) {
+		$this->_total_marks = $_total_marks;
+	}
+
+	public function getPercentage() {
+		return $this->_percentage;
+	}
+
+	public function setPercentage($_percentage) {
+		$this->_percentage = $_percentage;
+	}
+
+	public function getRemarks() {
+		return $this->_remarks;
+	}
+
+	public function setRemarks($_remarks) {
+		$this->_remarks = $_remarks;
+	}
+
+	public function getPassing_year() {
+		return $this->_passing_year;
+	}
+
+	public function setPassing_year($_passing_year) {
+		$this->_passing_year = $_passing_year;
+	}
+
+	public function getBranch() {
+		return $this->_branch;
+	}
+
+	public function setBranch($_branch) {
+		$this->_branch = $_branch;
+	}
+
+	public function getBoard() {
+		return $this->_board;
+	}
+
+	public function setBoard($_board) {
+		$this->_board = $_board;
+	}
+
+	public function getInstitution() {
+		return $this->_institution;
+	}
+
+	public function setInstitution($_institution) {
+		$this->_institution = $_institution;
+	}
+
+	public function getCity_id() {
+		return $this->_city_id;
+	}
+
+	public function setCity_id($_city_id) {
+		$this->_city_id = $_city_id;
+	}
+
+	public function getState_id() {
+		return $this->_state_id;
+	}
+
+	public function setState_id($_state_id) {
+		$this->_state_id = $_state_id;
+	}
+
+	public function getBoard_roll() {
+		return $this->_board_roll;
+	}
+
+	public function setBoard_roll($_board_roll) {
+		$this->_board_roll = $_board_roll;
+	}
+
+	public function getMigration_date() {
+		return $this->_migration_date;
+	}
+
+	public function setMigration_date($_migration_date) {
+		$this->_migration_date = $_migration_date;
+	}
+
+	/**
      * Set Subject Mapper
      * @param Acad_Model_Mapper_Exam_Diploma $mapper
      * @return Acad_Model_Exam_Diploma
@@ -131,7 +149,7 @@ class Acad_Model_Exam_Diploma
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Programme_DiplomaMapper
+     * @return Acad_Model_Mapper_Exam_Diploma
      */
     public function getMapper ()
     {
@@ -184,24 +202,18 @@ class Acad_Model_Exam_Diploma
     {
         $this->getMapper()->save($this);
     }
-    /**
-     * first set properties of object, according to which you want
-     * to search,using constructor, then call the search function
-     * 
-     */
     public function search ()
     {
         return $this->getMapper()->fetchMemberId($this);
     }
-    /**
-     * Gets Diploma information of a member
-     * You cant use it directly in 
-     * controller,
-     * first setMember_id and then call getter functions to retrieve properties.
-     */
-    public function getMemberExamDetails ()
+    public function initMemberExamInfo ()
     {
-        $options = $this->getMapper()->fetchMemberExamDetails($this);
+        $options = $this->getMapper()->fetchMemberExamInfo($this);
+        $this->setOptions($options);
+    }
+    public function initDisciplineInfo ()
+    {
+        $options = $this->getMapper()->fetchDisciplineInfo($this);
         $this->setOptions($options);
     }
 }

@@ -40,28 +40,45 @@ class Acad_Model_Mapper_Exam_Diploma
     public function save ()
     {}
     /**
-     * fetches Diploma details of a member
-     *@todo make memberId as basis
-     *@param Acad_Model_Exam_Diploma $diploma
+     * Fetches Diploma Details of a student
+     * @param Acad_Model_Exam_Diploma $diploma
      */
-    public function fetchMemberExamDetails (Acad_Model_Exam_Diploma $diploma)
+    public function fetchMemberExamInfo (Acad_Model_Exam_Diploma $diploma)
     {
         $member_id = $diploma->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
+        $required_fields = array('member_id', 'discipline_id', 'board_roll_no', 
+        'marks_obtained', 'total_marks', 'percentage', 'passing_year', 'remarks', 
+        'university', 'institution', 'city_id', 'state_id', 'migration_date');
         $select = $adapter->select()
-            ->from('diploma')
+            ->from($this->getDbTable()
+            ->info('name'), $required_fields)
             ->where('member_id = ?', $member_id);
-        $fetchall = $adapter->fetchAll($select);
-        $result = array();
-        foreach ($fetchall as $row) {
-            foreach ($row as $columnName => $columnValue) {
-                $result[$columnName] = $columnValue;
-            }
-        }
-        return $result;
+        $member_exam_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $member_exam_info[$member_id];
     }
     /**
-     * returns REGISTRATION NUMBER
+     * Fetches Discipline Information ,viz, Name in this case
+     * @param Acad_Model_Exam_Diploma $diploma
+     */
+    public function fetchDisciplineInfo (Acad_Model_Exam_Diploma $diploma)
+    {
+        $discipline_id = $diploma->getDiscipline_id();
+        if (! isset($discipline_id)) {
+            $error = 'Please provide the Discipline Id';
+            throw new Exception($error);
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $required_fields = array('discipline_id', 'name as discipline_name');
+            $select = $adapter->select()
+                ->from('discipline', $required_fields)
+                ->where('discipline_id = ?', $discipline_id);
+            $discipline_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            return $discipline_info[$discipline_id];
+        }
+    }
+    /**
+     * 
      * @param Acad_Model_Exam_Diploma $searchParams
      * @todo return memberIds
      */

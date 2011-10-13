@@ -67,7 +67,7 @@ class Acad_Model_Mapper_Exam_Aissce
     public function fetchMemberId (Acad_Model_Exam_Aissce $searchParams)
     {
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()->from('twelfth', 'member_id');
+        $select = $adapter->select()->from($this->getDbTable()->info('name'), 'member_id');
         $board_roll = $searchParams->getBoard_roll();
         $marks_obtained = $searchParams->getMarks_obtained();
         $total_marks = $searchParams->getTotal_marks();
