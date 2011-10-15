@@ -84,7 +84,6 @@ class StudentController extends Zend_Controller_Action
             'scaled_marks' => $scaled_marks, 'percentage' => $percentage);
         }
         $response['degree'] = $dmc;
-             Zend_Registry::get('logger')->debug($response['degree'] );
         /**
          * TWELFTH DETAILS
          */
@@ -97,8 +96,8 @@ class StudentController extends Zend_Controller_Action
         $percentage = $twelfth->getPercentage();
         $pcm_percentage = $twelfth->getPcm_percent();
         $yop = $twelfth->getPassing_year();
-        $city = $twelfth->getInstitution_city();
-        $state = $twelfth->getInstitution_state();
+        $city = $twelfth->getCity_name();
+        $state = $twelfth->getState_name();
         $board = $twelfth->getBoard();
         $institution = $twelfth->getInstitution();
         $twelfthresult = array('twelfth_roll_no' => $twelfth_roll_no, 
@@ -107,7 +106,6 @@ class StudentController extends Zend_Controller_Action
         'percentage' => $percentage, 'pcm_percentage' => $pcm_percentage, 
         'city' => $city, 'state' => $state);
         $response['twelfth'] = $twelfthresult;
-        Zend_Registry::get('logger')->debug($response['twelfth'] );
         /**
          * TENTH DETAILS
          */
@@ -118,10 +116,10 @@ class StudentController extends Zend_Controller_Action
         $tenth_total_marks = $tenthmodel->getTotal_marks();
         $tenth_marks_obtained = $tenthmodel->getMarks_obtained();
         $tenth_percentage = $tenthmodel->getPercentage();
-        $state = $twelfth->getInstitution_state();
+        $state = $twelfth->getState_name();
         $tenth_yop = $tenthmodel->getPassing_year();
         $tenth_board = $tenthmodel->getBoard();
-        $city = $tenthmodel->getInstitution_city();
+        $city = $tenthmodel->getCity_name();
         $tenth_institution = $tenthmodel->getInstitution();
         $tenthresult = array('tenth_roll_no' => $tenth_roll_no, 
         'institution' => $tenth_institution, 'board' => $tenth_board, 
@@ -129,12 +127,10 @@ class StudentController extends Zend_Controller_Action
         'total_marks' => $tenth_total_marks, 'percentage' => $tenth_percentage, 
         'city' => $city, 'state' => $state);
         $response['tenth'] = $tenthresult;
-        Zend_Registry::get('logger')->debug($response['tenth']);
-    /**
-     * RESPONSE
-     */
-        //Zend_Registry::get('logger')->debug($response);
-    /*$callback = $this->getRequest()->getParam('callback');
-        echo $callback.'('.$this->_helper->json($response,false).')';*/
+        /**
+         * RESPONSE
+         */
+        $callback = $this->getRequest()->getParam('callback');
+        echo $callback . '(' . $this->_helper->json($response, false) . ')';
     }
 }
