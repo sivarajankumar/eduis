@@ -195,7 +195,6 @@ class StudentController extends Zend_Controller_Action
             'lang_prof' => $language_prof);
         }
         $response['language'] = $language_result;
-        //Zend_Registry::get('logger')->debug($language_result);
         /*
          * SKILL DETAILS
          */
@@ -213,7 +212,9 @@ class StudentController extends Zend_Controller_Action
         }
         $response['skillset'] = $skill_result;
         Zend_Registry::get('logger')->debug($response);
-        /*$callback = $this->getRequest()->getParam('callback');
-        echo $callback.'('.$this->_helper->json($response,false).')';*/
+        $callback = $this->getRequest()->getParam('callback');
+        echo $callback . '(' . $this->_helper->json($response, false) . ')';
     }
+    public function searchAction ()
+    {}
 }
