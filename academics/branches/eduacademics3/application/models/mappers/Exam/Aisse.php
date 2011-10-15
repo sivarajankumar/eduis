@@ -50,9 +50,9 @@ class Acad_Model_Mapper_Exam_Aisse
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $required_fields = array('member_id', 'board', 'board_roll_no', 
         'marks_obtained','total_marks', 'percentage', 'passing_year', 'school_rank', 'remarks', 
-        'institution', 'city_id', 'state_id');
+        'institution', 'city_name', 'state_name');
         $select = $adapter->select()
-            ->from('matric_info',$required_fields)
+            ->from('matric',$required_fields)
             ->where('member_id = ?', $member_id);
         $member_exam_info = array();
         $member_exam_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);

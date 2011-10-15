@@ -1,6 +1,8 @@
 <?php
 class Acad_Model_Exam_Aissce
 {
+    protected $_search_initialised_status = false;
+    protected $_save_initialised_status = false;
     protected $_member_id;
     protected $_board_roll_no;
     protected $_marks_obtained;
@@ -12,27 +14,44 @@ class Acad_Model_Exam_Aissce
     protected $_school_rank;
     protected $_remarks;
     protected $_institution;
-    protected $_city_id;
-    protected $_state_id;
+    protected $_city_name;
+    protected $_state_name;
     protected $_migration_date;
     protected $_mapper;
-    public function getCity_id() {
-		return $this->_city_id;
+    public function getCity_name() {
+		return $this->_city_name;
 	}
 
-	public function setCity_id($_city_id) {
-		$this->_city_id = $_city_id;
+	public function setCity_name($_city_name) {
+		$this->_city_name = $_city_name;
 	}
 
-	public function getState_id() {
-		return $this->_state_id;
+	public function getState_name() {
+		return $this->_state_name;
 	}
 
-	public function setState_id($_state_id) {
-		$this->_state_id = $_state_id;
+	public function setState_name($_state_name) {
+		$this->_state_name = $_state_name;
 	}
 
-	public function getBoard_roll_no ()
+	protected function getSearch_initialised_status ()
+    {
+        return $this->_search_initialised_status;
+    }
+    protected function setSearch_initialised_status ($_search_initialised_status)
+    {
+        $this->_search_initialised_status = $_search_initialised_status;
+    }
+    protected function getSave_initialised_status ()
+    {
+        return $this->_save_initialised_status;
+    }
+    protected function setSave_initialised_status ($_save_initialised_status)
+    {
+        $this->_save_initialised_status = $_save_initialised_status;
+    }
+    
+    public function getBoard_roll_no ()
     {
         return $this->_board_roll_no;
     }
@@ -126,7 +145,6 @@ class Acad_Model_Exam_Aissce
     {
         $this->_institution = $_institution;
     }
-    
     public function getMigration_date ()
     {
         return $this->_migration_date;
@@ -218,7 +236,14 @@ class Acad_Model_Exam_Aissce
     public function initMemberExamInfo ()
     {
         $options = $this->getMapper()->fetchMemberExamInfo($this);
-        //Zend_Registry::get('logger')->debug($options);
         $this->setOptions($options);
+    }
+    public function initSearchOperation ()
+    {
+        $this->setSearch_initialised_status(true);
+    }
+    public function initSaveProcess ()
+    {
+        $this->setSave_initialised_status(true);
     }
 }
