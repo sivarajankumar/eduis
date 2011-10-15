@@ -1,4 +1,4 @@
-<<?php
+<?php
 class Tnp_Model_Mapper_Profile_Components_Certification
 {
     /**
