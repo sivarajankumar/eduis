@@ -1,7 +1,7 @@
-<div id="personal_detail">
-	<h2>Personal Details</h2>
-	<form action="javascript:submit();" class="uniForm">
-                
+<form action="javascript:submit_personal();" class="uniForm" id="personal">
+
+	<div id="personal_detail">
+		<h2>Personal Details</h2>                
         <div class="ctrlHolder">
           <label for="dob"><em>*</em>Date of Birth</label>
           <input name="dob" id="dob" data-default-value="1990-12-31" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
@@ -41,7 +41,7 @@
           <input name="annual_income" id="annual_income" value="" data-default-value="e.g. 456000" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
           <p class="formHint">Annual Income of father or guardian.(in Rupees only, no comma or units etc.)</p>
         </div>
-        </br>
+        <br>
           <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
         
         <div class="buttonHolder">
@@ -49,8 +49,10 @@
         	<button type="submit" class="primaryAction">Next</button>
     	</div>
     	
-    	</div>
-   <!--
+   </div>
+</form>
+
+<form action="javascript:submit_academic();" class="uniForm" id="academic">
    <div id="academic_details">
         <h2>Academics Details</h2>
         <h3>Matric Information</h3>
@@ -322,7 +324,10 @@
     	</div>
     	<br>
     	
-    	</div>
+    </div>
+</form>
+
+<form action="javascript:submit_career();" class="uniForm" id="career">
     	
     	<div id="career_details">
            <h2>Career Details</h2>
@@ -484,7 +489,7 @@
             <li><label for="government"><input  name="government" type="radio" value="true"   title="Yes" >Govt</label></li>
           </ul>
           <p class="formHint">Filter on basis of the job preferred </p>
-          </div>
+          </div>-->
           
           
         
@@ -495,15 +500,12 @@
         	<button type="submit" class="primaryAction">Next</button>
     	</div>
     	<br>
-    	</div>
-    	 	
-        
-    	-->
-    </form>
+    </div>
+</form>
     
     <script>
-	var urlBasicInfo = "<?php 
-			echo $this->url(array('controller' => 'student', 'action' => 'fetchlist'))?>";
+	var urlBasicInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchlist'))?>";
+	
       $(function(){
         $('form.uniForm').uniform({
           prevent_submit : true
@@ -517,14 +519,17 @@
 			yearRange: '-25:-15',
 			onClose : function(dateText, inst) {
 				this.focus();
-				}
+			}
         });
       });
 
-      function submit() {
+      function submit_personal() {
+	      $("#personal").hide(500,function(){
+             alert("it is hidden");
+   		  }); 
           $.ajax({
               url : urlBasicInfo,
-              data : getValues(),
+              data : getPersonalValues(),
               success: function(jStatus){
               },
                   error: function(response) {
@@ -534,24 +539,73 @@
                   });
       }
 
-        function getValues() {
-            var formData = {}; 
-            $('form.uniForm :input')
-            		.not('button,#e_mail_confirm,:input[value^="e.g."]')
-            		.each(function(){ 
-            			formData[this.name] = this.value; 
-                });
-        var gender = $('input:radio[name=gender]:checked').val();
-        formData.gender = gender; 
-  		return formData;
-  	}
-      	function hideDiv(){
-          	$(".buttonHolder").click(function(){
-              	$("#personal_detail").hide(500,function(){
-                  	alert("it is hidden"); });
-          	});
-              	
-          	};
+      function getPersonalValues() {
+          var formData = {}; 
+          $('#personal.uniForm :input')
+          	.not('button,#e_mail_confirm,:input[value^="e.g."]')
+          	.each(function(){ 
+          		formData[this.name] = this.value; 
+              });
+      	var gender = $('input:radio[name=gender]:checked').val();
+      	formData.gender = gender; 
+			return formData;
+		}
+
+      function submit_academic() {
+    	  $("#academic").hide(500,function(){
+              alert("it is hidden");
+    	  });
+          $.ajax({
+              url : urlBasicInfo,
+              data : getAcademicValues(),
+              success: function(jStatus){
+              },
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+                      console.log(response);
+                      }
+                  });
+      }
+
+      function getAcademicValues() {
+          var formData = {}; 
+          $('#academic.uniForm :input')
+          	.not('button,#e_mail_confirm,:input[value^="e.g."]')
+          	.each(function(){ 
+          		formData[this.name] = this.value; 
+              });
+      	var gender = $('input:radio[name=gender]:checked').val();
+      	formData.gender = gender; 
+			return formData;
+		}
+
+      function submit_career() {
+    	  $("#career").hide(500,function(){
+              alert("it is hidden");
+    	  });
+          $.ajax({
+              url : urlBasicInfo,
+              data : getCareerValues(),
+              success: function(jStatus){
+              },
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+                      console.log(response);
+                      }
+                  });
+      	}
+  	
+      function getCareerValues() {
+          var formData = {}; 
+          $('#career.uniForm :input')
+          	.not('button,#e_mail_confirm,:input[value^="e.g."]')
+          	.each(function(){ 
+          		formData[this.name] = this.value; 
+              });
+      	var gender = $('input:radio[name=gender]:checked').val();
+      	formData.gender = gender; 
+			return formData;
+		}
     </script>
     
     <?php
