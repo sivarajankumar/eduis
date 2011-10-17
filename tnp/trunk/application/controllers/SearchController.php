@@ -16,7 +16,7 @@ class SearchController extends Zend_Controller_Action
         // TODO Auto-generated SearchController::indexAction() default action
     }
     
-    public function fetchlist ()
+    public function studentAction ()
     {
     	
     }
