@@ -40,58 +40,41 @@ class Core_Model_Mapper_Member_Student
     public function save ()
     {}
     /**
-     * fetches information of a student
-     *@param Core_Model_Member_Student $student
+     * Fetches personal information of a Student
+     * @param Core_Model_Member_Student $student
      */
     public function fetchStudentInfo (Core_Model_Member_Student $student)
     {
         $member_id = $student->getMember_id();
-        $adapter = $this->getDbTable()->getDefaultAdapter();
-        $sql = 'SELECT
-    `student_personal`.`reg_no`
-    , `student_personal`.`cast_id`
-    , `student_personal`.`nationality_id`
-    , `student_personal`.`religion_id`
-    , `student_personal`.`first_name`
-    , `student_personal`.`middle_name`
-    , `student_personal`.`last_name`
-    , `student_personal`.`dob`
-    , `student_personal`.`gender`
-    , `student_personal`.`contact_no`
-    , `student_personal`.`e_mail`
-    , `student_personal`.`marital_status`
-    , `student_personal`.`councelling_no`
-    , `student_personal`.`admission_date`
-    , `student_personal`.`alloted_category`
-    , `student_personal`.`alloted_branch`
-    , `student_personal`.`state_of_domicile`
-    , `student_personal`.`urban`
-    , `student_personal`.`hostel`
-    , `student_personal`.`bus`
-    , `student_personal`.`image_no`
-    , `student_personal`.`blood_group`
-    , `student_department`.`department_id`
-    , `student_department`.`prgramme_id`
-    , `student_department`.`batch_start`
-    , `student_department`.`group_id`
+        if (empty($member_id)) {
+            $error = 'Please provide a Member Id';
+            throw new Exception($error);
+        } else {
+            $adapter = $this->getDbTable()->getAdapter();
+            $sql = 'SELECT
+        `student_personal`.`member_id`,`student_personal`.`reg_no`, `student_personal`.`cast_id`, `student_personal`.`nationality_id`
+    , `student_personal`.`religion_id`, `student_personal`.`first_name`, `student_personal`.`middle_name`
+    , `student_personal`.`last_name`, `student_personal`.`dob`, `student_personal`.`gender`
+    , `student_personal`.`contact_no`, `student_personal`.`e_mail`, `student_personal`.`marital_status`
+    , `student_personal`.`councelling_no`, `student_personal`.`admission_date`
+    , `student_personal`.`alloted_category`, `student_personal`.`alloted_branch`, `student_personal`.`state_of_domicile`
+    , `student_personal`.`urban`, `student_personal`.`hostel`, `student_personal`.`bus`
+    , `student_personal`.`image_no`, `student_personal`.`blood_group`, `student_department`.`department_id`
+    , `student_department`.`prgramme_id`, `student_department`.`batch_start`, `student_department`.`group_id`
     , `student_semester`.`semster_id`
-    , `student_personal`.`member_id`
-FROM
+    FROM
     `core`.`student_department`
-    INNER JOIN `core`.`student_personal` 
-        ON (`student_department`.`member_id` = `student_personal`.`member_id`)
-    INNER JOIN `core`.`student_semester` 
-        ON (`student_semester`.`member_id` = `student_department`.`member_id`)
-WHERE (`student_personal`.`member_id` = ?)';
-        $bind[] = $member_id;
-        $fetchall = $adapter->query($sql,$bind)->fetchAll();
-        $result = array();
-        foreach ($fetchall as $row) {
-            foreach ($row as $columnName => $columnValue) {
-                $result[$columnName] = $columnValue;
-            }
+    INNER JOIN `core`.`student_personal`
+    ON (`student_department`.`member_id` = `student_personal`.`member_id`)
+    INNER JOIN `core`.`student_semester`
+    ON (`student_semester`.`member_id` = `student_department`.`member_id`)
+    WHERE (`student_personal`.`member_id` = ?)';
+            $bind[] = $member_id;
+            $student_info = array();
+            $student_info = $adapter->query($sql, $bind)->fetchAll(
+            Zend_Db::FETCH_UNIQUE);
+            return $student_info[$member_id];
         }
-        return $result;
     }
     /**
      * @todo when rollNOs are not unique additional params like programme semester must be set.
@@ -101,11 +84,16 @@ WHERE (`student_personal`.`member_id` = ?)';
     public function fetchMember_id (Core_Model_Member_Student $student)
     {
         $roll_no = $student->getStudent_roll_no();
-        $adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()
-            ->from('student_semester', 'member_id')
-            ->where('roll_no = ?', $roll_no);
-        return $select->query()->fetchColumn();
+        if (empty($roll_no)) {
+            $error = 'Please provide a Roll No';
+            throw new Exception($error);
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('student_semester', 'member_id')
+                ->where('roll_no = ?', $roll_no);
+            return $select->query()->fetchColumn();
+        }
     }
     /**
      *fetches Roll Number of a student
@@ -114,111 +102,45 @@ WHERE (`student_personal`.`member_id` = ?)';
     public function fetchStudent_roll_no (Core_Model_Member_Student $student)
     {
         $memberId = $student->getMember_id();
-        $adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()
-            ->from('student_semester', 'roll_no')
-            ->where('member_id = ?', $memberId);
-        return $select->query()->fetchColumn();
+        if (empty($memberId)) {
+            $error = 'Please provide a Memmber Id ';
+            throw new Exception($error);
+        } else {
+            $adapter = $this->getDbTable()->getDefaultAdapter();
+            $select = $adapter->select()
+                ->from('student_semester', 'roll_no')
+                ->where('member_id = ?', $memberId);
+            return $select->query()->fetchColumn();
+        }
     }
     /**
      * Enter description here ...
      * @param Core_Model_Member_Student $student
+     * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
+     * here 'from' stands for >= AND 'to' stands for <=
+     * 
      */
-    public function fetchStudents (Core_Model_Member_Student $student)
+    public function fetchStudents (Core_Model_Member_Student $student, 
+    array $setter_options = null, array $property_range = null)
     {
-        $adapter = $this->getDbTable()->getDefaultAdapter();
+        $adapter = $this->getDbTable()->getAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
             ->info('name')), 'member_id');
-        $reg_no = $student->getReg_no();
-        $cast_id = $student->getCast_id();
-        $blood_group_id = $student->getBlood_group_id();
-        $nationality_id = $student->getBlood_group_id();
-        $religion_id = $student->getReligion_id();
-        $first_name = $student->getFirst_name();
-        $first_name = $student->getFirst_name();
-        $middle_name = $student->getMiddle_name();
-        $last_name = $student->getLast_name();
-        $dob = $student->getDob();
-        $gender = $student->getGender();
-        $contact_no = $student->getContact_no();
-        $email_id = $student->getE_mail();
-        $marrital_status = $student->getMarital_status();
-        $councelling_no = $student->getCouncelling_no();
-        $admission_date = $student->getAdmission_date();
-        $alloted_category = $student->getAlloted_category();
-        $alloted_branch = $student->getAlloted_branch();
-        $state_of_domicile = $student->getState_of_domicile();
-        $urban = $student->getUrban();
-        $hostel = $student->getHostel();
-        $bus = $student->getHostel();
-        $image_no = $student->getImage_no();
-        if (isset($reg_no)) {
-            $select->where('regn_no = ?', $reg_no);
+        foreach ($property_range as $key => $range) {
+            if (! empty($range['from'])) {
+                $select->where("$key >= ?", $range['from']);
+            }
+            if (! empty($range['to'])) {
+                $select->where("$key <= ?", $range['to']);
+            }
         }
-        if (isset($cast_id)) {
-            $select->where('cast_id = ?', $cast_id);
+        foreach ($setter_options as $property_name => $value) {
+            $getter_string = 'get' . ucfirst($property_name);
+            $student->$getter_string();
+            $condition = $property_name . ' = ?';
+            $select->where($condition, $value);
         }
-        if (isset($blood_group_id)) {
-            $select->where('blood_group_id = ?', $blood_group_id);
-        }
-        if (isset($nationality_id)) {
-            $select->where('nationality_id = ?', $nationality_id);
-        }
-        if (isset($religion_id)) {
-            $select->where('religion_id= ?', $religion_id);
-        }
-        if (isset($first_name)) {
-            $select->where('first_name = ?', $first_name);
-        }
-        if (isset($middle_name)) {
-            $select->where('middle_name = ?', $middle_name);
-        }
-        if (isset($last_name)) {
-            $select->where('last_name= ?', $last_name);
-        }
-        if (isset($dob)) {
-            $select->where('dob = ?', $dob);
-        }
-        if (isset($gender)) {
-            $select->where('gender = ?', $gender);
-        }
-        if (isset($contact_no)) {
-            $select->where('contact_no = ?', $contact_no);
-        }
-        if (isset($email_id)) {
-            $select->where('e_mail= ?', $email_id);
-        }
-        if (isset($marrital_status)) {
-            $select->where('marital_status = ?', $marrital_status);
-        }
-        if (isset($councelling_no)) {
-            $select->where('councelling_no = ?', $councelling_no);
-        }
-        if (isset($admission_date)) {
-            $select->where('admission_date = ?', $admission_date);
-        }
-        if (isset($alloted_category)) {
-            $select->where('alloted_category = ?', $alloted_category);
-        }
-        if (isset($alloted_branch)) {
-            $select->where('alloted_branch = ?', $alloted_branch);
-        }
-        if (isset($state_of_domicile)) {
-            $select->where('state_of_domicile = ?', $state_of_domicile);
-        }
-        if (isset($urban)) {
-            $select->where('urban= ?', $urban);
-        }
-        if (isset($hostel)) {
-            $select->where('hostel= ?', $hostel);
-        }
-        if (isset($bus)) {
-            $select->where('bus= ?', $bus);
-        }
-        if (isset($image_no)) {
-            $select->where('image_no = ?', $image_no);
-        }
-        return $select->query()->fetchColumn();
+        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
 }
