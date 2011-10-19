@@ -43,59 +43,48 @@ class Core_Model_Mapper_Relative
     {
         $member_id = $relative->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $required_fields = array('member_id', 'relation_id', 'relation_name', 
-        'name', 'occupation', 'designation', 'office_add', 'contact', 
-        'annual_income', 'landline_no');
+        $relatives_fields = array('member_id', 'relation_id', 'name', 
+        'occupation', 'designation', 'office_add', 'contact', 'annual_income', 
+        'landline_no');
+        $relations_fields = array('relation_name');
         $select = $adapter->select()
             ->from($this->getDbTable()
-            ->info('name'))
+            ->info('name'), $relatives_fields)
             ->joinInner('relations', 
-        'relatives.relation_id = relations.relation_id', $required_fields)
+        'relatives.relation_id = relations.relation_id', $relations_fields)
             ->where('member_id = ?', $member_id);
-        $fetchall = $adapter->fetchAll($select);
-        $result = array();
-        foreach ($fetchall as $row) {
-            foreach ($row as $columnName => $columnValue) {
-                $result[$columnName] = $columnValue;
-            }
-        }
-        return $result;
+        $relative_info = array();
+        $relative_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $relative_info[$member_id];
     }
     /**
      * Enter description here ...
-     * @param Core_Model_Relative $searchParams
+     * @param Core_Model_Relative $relative
+     * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
+     * here 'from' stands for >= AND 'to' stands for <=
+     * 
      */
-    public function fetchMember (Core_Model_Relative $searchParams)
+    public function fetchStudents (Core_Model_Relative $relative, 
+    array $setter_options = null, array $property_range = null)
     {
-        $adapter = $this->getDbTable()->getDefaultAdapter();
+        $adapter = $this->getDbTable()->getAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
             ->info('name')), 'member_id');
-        if (isset($searchParams->getRelation_id())) {
-            $select->where('relation_id = ?', $searchParams->getRelation_id());
+        foreach ($property_range as $key => $range) {
+            if (! empty($range['from'])) {
+                $select->where("$key >= ?", $range['from']);
+            }
+            if (! empty($range['to'])) {
+                $select->where("$key <= ?", $range['to']);
+            }
         }
-        if (isset($searchParams->getName())) {
-            $select->where('name= ?', $searchParams->getName());
+        foreach ($setter_options as $property_name => $value) {
+            $getter_string = 'get' . ucfirst($property_name);
+            $relative->$getter_string();
+            $condition = $property_name . ' = ?';
+            $select->where($condition, $value);
         }
-        if (isset($searchParams->getOccupation())) {
-            $select->where('occupation = ?', $searchParams->getOccupation());
-        }
-        if (isset($searchParams->getDesignation())) {
-            $select->where('designation = ?', $searchParams->getDesignation());
-        }
-        if (isset($searchParams->getOffice_add())) {
-            $select->where('office_add= ?', $searchParams->getOffice_add());
-        }
-        if (isset($searchParams->getContact())) {
-            $select->where('contact = ?', $searchParams->getContact());
-        }
-        if (isset($searchParams->getAnnual_income())) {
-            $select->where('annual_income = ?', 
-            $searchParams->getAnnual_income());
-        }
-        if (isset($searchParams->getLandline_no())) {
-            $select->where('landline_no = ?', $searchParams->getLandline_no());
-        }
-        return $select->query()->fetchColumn();
+        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
 }

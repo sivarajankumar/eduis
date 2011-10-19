@@ -105,7 +105,8 @@ class StudentController extends Corez_Base_BaseController
         $model->setStudent_roll_no($this->getRoll_no());
         $model->getStudentInfo();
         $info = array('roll_no' => $model->getStudent_roll_no(), 
-        'regn_no' => $model->getReg_no(), 'first_name' => $model->getFirst_name(), 
+        'regn_no' => $model->getReg_no(), 
+        'first_name' => $model->getFirst_name(), 
         'middle_name' => $model->getMiddle_name(), 
         'last_name' => $model->getLast_name(), 'gender' => $model->getGender(), 
         'phone_no' => $model->getContact_no(), 'dob' => $model->getDob(), 
@@ -113,6 +114,28 @@ class StudentController extends Corez_Base_BaseController
         $callback = $this->getRequest()->getParam('callback');
         echo $callback . '(' . $this->_helper->json($info, false) . ')';
          //$this->_helper->json($info);
+    }
+    public function searchAction ()
+    {
+        /*$student = new Core_Model_Member_Student();
+        $dob_range = array('from' => 1, 'to' => 2);
+        $rel_range = array('from' => 1, 'to' => 3);
+        $nat_range = array('from' => 1, 'to' => 3);
+        $r = array('check5'=>5,'cast_id' => $dob_range, 'check3' => 3, 
+        'religion_id' => $rel_range,'nationality_id'=>$nat_range);
+        $test = array('check4'=>5,'first_name' => 'AMRIT','nationality_id'=>1,'check1' => 2, 'check2' => 3);
+        echo "<pre>";
+        print_r($student->search($test, $r));
+        echo "</pre>";*/
+        $address = new Core_Model_Address();
+        $address->setMember_id(1);
+        $address->setAdress_type('COMMUNICATION');
+        $address->initAddressInfo();
+        $test = array('check4'=>5,'adress_type' => 'COMMUNICATION','nationality_id'=>1,'check1' => 2, 'check2' => 3);
+        echo $address->getCity();
+        echo "<pre>";
+        print_r($address->search($test,null));
+        echo "</pre>";
     }
 }
    

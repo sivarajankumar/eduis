@@ -11,7 +11,7 @@ class Core_Model_Mapper_Address
      * @param  Zend_Db_Table_Abstract $dbTable 
      * @return Core_Model_Mapper_Address
      */
-    public function setDbTable (Zend_Db_Table_Abstract $dbTable)
+    public function setDbTable ($dbTable)
     {
         if (is_string($dbTable)) {
             $dbTable = new $dbTable();
@@ -40,57 +40,58 @@ class Core_Model_Mapper_Address
     public function save ()
     {}
     /**
-     * fetches Address details
-     *@param Core_Model_Address $address
+     * fetches Address Information of a Member
+     * @param Core_Model_Address $address
      */
-    public function fetchAddressDetails ( Core_Model_Address $address)
+    public function fetchAddressInfo (Core_Model_Address $address)
     {
         $member_id = $address->getMember_id();
-    	$adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()
-            ->from($this->getDbTable()
-            ->info('name'))
-            ->where('member_id = ?', $member_id);
-        $fetchall = $adapter->fetchAll($select);
-        $result = array();
-        foreach ($fetchall as $row) {
-            foreach ($row as $columnName => $columnValue) {
-                $result[$columnName] = $columnValue;
-            }
+        $adress_type = $address->getAdress_type();
+        if (empty($member_id) or empty($adress_type)) {
+            $error = 'Both ,Member Id and Address must be set';
+            throw new Exception($error);
+        } else {
+            $adapter = $this->getDbTable()->getAdapter();
+            $required_fields = array('member_id', 'postal_code', 'city', 
+            'district', 'state', 'area', 'address');
+            $select = $adapter->select()
+                ->from($this->getDbTable()
+                ->info('name'), $required_fields)
+                ->where('member_id = ?', $member_id)
+                ->where('adress_type = ?', $adress_type);
+            $address_info = array();
+            $address_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            return $address_info[$member_id];
         }
-        return $result;
     }
     /**
      * Enter description here ...
-     * @param Core_Model_Address $searchParams
+     * @param Core_Model_Address $address
+     * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
+     * here 'from' stands for >= AND 'to' stands for <=
+     * 
      */
-    public function fetchMemberId (Core_Model_Address $searchParams)
+    public function fetchStudents (Core_Model_Address $address, 
+    array $setter_options = null, array $property_range = null)
     {
-        $adapter = $this->getDbTable()->getDefaultAdapter();
+        $adapter = $this->getDbTable()->getAdapter();
         $select = $adapter->select()->from(
         ($this->getDbTable()
             ->info('name')), 'member_id');
-        if (isset($searchParams->getAdress_type())) {
-            $select->where('adress_type = ?', $searchParams->getAdress_type());
+        foreach ($property_range as $key => $range) {
+            if (! empty($range['from'])) {
+                $select->where("$key >= ?", $range['from']);
+            }
+            if (! empty($range['to'])) {
+                $select->where("$key <= ?", $range['to']);
+            }
         }
-        if (isset($searchParams->getPostal_code())) {
-            $select->where('postal_code = ?', $searchParams->getPostal_code());
+        foreach ($setter_options as $property_name => $value) {
+            $getter_string = 'get' . ucfirst($property_name);
+            $address->$getter_string();
+            $condition = $property_name . ' = ?';
+            $select->where($condition, $value);
         }
-        if (isset($searchParams->getCity())) {
-            $select->where('city = ?', $searchParams->getCity());
-        }
-        if (isset($searchParams->getDistrict())) {
-            $select->where('district = ?', $searchParams->getDistrict());
-        }
-        if (isset($searchParams->getState())) {
-            $select->where('state= ?', $searchParams->getState());
-        }
-        if (isset($searchParams->getArea())) {
-            $select->where('area = ?', $searchParams->getArea());
-        }
-        if (isset($searchParams->getAddress())) {
-            $select->where('address = ?', $searchParams->getAddress());
-        }
-        return $select->query()->fetchColumn();
+        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
 }

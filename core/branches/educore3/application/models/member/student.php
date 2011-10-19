@@ -23,7 +23,7 @@ class Core_Model_Member_Student
     protected $_hostel;
     protected $_bus;
     protected $_image_no;
-    protected $_blood_group_id;
+    protected $_blood_group;
     //
     protected $_student_roll_no;
     protected $_department_id;
@@ -34,6 +34,28 @@ class Core_Model_Member_Student
     protected $_semster_id;
     //
     protected $_mapper;
+    protected $_class_properties = array('member_id', 'reg_no', 'cast_id', 
+    'nationality_id', 'religion_id', 'first_name', 'middle_name', 'last_name', 
+    'dob', 'gender', 'contact_no', 'e_mail', 'marital_status', 'councelling_no', 
+    'admission_date', 'alloted_category', 'alloted_branch', 'state_of_domicile', 
+    'urban', 'hostel', 'bus', 'image_no', 'blood_group', 'student_roll_no', 
+    'department_id', 'prgramme_id', 'batch_start', 'group_id', 'semster_id');
+    public function getBlood_group ()
+    {
+        return $this->_blood_group;
+    }
+    public function setBlood_group ($_blood_group)
+    {
+        $this->_blood_group = $_blood_group;
+    }
+    public function getClass_properties ()
+    {
+        return $this->_class_properties;
+    }
+    public function setClass_properties ($_class_properties)
+    {
+        $this->_class_properties = $_class_properties;
+    }
     /**
      * @return the $_member_id
      */
@@ -348,20 +370,6 @@ class Core_Model_Member_Student
         $this->_image_no = $_image_no;
     }
     /**
-     * @return the $_blood_group_id
-     */
-    public function getBlood_group_id ()
-    {
-        return $this->_blood_group_id;
-    }
-    /**
-     * @param field_type $_blood_group_id
-     */
-    public function setBlood_group_id ($_blood_group_id)
-    {
-        $this->_blood_group_id = $_blood_group_id;
-    }
-    /**
      * @return the $_student_roll_no
      */
     public function getStudent_roll_no ()
@@ -510,29 +518,20 @@ class Core_Model_Member_Student
     {
         $this->getMapper()->save($this);
     }
-    /**
-     * first set properties of object, according to which you want
-     * to search,using constructor, then call the search function
-     * 
-     */
-    public function search ()
-    {
-        return $this->getMapper()->fetchStudents($this);
-    }
-    protected function fetchMemberId ()
+    public function fetchMemberId ()
     {
         $roll_no = $this->getStudent_roll_no();
-        if (isset($roll_no)) {
+        if (!empty($roll_no)) {
             $result = $this->getMapper()->fetchMember_id($this);
             $this->setMember_id($result);
         } else {
             throw new Exception('You must set RollNumber first');
         }
     }
-    protected function fetchRollNumber ()
+    public function fetchRollNumber ()
     {
         $member_id = $this->getMember_id();
-        if (isset($member_id)) {
+        if (!empty($member_id)) {
             $result = $this->getMapper()->fetchStudent_roll_no($this);
             $this->setStudent_roll_no($result);
         } else {
@@ -550,5 +549,79 @@ class Core_Model_Member_Student
         $options = $this->getMapper()->fetchStudentInfo($this);
         $this->setOptions($options);
     }
-    
+    /**
+     * 
+     * Enter description here ...
+     * @param array $options containing properties mapped to values
+     * @param array $property_range containing properties mapped to array containing upper and lower range
+     * @throws Exception when trying to set equality and range both ,for property, at the same time
+     * @throws Exception when invalid properties are specified 
+     * @return array containing Member Ids
+     */
+    public function search (array $options = null, array $property_range = null)
+    {
+        $class_properties = array();
+        $options_keys = array();
+        $valid_options = array();
+        $invalid_options = array();
+        $setter_options = array();
+        $property_range_keys = array();
+        $valid_range_keys = array();
+        $invalid_range_keys = array();
+        $range = array();
+        $error = '';
+        $class_properties = $this->getClass_properties();
+        if (! empty($options)) {
+            $options_keys = array_keys($options);
+            $valid_options = array_intersect($options_keys, $class_properties);
+            foreach ($valid_options as $valid_option) {
+                //$setter_options array is now ready for search
+                //but will it participate,is not confirmed
+                $setter_options[$valid_option] = $options[$valid_option];
+            }
+            $invalid_options = array_diff($options_keys, $class_properties);
+            if (! empty($invalid_options)) {
+                foreach ($invalid_options as $invalid_option) {
+                    $error = $error . '  ' . $invalid_option;
+                }
+            }
+        }
+        if (! empty($property_range)) {
+            $property_range_keys = array_keys($property_range);
+            $valid_range_keys = array_intersect($property_range_keys, 
+            $class_properties);
+            foreach ($valid_range_keys as $valid_range_key) {
+                //$range array is now ready for search
+                //but will it participate,is not confirmed
+                $range[$valid_range_key] = $property_range[$valid_range_key];
+            }
+            $invalid_range_keys = array_diff($property_range_keys, 
+            $class_properties);
+            if (! empty($invalid_range_keys)) {
+                foreach ($invalid_range_keys as $invalid_range_key) {
+                    $error = $error . '  ' . $invalid_range_key;
+                }
+            }
+        }
+        $user_friendly_message = $error .
+         ' are invalid parameters and therefore were not included in search.' .
+         'Please try again with correct parameters to get more accurate results';
+        Zend_Registry::get('logger')->debug($user_friendly_message);
+        $deciding_intersection = array_intersect($valid_options, 
+        $valid_range_keys);
+        if (empty($deciding_intersection)) {
+            //now we can set off for search operation
+            $this->setOptions($setter_options);
+            $result = $this->getMapper()->fetchStudents($this, $setter_options, 
+            $range);
+            return $result;
+        } else {
+            foreach ($deciding_intersection as $duplicate_entry) {
+                $error_1 = $error_1 . '  ' . $duplicate_entry;
+            }
+            throw new Exception(
+            'Range and equality cannot be set for ' . $error_1 .
+             ' at the same time');
+        }
+    }
 }
