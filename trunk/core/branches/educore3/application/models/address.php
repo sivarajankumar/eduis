@@ -208,9 +208,7 @@ class Core_Model_Address
             $invalid_range_keys = array_diff($property_range_keys, 
             $class_properties);
             if (! empty($invalid_range_keys)) {
-                foreach ($invalid_range_keys as $invalid_range_key) {
-                    $error = $error . '  ' . $invalid_range_key;
-                }
+                $error = implode(', ', $invalid_range_keys);
             }
         }
         $user_friendly_message = $error .

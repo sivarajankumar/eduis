@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package CORE
+ *
+ */
 class Core_Model_Mapper_Member_Student
 {
     /**
@@ -123,10 +127,73 @@ class Core_Model_Mapper_Member_Student
     public function fetchStudents (Core_Model_Member_Student $student, 
     array $setter_options = null, array $property_range = null)
     {
+        $setter_options_keys = array_keys($setter_options);
+        $property_range_keys = array_keys($property_range);
+        $merge = array_merge($setter_options_keys, $property_range_keys);
+        //declare table name and table columns for join statement
+        $table = array('s_persnl' => $this->getDbTable()->info('name'));
+        //define 
+        //(a)names of tables used for 'join' operation.
+        //(b)corresponding join conditions 
+        $name1 = array('s_dep' => 'student_department');
+        $cond1 = 's_dep.member_id = s_persnl.member_id';
+        $name2 = 'casts';
+        $cond2 = "s_persnl.cast_id = $name2.cast_id ";
+        $name3 = 'bus';
+        $cond3 = "$name3.member_id =s_persnl.member_id ";
+        $name4 = array('nlty' => 'nationality');
+        $cond4 = 's_persnl.nationality_id = nlty.nationality_id';
+        $name5 = array('rel' => 'religion');
+        $cond5 = 's_persnl.religion_id = rel.religion_id';
+        $name6 = array('bus_st' => 'bus_stations');
+        $cond6 = "$name3.boarding_station = bus_st.boarding_station";
+        //1)get column names of student_department present in arguments received
+        $student_department_col = array('department_id', 'prgramme_id', 
+        'batch_start', 'group_id');
+        $student_department_intrsctn = array();
+        $student_department_intrsctn = array_intersect($student_department_col, 
+        $merge);
+        //2)get column names of casts present in arguments received
+        $casts_col = array('cast');
+        $casts_intrsctn = array();
+        $casts_intrsctn = array_intersect($casts_col, $merge);
+        //3)get column names of bus present in arguments received
+        $bus_col = array('boarding_station');
+        $bus_intrsctn = array();
+        $bus_intrsctn = array_intersect($bus_col, $merge);
+        Zend_Registry::get('logger')->debug($setter_options_keys);
+        //4)get column names of nationality present in arguments received
+        $nationality_col = array('nationality');
+        $nationality_intrsctn = array();
+        $nationality_intrsctn = array_intersect($nationality_col, $merge);
+        //5)get column names of religions present in arguments received
+        $religions_col = array('religion');
+        $religions_intrsctn = array();
+        $religions_intrsctn = array_intersect($religions_col, $merge);
+        //6)get column names of bus_stations table present in arguments received
+        $bus_stations_col = array('station_name');
+        $bus_stations = array();
+        $bus_stations = array_intersect($bus_stations_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
-        $select = $adapter->select()->from(
-        ($this->getDbTable()
-            ->info('name')), 'member_id');
+        $select = $adapter->select()->from($table, 'member_id');
+        if (! empty($student_department_intrsctn)) {
+            $select->join($name1, $cond1);
+        }
+        if (! empty($casts_intrsctn)) {
+            $select->join($name2, $cond2);
+        }
+        if (! empty($bus_intrsctn)) {
+            $select->join($name3, $cond3);
+        }
+        if (! empty($nationality_intrsctn)) {
+            $select->join($name4, $cond4);
+        }
+        if (! empty($religions_intrsctn)) {
+            $select->join($name5, $cond5);
+        }
+        if (! empty($bus_stations)) {
+            $select->join($name6, $cond6);
+        }
         foreach ($property_range as $key => $range) {
             if (! empty($range['from'])) {
                 $select->where("$key >= ?", $range['from']);
