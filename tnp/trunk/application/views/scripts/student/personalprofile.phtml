@@ -1,0 +1,259 @@
+   
+    <!--[if lte ie 7]>
+      <style type="text/css" media="screen">
+        /* Move these to your IE6/7 specific stylesheet if possible */
+        .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+      </style>
+    <![endif]-->
+<div><h3>Personal Profile</h3></div>
+        
+
+    <form action="javascript:submit();" class="uniForm">
+          
+        
+        <div id="personalinfo"><h3>Personal Information</h3>    
+        <div class="ctrlHolder noLabel">
+          <ul class="alternate">
+            <li><label for="first_name"><em>*</em> First Name</label>
+          <input name="first_name" id="first_name" data-default-value="e.g. Ravi" value="" size="10" maxlength="50" type="text" class="textInput required validateAlpha"/></li>
+            <li><label for="middle_name"> Middle Name</label>
+          <input name="middle_name" id="middle_name" data-default-value="e.g. Kumar" value=""  size="10" maxlength="50" type="text" class="textInput validateAlpha"/></li>
+            <li><label for="last_name"> Last Name</label>
+          <input name="last_name" id="last_name" data-default-value="e.g. Gupta" value=""  size="10" maxlength="50" type="text" class="textInput validateAlpha"/></li>
+          </ul>
+          <p class="formHint">Full Name of candidate</p>
+        </div>
+        <div class="ctrlHolder">
+          <label for="rollno"><em>*</em>Roll No.</label>
+          <input name="rollno" id="rollno" data-default-value="e.g.2308015" value=""  size="35" maxlength="50" type="text"  class="textInput required"/>
+          <p class="formHint">Enter your university rollno.</p>
+        </div><div class="ctrlHolder">
+          <label for="regnno"><em>*</em>Registration No.</label>
+          <input name="regnno" id="regnno" data-default-value="e.g.08-ECA-74" value=""  size="35" maxlength="50" type="text"  class="textInput required"/>
+          <p class="formHint">Enter your university regnno</p>
+        </div>
+        <div class="ctrlHolder">
+          <label for="dob"><em>*</em>Date of Birth</label>
+          <input name="dob" id="dob" data-default-value="1990-12-31" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+          <p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <p class="label">Gender</p>
+          <ul class="blockLabels alternate">
+            <li><label for="gender"><input name="gender" type="radio" value="M"  title="Male">Male</label></li>
+            <li><label for=""><input  name="gender" type="radio" value="F"  title="Female">Female</label></li>
+          </ul>
+          <p class="formHint">Gender</p>
+        </div>
+      
+        <div class="ctrlHolder">
+          <label for="nationality_id">Nationality</label>
+          <select id="nationality_id" name="nationality_id" class="selectInput">
+          		<option value="1">INDIAN</option>
+          		<option value="2"  >NRI</option>
+  		  </select>
+          <p class="formHint">Nationality</p>
+        </div>
+        
+      
+        <div class="ctrlHolder">
+          <label for="blood_group_id">Blood Group</label>
+          <select id="blood_group_id" name="blood_group_id" class="selectInput">
+          		<option value="A+" >A+</option>
+          		<option value="A-"  >A-</option>
+          		<option value="B+"  >B+</option>
+          		<option value="B-"  >B-</option>
+          		<option value="AB+">AB+</option>
+          		<option value="AB-" >AB-</option>
+          		<option value="O+" >O+</option>
+          		<option value="O-"  >O-</option>
+      	  </select>
+          <p class="formHint">Blood group of <span class="cName" >Candidate</span></p>
+        </div>
+        
+        
+        <div class="ctrlHolder">
+          <label for="religion_id">Religion</label>
+          <select id="religion_id" name="religion_id" class="selectInput required">
+          		<option value="1"  >Hindu</option>
+          		<option value="2" >Muslim</option>
+          		<option value="3"  >Sikh</option>
+          		<option value="4"  >Christian</option>
+      	  </select>
+          <p class="formHint">Religion of <span class="cName" >Candidate</span></p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for="cast">Cast</label>
+          <select id="cast" name="cast" class="selectInput required">
+          		<option value="GEN"  >GEN</option>
+          		<option value="SC"  >SC</option>
+          		<option value="BC"  >BC</option>
+      	  </select>
+          <p class="formHint">Cast of <span class="cName" >Candidate</span></p>
+        </div>
+        </div>
+      
+        <h3>Contact Information</h3>
+         <div class="ctrlHolder">
+          <label for="mobile_no"> Mobile No.</label>
+          <input name="lmobile_no" id="mobile_no" value="" data-default-value="e.g. 017226544331" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
+          <p class="formHint">Mobile number, if available.</p>
+        </div>
+        <div class="ctrlHolder">
+          <label for="">Email address</label>
+          <input name="e_mail" id="e_mail" value="" data-default-value="e.g. ravigupta@gmail.com"  size="35" maxlength="50" type="text" class="textInput validateEmail"/>
+          <p class="formHint">A valid email address</p>
+        </div>
+      
+        <div class="ctrlHolder">
+          <label for="e_mail_confirm">Email confirm</label>
+          <input name="e_mail_confirm" id="e_mail_confirm" data-default-value="i.e. same as above" value=""  size="35" maxlength="50" type="text" class="textInput validateSameAs e_mail"/>
+          <p class="formHint"></p>
+        </div>
+        
+      
+        <h3>Parent/Guardian Information</h3>
+       
+        <div class="ctrlHolder">
+          <label for="father_name"><em>*</em> Father's name</label>
+          <input name="father_name" id="father_name" data-default-value="e.g. Sh. Madan Kumar" value=""  size="35" maxlength="50" type="text" class="textInput required"/>
+          <p class="formHint">Father's name of <span class="cName" >Candidate</span></p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for="father_occupation">Father's occupation</label>
+          <input name="father_occupation" id="father_occupation" value="" data-default-value="e.g. Teacher" size="35" maxlength="50" type="text" class="textInput"/>
+          <p class="formHint">Father's occupation</p>
+        </div>
+        <div class="ctrlHolder">
+          <label for="father_designation" >Father's designation</label>
+          <input name="father_designation" id="father_designation" value="" data-default-value="e.g. Lecturer" size="35" maxlength="50" type="text" class="textInput"/>
+          <p class="formHint">Father's designation</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for="father_contact" > Father's contact</label>
+          <input name="father_contact" id="father_contact" value=""  data-default-value="e.g. 9416123494" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
+          <p class="formHint">Father's contact number, it should be a mobile number.</p>
+        </div>
+        
+       
+        <div class="ctrlHolder">
+          <label for="mother_name"><em>*</em> Mother's name</label>
+          <input name="mother_name" id="mother_name" value=""  data-default-value="e.g. Smt. Sita Devi" size="35" maxlength="50" type="text" class="textInput required"/>
+          <p class="formHint">Mother's name of <span class="cName" >Candidate</span></p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for="mother_occupation">Mother's occupation</label>
+          <input name="mother_occupation" id="mother_occupation" value="" data-default-value="e.g. Banking" size="35" maxlength="50" type="text" class="textInput"/>
+          <p class="formHint">Mother's occupation</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for="mother_designation">Mother's designation</label>
+          <input name="mother_designation" id="mother_designation" value="" data-default-value="e.g. Probationary officer" size="35" maxlength="50" type="text" class="textInput"/>
+          <p class="formHint">Mother's designation</p>
+        </div>
+        
+        
+        <div class="ctrlHolder">
+          <label for="">Guardian's name (if any)</label>
+          <input name="guardian_name" id="guardian_name" value="" data-default-value="e.g. Sh. Ravi Dutt" size="35" maxlength="50" type="text" class="textInput"/>
+          <p class="formHint">Guardian's name, if <span class="cName" >Candidate</span> is not with parents.</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for="guardian_relation">Guardian's relation</label>
+          <input name="guardian_relation" id="guardian_relation" value="" data-default-value="e.g. Uncle" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
+          <p class="formHint">Guardian's relationship with <span class="cName" >Candidate</span></p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for="guardian_contact">Guardian's contact number</label>
+          <input name="guardian_contact" id="guardian_contact" value="" data-default-value="e.g. +919799123132" size="35" maxlength="50" type="text" class="textInput"/>
+          <p class="formHint">Guardian's contact number, it should be a mobile number.</p>
+        </div>
+        
+        <div class="ctrlHolder">
+          <label for="annual_income"><em>*</em>Annual Income</label>
+          <input name="annual_income" id="annual_income" value="" data-default-value="e.g. 456000" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+          <p class="formHint">Annual Income of father or guardian.(in Rupees only, no comma or units etc.)</p>
+        </div>
+        
+        
+        
+        <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+        
+        <div class="buttonHolder">
+        	<button type="submit" class="secondaryAction">Cancel and go back</button>
+        	<button type="submit" class="primaryAction">Save</button>
+    	</div>
+
+    </form>
+	<script>
+	var urlBasicInfo  = "<?php echo $this->url(array('controller' => 'student', 'action' => ''))?>";
+      $(function(){
+        $('form.uniForm').uniform({
+          prevent_submit : true
+        });
+
+        serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+        $("#dob").datepicker({
+        	dateFormat: 'yy-mm-dd',
+        	changeMonth: true,
+			changeYear: true,
+			yearRange: '-25:-15',
+			onClose : function(dateText, inst) {
+				this.focus();
+			}
+        });
+      });       
+       $('#first_name').change(function(){
+            var cName = this.value;
+        	$('.cName').text(cName);
+        });
+        
+
+      function submit() {
+          $.ajax({
+              url : urlBasicInfo,
+              data : getValues(),
+              success: function(jStatus){
+                  
+              },
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+                      console.log(response);
+                      }
+                  });
+      }
+
+    
+
+        function getValues() {
+            var formData = {}; 
+            $('form.uniForm :input')
+            		.not('button,#e_mail_confirm,:input[value^="e.g."]')
+            		.each(function(){ 
+            			formData[this.name] = this.value; 
+                });
+        var gender = $('input:radio[name=gender]:checked').val();
+        formData.gender = gender; 
+  		return formData;
+  	}
+
+        
+    </script>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
