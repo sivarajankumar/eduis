@@ -67,10 +67,25 @@ class Core_Model_Mapper_Relative
     public function fetchStudents (Core_Model_Relative $relative, 
     array $setter_options = null, array $property_range = null)
     {
+        $setter_options_keys = array_keys($setter_options);
+        $property_range_keys = array_keys($property_range);
+        $merge = array_merge($setter_options_keys, $property_range_keys);
+        //define 
+        //(a)names of tables used for 'join' operation.
+        //(b)corresponding join conditions 
+        $table = array(
+        's_persnl' => $this->getDbTable()->info('name'));
+        $name1 = 'relations';
+        $cond1 = "$table.relation_id = $name1.relation_id";
+        //1)get column names of relations table present in arguments received
+        $relations_col = array('relation_name');
+        $relations_intrsctn = array();
+        $relations_intrsctn = array_intersect($relations_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
-        $select = $adapter->select()->from(
-        ($this->getDbTable()
-            ->info('name')), 'member_id');
+        $select = $adapter->select()->from($table, 'member_id');
+        if (! empty($relations_intrsctn)) {
+            $select->join($name1, $cond1);
+        }
         foreach ($property_range as $key => $range) {
             if (! empty($range['from'])) {
                 $select->where("$key >= ?", $range['from']);

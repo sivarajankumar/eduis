@@ -74,10 +74,9 @@ class Core_Model_Mapper_Address
     public function fetchStudents (Core_Model_Address $address, 
     array $setter_options = null, array $property_range = null)
     {
+        $table = array('s_persnl' => $this->getDbTable()->info('name'));
         $adapter = $this->getDbTable()->getAdapter();
-        $select = $adapter->select()->from(
-        ($this->getDbTable()
-            ->info('name')), 'member_id');
+        $select = $adapter->select()->from($table, 'member_id');
         foreach ($property_range as $key => $range) {
             if (! empty($range['from'])) {
                 $select->where("$key >= ?", $range['from']);

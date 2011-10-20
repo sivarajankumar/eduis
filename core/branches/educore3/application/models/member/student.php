@@ -27,7 +27,7 @@ class Core_Model_Member_Student
     //
     protected $_student_roll_no;
     protected $_department_id;
-    protected $_prgramme_id;
+    protected $_programme_id;
     protected $_batch_start;
     protected $_group_id;
     //
@@ -39,7 +39,7 @@ class Core_Model_Member_Student
     'dob', 'gender', 'contact_no', 'e_mail', 'marital_status', 'councelling_no', 
     'admission_date', 'alloted_category', 'alloted_branch', 'state_of_domicile', 
     'urban', 'hostel', 'bus', 'image_no', 'blood_group', 'student_roll_no', 
-    'department_id', 'prgramme_id', 'batch_start', 'group_id', 'semster_id');
+    'department_id', 'programme_id', 'batch_start', 'group_id', 'semster_id');
     public function getBlood_group ()
     {
         return $this->_blood_group;
@@ -398,18 +398,18 @@ class Core_Model_Member_Student
         $this->_department_id = $_department_id;
     }
     /**
-     * @return the $_prgramme_id
+     * @return the $_programme_id
      */
-    public function getPrgramme_id ()
+    public function getProgramme_id ()
     {
-        return $this->_prgramme_id;
+        return $this->_programme_id;
     }
     /**
-     * @param field_type $_prgramme_id
+     * @param field_type $_programme_id
      */
-    public function setPrgramme_id ($_prgramme_id)
+    public function setProgramme_id ($_programme_id)
     {
-        $this->_prgramme_id = $_prgramme_id;
+        $this->_programme_id = $_programme_id;
     }
     /**
      * @return the $_batch_start
@@ -598,15 +598,12 @@ class Core_Model_Member_Student
             $invalid_range_keys = array_diff($property_range_keys, 
             $class_properties);
             if (! empty($invalid_range_keys)) {
-                foreach ($invalid_range_keys as $invalid_range_key) {
-                    $error = $error . '  ' . $invalid_range_key;
-                }
+                $error = implode(', ', $invalid_range_keys);
             }
         }
         $user_friendly_message = $error .
          ' are invalid parameters and therefore were not included in search.' .
          'Please try again with correct parameters to get more accurate results';
-        Zend_Registry::get('logger')->debug($user_friendly_message);
         $deciding_intersection = array_intersect($valid_options, 
         $valid_range_keys);
         if (empty($deciding_intersection)) {
