@@ -97,7 +97,8 @@ class Tnp_Model_Mapper_Profile_Components_Certification
             throw new Exception('Insufficient Params.. certificationId not set');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
-            $requiredFields = array('certification_id','certification_name', 'technical_field_id');
+            $requiredFields = array('certification_id', 'certification_name', 
+            'technical_field_id');
             $select = $adapter->select()
                 ->from('certification', $requiredFields)
                 ->where('certification_id = ?', $certification_id);
@@ -142,7 +143,8 @@ class Tnp_Model_Mapper_Profile_Components_Certification
             'Insufficient Params.. technical_field_id not set');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
-            $requiredFields = array('technical_field_id','technical_field_name', 'technical_sector');
+            $requiredFields = array('technical_field_id', 
+            'technical_field_name', 'technical_sector');
             $select = $adapter->select()
                 ->from('technical_fields', $requiredFields)
                 ->where('technical_field_id = ?', $technical_field_id);
@@ -151,10 +153,7 @@ class Tnp_Model_Mapper_Profile_Components_Certification
             return $technical_field_info[$technical_field_id];
         }
     }
-    /**
-     * 
-     * @param Tnp_Model_Profile_Components_Certification $certification
-     */
+    /*
     public function fetchMemberId (
     Tnp_Model_Profile_Components_Certification $certification)
     {
@@ -179,16 +178,14 @@ class Tnp_Model_Mapper_Profile_Components_Certification
         }
         return $select->query()->fetchColumn();
     }
-    /**
-     * 
-     */
+    
     protected function searchPreRequisite ($certification)
     {
-        /**
-         * @todo search cant be made by using only one of techSec or TechFieldName.. both have to be specified
-         *reason :we are looking for members with certification course ex: ccna(certName) in networking(field name) of CSE(techField)
-         *this function cannot be used to search students with certification in hardware field of CSE and ECE sector together 
-         */
+        //
+        //@todo search cant be made by using only one of techSec or TechFieldName.. both have to be specified
+         //reason :we are looking for members with certification course ex: ccna(certName) in networking(field name) of CSE(techField)
+         //this function cannot be used to search students with certification in hardware field of CSE and ECE sector together 
+         //
         $techFieldName = $certification->getTechnical_field_name();
         $techSector = $certification->getTechnical_sector();
         $certiName = $certification->getCertification_name();
@@ -200,5 +197,59 @@ class Tnp_Model_Mapper_Profile_Components_Certification
         } else {
             return true;
         }
+    }*/
+    /**
+     * Enter description here ...
+     * @param Tnp_Model_Profile_Components_Certification $certification
+     * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
+     * here 'from' stands for >= AND 'to' stands for <=
+     * 
+     */
+    public function fetchStudents (Tnp_Model_Profile_Components_Certification $certification, 
+    array $setter_options = null, array $property_range = null)
+    {
+        
+        //declare table name and table columns for join statement
+        $table = (array('s' => $this->getDbTable()->info('name')));
+        $name1 = array('c' => 'certification');
+        $cond1 = 's.certification_id = c.certification_id';
+        $name2 = array('t' => 'technical_fields');
+        $cond2 = 'c.technical_field_id = t.technical_field_id';
+        //get column names of certification present in arguments received
+        $certification_col = array('certification_name','technical_field_id');
+        $certification_intrsctn = array();
+        $certification_intrsctn = array_intersect($certification_col, $setter_options, 
+        $property_range);
+        //get column names of functional_area present in arguments received
+        $technical_fields_col = array('technical_field_name','technical_sector');
+        $technical_fields_intrsctn = array();
+        $technical_fields_intrsctn = array_intersect($technical_fields_col, 
+        $setter_options, $property_range);
+       
+        //
+        $adapter = $this->getDbTable()->getAdapter();
+        $select = $adapter->select()->from($table, 'member_id');
+        if (! empty($certification_intrsctn)) {
+            $select->join($name1, $cond1);
+        }
+        if (! empty($technical_fields_intrsctn)) {
+            $select->join($name2, $cond2);
+        }
+        
+        foreach ($property_range as $key => $range) {
+            if (! empty($range['from'])) {
+                $select->where("$key >= ?", $range['from']);
+            }
+            if (! empty($range['to'])) {
+                $select->where("$key <= ?", $range['to']);
+            }
+        }
+        foreach ($setter_options as $property_name => $value) {
+            $getter_string = 'get' . ucfirst($property_name);
+            $certification->$getter_string();
+            $condition = $property_name . ' = ?';
+            $select->where($condition, $value);
+        }
+        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
 }
