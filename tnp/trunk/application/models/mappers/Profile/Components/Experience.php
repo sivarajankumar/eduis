@@ -142,7 +142,8 @@ class Tnp_Model_Mapper_Profile_Components_Experience
             $select = $adapter->select()
                 ->from('functional_area', $required_fields)
                 ->where('functional_area_id = ?', $functionalAreaId);
-            $functionalAreaInfo = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            $functionalAreaInfo = $select->query()->fetchAll(
+            Zend_Db::FETCH_UNIQUE);
             return $functionalAreaInfo[$functionalAreaId];
         }
     }
@@ -182,30 +183,6 @@ class Tnp_Model_Mapper_Profile_Components_Experience
         }
     }
     /**
-     * @todo
-     * @param Tnp_Model_Profile_Components_Experience $experience
-     */
-    public function fetchMemberId (
-    Tnp_Model_Profile_Components_Experience $searchParams)
-    {
-        $adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()->from(
-        ($this->getDbTable()
-            ->info('name')), 'member_id');
-        $industryName = $searchParams->getIndustry_name();
-        $industryId = $searchParams->getIndustry_id();
-        $functionalAreaName = $searchParams->getFunctional_area_name();
-        $functionalAreaId = $searchParams->getFunctional_area_id();
-        $roleName = $searchParams->getRole_name();
-        $roleId = $searchParams->getRole_id();
-        // todo
-        $searchPreReq = '';
-        if ($searchPreReq == true) {
-            // do this
-        }
-         //return $select->query()->fetchColumn();
-    }
-    /**
      * 
      * @todo decide the params
      * @param Tnp_Model_Profile_Components_Experience $params
@@ -213,4 +190,66 @@ class Tnp_Model_Mapper_Profile_Components_Experience
     protected function searchPreRequisite (
     Tnp_Model_Profile_Components_Experience $experience)
     {}
+    /**
+     * Enter description here ...
+     * @param Tnp_Model_Profile_Components_Experience $experience
+     * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
+     * here 'from' stands for >= AND 'to' stands for <=
+     * 
+     */
+    public function fetchStudents (
+    Tnp_Model_Profile_Components_Experience $experience, 
+    array $setter_options = null, array $property_range = null)
+    {
+        $setter_options_keys = array_keys($setter_options);
+        $property_range_keys = array_keys($property_range);
+        $merge = array_merge($setter_options_keys, $property_range_keys);
+        //declare table name and table columns for join statement
+        $table = (array('s' => $this->getDbTable()->info('name')));
+        $name1 = array('i' => 'industries');
+        $cond1 = 's.industry_id = i.industry_id';
+        $name2 = array('f' => 'functional_area');
+        $cond2 = 's.functional_area_id = f.functional_area_id';
+        $name3 = array('r' => 'roles');
+        $cond3 = 's.role_id = r.role_id';
+        //get column names of industries present in arguments received
+        $industries_col = array('industry_name');
+        $ind_intrsctn = array();
+        $ind_intrsctn = array_intersect($industries_col, $merge);
+        //get column names of functional_area present in arguments received
+        $functional_area_col = array('functional_area_name');
+        $functional_intrsctn = array();
+        $functional_intrsctn = array_intersect($functional_area_col, $merge);
+        //get column names of roles present in arguments received
+        $roles_col = array('role_name');
+        $roles_intrsctn = array();
+        $roles_intrsctn = array_intersect($roles_col, $merge);
+        //
+        $adapter = $this->getDbTable()->getAdapter();
+        $select = $adapter->select()->from($table, 'member_id');
+        if (! empty($ind_intrsctn)) {
+            $select->join($name1, $cond1);
+        }
+        if (! empty($functional_intrsctn)) {
+            $select->join($name2, $cond2);
+        }
+        if (! empty($roles_intrsctn)) {
+            $select->join($name3, $cond3);
+        }
+        foreach ($property_range as $key => $range) {
+            if (! empty($range['from'])) {
+                $select->where("$key >= ?", $range['from']);
+            }
+            if (! empty($range['to'])) {
+                $select->where("$key <= ?", $range['to']);
+            }
+        }
+        foreach ($setter_options as $property_name => $value) {
+            $getter_string = 'get' . ucfirst($property_name);
+            $experience->$getter_string();
+            $condition = $property_name . ' = ?';
+            $select->where($condition, $value);
+        }
+        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+    }
 }

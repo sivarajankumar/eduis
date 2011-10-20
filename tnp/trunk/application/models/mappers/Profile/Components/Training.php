@@ -152,10 +152,7 @@ class Tnp_Model_Mapper_Profile_Components_Training
             return $training_info[$trainingId];
         }
     }
-    /**
-     * 
-     * @param Tnp_Model_Profile_Components_Training $searchParams
-     */
+    /*
     public function fetchMemberId (
     Tnp_Model_Profile_Components_Training $searchParams)
     {
@@ -182,11 +179,7 @@ class Tnp_Model_Mapper_Profile_Components_Training
         }
         return $select->query()->fetchColumn();
     }
-    /**
-     * 
-     * Enter description here ...
-     * @param Tnp_Model_Profile_Components_Training $searchParams
-     */
+    
     protected function searchPreRequisite ($training)
     {
         //search cant be made by using only one of techSec or TechFieldName.. both have to be specified
@@ -203,5 +196,61 @@ class Tnp_Model_Mapper_Profile_Components_Training
         } else {
             return true;
         }
+    }*/
+    /**
+     * Enter description here ...
+     * @param Tnp_Model_Profile_Components_Training $training
+     * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
+     * here 'from' stands for >= AND 'to' stands for <=
+     * 
+     */
+    public function fetchStudents (
+    Tnp_Model_Profile_Components_Training $training, 
+    array $setter_options = null, array $property_range = null)
+    {
+        $setter_options_keys = array_keys($setter_options);
+        $property_range_keys = array_keys($property_range);
+        $merge = array_merge($setter_options_keys, $property_range_keys);
+        //declare table name and table columns for join statement
+        $table = (array('st' => $this->getDbTable()->info('name')));
+        $name1 = array('tr' => 'training');
+        $cond1 = 'st.training_id = tr.training_id';
+        $name2 = array('tf' => 'technical_fields');
+        $cond2 = 'tr.technical_field_id = t.technical_field_id';
+        //get column names of training present in arguments received
+        $training_col = array('certification_name', 
+        'technical_field_id');
+        $training_intrsctn = array();
+        $training_intrsctn = array_intersect($training_col, $merge);
+        //get column names of technical_fields present in arguments received
+        $technical_fields_col = array('technical_field_name', 
+        'technical_sector');
+        $technical_fields_intrsctn = array();
+        $technical_fields_intrsctn = array_intersect($technical_fields_col, 
+        $merge);
+        //
+        $adapter = $this->getDbTable()->getAdapter();
+        $select = $adapter->select()->from($table, 'member_id');
+        if (! empty($training_intrsctn)) {
+            $select->join($name1, $cond1);
+        }
+        if (! empty($technical_fields_intrsctn)) {
+            $select->join($name2, $cond2);
+        }
+        foreach ($property_range as $key => $range) {
+            if (! empty($range['from'])) {
+                $select->where("$key >= ?", $range['from']);
+            }
+            if (! empty($range['to'])) {
+                $select->where("$key <= ?", $range['to']);
+            }
+        }
+        foreach ($setter_options as $property_name => $value) {
+            $getter_string = 'get' . ucfirst($property_name);
+            $training->$getter_string();
+            $condition = $property_name . ' = ?';
+            $select->where($condition, $value);
+        }
+        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
 }
