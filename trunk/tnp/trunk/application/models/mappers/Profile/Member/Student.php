@@ -50,7 +50,8 @@ class Tnp_Model_Mapper_Profile_Member_Student
             throw new Exception('Insufficient Params.. Member\'s Id is required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
-            $required_fields = array('skill_id', 'proficiency as skill_proficiency');
+            $required_fields = array('skill_id', 
+            'skill_proficiency' => 'proficiency');
             $select = $adapter->select()
                 ->from('student_skills', $required_fields)
                 ->where('member_id = ?', $member_id);
@@ -94,7 +95,8 @@ class Tnp_Model_Mapper_Profile_Member_Student
             throw new Exception('Insufficient Params.. Member\'s Id is required');
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
-            $required_fields = array('language_id', 'proficiency as language_proficiency');
+            $required_fields = array('language_id', 
+            'language_proficiency' => 'proficiency');
             $select = $adapter->select()
                 ->from('student_language', $required_fields)
                 ->where('member_id = ?', $member_id);
@@ -195,5 +197,108 @@ class Tnp_Model_Mapper_Profile_Member_Student
             Zend_Db::FETCH_UNIQUE);
             return $profile_status_info[$member_id];
         }
+    }
+    /**
+     * Enter description here ...
+     * @param Tnp_Model_Profile_Member_Student $student
+     * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
+     * here 'from' stands for >= AND 'to' stands for <=
+     * 
+     */
+    public function fetchStudents (Tnp_Model_Profile_Member_Student $student, 
+    array $setter_options = null, array $property_range = null)
+    {
+        $setter_options_keys = array_keys($setter_options);
+        $property_range_keys = array_keys($property_range);
+        $merge = array_merge($setter_options_keys, $property_range_keys);
+        //declare table name and table columns for join statement
+        $table = array('st' => $this->getDbTable()->info('name'));
+        //define 
+        //(a)names of tables used for 'join' operation.
+        //(b)corresponding join conditions 
+        $name1 = array('pr_st' => 'profile_status');
+        $cond1 = 'pr_st.member_id = st.member_id';
+        $name2 = array('jp' => 'job_preferred');
+        $cond2 = 'jb.member_id = st.member_id';
+        $name3 = array('st_skl' => 'student_skills');
+        $cond3 = 'st_skl.member_id = st.member_id';
+        $name4 = array('skl' => 'skills');
+        $cond4 = 'st_skl.skill_id = skl.skill_id';
+        $name5 = array('st_lng' => 'student_language');
+        $cond5 = 'st_lng.member_id = st.member_id';
+        $name6 = array('lng' => 'languages');
+        $cond6 = 'st_lng.language_id = lng.language_id';
+        $name7 = array('co_clr' => 'co_curicullar');
+        $cond7 = 'co_clr.member_id = st.member_id';
+        //1)get column names of profile_status present in arguments received
+        $profile_status_col = array('exists', 'is_locked', 
+        'last_updated_on');
+        $profile_status_intrsctn = array();
+        $profile_status_intrsctn = array_intersect($profile_status_col, $merge);
+        //2)get column names of job_preferred present in arguments received
+        $job_preferred_col = array('type');
+        $job_preferred_intrsctn = array();
+        $job_preferred_intrsctn = array_intersect($job_preferred_col, $merge);
+        //3)get column names of student_skills present in arguments received
+        $student_skills_col = array('proficiency', 'skill_id');
+        $student_skills_intrsctn = array_intersect($student_skills_col, $merge);
+        //4)get column names of skills present in arguments received
+        $skills_col = array('skill_name', 'skill_field');
+        $skills_intrsctn = array();
+        $skills_intrsctn = array_intersect($skills_col, $merge);
+        //5)get column names of student_language present in arguments received
+        $student_language_col = array('language_id', 'proficiency');
+        $student_language_intrsctn = array();
+        $student_language_intrsctn = array_intersect($student_language_col, 
+        $merge);
+        //6)get column names of languages present in arguments received
+        $languages_col = array('language_name');
+        $languages_intrsctn = array();
+        $languages_intrsctn = array_intersect($languages_col, $merge);
+        //7)get column names of co_curicullar present in arguments received
+        $co_curicullar_col = array('achievements', 'activities', 
+        'hobbies');
+        $co_curicullar_intrsctn = array();
+        $co_curicullar_intrsctn = array_intersect($co_curicullar_col, $merge);
+        //
+        $adapter = $this->getDbTable()->getAdapter();
+        $select = $adapter->select()->from($table, 'member_id');
+        if (! empty($profile_status_intrsctn)) {
+            $select->join($name1, $cond1);
+        }
+        if (! empty($job_preferred_intrsctn)) {
+            $select->join($name2, $cond2);
+        }
+        if (! empty($student_skills_intrsctn)) {
+            $select->join($name3, $cond3);
+        }
+        if (! empty($skills_intrsctn)) {
+            $select->join($name4, $cond4);
+        }
+        if (! empty($student_language_intrsctn)) {
+            $select->join($name5, $cond5);
+        }
+        if (! empty($languages_intrsctn)) {
+            $select->join($name6, $cond6);
+        }
+        if (! empty($co_curicullar_intrsctn)) {
+            $select->join($name7, $cond7);
+        }
+        foreach ($property_range as $key => $range) {
+            if (! empty($range['from'])) {
+                $select->where("$key >= ?", $range['from']);
+            }
+            if (! empty($range['to'])) {
+                $select->where("$key <= ?", $range['to']);
+            }
+        }
+        foreach ($setter_options as $property_name => $value) {
+            $getter_string = 'get' . ucfirst($property_name);
+            $student->$getter_string();
+            $condition = $property_name . ' = ?';
+            $select->where($condition, $value);
+        }
+        //Zend_Registry::get('logger')->debug($select->__toString());
+        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
 }
