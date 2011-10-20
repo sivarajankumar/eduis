@@ -18,6 +18,18 @@ class Tnp_Model_Profile_Components_Experience
     protected $_is_parttime;
     protected $_description;
     protected $_mapper;
+    protected $_class_properties = array('student_experience_id', 'member_id', 
+    'industry_id', 'functional_area_id', 'functional_area_name', 'role_id', 
+    'role_name', 'experience_months', 'experience_years', 'organisation', 
+    'start_date', 'end_date', 'is_parttime', 'description');
+    public function getClass_properties ()
+    {
+        return $this->_class_properties;
+    }
+    public function setClass_properties ($_class_properties)
+    {
+        $this->_class_properties = $_class_properties;
+    }
     public function getMember_experiences_info ()
     {
         $member_experiences_info = $this->_member_experiences_info;
@@ -234,15 +246,6 @@ class Tnp_Model_Profile_Components_Experience
     {
         $this->getMapper()->save($this);
     }
-    /**
-     * first set properties of object, according to which you want
-     * to search,using constructor, then call the search function
-     * 
-     */
-    public function search ()
-    {
-        return $this->getMapper()->fetchMemberId($this);
-    }
     public function initMemberExperienceDetails ()
     {
         $member_experiences_info = $this->getMember_experiences_info();
@@ -280,5 +283,78 @@ class Tnp_Model_Profile_Components_Experience
     {
         $options = $this->getMapper()->fetchRoleInfo($this);
         $this->setOptions($options);
+    }
+    /**
+     * 
+     * Enter description here ...
+     * @param array $options containing properties mapped to values
+     * @param array $property_range containing properties mapped to array containing upper and lower range
+     * @throws Exception when trying to set equality and range both ,for property, at the same time
+     * @throws Exception when invalid properties are specified 
+     * @return array containing Member Ids
+     */
+    public function search (array $options = null, array $property_range = null)
+    {
+        $class_properties = array();
+        $options_keys = array();
+        $valid_options = array();
+        $invalid_options = array();
+        $setter_options = array();
+        $property_range_keys = array();
+        $valid_range_keys = array();
+        $invalid_range_keys = array();
+        $range = array();
+        $error = '';
+        $class_properties = $this->getClass_properties();
+        if (! empty($options)) {
+            $options_keys = array_keys($options);
+            $valid_options = array_intersect($options_keys, $class_properties);
+            foreach ($valid_options as $valid_option) {
+                //$setter_options array is now ready for search
+                //but will it participate,is not confirmed
+                $setter_options[$valid_option] = $options[$valid_option];
+            }
+            $invalid_options = array_diff($options_keys, $class_properties);
+            if (! empty($invalid_options)) {
+                $error = implode(', ', $invalid_range_keys);
+            }
+        }
+        if (! empty($property_range)) {
+            $property_range_keys = array_keys($property_range);
+            $valid_range_keys = array_intersect($property_range_keys, 
+            $class_properties);
+            foreach ($valid_range_keys as $valid_range_key) {
+                //$range array is now ready for search
+                //but will it participate,is not confirmed
+                $range[$valid_range_key] = $property_range[$valid_range_key];
+            }
+            $invalid_range_keys = array_diff($property_range_keys, 
+            $class_properties);
+            if (! empty($invalid_range_keys)) {
+                foreach ($invalid_range_keys as $invalid_range_key) {
+                    $error = $error . '  ' . $invalid_range_key;
+                }
+            }
+        }
+        $user_friendly_message = $error .
+         ' are invalid parameters and therefore were not included in search.' .
+         'Please try again with correct parameters to get more accurate results';
+        Zend_Registry::get('logger')->debug($user_friendly_message);
+        $deciding_intersection = array_intersect($valid_options, 
+        $valid_range_keys);
+        if (empty($deciding_intersection)) {
+            //now we can set off for search operation
+            $this->setOptions($setter_options);
+            $result = $this->getMapper()->fetchStudents($this, $setter_options, 
+            $range);
+            return $result;
+        } else {
+            foreach ($deciding_intersection as $duplicate_entry) {
+                $error_1 = $error_1 . '  ' . $duplicate_entry;
+            }
+            throw new Exception(
+            'Range and equality cannot be set for ' . $error_1 .
+             ' at the same time');
+        }
     }
 }
