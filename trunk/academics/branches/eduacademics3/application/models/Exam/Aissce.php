@@ -17,24 +17,36 @@ class Acad_Model_Exam_Aissce
     protected $_city_name;
     protected $_state_name;
     protected $_migration_date;
+    protected $_class_properties = array('member_id', 'board_roll_no', 
+    'marks_obtained', 'total_marks', 'percentage', 'pcm_percent', 'passing_year', 
+    'board', 'school_rank', 'remarks', 'institution', 'city_name', 'state_name', 
+    'migration_date');
     protected $_mapper;
-    public function getCity_name() {
-		return $this->_city_name;
-	}
-
-	public function setCity_name($_city_name) {
-		$this->_city_name = $_city_name;
-	}
-
-	public function getState_name() {
-		return $this->_state_name;
-	}
-
-	public function setState_name($_state_name) {
-		$this->_state_name = $_state_name;
-	}
-
-	protected function getSearch_initialised_status ()
+    public function getClass_properties ()
+    {
+        return $this->_class_properties;
+    }
+    public function setClass_properties ($_class_properties)
+    {
+        $this->_class_properties = $_class_properties;
+    }
+    public function getCity_name ()
+    {
+        return $this->_city_name;
+    }
+    public function setCity_name ($_city_name)
+    {
+        $this->_city_name = $_city_name;
+    }
+    public function getState_name ()
+    {
+        return $this->_state_name;
+    }
+    public function setState_name ($_state_name)
+    {
+        $this->_state_name = $_state_name;
+    }
+    protected function getSearch_initialised_status ()
     {
         return $this->_search_initialised_status;
     }
@@ -50,7 +62,6 @@ class Acad_Model_Exam_Aissce
     {
         $this->_save_initialised_status = $_save_initialised_status;
     }
-    
     public function getBoard_roll_no ()
     {
         return $this->_board_roll_no;
@@ -219,15 +230,6 @@ class Acad_Model_Exam_Aissce
         $this->getMapper()->save($this);
     }
     /**
-     * first set properties of object, according to which you want
-     * to search,using constructor, then call the search function
-     * 
-     */
-    public function search ()
-    {
-        return $this->getMapper()->fetchMemberId($this);
-    }
-    /**
      * Gets AISSCE information of a member
      * You cant use it directly in 
      * controller,
@@ -238,12 +240,79 @@ class Acad_Model_Exam_Aissce
         $options = $this->getMapper()->fetchMemberExamInfo($this);
         $this->setOptions($options);
     }
-    public function initSearchOperation ()
+    /**
+     * 
+     * Enter description here ...
+     * @param array $options containing properties mapped to values
+     * @param array $property_range containing properties mapped to array containing upper and lower range
+     * @throws Exception when trying to set equality and range both ,for property, at the same time
+     * @throws Exception when invalid properties are specified 
+     * @return array containing Member Ids
+     */
+    public function search (array $options = null, array $property_range = null)
     {
-        $this->setSearch_initialised_status(true);
-    }
-    public function initSaveProcess ()
-    {
-        $this->setSave_initialised_status(true);
+        $class_properties = array();
+        $options_keys = array();
+        $valid_options = array();
+        $invalid_options = array();
+        $setter_options = array();
+        $property_range_keys = array();
+        $valid_range_keys = array();
+        $invalid_range_keys = array();
+        $range = array();
+        $error = '';
+        $class_properties = $this->getClass_properties();
+        if (! empty($options)) {
+            $options_keys = array_keys($options);
+            $valid_options = array_intersect($options_keys, $class_properties);
+            foreach ($valid_options as $valid_option) {
+                //$setter_options array is now ready for search
+                //but will it participate,is not confirmed
+                $setter_options[$valid_option] = $options[$valid_option];
+            }
+            $invalid_options = array_diff($options_keys, $class_properties);
+            if (! empty($invalid_options)) {
+                foreach ($invalid_options as $invalid_option) {
+                    $error = $error . '  ' . $invalid_option;
+                }
+            }
+        }
+        if (! empty($property_range)) {
+            $property_range_keys = array_keys($property_range);
+            $valid_range_keys = array_intersect($property_range_keys, 
+            $class_properties);
+            foreach ($valid_range_keys as $valid_range_key) {
+                //$range array is now ready for search
+                //but will it participate,is not confirmed
+                $range[$valid_range_key] = $property_range[$valid_range_key];
+            }
+            $invalid_range_keys = array_diff($property_range_keys, 
+            $class_properties);
+            if (! empty($invalid_range_keys)) {
+                foreach ($invalid_range_keys as $invalid_range_key) {
+                    $error = $error . '  ' . $invalid_range_key;
+                }
+            }
+        }
+        $user_friendly_message = $error .
+         ' are invalid parameters and therefore were not included in search.' .
+         'Please try again with correct parameters to get more accurate results';
+        Zend_Registry::get('logger')->debug($user_friendly_message);
+        $deciding_intersection = array_intersect($valid_options, 
+        $valid_range_keys);
+        if (empty($deciding_intersection)) {
+            //now we can set off for search operation
+            $this->setOptions($setter_options);
+            $result = $this->getMapper()->fetchStudents($this, $setter_options, 
+            $range);
+            return $result;
+        } else {
+            foreach ($deciding_intersection as $duplicate_entry) {
+                $error_1 = $error_1 . '  ' . $duplicate_entry;
+            }
+            throw new Exception(
+            'Range and equality cannot be set for ' . $error_1 .
+             ' at the same time');
+        }
     }
 }

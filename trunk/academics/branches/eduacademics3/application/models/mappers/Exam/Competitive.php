@@ -59,42 +59,34 @@ class Acad_Model_Mapper_Exam_Competitive
         
         return $competitive_exam_info;
     }
-    /**
-     * returns REGISTRATION NUMBER
-     * @param Acad_Model_Exam_Competitive $searchParams
-     * @todo return memberIds
+     /**
+     * Enter description here ...
+     * @param Acad_Model_Exam_Competitive $competitiveExam
+     * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
+     * here 'from' stands for >= AND 'to' stands for <=
+     * 
      */
-    public function fetchMemberId (Acad_Model_Exam_Competitive $searchParams)
+    public function fetchStudents (Acad_Model_Exam_Competitive $competitiveExam, 
+    array $setter_options = null, array $property_range = null)
     {
-        $adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()->from('competitive_exam', 'member_id');
-        $competitive_exam_name = $searchParams->getCompetitive_exam_name();
-        $competitive_exam_abbr = $searchParams->getCompetitive_exam_abbr();
-        if (isset($competitive_exam_name) or isset($competitive_exam_abbr)) {
-            $logger = Zend_Registry::get('logger');
-            $logger->debug(
-            'Can not use Competitive_exam_name or Competitive_exam_abbr.Please use Competitive_exam_id');
+        $adapter = $this->getDbTable()->getAdapter();
+        $select = $adapter->select()->from(
+        ($this->getDbTable()
+            ->info('name')), 'member_id');
+        foreach ($property_range as $key => $range) {
+            if (! empty($range['from'])) {
+                $select->where("$key >= ?", $range['from']);
+            }
+            if (! empty($range['to'])) {
+                $select->where("$key <= ?", $range['to']);
+            }
         }
-        $competitive_exam_id = $searchParams->getCompetitive_exam_id();
-        $exam_roll_no = $searchParams->getExam_roll_no();
-        $exam_date = $searchParams->getExam_date();
-        $total_score = $searchParams->getTotal_score();
-        $all_india_rank = $searchParams->getAll_india_rank();
-        if (isset($competitive_exam_id)) {
-            $select->where('competitive_exam_id = ?', $competitive_exam_id);
+        foreach ($setter_options as $property_name => $value) {
+            $getter_string = 'get' . ucfirst($property_name);
+            $competitiveExam->$getter_string();
+            $condition = $property_name . ' = ?';
+            $select->where($condition, $value);
         }
-        if (isset($exam_roll_no)) {
-            $select->where('exam_roll_no = ?', $exam_roll_no);
-        }
-        if (isset($exam_date)) {
-            $select->where('exam_date = ?', $exam_date);
-        }
-        if (isset($total_score)) {
-            $select->where('total_score = ?', $total_score);
-        }
-        if (isset($all_india_rank)) {
-            $select->where('all_india_rank = ?', $all_india_rank);
-        }
-        return $select->query()->fetchColumn();
+        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
 }

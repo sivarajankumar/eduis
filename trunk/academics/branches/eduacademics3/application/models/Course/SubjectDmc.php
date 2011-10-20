@@ -308,7 +308,7 @@ class Acad_Model_Course_SubjectDmc
      * PreRequistes - either (regNo, subCode AND marks must be set)
      * or (dmcId must be set)
      */
-    public function getDetails ()
+    public function initInfo ()
     {
         $options = $this->getMapper()->fetchDetails($this);
         $this->setOptions($options);

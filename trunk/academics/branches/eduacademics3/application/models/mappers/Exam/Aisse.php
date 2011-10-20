@@ -58,59 +58,34 @@ class Acad_Model_Mapper_Exam_Aisse
         $member_exam_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $member_exam_info[$member_id];
     }
-    /**
-     * returns $member_id
-     * @param Acad_Model_Exam_Aisse $searchParams
-     * @todo return memberIds
+     /**
+     * Enter description here ...
+     * @param Acad_Model_Exam_Aisse $aisse
+     * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
+     * here 'from' stands for >= AND 'to' stands for <=
+     * 
      */
-    public function fetchMemberId (Acad_Model_Exam_Aisse $searchParams)
+    public function fetchStudents (Acad_Model_Exam_Aisse $aisse, 
+    array $setter_options = null, array $property_range = null)
     {
-        $adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()->from('matric_info', 'member_id');
-        $matric_board = $searchParams->getMatric_board();
-        $matric_roll_no = $searchParams->getMatric_roll_no();
-        $matric_marks_obtained = $searchParams->getMatric_marks_obtained();
-        $matric_total_marks = $searchParams->getMatric_total_marks();
-        $matric_percentage = $searchParams->getMatric_percentage();
-        $matric_passing_year = $searchParams->getMatric_passing_year();
-        $matric_school_rank = $searchParams->getMatric_school_rank();
-        $matric_remarks = $searchParams->getMatric_remarks();
-        $matric_institution = $searchParams->getMatric_institution();
-        $matric_city = $searchParams->getMatric_city();
-        $matric_state = $searchParams->getMatric_state();
-        if (isset($matric_board)) {
-            $select->where('matric_board = ?', $matric_board);
+        $adapter = $this->getDbTable()->getAdapter();
+        $select = $adapter->select()->from(
+        ($this->getDbTable()
+            ->info('name')), 'member_id');
+        foreach ($property_range as $key => $range) {
+            if (! empty($range['from'])) {
+                $select->where("$key >= ?", $range['from']);
+            }
+            if (! empty($range['to'])) {
+                $select->where("$key <= ?", $range['to']);
+            }
         }
-        if (isset($matric_roll_no)) {
-            $select->where('matric_roll_no = ?', $matric_roll_no);
+        foreach ($setter_options as $property_name => $value) {
+            $getter_string = 'get' . ucfirst($property_name);
+            $aisse->$getter_string();
+            $condition = $property_name . ' = ?';
+            $select->where($condition, $value);
         }
-        if (isset($matric_marks_obtained)) {
-            $select->where('matric_marks_obtained = ?', $matric_marks_obtained);
-        }
-        if (isset($matric_total_marks)) {
-            $select->where('matric_total_marks = ?', $matric_total_marks);
-        }
-        if (isset($matric_percentage)) {
-            $select->where('matric_percentage = ?', $matric_percentage);
-        }
-        if (isset($matric_passing_year)) {
-            $select->where('matric_passing_year = ?', $matric_passing_year);
-        }
-        if (isset($matric_school_rank)) {
-            $select->where('matric_school_rank = ?', $matric_school_rank);
-        }
-        if (isset($matric_remarks)) {
-            $select->where('matric_remarks = ?', $matric_remarks);
-        }
-        if (isset($matric_institution)) {
-            $select->where('matric_institution = ?', $matric_institution);
-        }
-        if (isset($matric_city)) {
-            $select->where('matric_city = ?', $matric_city);
-        }
-        if (isset($matric_state)) {
-            $select->where('matric_state = ?', $matric_state);
-        }
-        return $select->query()->fetchColumn();
+        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
 }

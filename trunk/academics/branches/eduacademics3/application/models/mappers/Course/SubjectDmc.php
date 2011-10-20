@@ -73,7 +73,7 @@ class Acad_Model_Mapper_Course_SubjectDmc
      * 
      * @param Acad_Model_Course_SubjectDmc $subjectDmc
      */
-    public function fetchDetails (Acad_Model_Course_SubjectDmc $subjectDmc)
+    public function fetchInfo (Acad_Model_Course_SubjectDmc $subjectDmc)
     {
         /**
          * call getmarks history and add following to query 
@@ -88,14 +88,20 @@ class Acad_Model_Mapper_Course_SubjectDmc
             throw new Exception(
             'Insufficient data provided..  memberId, subCode and subjMarks are ALL required');
         } else {
-            $requiredFields = array('subject_code', 'marks', 'appear_type', 
-            'custody_date', 'custody_date', 'is_granted', 'grant_date', 
-            'recieving_date', 'is_copied', 'dispatch_date', 'member_id');
+            $dmc_info_fields = array('custody_date', 'custody_date', 
+            'is_granted', 'grant_date', 'recieving_date', 'is_copied', 
+            'dispatch_date');
+            $dmc_record_fields = array('member_id', 'subject_code', 'marks', 
+            'appear_type');
             $adapter = $this->getDbTable()->getAdapter();
-            $table_name = $this->getDbTable()->info('name');
             $select = $adapter->select()
-                ->from($table_name)
-                ->joinInner('dmc_record', 'dmc_info.dmc_id = dmc_record.dmc_id');
+                ->from($this->getDbTable()
+                ->info('name'), $dmc_info_fields)
+                ->joinInner('dmc_record', 'dmc_info.dmc_id = dmc_record.dmc_id', 
+            $dmc_record_fields)->where('member_id = ?',$member_id)->where('member_id = ?',$member_id);
+            $dmc_info = array();
+            $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            return $dmc_info[$member_id];
         }
     }
     /**
@@ -106,8 +112,8 @@ class Acad_Model_Mapper_Course_SubjectDmc
     Acad_Model_Course_SubjectDmc $subjectDmc)
     {
         $member_id = $subjectDmc->getMember_id();
-        $requiredFields = array('semester_id', 'dmc_id', 'marks_obtained', 'scaled_marks',
-        'total_marks');
+        $requiredFields = array('semester_id', 'dmc_id', 'marks_obtained', 
+        'scaled_marks', 'total_marks');
         $adapter = $this->getDbTable()->getAdapter();
         $select = $adapter->select()
             ->from('dmc_total_marks', $requiredFields)

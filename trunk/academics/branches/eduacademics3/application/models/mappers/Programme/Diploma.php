@@ -47,9 +47,10 @@ class Acad_Model_Mapper_Programme_Diploma
     {
         $member_id = $diploma->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $required_fields = array('member_id', 'discipline_name', 'board_roll_no', 
-        'marks_obtained', 'total_marks', 'percentage', 'passing_year', 'remarks', 
-        'university', 'institution', 'city_name', 'state_name', 'migration_date');
+        $required_fields = array('member_id', 'discipline_name', 
+        'board_roll_no', 'marks_obtained', 'total_marks', 'percentage', 
+        'passing_year', 'remarks', 'university', 'institution', 'city_name', 
+        'state_name', 'migration_date');
         $select = $adapter->select()
             ->from($this->getDbTable()
             ->info('name'), $required_fields)
@@ -78,62 +79,33 @@ class Acad_Model_Mapper_Programme_Diploma
         }
     }*/
     /**
+     * Enter description here ...
+     * @param Acad_Model_Programme_Diploma $diploma
+     * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
+     * here 'from' stands for >= AND 'to' stands for <=
      * 
-     * @param Acad_Model_Programme_Diploma $searchParams
-     * @todo return memberIds
      */
-    public function fetchMemberId (Acad_Model_Programme_Diploma $searchParams)
+    public function fetchStudents (Acad_Model_Programme_Diploma $diploma, 
+    array $setter_options = null, array $property_range = null)
     {
-        $adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()->from('diploma', 'member_id');
-        $board_roll = $searchParams->getBoard_roll();
-        $marks_obtained = $searchParams->getMarks_obtained();
-        $percentage = $searchParams->getPercentage();
-        $total_marks = $searchParams->getTotal_marks();
-        $remarks = $searchParams->getRemarks();
-        $passing_year = $searchParams->getPassing_year();
-        $branch = $searchParams->getBranch();
-        $board = $searchParams->getBoard();
-        $institution = $searchParams->getInstitution();
-        $institution_city = $searchParams->getInstitution_city();
-        $migration_date = $searchParams->getMigration_date();
-        $institution_state = $searchParams->getInstitution_state();
-        if (isset($board_roll)) {
-            $select->where('board_roll = ?', $board_roll);
+        $adapter = $this->getDbTable()->getAdapter();
+        $select = $adapter->select()->from(
+        ($this->getDbTable()
+            ->info('name')), 'member_id');
+        foreach ($property_range as $key => $range) {
+            if (! empty($range['from'])) {
+                $select->where("$key >= ?", $range['from']);
+            }
+            if (! empty($range['to'])) {
+                $select->where("$key <= ?", $range['to']);
+            }
         }
-        if (isset($marks_obtained)) {
-            $select->where('marks_obtained = ?', $marks_obtained);
+        foreach ($setter_options as $property_name => $value) {
+            $getter_string = 'get' . ucfirst($property_name);
+            $diploma->$getter_string();
+            $condition = $property_name . ' = ?';
+            $select->where($condition, $value);
         }
-        if (isset($total_marks)) {
-            $select->where('total_marks = ?', $total_marks);
-        }
-        if (isset($percentage)) {
-            $select->where('percentage = ?', $percentage);
-        }
-        if (isset($remarks)) {
-            $select->where('remarks = ?', $remarks);
-        }
-        if (isset($passing_year)) {
-            $select->where('passing_year = ?', $passing_year);
-        }
-        if (isset($branch)) {
-            $select->where('branch = ?', $branch);
-        }
-        if (isset($board)) {
-            $select->where('board = ?', $board);
-        }
-        if (isset($institution)) {
-            $select->where('institution = ?', $institution);
-        }
-        if (isset($institution_city)) {
-            $select->where('institution_city = ?', $institution_city);
-        }
-        if (isset($institution_state)) {
-            $select->where('institution_state = ?', $institution_state);
-        }
-        if (isset($migration_date)) {
-            $select->where('migration_date = ?', $migration_date);
-        }
-        return $select->query()->fetchColumn();
+        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
 }
