@@ -70,7 +70,7 @@ class Acad_Model_Mapper_Programme_Diploma
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getDefaultAdapter();
-            $required_fields = array('discipline_id', 'name as discipline_name');
+            $required_fields = array('discipline_id', 'discipline_name'=>'name');
             $select = $adapter->select()
                 ->from('discipline', $required_fields)
                 ->where('discipline_id = ?', $discipline_id);

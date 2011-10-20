@@ -46,7 +46,7 @@ class Acad_Model_Mapper_Location
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = array('country_id', 'name as country_name');
+            $required_fields = array('country_id', 'country_name'=>'name');
             $select = $adapter->select()
                 ->from('country', $required_fields)
                 ->where('country_id = ?', $country_id);
@@ -89,7 +89,7 @@ class Acad_Model_Mapper_Location
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = array('state_id', 'name as state_name');
+            $required_fields = array('state_id', 'state_name'=>'name');
             $select = $adapter->select()
                 ->from('state', $required_fields)
                 ->where('state_id = ?', $state_id)
@@ -135,7 +135,7 @@ class Acad_Model_Mapper_Location
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = array('city_id', 'name as city_name');
+            $required_fields = array('city_id', 'city_name'=>'name');
             $select = $adapter->select()
                 ->from('city', $required_fields)
                 ->where('city_id = ?', $city_id);

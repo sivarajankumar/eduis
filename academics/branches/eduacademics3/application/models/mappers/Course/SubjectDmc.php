@@ -98,7 +98,9 @@ class Acad_Model_Mapper_Course_SubjectDmc
                 ->from($this->getDbTable()
                 ->info('name'), $dmc_info_fields)
                 ->joinInner('dmc_record', 'dmc_info.dmc_id = dmc_record.dmc_id', 
-            $dmc_record_fields)->where('member_id = ?',$member_id)->where('member_id = ?',$member_id);
+            $dmc_record_fields)
+                ->where('member_id = ?', $member_id)
+                ->where('member_id = ?', $member_id);
             $dmc_info = array();
             $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
             return $dmc_info[$member_id];
@@ -144,10 +146,10 @@ class Acad_Model_Mapper_Course_SubjectDmc
     Acad_Model_Course_SubjectDmc $subjectDmc)
     {
         $dmcRecordFields = array('dmc_id', 'appear_type', 
-        'marks as marks_scored_uexam');
+        'marks_scored_uexam' => 'marks');
         $internalMarksFields = array('subject_code', 
-        'marks_scored as marks_scored_internal', 
-        'marks_suggested as marks_suggested_internal');
+        'marks_scored_internal' => 'marks_scored', 
+        'marks_suggested_internal' => 'marks_suggested');
         $cond = 'internal_marks.member_id = dmc_record.member_id AND internal_marks.subject_code = dmc_record.subject_code';
         $adapter = $this->getDbTable()->getAdapter();
         $member_id = $subjectDmc->getMember_id();
