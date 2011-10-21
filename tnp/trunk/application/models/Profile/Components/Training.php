@@ -282,10 +282,14 @@ class Tnp_Model_Profile_Components_Training
                 $error = implode(', ', $invalid_range_keys);
             }
         }
-        $user_friendly_message = $error .
-         ' are invalid parameters and therefore were not included in search.' .
-         'Please try again with correct parameters to get more accurate results';
-        Zend_Registry::get('logger')->debug($user_friendly_message);
+        $user_friendly_message = "<b>" . $error . "</b>" .
+         ' are invalid parameters and therefore, they were not included in search.' .
+         "</br>" .
+         'Please try again with correct parameters to get more accurate results' .
+         "</br>";
+        $deciding_intersection = array_intersect($valid_options, 
+        $valid_range_keys);
+        Zend_Registry::get('logger')->debug(var_export($user_friendly_message));
         $deciding_intersection = array_intersect($valid_options, 
         $valid_range_keys);
         if (empty($deciding_intersection)) {

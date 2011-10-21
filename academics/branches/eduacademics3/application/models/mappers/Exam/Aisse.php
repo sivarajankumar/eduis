@@ -49,16 +49,16 @@ class Acad_Model_Mapper_Exam_Aisse
         $member_id = $aisse->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $required_fields = array('member_id', 'board', 'board_roll_no', 
-        'marks_obtained','total_marks', 'percentage', 'passing_year', 'school_rank', 'remarks', 
-        'institution', 'city_name', 'state_name');
+        'marks_obtained', 'total_marks', 'percentage', 'passing_year', 
+        'school_rank', 'remarks', 'institution', 'city_name', 'state_name');
         $select = $adapter->select()
-            ->from('matric',$required_fields)
+            ->from('matric', $required_fields)
             ->where('member_id = ?', $member_id);
         $member_exam_info = array();
         $member_exam_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $member_exam_info[$member_id];
     }
-     /**
+    /**
      * Enter description here ...
      * @param Acad_Model_Exam_Aisse $aisse
      * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
@@ -86,6 +86,12 @@ class Acad_Model_Mapper_Exam_Aisse
             $condition = $property_name . ' = ?';
             $select->where($condition, $value);
         }
-        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        if (! empty($result)) {
+            $serach_error = 'No results match your search criteria.';
+            return $serach_error;
+        } else {
+            return $result;
+        }
     }
 }

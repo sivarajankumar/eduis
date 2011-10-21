@@ -1,8 +1,6 @@
 <?php
 class Acad_Model_Exam_Aissce
 {
-    protected $_search_initialised_status = false;
-    protected $_save_initialised_status = false;
     protected $_member_id;
     protected $_board_roll_no;
     protected $_marks_obtained;
@@ -17,59 +15,13 @@ class Acad_Model_Exam_Aissce
     protected $_city_name;
     protected $_state_name;
     protected $_migration_date;
+    protected $_mapper;
+    protected $_search_initialised = false;
+    protected $_save_initialised = false;
     protected $_class_properties = array('member_id', 'board_roll_no', 
     'marks_obtained', 'total_marks', 'percentage', 'pcm_percent', 'passing_year', 
     'board', 'school_rank', 'remarks', 'institution', 'city_name', 'state_name', 
     'migration_date');
-    protected $_mapper;
-    public function getClass_properties ()
-    {
-        return $this->_class_properties;
-    }
-    public function setClass_properties ($_class_properties)
-    {
-        $this->_class_properties = $_class_properties;
-    }
-    public function getCity_name ()
-    {
-        return $this->_city_name;
-    }
-    public function setCity_name ($_city_name)
-    {
-        $this->_city_name = $_city_name;
-    }
-    public function getState_name ()
-    {
-        return $this->_state_name;
-    }
-    public function setState_name ($_state_name)
-    {
-        $this->_state_name = $_state_name;
-    }
-    protected function getSearch_initialised_status ()
-    {
-        return $this->_search_initialised_status;
-    }
-    protected function setSearch_initialised_status ($_search_initialised_status)
-    {
-        $this->_search_initialised_status = $_search_initialised_status;
-    }
-    protected function getSave_initialised_status ()
-    {
-        return $this->_save_initialised_status;
-    }
-    protected function setSave_initialised_status ($_save_initialised_status)
-    {
-        $this->_save_initialised_status = $_save_initialised_status;
-    }
-    public function getBoard_roll_no ()
-    {
-        return $this->_board_roll_no;
-    }
-    public function setBoard_roll_no ($_board_roll_no)
-    {
-        $this->_board_roll_no = $_board_roll_no;
-    }
     /**
      * @return the $_member_id
      */
@@ -84,85 +36,229 @@ class Acad_Model_Exam_Aissce
     {
         $this->_member_id = $_member_id;
     }
+    /**
+     * @return the $_board_roll_no
+     */
+    public function getBoard_roll_no ()
+    {
+        return $this->_board_roll_no;
+    }
+    /**
+     * @param field_type $_board_roll_no
+     */
+    public function setBoard_roll_no ($_board_roll_no)
+    {
+        $this->_board_roll_no = $_board_roll_no;
+    }
+    /**
+     * @return the $_marks_obtained
+     */
     public function getMarks_obtained ()
     {
         return $this->_marks_obtained;
     }
+    /**
+     * @param field_type $_marks_obtained
+     */
     public function setMarks_obtained ($_marks_obtained)
     {
         $this->_marks_obtained = $_marks_obtained;
     }
+    /**
+     * @return the $_total_marks
+     */
     public function getTotal_marks ()
     {
         return $this->_total_marks;
     }
+    /**
+     * @param field_type $_total_marks
+     */
     public function setTotal_marks ($_total_marks)
     {
         $this->_total_marks = $_total_marks;
     }
+    /**
+     * @return the $_percentage
+     */
     public function getPercentage ()
     {
         return $this->_percentage;
     }
+    /**
+     * @param field_type $_percentage
+     */
     public function setPercentage ($_percentage)
     {
         $this->_percentage = $_percentage;
     }
+    /**
+     * @return the $_pcm_percent
+     */
     public function getPcm_percent ()
     {
         return $this->_pcm_percent;
     }
+    /**
+     * @param field_type $_pcm_percent
+     */
     public function setPcm_percent ($_pcm_percent)
     {
         $this->_pcm_percent = $_pcm_percent;
     }
+    /**
+     * @return the $_passing_year
+     */
     public function getPassing_year ()
     {
         return $this->_passing_year;
     }
+    /**
+     * @param field_type $_passing_year
+     */
     public function setPassing_year ($_passing_year)
     {
         $this->_passing_year = $_passing_year;
     }
+    /**
+     * @return the $_board
+     */
     public function getBoard ()
     {
         return $this->_board;
     }
+    /**
+     * @param field_type $_board
+     */
     public function setBoard ($_board)
     {
         $this->_board = $_board;
     }
+    /**
+     * @return the $_school_rank
+     */
     public function getSchool_rank ()
     {
         return $this->_school_rank;
     }
+    /**
+     * @param field_type $_school_rank
+     */
     public function setSchool_rank ($_school_rank)
     {
         $this->_school_rank = $_school_rank;
     }
+    /**
+     * @return the $_remarks
+     */
     public function getRemarks ()
     {
         return $this->_remarks;
     }
+    /**
+     * @param field_type $_remarks
+     */
     public function setRemarks ($_remarks)
     {
         $this->_remarks = $_remarks;
     }
+    /**
+     * @return the $_institution
+     */
     public function getInstitution ()
     {
         return $this->_institution;
     }
+    /**
+     * @param field_type $_institution
+     */
     public function setInstitution ($_institution)
     {
         $this->_institution = $_institution;
     }
+    /**
+     * @return the $_city_name
+     */
+    public function getCity_name ()
+    {
+        return $this->_city_name;
+    }
+    /**
+     * @param field_type $_city_name
+     */
+    public function setCity_name ($_city_name)
+    {
+        $this->_city_name = $_city_name;
+    }
+    /**
+     * @return the $_state_name
+     */
+    public function getState_name ()
+    {
+        return $this->_state_name;
+    }
+    /**
+     * @param field_type $_state_name
+     */
+    public function setState_name ($_state_name)
+    {
+        $this->_state_name = $_state_name;
+    }
+    /**
+     * @return the $_migration_date
+     */
     public function getMigration_date ()
     {
         return $this->_migration_date;
     }
+    /**
+     * @param field_type $_migration_date
+     */
     public function setMigration_date ($_migration_date)
     {
         $this->_migration_date = $_migration_date;
+    }
+    /**
+     * @return the $_search_initialised
+     */
+    protected function getSearch_initialised ()
+    {
+        return $this->_search_initialised;
+    }
+    /**
+     * @param field_type $_search_initialised
+     */
+    protected function setSearch_initialised ($_search_initialised)
+    {
+        $this->_search_initialised = $_search_initialised;
+    }
+    /**
+     * @return the $_save_initialised
+     */
+    protected function getSave_initialised ()
+    {
+        return $this->_save_initialised;
+    }
+    /**
+     * @param field_type $_save_initialised
+     */
+    protected function setSave_initialised ($_save_initialised)
+    {
+        $this->_save_initialised = $_save_initialised;
+    }
+    /**
+     * @return the $_class_properties
+     */
+    public function getClass_properties ()
+    {
+        return $this->_class_properties;
+    }
+    /**
+     * @param field_type $_class_properties
+     */
+    public function setClass_properties ($_class_properties)
+    {
+        $this->_class_properties = $_class_properties;
     }
     /**
      * Set Aissce Mapper
@@ -225,15 +321,31 @@ class Acad_Model_Exam_Aissce
      * @todo
      * Enter description here ...
      */
-    public function save ()
+    public function init_save ()
     {
-        $this->getMapper()->save($this);
+        $this->setSave_initialised(true);
+        $class_properties = $this->getClass_properties();
+        foreach ($class_properties as $property) {
+            $p = "_$property";
+            unset($this->$p);
+        }
     }
     /**
-     * Gets AISSCE information of a member
-     * You cant use it directly in 
-     * controller,
-     * first setMember_id and then call getter functions to retrieve properties.
+     * Saves object to database
+     * @param array $options An associative array of objectProperty mapped to its value.
+     * 
+     */
+    public function save ($options)
+    {
+        $save_init_status = $this->getSave_initialised();
+        if ($save_init_status == true) {
+            $class_properties = $this->getClass_properties();
+            $options_keys = array_keys($options);
+        }
+    }
+    /**
+     * 
+     * Enter description here ...
      */
     public function initMemberExamInfo ()
     {
@@ -241,7 +353,36 @@ class Acad_Model_Exam_Aissce
         $this->setOptions($options);
     }
     /**
+     * Filters out valid class properties
+     * @param array $options An associative array of objectProperty mapped to its value.
      * 
+     */
+    protected function validOptions ($options)
+    {
+        $class_properties = $this->getClass_properties();
+        $options_keys = array_keys($options);
+        $valid_options = array_intersect($options_keys, $class_properties);
+        foreach ($valid_options as $valid_option) {
+            $validated_options[$valid_option] = $options[$valid_option];
+        }
+        return $validated_options;
+    }
+    /**
+     * Filters out invalid class properties
+     * @param array $options An associative array of objectProperty mapped to its value.
+     * 
+     */
+    protected function invalidOptions ($options)
+    {
+        $class_properties = $this->getClass_properties();
+        $options_keys = array_keys($options);
+        $invalidOptions = array_diff($options_keys, $class_properties);
+        foreach ($invalidOptions as $invalidOption) {
+            $validation_failed[$invalidOption] = $options[$invalidOption];
+        }
+        return $validation_failed;
+    }
+    /**
      * Enter description here ...
      * @param array $options containing properties mapped to values
      * @param array $property_range containing properties mapped to array containing upper and lower range
@@ -251,68 +392,46 @@ class Acad_Model_Exam_Aissce
      */
     public function search (array $options = null, array $property_range = null)
     {
-        $class_properties = array();
-        $options_keys = array();
-        $valid_options = array();
-        $invalid_options = array();
+        //declaration necessary because their scope is required to be throughout the function
         $setter_options = array();
+        $valid_options = array();
+        $invalid_names = array();
         $property_range_keys = array();
         $valid_range_keys = array();
-        $invalid_range_keys = array();
+        $invalid_names_1 = array();
         $range = array();
         $error = '';
         $class_properties = $this->getClass_properties();
         if (! empty($options)) {
-            $options_keys = array_keys($options);
-            $valid_options = array_intersect($options_keys, $class_properties);
-            foreach ($valid_options as $valid_option) {
-                //$setter_options array is now ready for search
-                //but will it participate,is not confirmed
-                $setter_options[$valid_option] = $options[$valid_option];
-            }
-            $invalid_options = array_diff($options_keys, $class_properties);
-            if (! empty($invalid_options)) {
-                foreach ($invalid_options as $invalid_option) {
-                    $error = $error . '  ' . $invalid_option;
-                }
+            //$setter_options array is now ready for search
+            //but will it participate,is not confirmed
+            $setter_options = $this->validOptions($options);
+            $invalid_names = array_keys($this->invalidOptions($options));
+            if (! empty($invalid_names)) {
+                $error = "<b>" . implode(', ', $invalid_names) . "</b>";
             }
         }
         if (! empty($property_range)) {
-            $property_range_keys = array_keys($property_range);
-            $valid_range_keys = array_intersect($property_range_keys, 
-            $class_properties);
-            foreach ($valid_range_keys as $valid_range_key) {
-                //$range array is now ready for search
-                //but will it participate,is not confirmed
-                $range[$valid_range_key] = $property_range[$valid_range_key];
-            }
-            $invalid_range_keys = array_diff($property_range_keys, 
-            $class_properties);
-            if (! empty($invalid_range_keys)) {
-                foreach ($invalid_range_keys as $invalid_range_key) {
-                    $error = $error . '  ' . $invalid_range_key;
-                }
+            $range = $this->validOptions($property_range);
+            $invalid_names_1 = array_keys($this->invalidOptions($property_range));
+            if (! empty($invalid_names_1)) {
+                $error = "<b>" . implode(', ', $invalid_names_1) . "</b>";
             }
         }
-        $user_friendly_message = $error .
-         ' are invalid parameters and therefore were not included in search.' .
-         'Please try again with correct parameters to get more accurate results';
-        Zend_Registry::get('logger')->debug($user_friendly_message);
+        $error_append = ' are invalid parameters and therefore, they were not included in search.';
+        $suggestion = 'Please try again with correct parameters to get more accurate results';
+        $message = $error_append . "</br>" . $suggestion;
         $deciding_intersection = array_intersect($valid_options, 
         $valid_range_keys);
+        Zend_Registry::get('logger')->debug(var_export($error . $message));
+        echo "</br>";
         if (empty($deciding_intersection)) {
             //now we can set off for search operation
             $this->setOptions($setter_options);
-            $result = $this->getMapper()->fetchStudents($this, $setter_options, 
-            $range);
-            return $result;
+            return $this->getMapper()->fetchStudents($this, $setter_options,$range);
         } else {
-            foreach ($deciding_intersection as $duplicate_entry) {
-                $error_1 = $error_1 . '  ' . $duplicate_entry;
-            }
-            throw new Exception(
-            'Range and equality cannot be set for ' . $error_1 .
-             ' at the same time');
+            $error_1 = implode(', ', $deciding_intersection);
+            throw new Exception('Range and equality cannot be set for ' . $error_1 .' at the same time');
         }
     }
 }

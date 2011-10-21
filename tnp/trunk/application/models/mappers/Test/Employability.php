@@ -176,4 +176,72 @@ class Tnp_Model_Mapper_Test_Employability
             return $member_test_record;
         }
     }
+    /**
+     * Enter description here ...
+     * @param Tnp_Model_Profile_Components_Training $training
+     * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
+     * here 'from' stands for >= AND 'to' stands for <=
+     * 
+     */
+    public function fetchStudents (
+    Tnp_Model_Profile_Components_Training $training, 
+    array $setter_options = null, array $property_range = null)
+    {
+        $setter_options_keys = array_keys($setter_options);
+        $property_range_keys = array_keys($property_range);
+        $merge = array_merge($setter_options_keys, $property_range_keys);
+        //declare table name and table columns for join statement
+        $table = (array('e_t_rec' => $this->getDbTable()->info('name')));
+        $name1 = array('e_t' => 'employability_test');
+        $cond1 = 'e_t_rec.employability_test_id = e_t.employability_test_id';
+        $name2 = array('e_t_sec_scr' => 'employability_test_section_score');
+        $cond2 = ' e_t_sec_scr.employability_test_id= e_t_rec.employability_test_id';
+        $name3 = array('e_t_sec' => 'employability_test_section');
+        $cond3 = ' e_t_sec_scr.test_section_id= e_t_sec.test_section_id';
+        //(1)get column names of employability_test present in arguments received
+        $e_t_col = array('test_name', 'date_of_conduct');
+        $e_t_intrsctn = array();
+        $e_t_intrsctn = array_intersect($e_t_col, $merge);
+        //(2)get column names of employability_test_section_score present in arguments received
+        $e_t_sec_scr_col = array('test_section_id', 'section_marks', 
+        'section_percentile');
+        $e_t_sec_scr_intrsctn = array();
+        $e_t_sec_scr_intrsctn = array_intersect($e_t_sec_scr_col, $merge);
+        //(3)get column names of employability_test_section present in arguments received
+        $e_t_sec_col = array('test_name', 'test_section_name');
+        $e_t_sec_intrsctn = array();
+        $e_t_sec_intrsctn = array_intersect($e_t_sec_col, $merge);
+        $adapter = $this->getDbTable()->getAdapter();
+        $select = $adapter->select()->from($table, 'member_id');
+        if (! empty($e_t_intrsctn)) {
+            $select->join($name1, $cond1);
+        }
+        if (! empty($e_t_sec_scr_intrsctn)) {
+            $select->join($name2, $cond2);
+        }
+        if (! empty($e_t_sec_intrsctn)) {
+            $select->join($name3, $cond3);
+        }
+        foreach ($property_range as $key => $range) {
+            if (! empty($range['from'])) {
+                $select->where("$key >= ?", $range['from']);
+            }
+            if (! empty($range['to'])) {
+                $select->where("$key <= ?", $range['to']);
+            }
+        }
+        foreach ($setter_options as $property_name => $value) {
+            $getter_string = 'get' . ucfirst($property_name);
+            $training->$getter_string();
+            $condition = $property_name . ' = ?';
+            $select->where($condition, $value);
+        }
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        if (! empty($result)) {
+            $serach_error = 'No results match your search criteria.';
+            return $serach_error;
+        } else {
+            return $result;
+        }
+    }
 }
