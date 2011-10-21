@@ -229,6 +229,11 @@ class Core_Model_Mapper_Member_Student
             return $result;
         }
     }
+    /**
+     * Provides correct db column names corresponding to model properties
+     * @todo add correct names where required
+     * @param string $key
+     */
     protected function correctDbKeys ($key)
     {
         switch ($key) {
@@ -240,6 +245,11 @@ class Core_Model_Mapper_Member_Student
                 break;
         }
     }
+    /**
+     * Provides correct model property names corresponding to db column names
+     * @todo add correct names where required
+     * @param string $key
+     */
     protected function correctModelKeys ($key)
     {
         switch ($key) {
