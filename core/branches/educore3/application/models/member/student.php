@@ -4,8 +4,11 @@ class Core_Model_Member_Student
     protected $_member_id;
     protected $_reg_no;
     protected $_cast_id;
+    protected $_cast;
     protected $_nationality_id;
     protected $_religion_id;
+    protected $_nationalit;
+    protected $_religion;
     protected $_first_name;
     protected $_middle_name;
     protected $_last_name;
@@ -22,6 +25,7 @@ class Core_Model_Member_Student
     protected $_urban;
     protected $_hostel;
     protected $_bus;
+    protected $_boarding_station;
     protected $_image_no;
     protected $_blood_group;
     //
@@ -34,12 +38,62 @@ class Core_Model_Member_Student
     protected $_semster_id;
     //
     protected $_mapper;
-    protected $_class_properties = array('member_id', 'reg_no', 'cast_id', 
-    'nationality_id', 'religion_id', 'first_name', 'middle_name', 'last_name', 
-    'dob', 'gender', 'contact_no', 'e_mail', 'marital_status', 'councelling_no', 
-    'admission_date', 'alloted_category', 'alloted_branch', 'state_of_domicile', 
-    'urban', 'hostel', 'bus', 'image_no', 'blood_group', 'student_roll_no', 
-    'department_id', 'programme_id', 'batch_start', 'group_id', 'semster_id');
+    /**
+     * @return the $_cast
+     */
+    public function getCast ()
+    {
+        return $this->_cast;
+    }
+    /**
+     * @param field_type $_cast
+     */
+    public function setCast ($_cast)
+    {
+        $this->_cast = $_cast;
+    }
+    /**
+     * @return the $_nationalit
+     */
+    public function getNationalit ()
+    {
+        return $this->_nationalit;
+    }
+    /**
+     * @param field_type $_nationalit
+     */
+    public function setNationalit ($_nationalit)
+    {
+        $this->_nationalit = $_nationalit;
+    }
+    /**
+     * @return the $_religion
+     */
+    public function getReligion ()
+    {
+        return $this->_religion;
+    }
+    /**
+     * @param field_type $_religion
+     */
+    public function setReligion ($_religion)
+    {
+        $this->_religion = $_religion;
+    }
+    /**
+     * @return the $_boarding_station
+     */
+    public function getBoarding_station ()
+    {
+        return $this->_boarding_station;
+    }
+    /**
+     * @param field_type $_boarding_station
+     */
+    public function setBoarding_station ($_boarding_station)
+    {
+        $this->_boarding_station = $_boarding_station;
+    }
     public function getBlood_group ()
     {
         return $this->_blood_group;
@@ -47,14 +101,6 @@ class Core_Model_Member_Student
     public function setBlood_group ($_blood_group)
     {
         $this->_blood_group = $_blood_group;
-    }
-    public function getClass_properties ()
-    {
-        return $this->_class_properties;
-    }
-    public function setClass_properties ($_class_properties)
-    {
-        $this->_class_properties = $_class_properties;
     }
     /**
      * @return the $_member_id
@@ -521,7 +567,7 @@ class Core_Model_Member_Student
     public function fetchMemberId ()
     {
         $roll_no = $this->getStudent_roll_no();
-        if (!empty($roll_no)) {
+        if (! empty($roll_no)) {
             $result = $this->getMapper()->fetchMember_id($this);
             $this->setMember_id($result);
         } else {
@@ -531,7 +577,7 @@ class Core_Model_Member_Student
     public function fetchRollNumber ()
     {
         $member_id = $this->getMember_id();
-        if (!empty($member_id)) {
+        if (! empty($member_id)) {
             $result = $this->getMapper()->fetchStudent_roll_no($this);
             $this->setStudent_roll_no($result);
         } else {
@@ -549,8 +595,59 @@ class Core_Model_Member_Student
         $options = $this->getMapper()->fetchStudentInfo($this);
         $this->setOptions($options);
     }
+    public function getAllowedProperties ()
+    {
+        $properties = get_class_vars('Core_Model_Member_Student');
+        //all names in $names begin with _
+        $names = array_keys($properties);
+        $options = array();
+        foreach ($names as $name => $value) {
+            $string_parts = str_split($value, 1);
+            $temp = "";
+            //first letter is _ therefore start $i from 1
+            // so that _is not included
+            for ($i = 1; $i < count($string_parts); $i ++) {
+                $temp = $temp . implode(array($string_parts[$i]));
+            }
+            $options[] = $temp;
+        }
+        //put names of all properties you want to deny acess to
+        $not_allowed = array('mapper');
+        //return on acessible properties
+        return array_diff($options, $not_allowed);
+    }
     /**
+     * Filters out valid options
+     * maintaining key value relationship
+     * @param array $options An associative array of objectProperty mapped to its value.
      * 
+     */
+    protected function validOptions ($options)
+    {
+        $class_properties = $this->getAllowedProperties();
+        $options_keys = array_keys($options);
+        $valid_options = array_intersect($options_keys, $class_properties);
+        foreach ($valid_options as $valid_option) {
+            $validated_options[$valid_option] = $options[$valid_option];
+        }
+        return $validated_options;
+    }
+    /**
+     * Filters out invalid options
+     * @param array $options An associative array of objectProperty mapped to its value.
+     * 
+     */
+    protected function invalidOptions ($options)
+    {
+        $class_properties = $this->getAllowedProperties();
+        $options_keys = array_keys($options);
+        $invalidOptions = array_diff($options_keys, $class_properties);
+        foreach ($invalidOptions as $invalidOption) {
+            $validation_failed[$invalidOption] = $options[$invalidOption];
+        }
+        return $validation_failed;
+    }
+    /**
      * Enter description here ...
      * @param array $options containing properties mapped to values
      * @param array $property_range containing properties mapped to array containing upper and lower range
@@ -560,64 +657,53 @@ class Core_Model_Member_Student
      */
     public function search (array $options = null, array $property_range = null)
     {
-        $class_properties = array();
-        $options_keys = array();
-        $valid_options = array();
-        $invalid_options = array();
+        //declaration necessary because their scope is required to be throughout the function
         $setter_options = array();
+        $valid_options = array();
+        $invalid_names = array();
         $property_range_keys = array();
         $valid_range_keys = array();
-        $invalid_range_keys = array();
+        $invalid_names_1 = array();
         $range = array();
-        $error = '';
-        $class_properties = $this->getClass_properties();
+        $error1 = '';
+        $error2 = '';
         if (! empty($options)) {
-            $options_keys = array_keys($options);
-            $valid_options = array_intersect($options_keys, $class_properties);
-            foreach ($valid_options as $valid_option) {
-                //$setter_options array is now ready for search
-                //but will it participate,is not confirmed
-                $setter_options[$valid_option] = $options[$valid_option];
-            }
-            $invalid_options = array_diff($options_keys, $class_properties);
-            if (! empty($invalid_options)) {
-                foreach ($invalid_options as $invalid_option) {
-                    $error = $error . '  ' . $invalid_option;
-                }
+            //$setter_options array is now ready for search
+            //but will it participate,is not confirmed
+            $setter_options = $this->validOptions(
+            $options);
+            $invalid_names = array_keys($this->invalidOptions($options));
+            if (! empty($invalid_names)) {
+                $error1 = "<b>" . implode(', ', $invalid_names) . "</b>";
             }
         }
         if (! empty($property_range)) {
-            $property_range_keys = array_keys($property_range);
-            $valid_range_keys = array_intersect($property_range_keys, 
-            $class_properties);
-            foreach ($valid_range_keys as $valid_range_key) {
-                //$range array is now ready for search
-                //but will it participate,is not confirmed
-                $range[$valid_range_key] = $property_range[$valid_range_key];
-            }
-            $invalid_range_keys = array_diff($property_range_keys, 
-            $class_properties);
-            if (! empty($invalid_range_keys)) {
-                $error = implode(', ', $invalid_range_keys);
+            $range = $this->validOptions($property_range);
+            $invalid_names_1 = array_keys(
+            $this->invalidOptions($property_range));
+            if (! empty($invalid_names_1)) {
+                $error2 = "<b>" . implode(', ', $invalid_names_1) . "</b>";
             }
         }
-        $user_friendly_message = $error .
-         ' are invalid parameters and therefore were not included in search.' .
-         'Please try again with correct parameters to get more accurate results';
+        $error_append = ' are invalid parameters and therefore, they were not included in search.';
+        $suggestion = 'Please try again with correct parameters to get more accurate results';
+        $message = "$error_append " . "</br>" . "$suggestion";
         $deciding_intersection = array_intersect($valid_options, 
         $valid_range_keys);
+        if (isset($invalid_names) or isset($invalid_names_1)) {
+            Zend_Registry::get('logger')->debug(
+            var_export($error1 . ' ' . $error2 . $message));
+            echo "</br>";
+        }
         if (empty($deciding_intersection)) {
             //now we can set off for search operation
             $this->setOptions($setter_options);
-            $result = $this->getMapper()->fetchStudents($this, $setter_options, 
+            return $this->getMapper()->fetchStudents($this, $setter_options, 
             $range);
-            return $result;
         } else {
-            foreach ($deciding_intersection as $duplicate_entry) {
-                $error_1 = $error_1 . '  ' . $duplicate_entry;
-            }
+            $error = implode(', ', $deciding_intersection);
             throw new Exception(
-            'Range and equality cannot be set for ' . $error_1 .
+            'Range and equality cannot be set for ' . $error .
              ' at the same time');
         }
     }

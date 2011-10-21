@@ -127,9 +127,18 @@ class Core_Model_Mapper_Member_Student
     public function fetchStudents (Core_Model_Member_Student $student, 
     array $setter_options = null, array $property_range = null)
     {
-        $setter_options_keys = array_keys($setter_options);
-        $property_range_keys = array_keys($property_range);
-        $merge = array_merge($setter_options_keys, $property_range_keys);
+        $correct_db_options = array();
+        foreach ($setter_options as $k => $val) {
+            $correct_db_options[$this->correctDbKeys($k)] = $val;
+        }
+        $correct_db_options_keys = array_keys($correct_db_options);
+        $correct_db_options1 = array();
+        foreach ($property_range as $k1 => $val1) {
+            $correct_db_options1[$this->correctDbKeys($k1)] = $val1;
+        }
+        $correct_db_options1_keys = array_keys($correct_db_options1);
+        $merge = array_merge($correct_db_options_keys, 
+        $correct_db_options1_keys);
         //declare table name and table columns for join statement
         $table = array('s_persnl' => $this->getDbTable()->info('name'));
         //define 
@@ -141,8 +150,8 @@ class Core_Model_Mapper_Member_Student
         $cond2 = "s_persnl.cast_id = $name2.cast_id ";
         $name3 = 'bus';
         $cond3 = "$name3.member_id =s_persnl.member_id ";
-        $name4 = array('nlty' => 'nationality');
-        $cond4 = 's_persnl.nationality_id = nlty.nationality_id';
+        $name4 = array('nlty' => 'nationalities');
+        $cond4 = 'nlty.nationality_id= s_persnl.nationality_id';
         $name5 = array('rel' => 'religion');
         $cond5 = 's_persnl.religion_id = rel.religion_id';
         $name6 = array('bus_st' => 'bus_stations');
@@ -161,7 +170,6 @@ class Core_Model_Mapper_Member_Student
         $bus_col = array('boarding_station');
         $bus_intrsctn = array();
         $bus_intrsctn = array_intersect($bus_col, $merge);
-        Zend_Registry::get('logger')->debug($setter_options_keys);
         //4)get column names of nationality present in arguments received
         $nationality_col = array('nationality');
         $nationality_intrsctn = array();
@@ -177,37 +185,70 @@ class Core_Model_Mapper_Member_Student
         $adapter = $this->getDbTable()->getAdapter();
         $select = $adapter->select()->from($table, 'member_id');
         if (! empty($student_department_intrsctn)) {
-            $select->join($name1, $cond1);
+            $select->join($name1, $cond1, $student_department_col);
         }
         if (! empty($casts_intrsctn)) {
-            $select->join($name2, $cond2);
+            $select->join($name2, $cond2, $casts_col);
         }
         if (! empty($bus_intrsctn)) {
-            $select->join($name3, $cond3);
+            $select->join($name3, $cond3, $bus_col);
         }
         if (! empty($nationality_intrsctn)) {
-            $select->join($name4, $cond4);
+            $select->join($name4, $cond4, $nationality_intrsctn);
         }
         if (! empty($religions_intrsctn)) {
-            $select->join($name5, $cond5);
+            $select->join($name5, $cond5, $religions_col);
         }
         if (! empty($bus_stations)) {
-            $select->join($name6, $cond6);
+            $select->join($name6, $cond6, $bus_stations_col);
         }
-        foreach ($property_range as $key => $range) {
-            if (! empty($range['from'])) {
-                $select->where("$key >= ?", $range['from']);
+        if (count($correct_db_options1)) {
+            foreach ($correct_db_options1 as $key => $range) {
+                if (! empty($range['from'])) {
+                    $select->where("$key >= ?", $range['from']);
+                }
+                if (! empty($range['to'])) {
+                    $select->where("$key <= ?", $range['to']);
+                }
             }
-            if (! empty($range['to'])) {
-                $select->where("$key <= ?", $range['to']);
+        }
+        if (count($correct_db_options)) {
+            foreach ($correct_db_options as $property_name => $value) {
+                $getter_string = 'get' .
+                 ucfirst($this->correctModelKeys($property_name));
+                $student->$getter_string();
+                $condition = $property_name . ' = ?';
+                $select->where($condition, $value);
             }
         }
-        foreach ($setter_options as $property_name => $value) {
-            $getter_string = 'get' . ucfirst($property_name);
-            $student->$getter_string();
-            $condition = $property_name . ' = ?';
-            $select->where($condition, $value);
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        if (! count($result)) {
+            $search_error = 'No results match your search criteria.';
+            return $search_error;
+        } else {
+            return $result;
         }
-        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+    }
+    protected function correctDbKeys ($key)
+    {
+        switch ($key) {
+            case 'nationalit':
+                return 'nationality';
+                break;
+            default:
+                return $key;
+                break;
+        }
+    }
+    protected function correctModelKeys ($key)
+    {
+        switch ($key) {
+            case 'nationality':
+                return 'nationalit';
+                break;
+            default:
+                return $key;
+                break;
+        }
     }
 }
