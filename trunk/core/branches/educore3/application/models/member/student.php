@@ -7,7 +7,7 @@ class Core_Model_Member_Student
     protected $_cast;
     protected $_nationality_id;
     protected $_religion_id;
-    protected $_nationalit;
+    protected $_nationality;
     protected $_religion;
     protected $_first_name;
     protected $_middle_name;
@@ -53,18 +53,18 @@ class Core_Model_Member_Student
         $this->_cast = $_cast;
     }
     /**
-     * @return the $_nationalit
+     * @return the $_nationality
      */
-    public function getNationalit ()
+    public function getNationality ()
     {
-        return $this->_nationalit;
+        return $this->_nationality;
     }
     /**
-     * @param field_type $_nationalit
+     * @param field_type $_nationality
      */
-    public function setNationalit ($_nationalit)
+    public function setNationality ($_nationality)
     {
-        $this->_nationalit = $_nationalit;
+        $this->_nationality = $_nationality;
     }
     /**
      * @return the $_religion
