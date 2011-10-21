@@ -1,18 +1,32 @@
-<form action="javascript:submit_personal();" class="uniForm" id="personal">
-
-	<div id="personal_detail">
-		<h2>Personal Details</h2>                
+<form action="javascript:submit_personal();" class="uniForm" id="personal" style="width: 30%;">
+	<h2 onclick="showForm('personal')"><span class="click_me_personal">+</span>   Personal Details</h2>
+	<div id="personal_detail">                
         <div class="ctrlHolder">
-          <label for="dob"><em>*</em>Date of Birth</label>
-          <input name="dob" id="dob" data-default-value="1990-12-31" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+        <ul>
+        	<li>
+          <label for="dob_from">Date of Birth from</label>
+          <input name="dob_from" class="dob" data-default-value="e.g. 1990-12-31" value=""  size="10" maxlength="50" type="text" readonly="readonly" class="textInput"/>
           <p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+          	</li>
+          <!-- <br><br> -->
+          	<li>
+          <label for="dob_from">Date of Birth from</label>
+          <input name="dob_to" class="dob" data-default-value="e.g. 1990-12-31" value=""  size="10" maxlength="50" type="text" readonly="readonly" class="textInput"/>
+          <p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+          	</li>
+         <!--  -->
+         </ul>
+          <br><br>
+          
+          <!-- <label for="dob_to">Date of Birth to</label> -->
+          
         </div>
         
         <div class="ctrlHolder">
           <p class="label">Gender</p>
           <ul class="blockLabels alternate">
             <li><label for="gender"><input name="gender" type="radio" value="M"  title="Male">Male</label></li>
-            <li><label for=""><input  name="gender" type="radio" value="F" title="Female">Female</label></li>
+            <li><label for="gender"><input  name="gender" type="radio" value="F" title="Female">Female</label></li>
           </ul>
           <p class="formHint">Gender</p>
         </div>
@@ -20,6 +34,7 @@
         <div class="ctrlHolder">
           <label for="nationality_id">Nationality</label>
           <select id="nationality_id" name="nationality_id" class="selectInput">
+          		<option value="0">ANY</option>
           		<option value="1">INDIAN</option>
           		<option value="2">NRI</option>
   		  </select>
@@ -29,6 +44,7 @@
         <div class="ctrlHolder">
           <label for="cast">Cast</label>
           <select id="cast" name="cast" class="selectInput required">
+          		<option value="ANY">ANY</option>
           		<option value="GEN">GEN</option>
           		<option value="SC">SC</option>
           		<option value="BC">BC</option>
@@ -37,8 +53,8 @@
         </div>
         
         <div class="ctrlHolder">
-          <label for="annual_income"><em>*</em>Annual Income</label>
-          <input name="annual_income" id="annual_income" value="" data-default-value="e.g. 456000" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+          <label for="annual_income">Annual Income</label>
+          <input name="annual_income" id="annual_income" value="" data-default-value="e.g. 456000" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
           <p class="formHint">Annual Income of father or guardian.(in Rupees only, no comma or units etc.)</p>
         </div>
         <br>
@@ -52,268 +68,221 @@
    </div>
 </form>
 
-<form action="javascript:submit_academic();" class="uniForm" id="academic">
-   <div id="academic_details">
-        <h2>Academics Details</h2>
-        <h3>Matric Information</h3>
-
-        <div class="ctrlHolder">
-            <label for=""><em>*</em>Marks Obtained</label>
-            <input name="matric_marks_obtained" id="matric_marks_obtained" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Marks Obtained by <span class="cName" >Candidate</span></p>
-          </div>
-          
+<form action="javascript:submit_academic();" class="uniForm" id="academic" style="width: 30%;">
+	<h2 onclick="showForm('academic')"><span class="click_me_academic">+</span>   Academic Details</h2>
+   <div id="academic_detail">
+   		<h3 onclick="showForm('matric')"><span class="click_me_matric">+</span>   Matric Information</h3>
+		<div id="matric_detail">
+        
           <div class="ctrlHolder">
-            <label for=""><em>*</em>Total Marks</label>
-            <input name="matric_total_marks" id="matric_total_marks" value="" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Total Marks</p>
+            <label for="matric_percentage_from">Percentage from</label>
+            <input name="matric_percentage_from" id="percentage" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <p class="formHint">Lower limit of Matric Percentage</p>
+            
+            <br><br>
+            
+            <label for="matric_percentage_to">Percentage to</label>
+            <input name="matric_percentage_to" id="percentage" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <p class="formHint">Upper limit of Matric Percentage</p>
           </div>
-      
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Percentage</label>
-            <input name="matric_percentage" id="percentage" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required"/>
-            <p class="formHint">Percentage obtained by <span class="cName" >Candidate</span></p>
-          </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>State</label>
-            <input name="matric_state" id="matric_state" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required"/>
-            <p class="formHint">State of Institution</p>
-          </div>
-          
-        <div class="ctrlHolder">
-          <label for=""><em>*</em> Board</label>
-          <input name="matric_board" id="matric_board" value="" data-default-value="e.g. HSBE" size="35" maxlength="20" type="text" class="textInput required"/>
-          <p class="formHint">Education Board in matric(10th)</p>
-        </div>
         
         <div class="ctrlHolder">
-          <label for=""><em>*</em> Passing year</label>
-          <input name="matric_passing_year" id="matric_passing_year" value="" data-default-value="e.g. 2005" size="35" maxlength="20" type="text" class="textInput required validateInteger"/>
-          <p class="formHint">Year in which passed the matriculation.</p>
+          <label for="matric_passing_year"> Passing year</label>
+          <input name="matric_passing_year" id="matric_passing_year" value="" data-default-value="e.g. 2005" size="35" maxlength="20" type="text" class="textInput validateInteger"/>
+          <p class="formHint">Year in which candidates passed the matriculation.</p>
         </div>
-        
-        <div class="ctrlHolder">
-          <p class="label">Compartment(s)</p>
-          <ul class="blockLabels alternate">
-            <li><label for=""><input name="compartments" type="radio" value="false"  title="No" >No</label></li>
-            <li><label for=""><input  name="compartments" type="radio" value="true"  title="Yes" >Yes</label></li>
-          </ul>
-          <p class="formHint">Does the has any compartment?</p>
-        </div>
-        
         
         <div class="ctrlHolder">
           <p class="label">Passed in first attempt</p>
           <ul class="blockLabels alternate">
-            <li><label for=""><input name="first_attempt" type="radio" value="false"   title="No" >No</label></li>
-            <li><label for=""><input  name="first_attempt" type="radio" value="true"   title="Yes" >Yes</label></li>
+            <li><label for="matric_first_attempt"><input name="matric_first_attempt" type="radio" value="false"   title="No" >No</label></li>
+            <li><label for="matric_first_attempt"><input  name="matric_first_attempt" type="radio" value="true"   title="Yes" >Yes</label></li>
           </ul>
           <p class="formHint">Passed in first attempt?</p>
         </div>
         <br>
-        <h3>Twelfth Marks</h3>
+     </div>
+        <h3 onclick="showForm('twelfth')"><span class="click_me_twelfth">+</span>   Twelfth Information</h3>
+		<div id="twelfth_detail">
+                      
+          <div class="ctrlHolder">
+            <label for="pcm_percent">PCM/PCB Percentage</label>
+            <input name="pcm_percent" id="pcm_percent" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <p class="formHint">Lower limit for percentage in Physics, Chemistry, Math/Biology</p>
+          </div>
+          
+          <div class="ctrlHolder">
+            <label for="twelfth_percent_from">Twelfth Total Percentage from</label>
+            <input name="twelfth_percent_from" id="twelfth_percent_from" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <p class="formHint">Lower limit of Twelfth Percentage</p>
             
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Marks Obtained</label>
-            <input name="marks_obtained" id="marks_obtained" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Marks Obtained by <span class="cName" >Candidate</span></p>
+            <br><br>
+            
+            <label for="twelfth_percent_to">Twelfth Total Percentage to</label>
+            <input name="twelfth_percent_to" id="twelfth_percent_to" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <p class="formHint">Upper limit of Twelfth Percentage</p>
           </div>
           
           <div class="ctrlHolder">
-            <label for=""><em>*</em>Total Marks</label>
-            <input name="total_marks" id="total_marks" value="" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Total Marks</p>
+            <label for="twelfth_passing_year">Year of Passing</label>
+            <input name="twelfth_passing_year" id="twelfth_passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+            <p class="formHint">Year in which Candidates passed the 12th</p>
           </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>PCM/PCB Percentage</label>
-            <input name="pcm_percent" id="pcm_percent" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
-            <p class="formHint">Percentage obtained by <span class="cName" >Candidate</span> in Physics, Chemistry, Math/Biology</p>
-          </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Year of Passing</label>
-            <input name="passing_year" id="passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput required validateInteger validateMax val-<?php echo date('Y');?>"/>
-            <p class="formHint">Year in which <span class="cName" >Candidate</span> passed the 12th</p>
-          </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Board</label>
-            <input name="board" id="board" value="" data-default-value="e.g. CBSE" size="35" maxlength="50" type="text" class="textInput required"/>
-            <p class="formHint">Education Board in 12th</p>
-          </div>
-        
-        <div class="ctrlHolder">
-          <p class="label">Compartment(s)</p>
-          <ul class="blockLabels alternate">
-            <li><label for=""><input name="compartments" type="radio" value="false"  title="No" >No</label></li>
-            <li><label for=""><input  name="compartments" type="radio" value="true"  title="Yes" >Yes</label></li>
-          </ul>
-          <p class="formHint">Does the has any compartment?</p>
-        </div>
-        
-        
+                
         <div class="ctrlHolder">
           <p class="label">Passed in first attempt</p>
           <ul class="blockLabels alternate">
-            <li><label for=""><input name="first_attempt" type="radio" value="false"   title="No" >No</label></li>
-            <li><label for=""><input  name="first_attempt" type="radio" value="true"   title="Yes" >Yes</label></li>
+            <li><label for="twelfth_first_attempt"><input name="twelfth_first_attempt" type="radio" value="false"   title="No" >No</label></li>
+            <li><label for="twelfth_first_attempt"><input  name="twelfth_first_attempt" type="radio" value="true"   title="Yes" >Yes</label></li>
+          </ul>
+          <p class="formHint">Passed in first attempt?</p>
+        </div>
+       </div>
+        
+       <h3 onclick="showForm('diploma')"><span class="click_me_diploma">+</span>   Diploma Information</h3>
+		<div id="diploma_detail">
+                    
+          <div class="ctrlHolder">
+            <label for="diploma_percent_from">Diploma Percentage from</label>
+            <input name="diploma_percent_from" id="diploma_percent_from" value="" data-default-value="e.g. 65" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <p class="formHint">Lower limit of Diploma Total Percentage</p>
+            
+            <br><br>
+            
+            <label for="diploma_percent_to">Diploma Percentage to</label>
+            <input name="diploma_percent_to" id="diploma_percent_to" value="" data-default-value="e.g. 80" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <p class="formHint">Upper limit of Diploma Total Percentage</p>
+          </div>
+            
+          <div class="ctrlHolder">
+            <label for="diploma_passing_year">Year of Passing</label>
+            <input name="diploma_passing_year" id="diploma_passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+            <p class="formHint">Year in which Candidates passed the Diploma</p>
+          </div>
+          
+          <div class="ctrlHolder">
+            <label for="diploma_branch">Branch</label>
+            <input name="diploma_branch" id="diploma_branch" value=""  data-default-value="e.g. Computer Science" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
+            <p class="formHint">Branch of Candidates(in full form only). Leave it empty if All Branches are to be selected</p>
+          </div>
+          
+          <div class="ctrlHolder">
+            <label for="diploma_board">University</label>
+            <input name="diploma_board" id="diploma_board" value="" data-default-value="e.g. KUK" size="35" maxlength="50" type="text" class="textInput"/>
+            <p class="formHint">Education University in Diploma</p>
+          </div>
+          <div class="ctrlHolder">
+            <label for="">LEET Rank</label>
+            <input name="leet_rank" id="leet_rank" value="" data-default-value="e.g. 12,205" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+            <p class="formHint">Lower limit of Rank of LEET</p>
+          </div>
+         </div>
+          <br>
+          
+        <h3 onclick="showForm('aieee')"><span class="click_me_aieee">+</span>   AIEEE Information</h3>
+		<div id="aieee_detail">
+            <div class="ctrlHolder">
+            <label for="aieee_rank">All India Rank (AIR)</label>
+            <input name="aieee_rank" id="ai_rank" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+            <p class="formHint">Lower limit of All India Rank of Candidates</p>
+          </div>
+        </div>
+          <br>
+          
+       <h3 onclick="showForm('btech')"><span class="click_me_btech">+</span>   B.Tech Information</h3>
+		<div id="btech_detail">
+        
+        	<div class="ctrlHolder">
+            <label for="btech_percent_from">Aggregate Percentage from</label>
+            <input name="btech_percent_from" id="btech_percent_from" value="" data-default-value="e.g. 65" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <p class="formHint">Lower limit of B.Tech Total Percentage</p>
+            
+            <br><br>
+            
+            <label for="btech_percent_to">Aggregate Percentage to</label>
+            <input name="btech_percent_to" id="btech_percent_to" value="" data-default-value="e.g. 80" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <p class="formHint">Upper limit of B.Tech Total Percentage</p>
+          </div>
+            
+          <div class="ctrlHolder">
+            <label for="btech_passing_year">Year of Passing</label>
+            <input name="btech_passing_year" id="btech_passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+            <p class="formHint">Year in which Candidates passed or will pass B.Tech</p>
+          </div>
+          
+          <div class="ctrlHolder">
+            <label for="btech_branch">Branch</label>
+            <input name="btech_branch" id="btech_branch" value=""  data-default-value="e.g. Computer Science" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
+            <p class="formHint">Branch of Candidates(in full form only). Leave it empty if All Branches are to be selected</p>
+          </div>
+          
+          <div class="ctrlHolder">
+            <label for="btech_board">University</label>
+            <input name="btech_board" id="btech_board" value="" data-default-value="e.g. KUK" size="35" maxlength="50" type="text" class="textInput"/>
+            <p class="formHint">Education University in B.Tech</p>
+          </div>
+          
+          <div class="ctrlHolder">
+          <p class="label">Never Backlog</p>
+          <ul class="blockLabels alternate">
+            <li><label for="btech_never_backlog"><input name="btech_never_backlog" type="radio" value="true"   title="Yes" onclick="hide_backlogBox('btech')">Yes</label></li>
+            <li><label for="btech_never_backlog"><input  name="btech_never_backlog" type="radio" value="false"   title="No" onclick="show_backlogBox('btech')">No</label></li>
           </ul>
           <p class="formHint">Passed in first attempt?</p>
         </div>
         
-        <h3>Diploma Marks</h3>
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Rank in DET</label>
-            <input name="leet_rank" id="leet_rank" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Rank of <span class="cName" >Candidate</span></p>
-          </div>
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Marks Obtained</label>
-            <input name="marks_obtained" id="marks_obtained" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Marks Obtained by <span class="cName" >Candidate</span></p>
-          </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Total Marks</label>
-            <input name="total_marks" id="total_marks" value="" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Total Marks</p>
-          </div>
-            
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Year of Passing</label>
-            <input name="passing_year" id="passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Year in which <span class="cName" >Candidate</span> passed the Diploma</p>
-          </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Branch</label>
-            <input name="branch" id="branch" value=""  data-default-value="e.g. Computer Science" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-            <p class="formHint">Branch of  <span class="cName" >Candidate</span>(in full form only)</p>
-          </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>University</label>
-            <input name="board" id="board" value="" data-default-value="e.g. KUK" size="35" maxlength="50" type="text" class="textInput required"/>
-            <p class="formHint">Education University in Diploma</p>
-          </div>
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>LEET Marks</label>
-            <input name="leet_marks" id="leet_marks" value="" data-default-value="e.g. 120" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
-            <p class="formHint">Marks of LEET</p>
-          </div>
-          <br>
-          
-        <h3>AIEEE</h3>
-            <div class="ctrlHolder">
-            <label for=""><em>*</em>All India Rank (AIR)</label>
-            <input name="ai_rank" id="ai_rank" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">All India Rank of <span class="cName" >Candidate</span></p>
-          </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>All India Category Rank</label>
-            <input name="ai_cat_rank" id="ai_cat_rank" value="" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">All India Category Rank of <span class="cName" >Candidate</span></p>
-          </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>AIEEE Marks</label>
-            <input name="aieee_marks" id="aieee_marks" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
-            <p class="formHint">Marks of AIEEE Form</p>
-          </div>
-          <br>
-          
-        <h3>B.Tech</h3>
-        	<div class="ctrlHolder">
-            <label for=""><em>*</em>Marks Obtained</label>
-            <input name="marks_obtained" id="marks_obtained" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Marks Obtained by <span class="cName" >Candidate</span></p>
-          </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Total Marks</label>
-            <input name="total_marks" id="total_marks" value="" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Total Marks</p>
-          </div>
-            
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Year of Passing</label>
-            <input name="passing_year" id="passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Year in which <span class="cName" >Candidate</span> passed the Diploma</p>
-          </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Branch</label>
-            <input name="branch" id="branch" value=""  data-default-value="e.g. Computer Science" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-            <p class="formHint">Branch of  <span class="cName" >Candidate</span>(in full form only)</p>
-          </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>University</label>
-            <input name="board" id="board" value="" data-default-value="e.g. KUK" size="35" maxlength="50" type="text" class="textInput required"/>
-            <p class="formHint">Education University in Diploma</p>
-          </div>
-          
-          <div class="ctrlHolder">
-          <p class="label">Never Backlog</p>
-          <ul class="blockLabels alternate">
-            <li><label for=""><input name="first_attempt" type="radio" value="false"   title="No" >No</label></li>
-            <li><label for=""><input  name="first_attempt" type="radio" value="true"   title="Yes" >Yes</label></li>
-          </ul>
-          <p class="formHint">Passed in first attempt?</p>
+         <div class="ctrlHolder" id="btechBacklogs">
+         </div>
         </div>
-         <div class="ctrlHolder">
-            <label for="backlog"><em>*</em>No. of backlogs</label>
-            <input name="backlog" id="" value="" data-default-value="e.g. 1" size="35" maxlength="2" type="text" class="textInput required"/>
-           
-          </div>
+         
           <br>
-          <h3>M.Tech</h3>
-        	<div class="ctrlHolder">
-            <label for=""><em>*</em>Marks Obtained</label>
-            <input name="marks_obtained" id="marks_obtained" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Marks Obtained by <span class="cName" >Candidate</span></p>
-          </div>
+          
+          <h3 onclick="showForm('mtech')"><span class="click_me_mtech">+</span>   M.Tech Information</h3>
+		<div id="mtech_detail">
           
           <div class="ctrlHolder">
-            <label for=""><em>*</em>Total Marks</label>
-            <input name="total_marks" id="total_marks" value="" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Total Marks</p>
+        	<label for="mtech_percent_from">M.Tech Aggregate Percentage from</label>
+            <input name="mtech_percent_from" id="mtech_percent_from" value="" data-default-value="e.g. 65" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <p class="formHint">Lower limit of M.Tech Total Percentage</p>
+            
+            <br><br>
+            
+            <label for="mtech_percent_to">M.Tech Aggregate Percentage to</label>
+            <input name="mtech_percent_to" id="mtech_percent_to" value="" data-default-value="e.g. 80" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <p class="formHint">Upper limit of M.Tech Total Percentage</p>
           </div>
             
           <div class="ctrlHolder">
-            <label for=""><em>*</em>Year of Passing</label>
-            <input name="passing_year" id="passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Year in which <span class="cName" >Candidate</span> passed the Diploma</p>
+            <label for="mtech_passing_year">Year of Passing</label>
+            <input name="mtech_passing_year" id="mtech_passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+            <p class="formHint">Year in which Candidates passed or will pass M.Tech</p>
           </div>
           
           <div class="ctrlHolder">
-            <label for=""><em>*</em>Branch</label>
-            <input name="branch" id="branch" value=""  data-default-value="e.g. Computer Science" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-            <p class="formHint">Branch of  <span class="cName" >Candidate</span>(in full form only)</p>
+            <label for="mtech_branch">Branch</label>
+            <input name="mtech_branch" id="mtech_branch" value=""  data-default-value="e.g. Computer Science" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
+            <p class="formHint">Branch of Candidate(in full form only). Leave it empty if All Branches are to be selected</p>
           </div>
           
           <div class="ctrlHolder">
-            <label for=""><em>*</em>University</label>
-            <input name="board" id="board" value="" data-default-value="e.g. KUK" size="35" maxlength="50" type="text" class="textInput required"/>
-            <p class="formHint">Education University in Diploma</p>
+            <label for="mtech_board">University</label>
+            <input name="mtech_board" id="mtech_board" value="" data-default-value="e.g. KUK" size="35" maxlength="50" type="text" class="textInput"/>
+            <p class="formHint">Education University in M.Tech</p>
           </div>
           
           <div class="ctrlHolder">
-          <p class="label">Never Backlog</p>
-          <ul class="blockLabels alternate">
-            <li><label for=""><input name="first_attempt" type="radio" value="false"   title="No" >No</label></li>
-            <li><label for=""><input  name="first_attempt" type="radio" value="true"   title="Yes" >Yes</label></li>
-          </ul>
-          <p class="formHint">Passed in first attempt?</p>
-        </div>
-         <div class="ctrlHolder">
-            <label for="backlog"><em>*</em>No. of backlogs</label>
-            <input name="backlog" id="" value="" data-default-value="e.g. 1" size="35" maxlength="2" type="text" class="textInput required"/>
-           
+          	<p class="label">Never Backlog</p>
+          	<ul class="blockLabels alternate">
+            	<li><label for="mtech_never_backlog"><input name="mtech_never_backlog" type="radio" value="true"   title="Yes" onclick="hide_backlogBox('mtech')">Yes</label></li>
+            	<li><label for="mtech_never_backlog"><input  name="mtech_never_backlog" type="radio" value="false"   title="No"  onclick="show_backlogBox('mtech')">No</label></li>
+          	</ul>
+          	<p class="formHint">Passed in first attempt?</p>
           </div>
+          
+          <div class="ctrlHolder" id="mtechBacklogs">          
+          </div>
+         </div>
+          
           <br>
           
             <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
@@ -327,50 +296,49 @@
     </div>
 </form>
 
-<form action="javascript:submit_career();" class="uniForm" id="career">
-    	
-    	<div id="career_details">
-           <h2>Career Details</h2>
+<form action="javascript:submit_career();" class="uniForm" id="career" style="width: 30%;">
+    	<h2 onclick="showForm('career')"><span class="click_me_career">+</span>   Career Details</h2>
+    	<div id="career_detail">
         
-        <h3>Basic Skills</h3>
+        <h3 onclick="showForm('skill')"><span class="click_me_skill">+</span>   Skills</h3>
+		<div id="skill_detail">
 
         <div class="ctrlHolder">
-            <label for=""><em>*</em>Feild</label>
-            <input name="" id="" value="" data-default-value="e.g. C, C++" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-            <p class="formHint">Technical feild known by <span class="cName" >Candidate</span></p>
+            <label for="">Skills</label>
+            <input name="skill" id="skill" value="" data-default-value="e.g. C++" size="35" maxlength="50" type="text" class="textInput"/>
+            <p class="formHint">Skill known by Candidates</p>
           </div>
           
           <div class="ctrlHolder">
-            <label for=""><em>*</em>Proficiency</label>
-             <select id="profiency" name="profiency" class="selectInput required">
+            <label for="">Skill Proficiency</label>
+             <select id="skill_profiency" name="skill_profiency" class="selectInput">
           		<option value="EXPERT">Expert</option>
           		<option value="INTERMEDIATE">Intermediate</option>
           		<option value="BASIC">Beginner</option>
       	  </select>
             <p class="formHint">Select the proficiency level</p>
           </div>
+         </div>
       
          <!-- <div class="ctrlHolder">
             <label for=""><em>*</em>Technical Stream</label>
-            <input name="matric_percentage" id="percentage" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required"/>
+            <input name="matric_percentage" id="percentage" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput"/>
             <p class="formHint">Percentage obtained by <span class="cName" >Candidate</span></p>
-          </div>
-          
-          
+          </div>          
         <br>
+        
         <h3>Employability Test</h3>
-           
-            
           <div class="ctrlHolder">
             <label for=""><em>*</em>Select Test</label>
             <ul class="blockLabels alternate">
+            <li><label for="amcat"><input name="amcat" type="radio" value="false"   title="No" >ANY</label></li>
             <li><label for="amcat"><input name="amcat" type="radio" value="false"   title="No" >AMCAT</label></li>
             <li><label for="nasscom"><input  name="nasscom" type="radio" value="true"   title="Yes" >NASSCOM</label></li>
             <li><label for="elitmus"><input  name="elitmus" type="radio" value="true"   title="Yes" >E-LITMUS</label></li>
           </ul>
          </div>
             
-     <div class="ctrlHolder">
+     	  <div class="ctrlHolder">
             <label for=""><em>*</em>Marks Obtained</label>
             <input name="marks_obtained" id="marks_obtained" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
             <p class="formHint">Marks Obtained by <span class="cName" >Candidate</span></p>
@@ -380,52 +348,20 @@
             <label for=""><em>*</em>Total Marks</label>
             <input name="total_marks" id="total_marks" value="" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
             <p class="formHint">Total Marks</p>
-          </div>
-          
+          </div>-->
+        <h3 onclick="showForm('professional')"><span class="click_me_professional">+</span> Professional Certification</h3>
+		<div id="professional_detail">
           <div class="ctrlHolder">
-            <label for=""><em>*</em>Year of Passing</label>
-            <input name="passing_year" id="passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput required validateInteger validateMax val-<?php echo date('Y');?>"/>
-            <p class="formHint">Year in which <span class="cName" >Candidate</span> passed the 12th</p>
-          </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Board</label>
-            <input name="board" id="board" value="" data-default-value="e.g. CBSE" size="35" maxlength="50" type="text" class="textInput required"/>
-            <p class="formHint">Education Board in 12th</p>
-          </div>
-        
-        <div class="ctrlHolder">
-          <p class="label">Compartment(s)</p>
-          <ul class="blockLabels alternate">
-            <li><label for=""><input name="compartments" type="radio" value="false"  title="No" >No</label></li>
-            <li><label for=""><input  name="compartments" type="radio" value="true"  title="Yes" >Yes</label></li>
-          </ul>
-          <p class="formHint">Does the has any compartment?</p>
-        </div>
-        
-        
-        <div class="ctrlHolder">
-          <p class="label">Passed in first attempt</p>
-          <ul class="blockLabels alternate">
-            <li><label for=""><input name="first_attempt" type="radio" value="false"   title="No" >No</label></li>
-            <li><label for=""><input  name="first_attempt" type="radio" value="true"   title="Yes" >Yes</label></li>
-          </ul>
-          <p class="formHint">Passed in first attempt?</p>
-        </div>
-        
-        -->
-       <!--  <h3>Professional Certification</h3>
-          <div class="ctrlHolder">
-            <label for="technical_feild"><em>*</em>Technical Feild</label>
-            <select id="technical_feild" name="technical_feild" class="selectInput required">
+            <label for="certification_field">Certification Feild</label>
+            <select id="certification_field" name="certification_field" class="selectInput">
           		<option value="Networking">Networking</option>
           		
       	  </select>
             <p class="formHint">Technical feild in which certification is done </p>
           </div>
           <div class="ctrlHolder">
-            <label for=""><em>*</em>Certification Name</label>
-            <select id="technical_sector" name="technical_sector" class="selectInput required">
+            <label for="">Certification Name</label>
+            <select id="certification_name" name="certification_name" class="selectInput">
           		<option value="CCNA">CCNA</option>
           		<option value="OCP">OCP</option>
           		<option value="RHCE">RHCE</option>
@@ -433,65 +369,30 @@
       	  <p class="formHint">Select name of Professional certification </p>
            
           </div>
+        </div>
         <br> 
           
-        <h3>Training</h3>
+       <h3 onclick="showForm('training')"><span class="click_me_training">+</span> Training Details</h3>
+		<div id="training_detail">
            <div class="ctrlHolder">
-            <label for="technical_feild"><em>*</em>Technical Feild</label>
-            <select id="technical_feild" name="technical_feild" class="selectInput required">
+            <label for="training">Training</label>
+            <select id="training" name="technical_feild" class="selectInput">
           		<option value="Networking">Networking</option>
           		
       	  </select>
             <p class="formHint">Technical feild in which training is done </p>
           </div>
           <div class="ctrlHolder">
-            <label for=""><em>*</em>Training Technology</label>
-            <select id="technical_sector" name="technical_sector" class="selectInput required">
+            <label for="">Training Technology</label>
+            <select id="technical_sector" name="technical_sector" class="selectInput">
           		<option value="CCNA">CCNA</option>
           		<option value="OCP">OCP</option>
           		<option value="RHCE">RHCE</option>
       	  </select>
            <p class="formHint">Technology in which training is done </p>
           </div>
-     <br>
-          
-        <h3>Languages Known</h3>
-         <div class="ctrlHolder">
-            <label for=""><em>*</em>Languages Known</label>
-            <select id="language_id" name="language_id" class="selectInput required">
-          		<option value="1">Hindi</option>
-          		<option value="2">English</option>
-          		<option value="3">Punjabi</option>
-          		<option value="4">Foreign</option>
-      	  </select>
-           <p class="formHint">Languages Known by <span class="cName" >Candidate</span> </p>
-          </div>
-          
-          <div class="ctrlHolder">
-            <label for=""><em>*</em>Total Marks</label>
-            <select id="language_id" name="language_id" class="selectInput required">
-          		<option value="READ">Read</option>
-          		<option value="WRITE">Write</option>
-          		<option value="SPEAK">Speak</option>
-          		<option value="ALL">All</option>
-      	  </select>
-            <p class="formHint">Select proficiency</p>
-          </div>
-            
-          
-          <br>
-          <h3>Prefrences</h3>
-        	<div class="ctrlHolder">
-            <ul class="blockLabels alternate">
-            <li><label for="IT"><input name="IT" type="radio" value="false"   title="No" >IT</label></li>
-            <li><label for="core"><input  name="core" type="radio" value="true"   title="Yes" >Core </label></li>
-            <li><label for="defence"><input  name="defence" type="radio" value="true"   title="Yes" >Defence</label></li>
-            <li><label for="government"><input  name="government" type="radio" value="true"   title="Yes" >Govt</label></li>
-          </ul>
-          <p class="formHint">Filter on basis of the job preferred </p>
-          </div>-->
-          
-          
+        </div>
+    	 <br>         
         
         <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
         
@@ -503,7 +404,32 @@
     </div>
 </form>
     
-    <script>
+   <script>
+   function showForm(type){
+	   var divName = "#"+type+"_detail";
+	   var spanName = ".click_me_"+type;
+	   var span_content = $(spanName).html();
+	   		if(span_content == '+'){
+	   		$(divName).hide();
+	   		$(spanName).html("-");
+	   }
+	   else{
+		   $(divName).show();
+		   $(spanName).html("+");
+	   }
+   }
+   function show_backlogBox(program){
+	   var divName = "#"+program+"Backlogs";
+	   $(divName).html("<label for='"+program+"_backlogs'><em>*</em>No. of backlogs</label><input name='"+program+"_backlogs' id='' value='' data-default-value='e.g. 1' size='35' maxlength='2' type='text' class='textInput required'/>");
+	   $(divName).show();
+   }
+   
+   function hide_backlogBox(program){
+	   var divName = "#"+program+"Backlogs";
+	   $(divName).html("");
+	   $(divName).hide();
+   }
+   
 	var urlBasicInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchlist'))?>";
 	
       $(function(){
@@ -512,7 +438,7 @@
         });
 
         serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
-        $("#dob").datepicker({
+        $(".dob").datepicker({
         	dateFormat: 'yy-mm-dd',
         	changeMonth: true,
 			changeYear: true,
@@ -524,9 +450,7 @@
       });
 
       function submit_personal() {
-	      $("#personal").hide(500,function(){
-             alert("it is hidden");
-   		  }); 
+	      $("#personal").hide(500); 
           $.ajax({
               url : urlBasicInfo,
               data : getPersonalValues(),
@@ -542,7 +466,7 @@
       function getPersonalValues() {
           var formData = {}; 
           $('#personal.uniForm :input')
-          	.not('button,#e_mail_confirm,:input[value^="e.g."]')
+          	.not('button,:input[value^="e.g."]')
           	.each(function(){ 
           		formData[this.name] = this.value; 
               });
@@ -552,9 +476,7 @@
 		}
 
       function submit_academic() {
-    	  $("#academic").hide(500,function(){
-              alert("it is hidden");
-    	  });
+    	  $("#academic").hide(500);
           $.ajax({
               url : urlBasicInfo,
               data : getAcademicValues(),
@@ -570,19 +492,27 @@
       function getAcademicValues() {
           var formData = {}; 
           $('#academic.uniForm :input')
-          	.not('button,#e_mail_confirm,:input[value^="e.g."]')
+          	.not('button,:input[value^="e.g."]')
           	.each(function(){ 
           		formData[this.name] = this.value; 
               });
-      	var gender = $('input:radio[name=gender]:checked').val();
-      	formData.gender = gender; 
+     	 	var matric_first_attempt = $('input:radio[name=matric_first_attempt]:checked').val();
+     	 	formData.matric_first_attempt = matric_first_attempt; 
+
+     	 	var twelfth_first_attempt = $('input:radio[name=twelfth_first_attempt]:checked').val();
+     	 	formData.twelfth_first_attempt = twelfth_first_attempt;
+
+     	 	var btech_never_backlog = $('input:radio[name=btech_never_backlog]:checked').val();
+     	 	formData.btech_never_backlog = btech_never_backlog;
+
+     	 	var mtech_never_backlog = $('input:radio[name=mtech_never_backlog]:checked').val();
+     	 	formData.mtech_never_backlog = mtech_never_backlog;
+     	 	
 			return formData;
 		}
 
       function submit_career() {
-    	  $("#career").hide(500,function(){
-              alert("it is hidden");
-    	  });
+    	  $("#career").hide(500);
           $.ajax({
               url : urlBasicInfo,
               data : getCareerValues(),
@@ -594,11 +524,11 @@
                       }
                   });
       	}
-  	
+  	  	
       function getCareerValues() {
           var formData = {}; 
           $('#career.uniForm :input')
-          	.not('button,#e_mail_confirm,:input[value^="e.g."]')
+          	.not('button,:input[value^="e.g."]')
           	.each(function(){ 
           		formData[this.name] = this.value; 
               });
@@ -608,7 +538,7 @@
 		}
     </script>
     
-    <?php
+<?php
 $this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
     
 $this->headLink()->prependStylesheet(
@@ -618,4 +548,3 @@ $this->headLink()->prependStylesheet(
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
 ?>
-
