@@ -11,9 +11,9 @@ class Tnp_Model_Profile_Components_Certification
     protected $_start_date;
     protected $_complete_date;
     protected $_mapper;
-    protected $_class_properties = array('certification_id', 'certification_name', 
-    'technical_field_id', 'technical_field_name', 'technical_sector', 'member_id', 
-    'start_date', 'complete_date');
+    protected $_class_properties = array('certification_id', 
+    'certification_name', 'technical_field_id', 'technical_field_name', 
+    'technical_sector', 'member_id', 'start_date', 'complete_date');
     public function getClass_properties ()
     {
         return $this->_class_properties;
@@ -264,12 +264,14 @@ class Tnp_Model_Profile_Components_Certification
                 $error = implode(', ', $invalid_range_keys);
             }
         }
-        $user_friendly_message = $error .
-         ' are invalid parameters and therefore were not included in search.' .
+        $user_friendly_message = ' are invalid parameters and therefore, they were not included in search.' .
+         "</br>" .
          'Please try again with correct parameters to get more accurate results';
-        Zend_Registry::get('logger')->debug($user_friendly_message);
         $deciding_intersection = array_intersect($valid_options, 
         $valid_range_keys);
+        Zend_Registry::get('logger')->debug(
+        var_export($error . $user_friendly_message));
+        echo "</br>";
         if (empty($deciding_intersection)) {
             //now we can set off for search operation
             $this->setOptions($setter_options);

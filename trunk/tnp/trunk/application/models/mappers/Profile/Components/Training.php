@@ -251,6 +251,12 @@ class Tnp_Model_Mapper_Profile_Components_Training
             $condition = $property_name . ' = ?';
             $select->where($condition, $value);
         }
-        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        if (! empty($result)) {
+            $serach_error = 'No results match your search criteria.';
+            return $serach_error;
+        } else {
+            return $result;
+        }
     }
 }

@@ -298,7 +298,14 @@ class Tnp_Model_Mapper_Profile_Member_Student
             $condition = $property_name . ' = ?';
             $select->where($condition, $value);
         }
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        if(!empty($result)){
+        	$serach_error = 'No results match your search criteria.';
+        	return $serach_error;
+        }else{
+        	return $result;
+        }
         //Zend_Registry::get('logger')->debug($select->__toString());
-        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        
     }
 }

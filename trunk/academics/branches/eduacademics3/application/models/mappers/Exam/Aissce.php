@@ -52,7 +52,7 @@ class Acad_Model_Mapper_Exam_Aissce
         'total_marks', 'percentage', 'pcm_percent', 'board', 'school_rank', 
         'remarks', 'institution', 'city_name', 'state_name', 'migration_date');
         $select = $adapter->select()
-            ->from('twelfth',$required_fields)
+            ->from('twelfth', $required_fields)
             ->where('member_id = ?', $member_id);
         $member_exam_info = array();
         $member_exam_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
@@ -86,6 +86,12 @@ class Acad_Model_Mapper_Exam_Aissce
             $condition = $property_name . ' = ?';
             $select->where($condition, $value);
         }
-        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        if (! empty($result)) {
+            $serach_error = 'No results match your search criteria.';
+            return $serach_error;
+        } else {
+            return $result;
+        }
     }
 }

@@ -53,13 +53,13 @@ class Acad_Model_Mapper_Exam_Competitive
         'exam_date', 'total_score', 'all_india_rank');
         $competitive_exam_fields = array();
         $select = $adapter->select()
-            ->from($this->getDbTable()->info('name'),$student_competitive_exam_fields)
+            ->from($this->getDbTable()
+            ->info('name'), $student_competitive_exam_fields)
             ->where('member_id = ?', $member_id);
         $competitive_exam_info = $adapter->fetchAll(Zend_Db::FETCH_UNIQUE);
-        
         return $competitive_exam_info;
     }
-     /**
+    /**
      * Enter description here ...
      * @param Acad_Model_Exam_Competitive $competitiveExam
      * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
@@ -87,6 +87,12 @@ class Acad_Model_Mapper_Exam_Competitive
             $condition = $property_name . ' = ?';
             $select->where($condition, $value);
         }
-        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        if (! empty($result)) {
+            $serach_error = 'No results match your search criteria.';
+            return $serach_error;
+        } else {
+            return $result;
+        }
     }
 }
