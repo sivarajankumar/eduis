@@ -19,5 +19,24 @@ class DepartmentController extends Zend_Controller_Action
     }
 
 
+    public function attendanceAction()
+    {
+        $dbtable = new Acad_Model_DbTable_StudentAttendance2();
+        $request = $this->getRequest();
+        $department_id = $request->getParam('department_id');
+        $programme_id = $request->getParam('programme_id');
+        $date_from = $request->getParam('date_from');
+        $date_upto = $request->getParam('date_upto');
+        
+        $this->view->assign('programme_id',$programme_id);
+        $this->view->assign('department_id',$department_id);
+        if (isset($department_id) and isset($programme_id)) {
+            $attendance = $dbtable->departmentwise($department_id,$programme_id,$date_from,$date_upto);
+            $this->view->assign('attendance',$attendance);
+            //$this->_helper->logger($attendance);
+        }
+        
+        
+    }
 }
 

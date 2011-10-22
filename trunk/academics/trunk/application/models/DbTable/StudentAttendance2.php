@@ -52,13 +52,10 @@ VALUES +';
     
     public function stats ($department = NULL, $programme = NULL, $semester = NULL, 
     $group = NULL, $subject_code = NULL, $subject_mode = NULL, $date_from = NULL, 
-    $date_upto = NULL, $showSubjectName = NULL)
+    $date_upto = NULL, $showSubjectName = NULL,array $order = NULL)
     {
         $select = $this->getAdapter()->select();
-        $select->from(array('patt'=>'period_attendance2'), 
-        array('faculty_id', 
-        'delievered' => 'COUNT(`patt`.`attendance_id`)', 
-        'total_duration' => 'SUM(`patt`.`duration`)'));
+        $select->from(array('patt'=>'period_attendance2'), array());
         if (isset($department)) {
             $select->where('department_id = ?', $department);
         } else {
@@ -97,18 +94,47 @@ VALUES +';
         }
         
         if (isset($showSubjectName)) {
-            $select->join('subject', '`patt`.`subject_code` = `subject`.`subject_code`');
-            $select->columns('subject_name');
+            $select->join('subject', '`patt`.`subject_code` = `subject`.`subject_code`',array('subject_name'));
         }
+        $select->columns(array('faculty_id', 
+                            'last_period_date' => 'MAX(`patt`.`period_date`)',
+                            'last_updated' => 'MAX(`patt`.`marked_date`)',
+                            'delivered' => 'COUNT(`patt`.`attendance_id`)', 
+                            'total_duration' => 'SUM(`patt`.`duration`)'))
+                ->group(array('department_id',
+                            'programme_id',
+                            'semester_id',
+                            'group_id',
+                            'patt.subject_code',
+                            'subject_mode_id'));
+                
+         if (!empty($order)) {
+             $select->order($order);
+         }
         
-        $select->group(array('department_id',
-        'programme_id',
-        'semester_id',
-        'group_id',
-        'patt.subject_code',
-        'subject_mode_id'))
-        ->order(array('period_date'));
-        
-        return $select->query()->fetchAll();
+        return $select->query()->fetchAll(Zend_Db::FETCH_GROUP);
+    }
+    
+    public function departmentwise($department= NULL,$programme=NULL, $date_from = NULL, 
+    $date_upto = NULL) {
+        $order = array('semester_id','subject_mode_id', 'subject_code','group_id');
+        $rawResult = self::stats($department,$programme,null,null,null,null,$date_from,$date_upto,true,$order);
+        $processed = array();
+        foreach ($rawResult as $semester_id => $attendanceList) {
+            foreach ($attendanceList as $key => $attendance) {
+                
+                $subjectCode = $attendance['subject_code'];
+                $subjectMode = $attendance['subject_mode_id'];
+                $group_id = $attendance['group_id'];
+                
+                unset($attendance['subject_code']);
+                unset($attendance['subject_mode_id']);
+                unset($attendance['group_id']);
+                
+                $processed[$semester_id][$subjectMode][$subjectCode][$group_id][] = $attendance;
+            }
+            
+        }
+        return $processed;
     }
 }

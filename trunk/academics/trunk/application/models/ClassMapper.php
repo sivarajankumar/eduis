@@ -107,7 +107,7 @@ class Acad_Model_ClassMapper
             $response = $client->request();
             if ($response->isError()) {
                 $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
-                 $response->getMessage();
+                 $response->getMessage().', i.e. '.$response->getHeader('Message');
                 throw new Zend_Exception($remoteErr, Zend_Log::ERR);
             } else {
                 $jsonContent = $response->getBody();

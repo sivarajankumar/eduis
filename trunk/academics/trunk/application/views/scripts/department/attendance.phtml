@@ -1,0 +1,257 @@
+<style>
+<!--
+.sectionDiv H3 {
+	margin-top: 1em;
+	border-bottom: 4px double #eee;
+	text-align: center;
+	clear: both;
+}
+
+.tableSemester {
+	margin-top: 1.5em;
+}
+
+.tableSemester tr td {
+	padding-left: 0.4em;
+	padding-right: 0.4em;
+}
+.rowSubjectMode { 
+	margin : 2em;
+	padding: 2em;
+}
+.rowSubjectMode td {
+ 	border-bottom: 1px solid #ddd;
+	vertical-align: middle;
+}
+.subjectMode{
+	color: #333;	
+	background-color : #eee;
+	font-size:1.1em;
+	vertical-align: top;
+}
+.modeHeadline td {
+	color: #555; 
+	background-color : #eee;
+	font-weight: bold;
+	font-size:0.9em;
+	text-align: center;
+	vertical-align: bottom;
+}
+.dataCellBordered {
+	border-top: 1px solid #aaa;
+	text-align: center;
+}
+.dataCellLightBordered {
+	border-top: 1px solid #ddd;
+	text-align: center;
+}
+.dataCell {
+	
+}
+.dataRow {
+	font-size:1em;
+	font-family: serif;	
+	color: #444;
+}
+.sectionDiv_clt {
+	float:right;
+	text-align: right;
+	position: relative;
+	right: 1em;
+	top:-1em;
+	display: none;
+}
+.reportNav {
+	float:right;
+	text-align: right;
+	position: relative;
+	right: 1em;
+}
+@MEDIA print{
+	table tr {		
+		page-break-inside: avoid;
+	}
+	.noprint {
+		display: none;
+	}
+	.sectionDiv H3 {
+    	page-break-after: avoid;
+	}
+}
+
+-->
+</style>
+<div style="padding :0.5em 0 0.5em 0; text-align: center; " >
+<form class="noprint" id="departmentWise"><label>Department: <input id="department_id" name="department_id" type="text"
+	class="ui-widget-content  ui-corner-all" style="text-align: center" 
+	value="<?php echo $this->department_id?>" ></input></label>
+	<label>Programme: <input id="programme_id" name="programme_id" type="text"
+	class="ui-widget-content  ui-corner-all" style="text-align: center" 
+	value="<?php echo $this->programme_id?>" ></input></label>
+	<button type="submit" class="ui-corner-all" style="font-size: 0.7em;">Show</button>
+</form>
+<?php 
+if (isset($this->department_id) and isset($this->programme_id)) { ?>
+    <h1>ATTENDANCE REPORT</h1>
+	<h2><?php  echo $this->department_id?> - <?php  echo $this->programme_id?></h2>
+<?php 
+$this->headTitle('Attendance Report for '.$this->department_id.'-'.$this->programme_id);
+} else {
+    $this->headTitle('Attendance Report for Department');
+}
+?>
+</div>
+<hr/>
+<?php 
+if (isset($this->attendance)) {
+    if (empty($this->attendance)) {
+        ?>
+        <p>The output is empty.</p>
+        <?php
+        return;
+    }
+    $semesters = array_keys($this->attendance);
+    echo '<div class="reportNav noprint">';
+    foreach ($semesters as $key => $semester) {
+        echo '<a href="#semester'.$semester.'">Semester '.$semester.'</a>&nbsp;';
+    }
+    echo '</div>';
+    foreach ($this->attendance as $semester_id => $subject_modes) {
+        $subjectModes = array_keys($subject_modes);
+        ?>
+        <div class="sectionDiv" id="semester<?php echo $semester_id?>" >
+        	<h3>Semester <?php echo $semester_id?></h3>
+        <form class="sectionDiv_clt" action="void(0);">
+        <?php foreach ($subjectModes as $key => $subMode) {
+            ?>
+            <label><?php echo $subMode?><input type="checkbox" checked="checked" value="semester<?php echo $semester_id.'_'.$subMode?>"></label>&nbsp;
+            <?php
+        } ?>
+        </form>
+<?php foreach ($subject_modes as $subject_mode_id => $subject_codes) {?>
+		<table class="tableSemester" cellspacing="0" border="0" id="semester<?php  echo $semester_id.'_'.$subject_mode_id?>">
+		<tbody>
+        <tr class="<?php echo $semester_id.'_'.$subject_mode_id?>_row rowSubjectMode">
+			<td class="subjectMode"><?php echo $subject_mode_id ?></td><td colspan="7" ><br/></td>
+			</tr>
+			<tr class="<?php echo $semester_id.'_'.$subject_mode_id?>_row modeHeadline">
+	<td>Subject Name</td>
+	<td style="border-left: 1px solid #ddd;">Subject Code</td>
+	<td style="border-left: 1px solid #ddd;">Faculty</td>
+	<td style="border-left: 1px solid #ddd;">Group</td>
+	<td style="border-left: 1px solid #ddd;">Delivered</td>
+	<td style="border-left: 1px solid #ddd;">Duration</td>
+	<td style="border-left: 1px solid #ddd;">Last Period Date</td>
+	<td style="border-left: 1px solid #ddd;">Last Updated</td>
+</tr>
+        <?php
+        foreach ($subject_codes as $subject_code => $groups) {
+                $prevFaculty  = null;
+                $prevSubjectName = null;
+                $prevSubjectCode = NULL;
+                $greyLine = NULL;
+                
+            foreach ($groups as $group_id => $records) {
+                foreach ($records as $key => $record) {
+                    ?>
+                <tr  class="<?php echo $semester_id.'_'.$subject_mode_id?>_row dataRow" >
+             <?php
+			
+			if($record['subject_name']==$prevSubjectName){
+			    echo '<td></td>';
+			} else {
+			    echo '<td class="dataCellBordered"  style="text-align:left" >'. 
+			                ucwords(strtolower($record['subject_name'])) .'</td>';
+			    $prevSubjectName=$record['subject_name'];
+			}
+                
+			if($subject_code==$prevSubjectCode){
+			    echo '<td></td>';
+			} else {
+			    echo '<td class="dataCellBordered"  style="text-align:left">'.$subject_code.'</td>';
+			    $prevSubjectCode=$subject_code;
+			}
+                
+             if($record['faculty_id']==$prevFaculty){
+			    echo '<td></td>';
+			} else {
+			    echo '<td class="dataCellBordered" style="text-align:left">'.$record['faculty_id'].'</td>';
+			    $prevFaculty=$record['faculty_id'];
+			}
+			
+			if (is_null($greyLine)) { 
+			    $greyLine = true;
+			    ?>
+			    <td class="dataCellBordered"><?php echo (strtoupper($group_id) == 'ALL')?'-':$group_id?></td>
+			<td class="dataCellBordered"><?php echo $record['delivered']?></td>
+			<td class="dataCellBordered"><?php echo $record['total_duration']?></td>
+			<td class="dataCellBordered">
+			<?php $date = date_create_from_format('Y-m-d', $record['last_period_date']);
+			                                echo date_format($date, 'd/M'); ?></td>
+			<td class="dataCellBordered">
+			<?php $date = date_create_from_format('Y-m-d H:i:s', $record['last_updated']);
+			                                echo date_format($date, 'd/M h:i a');?></td>
+			<?php } else {
+			    ?>
+			<td class="dataCellLightBordered"><?php echo (strtoupper($group_id) == 'ALL')?'-':$group_id?></td>
+			<td class="dataCellLightBordered"><?php echo $record['delivered']?></td>
+			<td class="dataCellLightBordered"><?php echo $record['total_duration']?></td>
+			<td class="dataCellLightBordered">
+			<?php $date = date_create_from_format('Y-m-d', $record['last_period_date']);
+			                                echo date_format($date, 'd/M'); ?></td>
+			<td class="dataCellLightBordered">
+			<?php $date = date_create_from_format('Y-m-d H:i:s', $record['last_updated']);
+			                                echo date_format($date, 'd/M h:i a');?></td>
+			<?php }?>
+			
+		</tr>
+                <?php 
+                
+                }
+                
+            }
+        }
+        ?>
+        
+        <tr class="<?php echo $semester_id.'_'.$subject_mode_id?>_row">
+			<td colspan="8" ><br/></td>
+			</tr>
+			</tbody>
+</table>
+        <?php
+        }
+        ?> 
+    
+    
+
+</div>
+<?php
+    }
+    
+} else {
+    ?>
+    <p>Department and corrosponding Degree are required!!</p>
+<?php }?>
+<script>
+$(document).ready(function() {
+	$('.sectionDiv').hover(function() {
+		$(this).find('.sectionDiv_clt').fadeIn('slow');
+	},
+	function() {
+		$(this).find('.sectionDiv_clt').fadeOut('slow');
+	});
+
+	$('.sectionDiv_clt :input').click(function() {
+		var elem = $(this).val();
+		$('#'+elem).fadeToggle();
+	});
+});
+//jQueryfy buttons
+$("button").button();
+
+var getSubjectAttendance = function() {
+	
+	alert('Hi');
+};
+
+</script>

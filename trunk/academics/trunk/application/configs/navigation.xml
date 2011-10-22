@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<nav>
+		<authentication>
+			<label>Authenticate</label>
+			<uri>authenticate</uri>
+			<pages>
+
+				<authenticate_index>
+					<label>Login Page</label>
+					<controller>authenticate</controller>
+					<action>index</action>
+				</authenticate_index>
+
+				<authenticate_logout>
+					<label>Logout</label>
+					<controller>authenticate</controller>
+					<action>logout</action>
+				</authenticate_logout>
+
+				<authenticate_check>
+					<label>Check User Info</label>
+					<controller>authenticate</controller>
+					<action>check</action>
+				</authenticate_check>
+			</pages>
+		</authentication>
+
+		<home>
+			<label>Home</label>
+			<order>-100</order>
+			<controller>index</controller>
+			<action>index</action>
+		</home>
+
+		<test>
+			<label>Home test</label>
+			<controller>index</controller>
+			<action>test</action>
+		</test>
+	</nav>
+</config>

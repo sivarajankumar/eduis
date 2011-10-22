@@ -81,8 +81,8 @@ class AuthenticateController extends Zend_Controller_Action
                 $client->setCookie('moduleName', $moduleName);
                 $response = $client->request();
                 if ($response->isError()) {
-                    $remoteErr = $response->getStatus() . ' : ' .
-                     $response->getMessage() . '<br/>' . $response->getBody();
+                    $remoteErr = $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
+                 $response->getMessage().', i.e. '.$response->getHeader('Message');
                     throw new Zend_Exception($remoteErr, Zend_Log::ERR);
                 }
             } else {
@@ -93,8 +93,17 @@ class AuthenticateController extends Zend_Controller_Action
         }
         if (isset($_COOKIE[self::AUTH_SID])) {
             preg_match('/[^.]+\.[^.]+$/', $_SERVER['SERVER_NAME'], $domain);
-            setcookie(self::AUTH_SID, '', time() - 360000, self::AUTH_PATH, 
-            ".$domain[0]");
+	    if (isset ( $_COOKIE [self::AUTH_SID] )) {
+            setcookie(self::AUTH_SID, '', time() - 360000, self::AUTH_PATH, ".$domain[0]");
+		}
+		
+	    if (isset ( $_COOKIE ['last'] )) {
+			setcookie ( 'last', false, time()-36000, null, ".$domain[0]");
+		}
+		
+		if (isset ( $_COOKIE ['identity'] )) {
+			setcookie ( 'identity', false, time()-36000, null, ".$domain[0]");
+		}
         }
         Zend_Auth::getInstance()->clearIdentity();
         Zend_Session::destroy();

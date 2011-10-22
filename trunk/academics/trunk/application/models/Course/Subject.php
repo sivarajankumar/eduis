@@ -46,6 +46,22 @@ class Acad_Model_Course_Subject
      */
     protected $_mapper;
     /**
+     * A whole set of student attendance related to subject.
+     * @var array
+     */
+    protected $_studentAttendance;
+    /**
+     * A total attendance related to subject.
+     * @var array
+     */
+    protected $_totalAttendance;
+    /**
+     * Processed attentdance result.
+     * Summary or abstract of attendance.
+     * @var unknown_type
+     */
+    protected $_attendanceStat;
+    /**
      * Set Subject Mapper
      * @param Acad_Model_Course_SubjectMapper $mapper - Subject Mapper
      * @return Acad_Model_Test_Sessional
@@ -82,6 +98,9 @@ class Acad_Model_Course_Subject
      */
     public function getSubject_code ()
     {
+        if (empty($this->_subject_code)) {
+            throw new Exception('Subject code is required!!', Zend_Log::ERR);
+        }
         return $this->_subject_code;
     }
     /**
@@ -114,13 +133,22 @@ class Acad_Model_Course_Subject
         return $this->_department;
     }
     /**
-     * Set subject modes (which are used for subject_faculty)
+     * Set possible modes of subject.
      * @param array $modes subject modes
+     * @example array('LEC','TUT') or array('PRC')
      * @return Acad_Model_Course_Subject
      */
-    public function setModes ()
+    public function setModes ($modes = NULL)
     {
-        $this->_modes = $this->getMapper()->getSubjectModes($this);
+        if (! empty($modes)) {
+            if (!is_array($modes)) {
+                $modes = array($modes);
+            }
+            $this->_modes = $modes;
+        } else {
+            $this->_modes = $this->getMapper()->getSubjectModes($this);
+        }
+        
         return $this;
     }
     /**
@@ -156,18 +184,23 @@ class Acad_Model_Course_Subject
         return $this->_semester;
     }
     /**
-     * Set class/semester wise subject faculty and corresponding mode
-     * @param array $faculty class/semester wise subject faculty and corresponding mode
+     * Set class/semester wise faculty of subject and corresponding mode.
+     * If no faculty is provided then it will try to fetch faculties from subject_faculty.
+     * @param array $faculty class/semester wise faculty of subject and corresponding mode
      * @return Acad_Model_Course_Subject
      */
-    public function setFaculty ()
+    public function setFaculty (array $faculty = NULL)
     {
-        $this->_faculty = $this->getMapper()->getFaculties($this);
+        if (! empty($faculty)) {
+            $this->_faculty = $faculty;
+        } else {
+            $this->_faculty = $this->getMapper()->getFaculties($this);
+        }
         return $this;
     }
     /**
-     * Get class/semester wise subject faculty and corresponding mode of subject.
-     * @return array $faculty class/semester wise subject faculty and corresponding mode of subject.
+     * Get class/semester wise faculty of subject and corresponding mode of subject.
+     * @return array $faculty class/semester wise faculty of subject and corresponding mode of subject.
      */
     public function getFaculty ()
     {
@@ -176,14 +209,107 @@ class Acad_Model_Course_Subject
         }
         return $this->_faculty;
     }
-    
-
     /**
      * Fetches all tests etc related to subject
      */
     public function getTest ($locked = FALSE)
     {
         return $this->getMapper()->fetchTest($this, $locked);
+    }
+    /**
+     * Total delievered, total duration, corrosponding groups and modes.
+     * 
+     * @param date $dateFrom
+     * @param date $dateUpto
+     */
+    public function getAttendanceTotal ($dateFrom = NULL, $dateUpto = NULL, 
+    $group_id = NULL, $forceUpdate = FALSE)
+    {
+        if (empty($this->_totalAttendance) or $forceUpdate) {
+            $this->_totalAttendance = $this->getMapper()->fetchAttendanceTotal($this, $dateFrom, 
+            $dateUpto, $group_id);
+        }
+        return $this->_totalAttendance;
+    }
+    /**
+     * Attendance of students enrolled in subject.
+     * The detailed attendance of students. By default, it will return ABSENT count in <i>counts</i>
+     * @param date $dateFrom
+     * @param date $dateUpto
+     */
+    public function getStudentAttendance ($dateFrom = NULL, $dateUpto = NULL, 
+    $status_id = NULL, $group_id = NULL, $forceUpdate = FALSE)
+    {
+        $rawAttendance = array();
+        if (empty($this->_studentAttendance) or $forceUpdate) {
+            $rawAttendance = $this->getMapper()
+                        ->fetchStudentAttendance($this, $dateFrom, $dateUpto, 
+                                                $status_id, $group_id);
+                                                
+        
+            foreach ($rawAttendance as $subject_mode => $studentsList) {
+                foreach ($studentsList as $key => $student) {
+                    $group = isset($student['group_id'])?$student['group_id']:$group_id;
+                    $status = $student['status'];
+                    $roll = $student['student_roll_no'];
+                    $this->_studentAttendance[$subject_mode][$group][$roll][$status] = $student['counts'];
+                }
+            }
+        }
+    
+        return $this->_studentAttendance;
+    }
+    /**
+     * Total number of students enrolled in subject and their average attendance percentage.
+     * 
+     * @param date $dateFrom
+     * @param date $dateUpto
+     */
+    public function getStudentAttendanceStat ($dateFrom = NULL, $dateUpto = NULL, $status = NULL, 
+                                                $group_id = NULL)
+    {
+        if (empty($this->_studentAttendance)) {
+            self::getStudentAttendance($dateFrom, $dateUpto, 
+                                        $status, $group_id);
+        }
+        
+        if (empty($this->_totalAttendance)) {
+            self::getStudentAttendance ($dateFrom, $dateUpto, 
+                                        $status, $group_id);
+        }
+        $this->_attendanceStat = $this->_totalAttendance;
+        foreach ($this->_studentAttendance as $subject_mode => $groups) {
+            foreach ($groups as $group => $students) {
+                $stuCount = count($students);
+                $avg = array();
+                foreach ($students as $roll => $records) {
+                    foreach ($records as $stuStatus => $counts) {
+                        if (!isset($avg[$stuStatus]['counts'])) {
+                            $avg[$stuStatus]['counts'] = 0;
+                        }
+                        $avg[$stuStatus]['counts'] = $avg[$stuStatus]['counts']+$counts;
+                    }
+                }
+                /**
+                 * @todo The STUDENTS should be the students enrolled to the subject.
+                 * So it should call $this->studentsEnrolled($subject_mode, $group)
+                 */
+                $this->_attendanceStat[$subject_mode][$group]['STUDENTS']=$stuCount;
+                foreach ($avg as $stuStatus => $counts) {
+                    $this->_attendanceStat[$subject_mode][$group]['AVERAGE'][$stuStatus] = 
+                                                        round($counts['counts']/$stuCount);
+                }
+            }
+        }
+        return $this->_attendanceStat;
+    }
+    /**
+     * Students enrolled in a subject.
+     * 
+     * @param year $sessionYear
+     */
+    public function studentsEnrolled($subject_mode = NULL, $group = NULL, $sessionYear = NULL) {
+        ;
     }
 }
 ?>

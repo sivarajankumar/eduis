@@ -1,0 +1,29 @@
+<div style="padding :2em 0 2em 0; text-align: center; " >
+<form id="subjectInfo" action=""><label>Subject Code: <input id="subject_code" name="subject_code" type="text"
+	class="ui-widget-content  ui-corner-all" style="text-align: center" value="<?php echo $this->subject_code?>" ></input></label>
+	<button type="submit" class="ui-corner-all" style="font-size: 0.7em;">Show</button>
+</form>
+<hr/>
+</div>
+<div>
+
+<?php 
+if (isset($this->attendanceTotal)) {
+    foreach ($this->attendanceTotal as $subject_mode_id => $groups) {
+        echo $subject_mode_id;
+    }
+}
+
+?>
+</div>
+<script>
+
+//jQueryfy buttons
+$("button").button();
+
+var getSubjectAttendance = function() {
+	
+	alert('Hi');
+};
+
+</script>

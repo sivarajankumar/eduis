@@ -24,7 +24,7 @@ class Acad_Model_DbTable_AcademicSession extends Acadz_Base_Model
             $response = $client->request();
             if ($response->isError()) {
                 $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
-                 $response->getMessage();
+                 $response->getMessage().', i.e. '.$response->getHeader('Message');
                 throw new Zend_Exception($remoteErr, Zend_Log::ERR);
             } else {
                 $jsonContent = $response->getBody();
