@@ -1,0 +1,131 @@
+
+<!--[if lte ie 7]>
+      <style type="text/css" media="screen">
+        /* Move these to your IE6/7 specific stylesheet if possible */
+        .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+      </style>
+    <![endif]-->
+
+<form action="javascript:submit();" class="uniForm">
+<fieldset>
+<h3>Enroll</h3>
+
+<div class="ctrlHolder"><label for=""><em>*</em>Roll number</label> <input
+	name="rollno" id="rollno" data-default-value="e.g. 2308015" size="35"
+	maxlength="50" type="text" class="textInput required validateInteger" />
+<p class="formHint">Enter your University Roll Number</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em>*</em>Registration Number</label>
+<input name="regn_no" id="regn_no" data-default-value="e.g. 08-ECA-74"
+	size="35" maxlength="50" type="text" class="textInput required " />
+<p class="formHint">Enter your University Registration Number</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em>*</em>Department</label> <input
+	name="rollno" id="rollno" data-default-value="e.g. CSE" size="35"
+	maxlength="50" type="text" class="textInput required validateAlpha" />
+<p class="formHint"></p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em>*</em>Degree</label> <select
+	id="deptt" name="deptt" class="selectInput required">
+	<option value="btech">B.Tech</option>
+	<option value="mtech">M.Tech</option>
+</select></div>
+
+<div class="ctrlHolder">
+<p class="label"><em>*</em>Admission Basis</p>
+<ul class="blockLabels">
+	<li><label for=""><input name="appBasis" type="radio" value="aieee"
+		title="AIEEE" class="required">AIEEE</label></li>
+	<li><label for=""><input name="appBasis" type="radio" value="twelfth"
+		title="10+2" class="required">10+2</label></li>
+	<li><label for=""><input name="appBasis" type="radio" value="leet"
+		title="LEET" class="required">LEET</label></li>
+</ul>
+<p class="formHint">Basis of Admission</p>
+</div>
+
+<br />
+<div class="buttonHolder">
+<button type="reset" class="secondaryAction">Reset the form</button>
+<button type="submit" class="primaryAction" >Proceed</button>
+</div>
+
+</fieldset>
+</form>
+<script>
+	/**@todo
+	*apply validate roll number
+	**/
+	var urlBasicInfo  = "<?php
+echo $this->url(array('controller' => 'profile', 'action' => 'personal'))?>";
+	var rollNo;
+	var basis;
+	var department;
+	var regnno;
+
+    $(function(){
+        $('form.uniForm').uniform({
+            prevent_submit : true
+        });
+
+        $('input[name=appBasis]').change(function(){
+            basis = this.value;
+        	$('.appBasis').text(' of '+this.title);
+        });
+      });
+
+    function submit(){
+   	 rollNo = $('#rollno').val();
+    	department = $('#deptt').val();
+    	regnno = $('#regn_no').val();
+    	$.ajax({
+        	url: urlBasicInfo,
+            data : {
+            roll_no: rollNo,
+    		admission_basis : basis,
+    		deptt : department,
+    		regn_no : regnno
+        	},
+            success: function(jStatus)
+            {
+        		window.location = "/profile/personal";
+    	    }
+           ,
+            error: function(response) {
+              	  $('#errorBox').text(response.responseText).parent().show();
+                    console.log(response);
+                    }
+                });
+    }
+    
+      /*function submit() {
+    	  rollNo = $('#rollno').val();
+          $.ajax({
+              url : urlCheckRollno,
+              dataType : 'json',
+              data : {roll_no: rollNo,
+                  	  admission_basis:basis},
+              success: function(jStatus){
+            	  if (confirm("Application not submitted.\nClick 'OK' to continue.")){
+            		  window.location = "/applicationform";
+            	  }
+              },
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+               console.log(response);
+                      }
+                  });
+      }*/
+    
+</script>
+<?php
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/css/smooth.uni-form.css');
+?>

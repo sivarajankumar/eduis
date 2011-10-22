@@ -1,0 +1,13 @@
+Roll number : <?php echo $this->applicant->roll_no ?><br/>
+Department Basis : <?php echo strtoupper($this->applicant->department) ?>
+Registration Number : <?php echo strtoupper($this->applicant->regn_no) ?>
+Appplication Basis : <?php echo strtoupper($this->applicant->application_basis) ?>
+
+
+
+<p>Following steps are required to submit application:</p>
+<ol>
+<?php foreach ($this->steps as $step) {
+    echo '<li><a href="'.$this->baseUrl("/applicationform/$step").'" >'.ucfirst($step).'</a></li>';
+} ?>
+</ol>
