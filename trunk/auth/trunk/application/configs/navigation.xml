@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<nav>
+		<authentication>
+			<label>Authenticate</label>
+			<uri>authenticate</uri>
+			<module>login</module>
+			<controller>authenticate</controller>
+			<action>index</action>
+			<resource>login_authenticate_index</resource>
+			<pages>
+
+				<authenticate_index>
+					<label>Login Page</label>
+					<module>login</module>
+					<controller>authenticate</controller>
+					<action>index</action>
+					<resource>login_authenticate_index</resource>
+				</authenticate_index>
+
+				<authenticate_logout>
+					<label>Logout</label>
+					<module>login</module>
+					<controller>authenticate</controller>
+					<action>logout</action>
+					<resource>login_authenticate_index</resource>
+				</authenticate_logout>
+
+				<authenticate_check>
+					<label>Check User Info</label>
+					<module>login</module>
+					<controller>authenticate</controller>
+					<action>check</action>
+					<resource>login_authenticate_index</resource>
+				</authenticate_check>
+			</pages>
+		</authentication>
+
+		<home>
+			<label>Home</label>
+			<order>-100</order>
+			<module>login</module>
+			<controller>index</controller>
+			<action>index</action>
+			<resource>login_authenticate_index</resource>
+		</home>
+
+		<test_popo>
+			<label>popo test</label>
+			<module>login</module>
+			<controller>test</controller>
+			<action>popo</action>
+			<resource>login_test_popo</resource>
+		</test_popo>
+		
+		<test_gogo>
+			<label>gogo test</label>
+			<module>login</module>
+			<controller>test</controller>
+			<action>gogo</action>
+			<resource>login_test_gogo</resource>
+		</test_gogo>
+		
+		<test_gettest>
+			<label>gettest test</label>
+			<module>login</module>
+			<controller>test</controller>
+			<action>gettest</action>
+			<resource>login_test_gettest</resource>
+		</test_gettest>
+	</nav>
+</config>

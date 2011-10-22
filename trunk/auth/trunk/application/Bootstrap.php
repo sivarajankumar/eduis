@@ -41,6 +41,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 		$this->bootstrap ( 'View' );
 		$view = $this->getResource ( 'View' );
 		$view->addHelperPath ( 'ZendX/JQuery/View/Helper/', 'ZendX_JQuery_View_Helper' );
+		$pages = new Zend_Config_Xml(APPLICATION_PATH.'/configs/navigation.xml', 'nav');
+
+		$container = new Zend_Navigation($pages);
+		$view->navigation($container);
+		
 		//Set default document type.
 		$view->doctype ( 'XHTML1_STRICT' );
 		
