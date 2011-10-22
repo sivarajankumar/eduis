@@ -2,7 +2,7 @@
 class Acad_Model_DbTable_Subject extends Acadz_Base_Model
 {
     protected $_name = 'subject';
-    const TABLE_NAME = 'batch';
+    const TABLE_NAME = 'subject';
     public static function getSubjectInfo ($subject_code, 
     $subject_type_id = null)
     {
