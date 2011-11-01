@@ -90,7 +90,6 @@ var manageMember = function(){
         $('#fset_accountInfo').hide();
         $('a#moreAccInfo').show();
         $('a#lessAccInfo').hide(); 
-        $("#cbkVerify").focus();   
     } else {
     	resetMemberSection();
         resetBookSection();
@@ -113,14 +112,22 @@ $(function(){
     $("#member_id").focus();
     
     // On Verification
-    $('#cbkVerify').click(function() {
-    	$("#lbl_acc_no").toggle();
-    	if(!$("#cbkVerify :checked").length){
+    $('#cbkVerify').change(function() {
+    	if(this.checked){
+        	$("#lbl_acc_no").show().focus().select();
+    	} else {
     		$("#acc_no").val('');
     		$("#bookArea").fadeOut("slow");
     		$("#divIssue").slideUp();
+        	$("#lbl_acc_no").hide();
     	}
-     });
+     }).keyup(function(event) {
+         if (13 == event.which) {
+             if (!this.checked) {
+    			$(this).attr('checked','checked').trigger('change');
+    		}
+  		}
+	});
     
 	$('#btnissue').click(function(){
 	    acc_no = $('#acc_no').val();
@@ -193,7 +200,8 @@ var fetchMemberInfo = function(member_id){
                     //fetchMemberPhoto(member_id);
                     $('#memberInfoBasic').html('');
                     traverse(memberInfoBasic,'#memberInfoBasic');
-                    $("#member-area").slideDown("slow");
+                    $("#member-area").slideDown('slow');
+                    $("#cbkVerify").focus();   
                     
                 }else{
                     $('#member_id').val('');

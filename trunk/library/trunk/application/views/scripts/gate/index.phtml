@@ -6,7 +6,7 @@
 	accesskey="A" id="lbl_accno" style="padding: 0.4em; float: none;"
 	class="ui-widget-content  ui-corner-all">Acc No : <input type="text"
 	id="txtacc_no" size="8" maxlength="6" /> </label> <input type="submit"
-	value="Submit"></form>
+	value="Check"></form>
 <table border="0" style="width: 100%">
 	<tr>
 		<td>
@@ -218,6 +218,6 @@ function resetAll(){
 	 $("#member_div").hide();
 	 $("#member_div :text").val('');
 	 $("#btndiv").hide();
-	 $("#txtacc_no").focus();
+	 $("#txtacc_no").focus().select();
 };
 </script>
