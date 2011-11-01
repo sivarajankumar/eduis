@@ -5,8 +5,8 @@
 	action="javascript:fetchBookInfo();"><label for="txtacc_no"
 	accesskey="A" id="lbl_accno" style="padding: 0.4em; float: none;"
 	class="ui-widget-content  ui-corner-all">Acc No : <input type="text"
-	id="txtacc_no" size="8" maxlength="6" /> </label> <input type="submit"
-	value="Submit"></form>
+	id="txtacc_no" size="8" maxlength="6" /><button type="submit"
+	value="Submit">Submit</button></label></form>
 <table border="0" style="width: 100%">
 	<tr>
 		<td>
@@ -102,12 +102,15 @@
 </table>
 <form id="btndiv" method="GET" action="javascript:returnBook();"
 	style="clear: both; text-align: center; padding-top: 1em; padding-bottom: 1em; display: none;">
-<input type="submit" id="btnreturn" value="Return Book" tabindex="1"
-	class="ui-corner-all" /> <input type="reset" id="btnreset" /></form>
+<button type="submit" id="btnreturn" value="Return document" tabindex="1"
+	class="ui-corner-all" >Return document</button> <button type="reset" id="btnreset" >Reset</button></form>
 </div>
 
 
 <script type="text/javascript">
+
+//jQueryfy buttons
+$("button").button();
 var urlIsbn  =  '<?=$this->url ( array ('module' => 'library', 'controller' => 'book', 'action' => 'getbookdetails' ) );?>';
 var urlBookImage = '<?=$this->url ( array ('module' => 'library', 'controller' => 'isbn', 'action' => 'getbookimage' ) );?>';
 var urlMember  = '<?=$this->url ( array ('module' => 'library', 'controller' => 'member', 'action' => 'getmemberinfo' ) );?>';
@@ -124,11 +127,10 @@ var day_late;
 resetAll();	 
 $(function(){
 	$("#main_div span").parent().attr("class", "ui-state-highlight ui-corner-all");
-	$("#btnreturn").attr("class","ui-corner-all");
-
 	$("#btnreset").click(function(){
 		resetAll();	 
 	});
+
 });
 
 function fetchBookInfo(){
@@ -236,6 +238,6 @@ function resetAll(){
 	 $("#member_div").hide();
 	 $("#member_div :text").val('');
 	 $("#btndiv").hide();
-	 $("#txtacc_no").focus();
+	 $("#txtacc_no").focus().select();
 };
 </script>
