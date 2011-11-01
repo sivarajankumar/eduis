@@ -1,0 +1,168 @@
+
+<!--[if lte ie 7]>
+      <style type="text/css" media="screen">
+        /* Move these to your IE6/7 specific stylesheet if possible */
+        .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+      </style>
+    <![endif]-->
+<div id="progressbar"></div>
+
+<form action="javascript:submit();" class="uniForm">
+<fieldset>
+<h3>Register Company</h3>
+<div class="ctrlHolder noLabel"><label for="company_name"><em>*</em>Name
+of company</label> <input name="company_name" id="company_name"
+	data-default-value="e.g. Ravi" value="" size="10" maxlength="50"
+	type="text" class="textInput required validateAlpha" />
+</li>
+<p class="formHint">Full Name of company</p>
+</div>
+
+<div class="ctrlHolder"><label for="feild"><em>*</em>Feild</label> <input
+	name="feild" id="feild" data-default-value="e.g IT" value="" size="35"
+	maxlength="50" type="text" class="textInput required" />
+<p class="formHint">Enter the feild <span class="cName"> deals in</span></p>
+</div>
+
+<div class="ctrlHolder"><label for="company_description">Company
+Description</label> <textarea name="company_description"
+	id="company_description" rows="25" cols="25"></textarea>
+<p class="formHint">Brief description of<span class="cName"></span></p>
+</div>
+</fieldset>
+<fieldset>
+<h3>Personnel Information</h3>
+<div class="ctrlHolder noLabel">
+<ul class="alternate">
+	<li><label for="first_name"><em>*</em> First Name</label> <input
+		name="first_name" id="first_name" data-default-value="e.g. Ravi"
+		value="" size="10" maxlength="50" type="text"
+		class="textInput required validateAlpha" /></li>
+	<li><label for="middle_name"> Middle Name</label> <input
+		name="middle_name" id="middle_name" data-default-value="e.g. Kumar"
+		value="" size="10" maxlength="50" type="text"
+		class="textInput validateAlpha" /></li>
+	<li><label for="last_name"> Last Name</label> <input name="last_name"
+		id="last_name" data-default-value="e.g. Gupta" value="" size="10"
+		maxlength="50" type="text" class="textInput validateAlpha" /></li>
+</ul>
+<p class="formHint">Full Name of candidate</p>
+</div>
+<div class="ctrlHolder"><label for="personnel_designation">Personnel's
+designation</label> <input name="personnel_designation"
+	id="personnel_designation" value="" data-default-value="e.g. HR"
+	size="35" maxlength="50" type="text" class="textInput" />
+<p class="formHint">personnel's designation</p>
+</div>
+</fieldset>
+<fieldset>
+<h3>Contact Information</h3>
+<div class="ctrlHolder"><label for="">Email address</label> <input
+	name="e_mail" id="e_mail" value=""
+	data-default-value="e.g. ravigupta@gmail.com" size="35" maxlength="50"
+	type="text" class="textInput validateEmail" />
+<p class="formHint">A valid email address</p>
+</div>
+
+<div class="ctrlHolder"><label for="e_mail_confirm">Email confirm</label>
+<input name="e_mail_confirm" id="e_mail_confirm"
+	data-default-value="i.e. same as above" value="" size="35"
+	maxlength="50" type="text" class="textInput validateSameAs e_mail" />
+<p class="formHint"></p>
+</div>
+
+<div class="ctrlHolder"><label for="mobile_no">Mobile No.</label> <input
+	name="lmobile_no" id="mobile_no" value=""
+	data-default-value="e.g. 097226544331" size="35" maxlength="12"
+	type="text" class="textInput validateInteger" />
+<p class="formHint">Mobile number</p>
+</div>
+<div class="ctrlHolder"><label for="landline_no"> Landline No.</label> <input
+	name="landline_no" id="landline_no" value=""
+	data-default-value="e.g. 017226544331" size="35" maxlength="12"
+	type="text" class="textInput validateInteger" />
+<p class="formHint">Landline number</p>
+</div>
+
+<div class="ctrlHolder"><label for="fax_no">Fax No.</label> <input
+	name="fax_no" id="fax_no" value=""
+	data-default-value="e.g. 017226544331" size="35" maxlength="12"
+	type="text" class="textInput validateInteger" />
+<p class="formHint">Fax number</p>
+</div>
+
+
+
+</fieldset>
+
+
+
+
+
+<div id="submitStatus" style="display: none; padding: 1em;"
+	class="ui-state-highlight ui-corner-all"></div>
+
+<div class="buttonHolder">
+<button type="submit" class="secondaryAction">Cancel and go back</button>
+<button type="submit" class="primaryAction">Save</button>
+</div>
+
+</form>
+<script>
+	var urlBasicInfo = "<?php
+echo $this->url(array('controller' => 'company', 'action' => 'save'))?>";
+      $(function(){
+        $('form.uniForm').uniform({
+          prevent_submit : true
+        });
+
+        serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+        $("#doa").datepicker({
+        	dateFormat: 'yy-mm-dd',
+        	changeMonth: true,
+			changeYear: true,
+			yearRange: '-25:-15',
+			onClose : function(dateText, inst) {
+				this.focus();
+				}
+        });
+
+        $('#company_name').change(function(){
+            var cName = this.value;
+        	$('.cName').text(cName);
+        });
+        
+      });
+
+      function submit() {
+          $.ajax({
+              url : urlBasicInfo,
+              data : getValues(),
+              success: function(jStatus){
+                  
+                  }
+      });
+      }
+
+        function getValues() {
+            var formData = {}; 
+            $('form.uniForm :input')
+            		.not('button,#e_mail_confirm,:input[value^="e.g."]')
+            		.each(function(){ 
+            			formData[this.name] = this.value; 
+                });
+        var gender = $('input:radio[name=gender]:checked').val();
+        formData.gender = gender; 
+  		return formData;
+  	}
+    </script>
+<?php
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/demos/css/demo.css');
+?>
