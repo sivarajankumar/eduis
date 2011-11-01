@@ -15,7 +15,7 @@ jQuery.extend(jQuery.jgrid.defaults, {
 		} else if (x.status == 404) {
 			xtype = 'Requested URL not found.';
 		} else if (x.status == 500) {
-			xtype = 'Internel Server Error.';
+			xtype = 'Error.';
 		} else if (st == 'parsererror') {
 			xtype = 'Error.\nParsing JSON Request failed.';
 		} else if (st == 'timeout') {
@@ -24,7 +24,7 @@ jQuery.extend(jQuery.jgrid.defaults, {
 			xtype = 'Unknown Error.\n' + x.responseText;
 		}
 
-		jQuery("#rsperror").html(xtype + '\n' + x.statusText);
+		jQuery("#rsperror").html(xtype + '\n' + x.responseText);
 	},
 	loadComplete : function() {
 		$('#errorBox').hide();
@@ -71,7 +71,7 @@ function addPager(gridTable, gridPager) {
 	jQuery(gridTable).jqGrid('filterToolbar', {
 		searchOnEnter : true
 	});
-	sgrid.toggleToolbar();
+	//sgrid.toggleToolbar();
 
 	/*
 	 * Following function(s) should be handled n implemented in better way...
