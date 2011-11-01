@@ -44,6 +44,7 @@ class Lib_Model_DbTable_Member extends Libz_Base_Model {
 		$membership = self::getMembership ( $memberId );
 		$memberType = strtoupper($membership['member_type_id']);
 		Zend_Registry::get('logger')->debug($membership);
+		$memberInfo = $membership;
 		switch ($memberType) {
 			case 'STUDENT' :
 				$URL_STU_INFO = $PROTOCOL . CORE_SERVER . '/student/getinfo' . "?rollno=$memberId";
@@ -52,10 +53,16 @@ class Lib_Model_DbTable_Member extends Libz_Base_Model {
 				$response = $client->request ();
 				if ($response->isError ()) {
 					$remoteErr = 'REMOTE ERROR: ('.$response->getStatus () . ') ' . $response->getMessage ();
-					throw new Zend_Exception ( $remoteErr, Zend_Log::ERR );
+					Zend_Registry::get('logger')->err($remoteErr);
+					/**
+					 * @todo Surpress Remote Error.
+					 */
+					//throw new Zend_Exception ( $remoteErr, Zend_Log::ERR );
+					$memberInfo['info'] = array();
+					return $memberInfo;
 				} else {
 					$jsonContent = $response->getBody ( $response );
-					$memberInfo = $membership;
+					
 					$memberInfo['info'] = Zend_Json_Decoder::decode ( $jsonContent );
 					return $memberInfo;
 				}
