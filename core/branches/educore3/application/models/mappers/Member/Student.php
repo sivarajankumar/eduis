@@ -39,10 +39,31 @@ class Core_Model_Mapper_Member_Student
     }
     /**
      * 
-     * @todo
+     * Enter description here ...
+     * @param array $options
+     * @param Core_Model_Member_Student $student
      */
-    public function save ()
-    {}
+    public function save ($options, Core_Model_Member_Student $student = null)
+    {
+        $stu_pers_cols = array('reg_no', 'cast_id', 'nationality_id', 
+        'religion_id', 'first_name', 'middle_name', 'last_name', 'dob', 'gender', 
+        'contact_no', 'e_mail', 'marital_status', 'councelling_no', 
+        'admission_date', 'alloted_category', 'alloted_branch', 
+        'state_of_domicile', 'urban', 'hostel', 'bus', 'image_no', 'blood_group');
+        $not_verified = array_keys($options);
+        foreach ($options as $key => $value) {
+            $correct_options[$this->correctDbKeys($key)] = $value;
+        }
+        $data = array();
+        $keys= array_keys($correct_options);
+        foreach ($correct_options as $key1 => $value1){
+            $str = "get"."$this->correctModelKeys($key1)";
+            $data[$key1] = $student->$str; 
+        }
+        //$where = $this->getDbTable()->getAdapter()->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
+
+        $sql = $this->getDbTable()->insert($data);
+    }
     /**
      * Fetches personal information of a Student
      * @param Core_Model_Member_Student $student
@@ -237,9 +258,9 @@ class Core_Model_Mapper_Member_Student
     protected function correctDbKeys ($key)
     {
         switch ($key) {
-            case 'nationalit':
+            /*case 'nationalit':
                 return 'nationality';
-                break;
+                break;*/
             default:
                 return $key;
                 break;
@@ -253,9 +274,9 @@ class Core_Model_Mapper_Member_Student
     protected function correctModelKeys ($key)
     {
         switch ($key) {
-            case 'nationality':
+            /*case 'nationality':
                 return 'nationalit';
-                break;
+                break;*/
             default:
                 return $key;
                 break;

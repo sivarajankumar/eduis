@@ -1,6 +1,9 @@
 <?php
 class Core_Model_Member_Student
 {
+    //
+    protected $_init_save = false;
+    //
     protected $_member_id;
     protected $_reg_no;
     protected $_cast_id;
@@ -38,6 +41,14 @@ class Core_Model_Member_Student
     protected $_semster_id;
     //
     protected $_mapper;
+    protected function getInit_save ()
+    {
+        return $this->_init_save;
+    }
+    protected function setInit_save ($_init_save)
+    {
+        $this->_init_save = $_init_save;
+    }
     /**
      * @return the $_cast
      */
@@ -511,7 +522,7 @@ class Core_Model_Member_Student
     }
     /**
      * gets the mapper from the object class
-     * @return Core_Model_Member_StudentMapper
+     * @return Core_Model_Mapper_Member_Student
      */
     public function getMapper ()
     {
@@ -560,9 +571,30 @@ class Core_Model_Member_Student
      * @todo
      * Enter description here ...
      */
-    public function save ()
+    public function initSave ()
     {
-        $this->getMapper()->save($this);
+        $this->unsetAll();
+        $this->setInit_save(true);
+    }
+    public function save ($options)
+    {
+        if ($this->getInit_save() == true) {
+            $properties = $this->getAllowedProperties();
+            $recieved = array_keys($options);
+            $correct_options = array_intersect($recieved, $properties);
+            $this->setOptions($correct_options);
+            $this->getMapper()->save($correct_options,$this);
+        } else {
+            throw new Exception('Save not initialised');
+        }
+    }
+    protected function unsetAll ()
+    {
+        $properties = $this->getAllowedProperties();
+        foreach ($properties as $name) {
+            $p = "_" . "$name";
+            unset($this->$p);
+        }
     }
     public function fetchMemberId ()
     {
@@ -598,18 +630,10 @@ class Core_Model_Member_Student
     public function getAllowedProperties ()
     {
         $properties = get_class_vars('Core_Model_Member_Student');
-        //all names in $names begin with _
         $names = array_keys($properties);
         $options = array();
         foreach ($names as $name => $value) {
-            $string_parts = str_split($value, 1);
-            $temp = "";
-            //first letter is _ therefore start $i from 1
-            // so that _is not included
-            for ($i = 1; $i < count($string_parts); $i ++) {
-                $temp = $temp . implode(array($string_parts[$i]));
-            }
-            $options[] = $temp;
+            $options[] = substr($value, 1);
         }
         //put names of all properties you want to deny acess to
         $not_allowed = array('mapper');
