@@ -74,29 +74,83 @@ class Core_Model_Mapper_Address
     public function fetchStudents (Core_Model_Address $address, 
     array $setter_options = null, array $property_range = null)
     {
-        $table = array('s_persnl' => $this->getDbTable()->info('name'));
+        $correct_db_options = array();
+        foreach ($setter_options as $k => $val) {
+            $correct_db_options[$this->correctDbKeys($k)] = $val;
+        }
+        $correct_db_options_keys = array_keys($correct_db_options);
+        $correct_db_options1 = array();
+        foreach ($property_range as $k1 => $val1) {
+            $correct_db_options1[$this->correctDbKeys($k1)] = $val1;
+        }
+        $correct_db_options1_keys = array_keys($correct_db_options1);
+        $merge = array_merge($correct_db_options_keys, 
+        $correct_db_options1_keys);
+        $table = array('addr' => $this->getDbTable()->info('name'));
+        //1)get column names of student_department present in arguments received
+        $address_col = array('member_id', 'adress_type', 'postal_code', 
+        'city', 'district', 'state', 'area', 'address');
+        $address_intrsctn = array();
+        $address_intrsctn = array_intersect($address_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
         $select = $adapter->select()->from($table, 'member_id');
-        foreach ($property_range as $key => $range) {
-            if (! empty($range['from'])) {
-                $select->where("$key >= ?", $range['from']);
-            }
-            if (! empty($range['to'])) {
-                $select->where("$key <= ?", $range['to']);
+        if (count($correct_db_options1)) {
+            foreach ($correct_db_options1 as $key => $range) {
+                if (! empty($range['from'])) {
+                    $select->where("$key >= ?", $range['from']);
+                }
+                if (! empty($range['to'])) {
+                    $select->where("$key <= ?", $range['to']);
+                }
             }
         }
-        foreach ($setter_options as $property_name => $value) {
-            $getter_string = 'get' . ucfirst($property_name);
-            $address->$getter_string();
-            $condition = $property_name . ' = ?';
-            $select->where($condition, $value);
+        if (count($correct_db_options)) {
+            foreach ($correct_db_options as $property_name => $value) {
+                $getter_string = 'get' .
+                 ucfirst($this->correctModelKeys($property_name));
+                $address->$getter_string();
+                $condition = $property_name . ' = ?';
+                $select->where($condition, $value);
+            }
         }
         $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        if (! empty($result)) {
-            $serach_error = 'No results match your search criteria.';
-            return $serach_error;
+        if (! count($result)) {
+            $search_error = 'No results match your search criteria.';
+            return $search_error;
         } else {
             return $result;
+        }
+    }
+    /**
+     * Provides correct db column names corresponding to model properties
+     * @todo add correct names where required
+     * @param string $key
+     */
+    protected function correctDbKeys ($key)
+    {
+        switch ($key) {
+            /*case 'nationalit':
+                return 'nationality';
+                break;*/
+            default:
+                return $key;
+                break;
+        }
+    }
+    /**
+     * Provides correct model property names corresponding to db column names
+     * @todo add correct names where required
+     * @param string $key
+     */
+    protected function correctModelKeys ($key)
+    {
+        switch ($key) {
+            /*case 'nationality':
+                return 'nationalit';
+                break;*/
+            default:
+                return $key;
+                break;
         }
     }
 }
