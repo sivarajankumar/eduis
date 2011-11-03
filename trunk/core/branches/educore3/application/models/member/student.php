@@ -1,9 +1,7 @@
 <?php
 class Core_Model_Member_Student
 {
-    //
     protected $_init_save = false;
-    //
     protected $_member_id;
     protected $_reg_no;
     protected $_cast_id;
@@ -31,87 +29,26 @@ class Core_Model_Member_Student
     protected $_boarding_station;
     protected $_image_no;
     protected $_blood_group;
-    //
     protected $_student_roll_no;
     protected $_department_id;
     protected $_programme_id;
     protected $_batch_start;
     protected $_group_id;
-    //
     protected $_semster_id;
-    //
     protected $_mapper;
+    /**
+     * @return the $_init_save
+     */
     protected function getInit_save ()
     {
         return $this->_init_save;
     }
+    /**
+     * @param field_type $_init_save
+     */
     protected function setInit_save ($_init_save)
     {
         $this->_init_save = $_init_save;
-    }
-    /**
-     * @return the $_cast
-     */
-    public function getCast ()
-    {
-        return $this->_cast;
-    }
-    /**
-     * @param field_type $_cast
-     */
-    public function setCast ($_cast)
-    {
-        $this->_cast = $_cast;
-    }
-    /**
-     * @return the $_nationality
-     */
-    public function getNationality ()
-    {
-        return $this->_nationality;
-    }
-    /**
-     * @param field_type $_nationality
-     */
-    public function setNationality ($_nationality)
-    {
-        $this->_nationality = $_nationality;
-    }
-    /**
-     * @return the $_religion
-     */
-    public function getReligion ()
-    {
-        return $this->_religion;
-    }
-    /**
-     * @param field_type $_religion
-     */
-    public function setReligion ($_religion)
-    {
-        $this->_religion = $_religion;
-    }
-    /**
-     * @return the $_boarding_station
-     */
-    public function getBoarding_station ()
-    {
-        return $this->_boarding_station;
-    }
-    /**
-     * @param field_type $_boarding_station
-     */
-    public function setBoarding_station ($_boarding_station)
-    {
-        $this->_boarding_station = $_boarding_station;
-    }
-    public function getBlood_group ()
-    {
-        return $this->_blood_group;
-    }
-    public function setBlood_group ($_blood_group)
-    {
-        $this->_blood_group = $_blood_group;
     }
     /**
      * @return the $_member_id
@@ -161,6 +98,20 @@ class Core_Model_Member_Student
         $this->_cast_id = $_cast_id;
     }
     /**
+     * @return the $_cast
+     */
+    public function getCast ()
+    {
+        return $this->_cast;
+    }
+    /**
+     * @param field_type $_cast
+     */
+    public function setCast ($_cast)
+    {
+        $this->_cast = $_cast;
+    }
+    /**
      * @return the $_nationality_id
      */
     public function getNationality_id ()
@@ -187,6 +138,34 @@ class Core_Model_Member_Student
     public function setReligion_id ($_religion_id)
     {
         $this->_religion_id = $_religion_id;
+    }
+    /**
+     * @return the $_nationality
+     */
+    public function getNationality ()
+    {
+        return $this->_nationality;
+    }
+    /**
+     * @param field_type $_nationality
+     */
+    public function setNationality ($_nationality)
+    {
+        $this->_nationality = $_nationality;
+    }
+    /**
+     * @return the $_religion
+     */
+    public function getReligion ()
+    {
+        return $this->_religion;
+    }
+    /**
+     * @param field_type $_religion
+     */
+    public function setReligion ($_religion)
+    {
+        $this->_religion = $_religion;
     }
     /**
      * @return the $_first_name
@@ -413,6 +392,20 @@ class Core_Model_Member_Student
         $this->_bus = $_bus;
     }
     /**
+     * @return the $_boarding_station
+     */
+    public function getBoarding_station ()
+    {
+        return $this->_boarding_station;
+    }
+    /**
+     * @param field_type $_boarding_station
+     */
+    public function setBoarding_station ($_boarding_station)
+    {
+        $this->_boarding_station = $_boarding_station;
+    }
+    /**
      * @return the $_image_no
      */
     public function getImage_no ()
@@ -425,6 +418,20 @@ class Core_Model_Member_Student
     public function setImage_no ($_image_no)
     {
         $this->_image_no = $_image_no;
+    }
+    /**
+     * @return the $_blood_group
+     */
+    public function getBlood_group ()
+    {
+        return $this->_blood_group;
+    }
+    /**
+     * @param field_type $_blood_group
+     */
+    public function setBlood_group ($_blood_group)
+    {
+        $this->_blood_group = $_blood_group;
     }
     /**
      * @return the $_student_roll_no
@@ -604,37 +611,6 @@ class Core_Model_Member_Student
             $this->$str(null);
         }
     }
-    public function fetchMemberId ()
-    {
-        $roll_no = $this->getStudent_roll_no();
-        if (! empty($roll_no)) {
-            $result = $this->getMapper()->fetchMember_id($this);
-            $this->setMember_id($result);
-        } else {
-            throw new Exception('You must set RollNumber first');
-        }
-    }
-    public function fetchRollNumber ()
-    {
-        $member_id = $this->getMember_id();
-        if (! empty($member_id)) {
-            $result = $this->getMapper()->fetchStudent_roll_no($this);
-            $this->setStudent_roll_no($result);
-        } else {
-            throw new Exception('You must set MemberId first');
-        }
-    }
-    /**
-     * Gets information of a student
-     * You cant use it directly in 
-     * controller To get info of student,
-     * first setMember_id and then call getter functions to retrieve properties.
-     */
-    public function initStudentInfo ()
-    {
-        $options = $this->getMapper()->fetchStudentInfo($this);
-        $this->setOptions($options);
-    }
     public function getAllowedProperties ()
     {
         $properties = get_class_vars('Core_Model_Member_Student');
@@ -738,5 +714,36 @@ class Core_Model_Member_Student
             'Range and equality cannot be set for ' . $error .
              ' at the same time');
         }
+    }
+    public function fetchMemberId ()
+    {
+        $roll_no = $this->getStudent_roll_no();
+        if (! empty($roll_no)) {
+            $result = $this->getMapper()->fetchMember_id($this);
+            $this->setMember_id($result);
+        } else {
+            throw new Exception('You must set RollNumber first');
+        }
+    }
+    public function fetchRollNumber ()
+    {
+        $member_id = $this->getMember_id();
+        if (! empty($member_id)) {
+            $result = $this->getMapper()->fetchStudent_roll_no($this);
+            $this->setStudent_roll_no($result);
+        } else {
+            throw new Exception('You must set MemberId first');
+        }
+    }
+    /**
+     * Gets information of a student
+     * You cant use it directly in 
+     * controller To get info of student,
+     * first setMember_id and then call getter functions to retrieve properties.
+     */
+    public function initStudentInfo ()
+    {
+        $options = $this->getMapper()->fetchStudentInfo($this);
+        $this->setOptions($options);
     }
 }

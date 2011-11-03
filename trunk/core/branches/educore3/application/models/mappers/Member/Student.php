@@ -18,10 +18,6 @@ class Core_Model_Mapper_Member_Student
     {
         return $this->_personal_columns;
     }
-    protected function setPersonal_columns ($_personal_columns)
-    {
-        $this->_personal_columns = $_personal_columns;
-    }
     /**
      * Specify Zend_Db_Table instance to use for data operations
      * 
@@ -77,7 +73,13 @@ class Core_Model_Mapper_Member_Student
         //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
         $adapter = $this->getDbTable()->getAdapter();
         $table = $this->getDbTable()->info('name');
-        $sql = $adapter->insert($table, $personal_data);
+        $adapter->beginTransaction();
+        try {
+            $sql = $adapter->insert($table, $personal_data);
+        } catch (Exception $exception) {
+            $adapter->rollBack();
+            echo $exception->getMessage() . "</br>";
+        }
     }
     /**
      * Fetches personal information of a Student
@@ -91,29 +93,21 @@ class Core_Model_Mapper_Member_Student
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $sql = 'SELECT
-            `student_personal`.`member_id`,`student_personal`.`reg_no`
-            ,`student_personal`.`cast_id`, `student_personal`.`nationality_id`
-            , `student_personal`.`religion_id`, `student_personal`.`first_name`, `student_personal`.`middle_name`
-            , `student_personal`.`last_name`, `student_personal`.`dob`, `student_personal`.`gender`
-            , `student_personal`.`contact_no`, `student_personal`.`e_mail`, `student_personal`.`marital_status`
-            , `student_personal`.`councelling_no`, `student_personal`.`admission_date`
-            , `student_personal`.`alloted_category`, `student_personal`.`alloted_branch`, `student_personal`.`state_of_domicile`
-            , `student_personal`.`urban`, `student_personal`.`hostel`, `student_personal`.`bus`
-            , `student_personal`.`image_no`, `student_personal`.`blood_group`, `student_department`.`department_id`
-            , `student_department`.`prgramme_id`, `student_department`.`batch_start`, `student_department`.`group_id`
-            , `student_semester`.`semster_id`
-            FROM
-            `core`.`student_department`
-            INNER JOIN `core`.`student_personal`
-            ON (`student_department`.`member_id` = `student_personal`.`member_id`)
-            INNER JOIN `core`.`student_semester`
-            ON (`student_semester`.`member_id` = `student_department`.`member_id`)
-            WHERE (`student_personal`.`member_id` = ?)';
-            $bind[] = $member_id;
+            $stu_prs_cols = $this->getPersonal_columns();
+            $stu_dep_cols = array('department_id', 'prgramme_id', 'batch_start', 
+            'group_id');
+            $stu_sem_cols = array('semster_id');
+            $select = $adapter->select()->from(
+            $this->getDbTable()
+                ->info('name'), $stu_prs_cols);
+            $cond1 = 'student_personal.member_id = student_department.member_id';
+            $cond2 = 'student_personal.member_id = student_semester.member_id';
+            $select->joinInner('student_department', $cond1, $stu_dep_cols);
+            $select->joinInner('student_semester', $cond2, $stu_sem_cols);
+            $select->where('student_personal.member_id = ?', $member_id);
             $student_info = array();
-            $student_info = $adapter->query($sql, $bind)->fetchAll(
-            Zend_Db::FETCH_UNIQUE);
+            Zend_Registry::get('logger')->debug($select->__toString());
+            $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
             return $student_info[$member_id];
         }
     }
