@@ -613,7 +613,7 @@ class Core_Model_Member_Student
     }
     public function getAllowedProperties ()
     {
-        $properties = get_class_vars('Core_Model_Member_Student');
+        $properties = get_class_vars(get_class($this));
         $names = array_keys($properties);
         $options = array();
         foreach ($names as $name => $value) {
