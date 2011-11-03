@@ -12,7 +12,7 @@ class OpacController extends Libz_Base_BaseController {
     /**
      * The default action - show the home page
      */
-    public function datewiseAction () {
+    public function indexAction () {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $this->view->assign('controller', $this->_request->getControllerName());
@@ -67,6 +67,8 @@ class OpacController extends Libz_Base_BaseController {
         $this->_helper->json($response);
         //echo $this->_helper->json($response, false);
     }
+    
+    
 }
 ?>
 

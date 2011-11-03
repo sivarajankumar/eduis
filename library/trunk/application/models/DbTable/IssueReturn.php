@@ -54,8 +54,8 @@ class Lib_Model_DbTable_IssueReturn extends Libz_Base_Model {
      */
     public function returnBook ($acc_no) {
         //, $remark = NULL, $fineType = NULL, $fine = NULL
-        //$staff_detail = $_SESSION['staff_detail'];
-        $accepted_by = 'test_temp'; //$staff_detail[0]['first_name'] . ' '. $staff_detail[0]['last_name'] ;
+        $authContent = Zend_Auth::getInstance()->getIdentity();
+        $accepted_by = $authContent['identity']; //$staff_detail[0]['first_name'] . ' '. $staff_detail[0]['last_name'] ;
         $where[] = $this->getAdapter()->quoteInto('acc_no = ?', $acc_no);
         $where[] = 'return_date IS NULL';
         $objToday = new Zend_Date();
@@ -76,15 +76,20 @@ class Lib_Model_DbTable_IssueReturn extends Libz_Base_Model {
         //TODO issue_date must be a timestamp rather then DATE.
         $objToday = new Zend_Date();
         $book = new Lib_Model_DbTable_Book();
-        $data = array('acc_no' => $acc_no, 'member_id' => $member_id, 
-        'issue_date' => $objToday->toString('YYYY-MM-dd HH:mm:ss'));
+        $authContent = Zend_Auth::getInstance()->getIdentity();
+        $issued_by = $authContent['identity']; //$staff_detail[0]['first_name'] . ' '. $staff_detail[0]['last_name'] ;
+        
+        $data = array('acc_no' => $acc_no, 
+        			'member_id' => $member_id, 
+        			'issue_date' => $objToday->toString('YYYY-MM-dd HH:mm:ss'),
+                    'issued_by' => $issued_by);
         if (isset($remark)) {
             $data['remarks'] = $remark;
         }
         try {
             return $this->insert($data);
         } catch (Exception $e) {
-            echo 'The book can not be issued because ' . $e->getMessage();
+            throw new Exception('The book can not be issued because ' . $e->getMessage(), Zend_Log::ERR) ;
         }
     }
 
