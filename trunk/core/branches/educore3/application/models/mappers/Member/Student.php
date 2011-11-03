@@ -76,6 +76,7 @@ class Core_Model_Mapper_Member_Student
         $adapter->beginTransaction();
         try {
             $sql = $adapter->insert($table, $personal_data);
+            $adapter->commit();
         } catch (Exception $exception) {
             $adapter->rollBack();
             echo $exception->getMessage() . "</br>";
