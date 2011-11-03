@@ -581,9 +581,12 @@ class Core_Model_Member_Student
         if ($this->getInit_save() == true) {
             $properties = $this->getAllowedProperties();
             $recieved = array_keys($options);
-            $correct_options = array_intersect($recieved, $properties);
-            $this->setOptions($correct_options);
-            $this->getMapper()->save($correct_options,$this);
+            $valid_props = array_intersect($recieved, $properties);
+            foreach ($valid_props as $value) {
+                $setter_options[$value] = $options[$value];
+            }
+            $this->setOptions($setter_options);
+            $this->getMapper()->save($setter_options, $this);
         } else {
             throw new Exception('Save not initialised');
         }
