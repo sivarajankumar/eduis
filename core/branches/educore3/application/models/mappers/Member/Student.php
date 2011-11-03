@@ -106,7 +106,6 @@ class Core_Model_Mapper_Member_Student
             $select->joinInner('student_semester', $cond2, $stu_sem_cols);
             $select->where('student_personal.member_id = ?', $member_id);
             $student_info = array();
-            Zend_Registry::get('logger')->debug($select->__toString());
             $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
             return $student_info[$member_id];
         }

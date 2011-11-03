@@ -103,7 +103,7 @@ class StudentController extends Corez_Base_BaseController
         $this->setRoll_no('2308009');
         $model->setMember_id($this->getMember_id());
         $model->setStudent_roll_no($this->getRoll_no());
-        $model->getStudentInfo();
+        $model->initStudentInfo();
         $info = array('roll_no' => $model->getStudent_roll_no(), 
         'regn_no' => $model->getReg_no(), 
         'first_name' => $model->getFirst_name(), 
