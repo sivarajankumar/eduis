@@ -71,7 +71,7 @@ class Lib_Model_DbTable_Member extends Libz_Base_Model {
 				$URL_STAFF_INFO = $PROTOCOL . CORE_SERVER . '/staff/getinfo' . "?id=$memberId";
 				return $URL_STAFF_INFO;
 			case 'BOOKBANK' :
-			    $memberInfo['info'] = array();
+			    $memberInfo['info'] = array('first_name'=>strtoupper($memberId));
 				return $memberInfo;
 			default :
 				throw new Zend_Exception ( 'Unknown member type : "'.$memberType.'"', Zend_Log::WARN );

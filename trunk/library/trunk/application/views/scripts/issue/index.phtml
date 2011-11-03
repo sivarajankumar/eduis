@@ -176,26 +176,28 @@ var fetchMemberInfo = function(member_id){
             dataType : "json",
             data : {'member_id' : member_id },
             success : function(member){
+        		var memberInfoBasic = {};
+                
                 if(member.member_type_id){
                     switch(member.member_type_id.toUpperCase()){
                     	case 'STUDENT' : 
-                    		var memberInfoBasic = {};
                             memberInfoBasic.name = member.info.first_name;
                             memberInfoBasic.deptt = member.info.department_id;
                             memberInfoBasic.degree = member.info.degree_id;
                             memberInfoBasic.semester = member.info.semester_id;
-                            memberInfoBasic.type = member.member_type_id;
                     	break;
-                    	case 'FACULTY' : alert('Hi!! Im Faculty. But my case is not considered yet.');
+                    	case 'FACULTY' : 
+                            memberInfoBasic.name = member.info.first_name;
+                            memberInfoBasic.deptt = member.info.department_id;
                     	break;
                     	case 'BOOKBANK' :
-                    		var memberInfoBasic = {};
-                            memberInfoBasic.type = member.member_type_id;
+                            memberInfoBasic.name = member.info.first_name;
                             memberInfoBasic.membership = member.membership_type_id;
                     	break;
                     	default: var alertText = 'Oops, "'+member.member_type_id.toUpperCase()+'" is unknown member type!!';
                     			alert(alertText);
                     }
+                    memberInfoBasic.type = member.member_type_id;
                     objMemberInfo = member;
                     if(!(objMemberType[objMemberInfo.membership_type_id])){
                         fetchMemberLimit(member_id);
@@ -205,8 +207,13 @@ var fetchMemberInfo = function(member_id){
                     //fetchMemberPhoto(member_id);
                     $('#memberInfoBasic').html('');
                     traverse(memberInfoBasic,'#memberInfoBasic');
-                    $("#member-area").slideDown('slow');
-                    $("#cbkVerify").focus();   
+                    $("#member-area").slideDown();
+                    switch(member.member_type_id.toUpperCase()){
+                    	case 'BOOKBANK' :
+                    		$("#cbkVerify").attr('checked','checked').trigger('change');
+                    	break;
+                    	default: $("#cbkVerify").focus();
+                    }
                     
                 }else{
                     $('#member_id').val('');
@@ -383,7 +390,11 @@ var issueBook = function(acc_no, member_id){
                 success : function(issuedStatus){
                     if(1 == issuedStatus.totBooksIssued){
                     	objMemberInfo.issued[objBookMoreInfo.document_type_id].counts = (1 + parseInt(issued));
-                    	alert('Accession no. "'+acc_no+'" issued to '+objMemberInfo.info.first_name+'.');
+                        if( "undefined" === typeof objMemberInfo.info.first_name){
+                        	alert('Accession no. "'+acc_no+'" issued to '+member_id.toUpperCase()+'.');
+                        } else {
+                        	alert('Accession no. "'+acc_no+'" issued to '+objMemberInfo.info.first_name+'.');
+						}
                     	processAccountInfo();
                     } else {
                         alert('Unexpected Zone: Total books issued is not equal to 1');
@@ -396,7 +407,11 @@ var issueBook = function(acc_no, member_id){
                 }
             });
         } else {
-            alert(objMemberInfo.info.first_name+' has already borrowed '+issued+' out of '+maximum+'  documents of "'+objBookMoreInfo.document_type_id+'" type.' );
+            if( "undefined" === typeof objMemberInfo.info.first_name){
+                alert(member_id.toUpperCase()+' has already borrowed '+issued+' out of '+maximum+'  documents of "'+objBookMoreInfo.document_type_id+'" type.' );
+            } else {
+                alert(objMemberInfo.info.first_name+' has already borrowed '+issued+' out of '+maximum+'  documents of "'+objBookMoreInfo.document_type_id+'" type.' );
+			}
             resetBookInfoArea();
         }
 };
