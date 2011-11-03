@@ -45,23 +45,17 @@ class Core_Model_Mapper_Member_Student
      */
     public function save ($options, Core_Model_Member_Student $student = null)
     {
-        $stu_pers_cols = array('reg_no', 'cast_id', 'nationality_id', 
+        /*$stu_pers_cols = array('reg_no', 'cast_id', 'nationality_id', 
         'religion_id', 'first_name', 'middle_name', 'last_name', 'dob', 'gender', 
         'contact_no', 'e_mail', 'marital_status', 'councelling_no', 
         'admission_date', 'alloted_category', 'alloted_branch', 
-        'state_of_domicile', 'urban', 'hostel', 'bus', 'image_no', 'blood_group');
-        $not_verified = array_keys($options);
-        foreach ($options as $key => $value) {
-            $correct_options[$this->correctDbKeys($key)] = $value;
-        }
+        'state_of_domicile', 'urban', 'hostel', 'bus', 'image_no', 'blood_group');*/
         $data = array();
-        $keys= array_keys($correct_options);
-        foreach ($correct_options as $key1 => $value1){
-            $str = "get"."$this->correctModelKeys($key1)";
-            $data[$key1] = $student->$str; 
+        foreach ($options as $key => $value) {
+            $str = get . ucfirst($key);
+            $data[$this->correctDbKeys($key)] = $this->$str();
         }
         //$where = $this->getDbTable()->getAdapter()->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
-
         $sql = $this->getDbTable()->insert($data);
     }
     /**
