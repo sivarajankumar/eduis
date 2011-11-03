@@ -5,11 +5,11 @@
  */
 class Core_Model_Mapper_Member_Student
 {
-    protected $_personal_columns = array('reg_no', 'cast_id', 'nationality_id', 
-    'religion_id', 'first_name', 'middle_name', 'last_name', 'dob', 'gender', 
-    'contact_no', 'e_mail', 'marital_status', 'councelling_no', 'admission_date', 
-    'alloted_category', 'alloted_branch', 'state_of_domicile', 'urban', 'hostel', 
-    'bus', 'image_no', 'blood_group');
+    protected $_personal_columns = array('member_id', 'reg_no', 'cast_id', 
+    'nationality_id', 'religion_id', 'first_name', 'middle_name', 'last_name', 
+    'dob', 'gender', 'contact_no', 'e_mail', 'marital_status', 'councelling_no', 
+    'admission_date', 'alloted_category', 'alloted_branch', 'state_of_domicile', 
+    'urban', 'hostel', 'bus', 'image_no', 'blood_group');
     /**
      * @var Zend_Db_Table_Abstract
      */
@@ -69,9 +69,10 @@ class Core_Model_Mapper_Member_Student
         $all_personal_cols);
         $personal_data = array();
         foreach ($recieved_personal_keys as $key_name) {
-            $str = get . ucfirst($this->correctModelKeys($key_name));
-            $personal_data[$key_name] = $this->$str();
+            $str = "get" . ucfirst($this->correctModelKeys($key_name));
+            $personal_data[$key_name] = $student->$str();
         }
+        //Zend_Registry::get('logger')->debug($personal_data);
         //$adapter = $this->getDbTable()->getAdapter();
         //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
         $adapter = $this->getDbTable()->getAdapter();
@@ -113,7 +114,6 @@ class Core_Model_Mapper_Member_Student
             $student_info = array();
             $student_info = $adapter->query($sql, $bind)->fetchAll(
             Zend_Db::FETCH_UNIQUE);
-            Zend_Registry::get('logger')->debug($student_info);
             return $student_info[$member_id];
         }
     }

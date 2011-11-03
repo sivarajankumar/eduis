@@ -1,6 +1,9 @@
 <?php
 class Core_Model_Address
 {
+    //
+    protected $_init_save = false;
+    //
     protected $_member_id;
     protected $_adress_type;
     protected $_postal_code;
@@ -10,6 +13,14 @@ class Core_Model_Address
     protected $_area;
     protected $_address;
     protected $_mapper;
+    protected function getInit_save ()
+    {
+        return $this->_init_save;
+    }
+    protected function setInit_save ($_init_save)
+    {
+        $this->_init_save = $_init_save;
+    }
     public function getMember_id ()
     {
         return $this->_member_id;
@@ -184,6 +195,43 @@ class Core_Model_Address
     {
         $options = $this->getMapper()->fetchAddressInfo($this);
         $this->setOptions($options);
+    }
+    /**
+     * Initialises the save process
+     * by unsetting all object properties
+     */
+    public function initSave ()
+    {
+        $this->unsetAll();
+        $this->setInit_save(true);
+    }
+    /**
+     * Saves the address object to database
+     * 
+     * @param array $options
+     */
+    public function save ($options)
+    {
+        if ($this->getInit_save() == true) {
+            $properties = $this->getAllowedProperties();
+            $recieved = array_keys($options);
+            $valid_props = array_intersect($recieved, $properties);
+            foreach ($valid_props as $value) {
+                $setter_options[$value] = $options[$value];
+            }
+            $this->setOptions($setter_options);
+            $this->getMapper()->save($setter_options, $this);
+        } else {
+            throw new Exception('Save not initialised');
+        }
+    }
+    protected function unsetAll ()
+    {
+        $properties = $this->getAllowedProperties();
+        foreach ($properties as $name) {
+            $p = "_" . "$name";
+            unset($this->$p);
+        }
     }
     /**
      * Enter description here ...
