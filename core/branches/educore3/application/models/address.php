@@ -5,7 +5,7 @@ class Core_Model_Address
     protected $_init_save = false;
     //
     protected $_member_id;
-    protected $_adress_type;
+    protected $_address_type;
     protected $_postal_code;
     protected $_city;
     protected $_district;
@@ -13,6 +13,118 @@ class Core_Model_Address
     protected $_area;
     protected $_address;
     protected $_mapper;
+    /**
+     * @return the $_member_id
+     */
+    public function getMember_id ()
+    {
+        return $this->_member_id;
+    }
+    /**
+     * @param field_type $_member_id
+     */
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
+    }
+    /**
+     * @return the $_address_type
+     */
+    public function getAddress_type ()
+    {
+        return $this->_address_type;
+    }
+    /**
+     * @param field_type $_address_type
+     */
+    public function setAddress_type ($_address_type)
+    {
+        $this->_address_type = $_address_type;
+    }
+    /**
+     * @return the $_postal_code
+     */
+    public function getPostal_code ()
+    {
+        return $this->_postal_code;
+    }
+    /**
+     * @param field_type $_postal_code
+     */
+    public function setPostal_code ($_postal_code)
+    {
+        $this->_postal_code = $_postal_code;
+    }
+    /**
+     * @return the $_city
+     */
+    public function getCity ()
+    {
+        return $this->_city;
+    }
+    /**
+     * @param field_type $_city
+     */
+    public function setCity ($_city)
+    {
+        $this->_city = $_city;
+    }
+    /**
+     * @return the $_district
+     */
+    public function getDistrict ()
+    {
+        return $this->_district;
+    }
+    /**
+     * @param field_type $_district
+     */
+    public function setDistrict ($_district)
+    {
+        $this->_district = $_district;
+    }
+    /**
+     * @return the $_state
+     */
+    public function getState ()
+    {
+        return $this->_state;
+    }
+    /**
+     * @param field_type $_state
+     */
+    public function setState ($_state)
+    {
+        $this->_state = $_state;
+    }
+    /**
+     * @return the $_area
+     */
+    public function getArea ()
+    {
+        return $this->_area;
+    }
+    /**
+     * @param field_type $_area
+     */
+    public function setArea ($_area)
+    {
+        $this->_area = $_area;
+    }
+    /**
+     * @return the $_address
+     */
+    public function getAddress ()
+    {
+        return $this->_address;
+    }
+    /**
+     * @param field_type $_address
+     */
+    public function setAddress ($_address)
+    {
+        $this->_address = $_address;
+    }
     protected function getInit_save ()
     {
         return $this->_init_save;
@@ -20,70 +132,6 @@ class Core_Model_Address
     protected function setInit_save ($_init_save)
     {
         $this->_init_save = $_init_save;
-    }
-    public function getMember_id ()
-    {
-        return $this->_member_id;
-    }
-    public function setMember_id ($_member_id)
-    {
-        $this->_member_id = $_member_id;
-    }
-    public function getAdress_type ()
-    {
-        return $this->_adress_type;
-    }
-    public function setAdress_type ($_adress_type)
-    {
-        $this->_adress_type = $_adress_type;
-    }
-    public function getPostal_code ()
-    {
-        return $this->_postal_code;
-    }
-    public function setPostal_code ($_postal_code)
-    {
-        $this->_postal_code = $_postal_code;
-    }
-    public function getCity ()
-    {
-        return $this->_city;
-    }
-    public function setCity ($_city)
-    {
-        $this->_city = $_city;
-    }
-    public function getDistrict ()
-    {
-        return $this->_district;
-    }
-    public function setDistrict ($_district)
-    {
-        $this->_district = $_district;
-    }
-    public function getState ()
-    {
-        return $this->_state;
-    }
-    public function setState ($_state)
-    {
-        $this->_state = $_state;
-    }
-    public function getArea ()
-    {
-        return $this->_area;
-    }
-    public function setArea ($_area)
-    {
-        $this->_area = $_area;
-    }
-    public function getAddress ()
-    {
-        return $this->_address;
-    }
-    public function setAddress ($_address)
-    {
-        $this->_address = $_address;
     }
     /**
      * Set Mapper
@@ -229,8 +277,8 @@ class Core_Model_Address
     {
         $properties = $this->getAllowedProperties();
         foreach ($properties as $name) {
-            $p = "_" . "$name";
-            unset($this->$p);
+            $str = "set" . ucfirst($name);
+            $this->$str(null);
         }
     }
     /**
