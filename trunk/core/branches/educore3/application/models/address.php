@@ -9,8 +9,6 @@ class Core_Model_Address
     protected $_state;
     protected $_area;
     protected $_address;
-    protected $_class_properties = array('member_id', 'adress_type', 
-    'postal_code', 'city', 'district', 'state', 'area', 'address');
     protected $_mapper;
     public function getMember_id ()
     {
@@ -76,14 +74,6 @@ class Core_Model_Address
     {
         $this->_address = $_address;
     }
-    public function getClass_properties ()
-    {
-        return $this->_class_properties;
-    }
-    public function setClass_properties ($_class_properties)
-    {
-        $this->_class_properties = $_class_properties;
-    }
     /**
      * Set Mapper
      * @param Core_Model_Mapper_Address $mapper
@@ -142,13 +132,49 @@ class Core_Model_Address
         }
         return $this;
     }
-    /**
-     * @todo
-     * Enter description here ...
-     */
-    public function save ()
+    public function getAllowedProperties ()
     {
-        $this->getMapper()->save($this);
+        $properties = get_class_vars('Core_Model_Address');
+        $names = array_keys($properties);
+        $options = array();
+        foreach ($names as $name => $value) {
+            $options[] = substr($value, 1);
+        }
+        //put names of all properties you want to deny acess to
+        $not_allowed = array('mapper');
+        //return on acessible properties
+        return array_diff($options, $not_allowed);
+    }
+    /**
+     * Filters out valid options
+     * maintaining key value relationship
+     * @param array $options An associative array of objectProperty mapped to its value.
+     * 
+     */
+    protected function validOptions ($options)
+    {
+        $class_properties = $this->getAllowedProperties();
+        $options_keys = array_keys($options);
+        $valid_options = array_intersect($options_keys, $class_properties);
+        foreach ($valid_options as $valid_option) {
+            $validated_options[$valid_option] = $options[$valid_option];
+        }
+        return $validated_options;
+    }
+    /**
+     * Filters out invalid options
+     * @param array $options An associative array of objectProperty mapped to its value.
+     * 
+     */
+    protected function invalidOptions ($options)
+    {
+        $class_properties = $this->getAllowedProperties();
+        $options_keys = array_keys($options);
+        $invalidOptions = array_diff($options_keys, $class_properties);
+        foreach ($invalidOptions as $invalidOption) {
+            $validation_failed[$invalidOption] = $options[$invalidOption];
+        }
+        return $validation_failed;
     }
     /**
      * Initialises address details of a member
@@ -160,7 +186,6 @@ class Core_Model_Address
         $this->setOptions($options);
     }
     /**
-     * 
      * Enter description here ...
      * @param array $options containing properties mapped to values
      * @param array $property_range containing properties mapped to array containing upper and lower range
@@ -170,67 +195,53 @@ class Core_Model_Address
      */
     public function search (array $options = null, array $property_range = null)
     {
-        $class_properties = array();
-        $options_keys = array();
-        $valid_options = array();
-        $invalid_options = array();
+        //declaration necessary because their scope is required to be throughout the function
         $setter_options = array();
+        $valid_options = array();
+        $invalid_names = array();
         $property_range_keys = array();
         $valid_range_keys = array();
-        $invalid_range_keys = array();
+        $invalid_names_1 = array();
         $range = array();
-        $error = '';
-        $class_properties = $this->getClass_properties();
+        $error1 = '';
+        $error2 = '';
         if (! empty($options)) {
-            $options_keys = array_keys($options);
-            $valid_options = array_intersect($options_keys, $class_properties);
-            foreach ($valid_options as $valid_option) {
-                //$setter_options array is now ready for search
-                //but will it participate,is not confirmed
-                $setter_options[$valid_option] = $options[$valid_option];
-            }
-            $invalid_options = array_diff($options_keys, $class_properties);
-            if (! empty($invalid_options)) {
-                foreach ($invalid_options as $invalid_option) {
-                    $error = $error . '  ' . $invalid_option;
-                }
+            //$setter_options array is now ready for search
+            //but will it participate,is not confirmed
+            $setter_options = $this->validOptions(
+            $options);
+            $invalid_names = array_keys($this->invalidOptions($options));
+            if (! empty($invalid_names)) {
+                $error1 = "<b>" . implode(', ', $invalid_names) . "</b>";
             }
         }
         if (! empty($property_range)) {
-            $property_range_keys = array_keys($property_range);
-            $valid_range_keys = array_intersect($property_range_keys, 
-            $class_properties);
-            foreach ($valid_range_keys as $valid_range_key) {
-                //$range array is now ready for search
-                //but will it participate,is not confirmed
-                $range[$valid_range_key] = $property_range[$valid_range_key];
-            }
-            $invalid_range_keys = array_diff($property_range_keys, 
-            $class_properties);
-            if (! empty($invalid_range_keys)) {
-                $error = implode(', ', $invalid_range_keys);
+            $range = $this->validOptions($property_range);
+            $invalid_names_1 = array_keys(
+            $this->invalidOptions($property_range));
+            if (! empty($invalid_names_1)) {
+                $error2 = "<b>" . implode(', ', $invalid_names_1) . "</b>";
             }
         }
-        $user_friendly_message = ' are invalid parameters and therefore, they were not included in search.' .
-         "</br>" .
-         'Please try again with correct parameters to get more accurate results';
+        $error_append = ' are invalid parameters and therefore, they were not included in search.';
+        $suggestion = 'Please try again with correct parameters to get more accurate results';
+        $message = "$error_append " . "</br>" . "$suggestion";
         $deciding_intersection = array_intersect($valid_options, 
         $valid_range_keys);
-        Zend_Registry::get('logger')->debug(
-        var_export($error . $user_friendly_message));
-        echo "</br>";
+        if (isset($invalid_names) or isset($invalid_names_1)) {
+            Zend_Registry::get('logger')->debug(
+            var_export($error1 . ' ' . $error2 . $message));
+            echo "</br>";
+        }
         if (empty($deciding_intersection)) {
             //now we can set off for search operation
             $this->setOptions($setter_options);
-            $result = $this->getMapper()->fetchStudents($this, $setter_options, 
+            return $this->getMapper()->fetchStudents($this, $setter_options, 
             $range);
-            return $result;
         } else {
-            foreach ($deciding_intersection as $duplicate_entry) {
-                $error_1 = $error_1 . '  ' . $duplicate_entry;
-            }
+            $error = implode(', ', $deciding_intersection);
             throw new Exception(
-            'Range and equality cannot be set for ' . $error_1 .
+            'Range and equality cannot be set for ' . $error .
              ' at the same time');
         }
     }

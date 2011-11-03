@@ -625,7 +625,7 @@ class Core_Model_Member_Student
      * controller To get info of student,
      * first setMember_id and then call getter functions to retrieve properties.
      */
-    public function getStudentInfo ()
+    public function initStudentInfo ()
     {
         $options = $this->getMapper()->fetchStudentInfo($this);
         $this->setOptions($options);
@@ -639,7 +639,7 @@ class Core_Model_Member_Student
             $options[] = substr($value, 1);
         }
         //put names of all properties you want to deny acess to
-        $not_allowed = array('mapper');
+        $not_allowed = array('mapper', 'init_save');
         //return on acessible properties
         return array_diff($options, $not_allowed);
     }
