@@ -35,10 +35,32 @@ class Core_Model_Mapper_Address
     }
     /**
      * 
-     * @todo
+     * Enter description here ...
+     * @param array $options
+     * @param Core_Model_Address $address
      */
-    public function save ()
-    {}
+    public function save ($options, Core_Model_Address $address = null)
+    {
+        $all_personal_cols = $this->getPersonal_columns();
+        //$db_options is $options with keys renamed a/q to db_columns
+        $db_options = array();
+        foreach ($options as $key => $value) {
+            $db_options[$this->correctDbKeys($key)] = $value;
+        }
+        $db_options_keys = array_keys($db_options);
+        $recieved_personal_keys = array_intersect($db_options_keys, 
+        $all_personal_cols);
+        $personal_data = array();
+        foreach ($recieved_personal_keys as $key_name) {
+            $str = "get" . ucfirst($this->correctModelKeys($key_name));
+            $personal_data[$key_name] = $address->$str();
+        }
+        //$adapter = $this->getDbTable()->getAdapter();
+        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
+        $adapter = $this->getDbTable()->getAdapter();
+        $table = $this->getDbTable()->info('name');
+        $sql = $adapter->insert($table, $personal_data);
+    }
     /**
      * fetches Address Information of a Member
      * @param Core_Model_Address $address

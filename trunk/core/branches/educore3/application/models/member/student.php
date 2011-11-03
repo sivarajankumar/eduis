@@ -568,14 +568,19 @@ class Core_Model_Member_Student
         return $this;
     }
     /**
-     * @todo
-     * Enter description here ...
+     * Initialises the save process
+     * by unsetting all object properties
      */
     public function initSave ()
     {
         $this->unsetAll();
         $this->setInit_save(true);
     }
+    /**
+     * Saves the student object to database
+     * 
+     * @param array $options
+     */
     public function save ($options)
     {
         if ($this->getInit_save() == true) {
@@ -595,8 +600,8 @@ class Core_Model_Member_Student
     {
         $properties = $this->getAllowedProperties();
         foreach ($properties as $name) {
-            $p = "_" . "$name";
-            unset($this->$p);
+            $str = "set" . ucfirst($name);
+            $this->$str(null);
         }
     }
     public function fetchMemberId ()
