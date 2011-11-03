@@ -1,15 +1,24 @@
 <?php
 class Core_Model_Mapper_Address
 {
+    protected $_address_columns = array('member_id', 'address_type', 
+    'postal_code', 'city', 'district', 'state', 'area', 'address');
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
     /**
+     * @return the $_address_columns
+     */
+    protected function getAddress_columns ()
+    {
+        return $this->_address_columns;
+    }
+    /**
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Core_Model_Mapper_Address
+     * @return Core_Model_Mapper_Member_Student
      */
     public function setDbTable ($dbTable)
     {
@@ -41,7 +50,7 @@ class Core_Model_Mapper_Address
      */
     public function save ($options, Core_Model_Address $address = null)
     {
-        $all_personal_cols = $this->getPersonal_columns();
+        $all_personal_cols = $this->getAddress_columns();
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
         foreach ($options as $key => $value) {
@@ -50,16 +59,23 @@ class Core_Model_Mapper_Address
         $db_options_keys = array_keys($db_options);
         $recieved_personal_keys = array_intersect($db_options_keys, 
         $all_personal_cols);
-        $personal_data = array();
+        $address_data = array();
         foreach ($recieved_personal_keys as $key_name) {
             $str = "get" . ucfirst($this->correctModelKeys($key_name));
-            $personal_data[$key_name] = $address->$str();
+            $address_data[$key_name] = $address->$str();
         }
         //$adapter = $this->getDbTable()->getAdapter();
         //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
         $adapter = $this->getDbTable()->getAdapter();
         $table = $this->getDbTable()->info('name');
-        $sql = $adapter->insert($table, $personal_data);
+        $adapter->beginTransaction();
+        try {
+            $sql = $adapter->insert($table, $address_data);
+            echo "DATA INSERTED SUCCESSFULLY";
+        } catch (Exception $exception) {
+            $adapter->rollBack();
+            echo $exception->getMessage() . "</br>";
+        }
     }
     /**
      * fetches Address Information of a Member
