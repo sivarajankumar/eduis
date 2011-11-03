@@ -188,6 +188,11 @@ var fetchMemberInfo = function(member_id){
                     	break;
                     	case 'FACULTY' : alert('Hi!! Im Faculty. But my case is not considered yet.');
                     	break;
+                    	case 'BOOKBANK' :
+                    		var memberInfoBasic = {};
+                            memberInfoBasic.type = member.member_type_id;
+                            memberInfoBasic.membership = member.membership_type_id;
+                    	break;
                     	default: var alertText = 'Oops, "'+member.member_type_id.toUpperCase()+'" is unknown member type!!';
                     			alert(alertText);
                     }
@@ -279,7 +284,7 @@ var processAccountInfo = function(){
 		if(objMemberInfo.issued[documentType]){
 		    var issued = objMemberInfo.issued[documentType].counts;
 	        var remaining = parseInt(maximum) - parseInt(issued);
-	   			$("#accountInfo").append('<div><div class="infoHeader" >'+documentType+' : </div><div class="infoContent ui-state-highlight ui-corner-all">'+remaining+'/'+maximum+'</div></div>');
+	   			$("#accountInfo").append('<div><div class="infoHeader" >'+documentType+' : </div><div class="infoContent ui-state-highlight ui-corner-all">Limit:'+maximum+', Issued:'+(maximum-remaining)+'</div></div>');
 		} else {
 			$("#accountInfo").append('<div><div class="infoHeader" >'+documentType+' : </div><div class="infoContent ui-state-highlight ui-corner-all">'+maximum+'/'+maximum+'</div></div>');
 		}
