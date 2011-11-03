@@ -73,6 +73,7 @@ class Core_Model_Mapper_Relative
         $adapter->beginTransaction();
         try {
             $sql = $adapter->insert($table, $relative_data);
+            $adapter->commit();
         } catch (Exception $exception) {
             $adapter->rollBack();
             echo $exception->getMessage() . "</br>";

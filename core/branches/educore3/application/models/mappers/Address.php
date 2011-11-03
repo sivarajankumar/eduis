@@ -71,10 +71,10 @@ class Core_Model_Mapper_Address
         $adapter->beginTransaction();
         try {
             $sql = $adapter->insert($table, $address_data);
+            $adapter->commit();
         } catch (Exception $exception) {
-            $adapter->rollBack();
-            $exc = $exception->getMessage() . "</br>";
-            Zend_Registry::get('logger')->debug(var_export($exc));
+           $adapter->rollBack();
+            echo $exception->getMessage() . "</br>";
         }
     }
     /**
