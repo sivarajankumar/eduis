@@ -18,7 +18,7 @@ class Core_Model_Mapper_Address
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Core_Model_Mapper_Member_Student
+     * @return Core_Model_Mapper_Address
      */
     public function setDbTable ($dbTable)
     {
@@ -50,17 +50,17 @@ class Core_Model_Mapper_Address
      */
     public function save ($options, Core_Model_Address $address = null)
     {
-        $all_personal_cols = $this->getAddress_columns();
+        $address_cols = $this->getAddress_columns();
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
         foreach ($options as $key => $value) {
             $db_options[$this->correctDbKeys($key)] = $value;
         }
         $db_options_keys = array_keys($db_options);
-        $recieved_personal_keys = array_intersect($db_options_keys, 
-        $all_personal_cols);
+        $recieved_address_keys = array_intersect($db_options_keys, 
+        $address_cols);
         $address_data = array();
-        foreach ($recieved_personal_keys as $key_name) {
+        foreach ($recieved_address_keys as $key_name) {
             $str = "get" . ucfirst($this->correctModelKeys($key_name));
             $address_data[$key_name] = $address->$str();
         }
@@ -71,10 +71,10 @@ class Core_Model_Mapper_Address
         $adapter->beginTransaction();
         try {
             $sql = $adapter->insert($table, $address_data);
-            echo "DATA INSERTED SUCCESSFULLY";
         } catch (Exception $exception) {
             $adapter->rollBack();
-            echo $exception->getMessage() . "</br>";
+            $exc = $exception->getMessage() . "</br>";
+            Zend_Registry::get('logger')->debug(var_export($exc));
         }
     }
     /**
@@ -90,8 +90,7 @@ class Core_Model_Mapper_Address
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = array('member_id', 'postal_code', 'city', 
-            'district', 'state', 'area', 'address');
+            $required_fields = $this->getAddress_columns();
             $select = $adapter->select()
                 ->from($this->getDbTable()
                 ->info('name'), $required_fields)
@@ -125,9 +124,8 @@ class Core_Model_Mapper_Address
         $merge = array_merge($correct_db_options_keys, 
         $correct_db_options1_keys);
         $table = array('addr' => $this->getDbTable()->info('name'));
-        //1)get column names of student_department present in arguments received
-        $address_col = array('member_id', 'adress_type', 'postal_code', 
-        'city', 'district', 'state', 'area', 'address');
+        //1)get column names of address present in arguments received
+        $address_col = $this->getAddress_columns();
         $address_intrsctn = array();
         $address_intrsctn = array_intersect($address_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
