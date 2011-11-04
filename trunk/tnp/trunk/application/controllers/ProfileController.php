@@ -11,23 +11,18 @@ class ProfileController extends Zend_Controller_Action
     /**
      * The default action - show the home page
      */
-	
-	protected $_applicant;
-	protected $_applicant_personal;
-	protected $_applicant_academic;
-	protected $_applicant_career;
-	
-
-	public function init ()
+    protected $_applicant;
+    protected $_applicant_personal;
+    protected $_applicant_academic;
+    protected $_applicant_career;
+    public function init ()
     {
-        $this->applicant = new Zend_Session_Namespace('applicant','applicant_personal','applicant_academic','applicant_career');
-        $this->view->assign('applicant',$this->applicant);
-        $this->view->assign('steps',array('personal','academic','career'));
+        $this->applicant = new Zend_Session_Namespace('applicant', 
+        'applicant_personal', 'applicant_academic', 'applicant_career');
+        $this->view->assign('applicant', $this->applicant);
+        $this->view->assign('steps', array('personal', 'academic', 'career'));
     }
-    
-    
-    
-public function validaterollnoAction ()
+    public function validaterollnoAction ()
     {
         /*$rollNo = $this->getRequest()->getParam('roll_no');
         $admission_basis = $this->getRequest()->getParam('admission_basis');
@@ -49,29 +44,28 @@ public function validaterollnoAction ()
         
        $this->_helper->json($status);*/
     }
-    
     public function indexAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
     }
-    public function followstepAction()
+    public function followstepAction ()
     {
-    	$request = $this->getRequest();
+        $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
-        foreach ($params as $colName => $value) {
-            $value = is_array($value)?$value:htmlentities(trim($value));
+        foreach ($params as $colName => $value) 
+        {
+            $value = is_array($value) ? $value : htmlentities(trim($value));
             $this->applicant->$colName = $value;
         }
-    	
+        $this->_redirect('/profile/personal');
     }
-    public function personalAction()
-    {      
-    	$this->view->assign('stepNo',0);
+    public function personalAction ()
+    {
+        $this->view->assign('stepNo', 0);
     }
-    
     public function setpersonalAction ()
     {
         $request = $this->getRequest();
@@ -79,22 +73,21 @@ public function validaterollnoAction ()
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
         foreach ($params as $colName => $value) {
-            $value = is_array($value)?$value:htmlentities(trim($value));
-            $this->applicant_academic->$colName = $value;
+            $value = is_array($value) ? $value : htmlentities(trim($value));
+            $this->applicant_personel->$colName = $value;
         }
         echo 'Following information recieved:<br/>';
         foreach ($params as $colName => $value) {
-            
-            $value = is_array($value)?var_export($value,true):htmlentities(trim($value));
-            echo '<b>'.ucwords(str_ireplace('_', ' ', $colName)).'</b> : '.$value.'<br/>';
+            $value = is_array($value) ? var_export($value, true) : htmlentities(
+            trim($value));
+            echo '<b>' . ucwords(str_ireplace('_', ' ', $colName)) . '</b> : ' .
+             $value . '<br/>';
         }
     }
-    
-public function academicAction ()
+    public function academicAction ()
     {
-        $this->view->assign('stepNo',1);
+        $this->view->assign('stepNo', 1);
     }
-    
     public function setacademicAction ()
     {
         $request = $this->getRequest();
@@ -102,45 +95,45 @@ public function academicAction ()
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
         foreach ($params as $colName => $value) {
-            $value = is_array($value)?$value:htmlentities(trim($value));
-            $this->applicant_personal->$colName = $value;
+            $value = is_array($value) ? $value : htmlentities(trim($value));
+            $this->applicant_academic->$colName = $value;
         }
         echo 'Following information recieved:<br/>';
         foreach ($params as $colName => $value) {
-            
-            $value = is_array($value)?var_export($value,true):htmlentities(trim($value));
-            echo '<b>'.ucwords(str_ireplace('_', ' ', $colName)).'</b> : '.$value.'<br/>';
+            $value = is_array($value) ? var_export($value, true) : htmlentities(
+            trim($value));
+            echo '<b>' . ucwords(str_ireplace('_', ' ', $colName)) . '</b> : ' .
+             $value . '<br/>';
         }
     }
-    
-    public function careerAction() 
+    public function careerAction ()
     {
-    	$this->view->assign('stepNo',2);
+        $this->view->assign('stepNo', 2);
     }
-    
-  public function setcareerAction ()
+    public function setcareerAction ()
     {
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
         foreach ($params as $colName => $value) {
-            $value = is_array($value)?$value:htmlentities(trim($value));
+            $value = is_array($value) ? $value : htmlentities(trim($value));
             $this->applicant_career->$colName = $value;
         }
         echo 'Following information recieved:<br/>';
         foreach ($params as $colName => $value) {
-            
-            $value = is_array($value)?var_export($value,true):htmlentities(trim($value));
-            echo '<b>'.ucwords(str_ireplace('_', ' ', $colName)).'</b> : '.$value.'<br/>';
+            $value = is_array($value) ? var_export($value, true) : htmlentities(
+            trim($value));
+            echo '<b>' . ucwords(str_ireplace('_', ' ', $colName)) . '</b> : ' .
+             $value . '<br/>';
         }
     }
-    
-    public function saveAction() 
+    public function saveAction ()
     {
-    	$authInfo = Zend_Auth::getInstance()->getStorage()->read();
-    	$this->_applicant = $authInfo['applicant'];
-    	$this->_applicant_personal = $authInfo['applicant_personal'];
+    	$this->_helper->viewRenderer->setNoRender(TRUE);
+        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+        $this->_applicant = $authInfo['applicant'];
+        $this->_applicant_personal = $authInfo['applicant_personal'];
         $this->_applicant_academic = $authInfo['applicant_academic'];
         $this->_applicant_career = $authInfo['applicant_career'];
         
