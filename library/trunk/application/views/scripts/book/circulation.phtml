@@ -9,30 +9,26 @@
 .acc_no {
 	font-family: cursive;	
 	color: #333;
-	float: left;
+	display: table-cell;
 }
 
 .member_id {
-	font-family: cursive;	
-	float: left;
+	font-family: cursive;
 	color: #333;
 	text-align: right;
 	padding-left : 0.4em;
+	display: table-cell;
 }
 .transaction {
 	padding : 0.1em 0.1em 0.1em 0;	
-	margin: 0 0 0.4em 0.2em;	
-	clear: both;
+	margin: 0.1em 0 0.4em 0.2em;
 	color: #aaa;
 	float: left;
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #dadada;
 }
 .transaction:hover {
 	background-color: #eee;
 	color: #111;
-}
-#bookCirculation ol {
-	min-width: 130px;
 }
 <!--
 @MEDIA print{
@@ -58,7 +54,7 @@
                 echo $this->date->get(Zend_Date::DATE_MEDIUM);?>" size="10"  class="ui-widget-content ui-corner-all" style="text-align: center" ></label>
 	<button type="submit" class="ui-corner-all" style="font-size: 0.7em;">Show</button>
 </form>
-    <h2><?php echo isset($this->process)?ucfirst(strtolower($this->process)):'Book'?> Circulation</h2>
+<h2><?php echo isset($this->process)?ucfirst(strtolower($this->process)):'Book'?> Circulation</h2>
     <?php if (isset($this->date)) {
 	    echo '<h4>'.$this->date->toString('dd-MM-YYYY').'</h4>';
     }?>
@@ -71,6 +67,7 @@ $this->headTitle('Book Circulation');
 if (isset($this->transSet)) {
 if (empty($this->transSet)) {
     echo("Nothing yet!!");
+    return true;
 }?>
 <div id="bookCirculation">
 <ol id="transactionSet">
@@ -108,10 +105,13 @@ $('.transaction').each(function(){
 });
 $('.acc_no').css('width', accNoWidth + 'px');
 $('.member_id').css('width', memberIdWidth + 'px');
-$('.transaction').css('min-width', (transactionWidth+5) + 'px');
-				
+$('.transaction').css('max-width', (transactionWidth+30) + 'px');
 $(function() {
-	$('#transactionSet').makeacolumnlists({cols:4,colWidth:(transactionWidth+5),equalHeight:false});    
+	$('#transactionSet').makeacolumnlists({cols:4,colWidth:(transactionWidth+30)});
+
+	$('#bookCirculation ol').each(function(){
+		$(this).prepend('<li value="0" style="display:block;"><span class="acc_no" style="display:inline;">Acc. no.</span><span style="display:inline;padding-left:1.8em;" class="member_id">Member</span></li>');
+	}); 
 	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
 
 	$("#date").datepicker({
