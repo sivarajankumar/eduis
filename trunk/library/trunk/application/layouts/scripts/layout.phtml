@@ -39,7 +39,7 @@ echo $this->jQuery ()->uiEnable ();
 </head>
 
 <body>
-<div id="topContent" >
+<div id="topContent"  class="noprint" >
 <span id="topRightInfo">
 <span class="ui-state-default ui-corner-bottom">Today&rsquo;s date: <span id="datetext"><?php $date = new Zend_Date(); echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span>
 <?php if (Zend_Auth::getInstance()->hasIdentity()) { ?>
@@ -52,7 +52,7 @@ echo $this->jQuery ()->uiEnable ();
 <?php }?>
 </span>
 
-<div id="header" >
+<div id="header"  class="noprint" >
 <img alt="Ambala College of Engineering and Applied Research" src="<?php echo $protocol.CDN_SERVER . '/images/logos/mainLogo_cupertino.png'; ?>">
 
 <div id="divTopNav">

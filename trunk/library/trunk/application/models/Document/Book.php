@@ -131,5 +131,11 @@ class Lib_Model_Document_Book extends Lib_Model_Document_Generic {
 	public function getInvoice() {
 		;
 	}
+	
+	public function datewiseCirculation($date = NULL, $process = NULL) {
+	    $issueReturn = new Lib_Model_DbTable_IssueReturn();
+	    
+	    return $issueReturn->fetchDatewiseCirculation($date, $process);
+	}
 }
 ?>

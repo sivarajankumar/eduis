@@ -32,9 +32,12 @@ $(function(){
     var urlBookDetail = "<?php echo $this->url ( array ('controller' => 'book', 'action' => 'getbookdetails' ), 'default', true )?>";
     $(gridTable).jqGrid({
         url : urlFillGrid,
-        colNames:['Acc_no','Title','Author', 'Edition','Member', 'Issue', 'Return', 'ISBN', 'Status'],
+        colNames:['Acc_no','Member','Title','Author', 'Edition', 'Issue', 'Return', 'ISBN', 'Status','Issued by','Accepted by'],
         colModel:[{name:'acc_no', 
             index:'acc_no'},
+            {name:'member_id',
+                index:'member_id'
+                },
             {name:'title',
                 index:'title'
             },
@@ -43,9 +46,6 @@ $(function(){
             {name:'edition',
                 index:'edition',
                 hidden: true},
-            {name:'member_id',
-                index:'member_id'
-                },
             {name:'issue_date', 
                 index:'issue_date'},
             {name:'return_date',
@@ -55,9 +55,16 @@ $(function(){
                 hidden: true},
             {name:'status', 
                 index:'status'},
+            {name:'issued_by', 
+                index:'issued_by',
+                hidden: true},
+            {name:'accepted_by', 
+                index:'accepted_by',
+                hidden: true}
             ],
             caption: "Book status" ,
-            sortname: "isbn_id",
+            sortname: "issue_date",
+            sortorder: 'desc',
             pager: gridPager,
             onSelectRow: function(id){
             	/*$('#'+id).bt({

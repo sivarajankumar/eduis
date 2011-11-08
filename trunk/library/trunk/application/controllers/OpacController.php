@@ -26,7 +26,11 @@ class OpacController extends Libz_Base_BaseController {
             $this->grid = $this->_helper->grid();
             $this->grid->sql = Zend_Db_Table::getDefaultAdapter()
                 ->select()
-                ->from('opac_issue_return');
+                ->from('opac_issue_return',array('acc_no','member_id',
+                                                'title','author','edition',
+                                                'issue_date','return_date',
+                                                'isbn_id','status',
+                                                'issued_by','accepted_by'));
             $searchOn = $request->getParam('_search');
             if ($searchOn != 'false') {
                 $sarr = $request->getParams();
@@ -37,6 +41,8 @@ class OpacController extends Libz_Base_BaseController {
                         case 'edition':
                         case 'status':
                         case 'member_id':
+                        case 'issued_by':
+                        case 'accepted_by':
                             $this->grid->sql->where("$key = ?", $value);
                             break;
                         case 'title':
