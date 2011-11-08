@@ -2,8 +2,8 @@
 class Lib_Model_DbTable_IssueReturn extends Libz_Base_Model {
 
     const TABLE_NAME = 'issue_return';
-
     protected $_name = 'issue_return';
+    protected $processes = array('issue','return');
 
     /**
      * Get date on which book is issued.
@@ -96,8 +96,8 @@ class Lib_Model_DbTable_IssueReturn extends Libz_Base_Model {
     /**
      * List of documents issued to a member
      * 
-     * @param unknown_type $member_id
-     * @param unknown_type $documentType
+     * @param string $member_id
+     * @param string $documentType
      */
     public static function getIssuedDocumentList ($member_id, 
     $documentType = NULL) {
@@ -155,6 +155,32 @@ class Lib_Model_DbTable_IssueReturn extends Libz_Base_Model {
             return $sql->fetchColumn(2);
         }
         return $sql->fetchAll(Zend_Db::FETCH_UNIQUE);
+    }
+    
+    public function fetchDatewiseCirculation(Zend_Date $date = NULL, $process = NULL,array $orderby = array('tranc_id')) {
+        $select  = $this->select()->from($this->info('name'),array('acc_no','member_id'));
+            if (empty($date)) {
+                $dateobj = new Zend_Date();
+            }
+            $datestr = $date->toString('YYYY-MM-dd');
+            // If process is given 
+            if (!empty($process)) {
+                $key = array_search(strtolower($process), $this->processes);
+                if (isset($key)) {
+                    $proName = array($this->processes[$key]);
+                } else {
+                    throw new Exception("The '$process' is not available.", Zend_Log::NOTICE);
+                }
+                //include possible processes
+            } else {
+                $proName = $this->processes;
+                $select->columns(array('issue_date','return_date'));
+            }
+            foreach ($proName as $key => $pro) {
+                $select->orwhere($pro.'_date LIKE ?',$datestr.'%');
+            }
+            $select->order($orderby);
+            return $select->query()->fetchAll();
     }
 }
 ?>

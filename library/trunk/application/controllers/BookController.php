@@ -166,4 +166,37 @@ class BookController extends Libz_Base_BaseController {
 	
 	}
 
+	public function circulationAction() {
+		$request = $this->getRequest ();
+		$process = $request->getParam ( 'process');
+		$pDate = $request->getParam ( 'date');
+		$format = $request->getParam ( 'format', 'html' );
+		$book = new Lib_Model_Document_Book();
+        if ($pDate) {
+            $dateObj = new Zend_Date($pDate, 'dd-MM-YYYY');
+        } else {
+            $dateObj = new Zend_Date();
+        }
+		$result = $book->datewiseCirculation($dateObj, $process);
+		switch (strtolower ( $format )) {
+			case 'html' :
+        		$this->_helper->viewRenderer->setNoRender ( false );
+        		$this->_helper->layout ()->enableLayout ();
+        		
+			    $this->view->assign('transSet',$result);
+			    $this->view->assign('date',$dateObj);
+			    $this->view->assign('process',$process);
+				return;
+			case 'json' :
+				$this->_helper->json ( $result );
+				return;
+			case 'test' :
+			    $this->_helper->logger->debug($result);
+				return;
+			case 'select' :
+				return;
+			default :
+			    throw new Exception("Unsupported format '$format'", Zend_Log::NOTICE);
+		}
+	}
 }
