@@ -1,10 +1,31 @@
 <?php
 class Acad_Model_Mapper_Exam_Competitive
 {
+    protected $_competitive_exam_cols = array('exam_id', 'exam_name', 
+    'exam_abbr');
+    protected $_student_competitive_exam_cols = array('member_id', 'exam_id', 
+    'exam_roll_no', 'exam_date', 'total_score', 'all_india_rank');
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
+    /**
+     * @return the $_competitive_exam_cols
+     */
+    protected function getCompetitive_exam_cols ()
+    {
+        return $this->_competitive_exam_cols;
+    }
+    /**
+     * @return the $_student_competitive_exam_cols
+     */
+    protected function getStudent_competitive_exam_cols ()
+    {
+        return $this->_student_competitive_exam_cols;
+    }
+    /**
+     * @return the $_competitive_cols
+     */
     /**
      * Specify Zend_Db_Table instance to use for data operations
      * 
@@ -29,18 +50,12 @@ class Acad_Model_Mapper_Exam_Competitive
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Acad_Model_Exam_Competitive');
+            $this->setDbTable('Acad_Model_DbTable_Competitive');
         }
         return $this->_dbTable;
     }
     /**
-     * 
-     * @todo
-     */
-    public function save ()
-    {}
-    /**
-     * fetches Competitive Exam details
+     * fetches member's Competitive Exam details
      *
      *@param Acad_Model_Exam_Competitive $competitiveExam
      */
@@ -48,16 +63,68 @@ class Acad_Model_Mapper_Exam_Competitive
     Acad_Model_Exam_Competitive $competitiveExam)
     {
         $member_id = $competitiveExam->getMember_id();
-        $adapter = $this->getDbTable()->getDefaultAdapter();
-        $student_competitive_exam_fields = array('exam_id', 'exam_roll_no', 
-        'exam_date', 'total_score', 'all_india_rank');
-        $competitive_exam_fields = array();
+        $adapter = $this->getDbTable()->getAdapter();
+        $student_competitive_exam_fields = $this->getStudent_competitive_exam_cols();
+        $table = $this->getDbTable()->info('name');
         $select = $adapter->select()
-            ->from($this->getDbTable()
-            ->info('name'), $student_competitive_exam_fields)
+            ->from($table, $student_competitive_exam_fields)
             ->where('member_id = ?', $member_id);
-        $competitive_exam_info = $adapter->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $competitive_exam_info;
+        $competitive_exam_info = $select->query()->fetchAll(
+        Zend_Db::FETCH_UNIQUE);
+        return $competitive_exam_info[$member_id];
+    }
+    /**
+     * fetches Competitive Exam details
+     *
+     *@param Acad_Model_Exam_Competitive $competitiveExam
+     */
+    public function fetchExamInfo (Acad_Model_Exam_Competitive $competitiveExam)
+    {
+        $exam_id = $competitiveExam->getExam_id();
+        $adapter = $this->getDbTable()->getAdapter();
+        $competitive_exam_fields = $this->getCompetitive_exam_cols();
+        $select = $adapter->select()
+            ->from('competitive_exam', $competitive_exam_fields)
+            ->where('exam_id = ?', $exam_id);
+        $competitive_exam_info = $select->query()->fetchAll(
+        Zend_Db::FETCH_UNIQUE);
+        return $competitive_exam_info[$exam_id];
+    }
+    /**
+     * 
+     * Enter description here ...
+     * @param array $options
+     * @param Acad_Model_Exam_Competitive $competitiveExam
+     */
+    public function save ($options, 
+    Acad_Model_Exam_Competitive $competitiveExam = null)
+    {
+        $stu_exam_cols = $this->getStudent_competitive_exam_cols();
+        //$db_options is $options with keys renamed a/q to db_columns
+        $db_options = array();
+        foreach ($options as $key => $value) {
+            $db_options[$this->correctDbKeys($key)] = $value;
+        }
+        $db_options_keys = array_keys($db_options);
+        $recieved_stu_exam_keys = array_intersect($db_options_keys, 
+        $stu_exam_cols);
+        $tenth_data = array();
+        foreach ($recieved_stu_exam_keys as $key_name) {
+            $str = "get" . ucfirst($this->correctModelKeys($key_name));
+            $stu_exam_data[$key_name] = $competitiveExam->$str();
+        }
+        //$adapter = $this->getDbTable()->getAdapter();
+        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $competitiveExam->getMember_id());
+        $adapter = $this->getDbTable()->getAdapter();
+        $table = $this->getDbTable()->info('name');
+        $adapter->beginTransaction();
+        try {
+            $sql = $adapter->insert($table, $stu_exam_data);
+            $adapter->commit();
+        } catch (Exception $exception) {
+            $adapter->rollBack();
+            echo $exception->getMessage() . "</br>";
+        }
     }
     /**
      * Enter description here ...
@@ -69,30 +136,82 @@ class Acad_Model_Mapper_Exam_Competitive
     public function fetchStudents (Acad_Model_Exam_Competitive $competitiveExam, 
     array $setter_options = null, array $property_range = null)
     {
+        $correct_db_options = array();
+        foreach ($setter_options as $k => $val) {
+            $correct_db_options[$this->correctDbKeys($k)] = $val;
+        }
+        $correct_db_options_keys = array_keys($correct_db_options);
+        $correct_db_options1 = array();
+        foreach ($property_range as $k1 => $val1) {
+            $correct_db_options1[$this->correctDbKeys($k1)] = $val1;
+        }
+        $correct_db_options1_keys = array_keys($correct_db_options1);
+        $merge = array_merge($correct_db_options_keys, 
+        $correct_db_options1_keys);
+        $table = $this->getDbTable()->info('name');
+        //1)get column names of tenth present in arguments received
+        $tenth_col = $this->getTenth_cols();
+        $tenth_intrsctn = array();
+        $tenth_intrsctn = array_intersect($tenth_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
-        $select = $adapter->select()->from(
-        ($this->getDbTable()
-            ->info('name')), 'member_id');
-        foreach ($property_range as $key => $range) {
-            if (! empty($range['from'])) {
-                $select->where("$key >= ?", $range['from']);
-            }
-            if (! empty($range['to'])) {
-                $select->where("$key <= ?", $range['to']);
+        $select = $adapter->select()->from($table, 'member_id');
+        if (count($correct_db_options1)) {
+            foreach ($correct_db_options1 as $key => $range) {
+                if (! empty($range['from'])) {
+                    $select->where("$key >= ?", $range['from']);
+                }
+                if (! empty($range['to'])) {
+                    $select->where("$key <= ?", $range['to']);
+                }
             }
         }
-        foreach ($setter_options as $property_name => $value) {
-            $getter_string = 'get' . ucfirst($property_name);
-            $competitiveExam->$getter_string();
-            $condition = $property_name . ' = ?';
-            $select->where($condition, $value);
+        if (count($correct_db_options)) {
+            foreach ($correct_db_options as $property_name => $value) {
+                $getter_string = 'get' .
+                 ucfirst($this->correctModelKeys($property_name));
+                $aisse->$getter_string();
+                $condition = $property_name . ' = ?';
+                $select->where($condition, $value);
+            }
         }
         $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        if (! empty($result)) {
-            $serach_error = 'No results match your search criteria.';
-            return $serach_error;
+        if (! count($result)) {
+            $search_error = 'No results match your search criteria.';
+            return $search_error;
         } else {
             return $result;
+        }
+    }
+    /**
+     * Provides correct db column names corresponding to model properties
+     * @todo add correct names where required
+     * @param string $key
+     */
+    protected function correctDbKeys ($key)
+    {
+        switch ($key) {
+            /*case 'nationalit':
+                return 'nationality';
+                break;*/
+            default:
+                return $key;
+                break;
+        }
+    }
+    /**
+     * Provides correct model property names corresponding to db column names
+     * @todo add correct names where required
+     * @param string $key
+     */
+    protected function correctModelKeys ($key)
+    {
+        switch ($key) {
+            /*case 'nationality':
+                return 'nationalit';
+                break;*/
+            default:
+                return $key;
+                break;
         }
     }
 }
