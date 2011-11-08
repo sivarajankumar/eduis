@@ -1,10 +1,21 @@
 <?php
 class Acad_Model_Mapper_Programme_Diploma
 {
+    protected $_diploma_cols = array('member_id', 'board_roll_no', 
+    'discipline_name', 'marks_obtained', 'total_marks', 'percentage', 
+    'passing_year', 'remarks', 'university', 'institution', 'migration_date', 
+    'city_name', 'state_name');
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
+    /**
+     * @return the $_diploma_cols
+     */
+    protected function getDiploma_cols ()
+    {
+        return $this->_diploma_cols;
+    }
     /**
      * Specify Zend_Db_Table instance to use for data operations
      * 
@@ -33,12 +44,6 @@ class Acad_Model_Mapper_Programme_Diploma
         }
         return $this->_dbTable;
     }
-    /**
-     * 
-     * @todo
-     */
-    public function save ()
-    {}
     /**
      * Fetches Diploma Details of a student
      * @param Acad_Model_Programme_Diploma $diploma
@@ -79,6 +84,42 @@ class Acad_Model_Mapper_Programme_Diploma
         }
     }*/
     /**
+     * 
+     * Enter description here ...
+     * @param array $options
+     * @param Acad_Model_Programme_Diploma $diploma
+     */
+    public function save ($options, Acad_Model_Programme_Diploma $diploma = null)
+    {
+        $all_diploma_cols = $this->getDiploma_cols();
+        //$db_options is $options with keys renamed a/q to db_columns
+        $db_options = array();
+        foreach ($options as $key => $value) {
+            $db_options[$this->correctDbKeys($key)] = $value;
+        }
+        $db_options_keys = array_keys($db_options);
+        $recieved_diploma_keys = array_intersect($db_options_keys, 
+        $all_diploma_cols);
+        $diploma_data = array();
+        foreach ($recieved_diploma_keys as $key_name) {
+            $str = "get" . ucfirst($this->correctModelKeys($key_name));
+            $diploma_data[$key_name] = $diploma->$str();
+        }
+        //Zend_Registry::get('logger')->debug($diploma_data);
+        //$adapter = $this->getDbTable()->getAdapter();
+        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
+        $adapter = $this->getDbTable()->getAdapter();
+        $table = $this->getDbTable()->info('name');
+        $adapter->beginTransaction();
+        try {
+            $sql = $adapter->insert($table, $diploma_data);
+            $adapter->commit();
+        } catch (Exception $exception) {
+            $adapter->rollBack();
+            echo $exception->getMessage() . "</br>";
+        }
+    }
+    /**
      * Enter description here ...
      * @param Acad_Model_Programme_Diploma $diploma
      * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
@@ -88,30 +129,82 @@ class Acad_Model_Mapper_Programme_Diploma
     public function fetchStudents (Acad_Model_Programme_Diploma $diploma, 
     array $setter_options = null, array $property_range = null)
     {
+        $correct_db_options = array();
+        foreach ($setter_options as $k => $val) {
+            $correct_db_options[$this->correctDbKeys($k)] = $val;
+        }
+        $correct_db_options_keys = array_keys($correct_db_options);
+        $correct_db_options1 = array();
+        foreach ($property_range as $k1 => $val1) {
+            $correct_db_options1[$this->correctDbKeys($k1)] = $val1;
+        }
+        $correct_db_options1_keys = array_keys($correct_db_options1);
+        $merge = array_merge($correct_db_options_keys, 
+        $correct_db_options1_keys);
+        $table = $this->getDbTable()->info('name');
+        //1)get column names of Diploma present in arguments received
+        $diploma_col = $this->getDiploma_cols();
+        $diploma_intrsctn = array();
+        $diploma_intrsctn = array_intersect($diploma_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
-        $select = $adapter->select()->from(
-        ($this->getDbTable()
-            ->info('name')), 'member_id');
-        foreach ($property_range as $key => $range) {
-            if (! empty($range['from'])) {
-                $select->where("$key >= ?", $range['from']);
-            }
-            if (! empty($range['to'])) {
-                $select->where("$key <= ?", $range['to']);
+        $select = $adapter->select()->from($table, 'member_id');
+        if (count($correct_db_options1)) {
+            foreach ($correct_db_options1 as $key => $range) {
+                if (! empty($range['from'])) {
+                    $select->where("$key >= ?", $range['from']);
+                }
+                if (! empty($range['to'])) {
+                    $select->where("$key <= ?", $range['to']);
+                }
             }
         }
-        foreach ($setter_options as $property_name => $value) {
-            $getter_string = 'get' . ucfirst($property_name);
-            $diploma->$getter_string();
-            $condition = $property_name . ' = ?';
-            $select->where($condition, $value);
+        if (count($correct_db_options)) {
+            foreach ($correct_db_options as $property_name => $value) {
+                $getter_string = 'get' .
+                 ucfirst($this->correctModelKeys($property_name));
+                $diploma->$getter_string();
+                $condition = $property_name . ' = ?';
+                $select->where($condition, $value);
+            }
         }
         $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        if (! empty($result)) {
-            $serach_error = 'No results match your search criteria.';
-            return $serach_error;
+        if (! count($result)) {
+            $search_error = 'No results match your search criteria.';
+            return $search_error;
         } else {
             return $result;
+        }
+    }
+    /**
+     * Provides correct db column names corresponding to model properties
+     * @todo add correct names where required
+     * @param string $key
+     */
+    protected function correctDbKeys ($key)
+    {
+        switch ($key) {
+            /*case 'nationalit':
+                return 'nationality';
+                break;*/
+            default:
+                return $key;
+                break;
+        }
+    }
+    /**
+     * Provides correct model property names corresponding to db column names
+     * @todo add correct names where required
+     * @param string $key
+     */
+    protected function correctModelKeys ($key)
+    {
+        switch ($key) {
+            /*case 'nationality':
+                return 'nationalit';
+                break;*/
+            default:
+                return $key;
+                break;
         }
     }
 }
