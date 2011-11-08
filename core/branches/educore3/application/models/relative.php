@@ -252,8 +252,13 @@ class Core_Model_Relative
             foreach ($valid_props as $value) {
                 $setter_options[$value] = $options[$value];
             }
-            $this->setOptions($setter_options);
-            $this->getMapper()->save($setter_options, $this);
+            if (! empty($setter_options)) {
+                $this->setOptions($setter_options);
+                $this->getMapper()->save($setter_options, $this);
+            } else {
+                throw new Exception(
+                'No valid option was supplied for save process');
+            }
         } else {
             throw new Exception('Save not initialised');
         }
