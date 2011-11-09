@@ -1,19 +1,27 @@
 <?php
 class Core_Model_Mapper_Relative
 {
-    protected $_relative_columns = array('member_id', 'name', 'relation_id', 
-    'occupation', 'designation', 'office_add', 'contact', 'annual_income', 
-    'landline_no');
+    protected $_table_cols = null;
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
     /**
-     * @return the $_relative_columns
+     * @return the $_table_cols
      */
-    protected function getRelative_columns ()
+    protected function getTable_cols ()
     {
-        return $this->_relative_columns;
+        if (! isset($this->_table_cols)) {
+            $this->setTable_cols();
+        }
+        return $this->_table_cols;
+    }
+    /**
+     * @param field_type $_table_cols
+     */
+    protected function setTable_cols ()
+    {
+        $this->_table_cols = $this->getDbTable()->info('cols');
     }
     /**
      * Specify Zend_Db_Table instance to use for data operations
@@ -51,7 +59,7 @@ class Core_Model_Mapper_Relative
      */
     public function save ($options, Core_Model_Relative $relative = null)
     {
-        $all_relative_cols = $this->getRelative_columns();
+        $all_relative_cols = $this->getTable_cols();
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
         foreach ($options as $key => $value) {
@@ -87,7 +95,7 @@ class Core_Model_Mapper_Relative
     {
         $member_id = $relative->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $relatives_fields = $this->getRelative_columns();
+        $relatives_fields = $this->getTable_cols();
         $relations_fields = array('relation_name');
         $select = $adapter->select()
             ->from($this->getDbTable()
@@ -123,7 +131,7 @@ class Core_Model_Mapper_Relative
         $correct_db_options1_keys);
         $table = array('rel' => $this->getDbTable()->info('name'));
         //1)get column names of relatives present in arguments received
-        $relative_col = $this->getRelative_columns();
+        $relative_col = $this->getTable_cols();
         $relative_intrsctn = array();
         $relative_intrsctn = array_intersect($relative_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
