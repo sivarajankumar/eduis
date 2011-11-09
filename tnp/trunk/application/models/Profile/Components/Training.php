@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Profile_Components_Training
+class Tnp_Model_Profile_Components_Training extends Tnp_Model_Generic
 {
     protected $_member_trainings_info = array();
     protected $_training_id;
@@ -13,18 +13,6 @@ class Tnp_Model_Profile_Components_Training
     protected $_training_semester;
     protected $_member_id;
     protected $_mapper;
-    protected $_class_properties = array('training_id', 'training_technology', 
-    'technical_field_id', 'technical_field_name', 'training_sector', 
-    'training_institute', 'start_date', 'completion_date', 'training_semester', 
-    'member_id');
-    public function getClass_properties ()
-    {
-        return $this->_class_properties;
-    }
-    public function setClass_properties ($_class_properties)
-    {
-        $this->_class_properties = $_class_properties;
-    }
     protected function getMember_trainings_info ()
     {
         $member_trainings_info = $this->_member_trainings_info;
@@ -128,21 +116,6 @@ class Tnp_Model_Profile_Components_Training
         $this->_member_id = $_member_id;
     }
     /**
-     * used to init an object
-     * @param array $options
-     */
-    public function setOptions ($options)
-    {
-        $methods = get_class_methods($this);
-        foreach ($options as $key => $value) {
-            $method = 'set' . ucfirst($key);
-            if (in_array($method, $methods)) {
-                $this->$method($value);
-            }
-        }
-        return $this;
-    }
-    /**
      * Set Mapper
      * @param Tnp_Model_Mapper_Profile_Components_Training $mapper
      * @return Tnp_Model_Profile_Components_Training
@@ -162,35 +135,6 @@ class Tnp_Model_Profile_Components_Training
             $this->setMapper(new Tnp_Model_Mapper_Profile_Components_Training());
         }
         return $this->_mapper;
-    }
-    public function __construct (array $options = null)
-    {
-        if (is_array($options)) {
-            $this->setOptions($options);
-        }
-    }
-    public function __set ($name, $value)
-    {
-        $method = 'set' . $name;
-        if ('mapper' == $name || ! method_exists($this, $method)) {
-            throw new Exception('Invalid property specified');
-        }
-        $this->$method($value);
-    }
-    public function __get ($name)
-    {
-        $method = 'get' . $name;
-        if ('mapper' == $name || ! method_exists($this, $method)) {
-            throw new Exception('Invalid property specified');
-        }
-    }
-    /**
-     * @todo
-     * Enter description here ...
-     */
-    public function save ()
-    {
-        $this->getMapper()->save($this);
     }
     /**
      * 
@@ -229,82 +173,5 @@ class Tnp_Model_Profile_Components_Training
     {
         $options = $this->getMapper()->fetchTechnicalFieldInfo($this);
         $this->setOptions($options);
-    }
-    /**
-     * 
-     * Enter description here ...
-     * @param array $options containing properties mapped to values
-     * @param array $property_range containing properties mapped to array containing upper and lower range
-     * @throws Exception when trying to set equality and range both ,for property, at the same time
-     * @throws Exception when invalid properties are specified 
-     * @return array containing Member Ids
-     */
-    public function search (array $options = null, array $property_range = null)
-    {
-        $class_properties = array();
-        $options_keys = array();
-        $valid_options = array();
-        $invalid_options = array();
-        $setter_options = array();
-        $property_range_keys = array();
-        $valid_range_keys = array();
-        $invalid_range_keys = array();
-        $range = array();
-        $error = '';
-        $class_properties = $this->getClass_properties();
-        if (! empty($options)) {
-            $options_keys = array_keys($options);
-            $valid_options = array_intersect($options_keys, $class_properties);
-            foreach ($valid_options as $valid_option) {
-                //$setter_options array is now ready for search
-                //but will it participate,is not confirmed
-                $setter_options[$valid_option] = $options[$valid_option];
-            }
-            $invalid_options = array_diff($options_keys, $class_properties);
-            if (! empty($invalid_options)) {
-                foreach ($invalid_options as $invalid_option) {
-                    $error = $error . '  ' . $invalid_option;
-                }
-            }
-        }
-        if (! empty($property_range)) {
-            $property_range_keys = array_keys($property_range);
-            $valid_range_keys = array_intersect($property_range_keys, 
-            $class_properties);
-            foreach ($valid_range_keys as $valid_range_key) {
-                //$range array is now ready for search
-                //but will it participate,is not confirmed
-                $range[$valid_range_key] = $property_range[$valid_range_key];
-            }
-            $invalid_range_keys = array_diff($property_range_keys, 
-            $class_properties);
-            if (! empty($invalid_range_keys)) {
-                $error = implode(', ', $invalid_range_keys);
-            }
-        }
-        $user_friendly_message = "<b>" . $error . "</b>" .
-         ' are invalid parameters and therefore, they were not included in search.' .
-         "</br>" .
-         'Please try again with correct parameters to get more accurate results' .
-         "</br>";
-        $deciding_intersection = array_intersect($valid_options, 
-        $valid_range_keys);
-        Zend_Registry::get('logger')->debug(var_export($user_friendly_message));
-        $deciding_intersection = array_intersect($valid_options, 
-        $valid_range_keys);
-        if (empty($deciding_intersection)) {
-            //now we can set off for search operation
-            $this->setOptions($setter_options);
-            $result = $this->getMapper()->fetchStudents($this, $setter_options, 
-            $range);
-            return $result;
-        } else {
-            foreach ($deciding_intersection as $duplicate_entry) {
-                $error_1 = $error_1 . '  ' . $duplicate_entry;
-            }
-            throw new Exception(
-            'Range and equality cannot be set for ' . $error_1 .
-             ' at the same time');
-        }
     }
 }
