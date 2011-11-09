@@ -5,7 +5,7 @@
  *
  *
  */
-class Acad_Model_Course_SubjectDmc
+class Acad_Model_Course_SubjectDmc extends Acad_Model_Generic
 {
     protected $_considered_dmc_records = array();
     protected $_member_dmc_records = array();
@@ -231,67 +231,6 @@ class Acad_Model_Course_SubjectDmc
             $this->setMapper(new Acad_Model_Mapper_Course_SubjectDmc());
         }
         return $this->_mapper;
-    }
-    public function __construct (array $options = null)
-    {
-        if (is_array($options)) {
-            $this->setOptions($options);
-        }
-    }
-    public function __set ($name, $value)
-    {
-        $method = 'set' . $name;
-        if ('mapper' == $name || ! method_exists($this, $method)) {
-            throw new Exception('Invalid property specified');
-        }
-        $this->$method($value);
-    }
-    /**
-     * 
-     * @throws Exception
-     */
-    public function __get ($name)
-    {
-        $method = 'get' . $name;
-        if ('mapper' == $name || ! method_exists($this, $method)) {
-            throw new Exception('Invalid property specified');
-        }
-    }
-    /**
-     * used to init an object
-     * @param array $options
-     */
-    public function setOptions ($options)
-    {
-        $methods = get_class_methods($this);
-        foreach ($options as $key => $value) {
-            $method = 'set' . ucfirst($key);
-            if (in_array($method, $methods)) {
-                $this->$method($value);
-            }
-        }
-        return $this;
-    }
-    /**
-     * @todo
-     * must include a check that no undesirable properties are set before saving
-     * ex : some properties are defined to just simplify search or are to be used as read only i-e
-     * they must not be set by controller.. if set they must be detected here...
-     * but this is not a problem bcoz save function will save only those properties 
-     * for which it is designed to save
-     */
-    public function save ()
-    {
-        $this->getMapper()->save($this);
-    }
-    /**
-     * first set properties of object, according to which you want
-     * to search,using constructor, then call the search function
-     * 
-     */
-    public function search ()
-    {
-        return $this->getMapper()->fetchMemberId($this);
     }
     /**
      * 
