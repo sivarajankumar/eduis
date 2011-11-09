@@ -41,7 +41,7 @@ h2 {
 }
 
 .loading {
-  background: url(http://site.cdn.aceambala.com/images/activity/loading/spinner.gif) no-repeat center center;
+  background: url(http://<?php echo CDN_SERVER?>/images/activity/loading/spinner.gif) no-repeat center center;
 }
 @media print {
 	#myform {
@@ -57,14 +57,14 @@ h2 {
 <form name="formAcc" id="formAcc" action="javascript: getBarCode();">
 Range:<br/>
 <label>From : <input type="text" id="accFrom" name="accFrom"  size="6"></label>&nbsp;
-<label>Upto : <input type="text" id="accUpto" name="accUpto"  size="6"></label><input type="submit" value="Submit" /></form>
+<label>Upto : <input type="text" id="accUpto" name="accUpto"  size="6"></label> <button type="submit" >Generate</button> </form>
 <hr />
 </div>
 <?php
-$url = $this->baseUrl('library/barcodebook/generatecode');
+$url = $this->baseUrl('barcode/generatecode');
 ?>
 
-<script type="text/javascript" src="http://site.cdn.aceambala.com/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="http://<?php echo CDN_SERVER?>/js/jquery-1.6.2.min.js"></script>
 <script type="text/javascript">
 function getBarCode() {
 	var accFrom = parseInt($('#accFrom').val());

@@ -29,7 +29,7 @@ h3 {
 	echo 'ISBN : '.$this->isbn;
 } else echo 'Barcode for ISBN'?></h3>
 <form name="formISBN" id="formISBN" >
-<label>ISBN : <input type="text" name="isbn" > </label> <input type="submit" value="Submit" /> </form>
+<label>ISBN : <input type="text" name="isbn" value="<?php echo $this->isbn?>" > </label> <button type="submit">Generate</button> </form>
 <form name="formAdd" id="formAdd" action="javascript: addMore();">
 Add <input id="counts" value="1" maxlength="2" size="2" /> times more. 
 <input type="submit" value="Add" /></form>
@@ -40,12 +40,12 @@ Add <input id="counts" value="1" maxlength="2" size="2" /> times more.
 </div>
 <div id="divImage" ></div>
 <?php
-$url = $this->baseUrl('library/barcodebook');
+$url = $this->baseUrl('barcode');
 if (isset ( $this->isbn )) {
 		echo '<label class="barcodeBox"><img class="barCodeImg" src="'.$url.'/generatecode?text=' . $this->isbn . '"/><label/>';
 }
 ?>
-<script type="text/javascript" src="http://site.cdn.aceambala.com/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="http://<?php echo CDN_SERVER?>/js/jquery-1.6.2.min.js"></script>
 <script type="text/javascript">
 function addMore(){
 	var cache = $('.barcodeBox:first').clone();
