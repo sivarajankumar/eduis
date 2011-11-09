@@ -1,20 +1,27 @@
 <?php
 class Acad_Model_Mapper_Exam_Aissce
 {
-    protected $_twelfth_cols = array('member_id', 'board', 'board_roll_no', 
-    'marks_obtained', 'total_marks', 'percentage', 'pcm_percent', 'passing_year', 
-    'school_rank', 'remarks', 'institution', 'migration_date', 'city_name', 
-    'state_name');
+    protected $_table_cols = null;
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
     /**
-     * @return the $_twelfth_cols
+     * @return the $_table_cols
      */
-    protected function getTwelfth_cols ()
+    protected function getTable_cols ()
     {
-        return $this->_twelfth_cols;
+        if (! isset($this->_table_cols)) {
+            $this->setTable_cols();
+        }
+        return $this->_table_cols;
+    }
+    /**
+     * @param field_type $_table_cols
+     */
+    protected function setTable_cols ()
+    {
+        $this->_table_cols = $this->getDbTable()->info('cols');
     }
     /**
      * Specify Zend_Db_Table instance to use for data operations
@@ -53,7 +60,7 @@ class Acad_Model_Mapper_Exam_Aissce
     {
         $member_id = $aissce->getMember_id();
         $adapter = $this->getDbTable()->getAdapter();
-        $required_fields = $this->getTwelfth_cols();
+        $required_fields = $this->getTable_cols();
         $table = $this->getDbTable()->info('name');
         $select = $adapter->select()
             ->from($table, $required_fields)
@@ -70,7 +77,7 @@ class Acad_Model_Mapper_Exam_Aissce
      */
     public function save ($options, Acad_Model_Exam_Aissce $aissce = null)
     {
-        $all_twelfth_cols = $this->getTwelfth_cols();
+        $all_twelfth_cols = $this->getTable_cols();
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
         foreach ($options as $key => $value) {
@@ -122,7 +129,7 @@ class Acad_Model_Mapper_Exam_Aissce
         $correct_db_options1_keys);
         $table = $this->getDbTable()->info('name');
         //1)get column names of twelfth present in arguments received
-        $twelfth_col = $this->getTwelfth_cols();
+        $twelfth_col = $this->getTable_cols();
         $twelfth_intrsctn = array();
         $twelfth_intrsctn = array_intersect($twelfth_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();

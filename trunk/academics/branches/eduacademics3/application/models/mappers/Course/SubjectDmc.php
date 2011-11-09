@@ -53,7 +53,7 @@ class Acad_Model_Mapper_Course_SubjectDmc
             throw new Exception(
             'Insufficient data provided.. both memberId and subCode are required');
         } else {
-            $requiredFields = array('dmc_id', 'marks', 'appear_type');
+            $requiredFields = array('marks', 'dmc_id', 'appear_type');
             $adapter = $this->getDbTable()->getDefaultAdapter();
             $select = $adapter->select()
                 ->from('dmc_record', $requiredFields)
@@ -68,19 +68,8 @@ class Acad_Model_Mapper_Course_SubjectDmc
             return $subjectMarksHistory;
         }
     }
-    /**
-     * @todo  incomplete
-     * 
-     * @param Acad_Model_Course_SubjectDmc $subjectDmc
-     */
-    public function fetchInfo (Acad_Model_Course_SubjectDmc $subjectDmc)
+    public function fetchDmcId (Acad_Model_Course_SubjectDmc $subjectDmc)
     {
-        /**
-         * call getmarks history and add following to query 
-         * where marks = (marks[0] or marks[1]
-         * and get all dmc ids corresponding to a appear type
-         * @var unknown_type
-         */
         $member_id = $subjectDmc->getMember_id();
         $subjCode = $subjectDmc->getSubject_code();
         $marks = $subjectDmc->getMarks();
@@ -88,22 +77,45 @@ class Acad_Model_Mapper_Course_SubjectDmc
             throw new Exception(
             'Insufficient data provided..  memberId, subCode and subjMarks are ALL required');
         } else {
-            $dmc_info_fields = array('custody_date', 'custody_date', 
-            'is_granted', 'grant_date', 'recieving_date', 'is_copied', 
-            'dispatch_date');
-            $dmc_record_fields = array('member_id', 'subject_code', 'marks', 
-            'appear_type');
+            $adapter = $this->getDbTable()->getAdapter();
+            $req_fields = array('dmc_id');
+            $select = $adapter->select()
+                ->from('dmc_record', $req_fields)
+                ->where('member_id = ?', $member_id)
+                ->where('subject_code = ?', $subjCode)
+                ->where('marks = ?', $marks);
+            $dmc_id_array = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            return $dmc_id_array[0];
+        }
+    }
+    /**
+     * @todo  incomplete
+     * 
+     * @param Acad_Model_Course_SubjectDmc $subjectDmc
+     */
+    public function fetchDmcInfo (Acad_Model_Course_SubjectDmc $subjectDmc)
+    {
+        $dmc_id = null;
+        $dmc_id_direct = $subjectDmc->getDmc_id();
+        $dmc_id_calculated = $this->fetchDmcId($subjectDmc);
+        $dmc_info_fields = array('custody_date', 'custody_date', 'is_granted', 
+        'grant_date', 'recieving_date', 'is_copied', 'dispatch_date');
+        if (isset($dmc_id_direct)) {
+            $dmc_id = $dmc_id_direct;
+        } else {
+            if (isset($dmc_id_calculated)) {
+                $dmc_id = $dmc_id_calculated;
+            }
+        }
+        if (isset($dmc_id)) {
             $adapter = $this->getDbTable()->getAdapter();
             $select = $adapter->select()
                 ->from($this->getDbTable()
                 ->info('name'), $dmc_info_fields)
-                ->joinInner('dmc_record', 'dmc_info.dmc_id = dmc_record.dmc_id', 
-            $dmc_record_fields)
-                ->where('member_id = ?', $member_id)
-                ->where('member_id = ?', $member_id);
+                ->where('dmc_id = ?', $dmc_id);
             $dmc_info = array();
             $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            return $dmc_info[$member_id];
+            return $dmc_info[$dmc_id];
         }
     }
     /**
@@ -145,9 +157,9 @@ class Acad_Model_Mapper_Course_SubjectDmc
     public function fetchMemberDmcRecords (
     Acad_Model_Course_SubjectDmc $subjectDmc)
     {
-        $dmcRecordFields = array('dmc_id', 'appear_type', 
+        $dmcRecordFields = array('internal_marks.subject_code','dmc_id', 'appear_type', 
         'marks_scored_uexam' => 'marks');
-        $internalMarksFields = array('subject_code', 
+        $internalMarksFields = array( 
         'marks_scored_internal' => 'marks_scored', 
         'marks_suggested_internal' => 'marks_suggested');
         $cond = 'internal_marks.member_id = dmc_record.member_id AND internal_marks.subject_code = dmc_record.subject_code';
