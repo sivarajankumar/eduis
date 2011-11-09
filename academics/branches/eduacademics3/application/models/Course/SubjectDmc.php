@@ -2,7 +2,7 @@
 /**
  * @todo complete member_dmc_record func
  * Enter description here ...
- * @author OMEGA
+ *
  *
  */
 class Acad_Model_Course_SubjectDmc
@@ -11,7 +11,6 @@ class Acad_Model_Course_SubjectDmc
     protected $_member_dmc_records = array();
     protected $_marks_scored_internal;
     protected $_marks_scored_uexam;
-    
     protected $_member_id;
     //
     protected $_semster_id;
@@ -32,23 +31,23 @@ class Acad_Model_Course_SubjectDmc
     protected $_total_marks;
     protected $_scaled_marks;
     protected $_mapper;
-    public function getMarks_scored_internal() {
-		return $this->_marks_scored_internal;
-	}
-
-	public function setMarks_scored_internal($_marks_scored_internal) {
-		$this->_marks_scored_internal = $_marks_scored_internal;
-	}
-
-	public function getMarks_scored_uexam() {
-		return $this->_marks_scored_uexam;
-	}
-
-	public function setMarks_scored_uexam($_marks_scored_uexam) {
-		$this->_marks_scored_uexam = $_marks_scored_uexam;
-	}
-
-	protected function getConsidered_dmc_records ()
+    public function getMarks_scored_internal ()
+    {
+        return $this->_marks_scored_internal;
+    }
+    public function setMarks_scored_internal ($_marks_scored_internal)
+    {
+        $this->_marks_scored_internal = $_marks_scored_internal;
+    }
+    public function getMarks_scored_uexam ()
+    {
+        return $this->_marks_scored_uexam;
+    }
+    public function setMarks_scored_uexam ($_marks_scored_uexam)
+    {
+        $this->_marks_scored_uexam = $_marks_scored_uexam;
+    }
+    protected function getConsidered_dmc_records ()
     {
         $considered_dmc_records = $this->_considered_dmc_records;
         if (sizeof($considered_dmc_records) == 0) {
@@ -328,6 +327,7 @@ class Acad_Model_Course_SubjectDmc
         } else {
             if (array_key_exists($semester_id, $considered_dmc_records)) {
                 $options = $considered_dmc_records[$semester_id];
+                //call unset all.. be careful
                 $this->setOptions($options);
             } else {
                 $error = 'Sorry, ' . $this->getMember_id() . ' Your DMC for ' .

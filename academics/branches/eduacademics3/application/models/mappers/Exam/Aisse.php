@@ -1,19 +1,27 @@
 <?php
 class Acad_Model_Mapper_Exam_Aisse
 {
-    protected $_tenth_cols = array('member_id', 'board', 'board_roll_no', 
-    'marks_obtained', 'total_marks', 'percentage', 'passing_year', 'school_rank', 
-    'remarks', 'institution', 'city_name', 'state_name');
+    protected $_table_cols = null;
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
     /**
-     * @return the $_tenth_cols
+     * @return the $_table_cols
      */
-    protected function getTenth_cols ()
+    protected function getTable_cols ()
     {
-        return $this->_tenth_cols;
+        if (! isset($this->_table_cols)) {
+            $this->setTable_cols();
+        }
+        return $this->_table_cols;
+    }
+    /**
+     * @param field_type $_table_cols
+     */
+    protected function setTable_cols ()
+    {
+        $this->_table_cols = $this->getDbTable()->info('cols');
     }
     /**
      * Specify Zend_Db_Table instance to use for data operations
@@ -50,11 +58,10 @@ class Acad_Model_Mapper_Exam_Aisse
      */
     public function fetchMemberExamInfo (Acad_Model_Exam_Aisse $aisse)
     {
-        
         $member_id = $aisse->getMember_id();
         Zend_Registry::get('logger')->debug($member_id);
-        $adapter = $this->getDbTable()->getDefaultAdapter();
-        $required_fields = $this->getTenth_cols();
+        $adapter = $this->getDbTable()->getAdapter();
+        $required_fields = $this->getTable_cols();
         $select = $adapter->select()
             ->from('matric', $required_fields)
             ->where('member_id = ?', $member_id);
@@ -70,7 +77,7 @@ class Acad_Model_Mapper_Exam_Aisse
      */
     public function save ($options, Acad_Model_Exam_Aisse $aisse = null)
     {
-        $all_tenth_cols = $this->getTenth_cols();
+        $all_tenth_cols = $this->getTable_cols();
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
         foreach ($options as $key => $value) {
@@ -122,7 +129,7 @@ class Acad_Model_Mapper_Exam_Aisse
         $correct_db_options1_keys);
         $table = $this->getDbTable()->info('name');
         //1)get column names of tenth present in arguments received
-        $tenth_col = $this->getTenth_cols();
+        $tenth_col = $this->getTable_cols();
         $tenth_intrsctn = array();
         $tenth_intrsctn = array_intersect($tenth_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
