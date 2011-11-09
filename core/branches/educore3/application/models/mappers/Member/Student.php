@@ -5,27 +5,27 @@
  */
 class Core_Model_Mapper_Member_Student
 {
-    protected $_personal_columns = null;
+    protected $_table_cols = null;
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
     /**
-     * @return the $_personal_columns
+     * @return the $_table_cols
      */
-    public function getPersonal_columns ()
+    protected function getTable_cols ()
     {
-        if (! isset($this->_personal_columns)) {
-            $this->setPersonal_columns();
+        if (! isset($this->_table_cols)) {
+            $this->setTable_cols();
         }
-        return $this->_personal_columns;
+        return $this->_table_cols;
     }
     /**
-     * @param field_type $_personal_columns
+     * @param field_type $_table_cols
      */
-    public function setPersonal_columns ()
+    protected function setTable_cols ()
     {
-        $this->_personal_columns = $this->getDbTable()->info('cols');
+        $this->_table_cols = $this->getDbTable()->info('cols');
     }
     /**
      * Specify Zend_Db_Table instance to use for data operations
@@ -67,7 +67,7 @@ class Core_Model_Mapper_Member_Student
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $stu_prs_cols = $this->getPersonal_columns();
+            $stu_prs_cols = $this->getTable_cols();
             $stu_dep_cols = array('department_id', 'prgramme_id', 'batch_start', 
             'group_id');
             $stu_sem_cols = array('semster_id');
@@ -129,7 +129,7 @@ class Core_Model_Mapper_Member_Student
      */
     public function save ($options, Core_Model_Member_Student $student = null)
     {
-        $all_personal_cols = $this->getPersonal_columns();
+        $all_personal_cols = $this->getTable_cols();
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
         foreach ($options as $key => $value) {

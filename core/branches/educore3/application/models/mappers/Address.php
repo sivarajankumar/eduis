@@ -1,18 +1,27 @@
 <?php
 class Core_Model_Mapper_Address
 {
-    protected $_address_columns = array('member_id', 'address_type', 
-    'postal_code', 'city', 'district', 'state', 'area', 'address');
+    protected $_table_cols = null;
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
     /**
-     * @return the $_address_columns
+     * @return the $_table_cols
      */
-    protected function getAddress_columns ()
+    protected function getTable_cols ()
     {
-        return $this->_address_columns;
+        if (! isset($this->_table_cols)) {
+            $this->setTable_cols();
+        }
+        return $this->_table_cols;
+    }
+    /**
+     * @param field_type $_table_cols
+     */
+    protected function setTable_cols ()
+    {
+        $this->_table_cols = $this->getDbTable()->info('cols');
     }
     /**
      * Specify Zend_Db_Table instance to use for data operations
@@ -50,7 +59,7 @@ class Core_Model_Mapper_Address
      */
     public function save ($options, Core_Model_Address $address = null)
     {
-        $address_cols = $this->getAddress_columns();
+        $address_cols = $this->getTable_cols();
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
         foreach ($options as $key => $value) {
@@ -73,7 +82,7 @@ class Core_Model_Mapper_Address
             $sql = $adapter->insert($table, $address_data);
             $adapter->commit();
         } catch (Exception $exception) {
-           $adapter->rollBack();
+            $adapter->rollBack();
             echo $exception->getMessage() . "</br>";
         }
     }
@@ -84,18 +93,18 @@ class Core_Model_Mapper_Address
     public function fetchAddressInfo (Core_Model_Address $address)
     {
         $member_id = $address->getMember_id();
-        $adress_type = $address->getAdress_type();
-        if (empty($member_id) or empty($adress_type)) {
+        $address_type = $address->getAddress_type();
+        if (empty($member_id) or empty($address_type)) {
             $error = 'Both ,Member Id and Address must be set';
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = $this->getAddress_columns();
+            $required_fields = $this->getTable_cols();
             $select = $adapter->select()
                 ->from($this->getDbTable()
                 ->info('name'), $required_fields)
                 ->where('member_id = ?', $member_id)
-                ->where('adress_type = ?', $adress_type);
+                ->where('address_type = ?', $address_type);
             $address_info = array();
             $address_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
             return $address_info[$member_id];
@@ -125,7 +134,7 @@ class Core_Model_Mapper_Address
         $correct_db_options1_keys);
         $table = array('addr' => $this->getDbTable()->info('name'));
         //1)get column names of address present in arguments received
-        $address_col = $this->getAddress_columns();
+        $address_col = $this->getTable_cols();
         $address_intrsctn = array();
         $address_intrsctn = array_intersect($address_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
