@@ -5,18 +5,27 @@
  */
 class Core_Model_Mapper_Member_Student
 {
-    protected $_personal_columns = array('member_id', 'reg_no', 'cast_id', 
-    'nationality_id', 'religion_id', 'first_name', 'middle_name', 'last_name', 
-    'dob', 'gender', 'contact_no', 'e_mail', 'marital_status', 'councelling_no', 
-    'admission_date', 'alloted_category', 'alloted_branch', 'state_of_domicile', 
-    'urban', 'hostel', 'bus', 'image_no', 'blood_group');
+    protected $_personal_columns = null;
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
-    protected function getPersonal_columns ()
+    /**
+     * @return the $_personal_columns
+     */
+    public function getPersonal_columns ()
     {
+        if (! isset($this->_personal_columns)) {
+            $this->setPersonal_columns();
+        }
         return $this->_personal_columns;
+    }
+    /**
+     * @param field_type $_personal_columns
+     */
+    public function setPersonal_columns ()
+    {
+        $this->_personal_columns = $this->getDbTable()->info('cols');
     }
     /**
      * Specify Zend_Db_Table instance to use for data operations
