@@ -47,14 +47,21 @@ $(function(){
                 index:'edition',
                 hidden: true},
             {name:'issue_date', 
-                index:'issue_date'},
+                index:'issue_date',
+                search:true,
+                stype:'text',
+                searchoptions:{dataInit:datePick, attr:{title:'Select Date'}}},
             {name:'return_date',
                 index:'return_date'},
             {name:'isbn_id', 
                 index:'isbn_id',
                 hidden: true},
-            {name:'status', 
-                index:'status'},
+                {name:'status', 
+                    index:'status',
+                    search:true,
+                    stype:'select',
+                    editoptions:{value:{'':'Status Filter',AVAILABLE:'AVAILABLE',ISSUED:'ISSUED'}} ,
+                    searchoptions:{attr:{title:'Book Status'}}},
             {name:'issued_by', 
                 index:'issued_by',
                 hidden: true},
@@ -131,7 +138,15 @@ $(function(){
     addPager(gridTable, gridPager); 
     
 });
+datePick = function(elem)
+{
+	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
 
+	$(elem).datepicker({
+		maxDate : serverDateObj,
+		dateFormat: 'yy-mm-dd'
+	});
+};
 function fetchBookDetail(acc_no) {
 	var tip = 'Book detail...';
 	$.ajax({
