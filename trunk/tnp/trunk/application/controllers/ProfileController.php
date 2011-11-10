@@ -14,16 +14,16 @@ class ProfileController extends Zend_Controller_Action
     protected $_applicant;
     protected $_applicant_personal;
     protected $_applicant_academic;
-    protected $_applicant_applicationtype;
+    protected $_applicant_admissionbasis;
     protected $_applicant_degreedetails;
     
     protected $_applicant_career;
     public function init ()
     {
         $this->applicant = new Zend_Session_Namespace('applicant', 
-        'applicant_personal', 'applicant_academic','applicant_applicationtype','applicant_degreedetails', 'applicant_career');
+        'applicant_personal', 'applicant_admissionbasis','applicant_academic','applicant_degreedetails', 'applicant_career');
         $this->view->assign('applicant', $this->applicant);
-        $this->view->assign('steps', array('personal','applicationtype','academic','degreedetails', 'career'));
+        $this->view->assign('steps', array('personal','admissionbasis','academic','degreedetails', 'career'));
     }
     public function validaterollnoAction ()
     {
@@ -87,10 +87,27 @@ class ProfileController extends Zend_Controller_Action
              $value . '<br/>';
         }
     }
-   
-    public function academicAction ()
+public function admissionbasisAction ()
     {
         $this->view->assign('stepNo', 1);
+    }
+    public function setadmissionbasisAction ()
+    {
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $this->_helper->viewRenderer->setNoRender(TRUE);
+        $this->_helper->layout()->disableLayout();
+        foreach ($params as $colName => $value) 
+        {
+           $this->applicant->$colName = $value;
+        }
+        $this->_redirect('/profile/academic');
+        
+        
+    }
+    public function academicAction ()
+    {
+        $this->view->assign('stepNo', 2);
     }
     public function setacademicAction ()
     {
@@ -110,24 +127,7 @@ class ProfileController extends Zend_Controller_Action
              $value . '<br/>';
         }
     }
-public function applicationtypeAction ()
-    {
-        $this->view->assign('stepNo', 2);
-    }
-    public function settypeAction ()
-    {
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $this->_helper->viewRenderer->setNoRender(TRUE);
-        $this->_helper->layout()->disableLayout();
-        foreach ($params as $colName => $value) 
-        {
-           $this->applicant->$colName = $value;
-        }
-        $this->_redirect('/profile/degreedetails');
-        
-        
-    }
+
     
 public function degreedetailsAction ()
     {
@@ -179,9 +179,9 @@ public function degreedetailsAction ()
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
         $this->_applicant = $authInfo['applicant'];
         $this->_applicant_personal = $authInfo['applicant_personal'];
-        
+        $this->_applicant_academic = $authInfo['applicant_admissionbasis'];
         $this->_applicant_academic = $authInfo['applicant_academic'];
-        $this->_applicant_academic = $authInfo['applicant_applicationtype'];
+        
         $this->_applicant_academic = $authInfo['applicant_degreedetails'];
         $this->_applicant_career = $authInfo['applicant_career'];
         
