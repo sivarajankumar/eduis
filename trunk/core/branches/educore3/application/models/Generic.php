@@ -78,13 +78,19 @@ abstract class Core_Model_Generic
      */
     protected function validOptions ($options)
     {
+        $validated_options = array();
         $class_properties = $this->getAllowedProperties();
         $options_keys = array_keys($options);
         $valid_options = array_intersect($options_keys, $class_properties);
         foreach ($valid_options as $valid_option) {
             $validated_options[$valid_option] = $options[$valid_option];
         }
-        return $validated_options;
+        if (sizeof($validated_options) == 0) {
+            $error = 'No valid option was provided';
+            throw new Exception($error);
+        } else {
+            return $validated_options;
+        }
     }
     /**
      * Filters out invalid options
