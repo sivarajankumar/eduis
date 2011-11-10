@@ -1,10 +1,28 @@
 <?php
 class Acad_Model_Mapper_Course_SubjectDmc
 {
+    protected $_table_cols = null;
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
+    /**
+     * @return the $_table_cols
+     */
+    protected function getTable_cols ()
+    {
+        if (! isset($this->_table_cols)) {
+            $this->setTable_cols();
+        }
+        return $this->_table_cols;
+    }
+    /**
+     * @param field_type $_table_cols
+     */
+    protected function setTable_cols ()
+    {
+        $this->_table_cols = $this->getDbTable()->info('cols');
+    }
     /**
      * Specify Zend_Db_Table instance to use for data operations
      * 
@@ -58,13 +76,13 @@ class Acad_Model_Mapper_Course_SubjectDmc
             $select = $adapter->select()
                 ->from('dmc_record', $requiredFields)
                 ->where('member_id = ?', $member_id)
-                ->where('subject_code = ?', $subjCode);
+                ->where('subject_code = ?', $subjCode)
+                ->order(array('marks DESC'));
             if (isset($appearType)) {
                 $select->where('appear_type = ?', $appearType);
             }
             $subjectMarksHistory = $select->query()->fetchAll(
             Zend_Db::FETCH_UNIQUE);
-            //Zend_Registry::get('logger')->debug($subjectMarksHistory);
             return $subjectMarksHistory;
         }
     }
@@ -97,12 +115,11 @@ class Acad_Model_Mapper_Course_SubjectDmc
     {
         $dmc_id = null;
         $dmc_id_direct = $subjectDmc->getDmc_id();
-        $dmc_id_calculated = $this->fetchDmcId($subjectDmc);
-        $dmc_info_fields = array('custody_date', 'custody_date', 'is_granted', 
-        'grant_date', 'recieving_date', 'is_copied', 'dispatch_date');
+        $dmc_info_fields = $this->getTable_cols();
         if (isset($dmc_id_direct)) {
             $dmc_id = $dmc_id_direct;
         } else {
+            $dmc_id_calculated = $this->fetchDmcId($subjectDmc);
             if (isset($dmc_id_calculated)) {
                 $dmc_id = $dmc_id_calculated;
             }
@@ -131,13 +148,12 @@ class Acad_Model_Mapper_Course_SubjectDmc
         $adapter = $this->getDbTable()->getAdapter();
         $select = $adapter->select()
             ->from('dmc_total_marks', $requiredFields)
-            ->joinInner('dmc_record', 
-        'dmc_total_marks.dmc_id = dmc_record.dmc_id', 'member_id')
+            ->join('dmc_record', 'dmc_total_marks.dmc_id = dmc_record.dmc_id', 
+        'member_id')
             ->where('member_id = ?', $member_id);
         $considered_dmc_records = array();
         $considered_dmc_records = $select->query()->fetchAll(
         Zend_Db::FETCH_UNIQUE);
-        //Zend_Registry::get('logger')->debug($considered_dmc_records);
         if (sizeof($considered_dmc_records) == 0) {
             throw new Exception(
             'No passed semesters record exist for ' . $subjectDmc->getMember_id());
@@ -157,28 +173,62 @@ class Acad_Model_Mapper_Course_SubjectDmc
     public function fetchMemberDmcRecords (
     Acad_Model_Course_SubjectDmc $subjectDmc)
     {
-        $dmcRecordFields = array('internal_marks.subject_code','dmc_id', 'appear_type', 
-        'marks_scored_uexam' => 'marks');
-        $internalMarksFields = array( 
-        'marks_scored_internal' => 'marks_scored', 
-        'marks_suggested_internal' => 'marks_suggested');
-        $cond = 'internal_marks.member_id = dmc_record.member_id AND internal_marks.subject_code = dmc_record.subject_code';
-        $adapter = $this->getDbTable()->getAdapter();
         $member_id = $subjectDmc->getMember_id();
         $department_id = $subjectDmc->getDepartment_id();
         $programme_id = $subjectDmc->getProgramme_id();
-        $semester_id = $subjectDmc->getSemster_id();
+        $semester_id = $subjectDmc->getSemester_id();
         $appear_type = $subjectDmc->getAppear_type();
-        $select = $adapter->select()
-            ->from('dmc_record', $dmcRecordFields)
-            ->joinInner('internal_marks', $cond, $internalMarksFields)
-            ->where('internal_marks.member_id = ?', $member_id)
-            ->where('department_id = ?', $department_id)
-            ->where('programme_id = ?', $programme_id)
-            ->where('semester_id = ?', $semester_id)
-            ->where('appear_type = ?', $appear_type);
-        $memberDmcRecords = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        Zend_Registry::get('logger')->debug($memberDmcRecords);
-        return $memberDmcRecords;
+        if (! isset($member_id) or ! isset($department_id) or
+         ! isset($programme_id) or ! isset($semester_id)) {
+            throw new Exception(
+            'Insufficient data provided..  memberId, department_id,programme_id and semester_id are ALL required');
+        } else {
+            $dmcRecordFields = array('dmc_id', 'appear_type', 
+            'marks_scored_uexam' => 'marks');
+            $internalMarksFields = array('subject_code', 
+            'marks_scored_internal' => 'marks_scored', 
+            'marks_suggested_internal' => 'marks_suggested');
+            $cond = 'internal_marks.member_id = dmc_record.member_id AND internal_marks.subject_code = dmc_record.subject_code';
+            $adapter = $this->getDbTable()->getAdapter();
+            //$key_for_resultset = array('internal_marks.subject_code');
+            //$key_for_resultset = array('dmc_record.dmc_id');
+            $select = $adapter->select()
+                ->from('dmc_record', $dmcRecordFields)
+                ->join('internal_marks', $cond, $internalMarksFields)
+                ->where('internal_marks.member_id = ?', $member_id)
+                ->where('department_id = ?', $department_id)
+                ->where('programme_id = ?', $programme_id)
+                ->where('semester_id = ?', $semester_id);
+            if (isset($appear_type)) {
+                $select->where('appear_type = ?', $appear_type);
+            }
+            $memberDmcRecords = $select->query()->fetchAll(Zend_Db::FETCH_GROUP);
+            return $memberDmcRecords;
+        }
+    }
+    public function helper (Acad_Model_Course_SubjectDmc $subjectDmc)
+    {
+        $member_id = $subjectDmc->getMember_id();
+        $department_id = $subjectDmc->getDepartment_id();
+        $programme_id = $subjectDmc->getProgramme_id();
+        $semester_id = $subjectDmc->getSemester_id();
+        if (! isset($member_id) or ! isset($department_id) or
+         ! isset($programme_id) or ! isset($semester_id)) {
+            throw new Exception(
+            'Insufficient data provided..  memberId, department_id,programme_id and semester_id are ALL required');
+        } else {
+            $internalMarksFields = array('subject_code', 
+            'marks_scored_internal' => 'marks_scored', 
+            'marks_suggested_internal' => 'marks_suggested');
+            $adapter = $this->getDbTable()->getAdapter();
+            $select = $adapter->select()
+                ->from('internal_marks', $internalMarksFields)
+                ->where('department_id = ?', $department_id)
+                ->where('programme_id = ?', $programme_id)
+                ->where('semester_id = ?', $semester_id)
+                ->where('member_id = ?', $member_id);
+            $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            return $result;
+        }
     }
 }
