@@ -9,11 +9,12 @@ class Acad_Model_Course_SubjectDmc extends Acad_Model_Generic
 {
     protected $_considered_dmc_records = array();
     protected $_member_dmc_records = array();
+    protected $_internal_marks = array();
     protected $_marks_scored_internal;
     protected $_marks_scored_uexam;
     protected $_member_id;
     //
-    protected $_semster_id;
+    protected $_semester_id;
     protected $_marks_obtained;
     //
     protected $_department_id;
@@ -31,6 +32,23 @@ class Acad_Model_Course_SubjectDmc extends Acad_Model_Generic
     protected $_total_marks;
     protected $_scaled_marks;
     protected $_mapper;
+    /**
+     * @return the $_internal_marks
+     */
+    protected function getInternal_marks ()
+    {
+        $internal_marks = $this->_internal_marks;
+        $internal_marks = $this->getMapper()->helper($this);
+        $this->setInternal_marks($internal_marks);
+        return $this->_internal_marks;
+    }
+    /**
+     * @param field_type $_internal_marks
+     */
+    protected function setInternal_marks ($_internal_marks)
+    {
+        $this->_internal_marks = $_internal_marks;
+    }
     public function getMarks_scored_internal ()
     {
         return $this->_marks_scored_internal;
@@ -83,13 +101,13 @@ class Acad_Model_Course_SubjectDmc extends Acad_Model_Generic
     {
         $this->_member_id = $_member_id;
     }
-    public function getSemster_id ()
+    public function getSemester_id ()
     {
-        return $this->_semster_id;
+        return $this->_semester_id;
     }
-    public function setSemster_id ($_semster_id)
+    public function setSemester_id ($_semester_id)
     {
-        $this->_semster_id = $_semster_id;
+        $this->_semester_id = $_semester_id;
     }
     public function getMarks_obtained ()
     {
@@ -246,9 +264,9 @@ class Acad_Model_Course_SubjectDmc extends Acad_Model_Generic
      * PreRequistes - either (regNo, subCode AND marks must be set)
      * or (dmcId must be set)
      */
-    public function initInfo ()
+    public function initDmcInfo ()
     {
-        $options = $this->getMapper()->fetchDetails($this);
+        $options = $this->getMapper()->fetchDmcInfo($this);
         $this->setOptions($options);
     }
     public function getPassedSemesters ()
@@ -256,10 +274,10 @@ class Acad_Model_Course_SubjectDmc extends Acad_Model_Generic
         $considered_dmc_records = $this->getConsidered_dmc_records();
         return array_keys($considered_dmc_records);
     }
-    public function initSemesterDmcConsidered ()
+    /* public function initAggregate ()
     {
         $considered_dmc_records = $this->getConsidered_dmc_records();
-        $semester_id = $this->getSemster_id();
+        $semester_id = $this->getSemester_id();
         if (! isset($semester_id)) {
             throw new Exception('Please provide semester id first', 
             Zend_Log::ERR);
@@ -274,7 +292,7 @@ class Acad_Model_Course_SubjectDmc extends Acad_Model_Generic
                 throw new Exception($error, Zend_Log::ERR);
             }
         }
-    }
+    }*/
     /**
      * returns an array containing dmcIds of semesters passed by student  
      * Enter description here ...
@@ -282,10 +300,35 @@ class Acad_Model_Course_SubjectDmc extends Acad_Model_Generic
     public function getMemberDmcIds ()
     {
         $member_dmc_records = $this->getMember_dmc_records();
+        Zend_Registry::get('logger')->debug($member_dmc_records);
         return array_keys($member_dmc_records);
     }
-    public function getMemberDmcRecord ()
+    public function getSemAppearedSubjects ()
     {
-        return $this->getMapper()->fetchMemberDmcRecord($this);
+        $int_mark_helper = $this->getInternal_marks();
+        return array_keys($int_mark_helper);
+    }
+    public function createClearedSemDmc ()
+    {
+        $dmc = array();
+        $subjects = $this->getSemAppearedSubjects();
+        $int_mark_helper = $this->getInternal_marks();
+        foreach ($subjects as $subject) {
+            $this->setSubject_code($subject);
+            $marks_history = $this->getSubjectMarksHistory();
+            $all_marks = array_keys($marks_history);
+            $max = $all_marks[0];
+            $inf['subject_code'] = $subject;
+            $inf['dmc_id'] = $marks_history[$max]['dmc_id'];
+            $inf['appear_type'] = $marks_history[$max]['appear_type'];
+            $inf['marks_scored_uexam'] = $max;
+            $inf['marks_scored_internal'] = $int_mark_helper[$subject]['marks_scored_internal'];
+            $dmc[] = $inf;
+        }
+        return $dmc;
+    }
+    public function createDmc ()
+    {
+        k;
     }
 }
