@@ -198,8 +198,7 @@ abstract class Core_Model_Generic
         $valid_range_keys);
         if (isset($invalid_names) or isset($invalid_names_1)) {
             Zend_Registry::get('logger')->debug(
-            var_export($error1 . ' ' . $error2 . $message));
-            echo "</br>";
+            var_export($error1 . ' ' . $error2 . $message, true));
         }
         if (empty($deciding_intersection)) {
             //now we can set off for search operation
