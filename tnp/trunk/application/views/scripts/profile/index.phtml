@@ -28,25 +28,20 @@
 <p class="formHint"></p>
 </div>
 
-<div class="ctrlHolder"><label for=""><em>*</em>Degree</label> <select
-	id="deptt" name="deptt" class="selectInput required">
-	<option value="btech">B.Tech</option>
-	<option value="mtech">M.Tech</option>
-</select></div>
 
 <div class="ctrlHolder">
-<p class="label"><em>*</em>Admission Basis In B.Tech</p>
+<p class="label"><em>*</em>Your Degree</p>
 <ul class="blockLabels">
-	<li><label for=""><input name="appBasis" type="radio" value="aieee"
-		title="AIEEE" class="required">AIEEE</label></li>
-	<li><label for=""><input name="appBasis" type="radio" value="twelfth"
-		title="10+2" class="required">10+2</label></li>
-	<li><label for=""><input name="appBasis" type="radio" value="leet"
-		title="LEET" class="required">LEET</label></li>
+	<li><label for=""><input name="appType" type="radio" value="btech"
+		title="BTECH" class="required">B.Tech</label></li>
+	<li><label for=""><input name="appType" type="radio" value="mtech"
+		title="MTECH" class="required">M.Tech</label></li>
+	
 	
 </ul>
 
 </div>
+
 
 <br />
 <div class="buttonHolder">
@@ -63,7 +58,7 @@
 	var urlBasicInfo  = "<?php
 echo $this->url(array('controller' => 'profile', 'action' => 'followstep'))?>";
 	var rollNo;
-	var basis;
+	var type;
 	var department;
 	var regnno;
 
@@ -72,9 +67,9 @@ echo $this->url(array('controller' => 'profile', 'action' => 'followstep'))?>";
             prevent_submit : true
         });
 
-        $('input[name=appBasis]').change(function(){
-            basis = this.value;
-        	$('.appBasis').text(' of '+this.title);
+        $('input[name=appType]').change(function(){
+            type = this.value;
+        	$('.appType').text(' of '+this.title);
         });
       });
 
@@ -86,7 +81,7 @@ echo $this->url(array('controller' => 'profile', 'action' => 'followstep'))?>";
         	url: urlBasicInfo,
             data : {
             roll_no: rollNo,
-    		admission_basis : basis,
+    		application_type : type,
     		deptt : department,
     		regn_no : regnno
         	},
@@ -108,7 +103,7 @@ echo $this->url(array('controller' => 'profile', 'action' => 'followstep'))?>";
               url : urlCheckRollno,
               dataType : 'json',
               data : {roll_no: rollNo,
-                  	  admission_basis:basis},
+                  	  application_type:type},
               success: function(jStatus){
             	  if (confirm("Application not submitted.\nClick 'OK' to continue.")){
             		  window.location = "/applicationform";

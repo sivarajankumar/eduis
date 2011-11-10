@@ -1,6 +1,6 @@
 
 <!--[if lte ie 7]>
-      <style type="text/css" media="screen">
+      <style basis="text/css" media="screen">
         /* Move these to your IE6/7 specific stylesheet if possible */
         .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
       </style>
@@ -14,22 +14,19 @@ echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$step
 <fieldset>
 <h3>Enroll</h3>
 <div class="ctrlHolder">
-<p class="label"><em>*</em>Filling Application for</p>
-<ul class="blockLabels">
-	<li><label for=""><input name="appType" type="radio" value="btech"
-		title="BTECH" class="required">B.Tech</label></li>
-	<li><label for=""><input name="appType" type="radio" value="mtech"
-		title="MTECH" class="required">M.Tech</label></li>
-	
-	
-</ul>
-
-</div>
+          <p class="label"><em>*</em>Admission Basis</p>
+          <ul class="blockLabels">
+            <li><label for=""><input name="admBasis" type="radio" value="aieee" title="AIEEE" class="required">AIEEE</label></li>
+            <li><label for=""><input  name="admBasis" type="radio" value="twelfth" title="10+2" class="required">10+2</label></li>
+            <li><label for=""><input  name="admBasis" type="radio" value="leet" title="LEET" class="required">LEET</label></li>
+          </ul>
+          <p class="formHint">Basis of Addmission</p>
+        </div>
 
 <br />
 <div class="buttonHolder">
-<button type="reset" class="secondaryAction">Reset the form</button>
-<button type="submit" class="primaryAction" >Proceed</button>
+<button basis="reset" class="secondaryAction">Reset the form</button>
+<button basis="submit" class="primaryAction" >Proceed</button>
 </div>
 
 </fieldset>
@@ -38,19 +35,18 @@ echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$step
 	/**@todo
 	*apply validate roll number
 	**/
-	var urlBasicInfo  = "<?php
-echo $this->url(array('controller' => 'profile', 'action' => 'settype'))?>";
+	var urlBasicInfo  = "<?php echo $this->url(array('controller' => 'profile', 'action' => 'set'.$this->steps[$stepNo]))?>";
 	
-	var type;
+	var basis;
 	
     $(function(){
         $('form.uniForm').uniform({
             prevent_submit : true
         });
 
-        $('input[name=appType]').change(function(){
-            type = this.value;
-        	$('.appType').text(' of '+this.title);
+        $('input[name=admBasis]').change(function(){
+            basis = this.value;
+        	$('.admBasis').text(' of '+this.title);
         });
       });
 
@@ -60,11 +56,11 @@ echo $this->url(array('controller' => 'profile', 'action' => 'settype'))?>";
         	url: urlBasicInfo,
             data : {
           
-    		application_type : type
+    		admission_basis : basis
         	},
             success: function(jStatus)
             {
-        		window.location = "/profile/degreedetails";
+        		window.location = "/profile/<?php echo $this->steps[$stepNo+1];?> ";
     	    }
            ,
             error: function(response) {
