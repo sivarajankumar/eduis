@@ -35,7 +35,7 @@
 </select></div>
 
 <div class="ctrlHolder">
-<p class="label"><em>*</em>Admission Basis</p>
+<p class="label"><em>*</em>Admission Basis In B.Tech</p>
 <ul class="blockLabels">
 	<li><label for=""><input name="appBasis" type="radio" value="aieee"
 		title="AIEEE" class="required">AIEEE</label></li>
@@ -43,8 +43,9 @@
 		title="10+2" class="required">10+2</label></li>
 	<li><label for=""><input name="appBasis" type="radio" value="leet"
 		title="LEET" class="required">LEET</label></li>
+	
 </ul>
-<p class="formHint">Basis of Admission</p>
+
 </div>
 
 <br />
@@ -60,7 +61,7 @@
 	*apply validate roll number
 	**/
 	var urlBasicInfo  = "<?php
-echo $this->url(array('controller' => 'profile', 'action' => 'personal'))?>";
+echo $this->url(array('controller' => 'profile', 'action' => 'followstep'))?>";
 	var rollNo;
 	var basis;
 	var department;
