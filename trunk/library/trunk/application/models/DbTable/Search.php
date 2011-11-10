@@ -1,59 +1,57 @@
 <?php
 class Lib_Model_DbTable_Search extends Libz_Base_Model {
-	
-	public static function search($q, $start, $filter) {
-		$sql = "SELECT
-  isbn.title,
-  isbn.author,
-  isbn.place_publisher,
-  IFNULL(isbn.year,'-') AS pub_year,
-  IFNULL(isbn.edition,'-') AS edition,
-  book.status,
-  book.isbn_id,
-  book.acc_no
-	FROM isbn
-  INNER JOIN book
-    ON isbn.isbn_id = book.isbn_id
-WHERE (isbn.title LIKE '%$q%'
-     OR isbn.author LIKE '%$q%'	
-     OR isbn.place_publisher LIKE '%$q%'	
-     OR book.acc_no = '$q'
-     OR isbn.isbn_id = '$q')";
-		if ($filter == 'avail_book') {
-			$sql .= " AND book.status = 'AVAILABLE'";
+	protected $_resultCount = NULL;
+	protected $_result = NULL;
+	protected  $_processedResult = NULL;
+	 
+	protected function _search($q, $filter = NULL, $offset = 0,$limit = 10) {
+	    $select = $this->getAdapter()->select()
+	                    ->from('book',array('isbn_id','status',
+	                    					'COUNT(`acc_no`) AS counts'))
+	                    ->join('isbn',
+	                    		'isbn.isbn_id = book.isbn_id',
+	                            array('title','author',
+                						'edition'=> 'IFNULL(isbn.edition,"-")',
+                						'pub_year'=>'IFNULL(isbn.year,"-")',
+                						'place_publisher'));
+                        
+        $qArray = array();
+        $qArray[] = $this->getAdapter ()->quoteInto ( "isbn.title LIKE ?", '%'.$q.'%' );
+        $qArray[] = $this->getAdapter ()->quoteInto ( "isbn.author LIKE ?", '%'.$q.'%' );
+        $qArray[] = $this->getAdapter ()->quoteInto ( "isbn.place_publisher LIKE ?", '%'.$q.'%' );
+        $qArray[] = $this->getAdapter ()->quoteInto ( "book.acc_no = ?", $q );
+        $qArray[] = $this->getAdapter ()->quoteInto ( "isbn.isbn_id = ?", $q );
+        $select->where(implode(' OR ', $qArray));
+		if ($filter) {
+			$select->where('book.status = ?',$filter);
 		}
-		if ($filter == 'issued_book') {
-			$sql .= " AND book.status = 'ISSUED '";
-		}
-		$sql .= "LIMIT $start,10";
-		$result = self::getDefaultAdapter ()->query ( $sql )->fetchAll ();
-		return $result;
+		$select->group(array('isbn_id','status'));
+		$this->_resultCount = $select->query(Zend_Db::FETCH_GROUP)->rowCount();
+		$select->limit($limit,$offset);
+		$select->order(array('title','author','status'));
+		$this->_result = $select->query ()->fetchAll (Zend_Db::FETCH_GROUP);
+		return $this;
 	}
-	public static function resultCount($q, $filter) {
-		$sql = "SELECT
-  isbn.title,
-  isbn.author,
-  isbn.place_publisher,
-  IFNULL(isbn.year,'-') AS pub_year,
-  IFNULL(isbn.edition,'-') AS edition,
-  book.status,
-  book.isbn_id,
-  book.acc_no
-	FROM isbn
-  INNER JOIN book
-    ON isbn.isbn_id = book.isbn_id
-WHERE (isbn.title LIKE '%$q%'
-     OR isbn.author LIKE '%$q%'	
-     OR isbn.place_publisher LIKE '%$q%'	
-     OR book.acc_no = '$q'
-     OR isbn.isbn_id = '$q')";
-		if ($filter == 'avail_book') {
-			$sql .= " AND book.status = 'AVAILABLE'";
-		}
-		if ($filter == 'issued_book') {
-			$sql .= " AND book.status = 'ISSUED '";
-		}
-		return self::getDefaultAdapter ()->query ( $sql )->rowCount ();
+	public function search($q, $filter = NULL, $offset = 0,$limit = 10) {
+	    self::_search($q, $filter, $offset,$limit);
+	    $processedresult = array();
+	    foreach ($this->_result as $isbn_id =>$isbn) {
+	        foreach ($isbn as $key => $book) {
+    	        $status = $book['status'];
+    	        $counts = $book['counts'];
+    	        $processedresult[$isbn_id]['status'][$status] = $counts;
+    	        $processedresult[$isbn_id]['info'] = array_diff_key($book, array('status'=>'',
+        																		'counts'=>''));
+	        }
+	    }
+	    $this->_processedResult = $processedresult;
+	    return $this->_processedResult;
+	}
+	public function resultCount() {
+	    if (!isset($this->_result)) {
+	        throw new Zend_Exception('Result is not set yet!!',Zend_Log::INFO);
+	    }
+	    return $this->_resultCount;
 	}
 }
 ?>

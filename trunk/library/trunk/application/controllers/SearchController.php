@@ -19,32 +19,33 @@ class SearchController extends Libz_Base_BaseController {
         $this->view->assign('module', $this->_request->getModuleName());
         $request = $this->getRequest();
         $q = $request->getParam('q');
-        $start = ($request->getParam('start')) ? $request->getParam('start') : 0;
+        $offset = $request->getParam('start',0);
+        $limit = 20;
         $this->view->assign('q', $q);
         $paging = NULL;
         if (! empty($q)) {
-            $filter = $request->getParam('filter') ? $request->getParam(
-            'filter') : 'all_book';
-            $this->view->assign($filter, "checked");
-            $model = self::createModel();
-            $this->view->assign("search_result", 
-            $model::search($q, $start, $filter));
-            $row_num = $model::resultCount($q, $filter);
-            $page_no = ($start / 10) + 1;
+            $filter = $request->getParam('filter');
+            $this->view->assign('checked', $filter);
+            $searchObj = new Lib_Model_DbTable_Search();
+            $result = $searchObj->search($q, $filter,$offset,$limit);
+            $this->_helper->logger($result);
+            $this->view->assign("search_result", $result);
+            $row_num = $searchObj->resultCount();
+            $page_no = ($offset / $limit) + 1;
             $this->view->assign("cur_page", $page_no);
-            if ($page_no > 10) {
-                $page_no = $page_no - 10;
+            if ($page_no > $limit) {
+                $page_no = $page_no - $limit;
             } else {
                 $page_no = 0;
             }
-            $tmp_start = $page_no * 10;
+            $tmp_start = $page_no * $limit;
             $cnt = 1;
-            for ($cur_row = $page_no * 10; ($cnt < 20 && $cur_row < $row_num); $cur_row += 10) {
+            for ($cur_row = $page_no * $limit; ($cnt < 20 && $cur_row < $row_num); $cur_row += $limit) {
                 $page_no ++;
-                $paging[] = "<a name= $page_no href=" . $_SERVER['REDIRECT_URL'] .
+                $paging[] = '<a name="'.$page_no.'" href="'. $_SERVER['REDIRECT_URL'] .
                  '?q=' . $q . '&start=' . ($tmp_start) . '&filter=' . $filter .
-                 ">" . $page_no . "</a>";
-                $tmp_start = $tmp_start + 10;
+                 '">' . $page_no . '</a>';
+                $tmp_start = $tmp_start + $limit;
                 $cnt ++;
             }
             if ($row_num > 0) {
