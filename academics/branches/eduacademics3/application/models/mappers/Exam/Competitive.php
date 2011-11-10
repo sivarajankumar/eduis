@@ -123,7 +123,7 @@ class Acad_Model_Mapper_Exam_Competitive
             $adapter->commit();
         } catch (Exception $exception) {
             $adapter->rollBack();
-            echo $exception->getMessage() . "</br>";
+            throw $exception;
         }
     }
     /**
@@ -177,7 +177,7 @@ class Acad_Model_Mapper_Exam_Competitive
         $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         if (! count($result)) {
             $search_error = 'No results match your search criteria.';
-            return $search_error;
+            throw new Exception($search_error, Zend_Log::WARN);
         } else {
             return $result;
         }
