@@ -16,11 +16,11 @@ echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$step
          <h3>Basic Skills</h3>
          <div class="ctrlHolder">
           <label for="skills"><em>*</em>Feild</label>
-          <input name="skill" id="skill" value="" data-default-value="e.g. C, C++" value="<?php echo $this->applicant->skill ?>"  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required validateAlpha"/>
+          <input name="skill" id="skill" value="" data-default-value="e.g. C, C++" value="<?php echo $this->applicant->skill ?>"  size="35" maxlength="50" type="text"  class="textInput required validateAlpha"/>
           <p class="formHint">Please enter the technical feild you are skilled in</p>
         </div>
         <div class="ctrlHolder">
-          <label for="proficiency">Blood Group</label>
+          <label for="proficiency">Proficiency</label>
           <select id="proficiency" name="proficiency" class="selectInput">
           		<option value="EXPERT" <?php echo ($this->applicant->proficiency)?'selected="selected"':'';?> >Expert</option>
           		<option value="INTERMEDIATE" <?php echo ($this->applicant->proficiency)?'selected="selected"':'';?> >Intermediate</option>
@@ -31,7 +31,7 @@ echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$step
         </div>
         <div class="ctrlHolder">
           <label for="skills"><em>*</em>Technical Stream</label>
-            <input name="tech_stream" id="tech_stream" data-default-value="e.g. Computer programming" value="<?php echo $this->applicant->tech_stream ?>"  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required validateAlpha"/>
+            <input name="tech_stream" id="tech_stream" data-default-value="e.g. Computer programming" value="<?php echo $this->applicant->tech_stream ?>"  size="35" maxlength="50" type="text"  class="textInput required validateAlpha"/>
           <p class="formHint">Please enter the technical feild you are skilled in</p>
         </div>       
         </fieldset>

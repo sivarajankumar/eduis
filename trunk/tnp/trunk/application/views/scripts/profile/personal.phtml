@@ -192,8 +192,7 @@
 
     </form>
 	<script>
-	var urlBasicInfo = "<?php 
-	echo $this->url(array('controller' => 'profile', 'action' => 'set'.$this->steps[$stepNo]))?>";
+	var urlBasicInfo = "<?php echo $this->url(array('controller' => 'profile', 'action' => 'set'.$this->steps[$stepNo]))?>";
       $(function(){
         $('form.uniForm').uniform({
           prevent_submit : true
