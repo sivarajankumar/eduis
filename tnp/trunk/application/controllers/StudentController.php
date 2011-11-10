@@ -216,4 +216,9 @@ class StudentController extends Zend_Controller_Action
     }
     public function searchAction ()
     {}
+    
+    public function saveprofileAction()
+    {
+    	
+    }
 }
