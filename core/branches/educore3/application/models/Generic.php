@@ -1,5 +1,5 @@
 <?php
-abstract class Core_Model_Generic
+abstract class Acad_Model_Generic
 {
     protected $_init_save = false;
     /**
@@ -196,9 +196,10 @@ abstract class Core_Model_Generic
         $message = "$error_append " . "</br>" . "$suggestion";
         $deciding_intersection = array_intersect($valid_options, 
         $valid_range_keys);
-        if (isset($invalid_names) or isset($invalid_names_1)) {
+        if (empty($invalid_names) or empty($invalid_names_1)) {
             Zend_Registry::get('logger')->debug(
-            var_export($error1 . ' ' . $error2 . $message, true));
+            var_export($error1 . ' ' . $error2 . $message));
+            echo "</br>";
         }
         if (empty($deciding_intersection)) {
             //now we can set off for search operation

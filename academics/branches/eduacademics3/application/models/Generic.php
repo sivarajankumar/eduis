@@ -196,9 +196,7 @@ abstract class Acad_Model_Generic
         $message = "$error_append " . "</br>" . "$suggestion";
         $deciding_intersection = array_intersect($valid_options, 
         $valid_range_keys);
-        $size= sizeof($invalid_names);
-        $size1= sizeof($invalid_names_1);
-        if ($size == 0 or $size1 == 0) {
+        if (empty($invalid_names) or empty($invalid_names_1)) {
             Zend_Registry::get('logger')->debug(
             var_export($error1 . ' ' . $error2 . $message));
             echo "</br>";
