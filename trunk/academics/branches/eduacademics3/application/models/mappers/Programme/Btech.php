@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_Mapper_Programme_Diploma
+class Acad_Model_Mapper_Programme_Btech
 {
     protected $_table_cols = null;
     /**
@@ -27,7 +27,7 @@ class Acad_Model_Mapper_Programme_Diploma
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Acad_Model_Mapper_Programme_Diploma
+     * @return Acad_Model_Mapper_Programme_Btech
      */
     public function setDbTable ($dbTable)
     {
@@ -47,17 +47,17 @@ class Acad_Model_Mapper_Programme_Diploma
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Acad_Model_DbTable_Diploma');
+            $this->setDbTable('Acad_Model_DbTable_Btech');
         }
         return $this->_dbTable;
     }
     /**
      * Fetches Diploma Details of a student
-     * @param Acad_Model_Programme_Diploma $diploma
+     * @param Acad_Model_Programme_Btech $btech
      */
-    public function fetchMemberExamInfo (Acad_Model_Programme_Diploma $diploma)
+    public function fetchMemberExamInfo (Acad_Model_Programme_Btech $btech)
     {
-        $member_id = $diploma->getMember_id();
+        $member_id = $btech->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
         $required_fields = $this->getTable_cols();
         $select = $adapter->select()
@@ -69,11 +69,11 @@ class Acad_Model_Mapper_Programme_Diploma
     }
     /**
      * Fetches Discipline Information ,viz, Name in this case
-     * @param Acad_Model_Programme_Diploma $diploma
+     * @param Acad_Model_Programme_Btech $btech
      */
-    /*public function fetchDisciplineInfo (Acad_Model_Programme_Diploma $diploma)
+    /*public function fetchDisciplineInfo (Acad_Model_Programme_Btech $btech)
     {
-        $discipline_id = $diploma->getDiscipline_id();
+        $discipline_id = $btech->getDiscipline_id();
         if (! isset($discipline_id)) {
             $error = 'Please provide the Discipline Id';
             throw new Exception($error);
@@ -91,9 +91,9 @@ class Acad_Model_Mapper_Programme_Diploma
      * 
      * Enter description here ...
      * @param array $options
-     * @param Acad_Model_Programme_Diploma $diploma
+     * @param Acad_Model_Programme_Btech $btech
      */
-    public function save ($options, Acad_Model_Programme_Diploma $diploma = null)
+    public function save ($options, Acad_Model_Programme_Btech $btech = null)
     {
         $all_diploma_cols = $this->getDiploma_cols();
         //$db_options is $options with keys renamed a/q to db_columns
@@ -104,19 +104,16 @@ class Acad_Model_Mapper_Programme_Diploma
         $db_options_keys = array_keys($db_options);
         $recieved_diploma_keys = array_intersect($db_options_keys, 
         $all_diploma_cols);
-        $diploma_data = array();
+        $btech_data = array();
         foreach ($recieved_diploma_keys as $key_name) {
             $str = "get" . ucfirst($this->correctModelKeys($key_name));
-            $diploma_data[$key_name] = $diploma->$str();
+            $btech_data[$key_name] = $btech->$str();
         }
-        //Zend_Registry::get('logger')->debug($diploma_data);
-        //$adapter = $this->getDbTable()->getAdapter();
-        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
         $adapter = $this->getDbTable()->getAdapter();
         $table = $this->getDbTable()->info('name');
         $adapter->beginTransaction();
         try {
-            $sql = $adapter->insert($table, $diploma_data);
+            $sql = $adapter->insert($table, $btech_data);
             $adapter->commit();
         } catch (Exception $exception) {
             $adapter->rollBack();
@@ -125,12 +122,12 @@ class Acad_Model_Mapper_Programme_Diploma
     }
     /**
      * Enter description here ...
-     * @param Acad_Model_Programme_Diploma $diploma
+     * @param Acad_Model_Programme_Btech $btech
      * @param array $property_range Example :array('name'=>array('from'=>n ,'to'=>m));
      * here 'from' stands for >= AND 'to' stands for <=
      * 
      */
-    public function fetchStudents (Acad_Model_Programme_Diploma $diploma, 
+    public function fetchStudents (Acad_Model_Programme_Btech $btech, 
     array $setter_options = null, array $property_range = null)
     {
         $correct_db_options = array();
@@ -147,9 +144,9 @@ class Acad_Model_Mapper_Programme_Diploma
         $correct_db_options1_keys);
         $table = $this->getDbTable()->info('name');
         //1)get column names of Diploma present in arguments received
-        $diploma_col = $this->getDiploma_cols();
-        $diploma_intrsctn = array();
-        $diploma_intrsctn = array_intersect($diploma_col, $merge);
+        $btech_col = $this->getDiploma_cols();
+        $btech_intrsctn = array();
+        $btech_intrsctn = array_intersect($btech_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
         $select = $adapter->select()->from($table, 'member_id');
         if (count($correct_db_options1)) {
@@ -166,7 +163,7 @@ class Acad_Model_Mapper_Programme_Diploma
             foreach ($correct_db_options as $property_name => $value) {
                 $getter_string = 'get' .
                  ucfirst($this->correctModelKeys($property_name));
-                $diploma->$getter_string();
+                $btech->$getter_string();
                 $condition = $property_name . ' = ?';
                 $select->where($condition, $value);
             }
