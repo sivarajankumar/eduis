@@ -15,7 +15,9 @@ class JobController extends Zend_Controller_Action
 		
 	}
     public function indexAction ()
-    {}
+    {
+    $this->_redirect('job/register');
+    }
     public function registerAction ()
     {
         
@@ -26,7 +28,7 @@ class JobController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
-    	
+        
         
         
         
