@@ -48,17 +48,15 @@ $(function(){
                 hidden: true},
             {name:'issue_date', 
                 index:'issue_date',
-                search:true,
-                stype:'text',
                 searchoptions:{dataInit:datePick, attr:{title:'Select Date'}}},
             {name:'return_date',
-                index:'return_date'},
+                index:'return_date',
+                searchoptions:{dataInit:datePick, attr:{title:'Select Date'}}},
             {name:'isbn_id', 
                 index:'isbn_id',
                 hidden: true},
                 {name:'status', 
                     index:'status',
-                    search:true,
                     stype:'select',
                     editoptions:{value:{'':'Status Filter',AVAILABLE:'AVAILABLE',ISSUED:'ISSUED'}} ,
                     searchoptions:{attr:{title:'Book Status'}}},
@@ -112,28 +110,7 @@ $(function(){
         view : false,
         search : false,
         refresh : false
-    }, // options
-            {
-                width : 400,
-                savekey : [ true, 13 ],
-                navkeys : [ true, 38, 40 ],
-                jqModal : false,
-                closeOnEscape : true
-            }, // edit options
-            {
-                width : 400,
-                savekey : [ true, 13 ],
-                navkeys : [ true, 38, 40 ],
-                jqModal : false,
-                closeOnEscape : true,
-                clearAfterAdd : true //Default is true, make false if needed
-            }, // add options
-            {
-                reloadAfterSubmit : false,
-                jqModal : false,
-                closeOnEscape : true
-            } // del options
-         );
+    });
     
     addPager(gridTable, gridPager); 
     
@@ -144,7 +121,11 @@ datePick = function(elem)
 
 	$(elem).datepicker({
 		maxDate : serverDateObj,
-		dateFormat: 'yy-mm-dd'
+		dateFormat: 'yy-mm-dd',
+		onClose: function(dateText, inst) {
+			var e = jQuery.Event( 'keypress', { keyCode: $.ui.keyCode.ENTER } );
+			$(inst.input).trigger(e);
+		}
 	});
 };
 function fetchBookDetail(acc_no) {
