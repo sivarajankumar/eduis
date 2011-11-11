@@ -25,8 +25,8 @@
         <div class="ctrlHolder">
           <p class="label">Gender</p>
           <ul class="blockLabels alternate">
-            <li><label for="gender"><input name="gender" type="radio" value="M"  title="Male">Male</label></li>
-            <li><label for="gender"><input  name="gender" type="radio" value="F" title="Female">Female</label></li>
+            <li><label for="gender"><input name="gender" type="radio" value="MALE"  title="Male">Male</label></li>
+            <li><label for="gender"><input  name="gender" type="radio" value="FEMALE" title="Female">Female</label></li>
           </ul>
           <p class="formHint">Gender</p>
         </div>
@@ -35,8 +35,8 @@
           <label for="nationality_id">Nationality</label>
           <select id="nationality_id" name="nationality_id" class="selectInput">
           		<option value="0">ANY</option>
-          		<option value="indian">INDIAN</option>
-          		<option value="nri">NRI</option>
+          		<option value="1">INDIAN</option>
+          		<option value="2">NRI</option>
   		  </select>
           <p class="formHint">Nationality</p>
         </div>
@@ -45,9 +45,9 @@
           <label for="cast">Cast</label>
           <select id="cast" name="cast" class="selectInput required">
           		<option value="0">ANY</option>
-          		<option value="GEN">GEN</option>
-          		<option value="SC">SC</option>
-          		<option value="OBC">OBC</option>
+          		<option value="1">GEN</option>
+          		<option value="2">SC</option>
+          		<option value="3">OBC</option>
       	  </select>
           <p class="formHint">Cast of <span class="cName" >Candidate</span></p>
         </div>
@@ -125,14 +125,14 @@
           </div>
           
           <div class="ctrlHolder">
-            <label for="1twelfth_percent[from]">Twelfth Total Percentage from</label>
-            <input name="1twelfth_percent[from]" class = "1twelfth_percent" id="twelfth_percent_from" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <label for="1percentage[from]">Twelfth Total Percentage from</label>
+            <input name="1percentage[from]" class = "1percentage" id="twelfth_percent_from" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
             <p class="formHint">Lower limit of Twelfth Percentage</p>
             
             <br><br>
             
-            <label for="1twelfth_percent[to]">Twelfth Total Percentage to</label>
-            <input name="1twelfth_percent[to]" class = "1twelfth_percent" id="twelfth_percent_to" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <label for="1percentage[to]">Twelfth Total Percentage to</label>
+            <input name="1percentage[to]" class = "1percentage" id="twelfth_percent_to" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
             <p class="formHint">Upper limit of Twelfth Percentage</p>
           </div>
           
@@ -255,7 +255,7 @@
          
           <br>
           
-          <h3 onclick="showForm('mtech')"><span class="click_me_mtech">+</span>   M.Tech Information</h3>
+         <!-- <h3 onclick="showForm('mtech')"><span class="click_me_mtech">+</span>   M.Tech Information</h3>
 		<div id="mtech_detail">
           
           <div class="ctrlHolder">
@@ -303,7 +303,7 @@
           
           <br>
           
-            <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+            --><div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
         
         <div class="buttonHolder">
         	<button type="submit" class="secondaryAction">Cancel and go back</button>
