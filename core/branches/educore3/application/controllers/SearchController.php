@@ -19,7 +19,7 @@ class SearchController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $without_rangeKeys = array('gender'=>'',
                                'nationality_id'=>'',
-                               'cast'=>'');
+                               'cast_id'=>'');
         $without_range = array_intersect_key($params, $without_rangeKeys);
         $this->_helper->logger($without_range);
         
@@ -54,14 +54,15 @@ class SearchController extends Zend_Controller_Action
         {
             $response = $search_result_rel; 
         }
-        $this->_helper->logger($response);
+        
         $info = array();
         foreach($response as $key => $memberId)
         {
             $model->setMember_id($memberId);
             $model->initStudentInfo();
+            $model->fetchRollNumber();
             $info[$memberId] = array(
-            'roll_no' => $model->fetchRollNumber(),
+            'roll_no' => $model->getStudent_roll_no(),
             'name' => $model->getFirst_name());
         }
        
