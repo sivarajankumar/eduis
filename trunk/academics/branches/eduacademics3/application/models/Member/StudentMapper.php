@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Student data mapper
  *
@@ -16,25 +15,23 @@ class Acad_Model_Member_StudentMapper
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
-
     /**
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
      * @return Default_Model_GuestbookMapper
      */
-    public function setDbTable($dbTable)
+    public function setDbTable ($dbTable)
     {
         if (is_string($dbTable)) {
             $dbTable = new $dbTable();
         }
-        if (!$dbTable instanceof Zend_Db_Table_Abstract) {
+        if (! $dbTable instanceof Zend_Db_Table_Abstract) {
             throw new Exception('Invalid table data gateway provided');
         }
         $this->_dbTable = $dbTable;
         return $this;
     }
-
     /**
      * Get registered Zend_Db_Table instance
      *
@@ -42,28 +39,23 @@ class Acad_Model_Member_StudentMapper
      * 
      * @return Zend_Db_Table_Abstract
      */
-    public function getDbTable()
+    public function getDbTable ()
     {
         if (null === $this->_dbTable) {
             $this->setDbTable('Acad_Model_DbTable_StudentAttendance2');
         }
         return $this->_dbTable;
     }
-
     /**
      * Save a guestbook entry
      * 
      * @param  Default_Model_Guestbook $guestbook 
      * @return void
      */
-    public function save(Default_Model_Guestbook $guestbook)
+    public function save (Default_Model_Guestbook $guestbook)
     {
-        $data = array(
-            'email'   => $guestbook->getEmail(),
-            'comment' => $guestbook->getComment(),
-            'created' => date('Y-m-d H:i:s'),
-        );
-
+        $data = array('email' => $guestbook->getEmail(), 
+        'comment' => $guestbook->getComment(), 'created' => date('Y-m-d H:i:s'));
         if (null === ($id = $guestbook->getId())) {
             unset($data['id']);
             $this->getDbTable()->insert($data);
@@ -71,7 +63,6 @@ class Acad_Model_Member_StudentMapper
             $this->getDbTable()->update($data, array('id = ?' => $id));
         }
     }
-
     /**
      * Find a guestbook entry by id
      * 
@@ -79,7 +70,7 @@ class Acad_Model_Member_StudentMapper
      * @param  Default_Model_Guestbook $guestbook 
      * @return void
      */
-    public function find($id, Default_Model_Guestbook $guestbook)
+    public function find ($id, Default_Model_Guestbook $guestbook)
     {
         $result = $this->getDbTable()->find($id);
         if (0 == count($result)) {
@@ -87,19 +78,18 @@ class Acad_Model_Member_StudentMapper
         }
         $row = $result->current();
         $guestbook->setId($row->id)
-                  ->setEmail($row->email)
-                  ->setComment($row->comment)
-                  ->setCreated($row->created);
+            ->setEmail($row->email)
+            ->setComment($row->comment)
+            ->setCreated($row->created);
     }
-
     /**
      * Fetch all guestbook entries
      * 
      * @return array
      */
-    public function fetchAll()
+    public function fetchAll ()
     {
-        $resultSet = $this->getDbTable()->fetchAll();
+        /* $resultSet = $this->getDbTable()->fetchAll();
         $entries   = array();
         foreach ($resultSet as $row) {
             $entry = new Default_Model_Guestbook();
@@ -110,6 +100,6 @@ class Acad_Model_Member_StudentMapper
                   ->setMapper($this);
             $entries[] = $entry;
         }
-        return $entries;
+        return $entries;*/
     }
 }
