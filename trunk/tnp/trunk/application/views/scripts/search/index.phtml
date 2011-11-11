@@ -480,6 +480,7 @@
               dataType : 'jsonp',
               data : getPersonalValues(),
               success: function(jStatus){
+                  
               },
                   error: function(response) {
                       console.log(response);
@@ -504,6 +505,7 @@
           $.ajax({
               url : urlfetchacademic,
               data : getAcademicValues(),
+              dataType : 'jsonp',
               success: function(jStatus){
               },
                   error: function(response) {
@@ -540,6 +542,7 @@
           $.ajax({
               url : urlfetchcareer,
               data : getCareerValues(),
+              dataType : 'jsonp',
               success: function(jStatus){
               },
                   error: function(response) {
