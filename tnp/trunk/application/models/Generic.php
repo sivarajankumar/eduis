@@ -197,7 +197,7 @@ abstract class Tnp_Model_Generic
         $message = "$error_append " . "</br>" . "$suggestion";
         $deciding_intersection = array_intersect($valid_options, 
         $valid_range_keys);
-        if (empty($invalid_names) or empty($invalid_names_1)) {
+        if (!empty($invalid_names) or !empty($invalid_names_1)) {
             Zend_Registry::get('logger')->debug(
             var_export($error1 . ' ' . $error2 . $message));
             echo "</br>";
