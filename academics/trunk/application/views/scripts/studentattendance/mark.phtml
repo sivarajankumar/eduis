@@ -1,4 +1,4 @@
-<style async="true" >
+<style>
 .holiday {
 	background-color: maroon;
 	color: red;
@@ -92,10 +92,10 @@ echo $date->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-al
 </form>
 
 </div>
-<div style="clear: both;" >&nbsp;</div>
-<table id="stulistgrid" class="scroll"
-	cellpadding="0" cellspacing="0"></table>
-
+<div class="gridstyle">
+<table id="stulistgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
 <div id="statusdiv" class="aligncenter">
 <form id="finalStatus">
 <table style="padding: 0.5em;"  >
@@ -174,10 +174,10 @@ $(function(){
 		var selectedGroup = $(this).val();
 		
 		if ( 'ALL' == selectedGroup) {
-			$("#subject_mode_id option[together='1']").attr("selected", "selected");
+			$("#subject_mode_id option[together='1']").prop("selected", "selected");
 		    $("#subject_mode_id").trigger('change');
 		} else {
-			$("#subject_mode_id option[together='0']:first").attr("selected", "selected");
+			$("#subject_mode_id option[together='0']:first").prop("selected", "selected");
 		    $("#subject_mode_id").trigger('change');
 		}
 	});
@@ -199,8 +199,8 @@ $(function(){
 		/**
 		* @TODO Update Duration Automatically.
 		*/
-		$("#duration option[selected]").removeAttr("selected");
-		$("#duration option[value='"+duration+"']").attr("selected", "selected");
+		$("#duration option[selected]").prop("selected", "");
+		$("#duration option[value='"+duration+"']").prop("selected", "selected");
 	});
 ////////////////////
 //	Element updation functions.
@@ -247,8 +247,6 @@ $(function(){
 					format : 'jsonp'},
 			success: function(jSemesters){
 						var selectOptionString = '<option value ="-1">Semester</option>';
-						//Line below is just a "jugaad".
-						//selectOptionString += '<option value ="1">1</option>';
 	                	$.each(jSemesters, function (index, semester) {
 	        				selectOptionString += '<option value ="'+semester.semester_id+'">'+semester.semester_id+'</option>';
 	        			});
@@ -319,20 +317,20 @@ $(function(){
 			      });
 		      $(elementId).html(selectOptionString).prop('disabled', '');
 		    var selectedGroup = $('#group_id').val();
-			$("#subject_mode_id option:selected").removeAttr("selected");
+			$("#subject_mode_id option:selected").prop("selected", '');
 			if ( 'ALL' == selectedGroup) {
-				$("#subject_mode_id option[together='1']").attr("selected", "selected");
+				$("#subject_mode_id option[together='1']").prop("selected", "selected");
 			    $("#subject_mode_id").trigger('change');
 			} else {
-				$("#subject_mode_id option[together='0']:first").attr("selected", "selected");
+				$("#subject_mode_id option[together='0']:first").prop("selected", "selected");
 			    $("#subject_mode_id").trigger('change');
 			}
 		} else {
 			selectOptionString += '<option together="'+semSubjects[subject_code][0].group_together+'" duration="'+semSubjects[subject_code][0].suggested_duration+'" value ="'+semSubjects[subject_code][0].subject_mode_id+'">'+semSubjects[subject_code][0].subject_mode_id+'</option>';
 		    $(elementId).html(selectOptionString).prop('disabled', '');
 		    
-			$("#subject_mode_id option:selected").removeAttr("selected");
-			$("#subject_mode_id option[value='"+semSubjects[subject_code][0].subject_mode_id+"']").attr("selected", "selected");
+			$("#subject_mode_id option:selected").prop("selected", '');
+			$("#subject_mode_id option[value='"+semSubjects[subject_code][0].subject_mode_id+"']").prop("selected", "selected");
 		    $("#subject_mode_id").trigger('change');
 		}
 	}
@@ -347,9 +345,9 @@ var initStudentGrid = function(){
 	$("#stulistgrid").jqGrid({
 		datatype: "local",
 		colNames:['Group 1','Group 2' , 'Group 3'],
-		colModel:[ {name:'group1',index:'group1', width:100},
-					{name:'group2',index:'group2', width:100},
-					{name:'group3',index:'group3', width:100}],
+		colModel:[ {name:'group1',index:'group1', width:300},
+					{name:'group2',index:'group2', width:300},
+					{name:'group3',index:'group3', width:300}],
 		caption: "Students",
 		hoverrows : false,
 		onCellSelect : function(rowid,icol,content){
@@ -360,7 +358,7 @@ var initStudentGrid = function(){
 		}
 	});
 
-	isStudentGridInit = true;
+	isStudentGridInit = false;
 };
 
 
@@ -382,6 +380,10 @@ $('#markattendance').bind("submit", function(e){
 	var group_id = $("#group_id").val();
 	
 	getStudents(department_id, programme_id, semester_id,group_id);
+
+	//var mygrid=jQuery("#stulistgrid")[0];
+	//mygrid.updateColumns();
+	//jQuery("#stulistgrid").jqGrid('updateColumns');
     }
  });
 
@@ -503,8 +505,6 @@ function getStudents(department_id, degree_id, semester_id, group_id) {
                     default : alert('Unknown group_number :'+group_number);
                 }
 			}
-			
-			
 		}
 
 		$('#stulistgrid input[type=checkbox]').customInput();
@@ -522,7 +522,7 @@ function getStudents(department_id, degree_id, semester_id, group_id) {
 			$("#statusdiv").show();
 		});
 		*/
-		$('#iagree').removeAttr('disabled');
+		$('#iagree').prop('disabled','');
 				
 
 
@@ -609,6 +609,7 @@ $("#period_date").datepicker({
                     url: studentAttendanceUrl ,
                      data: getValues(),
                      success: function(response) {
+                    	 resetgrid();
                          alert(response);
                          /*
                          $( "#submitStatus" ).html(response).slideDown('slow', function(){
@@ -617,7 +618,6 @@ $("#period_date").datepicker({
                                 	},1000);
                             }).append('<br/>Page should refresh itself.');
                          */
-                         resetgrid();
                      },
                      error: function(event) {
                          console.log(event.responseText);
@@ -626,8 +626,8 @@ $("#period_date").datepicker({
                   });
             }
             else{
-                $("#btnmark").attr('disabled','disabled');
-                $('#iagree').attr('checked',false); 
+                $('#iagree').prop('checked','');
+    			$("#btnmark").prop('disabled', 'disabled');
             }
         }
     });
@@ -643,7 +643,7 @@ $("#period_date").datepicker({
           var absentee = new Array();
           var absenteeSet = $("#stulistgrid").find("input:checked").not('.checkGroup');
           absenteeSet.each(function(i) {
-              var rollNo = $(this).attr("id");
+              var rollNo = $(this).prop("id");
           	absentee.push(rollNo);
           });
           formData.absentee = absentee;
@@ -666,7 +666,8 @@ $("#period_date").datepicker({
 function setDefault()
 {
 	$('#totalabsent,#totalstudents').val('0');
-	$('#iagree').prop('checked', false).trigger('click');
+    $('#iagree').prop('checked','');
+	$("#btnmark").prop('disabled', 'disabled');
     $("#statusdiv").hide();
 }
 
