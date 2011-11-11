@@ -82,12 +82,19 @@
 -->
 </style>
 <div style="padding :0.5em 0 0.5em 0; text-align: center; " >
-<form class="noprint" id="departmentWise"><label>Department: <input id="department_id" name="department_id" type="text"
+<form class="noprint" id="departmentWise"><label>Department: <select id="department_id" name="department_id" 
 	class="ui-widget-content  ui-corner-all" style="text-align: center" 
-	value="<?php echo $this->department_id?>" ></input></label>
-	<label>Programme: <input id="programme_id" name="programme_id" type="text"
+	>
+	<option value="BT">Biotech</option>
+	<option value="CSE">Computer Science</option>
+	<option value="ECE">Electronics</option>
+	<option value="ME">Mechanical</option>
+	</select></label>
+	<label>Programme: <select id="programme_id" name="programme_id"
 	class="ui-widget-content  ui-corner-all" style="text-align: center" 
-	value="<?php echo $this->programme_id?>" ></input></label>
+	>
+	<option value="BTECH">BTECH</option>
+	</select></label>
 	<button type="submit" class="ui-corner-all" style="font-size: 0.7em;">Show</button>
 </form>
 <?php 
