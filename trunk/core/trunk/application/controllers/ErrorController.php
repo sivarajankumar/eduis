@@ -4,7 +4,7 @@ class ErrorController extends Zend_Controller_Action
     public function errorAction ()
     {
         $this->_helper->layout()->disableLayout();
-        $this->getResponse()->clearBody(); 
+        $this->getResponse()->clearBody();
         $errors = $this->_getParam('error_handler');
         $message = null;
         if (! $errors) {
@@ -21,44 +21,57 @@ class ErrorController extends Zend_Controller_Action
                 break;
             default:
                 // application error
-                $this->getResponse()->setHttpResponseCode(500);
-                $message = 'Application error';
+                $this->getResponse()->setHttpResponseCode(403);
                 break;
         }
-        // Log exception, if logger available
-        $log = $this->getLog();
-        $code = $errors->exception->getCode();
-        if ($log) {
-            if (0 <= $code and $code <= 8) {
-                $log->log($errors->exception->getMessage(),$code);
-            } else {
-                $log->crit($errors->exception->getMessage());
+        $exception = $errors->exception;
+        if ($exception instanceof Exception) {
+            $code = $exception->getCode();
+            $message = $exception->getMessage();
+            
+            // Log exception, if logger available
+            $log = $this->getLog();
+            if ($log) {
+                if (0 <= $code and $code <= 8) {
+                    $log->log($exception->getMessage(), $code);
+                } else {
+                    $log->crit($code . ' ' . $message);
+                }
             }
-        }
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            $this->_helper->viewRenderer->setNoRender();
-            $this->getResponse()->setHttpResponseCode(403);
-            if ('development' == strtolower(APPLICATION_ENV)) {
-                $this->getResponse()->setBody($errors->exception->getLine().$errors->exception->getFile().$errors->exception->getMessage().$errors->exception->getTraceAsString());
+            
+            $this->getResponse()->setHeader('Message', $message);
+            
+            if ($this->getRequest()->isXmlHttpRequest()) {
+                $this->_helper->viewRenderer->setNoRender();
+                $this->getResponse()->setBody($message);
+                // conditionally display exceptions
+                if ($this->getInvokeArg('displayExceptions') == true) {
+                    $this->getResponse()->append('line', $exception->getLine());
+                    $this->getResponse()->append('file', $exception->getFile());
+                    $this->getResponse()->append('trace', $exception->getTraceAsString());
+                }
             } else {
-                $this->getResponse()->setBody($errors->exception->getMessage());
+                $this->view->message = $message;
                 
+                // conditionally display exceptions
+                if ($this->getInvokeArg('displayExceptions') == true) {
+                    $this->view->exception = $exception;
+                }
+                
+                $this->view->request = $errors->request;
             }
-        } else {
-            // conditionally display exceptions
-            if ($this->getInvokeArg('displayExceptions') == true) {
-                $this->view->exception = $errors->exception;
-            }
-            $this->view->message = $errors->exception->getMessage();
-            $this->view->request = $errors->request;
         }
-        
     }
-
-	public function getLog() {
-		if (Zend_Registry::isRegistered ( 'logger' )) {
-			$log = Zend_Registry::get ( 'logger' );
-			return $log;
-		}
-	}
+    /**
+     * 
+     * Enter description here ...
+     * @return Zend_Log
+     */
+    public function getLog ()
+    {
+        if (Zend_Registry::isRegistered('logger')) {
+            $log = Zend_Registry::get('logger');
+            return $log;
+        }
+    }
 }
