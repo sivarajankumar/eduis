@@ -1,5 +1,5 @@
 <?php
-abstract class Acad_Model_Generic
+abstract class Core_Model_Generic
 {
     protected $_init_save = false;
     /**
