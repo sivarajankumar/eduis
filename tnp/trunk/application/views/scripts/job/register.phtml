@@ -77,10 +77,16 @@ echo $this->url(array('controller' => 'job', 'action' => 'save'))?>";
               url : urlBasicInfo,
               data : getValues(),
               success: function(jStatus){
-                  
-                  }
-      });
+                  window.location = "/job/save";
+                        	},
+             
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+                      console.log(response);
+                      }
+                  });
       }
+
 
         function getValues() {
             var formData = {}; 
