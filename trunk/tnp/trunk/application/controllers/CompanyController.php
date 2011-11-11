@@ -17,6 +17,7 @@ class CompanyController extends Zend_Controller_Action
     
     public function init ()
     {
+    	
         
     }
     
@@ -24,15 +25,15 @@ class CompanyController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->enableLayout();
+        $this->_redirect('/company/register');
     }
     
     public function registerAction ()
     {
-       
+       $this->view->assign('stepNo', 0);
     }
-   
     
-   /* public function setcontactAction ()
+    public function setregisterAction()
     {
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
@@ -40,7 +41,7 @@ class CompanyController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         foreach ($params as $colName => $value) {
             $value = is_array($value) ? $value : htmlentities(trim($value));
-            $this->company_contact->$colName = $value;
+            $this->company_register->$colName = $value;
         }
         echo 'Following information recieved:<br/>';
         foreach ($params as $colName => $value) {
@@ -49,16 +50,17 @@ class CompanyController extends Zend_Controller_Action
             echo '<b>' . ucwords(str_ireplace('_', ' ', $colName)) . '</b> : ' .
              $value . '<br/>';
         }
-    }*/
+    }
+    
     
     public function saveAction ()
     {
-    	$request = $this->getRequest();
+        $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
-    	
-        
+       	echo "Data has been saved";
+                
         
         
     }
