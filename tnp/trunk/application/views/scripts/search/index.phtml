@@ -12,7 +12,7 @@
           	<li>
           <label for="dob[to]">Date of Birth to</label>
           <input name="dob[to]" class="dob" data-default-value="e.g. 1990-12-31" value=""  size="10" maxlength="50" type="text" readonly="readonly" class="textInput"/>
-          <p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+          
           	</li>
          <!--  -->
          </ul>
@@ -47,16 +47,23 @@
           		<option value="0">ANY</option>
           		<option value="GEN">GEN</option>
           		<option value="SC">SC</option>
-          		<option value="BC">BC</option>
+          		<option value="OBC">OBC</option>
       	  </select>
           <p class="formHint">Cast of <span class="cName" >Candidate</span></p>
         </div>
         
         <div class="ctrlHolder">
-          <label for="annual_income">Annual Income</label>
-          <input name="annual_income" id="annual_income" value="" data-default-value="e.g. 456000" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
-          <p class="formHint">Annual Income of father or guardian.(in Rupees only, no comma or units etc.)</p>
+          <label for="annual_income[from]">Annual Income From</label>
+          <input name="annual_income[from]" class="annual_income" id="annual_income_to" data-default-value="e.g. 456000" size="30" maxlength="50" type="text" class="textInput validateInteger"/>
+          <p class="formHint">Lower Limit of Annual Income of father or guardian.(in Rupees only, no comma or units etc.)</p>
         </div>
+        
+        <div class="ctrlHolder">
+          <label for="annual_income[to]">Annual Income To</label>
+          <input name="annual_income[to]" class="annual_income" id="annual_income_from" data-default-value="e.g. 456000" size="30" maxlength="50" type="text" class="textInput validateInteger"/>
+          <p class="formHint">Upper Limit of Annual Income of father or guardian.(in Rupees only, no comma or units etc.)</p>
+        </div>
+        
         <br>
           <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
         
@@ -75,28 +82,28 @@
 		<div id="matric_detail">
         
           <div class="ctrlHolder">
-            <label for="matric_percentage_from">Percentage from</label>
-            <input name="matric_percentage_from" id="percentage" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <label for="0percentage[from]">Percentage from</label>
+            <input name="0percentage[from]" class = "0percentage" id="percentage_from" data-default-value="e.g. 90" size="30" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
             <p class="formHint">Lower limit of Matric Percentage</p>
             
             <br><br>
             
-            <label for="matric_percentage_to">Percentage to</label>
-            <input name="matric_percentage_to" id="percentage" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <label for="0percentage[to]">Percentage to</label>
+            <input name="0percentage[to]" class = "0percentage" id="percentage_to" data-default-value="e.g. 90" size="30" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
             <p class="formHint">Upper limit of Matric Percentage</p>
           </div>
         
         <div class="ctrlHolder">
-          <label for="matric_passing_year"> Passing year</label>
-          <input name="matric_passing_year" id="matric_passing_year" value="" data-default-value="e.g. 2005" size="35" maxlength="20" type="text" class="textInput validateInteger"/>
+          <label for="0passing_year"> Passing year</label>
+          <input name="0passing_year" id="0passing_year" value="" data-default-value="e.g. 2005" size="35" maxlength="20" type="text" class="textInput validateInteger"/>
           <p class="formHint">Year in which candidates passed the matriculation.</p>
         </div>
         
         <div class="ctrlHolder">
           <p class="label">Passed in first attempt</p>
           <ul class="blockLabels alternate">
-            <li><label for="matric_first_attempt"><input name="matric_first_attempt" type="radio" value="false"   title="No" >No</label></li>
-            <li><label for="matric_first_attempt"><input  name="matric_first_attempt" type="radio" value="true"   title="Yes" >Yes</label></li>
+            <li><label for="0first_attempt"><input name="0first_attempt" type="radio" value="false"   title="No" >No</label></li>
+            <li><label for="0first_attempt"><input  name="0first_attempt" type="radio" value="true"   title="Yes" >Yes</label></li>
           </ul>
           <p class="formHint">Passed in first attempt?</p>
         </div>
@@ -106,26 +113,32 @@
 		<div id="twelfth_detail">
                       
           <div class="ctrlHolder">
-            <label for="pcm_percent">PCM/PCB Percentage</label>
-            <input name="pcm_percent" id="pcm_percent" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <label for="1pcm_percent[from]">PCM/PCB Percentage From</label>
+            <input name="1pcm_percent[from]" class = "1pcm_percent" id="pcm_percent_from" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <p class="formHint">Lower limit for percentage in Physics, Chemistry, Math/Biology</p>
+          </div>
+          
+           <div class="ctrlHolder">
+            <label for="1pcm_percent[to]">PCM/PCB Percentage To</label>
+            <input name="1pcm_percent[to]" class = "1pcm_percent" id="pcm_percent_to" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
             <p class="formHint">Lower limit for percentage in Physics, Chemistry, Math/Biology</p>
           </div>
           
           <div class="ctrlHolder">
-            <label for="twelfth_percent_from">Twelfth Total Percentage from</label>
-            <input name="twelfth_percent_from" id="twelfth_percent_from" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <label for="1twelfth_percent[from]">Twelfth Total Percentage from</label>
+            <input name="1twelfth_percent[from]" class = "1twelfth_percent" id="twelfth_percent_from" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
             <p class="formHint">Lower limit of Twelfth Percentage</p>
             
             <br><br>
             
-            <label for="twelfth_percent_to">Twelfth Total Percentage to</label>
-            <input name="twelfth_percent_to" id="twelfth_percent_to" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <label for="1twelfth_percent[to]">Twelfth Total Percentage to</label>
+            <input name="1twelfth_percent[to]" class = "1twelfth_percent" id="twelfth_percent_to" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
             <p class="formHint">Upper limit of Twelfth Percentage</p>
           </div>
           
           <div class="ctrlHolder">
-            <label for="twelfth_passing_year">Year of Passing</label>
-            <input name="twelfth_passing_year" id="twelfth_passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+            <label for="1twelfth_passing_year">Year of Passing</label>
+            <input name="1twelfth_passing_year" id="twelfth_passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
             <p class="formHint">Year in which Candidates passed the 12th</p>
           </div>
                 
@@ -143,42 +156,43 @@
 		<div id="diploma_detail">
                     
           <div class="ctrlHolder">
-            <label for="diploma_percent_from">Diploma Percentage from</label>
-            <input name="diploma_percent_from" id="diploma_percent_from" value="" data-default-value="e.g. 65" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <label for="2percentage[from]">Diploma Percentage from</label>
+            <input name="2percentage[from]" class = "2percentage" id="diploma_percent_from" value="" data-default-value="e.g. 65" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
             <p class="formHint">Lower limit of Diploma Total Percentage</p>
             
             <br><br>
             
-            <label for="diploma_percent_to">Diploma Percentage to</label>
-            <input name="diploma_percent_to" id="diploma_percent_to" value="" data-default-value="e.g. 80" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <label for="2percentage[to]">Diploma Percentage to</label>
+            <input name="2percentage[to]" class = "2percentage" id="diploma_percent_to" value="" data-default-value="e.g. 80" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
             <p class="formHint">Upper limit of Diploma Total Percentage</p>
           </div>
             
           <div class="ctrlHolder">
-            <label for="diploma_passing_year">Year of Passing</label>
-            <input name="diploma_passing_year" id="diploma_passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
-            <p class="formHint">Year in which Candidates passed the Diploma</p>
+            <label for="2passing_year">Year of Passing</label>
+            <input name="2passing_year" id="passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+            <p class="formHint">Year in which Candidates passed the 2diploma</p>
           </div>
           
           <div class="ctrlHolder">
-            <label for="diploma_branch">Branch</label>
-            <input name="diploma_branch" id="diploma_branch" value=""  data-default-value="e.g. Computer Science" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
+            <label for="2discipline_name">Branch</label>
+            <input name="2discipline_name" id="diploma_branch" value=""  data-default-value="e.g. Computer Science" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
             <p class="formHint">Branch of Candidates(in full form only). Leave it empty if All Branches are to be selected</p>
           </div>
           
           <div class="ctrlHolder">
-            <label for="diploma_board">University</label>
-            <input name="diploma_board" id="diploma_board" value="" data-default-value="e.g. KUK" size="35" maxlength="50" type="text" class="textInput"/>
+            <label for="2University">University</label>
+            <input name="2University" id="2University" value="" data-default-value="e.g. KUK" size="35" maxlength="50" type="text" class="textInput"/>
             <p class="formHint">Education University in Diploma</p>
           </div>
-          <div class="ctrlHolder">
+          <!--<div class="ctrlHolder">
             <label for="">LEET Rank</label>
-            <input name="leet_rank" id="leet_rank" value="" data-default-value="e.g. 12,205" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
-            <p class="formHint">Lower limit of Rank of LEET</p>
+            <input name="2leet_rank" id="leet_rank" value="" data-default-value="e.g. 12,205" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+            <p class="2formHint">Lower limit of Rank of LEET</p>
           </div>
+          -->
          </div>
           <br>
-          
+         <!-- 
         <h3 onclick="showForm('aieee')"><span class="click_me_aieee">+</span>   AIEEE Information</h3>
 		<div id="aieee_detail">
             <div class="ctrlHolder">
@@ -186,54 +200,58 @@
             <input name="aieee_rank" id="ai_rank" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
             <p class="formHint">Lower limit of All India Rank of Candidates</p>
           </div>
+          -->
         </div>
           <br>
+          
           
        <h3 onclick="showForm('btech')"><span class="click_me_btech">+</span>   B.Tech Information</h3>
 		<div id="btech_detail">
         
         	<div class="ctrlHolder">
-            <label for="btech_percent_from">Aggregate Percentage from</label>
-            <input name="btech_percent_from" id="btech_percent_from" value="" data-default-value="e.g. 65" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <label for="3percentage[from]">Aggregate Percentage from</label>
+            <input name="3percentage[from]" class = "3percentage" id="btech_percent_from" value="" data-default-value="e.g. 65" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
             <p class="formHint">Lower limit of B.Tech Total Percentage</p>
             
             <br><br>
             
-            <label for="btech_percent_to">Aggregate Percentage to</label>
-            <input name="btech_percent_to" id="btech_percent_to" value="" data-default-value="e.g. 80" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
+            <label for="3percentage[to]">Aggregate Percentage to</label>
+            <input name="3percentage[to]" class = "3percentage" id="btech_percent_to" value="" data-default-value="e.g. 80" size="35" maxlength="50" type="text" class="textInput validateNumber  validateMax val-100"/>
             <p class="formHint">Upper limit of B.Tech Total Percentage</p>
           </div>
             
           <div class="ctrlHolder">
-            <label for="btech_passing_year">Year of Passing</label>
-            <input name="btech_passing_year" id="btech_passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+            <label for="3passing_year">Year of Passing</label>
+            <input name="3passing_year" id="btech_passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
             <p class="formHint">Year in which Candidates passed or will pass B.Tech</p>
           </div>
           
           <div class="ctrlHolder">
-            <label for="btech_branch">Branch</label>
-            <input name="btech_branch" id="btech_branch" value=""  data-default-value="e.g. Computer Science" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
+            <label for="3discipline_name">Branch</label>
+            <input name="3discipline_name" id="3discipline_name" value=""  data-default-value="e.g. Computer Science" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
             <p class="formHint">Branch of Candidates(in full form only). Leave it empty if All Branches are to be selected</p>
           </div>
           
           <div class="ctrlHolder">
-            <label for="btech_board">University</label>
-            <input name="btech_board" id="btech_board" value="" data-default-value="e.g. KUK" size="35" maxlength="50" type="text" class="textInput"/>
+            <label for="3university">University</label>
+            <input name="3university" id="3board" value="" data-default-value="e.g. KUK" size="35" maxlength="50" type="text" class="textInput"/>
             <p class="formHint">Education University in B.Tech</p>
           </div>
           
-          <div class="ctrlHolder">
+          <!--<div class="ctrlHolder">
           <p class="label">Never Backlog</p>
           <ul class="blockLabels alternate">
-            <li><label for="btech_never_backlog"><input name="btech_never_backlog" type="radio" value="true"   title="Yes" onclick="hide_backlogBox('btech')">Yes</label></li>
-            <li><label for="btech_never_backlog"><input  name="btech_never_backlog" type="radio" value="false"   title="No" onclick="show_backlogBox('btech')">No</label></li>
+            <li><label for="3never_backlog"><input name="3never_backlog" type="radio" value="true"   title="Yes" onclick="hide_backlogBox('btech')">Yes</label></li>
+            <li><label for="3never_backlog"><input  name="3never_backlog" type="radio" value="false"   title="No" onclick="show_backlogBox('btech')">No</label></li>
           </ul>
           <p class="formHint">Passed in first attempt?</p>
         </div>
         
+         
          <div class="ctrlHolder" id="btechBacklogs">
          </div>
         </div>
+        -->
          
           <br>
           
@@ -296,7 +314,7 @@
     </div>
 </form>
 
-<form action="javascript:submit_career();" class="uniForm" id="career" style="width: 30%;">
+<form action="javascript:submit_career();" class="uniForm" id="career" style="width: 73%;">
     	<h2 onclick="showForm('career')"><span class="click_me_career">+</span>   Career Details</h2>
     	<div id="career_detail">
         
