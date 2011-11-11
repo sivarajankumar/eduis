@@ -477,11 +477,11 @@
 	      //$("#personal").hide(500); 
           $.ajax({
               url : urlfetchpersonal,
+              dataType : 'jsonp',
               data : getPersonalValues(),
               success: function(jStatus){
               },
                   error: function(response) {
-                	  $('#errorBox').text(response.responseText).parent().show();
                       console.log(response);
                       }
                   });
