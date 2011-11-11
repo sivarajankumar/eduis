@@ -63,6 +63,21 @@ $this->headTitle('Book Circulation');
 ?>
 </div>
 <hr/>
+
+<script type="text/javascript">
+<!--
+$(function(){
+//jQueryfy buttons
+	$("button").button();
+    serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+    $("#date").datepicker({
+    	maxDate : serverDateObj,
+    	dateFormat: 'dd-mm-yy',
+    	currentText: 'Now'
+    });
+});
+//-->
+</script>
 <?php 
 if (isset($this->transSet)) {
 if (empty($this->transSet)) {
@@ -80,9 +95,6 @@ if (empty($this->transSet)) {
 </div>
 <script type="text/javascript">
 <!--
-
-//jQueryfy buttons
-$("button").button();
 var accNoWidth = 2;
 var memberIdWidth = 2;
 var transactionWidth = 2;
@@ -106,19 +118,13 @@ $('.transaction').each(function(){
 $('.acc_no').css('width', accNoWidth + 'px');
 $('.member_id').css('width', memberIdWidth + 'px');
 $('.transaction').css('max-width', (transactionWidth+30) + 'px');
-$(function() {
+
+$(function(){
 	$('#transactionSet').makeacolumnlists({cols:4,colWidth:(transactionWidth+30)});
 
 	$('#bookCirculation ol').each(function(){
 		$(this).prepend('<li value="0" style="display:block;"><span class="acc_no" style="display:inline;">Acc. no.</span><span style="display:inline;padding-left:1.8em;" class="member_id">Member</span></li>');
 	}); 
-	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
-
-	$("#date").datepicker({
-		maxDate : serverDateObj,
-		dateFormat: 'dd-mm-yy',
-		showButtonPanel: true
-	});
 });
 //-->
 </script>
