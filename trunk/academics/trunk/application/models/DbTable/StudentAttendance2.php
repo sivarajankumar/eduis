@@ -114,7 +114,15 @@ VALUES +';
         
         return $select->query()->fetchAll(Zend_Db::FETCH_GROUP);
     }
-    
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $department
+     * @param unknown_type $programme
+     * @param unknown_type $date_from
+     * @param unknown_type $date_upto
+     * @deprecated Use Acad_Model_Department->fetchAttendance();
+     */
     public function departmentwise($department= NULL,$programme=NULL, $date_from = NULL, 
     $date_upto = NULL) {
         $order = array('semester_id','subject_mode_id', 'subject_code','group_id');

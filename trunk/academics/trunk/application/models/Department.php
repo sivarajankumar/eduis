@@ -77,6 +77,14 @@ class Acad_Model_Department
      */
     public function getDepartment ()
     {
+        if (null === $this->_department) {
+            $authContent = Zend_Auth::getInstance()->getIdentity();
+            if (isset($authContent['department_id'])) {
+                $this->setDepartment($authContent['department_id']);
+            } else {
+                throw new Exception('Department is not set!!', Zend_Log::INFO);
+            }
+        }
         return $this->_department;
     }
     /**
@@ -158,12 +166,19 @@ class Acad_Model_Department
         return $this->_teachingFaculty;
     }
     
-    public function getAttendanceOverview($dateFrom = null) {
-        return $this->getMapper()->fetchAttendanceStat($dateFrom);
-    }
-    
-    public function getAttendanceDetail($dateFrom = null, $degree = null, $semester = null) {
-        return $this->getMapper()->fetchAttendanceDetail($this,$dateFrom);
+    /**
+     * Semester-wise overview of student attendance.
+     * 
+     * @param string $programme
+     * @param date_string $date_from
+     * @param date_string $date_upto
+     * @param int $semester
+     * @return array $processedData - according to department level.
+     */
+    public function getStudentAttendance($programme, $date_from = NULL, 
+                                            $date_upto = NULL,$semester = null) {
+        return $this->getMapper()->fetchAttendance($this,$programme, $date_from, 
+                                            $date_upto,$semester);
     }
 }
 ?>
