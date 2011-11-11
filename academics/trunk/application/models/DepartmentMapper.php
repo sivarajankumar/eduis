@@ -35,56 +35,45 @@ class Acad_Model_DepartmentMapper
         }
         return $this->_dbTable;
     }
-    
-    /**
-     * Fetch an overview of attendance status.
-     * 
-     * Fetch an overview of attendance status of all departments whose time table has been entered.
-     * @param date $dateFrom
-     */
-    public function fetchAttendanceStat($dateFrom = null) {
-        if (null == isset($dateFrom)) {
-            $dateFrom = 'CURRENT_DATE';
-        }
-        $sql = "CALL prd_att_deptt_wise(?)";
-        return $this->getDbTable()->getAdapter()->query($sql,$dateFrom)->fetchAll();
-    }
-    
 
     /**
-     * 
-     * Enter description here ...
-     * @param Acad_Model_Department $dept
-     * @param string $dateFrom
-     * @param string $degree
+     * An semesterwise overview of student attendance.
+     * @param Acad_Model_Department $department
+     * @param string $programme
+     * @param date_string $date_from
+     * @param date_string $date_upto
      * @param int $semester
      */
-    public function fetchAttendanceDetail(Acad_Model_Department $dept, 
-                                            $dateFrom = null, 
-                                            $degree = null, 
-                                            $semester = null) {
-                                                
-                                                
-        if (null == isset($dateFrom)) {
-            $dateFrom = 'CURRENT_DATE';
+    public function fetchAttendance(Acad_Model_Department $department, $programme = NULL, 
+                                $date_from = NULL, $date_upto = NULL,$semester = null) {
+                                    
+        $dept = $department->getDepartment(); 
+        $studentAttendance = new Acad_Model_DbTable_StudentAttendance2();
+        
+        $order = array('semester_id','subject_mode_id', 'subject_code','group_id');
+        $rawResult = $studentAttendance->stats($dept, $programme ,null,null,null,null,
+                                                $date_from,$date_upto,true,$order);
+        $processed = array();
+        foreach ($rawResult as $semester_id => $attendanceList) {
+            foreach ($attendanceList as $key => $attendance) {
+                
+                $subjectCode = $attendance['subject_code'];
+                $subjectMode = $attendance['subject_mode_id'];
+                $group_id = $attendance['group_id'];
+                
+                unset($attendance['subject_code']);
+                unset($attendance['subject_mode_id']);
+                unset($attendance['group_id']);
+                
+                $processed[$semester_id][$subjectMode][$subjectCode][$group_id][] = $attendance;
+            }
+            
         }
         
-        $select = $this->getDbTable()->getAdapter()
-                        ->select()->from('period_attendance',array('staff_id','marked_date'))
-                        ->join('timetable',
-                        	'`period_attendance`.`timetable_id` = `timetable`.`timetable_id`',
-                            array('period.degree_id',
-                            		'period.semester_id',
-                            		'periods_covered',
-                            		'subject_code',
-                            		'subject_mode_id',
-                            		'group_id'))
-                        ->join('period', 
-                    		'`timetable`.`period_id` = `period`.`period_id`',
-                            array())
-                        ->where('`period_attendance`.period_date = ?',$dateFrom)
-                        ->where('timetable.department_id = ?', $dept->getDepartment());
-                        
-        return $select->query()->fetchAll();
+        if (isset($semester)) {
+            return $processed[$semester];
+        } else {
+            return $processed;
+        }
     }
 }
