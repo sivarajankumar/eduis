@@ -14,15 +14,15 @@ $imageServer = $baseUrl;
 // Add most common CSS files
 $this->headLink()->prependStylesheet($cdnServer . '/css/layouts/login/default.css');
 //Jquery UI Theme
-$this->jQuery ()->addStylesheet ( $cdnServer . '/css/themes/jqueryui/'.$baseTheme.'/jquery-ui-1.8.6.custom.css' );
+$this->jQuery ()->addStylesheet ( $cdnServer . '/css/themes/jqueryui/'.$baseTheme.'/jquery-ui.css' );
 
 // Add most common Script files
 $this->headScript()->prependFile($cdnServer . '/js/plugins/jquery.hoverIntent.minified.js');
 
 // Jquery
-$this->jQuery ()->setLocalPath ( $cdnServer . '/js/jquery-1.5.min.js' );
+$this->jQuery ()->setLocalPath ( $cdnServer . '/js/jquery-1.6.2.min.js' );
 // Jquery UI
-$this->jQuery ()->setUiLocalPath ( $cdnServer . '/js/jquery-ui-1.8.6.custom.min.js' );
+$this->jQuery ()->setUiLocalPath ( $cdnServer . '/js/jquery-ui-1.8.16.custom.min.js' );
 
 
 echo $this->headMeta();
@@ -58,7 +58,8 @@ echo $this->jQuery ()->uiEnable ();
 </span>
 
 <div id="header" >
-<img alt="Ambala College of Engineering and Applied Research" src="<?php echo $cdnServer . '/images/logos/mainLogo_'.'smoothness'.'.png'; ?>">
+<?php 
+echo $this->applicationLogo('smoothness','Ambala College of Engineering')?>
 <?php 
 /*
  * A sample array for top Navigation should be like follows:
@@ -71,7 +72,9 @@ $topNav = array('Home','Department','Library','Transport');
 //Categories set
 $topNav['Department']['StuAttendance']['index'] = array('');
 ?>
-<div id="topNav">Top Nav</div>
+<div id="topNav">
+<?php
+        $this->navigation()->setAcl($authContent['acl'])->setRole($authContent['identity']);?></div>
 </div>
 </div>
 <!-- Div below is required to keep layout at expected place  -->
@@ -99,5 +102,6 @@ $topNav['Department']['StuAttendance']['index'] = array('');
 -->
 <?php echo $this->headScript()?>
 </body>
-
+<?php 
+		echo $this->navigation()->menu();?>
 </html>
