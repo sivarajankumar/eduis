@@ -102,6 +102,7 @@ abstract class Acad_Model_Generic
         $class_properties = $this->getAllowedProperties();
         $options_keys = array_keys($options);
         $invalidOptions = array_diff($options_keys, $class_properties);
+        $validation_failed = array();
         foreach ($invalidOptions as $invalidOption) {
             $validation_failed[$invalidOption] = $options[$invalidOption];
         }
