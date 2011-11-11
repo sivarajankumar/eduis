@@ -31,7 +31,7 @@
 		</tr>
 	</table>
 	<label for="cbkVerify" id="lbl_cbkVerify" class="ui-widget-content  ui-corner-all">
-	Verified : <input id="cbkVerify" type="checkbox" accesskey="V" tabindex="2" value="verified" /> 
+	Verified : <input id="cbkVerify" type="checkbox" accesskey="V" tabindex="2" />
 	</label>
 <!--<div id="memberInfo" style="clear: both;">&nbsp;</div>-->
 <span style="clear: both;"><a id="moreAccInfo" href="#">more...</a></span>
@@ -122,9 +122,9 @@ $(function(){
         	$("#lbl_acc_no").hide();
     	}
      }).keyup(function(event) {
-         if (13 == event.which) {
+         if ($.ui.keyCode.ENTER == event.keyCode) {
              if (!this.checked) {
-    			$(this).attr('checked','checked').trigger('change');
+    			$(this).prop('checked','checked').trigger('change');
     		}
   		}
 	});
@@ -210,9 +210,9 @@ var fetchMemberInfo = function(member_id){
                     $("#member-area").slideDown();
                     switch(member.member_type_id.toUpperCase()){
                     	case 'BOOKBANK' :
-                    		$("#cbkVerify").attr('checked','checked').trigger('change');
+                    		$("#cbkVerify").prop('checked','checked').trigger('change');
                     	break;
-                    	default: $("#cbkVerify").focus();
+                    	default: $("#cbkVerify").trigger("focus");
                     }
                     
                 }else{
@@ -247,7 +247,7 @@ var fetchMemberPhoto = function(member_id, imgId){
 	}
 
     imgPath = imgServer+imgLoc;
-    $(imgId).attr({
+    $(imgId).prop({
         alt: member_id,
         title: objMemberInfo.info.first_name,
         src : imgPath+member_id+imgType
@@ -456,7 +456,7 @@ var resetBookSection = function(){
     $("#bookArea").hide();
     $("#lbl_acc_no").hide();
     $("#divIssue").hide();
-    $('#cbkVerify').attr("checked", '');
+    $('#cbkVerify').prop("checked", '');
     $("#member_id").focus().select();
 };
 
