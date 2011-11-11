@@ -5,14 +5,14 @@
         .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
       </style>
     <![endif]-->
-<div id="progressbar"></div>
+
 
 <form action="javascript:submit();" class="uniForm">
 <fieldset>
 <h3>Register Company</h3>
 <div class="ctrlHolder noLabel"><label for="company_name"><em>*</em>Name
 of company</label> <input name="company_name" id="company_name"
-	data-default-value="e.g. Ravi" value="" size="10" maxlength="50"
+	data-default-value="e.g. infosys" value="" size="10" maxlength="50"
 	type="text" class="textInput required validateAlpha" />
 </li>
 <p class="formHint">Full Name of company</p>
@@ -35,7 +35,7 @@ Description</label> <textarea name="company_description"
 <div class="ctrlHolder noLabel">
 <ul class="alternate">
 	<li><label for="first_name"><em>*</em> First Name</label> <input
-		name="first_name" id="first_name" data-default-value="e.g. Ravi"
+		name="first_name" id="first_name" data-default-value="e.g. infosys"
 		value="" size="10" maxlength="50" type="text"
 		class="textInput required validateAlpha" /></li>
 	<li><label for="middle_name"> Middle Name</label> <input
@@ -59,7 +59,7 @@ designation</label> <input name="personnel_designation"
 <h3>Contact Information</h3>
 <div class="ctrlHolder"><label for="">Email address</label> <input
 	name="e_mail" id="e_mail" value=""
-	data-default-value="e.g. ravigupta@gmail.com" size="35" maxlength="50"
+	data-default-value="e.g. infosys@gmail.com" size="35" maxlength="50"
 	type="text" class="textInput validateEmail" />
 <p class="formHint">A valid email address</p>
 </div>
@@ -109,8 +109,7 @@ designation</label> <input name="personnel_designation"
 
 </form>
 <script>
-	var urlBasicInfo = "<?php
-echo $this->url(array('controller' => 'company', 'action' => 'save'))?>";
+var urlBasicInfo = "<?php echo $this->url(array('controller' => 'company', 'action' => 'setregister'))?>";
       $(function(){
         $('form.uniForm').uniform({
           prevent_submit : true
@@ -139,9 +138,17 @@ echo $this->url(array('controller' => 'company', 'action' => 'save'))?>";
               url : urlBasicInfo,
               data : getValues(),
               success: function(jStatus){
-                  
-                  }
-      });
+                  $( "#submitStatus" ).html(jStatus).slideDown('slow', function(){
+                    	setTimeout(function(){
+                    		window.location = "/company/save";
+                        	},10000);
+                    }).append('<br/><a href="/company/save" >Save</a>');
+              },
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+                      console.log(response);
+                      }
+                  });
       }
 
         function getValues() {
