@@ -19,7 +19,8 @@ $this->headLink()->prependStylesheet($protocol.CDN_SERVER . '/css/layouts/librar
 $this->jQuery ()->addStylesheet ( $protocol.CDN_SERVER . '/css/themes/jqueryui/'.$baseTheme.'/jquery-ui.css' );
 
 // Add most common Script files
-$this->headScript()->prependFile($protocol.CDN_SERVER . '/js/plugins/jquery.hoverIntent.minified.js');
+$this->headLink()
+    ->appendStylesheet($protocol.CDN_SERVER . '/css/menu/stylesheet.css');
 
 // Jquery
 $this->jQuery ()->setLocalPath ( $protocol.CDN_SERVER . '/js/jquery-1.7.min.js' );
@@ -50,31 +51,18 @@ echo $this->jQuery ()->uiEnable ();
 		</span></a></span>
 	<?php }?>
 <?php }?>
+
 </span>
 
 <div id="header"  class="noprint" >
 <img alt="Ambala College of Engineering and Applied Research" src="<?php echo $protocol.CDN_SERVER . '/images/logos/mainLogo_cupertino.png'; ?>">
 
 <div id="divTopNav">
-<ul id="topnav" class="ui-widget">
-	<li><a href="<?php echo $protocol.AUTH_SERVER?>" class="main">Home</a></li>
-	<li><a href="#" class="main">Department</a>
-	<div style="opacity: 0; display: none;" class="sub">
-	<ul>
-	</ul>
-	</div>
-	</li>
-	<li><a href="<?php echo $protocol.LIBRARY_SERVER?>" class="main">Library</a>
-	<div id="library" style="opacity: 0; display: none;" class="sub">
-	<div class="row">
-	<ul>
-	</ul>
-	</div>
-	</div>
-	</li><!--
-	<li><a href="#" class="main">Transport</a></li>
-	<li><a href="#" class="main">Hostel</a></li>
---></ul></div>
+<div id="nav"> <?php 
+$this->navigation()->setAcl($authContent['acl'])->setRole($authContent['identity']);
+echo $this->navigation()->menu();?>
+</div>
+</div>
 </div>
 </div>
 
@@ -88,7 +76,8 @@ echo $this->jQuery ()->uiEnable ();
     </div>
 <div id="lastDiv"></div>
 <?php
-echo $this->headScript ()?>
+echo $this->headScript ();
+?>
 </div>
 </body>
 </html>
