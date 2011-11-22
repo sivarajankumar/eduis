@@ -23,7 +23,7 @@ class Acad_Model_DbTable_AcademicSession extends Acadz_Base_Model
             $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
             $response = $client->request();
             if ($response->isError()) {
-                $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
+                $remoteErr = 'ERROR from '.CORE_SERVER.' : (' . $response->getStatus() . ') ' .
                  $response->getMessage().', i.e. '.$response->getHeader('Message');
                 throw new Zend_Exception($remoteErr, Zend_Log::ERR);
             } else {
