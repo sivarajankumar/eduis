@@ -1,41 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 	<nav>
-		<authentication>
-			<label>Authenticate</label>
-			<uri>authenticate</uri>
-			<module>login</module>
-			<controller>authenticate</controller>
-			<action>index</action>
-			<resource>login_authenticate_index</resource>
-			<pages>
-
-				<authenticate_index>
-					<label>Login Page</label>
-					<module>login</module>
-					<controller>authenticate</controller>
-					<action>index</action>
-					<resource>login_authenticate_index</resource>
-				</authenticate_index>
-
-				<authenticate_logout>
-					<label>Logout</label>
-					<module>login</module>
-					<controller>authenticate</controller>
-					<action>logout</action>
-					<resource>login_authenticate_index</resource>
-				</authenticate_logout>
-
-				<authenticate_check>
-					<label>Check User Info</label>
-					<module>login</module>
-					<controller>authenticate</controller>
-					<action>check</action>
-					<resource>login_authenticate_index</resource>
-				</authenticate_check>
-			</pages>
-		</authentication>
-
 		<home>
 			<label>Home</label>
 			<order>-100</order>
