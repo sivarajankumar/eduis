@@ -64,7 +64,7 @@ class Lib_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract {
     }
 
     /**
-     * getDb() - Fetch cache from registry.
+     * getLogger() - Fetch logger from registry.
      *
      * @return Zend_Log
      */
@@ -95,8 +95,7 @@ class Lib_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract {
                 Zend_Registry::get('logger')->debug(
                 'User has logged in auth module');
             }
-            $cache = self::getCache();
-            $commonAcl = $cache->load('commonAcl');
+            $commonAcl = self::getCache()->load('commonAcl');
             if ($commonAcl === false) {
                 $commonAcl = self::initAcl();
             } else {
