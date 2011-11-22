@@ -45,7 +45,7 @@ class AuthenticateController extends Zend_Controller_Action {
 					preg_match ( '/[^.]+\.[^.]+$/', $_SERVER ['SERVER_NAME'], $domain );
 					setcookie ( self::AUTH_SID, Zend_Session::getId (), time () + 1200, self::AUTH_PATH, ".$domain[0]", null, true  );
 					$last = time();
-					setcookie ( 'last', $last,  null,  null, ".$domain[0]", null, true );
+					setcookie ( 'last', $last,  null,  '/', ".$domain[0]", null, true );
 					$lastLogin = new Zend_Session_Namespace('last');
 					$lastLogin->lastLogin = $last;
 					$lastLogin->setExpirationHops(1,null,1);
