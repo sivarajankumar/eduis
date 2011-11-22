@@ -5,8 +5,6 @@ body {
 	padding: 0;
 	font-size: 0.72em;
 	font: normal Verdana, Arial, Helvetica, sans-serif;
-	background: #F7F3DE url(images/ui-bg_fine-grain_15_f7f3de_60x60.png)
-		repeat scroll 50% 50%;
 }
 
 #content {
