@@ -25,8 +25,8 @@ class AuthenticateController extends Zend_Controller_Action
                 //$client->setCookie('moduleName', $moduleName);
                 $response = $client->request();
                 if ($response->isError()) {
-                    $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() .
-                     ') ' . $response->getBody();
+                    $remoteErr = 'ERROR from '.AUTH_SERVER.' : (' . $response->getStatus() . ') ' .
+                     $response->getMessage().', i.e. '.$response->getHeader('Message');
                     throw new Zend_Exception($remoteErr, Zend_Log::ERR);
                 } else {
                     $jsonContent = $response->getBody();
@@ -41,16 +41,19 @@ class AuthenticateController extends Zend_Controller_Action
             } else {
                     $guestAdapter = new Acadz_Resource_Acl_Guest();
                     $auth->authenticate($guestAdapter);
-					$userInfo['identity'] = 'anon';
+					$userInfo['identity'] = Acadz_Resource_Acl_Guest::GUEST_ID;
 					$userInfo['roles'][] = 'guest';
 					$remoteAcl->userInfo = $userInfo;
-                    $this->_helper->logger('No remote cookie found. So, identifying as "anon" with guest privilege.');
+                    $this->_helper->logger('No remote cookie found. So, identifying as"'
+                                            .Acadz_Resource_Acl_Guest::GUEST_ID.
+                    						'" with guest privilege.');
             }
     
             if (isset($remoteAcl->redirectedFrom)) {
                 $rdirctdFrom = $remoteAcl->redirectedFrom;
                 $moduleName = $this->getRequest()->getModuleName();
-                $params= null;
+                $params= empty($rdirctdFrom->redirectedParams)?array():$rdirctdFrom->redirectedParams;
+                
                 if (!empty($rdirctdFrom->redirectedParams)) {
                     $params = $rdirctdFrom->redirectedParams;
                 }
@@ -65,7 +68,6 @@ class AuthenticateController extends Zend_Controller_Action
 
     public function logoutAction () {
         $this->_helper->layout()->disableLayout();
-        $this->_helper->viewRenderer->setNoRender();
         $serverUrl = 'http://' . AUTH_SERVER . self::AUTH_PATH . '/logout';
         $client = new Zend_Http_Client($serverUrl, array('timeout' => 30));
         try {
