@@ -41,18 +41,19 @@ echo $this->jQuery ()->uiEnable ();
 <div id="topContent" >
 <span id="topRightInfo">
 <span class="ui-state-default ui-corner-bottom">Today&rsquo;s date: <span id="datetext"><?php $date = new Zend_Date(); echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span>
-<?php if (Zend_Auth::getInstance()->hasIdentity()) { ?>
-<span class="ui-state-default ui-corner-bottom">Hi! <span id="userName"><?php $authContent = Zend_Auth::getInstance()->getStorage ()->read ();echo $authContent['identity'];?></span></span>
-<?php if ($authContent['identity'] != 'anon') { ?>
+<?php if (Zend_Auth::getInstance()->hasIdentity()) {
+	$authContent = Zend_Auth::getInstance()->getStorage ()->read ();
+	if ($authContent['identity'] != 'anon') { ?>
+<span class="ui-state-default ui-corner-bottom">Hi! <span id="userName"><?php echo $authContent['identity'];?></span></span>
 	<span class="ui-state-default ui-corner-bl"><a id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'logout' ), 'default' )?>">
 		Logout<span class="ui-icon ui-icon ui-icon-closethick ui-state-default ui-corner-br" style="float: right; padding-left: 1px; margin-left:-1px;">
 		</span></a></span>
 	<?php }else {?>
-	<span class="ui-state-default ui-corner-bl"><a id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'index'), 'default' )?>">
+	<span class="ui-state-default ui-corner-bl"><a id="login" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'index'), 'default' )?>">
 		Login</a></span>
 <?php }?>
 <?php } else {?>
-	<span class="ui-state-default ui-corner-bl"><a id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'index'), 'default' )?>">
+	<span class="ui-state-default ui-corner-bl"><a id="login" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'index'), 'default' )?>">
 		Login</a></span>
 <?php }?>
 </span>
@@ -60,21 +61,9 @@ echo $this->jQuery ()->uiEnable ();
 <div id="header" >
 <?php 
 echo $this->applicationLogo('smoothness','Ambala College of Engineering')?>
-<?php 
-/*
- * A sample array for top Navigation should be like follows:
- */
-/*
- * TODO Make structure for ACL array.
- */ 
-//Modules
-$topNav = array('Home','Department','Library','Transport');
-//Categories set
-$topNav['Department']['StuAttendance']['index'] = array('');
-?>
+
 <div id="topNav">
-<?php
-        $this->navigation()->setAcl($authContent['acl'])->setRole($authContent['identity']);?></div>
+<?php //$this->navigation()->setAcl($authContent['acl'])->setRole($authContent['identity']);?></div>
 </div>
 </div>
 <!-- Div below is required to keep layout at expected place  -->
@@ -103,5 +92,5 @@ $topNav['Department']['StuAttendance']['index'] = array('');
 <?php echo $this->headScript()?>
 </body>
 <?php 
-		echo $this->navigation()->menu();?>
+		//echo $this->navigation()->menu();?>
 </html>
