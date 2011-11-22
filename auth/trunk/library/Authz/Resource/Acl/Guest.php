@@ -13,8 +13,9 @@ class Authz_Resource_Acl_Guest implements Zend_Auth_Adapter_Interface
      * @var string
      */
     protected $_identity = null;
+    const GUEST_ID = 'anon';
 
-    /**
+	/**
      * __construct() - Sets user as guest if no identity provided.
      *
      * @param  string                   $identity
@@ -23,7 +24,7 @@ class Authz_Resource_Acl_Guest implements Zend_Auth_Adapter_Interface
     public function __construct($identity = null)
     {
         if (null == $identity) {
-            $this->setIdentity('anon');
+            $this->setIdentity(self::GUEST_ID);
         } else {
         	 $this->setIdentity(strtolower($identity));
         }
@@ -42,6 +43,13 @@ class Authz_Resource_Acl_Guest implements Zend_Auth_Adapter_Interface
         return $this;
     }
 
+    /**
+	 * @return the $_identity
+	 */
+	public function getIdentity() {
+		return $this->_identity;
+	}
+	
     /**
      * authenticate() - defined by Zend_Auth_Adapter_Interface.  This method is called to
      * attempt an authentication.  Previous to this call, this adapter would have already
