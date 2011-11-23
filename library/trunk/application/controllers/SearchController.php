@@ -131,6 +131,33 @@ class SearchController extends Libz_Base_BaseController {
         $this->_helper->json($response);
         //echo $this->_helper->json($response, false);
     }
+    
+    public function getisbnbooksAction() {
+        $request = $this->getRequest();
+        $isbn_id = $request->getParam('isbn_id');
+        $status =  $request->getParam('status');
+        $format =  $request->getParam('format','str');
+        if ($isbn_id) {
+            $table = new Lib_Model_DbTable_Book();
+            $result = $table->isbnBooks($isbn_id,$status);
+            switch ($format) {
+                case 'str':
+                    //@TODO Consider status if required.
+                    $this->_helper->logger('Format "Str" ignores status');
+                    $accNo = array();
+                    foreach ($result as $key => $book) {
+                        $accNo[] = $book['acc_no'];
+                    }
+                    echo implode(', ', $accNo);
+                return;
+                case 'json':
+                    echo $this->_helper->json($result,false);
+                default:
+                    ;
+                break;
+            }
+        }
+    }
 }
 ?>
 

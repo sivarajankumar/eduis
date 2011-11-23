@@ -99,6 +99,26 @@ class Lib_Model_DbTable_Book extends Libz_Base_Model {
 		$sql = 'CALL GetEnumChoiceList("library","' . self::TABLE_NAME . '","status")';
 		return self::getDefaultAdapter ()->fetchCol ( $sql );
 	}
+	
+	/**
+	 * Books of particular status and ISBN
+	 * @situation Say, Number and Accession of AVAILABLE Books of ISBN 9780131660915
+	 * @param string $isbn_id
+	 * @param string $status
+	 */
+	public function isbnBooks($isbn_id, $status = NULL) {
+	    $sql = $this->select()
+	            ->from(self::info('name'), array('acc_no'))
+	            ->where('isbn_id = ?',$isbn_id);
+	            
+        if ($status) {
+            $sql->where('status = ?',$status);
+        } else {
+            $sql->columns('status');
+        }
+        
+        return $sql->query()->fetchAll();
+	}
 }
 
 ?>
