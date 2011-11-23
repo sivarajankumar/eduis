@@ -1,8 +1,57 @@
-<ul>
-        <li>Dynamic navigation is available now. So, browse through menu</li><li>You can login from <a href="<?php echo 'http://'.AUTH_SERVER ?>/authenticate"><?php echo 'http://'.AUTH_SERVER ?>/authenticate</a></li>
+<style>
+<!--
+/* number style */
+#commentlist {
+margin: 5em 0 8em;
+padding: 0;
+width: 50em;
+color: #666;
+}
+#commentlist a {
+	text-decoration: none;
+	color: teal;
+	padding: 0.1em 0.5em;
+}
+#commentlist a:hover {
+	background-color: #eee;
+}
+#commentlist li {
+padding: 1.5em 0 1.5em;
+list-style: none;
+border-top: solid 1px #ccc;
+position: relative;
+}
+#commentlist cite {
+font: bold 140%/110% Arial, Helvetica, sans-serif;
+color: #666;
+}
+#commentlist .time {
+color: #ccc;
+margin: 0 0 1em;
+}
+#commentlist .commentnumber {
+position: absolute;
+right: 0;
+top: 0.4em;
+font: normal 200%/100% Georgia, "Times New Roman", Times, serif;
+color: #ccc;
+} 
+-->
+</style>
+<ol id="commentlist">
+		<li>You can login from <a href="<?php echo 'http://'.AUTH_SERVER ?>/authenticate"><?php echo 'http://'.AUTH_SERVER ?>/authenticate</a></li>
         <li>Know latest about project <a href="http://code.google.com/p/eduis">here</a></li>
         <li>Contribute your suggestions, feature request, issues etc. <a href="http://code.google.com/p/eduis/issues/list">here</a></li>
         <li>Login to official mail account at <a href="http://mail.aceambala.com">mail.aceambala.com</a> for notices etc.</li>
         <li>New features and updates will be list below soon...</li>
-</ul>
+</ol>
 <img style="position: absolute; right: 0;bottom:1em; z-index: -9999;" src="http://<?php echo CDN_SERVER?>/images/library/books-loading.jpg" alt="Books loading">
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#commentlist li").each(function (i) {
+        i = i+1;
+        $(this).prepend('<span class="commentnumber"> #'+i+'</span>');
+    });
+});
+</script>
