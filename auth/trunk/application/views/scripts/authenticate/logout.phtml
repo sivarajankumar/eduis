@@ -20,15 +20,17 @@ body {
 </head>
 <body>
 <div class="logout_page">
-    <h1 >You have successfully logged out.</h1>
-    <img src="http://<?php echo CDN_SERVER?>/images/activity/logout/1.jpg" alt="Smile">
-    <p><ul style="font-size: 0.7em; " >
+    <h1>Logged out.</h1>
+    <div style="margin-top: 1em;" ><a href="<?php echo 'http://'.AUTH_SERVER ?>">Return to the homepage</a></div>
+    <hr />
+    <div style="margin-top: 5em;" ><ul style="font-size: 0.7em; margin-left: 12em;text-align: left;" >
         <li>You can login from <a href="<?php echo 'http://'.AUTH_SERVER ?>/authenticate"><?php echo 'http://'.AUTH_SERVER ?>/authenticate</a></li>
         <li>Know latest about project <a href="http://code.google.com/p/eduis">here</a></li>
         <li>Contribute your suggestions, feature request, issues etc. <a href="http://code.google.com/p/eduis/issues/list">here</a></li>
         <li>Login to official mail account at <a href="http://mail.aceambala.com">mail.aceambala.com</a> for notices etc.</li>
-</ul></p>
-    <p><a href="<?php echo 'http://'.AUTH_SERVER ?>">Return to the homepage</a></p>
+</ul></div> 
+<img style="position: absolute; right: 0;bottom:1em; z-index: -9999;"  src="http://<?php echo CDN_SERVER?>/images/activity/logout/1.jpg" alt="Smile"/>
 </div>
+   
 </body>
 </html>
