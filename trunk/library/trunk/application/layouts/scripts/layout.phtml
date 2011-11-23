@@ -42,13 +42,15 @@ echo $this->jQuery ()->uiEnable ();
 <body>
 <div id="topContent"  class="noprint" >
 <span id="topRightInfo">
-<span class="ui-state-default ui-corner-bottom">Today&rsquo;s date: <span id="datetext"><?php $date = new Zend_Date(); echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span>
-<?php if (Zend_Auth::getInstance()->hasIdentity()) { ?>
-<span class="ui-state-default ui-corner-bottom">Hi! <span id="userName"><?php $authContent = Zend_Auth::getInstance()->getStorage ()->read ();echo $authContent['identity'];?></span></span>
-<?php if ($authContent['identity'] != 'anon') { ?>
-	<span class="ui-state-default ui-corner-bl"><a id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'logout' ), 'default' )?>">
-		Logout<span class="ui-icon ui-icon ui-icon-closethick ui-state-default ui-corner-br" style="float: right; padding-left: 1px; margin-left:-1px;">
-		</span></a></span>
+<span style="float: left;" class="ui-state-default ui-corner-bottom">Today&rsquo;s date: <span id="datetext"><?php $date = new Zend_Date(); echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span>
+<?php if (Zend_Auth::getInstance()->hasIdentity()) {
+    $authContent = Zend_Auth::getInstance()->getStorage ()->read ();
+    if ($authContent['identity'] != Libz_Resource_Acl_Guest::GUEST_ID) { ?>
+	<span style="float: left;" class="ui-state-default ui-corner-bottom">Hi! <span id="userName"><?php echo $authContent['identity'];?></span></span>
+	<span style="width: 4.8em; float: left; " class="ui-state-default ui-corner-bottom">
+	<a style="float: left; text-decoration: none;"  id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'logout' ), 'default' )?>">
+	<span style="float: left;">Logout</span><span class="ui-icon ui-icon-closethick ui-corner-br" style="float: left; margin:0 -0.2em 0 0;"></span></a>
+	</span> 
 	<?php }?>
 <?php }?>
 
@@ -65,9 +67,6 @@ echo $this->navigation()->menu();?>
 </div>
 </div>
 </div>
-
-
-
 
 <div class="ui-widget container ui-corner-all">
 <!--<div id="moduleRibbon"></div>-->
