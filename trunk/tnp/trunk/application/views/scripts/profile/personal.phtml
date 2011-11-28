@@ -11,6 +11,11 @@
         <h2><?php $stepNo = 0;
         echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$stepNo]);?> Information:</h2>
         <hr/>
+        <div class="ctrlHolder"><label for=""><em>*</em>Registration Number</label>
+	  	<input name="regn_no" id="regn_no" data-default-value="e.g. 08-ECA-74"
+		size="35" maxlength="50" type="text" class="textInput required " />
+		<p class="formHint">Enter your University Registration Number</p>
+		</div>
         <div class="ctrlHolder noLabel">
           <ul class="alternate">
             <li><label for="first_name"><em>*</em> First Name</label>
@@ -28,6 +33,8 @@
           <input name="dob" id="dob" data-default-value="1990-12-31" value="<?php echo $this->applicant->dob ?>"  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
           <p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
         </div>
+        
+
         
         <div class="ctrlHolder">
           <p class="label">Gender</p>
@@ -259,4 +266,3 @@ $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
-?>
