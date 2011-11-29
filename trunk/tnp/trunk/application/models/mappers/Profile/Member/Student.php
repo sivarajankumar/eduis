@@ -39,6 +39,72 @@ class Tnp_Model_Mapper_Profile_Member_Student
         return $this->_dbTable;
     }
     /**
+     * 
+     * Enter description here ...
+     * @param array $options
+     * @param Tnp_Model_Profile_Member_Student $student
+     */
+    public function save ($options, Tnp_Model_Profile_Member_Student $student)
+    {
+        $save_stu = $student->getSave_student();
+        $save_skills = $student->getSave_skills();
+        $save_stu_skills = $student->getSave_stu_skills();
+        $save_lang = $student->getSave_lang();
+        $save_stu_lang = $student->getSave_stu_lang();
+        $save_profile_status = $student->getSave_profile_status();
+        $save_job_pref = $student->getSave_job_pref();
+        $save_co_curri = $student->getSave_co_curri();
+        if (isset($save_stu)) {
+            $dbtable = new Tnp_Model_DbTable_Student();
+        }
+        if (isset($save_skills)) {
+            $dbtable = new Tnp_Model_DbTable_Skills();
+        }
+        if (isset($save_stu_skills)) {
+            $dbtable = new Tnp_Model_DbTable_Student_Skills();
+        }
+        if (isset($save_lang)) {
+            $dbtable = new Tnp_Model_DbTable_Languages();
+        }
+        if (isset($save_stu_lang)) {
+            $dbtable = new Tnp_Model_DbTable_Student_Language();
+        }
+        if (isset($save_profile_status)) {
+            $dbtable = new Tnp_Model_DbTable_Profile_Status();
+        }
+        if (isset($save_job_pref)) {
+            $dbtable = new Tnp_Model_DbTable_Job_Preferred();
+        }
+        if (isset($save_co_curri)) {
+            $dbtable = new Tnp_Model_DbTable_Co_Curicullar();
+        }
+        $cols = $dbtable->info('cols');
+        //$db_options is $options with keys renamed a/q to db_columns
+        $db_options = array();
+        foreach ($options as $key => $value) {
+            $db_options[$this->correctDbKeys($key)] = $value;
+        }
+        $db_options_keys = array_keys($db_options);
+        $recieved_keys = array_intersect($db_options_keys, $cols);
+        $data = array();
+        foreach ($recieved_keys as $key_name) {
+            $str = "get" . ucfirst($this->correctModelKeys($key_name));
+            $data[$key_name] = $dmc->$str();
+        }
+        //$adapter = $this->getDbTable()->getAdapter();
+        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
+        $adapter = $this->getDbTable()->getAdapter();
+        $table = $this->getDbTable()->info('name');
+        $adapter->beginTransaction();
+        try {
+            $sql = $adapter->insert($table, $data);
+            $adapter->commit();
+        } catch (Exception $exception) {
+            $adapter->rollBack();
+            throw $exception;
+        }
+    }
+    /**
      * @todo reg no
      * Enter description here ...
      * @param unknown_type $student
