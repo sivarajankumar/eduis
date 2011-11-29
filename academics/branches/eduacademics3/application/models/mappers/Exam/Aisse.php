@@ -77,28 +77,27 @@ class Acad_Model_Mapper_Exam_Aisse
      */
     public function save ($options, Acad_Model_Exam_Aisse $aisse = null)
     {
-        $all_tenth_cols = $this->getTable_cols();
+        $dbtable = $this->getDbTable();
+        $cols = $dbtable->info('cols');
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
         foreach ($options as $key => $value) {
             $db_options[$this->correctDbKeys($key)] = $value;
         }
         $db_options_keys = array_keys($db_options);
-        $recieved_tenth_keys = array_intersect($db_options_keys, 
-        $all_tenth_cols);
-        $tenth_data = array();
-        foreach ($recieved_tenth_keys as $key_name) {
+        $recieved_keys = array_intersect($db_options_keys, $cols);
+        $data = array();
+        foreach ($recieved_keys as $key_name) {
             $str = "get" . ucfirst($this->correctModelKeys($key_name));
-            $tenth_data[$key_name] = $aisse->$str();
+            $data[$key_name] = $aisse->$str();
         }
-        //Zend_Registry::get('logger')->debug($tenth_data);
         //$adapter = $this->getDbTable()->getAdapter();
-        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $aissce->getMember_id());
-        $adapter = $this->getDbTable()->getAdapter();
-        $table = $this->getDbTable()->info('name');
+        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
+        $adapter = $dbtable->getAdapter();
+        $table = $dbtable->info('name');
         $adapter->beginTransaction();
         try {
-            $sql = $adapter->insert($table, $tenth_data);
+            $sql = $adapter->insert($table, $data);
             $adapter->commit();
         } catch (Exception $exception) {
             $adapter->rollBack();

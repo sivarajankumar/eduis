@@ -149,14 +149,12 @@ class Acad_Model_Mapper_Course_Dmc
         $dmcTotalMarks = $dmc->getSave_total_marks();
         if (isset($dmcInfo)) {
             $dbtable = new Acad_Model_DbTable_DmcInfo();
-        } else {
-            if (isset($dmcData)) {
-                $dbtable = new Acad_Model_DbTable_DmcData();
-            } else {
-                if (isset($dmcTotalMarks)) {
-                    $dbtable = new Acad_Model_DbTable_DmcTotalMarks();
-                }
-            }
+        }
+        if (isset($dmcData)) {
+            $dbtable = new Acad_Model_DbTable_DmcData();
+        }
+        if (isset($dmcTotalMarks)) {
+            $dbtable = new Acad_Model_DbTable_DmcTotalMarks();
         }
         $cols = $dbtable->info('cols');
         //$db_options is $options with keys renamed a/q to db_columns
@@ -173,8 +171,8 @@ class Acad_Model_Mapper_Course_Dmc
         }
         //$adapter = $this->getDbTable()->getAdapter();
         //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
-        $adapter = $this->getDbTable()->getAdapter();
-        $table = $this->getDbTable()->info('name');
+        $adapter = $dbtable->getAdapter();
+        $table = $dbtable->info('name');
         $adapter->beginTransaction();
         try {
             $sql = $adapter->insert($table, $data);
