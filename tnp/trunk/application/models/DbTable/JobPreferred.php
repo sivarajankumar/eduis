@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_DbTable_Job_Preferred extends Zend_Db_Table_Abstract
+class Tnp_Model_DbTable_JobPreferred extends Zend_Db_Table_Abstract
 {
 	/**
      * @var string Name of the database table

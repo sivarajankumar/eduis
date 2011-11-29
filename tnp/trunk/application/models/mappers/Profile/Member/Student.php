@@ -55,28 +55,28 @@ class Tnp_Model_Mapper_Profile_Member_Student
         $save_job_pref = $student->getSave_job_pref();
         $save_co_curri = $student->getSave_co_curri();
         if (isset($save_stu)) {
-            $dbtable = new Tnp_Model_DbTable_Student_Semester();
+            $dbtable = new Tnp_Model_DbTable_StudentSemester();
         }
         if (isset($save_skills)) {
             $dbtable = new Tnp_Model_DbTable_Skills();
         }
         if (isset($save_stu_skills)) {
-            $dbtable = new Tnp_Model_DbTable_Student_Skills();
+            $dbtable = new Tnp_Model_DbTable_StudentSkills();
         }
         if (isset($save_lang)) {
             $dbtable = new Tnp_Model_DbTable_Languages();
         }
         if (isset($save_stu_lang)) {
-            $dbtable = new Tnp_Model_DbTable_Student_Language();
+            $dbtable = new Tnp_Model_DbTable_StudentLanguage();
         }
         if (isset($save_profile_status)) {
-            $dbtable = new Tnp_Model_DbTable_Profile_Status();
+            $dbtable = new Tnp_Model_DbTable_ProfileStatus();
         }
         if (isset($save_job_pref)) {
-            $dbtable = new Tnp_Model_DbTable_Job_Preferred();
+            $dbtable = new Tnp_Model_DbTable_JobPreferred();
         }
         if (isset($save_co_curri)) {
-            $dbtable = new Tnp_Model_DbTable_Co_Curicullar();
+            $dbtable = new Tnp_Model_DbTable_CoCuricullar();
         }
         $cols = $dbtable->info('cols');
         //$db_options is $options with keys renamed a/q to db_columns

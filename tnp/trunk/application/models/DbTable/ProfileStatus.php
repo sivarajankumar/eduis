@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_DbTable_Profile_Status extends Zend_Db_Table_Abstract
+class Tnp_Model_DbTable_ProfileStatus extends Zend_Db_Table_Abstract
 {
     /**
      * @var string Name of the database table
