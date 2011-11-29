@@ -11,7 +11,7 @@
 <h3>Enroll</h3>
 
 <div class="ctrlHolder"><label for=""><em>*</em>Roll number</label> <input
-	name="department" id="department" data-default-value="e.g. 2308015" size="35"
+	name="rollno" id="rollno" data-default-value="e.g. 2308015" size="35"
 	maxlength="50" type="text" class="textInput required validateInteger" />
 <p class="formHint">Enter your University Roll Number</p>
 </div>
@@ -57,7 +57,7 @@
 	**/
 	var urlBasicInfo  = "<?php
 echo $this->url(array('controller' => 'profile', 'action' => 'followstep'))?>";
-	var department;
+	var rollno;
 	var type;
 	var department;
 	var semno;
@@ -75,12 +75,13 @@ echo $this->url(array('controller' => 'profile', 'action' => 'followstep'))?>";
 
     function submit(){
    	 department = $('#department').val();
-    	department = $('#deptt').val();
-    	semno = $('#regn_no').val();
+    	rollno = $('#rollno').val();
+    	semno = $('#sem_no').val();
+    	type = $('input:radio[name=progamme]:checked').val();
     	$.ajax({
         	url: urlBasicInfo,
             data : {
-            roll_no: department,
+            rollno: rollno,
     		application_type : type,
     		deptt : department,
     		sem_no : semno
