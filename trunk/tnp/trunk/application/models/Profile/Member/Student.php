@@ -93,12 +93,8 @@ class Tnp_Model_Profile_Member_Student extends Tnp_Model_Generic
     }
     protected function getSkills_possessed ()
     {
-        $skills_possessed = $this->_skills_possessed;
-        if (sizeof($skills_possessed) == 0) {
-            $skills_possessed = $this->getMapper()->fetchSkillsPossessedInfo(
-            $this);
-            $this->setSkills_possessed($skills_possessed);
-        }
+        $skills_possessed = $this->getMapper()->fetchSkillsPossessedInfo($this);
+        $this->setSkills_possessed($skills_possessed);
         return $this->_skills_possessed;
     }
     protected function setSkills_possessed ($_skills_possessed)
@@ -107,12 +103,8 @@ class Tnp_Model_Profile_Member_Student extends Tnp_Model_Generic
     }
     protected function getLanguages_known ()
     {
-        $languages_known = $this->_languages_known;
-        if (sizeof($languages_known) == 0) {
-            $languages_known = $this->getMapper()->fetchLanguagesKnownInfo(
-            $this);
-            $this->setLanguages_known($languages_known);
-        }
+        $languages_known = $this->getMapper()->fetchLanguagesKnownInfo($this);
+        $this->setLanguages_known($languages_known);
         return $this->_languages_known;
     }
     protected function setLanguages_known ($_languages_known)
@@ -323,5 +315,39 @@ class Tnp_Model_Profile_Member_Student extends Tnp_Model_Generic
     {
         $options = $this->getMapper()->fetchJobPreferredInfo($this);
         $this->setOptions($options);
+    }
+    /**
+     * @todo reg no included in search
+     * Enter description here ...
+     * @throws Exception
+     */
+    public function findMemberID ()
+    {
+        $roll_no = $this->getRoll_no();
+        $department_id = $this->getDepartment_id();
+        $programme_id = $this->getProgramme_id();
+        $semester_id = $this->getSemester_id();
+        if (! isset($roll_no) or ! isset($department_id) or
+         ! isset($programme_id) or ! isset($semester_id)) {
+            throw new Exception(
+            'Insufficient data provided..   roll_no,department_id,programme_id and semester_id are ALL required');
+        } else {
+            $options = $this->getMapper()->fetchMemberID($this);
+            $this->setOptions($options);
+        }
+    }
+    public function findRollNo ()
+    {
+        $member_id = $this->getMember_id();
+        $department_id = $this->getDepartment_id();
+        $programme_id = $this->getProgramme_id();
+        $semester_id = $this->getSemester_id();
+        if (! isset($member_id)) {
+            throw new Exception(
+            'Insufficient data provided..   department_id,programme_id and semester_id are ALL required');
+        } else {
+            $options = $this->getMapper()->fetchRollNo($this);
+            $this->setOptions($options);
+        }
     }
 }
