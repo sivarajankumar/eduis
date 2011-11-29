@@ -99,27 +99,26 @@ class Acad_Model_Mapper_Exam_Competitive
     public function save ($options, 
     Acad_Model_Exam_Competitive $competitiveExam = null)
     {
-        $stu_exam_cols = $this->getStudent_competitive_exam_cols();
+        $cols = $this->getStudent_competitive_exam_cols();
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
         foreach ($options as $key => $value) {
             $db_options[$this->correctDbKeys($key)] = $value;
         }
         $db_options_keys = array_keys($db_options);
-        $recieved_stu_exam_keys = array_intersect($db_options_keys, 
-        $stu_exam_cols);
-        $tenth_data = array();
-        foreach ($recieved_stu_exam_keys as $key_name) {
+        $recieved_keys = array_intersect($db_options_keys, $cols);
+        $data = array();
+        foreach ($recieved_keys as $key_name) {
             $str = "get" . ucfirst($this->correctModelKeys($key_name));
-            $stu_exam_data[$key_name] = $competitiveExam->$str();
+            $data[$key_name] = $competitiveExam->$str();
         }
         //$adapter = $this->getDbTable()->getAdapter();
-        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $competitiveExam->getMember_id());
-        $adapter = $this->getDbTable()->getAdapter();
-        $table = $this->getDbTable()->info('name');
+        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
+        $adapter = $dbtable->getAdapter();
+        $table = $dbtable->info('name');
         $adapter->beginTransaction();
         try {
-            $sql = $adapter->insert($table, $stu_exam_data);
+            $sql = $adapter->insert($table, $data);
             $adapter->commit();
         } catch (Exception $exception) {
             $adapter->rollBack();
