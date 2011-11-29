@@ -1,6 +1,8 @@
 <?php
 class Tnp_Model_Profile_Components_Certification extends Tnp_Model_Generic
 {
+    protected $_save_stu_certification = false;
+    protected $_save_certification = false;
     protected $_member_certifications_info = array();
     protected $_certification_id;
     protected $_certification_name;
@@ -11,14 +13,39 @@ class Tnp_Model_Profile_Components_Certification extends Tnp_Model_Generic
     protected $_start_date;
     protected $_complete_date;
     protected $_mapper;
+    /**
+     * @return the $_save_stu_certification
+     */
+    public function getSave_stu_certification ()
+    {
+        return $this->_save_stu_certification;
+    }
+    /**
+     * @param field_type $_save_stu_certification
+     */
+    public function setSave_stu_certification ($_save_stu_certification)
+    {
+        $this->_save_stu_certification = $_save_stu_certification;
+    }
+    /**
+     * @return the $_save_certification
+     */
+    public function getSave_certification ()
+    {
+        return $this->_save_certification;
+    }
+    /**
+     * @param field_type $_save_certification
+     */
+    public function setSave_certification ($_save_certification)
+    {
+        $this->_save_certification = $_save_certification;
+    }
     protected function getMember_certifications_info ()
     {
-        $member_certifications_info = $this->_member_certifications_info;
-        if (sizeof($member_certifications_info) == 0) {
-            $member_certifications_info = $this->getMapper()->fetchMemberCertificationInfo(
-            $this);
-            $this->setMember_certifications_info($member_certifications_info);
-        }
+        $member_certifications_info = $this->getMapper()->fetchMemberCertificationInfo(
+        $this);
+        $this->setMember_certifications_info($member_certifications_info);
         return $this->_member_certifications_info;
     }
     protected function setMember_certifications_info (
@@ -119,6 +146,16 @@ class Tnp_Model_Profile_Components_Certification extends Tnp_Model_Generic
             new Tnp_Model_Mapper_Profile_Components_Certification());
         }
         return $this->_mapper;
+    }
+    public function saveStuCertification ($options)
+    {
+        $this->setSave_stu_certification(true);
+        parent::save($options);
+    }
+    public function saveCertification ($options)
+    {
+        $this->setSave_certification(true);
+        parent::save($options);
     }
     /**
      * 

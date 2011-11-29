@@ -39,6 +39,43 @@ class Tnp_Model_Mapper_Profile_Member_Student
         return $this->_dbTable;
     }
     /**
+     * @todo reg no
+     * Enter description here ...
+     * @param unknown_type $student
+     */
+    public function fetchMemberID (Tnp_Model_Profile_Member_Student $student)
+    {
+        $roll_no = $student->getRoll_no();
+        $department_id = $student->getDepartment_id();
+        $programme_id = $student->getProgramme_id();
+        $semester_id = $student->getSemester_id();
+        $adapter = $this->getDbTable()->getAdapter();
+        $select = $adapter->select()
+            ->from('student_semester', 'member_id')
+            ->where('department_id = ?', $department_id)
+            ->where('programme_id = ?', $programme_id)
+            ->where('semester_id = ?', $semester_id)
+            ->where('roll_no = ?', $roll_no);
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
+        return $result[0];
+    }
+    public function fetchRollNo (Tnp_Model_Profile_Member_Student $student)
+    {
+        $member_id = $student->getMember_id();
+        $department_id = $student->getDepartment_id();
+        $programme_id = $student->getProgramme_id();
+        $semester_id = $student->getSemester_id();
+        $adapter = $this->getDbTable()->getAdapter();
+        $select = $adapter->select()
+            ->from('student_semester', 'roll_no')
+            ->where('department_id = ?', $department_id)
+            ->where('programme_id = ?', $programme_id)
+            ->where('semester_id = ?', $semester_id)
+            ->where('member_id = ?', $member_id);
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
+        return $result[0];
+    }
+    /**
      * 
      * @param Tnp_Model_Profile_Member_Student $student
      */
@@ -299,13 +336,12 @@ class Tnp_Model_Mapper_Profile_Member_Student
             $select->where($condition, $value);
         }
         $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        if(!empty($result)){
-        	$serach_error = 'No results match your search criteria.';
-        	return $serach_error;
-        }else{
-        	return $result;
+        if (! empty($result)) {
+            $serach_error = 'No results match your search criteria.';
+            return $serach_error;
+        } else {
+            return $result;
         }
-        //Zend_Registry::get('logger')->debug($select->__toString());
-        
+         //Zend_Registry::get('logger')->debug($select->__toString());
     }
 }

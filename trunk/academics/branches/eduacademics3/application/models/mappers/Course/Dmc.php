@@ -64,14 +64,13 @@ class Acad_Model_Mapper_Course_Dmc
         } else {
             $adapter = $this->getDbTable()->getAdapter();
             $select = $adapter->select()
-                ->from('student_subject', 
-            array('subject_code', 'stu_sub_id'))
+                ->from('student_subject', array('subject_code', 'stu_sub_id'))
                 ->where('department_id = ?', $department_id)
                 ->where('programme_id = ?', $programme_id)
                 ->where('semester_id = ?', $semester_id)
                 ->where('member_id = ?', $member_id);
             $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-           // Zend_Registry::get('logger')->debug($result);
+            // Zend_Registry::get('logger')->debug($result);
             return $result;
         }
     }
@@ -150,12 +149,14 @@ class Acad_Model_Mapper_Course_Dmc
         $dmcTotalMarks = $dmc->getSave_total_marks();
         if (isset($dmcInfo)) {
             $dbtable = new Acad_Model_DbTable_DmcInfo();
-        }
-        if (isset($dmcData)) {
-            $dbtable = new Acad_Model_DbTable_DmcData();
-        }
-        if (isset($dmcTotalMarks)) {
-            $dbtable = new Acad_Model_DbTable_DmcTotalMarks();
+        } else {
+            if (isset($dmcData)) {
+                $dbtable = new Acad_Model_DbTable_DmcData();
+            } else {
+                if (isset($dmcTotalMarks)) {
+                    $dbtable = new Acad_Model_DbTable_DmcTotalMarks();
+                }
+            }
         }
         $cols = $dbtable->info('cols');
         //$db_options is $options with keys renamed a/q to db_columns

@@ -6,6 +6,10 @@
 class Tnp_Model_Profile_Member_Student extends Tnp_Model_Generic
 {
     protected $_member_id;
+    protected $_roll_no;
+    protected $_department_id;
+    protected $_programme_id;
+    protected $_semester_id;
     protected $_skills_possessed = array();
     protected $_languages_known = array();
     protected $_skill_id;
@@ -23,6 +27,62 @@ class Tnp_Model_Profile_Member_Student extends Tnp_Model_Generic
     protected $_activities;
     protected $_hobbies;
     protected $_mapper;
+    /**
+     * @return the $_roll_no
+     */
+    public function getRoll_no ()
+    {
+        return $this->_roll_no;
+    }
+    /**
+     * @param field_type $_roll_no
+     */
+    public function setRoll_no ($_roll_no)
+    {
+        $this->_roll_no = $_roll_no;
+    }
+    /**
+     * @return the $_department_id
+     */
+    public function getDepartment_id ()
+    {
+        return $this->_department_id;
+    }
+    /**
+     * @param field_type $_department_id
+     */
+    public function setDepartment_id ($_department_id)
+    {
+        $this->_department_id = $_department_id;
+    }
+    /**
+     * @return the $_programme_id
+     */
+    public function getProgramme_id ()
+    {
+        return $this->_programme_id;
+    }
+    /**
+     * @param field_type $_programme_id
+     */
+    public function setProgramme_id ($_programme_id)
+    {
+        $this->_programme_id = $_programme_id;
+    }
+    /**
+     * @return the $_semester_id
+     */
+    public function getSemester_id ()
+    {
+        return $this->_semester_id;
+    }
+    /**
+     * @param field_type $_semester_id
+     */
+    public function setSemester_id ($_semester_id)
+    {
+        $this->_semester_id = $_semester_id;
+    }
     public function getMember_id ()
     {
         return $this->_member_id;
