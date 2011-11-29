@@ -19,7 +19,7 @@
 <div class="ctrlHolder"><label for=""><em>*</em>Semester</label>
 <input name="sem_no" id="sem_no" data-default-value="e.g. 08-ECA-74"
 	size="35" maxlength="50" type="text" class="textInput required " />
-<p class="formHint">Enter your University Registration Number</p>
+<p class="formHint">Enter your Semester Number</p>
 </div>
 
 <div class="ctrlHolder"><label for=""><em>*</em>Department</label> <input
@@ -76,7 +76,7 @@ echo $this->url(array('controller' => 'profile', 'action' => 'followstep'))?>";
     function submit(){
    	 department = $('#department').val();
     	department = $('#deptt').val();
-    	semno = $('#sem_no').val();
+    	semno = $('#regn_no').val();
     	$.ajax({
         	url: urlBasicInfo,
             data : {
