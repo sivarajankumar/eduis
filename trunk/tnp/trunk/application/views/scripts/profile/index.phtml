@@ -18,23 +18,33 @@
 
 <div class="ctrlHolder"><label for=""><em>*</em>Semester</label>
 <input name="sem_no" id="sem_no" data-default-value="e.g. 08-ECA-74"
-	size="35" maxlength="50" type="text" class="textInput required " />
+	size="35" maxlength="50" type="text" class="textInput required validateInteger validateMax val-8" />
 <p class="formHint">Enter your Semester Number</p>
 </div>
 
-<div class="ctrlHolder"><label for=""><em>*</em>Department</label> <input
+<!-- <div class="ctrlHolder"><label for=""><em>*</em>Department</label> <input
 	name="department" id="department" data-default-value="e.g. CSE" size="35"
 	maxlength="50" type="text" class="textInput required validateAlpha" />
 <p class="formHint"></p>
-</div>
+</div> -->
 
+<div class="ctrlHolder">
+	<label for="department"><em>*</em>Department</label>
+	<select id="department" name="department" class="selectInput required">
+		<option value="cse">Computer Science</option>
+		<option value="ece">Electronics and Communication</option>
+		<option value="bio">Biotechnology</option>
+		<option value="me">Mechanical</option>
+	</select>
+	<p class="formHint">Select Your Trade</p>
+</div>
 
 <div class="ctrlHolder">
 <p class="label"><em>*</em>Your Degree</p>
 <ul class="blockLabels">
-	<li><label for=""><input name="progamme" type="radio" value="btech"
+	<li><label for=""><input name="programme" type="radio" value="btech"
 		title="BTECH" class="required">B.Tech</label></li>
-	<li><label for=""><input name="progamme" type="radio" value="mtech"
+	<li><label for=""><input name="programme" type="radio" value="mtech"
 		title="MTECH" class="required">M.Tech</label></li>
 	
 	
@@ -67,9 +77,9 @@ echo $this->url(array('controller' => 'profile', 'action' => 'followstep'))?>";
             prevent_submit : true
         });
 
-        $('input[name=progamme]').change(function(){
+        $('input[name=programme]').change(function(){
             type = this.value;
-        	$('.progamme').text(' of '+this.title);
+        	$('.programme').text(' of '+this.title);
         });
       });
 
@@ -77,12 +87,12 @@ echo $this->url(array('controller' => 'profile', 'action' => 'followstep'))?>";
    	 department = $('#department').val();
     	rollno = $('#rollno').val();
     	semno = $('#sem_no').val();
-    	type = $('input:radio[name=progamme]:checked').val();
+    	type = $('input:radio[name=programme]:checked').val();
     	$.ajax({
         	url: urlBasicInfo,
             data : {
             roll_no: rollno,
-            progamme_id : type,
+            programme_id : type,
     		department_id : department,
     		semester_id : semno
         	},
