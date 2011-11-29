@@ -562,10 +562,7 @@ class Tnp_Model_Profile_Member_Student extends Tnp_Model_Generic
     }
     public function enroll ($options)
     {
-        $roll_no = $this->getRoll_no();
-        $department_id = $this->getDepartment_id();
-        $programme_id = $this->getProgramme_id();
-        $semester_id = $this->getSemester_id();
+        $roll_no = $options['roll_no'];
         if (! isset($roll_no)) {
             throw new Exception(
             'Insufficient data provided..   roll_no is required');
