@@ -79,7 +79,7 @@ class StudentController extends Corez_Base_BaseController
     {
         $model = new Core_Model_Member_Student();
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-        $member_id = $authInfo['member_id'];
+        $member_id = '1';
         /* 
        if (isset($member_id) 
         {
@@ -131,12 +131,30 @@ class StudentController extends Corez_Base_BaseController
         $address->setMember_id(1);
         $address->setAdress_type('COMMUNICATION');
         $address->initAddressInfo();
-        $test = array('check4'=>5,'adress_type' => 'COMMUNICATION','nationality_id'=>1,'check1' => 2, 'check2' => 3);
+        $test = array('check4' => 5, 'adress_type' => 'COMMUNICATION', 
+        'nationality_id' => 1, 'check1' => 2, 'check2' => 3);
         echo $address->getCity();
         echo "<pre>";
-        print_r($address->search($test,null));
+        print_r($address->search($test, null));
         echo "</pre>";
     }
+    public function saveprofileAction ()
+    {
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $this->_helper->logger($params);
+        $model = new Core_Model_Member_Student();
+        /*$properties = $model->getAllowedProperties();
+        print_r($properties);*/
+        $required_personal = array('first_name' => '', 'middle_name' => '', 
+        'last_name' => '', 'dob' => '', 'cast_id' => '', 'nationality_id' => '', 
+        'blood_group' => '', 'religion_id' => '', 'e_mail' => '', 'gender' => '');
+        $personalInfoArray = array_intersect($required_personal, $params);
+        $model->save($personalInfoArray);
+
+        
+    }
 }
+
    
 
