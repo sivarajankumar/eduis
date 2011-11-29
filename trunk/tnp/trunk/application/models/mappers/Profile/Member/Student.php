@@ -55,7 +55,7 @@ class Tnp_Model_Mapper_Profile_Member_Student
         $save_job_pref = $student->getSave_job_pref();
         $save_co_curri = $student->getSave_co_curri();
         if (isset($save_stu)) {
-            $dbtable = new Tnp_Model_DbTable_Student();
+            $dbtable = new Tnp_Model_DbTable_Student_Semester();
         }
         if (isset($save_skills)) {
             $dbtable = new Tnp_Model_DbTable_Skills();
