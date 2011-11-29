@@ -42,7 +42,8 @@ class Tnp_Model_Mapper_Profile_Components_Experience
      * 
      * @todo
      */
-    public function save ($options, Tnp_Model_Profile_Components_Experience $experience)
+    public function save ($options, 
+    Tnp_Model_Profile_Components_Experience $experience)
     {
         if (isset($save_stu)) {
             $dbtable = new Tnp_Model_DbTable_Student();
@@ -62,8 +63,8 @@ class Tnp_Model_Mapper_Profile_Components_Experience
         }
         //$adapter = $this->getDbTable()->getAdapter();
         //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
-        $adapter = $this->getDbTable()->getAdapter();
-        $table = $this->getDbTable()->info('name');
+        $adapter = $dbtable->getAdapter();
+        $table = $dbtable->info('name');
         $adapter->beginTransaction();
         try {
             $sql = $adapter->insert($table, $data);
@@ -285,6 +286,38 @@ class Tnp_Model_Mapper_Profile_Components_Experience
             return $serach_error;
         } else {
             return $result;
+        }
+    }
+    /**
+     * Provides correct db column names corresponding to model properties
+     * @todo add correct names where required
+     * @param string $key
+     */
+    protected function correctDbKeys ($key)
+    {
+        switch ($key) {
+            /*case 'nationalit':
+                return 'nationality';
+                break;*/
+            default:
+                return $key;
+                break;
+        }
+    }
+    /**
+     * Provides correct model property names corresponding to db column names
+     * @todo add correct names where required
+     * @param string $key
+     */
+    protected function correctModelKeys ($key)
+    {
+        switch ($key) {
+            /*case 'nationality':
+                return 'nationalit';
+                break;*/
+            default:
+                return $key;
+                break;
         }
     }
 }
