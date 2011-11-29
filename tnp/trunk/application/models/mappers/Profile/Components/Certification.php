@@ -1,10 +1,28 @@
 <?php
 class Tnp_Model_Mapper_Profile_Components_Certification
 {
+    protected $_table_cols = null;
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
+    /**
+     * @return the $_table_cols
+     */
+    protected function getTable_cols ()
+    {
+        if (! isset($this->_table_cols)) {
+            $this->setTable_cols();
+        }
+        return $this->_table_cols;
+    }
+    /**
+     * @param field_type $_table_cols
+     */
+    protected function setTable_cols ()
+    {
+        $this->_table_cols = $this->getDbTable()->info('cols');
+    }
     /**
      * Specify Zend_Db_Table instance to use for data operations
      * 
@@ -35,10 +53,48 @@ class Tnp_Model_Mapper_Profile_Components_Certification
     }
     /**
      * 
-     * @todo
+     * Enter description here ...
+     * @param array $options
+     * @param Tnp_Model_Profile_Components_Certification $certification
      */
-    public function save ()
-    {}
+    public function save ($options, 
+    Tnp_Model_Profile_Components_Certification $certification = null)
+    {
+        $certInfo = $certification->getSave_certification();
+        $stuCertification = $certification->getSave_data();
+        if (isset($certInfo)) {
+            $dbtable = new Tnp_Model_DbTable_Certification();
+        } else {
+            if (isset($stuCertification)) {
+                $dbtable = new Tnp_Model_DbTable_StudentCertification();
+            }
+        }
+        $cols = $dbtable->info('cols');
+        //$db_options is $options with keys renamed a/q to db_columns
+        $db_options = array();
+        foreach ($options as $key => $value) {
+            $db_options[$this->correctDbKeys($key)] = $value;
+        }
+        $db_options_keys = array_keys($db_options);
+        $recieved_keys = array_intersect($db_options_keys, $cols);
+        $data = array();
+        foreach ($recieved_keys as $key_name) {
+            $str = "get" . ucfirst($this->correctModelKeys($key_name));
+            $data[$key_name] = $dmc->$str();
+        }
+        //$adapter = $this->getDbTable()->getAdapter();
+        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
+        $adapter = $this->getDbTable()->getAdapter();
+        $table = $this->getDbTable()->info('name');
+        $adapter->beginTransaction();
+        try {
+            $sql = $adapter->insert($table, $data);
+            $adapter->commit();
+        } catch (Exception $exception) {
+            $adapter->rollBack();
+            throw $exception;
+        }
+    }
     /**
      * 
      * @param Tnp_Model_Profile_Components_Certification $certification
@@ -153,51 +209,6 @@ class Tnp_Model_Mapper_Profile_Components_Certification
             return $technical_field_info[$technical_field_id];
         }
     }
-    /*
-    public function fetchMemberId (
-    Tnp_Model_Profile_Components_Certification $certification)
-    {
-        $certification_id = $certification->getCertification_id();
-        $searchPreReq = self::searchPreRequisite($certification);
-        $start_date = $certification->getStart_date();
-        $complete_date = $certification->getComplete_date();
-        $adapter = $this->getDbTable()->getDefaultAdapter();
-        $select = $adapter->select()->from(
-        ($this->getDbTable()
-            ->info('name')), 'member_id');
-        if ($searchPreReq == true) {
-            self::fetchTechnical_field_id($certification);
-            self::fetchCertification_id($certification);
-            $select->where('certification_id = ?', $certification_id);
-        }
-        if (isset($start_date)) {
-            $select->where('start_date = ?', $start_date);
-        }
-        if (isset($complete_date)) {
-            $select->where('complete_date = ?', $complete_date);
-        }
-        return $select->query()->fetchColumn();
-    }
-    
-    protected function searchPreRequisite ($certification)
-    {
-        //
-        //@todo search cant be made by using only one of techSec or TechFieldName.. both have to be specified
-         //reason :we are looking for members with certification course ex: ccna(certName) in networking(field name) of CSE(techField)
-         //this function cannot be used to search students with certification in hardware field of CSE and ECE sector together 
-         //
-        $techFieldName = $certification->getTechnical_field_name();
-        $techSector = $certification->getTechnical_sector();
-        $certiName = $certification->getCertification_name();
-        if (! isset($techFieldName) or ! isset($techSector) or
-         ! isset($certiName)) {
-            throw new Exception(
-            'Insufficient Params.. Techsector, TechFieldName, CetificationName are all required');
-            return false;
-        } else {
-            return true;
-        }
-    }*/
     /**
      * Enter description here ...
      * @param Tnp_Model_Profile_Components_Certification $certification
