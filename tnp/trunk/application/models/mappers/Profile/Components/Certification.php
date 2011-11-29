@@ -64,10 +64,9 @@ class Tnp_Model_Mapper_Profile_Components_Certification
         $stuCertification = $certification->getSave_data();
         if (isset($certInfo)) {
             $dbtable = new Tnp_Model_DbTable_Certification();
-        } else {
-            if (isset($stuCertification)) {
-                $dbtable = new Tnp_Model_DbTable_StudentCertification();
-            }
+        }
+        if (isset($stuCertification)) {
+            $dbtable = new Tnp_Model_DbTable_StudentCertification();
         }
         $cols = $dbtable->info('cols');
         //$db_options is $options with keys renamed a/q to db_columns
