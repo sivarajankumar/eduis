@@ -81,10 +81,10 @@ echo $this->url(array('controller' => 'profile', 'action' => 'followstep'))?>";
     	$.ajax({
         	url: urlBasicInfo,
             data : {
-            rollno: rollno,
-    		application_type : type,
-    		deptt : department,
-    		sem_no : semno
+            roll_no: rollno,
+            progamme_id : type,
+    		department_id : department,
+    		semester_id : semno
         	},
             success: function(jStatus)
             {
