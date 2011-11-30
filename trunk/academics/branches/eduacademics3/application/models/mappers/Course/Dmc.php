@@ -74,6 +74,11 @@ class Acad_Model_Mapper_Course_Dmc
             return $result;
         }
     }
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $dmc
+     */
     public function fetchDmcInfoIds (Acad_Model_Course_Dmc $dmc)
     {
         $member_id = $dmc->getMember_id();
@@ -84,6 +89,26 @@ class Acad_Model_Mapper_Course_Dmc
             ->where('member_id = ?', $member_id);
         $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $result;
+    }
+    /**
+     * 
+     * Enter description here ...
+     * @param Acad_Model_Course_Dmc $dmc
+     */
+    public function fetchDmcInfo (Acad_Model_Course_Dmc $dmc)
+    {
+        $dmc_info_id = $dmc->getDmc_info_id();
+        $adapter = $this->getDbTable()->getAdapter();
+        $table = $this->getDbTable()->info('name');
+        $fields = array('dmc_info_id', 'dmc_id', 'roll_no', 'semester_id', 
+        'examination', 'custody_date', 'is_granted', 'grant_date', 
+        'recieveing_date', 'is_copied', 'dispatch_date', 'marks_obtained', 
+        'total_marks', 'scaled_marks');
+        $select = $adapter->select()
+            ->from($table, $fields)
+            ->where('dmc_info_id = ?', $dmc_info_id);
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $result[$dmc_info_id];
     }
     public function fetchStuSubId (Acad_Model_Course_Dmc $dmc)
     {
@@ -144,17 +169,13 @@ class Acad_Model_Mapper_Course_Dmc
      */
     public function save ($options, Acad_Model_Course_Dmc $dmc)
     {
-        $dmcInfo = $dmc->getSave_info();
-        $dmcData = $dmc->getSave_data();
-        $dmcTotalMarks = $dmc->getSave_total_marks();
+        $dmcInfo = $dmc->getSave_dmc_info();
+        $dmcMarks = $dmc->getSave_marks();
         if (isset($dmcInfo)) {
             $dbtable = new Acad_Model_DbTable_DmcInfo();
         }
-        if (isset($dmcData)) {
-            $dbtable = new Acad_Model_DbTable_DmcData();
-        }
-        if (isset($dmcTotalMarks)) {
-            $dbtable = new Acad_Model_DbTable_DmcTotalMarks();
+        if (isset($dmcMarks)) {
+            $dbtable = new Acad_Model_DbTable_DmcMarks();
         }
         $cols = $dbtable->info('cols');
         //$db_options is $options with keys renamed a/q to db_columns

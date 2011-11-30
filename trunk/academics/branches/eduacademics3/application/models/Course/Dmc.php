@@ -1,10 +1,9 @@
 <?php
 class Acad_Model_Course_Dmc extends Acad_Model_Generic
 {
+    protected $_save_dmc_info = false;
+    protected $_save_marks = false;
     protected $_stu_sub_info = array();
-    protected $_save_info = false;
-    protected $_save_data = false;
-    protected $_save_total_marks = false;
     protected $_stu_sub_id;
     protected $_member_id;
     protected $_roll_no;
@@ -26,6 +25,34 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
     protected $_marks_type;
     protected $_mapper;
     /**
+     * @return the $_save_dmc_info
+     */
+    public function getSave_dmc_info ()
+    {
+        return $this->_save_dmc_info;
+    }
+    /**
+     * @param field_type $_save_dmc_info
+     */
+    public function setSave_dmc_info ($_save_dmc_info)
+    {
+        $this->_save_dmc_info = $_save_dmc_info;
+    }
+    /**
+     * @return the $_save_marks
+     */
+    public function getSave_marks ()
+    {
+        return $this->_save_marks;
+    }
+    /**
+     * @param field_type $_save_marks
+     */
+    public function setSave_marks ($_save_marks)
+    {
+        $this->_save_marks = $_save_marks;
+    }
+    /**
      * @return the $_stu_sub_info
      */
     protected function getStu_sub_info ()
@@ -40,48 +67,6 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
     protected function setStu_sub_info ($_stu_sub_info)
     {
         $this->_stu_sub_info = $_stu_sub_info;
-    }
-    /**
-     * @return the $_save_info
-     */
-    public function getSave_info ()
-    {
-        return $this->_save_info;
-    }
-    /**
-     * @param field_type $_save_info
-     */
-    protected function setSave_info ($_save_info)
-    {
-        $this->_save_info = $_save_info;
-    }
-    /**
-     * @return the $_save_data
-     */
-    public function getSave_data ()
-    {
-        return $this->_save_data;
-    }
-    /**
-     * @param field_type $_save_data
-     */
-    protected function setSave_data ($_save_data)
-    {
-        $this->_save_data = $_save_data;
-    }
-    /**
-     * @return the $_save_total_marks
-     */
-    public function getSave_total_marks ()
-    {
-        return $this->_save_total_marks;
-    }
-    /**
-     * @param field_type $_save_total_marks
-     */
-    protected function setSave_total_marks ($_save_total_marks)
-    {
-        $this->_save_total_marks = $_save_total_marks;
     }
     /**
      * @return the $_stu_sub_id
@@ -372,22 +357,29 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
     }
     public function saveDmcInfo ($options)
     {
-        $this->setSave_info(true);
+        $this->setSave_dmc_info(true);
         parent::save($options);
     }
-    public function saveDmcData ($options)
+    public function saveDmcMarks ($options)
     {
-        $this->setSave_data(true);
-        parent::save($options);
-    }
-    public function saveDmcTotalMarks ($options)
-    {
-        $this->setSave_total_marks(true);
+        $this->setSave_marks(true);
         parent::save($options);
     }
     public function getAllDmcInfoIds ()
     {
         $member_id = $this->getMember_id();
+        if (! isset($member_id)) {
+            throw new Exception(
+            'Insufficient data provided..   Member_id required');
+        } else {
+            return $this->getMapper()->fetchDmcInfoIds($this);
+        }
+    }
+    public function getAllDmcIds ()
+    {
+        $member_id = $this->getMember_id();
+        $semester = $this->getSemester_id();
+        $test_info_id = $this->getDmc_info_id();
         if (! isset($member_id)) {
             throw new Exception(
             'Insufficient data provided..   Member_id required');
@@ -445,6 +437,17 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
             if (array_key_exists($subject_code, $stu_sub_info)) {
                 return $stu_sub_info[$subject_code]['stu_sub_id'];
             }
+        }
+    }
+    public function initDmcInfo ()
+    {
+        $dmc_info_id = $this->getDmc_info_id();
+        if (! isset($dmc_info_id)) {
+            throw new Exception(
+            'Insufficient data provided..   dmc_info_id required');
+        } else {
+            $options = $this->getMapper()->fetchDmcInfo($this);
+            $this->setOptions($options);
         }
     }
 }
