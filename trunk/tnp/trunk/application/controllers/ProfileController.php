@@ -16,10 +16,9 @@ class ProfileController extends Zend_Controller_Action
     protected $_applicant_academic;
     protected $_applicant_admissionbasis;
     protected $_applicant_degreedetails;
-    
     protected $_applicant_career;
     protected $_member_id;
-	public function getMember_id ()
+    public function getMember_id ()
     {
         return $this->_member_id;
     }
@@ -33,14 +32,19 @@ class ProfileController extends Zend_Controller_Action
     public function init ()
     {
         $this->_applicant = new Zend_Session_Namespace('applicant');
-        $this->_applicant_personal = new Zend_Session_Namespace('applicant_personal');
-        $this->_applicant_admissionbasis = new Zend_Session_Namespace('applicant_admissionbasis');
-        $this->_applicant_academic = new Zend_Session_Namespace('applicant_academic');
-        $this->_applicant_degreedetails = new Zend_Session_Namespace('applicant_degreedetails');
+        $this->_applicant_personal = new Zend_Session_Namespace(
+        'applicant_personal');
+        $this->_applicant_admissionbasis = new Zend_Session_Namespace(
+        'applicant_admissionbasis');
+        $this->_applicant_academic = new Zend_Session_Namespace(
+        'applicant_academic');
+        $this->_applicant_degreedetails = new Zend_Session_Namespace(
+        'applicant_degreedetails');
         $this->_applicant_career = new Zend_Session_Namespace('applicant_career');
-        
         $this->view->assign('applicant', $this->_applicant);
-        $this->view->assign('steps', array('personal','admissionbasis','academic','degreedetails', 'career'));
+        $this->view->assign('steps', 
+        array('personal', 'admissionbasis', 'academic', 'degreedetails', 
+        'career'));
     }
     public function validaterollnoAction ()
     {
@@ -71,30 +75,35 @@ class ProfileController extends Zend_Controller_Action
     }
     public function followstepAction ()
     {
-    	$request = $this->getRequest();
+        $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
-        
-        foreach ($params as $colName => $value) 
-        {
+        foreach ($params as $colName => $value) {
             $value = is_array($value) ? $value : htmlentities(trim($value));
             $this->_applicant->$colName = $value;
         }
+        $PROTOCOL = 'http://';
+        Zend_Registry::get('logger')->debug($params);
+        $URL = $PROTOCOL . CORE_SERVER . '/student/enroll' . '?' .
+         http_build_query($params);
+        $client = new Zend_Http_Client($URL);
+        $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+        $response = $client->request();
+        if ($response->isError()) {
+            $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
+             $response->getHeader('Message');
+            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+        } else {
+            $jsonContent = $response->getBody($response);
+            $memberId = Zend_Json_Decoder::decode($jsonContent);
+            $this->_applicant->memberId = $memberId;
+            Zend_Registry::get('logger')->debug($this->_applicant->memberId);
+            return $memberId;
+        }
+        $this->_applicant->memberId = $memberId;
+        Zend_Registry::get('logger')->debug($this->_applicant->memberId);
         
-        $model = new Tnp_Model_Profile_Member_Student();
-        $model->initSave();
-        $model->enroll($params);
-        
-        $model->setRoll_no($params['roll_no']);
-        $model->setDepartment_id($params['department_id']);
-        $model->setProgramme_id($params['programme_id']);
-        $model->setSemester_id($params['semester_id']);
-        $model->findMemberID();
-        $member_id = $model->getMember_id();
-       	$this->setMember_id($member_id);
-
-        //$this->_redirect('/profile/personal');
     }
     public function personalAction ()
     {
@@ -102,34 +111,39 @@ class ProfileController extends Zend_Controller_Action
     }
     public function setpersonalAction ()
     {
+        Zend_Registry::get('logger')->debug($this->_applicant->memberId);
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $params['member_id'] = $this->_applicant->memberId;
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
         foreach ($params as $colName => $value) {
             $value = is_array($value) ? $value : htmlentities(trim($value));
             $this->_applicant_personel->$colName = $value;
         }
-        Zend_Registry::get('logger')->debug($params);
         echo 'Following information recieved:<br/>';
         foreach ($params as $colName => $value) {
             $value = is_array($value) ? var_export($value, true) : htmlentities(
             trim($value));
             echo '<b>' . ucwords(str_ireplace('_', ' ', $colName)) . '</b> : ' .
              $value . '<br/>';
-             
-             $PROTOCOL = 'http://';
-             $URL= $PROTOCOL . CORE_SERVER . '/student/saveprofile' . "?params=$params";
-				$client = new Zend_Http_Client ( $URL );
-				$client->setCookie ( 'PHPSESSID', $_COOKIE ['PHPSESSID'] );
-				$response = $client->request ();
-				if ($response->isError ()) {
-					$remoteErr = 'REMOTE ERROR: ('.$response->getStatus () . ') ' . $response->getMessage ();
-					throw new Zend_Exception ( $remoteErr, Zend_Log::ERR );
-				}
         }
+        $PROTOCOL = 'http://';
+        Zend_Registry::get('logger')->debug($params);
+        $URL = $PROTOCOL . CORE_SERVER . '/student/saveprofile' . '?' .
+         http_build_query($params);
+        $client = new Zend_Http_Client($URL);
+        $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+        $response = $client->request();
+        if ($response->isError()) {
+            $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
+             $response->getHeader('Message');
+            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+        }
+        $body = $response->getBody();
+        Zend_Registry::get('logger')->debug($body);
     }
-public function admissionbasisAction ()
+    public function admissionbasisAction ()
     {
         $this->view->assign('stepNo', 1);
     }
@@ -139,13 +153,10 @@ public function admissionbasisAction ()
         $params = array_diff($request->getParams(), $request->getUserParams());
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
-        foreach ($params as $colName => $value) 
-        {
-           $this->_applicant->$colName = $value;
+        foreach ($params as $colName => $value) {
+            $this->_applicant->$colName = $value;
         }
         $this->_redirect('/profile/academic');
-        
-        
     }
     public function academicAction ()
     {
@@ -168,10 +179,20 @@ public function admissionbasisAction ()
             echo '<b>' . ucwords(str_ireplace('_', ' ', $colName)) . '</b> : ' .
              $value . '<br/>';
         }
+        $PROTOCOL = 'http://';
+        Zend_Registry::get('logger')->debug($params);
+        $URL = $PROTOCOL . ACADEMIC_SERVER . '/student/saveprofile' . '?' .
+         http_build_query($params);
+        $client = new Zend_Http_Client($URL);
+        $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+        $response = $client->request();
+        if ($response->isError()) {
+            $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
+             $response->getHeader('Message');
+            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+        }
     }
-
-    
-public function degreedetailsAction ()
+    public function degreedetailsAction ()
     {
         $this->view->assign('stepNo', 3);
     }
@@ -217,21 +238,13 @@ public function degreedetailsAction ()
     }
     public function saveAction ()
     {
-    	$this->_helper->viewRenderer->setNoRender(TRUE);
+        $this->_helper->viewRenderer->setNoRender(TRUE);
         $authInfo = Zend_Auth::getInstance()->getStorage()->read();
         $this->_applicant = $authInfo['applicant'];
         $this->_applicant_personal = $authInfo['applicant_personal'];
         $this->_applicant_academic = $authInfo['applicant_admissionbasis'];
         $this->_applicant_academic = $authInfo['applicant_academic'];
-        
         $this->_applicant_academic = $authInfo['applicant_degreedetails'];
         $this->_applicant_career = $authInfo['applicant_career'];
-        
-        
-        
     }
-    
-    
-    
-    
 }
