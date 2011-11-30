@@ -73,10 +73,10 @@ class Acad_Model_Test_TestMarks extends Acad_Model_Test_Generic
      */
     public function getMapper ()
     {
-        if (null === $this->_mapper) {
+      /*  if (null === $this->_mapper) {
             $this->setMapper(new Acad_Model_Test_TestMarksMapper());
         }
-        return $this->_mapper;
+        return $this->_mapper;*/
     }
     /**
      * Constructor
