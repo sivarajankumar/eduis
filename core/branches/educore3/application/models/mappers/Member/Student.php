@@ -117,10 +117,16 @@ class Core_Model_Mapper_Member_Student
     public function save ($options, Core_Model_Member_Student $student = null)
     {
         $save_stu_dep = $student->getSave_stu_dep();
+        $save_stu_per = $student->getSave_stu_per();
+        $save_student = $student->getSave_student();
         if (isset($save_stu_dep)) {
             $dbtable = new Core_Model_DbTable_StudentDepartment();
-        } else {
+        }
+        if (isset($save_stu_per)) {
             $dbtable = new Core_Model_DbTable_StudentPersonal();
+        }
+        if (isset($save_student)) {
+            $dbtable = new Core_Model_DbTable_StudentSemester();
         }
         $dbtable = $this->getDbTable();
         $cols = $dbtable->info('cols');

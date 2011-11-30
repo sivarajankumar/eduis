@@ -1,6 +1,7 @@
 <?php
 class Core_Model_Member_Student extends Core_Model_Generic
 {
+    protected $_save_student = false;
     protected $_save_stu_per = false;
     protected $_save_stu_dep = false;
     protected $_member_id;
@@ -38,6 +39,20 @@ class Core_Model_Member_Student extends Core_Model_Generic
     protected $_semester_id;
     protected $_mapper;
     /**
+	 * @return the $_save_student
+	 */
+	public function getSave_student() {
+		return $this->_save_student;
+	}
+
+	/**
+	 * @param field_type $_save_student
+	 */
+	public function setSave_student($_save_student) {
+		$this->_save_student = $_save_student;
+	}
+
+	/**
      * @return the $_save_stu_per
      */
     public function getSave_stu_per ()
@@ -605,7 +620,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
             throw new Exception(
             'Insufficient data provided..   roll_no is required');
         } else {
-            $this->setSave_stu_dep(true);
+            $this->setSave_student(true);
             parent::save($options);
         }
     }

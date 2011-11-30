@@ -99,6 +99,7 @@ class Acad_Model_Mapper_Exam_Competitive
     public function save ($options, 
     Acad_Model_Exam_Competitive $competitiveExam = null)
     {
+        $dbtable = $this->getDbTable();
         $cols = $this->getStudent_competitive_exam_cols();
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
@@ -114,8 +115,8 @@ class Acad_Model_Mapper_Exam_Competitive
         }
         //$adapter = $this->getDbTable()->getAdapter();
         //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
-        $adapter = $this->getDbTable()->getAdapter();
-        $table = $this->getDbTable()->info('name');
+        $adapter = $dbtable->getAdapter();
+        $table = $dbtable->info('name');
         $adapter->beginTransaction();
         try {
             $sql = $adapter->insert($table, $data);
