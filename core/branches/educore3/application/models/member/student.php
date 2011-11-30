@@ -35,7 +35,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
     protected $_programme_id;
     protected $_batch_start;
     protected $_group_id;
-    protected $_semster_id;
+    protected $_semester_id;
     protected $_mapper;
     /**
      * @return the $_save_stu_per
@@ -519,18 +519,18 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $this->_group_id = $_group_id;
     }
     /**
-     * @return the $_semster_id
+     * @return the $_semester_id
      */
-    public function getSemster_id ()
+    public function getSemester_id ()
     {
-        return $this->_semster_id;
+        return $this->_semester_id;
     }
     /**
-     * @param field_type $_semster_id
+     * @param field_type $_semester_id
      */
-    public function setSemster_id ($_semster_id)
+    public function setSemester_id ($_semester_id)
     {
-        $this->_semster_id = $_semster_id;
+        $this->_semester_id = $_semester_id;
     }
     /**
      * Set Mapper
@@ -553,24 +553,38 @@ class Core_Model_Member_Student extends Core_Model_Generic
         }
         return $this->_mapper;
     }
-    public function fetchMemberId ()
+    /**
+     * @todo reg no included in search
+     * Enter description here ...
+     * @throws Exception
+     */
+    public function findMemberID ()
     {
-        $roll_no = $this->getStudent_roll_no();
-        if (! empty($roll_no)) {
-            $result = $this->getMapper()->fetchMember_id($this);
-            $this->setMember_id($result);
+        $roll_no = $this->getRoll_no();
+        $department_id = $this->getDepartment_id();
+        $programme_id = $this->getProgramme_id();
+        $semester_id = $this->getSemester_id();
+        if (! isset($roll_no) or ! isset($department_id) or
+         ! isset($programme_id) or ! isset($semester_id)) {
+            throw new Exception(
+            'Insufficient data provided..   roll_no,department_id,programme_id and semester_id are ALL required');
         } else {
-            throw new Exception('You must set RollNumber first');
+            $options = $this->getMapper()->fetchMemberID($this);
+            $this->setOptions($options);
         }
     }
-    public function fetchRollNumber ()
+    public function findRollNo ()
     {
         $member_id = $this->getMember_id();
-        if (! empty($member_id)) {
-            $result = $this->getMapper()->fetchStudent_roll_no($this);
-            $this->setStudent_roll_no($result);
+        $department_id = $this->getDepartment_id();
+        $programme_id = $this->getProgramme_id();
+        $semester_id = $this->getSemester_id();
+        if (! isset($member_id)) {
+            throw new Exception(
+            'Insufficient data provided..   department_id,programme_id and semester_id are ALL required');
         } else {
-            throw new Exception('You must set MemberId first');
+            $options = $this->getMapper()->fetchRollNo($this);
+            $this->setOptions($options);
         }
     }
     /**
