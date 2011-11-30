@@ -1,6 +1,8 @@
 <?php
 class Core_Model_Member_Student extends Core_Model_Generic
 {
+    protected $_save_stu_per = false;
+    protected $_save_stu_dep = false;
     protected $_member_id;
     protected $_reg_no;
     protected $_cast_id;
@@ -28,13 +30,41 @@ class Core_Model_Member_Student extends Core_Model_Generic
     protected $_boarding_station;
     protected $_image_no;
     protected $_blood_group;
-    protected $_student_roll_no;
+    protected $_roll_no;
     protected $_department_id;
     protected $_programme_id;
     protected $_batch_start;
     protected $_group_id;
     protected $_semster_id;
     protected $_mapper;
+    /**
+     * @return the $_save_stu_per
+     */
+    public function getSave_stu_per ()
+    {
+        return $this->_save_stu_per;
+    }
+    /**
+     * @param field_type $_save_stu_per
+     */
+    public function setSave_stu_per ($_save_stu_per)
+    {
+        $this->_save_stu_per = $_save_stu_per;
+    }
+    /**
+     * @return the $_save_stu_dep
+     */
+    public function getSave_stu_dep ()
+    {
+        return $this->_save_stu_dep;
+    }
+    /**
+     * @param field_type $_save_stu_dep
+     */
+    public function setSave_stu_dep ($_save_stu_dep)
+    {
+        $this->_save_stu_dep = $_save_stu_dep;
+    }
     /**
      * @return the $_member_id
      */
@@ -419,18 +449,18 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $this->_blood_group = $_blood_group;
     }
     /**
-     * @return the $_student_roll_no
+     * @return the $_roll_no
      */
-    public function getStudent_roll_no ()
+    public function getRoll_no ()
     {
-        return $this->_student_roll_no;
+        return $this->_roll_no;
     }
     /**
-     * @param field_type $_student_roll_no
+     * @param field_type $_roll_no
      */
-    public function setStudent_roll_no ($_student_roll_no)
+    public function setRoll_no ($_roll_no)
     {
-        $this->_student_roll_no = $_student_roll_no;
+        $this->_roll_no = $_roll_no;
     }
     /**
      * @return the $_department_id
@@ -553,5 +583,16 @@ class Core_Model_Member_Student extends Core_Model_Generic
     {
         $options = $this->getMapper()->fetchStudentInfo($this);
         $this->setOptions($options);
+    }
+    public function enroll ($options)
+    {
+        $roll_no = $options['roll_no'];
+        if (! isset($roll_no)) {
+            throw new Exception(
+            'Insufficient data provided..   roll_no is required');
+        } else {
+            $this->setSave_stu_dep(true);
+            parent::save($options);
+        }
     }
 }
