@@ -52,7 +52,7 @@ class Core_Model_Mapper_Member_Student
             $stu_prs_cols = $this->getTable_cols();
             $stu_dep_cols = array('department_id', 'prgramme_id', 'batch_start', 
             'group_id');
-            $stu_sem_cols = array('semster_id');
+            $stu_sem_cols = array('semester_id');
             $select = $adapter->select()->from(
             $this->getDbTable()
                 ->info('name'), $stu_prs_cols);
@@ -67,41 +67,46 @@ class Core_Model_Mapper_Member_Student
         }
     }
     /**
-     * @todo when rollNOs are not unique additional params like programme semester must be set.
-     * fetches memberId of a student
-     *@param Core_Model_Member_Student $student
+     * 
+     * Enter description here ...
+     * @param Core_Model_Member_Student $student
      */
-    public function fetchMember_id (Core_Model_Member_Student $student)
+    public function fetchMemberID (Core_Model_Member_Student $student)
     {
-        $roll_no = $student->getStudent_roll_no();
-        if (empty($roll_no)) {
-            $error = 'Please provide a Roll No';
-            throw new Exception($error);
-        } else {
-            $adapter = $this->getDbTable()->getDefaultAdapter();
-            $select = $adapter->select()
-                ->from('student_semester', 'member_id')
-                ->where('roll_no = ?', $roll_no);
-            return $select->query()->fetchColumn();
-        }
+        $roll_no = $student->getRoll_no();
+        $department_id = $student->getDepartment_id();
+        $programme_id = $student->getProgramme_id();
+        $semester_id = $student->getSemester_id();
+        $adapter = $this->getDbTable()->getAdapter();
+        $select = $adapter->select()
+            ->from('student_semester', 'member_id')
+            ->where('department_id = ?', $department_id)
+            ->where('programme_id = ?', $programme_id)
+            ->where('semester_id = ?', $semester_id)
+            ->where('roll_no = ?', $roll_no);
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
+        return $result[0];
     }
     /**
-     *fetches Roll Number of a student
-     *@param Core_Model_Member_Student $student
+     * 
+     * Enter description here ...
+     * @param unknown_type $student
      */
-    public function fetchStudent_roll_no (Core_Model_Member_Student $student)
+    public function fetchRollNo (Core_Model_Member_Student $student)
     {
-        $memberId = $student->getMember_id();
-        if (empty($memberId)) {
-            $error = 'Please provide a Memmber Id ';
-            throw new Exception($error);
-        } else {
-            $adapter = $this->getDbTable()->getDefaultAdapter();
-            $select = $adapter->select()
-                ->from('student_semester', 'roll_no')
-                ->where('member_id = ?', $memberId);
-            return $select->query()->fetchColumn();
-        }
+        $member_id = $student->getMember_id();
+        $department_id = $student->getDepartment_id();
+        $programme_id = $student->getProgramme_id();
+        $semester_id = $student->getSemester_id();
+        $adapter = $this->getDbTable()->getAdapter();
+        $select = $adapter->select()
+            ->from('student_semester', 'roll_no')
+            ->where('department_id = ?', $department_id)
+            ->where('programme_id = ?', $programme_id)
+            ->where('semester_id = ?', $semester_id)
+            ->where('member_id = ?', $member_id);
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
+        return $result[0];
     }
     /**
      * 
