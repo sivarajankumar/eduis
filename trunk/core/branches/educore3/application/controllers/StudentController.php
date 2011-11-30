@@ -142,17 +142,51 @@ class StudentController extends Corez_Base_BaseController
     {
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $this->_helper->logger($params);
         $model = new Core_Model_Member_Student();
-        /*$properties = $model->getAllowedProperties();
-        print_r($properties);*/
-        $required_personal = array('first_name' => '', 'middle_name' => '', 
-        'last_name' => '', 'dob' => '', 'cast_id' => '', 'nationality_id' => '', 
-        'blood_group' => '', 'religion_id' => '', 'e_mail' => '', 'gender' => '');
-        $personalInfoArray = array_intersect($required_personal, $params);
-        $model->save($personalInfoArray);
-
+        $model->initSave();
+        $model->setSave_stu_dep(true);
+        $model->save($params);
+        $model->initSave();
+        $model->setSave_stu_per(true);
+        $model->save($params);
         
+    }
+    public function enrollAction ()
+    {
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $this->_helper->viewRenderer->setNoRender(TRUE);
+        $this->_helper->layout()->disableLayout();
+        $model = new Core_Model_Member_Student();
+        $model->initSave();
+        $model->enroll($params);
+        $model->setRoll_no($params['roll_no']);
+        $model->setDepartment_id($params['department_id']);
+        $model->setProgramme_id($params['programme_id']);
+        $model->setSemester_id($params['semester_id']);
+        $model->findMemberID();
+        $member_id = $model->getMember_id();
+        $this->_helper->json($member_id);
+    }
+    /**
+     * 
+     * for testing
+     */
+    public function testAction ()
+    {
+        $model = new Core_Model_Member_Student();
+        $options = array('department_id' => 'cse', 'member_id' => 90);
+        $model->initSave();
+        $model->setSave_stu_dep(true);
+        $model->save($options);
+        $model->initSave();
+        $model->setSave_stu_per(true);
+        $options['member_id'] = 90;
+        $options['reg_no'] = 70;
+        $options['religion_id'] = 1;
+        $options['cast_id'] = 1;
+        $options['nationality_id'] = 1;
+        $model->save($options);
     }
 }
 
