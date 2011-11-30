@@ -18,11 +18,28 @@ class ProfileController extends Zend_Controller_Action
     protected $_applicant_degreedetails;
     
     protected $_applicant_career;
+    protected $_member_id;
+	public function getMember_id ()
+    {
+        return $this->_member_id;
+    }
+    /**
+     * @param field_type $_member_id
+     */
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
+    }
     public function init ()
     {
-        $this->applicant = new Zend_Session_Namespace('applicant', 
-        'applicant_personal', 'applicant_admissionbasis','applicant_academic','applicant_degreedetails', 'applicant_career');
-        $this->view->assign('applicant', $this->applicant);
+        $this->_applicant = new Zend_Session_Namespace('applicant');
+        $this->_applicant_personal = new Zend_Session_Namespace('applicant_personal');
+        $this->_applicant_admissionbasis = new Zend_Session_Namespace('applicant_admissionbasis');
+        $this->_applicant_academic = new Zend_Session_Namespace('applicant_academic');
+        $this->_applicant_degreedetails = new Zend_Session_Namespace('applicant_degreedetails');
+        $this->_applicant_career = new Zend_Session_Namespace('applicant_career');
+        
+        $this->view->assign('applicant', $this->_applicant);
         $this->view->assign('steps', array('personal','admissionbasis','academic','degreedetails', 'career'));
     }
     public function validaterollnoAction ()
@@ -54,16 +71,30 @@ class ProfileController extends Zend_Controller_Action
     }
     public function followstepAction ()
     {
-        $request = $this->getRequest();
+    	$request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
+        
         foreach ($params as $colName => $value) 
         {
             $value = is_array($value) ? $value : htmlentities(trim($value));
-            $this->applicant->$colName = $value;
+            $this->_applicant->$colName = $value;
         }
-        $this->_redirect('/profile/personal');
+        
+        $model = new Tnp_Model_Profile_Member_Student();
+        $model->initSave();
+        $model->enroll($params);
+        
+        $model->setRoll_no($params['roll_no']);
+        $model->setDepartment_id($params['department_id']);
+        $model->setProgramme_id($params['programme_id']);
+        $model->setSemester_id($params['semester_id']);
+        $model->findMemberID();
+        $member_id = $model->getMember_id();
+       	$this->setMember_id($member_id);
+
+        //$this->_redirect('/profile/personal');
     }
     public function personalAction ()
     {
@@ -77,14 +108,25 @@ class ProfileController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         foreach ($params as $colName => $value) {
             $value = is_array($value) ? $value : htmlentities(trim($value));
-            $this->applicant_personel->$colName = $value;
+            $this->_applicant_personel->$colName = $value;
         }
+        Zend_Registry::get('logger')->debug($params);
         echo 'Following information recieved:<br/>';
         foreach ($params as $colName => $value) {
             $value = is_array($value) ? var_export($value, true) : htmlentities(
             trim($value));
             echo '<b>' . ucwords(str_ireplace('_', ' ', $colName)) . '</b> : ' .
              $value . '<br/>';
+             
+             $PROTOCOL = 'http://';
+             $URL= $PROTOCOL . CORE_SERVER . '/student/saveprofile' . "?params=$params";
+				$client = new Zend_Http_Client ( $URL );
+				$client->setCookie ( 'PHPSESSID', $_COOKIE ['PHPSESSID'] );
+				$response = $client->request ();
+				if ($response->isError ()) {
+					$remoteErr = 'REMOTE ERROR: ('.$response->getStatus () . ') ' . $response->getMessage ();
+					throw new Zend_Exception ( $remoteErr, Zend_Log::ERR );
+				}
         }
     }
 public function admissionbasisAction ()
@@ -99,7 +141,7 @@ public function admissionbasisAction ()
         $this->_helper->layout()->disableLayout();
         foreach ($params as $colName => $value) 
         {
-           $this->applicant->$colName = $value;
+           $this->_applicant->$colName = $value;
         }
         $this->_redirect('/profile/academic');
         
@@ -117,7 +159,7 @@ public function admissionbasisAction ()
         $this->_helper->layout()->disableLayout();
         foreach ($params as $colName => $value) {
             $value = is_array($value) ? $value : htmlentities(trim($value));
-            $this->applicant_academic->$colName = $value;
+            $this->_applicant_academic->$colName = $value;
         }
         echo 'Following information recieved:<br/>';
         foreach ($params as $colName => $value) {
@@ -141,7 +183,7 @@ public function degreedetailsAction ()
         $this->_helper->layout()->disableLayout();
         foreach ($params as $colName => $value) {
             $value = is_array($value) ? $value : htmlentities(trim($value));
-            $this->applicant_degreedetails->$colName = $value;
+            $this->_applicant_degreedetails->$colName = $value;
         }
         echo 'Following information recieved:<br/>';
         foreach ($params as $colName => $value) {
@@ -163,7 +205,7 @@ public function degreedetailsAction ()
         $this->_helper->layout()->disableLayout();
         foreach ($params as $colName => $value) {
             $value = is_array($value) ? $value : htmlentities(trim($value));
-            $this->applicant_career->$colName = $value;
+            $this->_applicant_career->$colName = $value;
         }
         echo 'Following information recieved:<br/>';
         foreach ($params as $colName => $value) {
