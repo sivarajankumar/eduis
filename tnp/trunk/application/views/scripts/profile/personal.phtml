@@ -12,7 +12,7 @@
         echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$stepNo]);?> Information:</h2>
         <hr/>
         <div class="ctrlHolder"><label for=""><em>*</em>Registration Number</label>
-	  	<input name="regn_no" id="regn_no" data-default-value="e.g. 08-ECA-74"
+	  	<input name="reg_no" id="reg_no" data-default-value="e.g. 08-ECA-74"
 		size="35" maxlength="50" type="text" class="textInput required " />
 		<p class="formHint">Enter your University Registration Number</p>
 		</div>
@@ -86,23 +86,24 @@
         
         <div class="ctrlHolder">
           <label for="cast">Cast</label>
-          <select id="cast" name="cast" class="selectInput required">
-          		<option value="GEN" <?php echo ('GEN' == $this->applicant->cast?'selected="selected"':'');?> >GEN</option>
-          		<option value="SC" <?php echo ('SC' == $this->applicant->cast?'selected="selected"':'');?> >SC</option>
-          		<option value="BC" <?php echo ('BC' == $this->applicant->cast?'selected="selected"':'');?> >BC</option>
+          <select id="cast" name="cast_id" class="selectInput required">
+          		<option value="0" <?php echo ('GEN' == $this->applicant->cast?'selected="selected"':'');?> >GEN</option>
+          		<option value="1" <?php echo ('BC' == $this->applicant->cast?'selected="selected"':'');?> >BC</option>
+          		<option value="2" <?php echo ('SC' == $this->applicant->cast?'selected="selected"':'');?> >SC</option>
+          		<option value="3" <?php echo ('ST' == $this->applicant->cast?'selected="selected"':'');?> >ST</option>
       	  </select>
           <p class="formHint">Cast of <span class="cName" >Candidate</span></p>
         </div>
         
         <div class="ctrlHolder">
           <label for="">Email address</label>
-          <input name="e_mail" id="e_mail" value="<?php echo $this->applicant->e_mail ?>" data-default-value="e.g. ravigupta@gmail.com"  size="35" maxlength="50" type="text" class="textInput validateEmail"/>
+          <input name="e_mail" id="e_mail" value="<?php echo $this->applicant->e_mail ?>" data-default-value="e.g. ravigupta@gmail.com"  size="35" maxlength="50" type="text" class=" required textInput validateEmail"/>
           <p class="formHint">A valid email address</p>
         </div>
       
         <div class="ctrlHolder">
           <label for="e_mail_confirm">Email confirm</label>
-          <input name="e_mail_confirm" id="e_mail_confirm" data-default-value="i.e. same as above" value="<?php echo $this->applicant->e_mail ?>"  size="35" maxlength="50" type="text" class="textInput validateSameAs e_mail"/>
+          <input name="e_mail_confirm" id="e_mail_confirm" data-default-value="i.e. same as above" value="<?php echo $this->applicant->e_mail ?>"  size="35" maxlength="50" type="text" class="required textInput validateSameAs e_mail"/>
           <p class="formHint"></p>
         </div>
         
@@ -181,7 +182,7 @@
           <input name="guardian_contact" id="guardian_contact" value="<?php echo $this->applicant->guardian_contact ?>" data-default-value="e.g. +919799123132" size="35" maxlength="50" type="text" class="textInput"/>
           <p class="formHint">Guardian's contact number, it should be a mobile number.</p>
         </div>
-        -->
+        
         <fieldset>
         <div class="ctrlHolder">
           <label for="annual_income"><em>*</em>Annual Income</label>
@@ -190,7 +191,7 @@
         </div>
         
         </fieldset>
-        
+        -->
         <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
         
         <div class="buttonHolder">
