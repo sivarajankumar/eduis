@@ -128,7 +128,6 @@ class Core_Model_Mapper_Member_Student
         if (isset($save_student)) {
             $dbtable = new Core_Model_DbTable_StudentSemester();
         }
-        $dbtable = $this->getDbTable();
         $cols = $dbtable->info('cols');
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
