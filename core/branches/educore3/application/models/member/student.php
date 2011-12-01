@@ -39,20 +39,20 @@ class Core_Model_Member_Student extends Core_Model_Generic
     protected $_semester_id;
     protected $_mapper;
     /**
-	 * @return the $_save_student
-	 */
-	public function getSave_student() {
-		return $this->_save_student;
-	}
-
-	/**
-	 * @param field_type $_save_student
-	 */
-	public function setSave_student($_save_student) {
-		$this->_save_student = $_save_student;
-	}
-
-	/**
+     * @return the $_save_student
+     */
+    public function getSave_student ()
+    {
+        return $this->_save_student;
+    }
+    /**
+     * @param field_type $_save_student
+     */
+    public function setSave_student ($_save_student)
+    {
+        $this->_save_student = $_save_student;
+    }
+    /**
      * @return the $_save_stu_per
      */
     public function getSave_stu_per ()
