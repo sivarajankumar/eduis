@@ -240,6 +240,7 @@ class Acad_Model_Exam_Aissce extends Acad_Model_Generic
     public function initMemberExamInfo ()
     {
         $options = $this->getMapper()->fetchMemberExamInfo($this);
+        Zend_Registry::get('logger')->debug($options);
         $this->setOptions($options);
     }
 }

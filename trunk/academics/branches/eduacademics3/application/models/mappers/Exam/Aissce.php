@@ -47,6 +47,7 @@ class Acad_Model_Mapper_Exam_Aissce
     public function fetchMemberExamInfo (Acad_Model_Exam_Aissce $aissce)
     {
         $member_id = $aissce->getMember_id();
+        Zend_Registry::get('logger')->debug($member_id);
         $adapter = $this->getDbTable()->getAdapter();
         $required_fields = $this->getDbTable()->info('cols');
         $table = $this->getDbTable()->info('name');
@@ -55,7 +56,12 @@ class Acad_Model_Mapper_Exam_Aissce
             ->where('member_id = ?', $member_id);
         $member_exam_info = array();
         $member_exam_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $member_exam_info[$member_id];
+        if (sizeof($member_exam_info) == 0) {
+            throw new Exception(
+            'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+        } else {
+            return $member_exam_info[$member_id];
+        }
     }
     /**
      * 
@@ -65,7 +71,7 @@ class Acad_Model_Mapper_Exam_Aissce
      */
     public function save ($options, Acad_Model_Exam_Aissce $aissce = null)
     {
-    $dbtable = $this->getDbTable();
+        $dbtable = $this->getDbTable();
         $cols = $dbtable->info('cols');
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
