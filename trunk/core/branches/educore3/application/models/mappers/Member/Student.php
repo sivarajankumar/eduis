@@ -49,7 +49,7 @@ class Core_Model_Mapper_Member_Student
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $stu_prs_cols = $this->getTable_cols();
+            $stu_prs_cols = $this->getDbTable()->info('cols');
             $stu_dep_cols = array('department_id', 'prgramme_id', 'batch_start', 
             'group_id');
             $stu_sem_cols = array('semester_id');

@@ -81,7 +81,7 @@ class Core_Model_Mapper_Address
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = $this->getTable_cols();
+            $required_fields = $this->getDbTable()->info('key');
             $select = $adapter->select()
                 ->from($this->getDbTable()
                 ->info('name'), $required_fields)
@@ -116,7 +116,7 @@ class Core_Model_Mapper_Address
         $correct_db_options1_keys);
         $table = array('addr' => $this->getDbTable()->info('name'));
         //1)get column names of address present in arguments received
-        $address_col = $this->getTable_cols();
+        $address_col = $this->getDbTable()->info('cols');
         $address_intrsctn = array();
         $address_intrsctn = array_intersect($address_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();

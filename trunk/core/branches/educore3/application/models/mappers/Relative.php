@@ -76,7 +76,7 @@ class Core_Model_Mapper_Relative
     {
         $member_id = $relative->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $relatives_fields = $this->getTable_cols();
+        $relatives_fields = $this->getDbTable()->info('key');
         $relations_fields = array('relation_name');
         $select = $adapter->select()
             ->from($this->getDbTable()
@@ -112,7 +112,7 @@ class Core_Model_Mapper_Relative
         $correct_db_options1_keys);
         $table = array('rel' => $this->getDbTable()->info('name'));
         //1)get column names of relatives present in arguments received
-        $relative_col = $this->getTable_cols();
+        $relative_col = $this->getDbTable()->info('key');
         $relative_intrsctn = array();
         $relative_intrsctn = array_intersect($relative_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
