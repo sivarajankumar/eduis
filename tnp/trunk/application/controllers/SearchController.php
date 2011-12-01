@@ -18,6 +18,12 @@ class SearchController extends Zend_Controller_Action
     
     public function studentAction ()
     {
-    	
+    	$request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $without_rangeKeys = array('gender'=>'',
+                               'nationality_id'=>'',
+                               'cast'=>'');
+        $without_range = array_intersect_key($params, $without_rangeKeys);
+        $this->_helper->logger($without_range);
     }
 }
