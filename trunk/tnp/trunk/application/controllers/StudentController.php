@@ -211,6 +211,7 @@ class StudentController extends Zend_Controller_Action
             'skill_prof' => $skill_prof, 'skill_field' => $skill_field);
         }
         $response['skillset'] = $skill_result;
+        Zend_Registry::get('logger')->debug($response);
         $callback = $this->getRequest()->getParam('callback');
         echo $callback . '(' . $this->_helper->json($response, false) . ')';
     }
