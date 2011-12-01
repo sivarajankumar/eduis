@@ -1,28 +1,10 @@
 <?php
 class Acad_Model_Mapper_Exam_Aisse
 {
-    protected $_table_cols = null;
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
-    /**
-     * @return the $_table_cols
-     */
-    protected function getTable_cols ()
-    {
-        if (! isset($this->_table_cols)) {
-            $this->setTable_cols();
-        }
-        return $this->_table_cols;
-    }
-    /**
-     * @param field_type $_table_cols
-     */
-    protected function setTable_cols ()
-    {
-        $this->_table_cols = $this->getDbTable()->info('cols');
-    }
     /**
      * Specify Zend_Db_Table instance to use for data operations
      * 
@@ -61,7 +43,7 @@ class Acad_Model_Mapper_Exam_Aisse
         $member_id = $aisse->getMember_id();
         Zend_Registry::get('logger')->debug($member_id);
         $adapter = $this->getDbTable()->getAdapter();
-        $required_fields = $this->getTable_cols();
+        $required_fields = $this->getDbTable()->info('cols');
         $select = $adapter->select()
             ->from('matric', $required_fields)
             ->where('member_id = ?', $member_id);
@@ -128,7 +110,7 @@ class Acad_Model_Mapper_Exam_Aisse
         $correct_db_options1_keys);
         $table = $this->getDbTable()->info('name');
         //1)get column names of tenth present in arguments received
-        $tenth_col = $this->getTable_cols();
+        $tenth_col = $this->getDbTable()->info('cols');
         $tenth_intrsctn = array();
         $tenth_intrsctn = array_intersect($tenth_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
