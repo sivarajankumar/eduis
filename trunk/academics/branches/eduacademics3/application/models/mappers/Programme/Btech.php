@@ -1,28 +1,10 @@
 <?php
 class Acad_Model_Mapper_Programme_Btech
 {
-    protected $_table_cols = null;
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
-    /**
-     * @return the $_table_cols
-     */
-    protected function getTable_cols ()
-    {
-        if (! isset($this->_table_cols)) {
-            $this->setTable_cols();
-        }
-        return $this->_table_cols;
-    }
-    /**
-     * @param field_type $_table_cols
-     */
-    protected function setTable_cols ()
-    {
-        $this->_table_cols = $this->getDbTable()->info('cols');
-    }
     /**
      * Specify Zend_Db_Table instance to use for data operations
      * 
@@ -59,7 +41,7 @@ class Acad_Model_Mapper_Programme_Btech
     {
         $member_id = $btech->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $required_fields = $this->getTable_cols();
+        $required_fields = $this->getDbTable()->info('cols');
         $select = $adapter->select()
             ->from($this->getDbTable()
             ->info('name'), $required_fields)
@@ -95,25 +77,27 @@ class Acad_Model_Mapper_Programme_Btech
      */
     public function save ($options, Acad_Model_Programme_Btech $btech = null)
     {
-        $all_diploma_cols = $this->getDiploma_cols();
+        $dbtable = $this->getDbTable();
+        $cols = $dbtable->info('cols');
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
         foreach ($options as $key => $value) {
             $db_options[$this->correctDbKeys($key)] = $value;
         }
         $db_options_keys = array_keys($db_options);
-        $recieved_diploma_keys = array_intersect($db_options_keys, 
-        $all_diploma_cols);
-        $btech_data = array();
-        foreach ($recieved_diploma_keys as $key_name) {
+        $recieved_keys = array_intersect($db_options_keys, $cols);
+        $data = array();
+        foreach ($recieved_keys as $key_name) {
             $str = "get" . ucfirst($this->correctModelKeys($key_name));
-            $btech_data[$key_name] = $btech->$str();
+            $data[$key_name] = $btech->$str();
         }
-        $adapter = $this->getDbTable()->getAdapter();
-        $table = $this->getDbTable()->info('name');
+        //$adapter = $this->getDbTable()->getAdapter();
+        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
+        $adapter = $dbtable->getAdapter();
+        $table = $dbtable->info('name');
         $adapter->beginTransaction();
         try {
-            $sql = $adapter->insert($table, $btech_data);
+            $sql = $adapter->insert($table, $data);
             $adapter->commit();
         } catch (Exception $exception) {
             $adapter->rollBack();

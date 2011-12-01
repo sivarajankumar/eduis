@@ -10,7 +10,6 @@ class Acad_Model_Programme_Diploma extends Acad_Model_Generic
     protected $_percentage;
     protected $_remarks;
     protected $_passing_year;
-    protected $_branch;
     protected $_board;
     protected $_institution;
     protected $_city_name;
@@ -129,20 +128,6 @@ class Acad_Model_Programme_Diploma extends Acad_Model_Generic
     public function setPassing_year ($_passing_year)
     {
         $this->_passing_year = $_passing_year;
-    }
-    /**
-     * @return the $_branch
-     */
-    public function getBranch ()
-    {
-        return $this->_branch;
-    }
-    /**
-     * @param field_type $_branch
-     */
-    public function setBranch ($_branch)
-    {
-        $this->_branch = $_branch;
     }
     /**
      * @return the $_institution

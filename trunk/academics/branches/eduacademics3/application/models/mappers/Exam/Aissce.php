@@ -1,28 +1,16 @@
 <?php
 class Acad_Model_Mapper_Exam_Aissce
 {
-    protected $_table_cols = null;
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
     /**
-     * @return the $_table_cols
+     * Specify Zend_Db_Table instance to use for data operations
+     * 
+     * @param  Zend_Db_Table_Abstract $dbTable 
+     * @return Acad_Model_Mapper_Course_Dmc
      */
-    protected function getTable_cols ()
-    {
-        if (! isset($this->_table_cols)) {
-            $this->setTable_cols();
-        }
-        return $this->_table_cols;
-    }
-    /**
-     * @param field_type $_table_cols
-     */
-    protected function setTable_cols ()
-    {
-        $this->_table_cols = $this->getDbTable()->info('cols');
-    }
     /**
      * Specify Zend_Db_Table instance to use for data operations
      * 
@@ -60,7 +48,7 @@ class Acad_Model_Mapper_Exam_Aissce
     {
         $member_id = $aissce->getMember_id();
         $adapter = $this->getDbTable()->getAdapter();
-        $required_fields = $this->getTable_cols();
+        $required_fields = $this->getDbTable()->info('cols');
         $table = $this->getDbTable()->info('name');
         $select = $adapter->select()
             ->from($table, $required_fields)
@@ -128,7 +116,7 @@ class Acad_Model_Mapper_Exam_Aissce
         $correct_db_options1_keys);
         $table = $this->getDbTable()->info('name');
         //1)get column names of twelfth present in arguments received
-        $twelfth_col = $this->getTable_cols();
+        $twelfth_col = $this->getDbTable()->info('cols');
         $twelfth_intrsctn = array();
         $twelfth_intrsctn = array_intersect($twelfth_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
