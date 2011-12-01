@@ -52,8 +52,13 @@ class Acad_Model_Mapper_Course_Dmc
                 ->where('semester_id = ?', $semester_id)
                 ->where('member_id = ?', $member_id);
             $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            // Zend_Registry::get('logger')->debug($result);
-            return $result;
+            if (sizeof($result) == 0) {
+                throw new Exception(
+                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+            } else {
+                return $result;
+            }
+             // Zend_Registry::get('logger')->debug($result);
         }
     }
     /**
@@ -75,14 +80,24 @@ class Acad_Model_Mapper_Course_Dmc
             ->where('member_id = ?', $member_id);
         if ($all) {
             $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-            return $result;
+            if (sizeof($result) == 0) {
+                throw new Exception(
+                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+            } else {
+                return $result;
+            }
         }
         if ($semSpecific) {
             if (isset($semester_id)) {
                 $select->where('dmc_info.semester_id = ?', $semester_id)->order(
                 'dmc_info_id DESC');
                 $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-                return $result;
+                if (sizeof($result) == 0) {
+                    throw new Exception(
+                    'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+                } else {
+                    return $result;
+                }
             }
         }
     }
@@ -107,14 +122,24 @@ class Acad_Model_Mapper_Course_Dmc
             ->where('member_id = ?', $member_id);
         if ($all) {
             $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-            return $result;
+            if (sizeof($result) == 0) {
+                throw new Exception(
+                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+            } else {
+                return $result;
+            }
         }
         if ($semSpecific) {
             if (isset($semester_id)) {
                 $select->where('dmc_info.semester_id = ?', $semester_id)->order(
                 array('dmc_id DESC'));
                 $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-                return $result;
+                if (sizeof($result) == 0) {
+                    throw new Exception(
+                    'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+                } else {
+                    return $result;
+                }
             }
         }
     }
@@ -195,7 +220,11 @@ class Acad_Model_Mapper_Course_Dmc
             $select->where('dmc_id = ?', $dmc_id);
         }
         $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $result[$dmc_info_id];
+        if (sizeof($result) == 0) {
+            throw new Exception('NO DATA EXISTS FOR DMC_ID' . $dmc_id . '!!');
+        } else {
+            return $result[$dmc_info_id];
+        }
     }
     public function fetchStuSubId (Acad_Model_Course_Dmc $dmc)
     {
@@ -209,7 +238,12 @@ class Acad_Model_Mapper_Course_Dmc
             ->from('student_subject', 'stu_sub_id')
             ->where('member_id = ?', $subject_code);
         $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $result;
+        if (sizeof($result) == 0) {
+            throw new Exception(
+            'NO Subject related DATA EXISTS FOR member_id' . $member_id . '!!');
+        } else {
+            return $result;
+        }
     }
     /**
      * @todo reg no
@@ -230,7 +264,12 @@ class Acad_Model_Mapper_Course_Dmc
             ->where('semester_id = ?', $semester_id)
             ->where('roll_no = ?', $roll_no);
         $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
-        return $result[0];
+        if (sizeof($result) == 0) {
+            throw new Exception(
+            'NO Member id EXISTS FOR roll_no' . $roll_no . '!!');
+        } else {
+            return $result[0];
+        }
     }
     public function fetchRollNo (Acad_Model_Course_Dmc $dmc)
     {
@@ -246,7 +285,12 @@ class Acad_Model_Mapper_Course_Dmc
             ->where('semester_id = ?', $semester_id)
             ->where('member_id = ?', $member_id);
         $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
-        return $result[0];
+        if (sizeof($result) == 0) {
+            throw new Exception(
+            'NO roll_no EXISTS FOR Member id' . $member_id . '!!');
+        } else {
+            return $result[0];
+        }
     }
     /**
      * 

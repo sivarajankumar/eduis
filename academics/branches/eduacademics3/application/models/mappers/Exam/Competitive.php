@@ -70,7 +70,12 @@ class Acad_Model_Mapper_Exam_Competitive
             ->where('member_id = ?', $member_id);
         $competitive_exam_info = $select->query()->fetchAll(
         Zend_Db::FETCH_UNIQUE);
-        return $competitive_exam_info[$member_id];
+        if (sizeof($competitive_exam_info) == 0) {
+            throw new Exception(
+            'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+        } else {
+            return $competitive_exam_info[$member_id];
+        }
     }
     /**
      * fetches Competitive Exam details
@@ -87,7 +92,12 @@ class Acad_Model_Mapper_Exam_Competitive
             ->where('exam_id = ?', $exam_id);
         $competitive_exam_info = $select->query()->fetchAll(
         Zend_Db::FETCH_UNIQUE);
-        return $competitive_exam_info[$exam_id];
+        if (sizeof($competitive_exam_info) == 0) {
+            throw new Exception(
+            'NO Information exists exam_id '. $exam_id . '!!');
+        } else {
+            return $competitive_exam_info[$exam_id];
+        }
     }
     /**
      * 

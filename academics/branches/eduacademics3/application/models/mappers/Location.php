@@ -46,12 +46,17 @@ class Acad_Model_Mapper_Location
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = array('country_id', 'country_name'=>'name');
+            $required_fields = array('country_id', 'country_name' => 'name');
             $select = $adapter->select()
                 ->from('country', $required_fields)
                 ->where('country_id = ?', $country_id);
             $country_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            return $country_info[$country_id];
+            if (sizeof($country_info) == 0) {
+                throw new Exception(
+                'NO DATA EXISTS FOR country' . $country_id . '!!');
+            } else {
+                return $country_info[$country_id];
+            }
         }
     }
     /**
@@ -89,7 +94,7 @@ class Acad_Model_Mapper_Location
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = array('state_id', 'state_name'=>'name');
+            $required_fields = array('state_id', 'state_name' => 'name');
             $select = $adapter->select()
                 ->from('state', $required_fields)
                 ->where('state_id = ?', $state_id)
@@ -135,7 +140,7 @@ class Acad_Model_Mapper_Location
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = array('city_id', 'city_name'=>'name');
+            $required_fields = array('city_id', 'city_name' => 'name');
             $select = $adapter->select()
                 ->from('city', $required_fields)
                 ->where('city_id = ?', $city_id);
