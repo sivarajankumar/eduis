@@ -395,6 +395,12 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
         $this->setSave_marks(true);
         parent::save($options);
     }
+    /**
+     * Enter description here ...
+     * @param unknown_type $all
+     * @param unknown_type $semSpecific
+     * @throws Exception
+     */
     public function getDmcIds ($all = false, $semSpecific = false)
     {
         $semester_id = $this->getSemester_id();
@@ -413,6 +419,11 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
                 return $this->getMapper()->fetchDmcId($this, false, true);
             }
         }
+    }
+    public function getConsideredDmcId ()
+    {
+        $all = $this->getDmcIds(false,true);
+        return $all[0];
     }
     public function getDmcInfoIds ($all = false, $semSpecific = false)
     {
@@ -510,7 +521,7 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
             throw new Exception(
             'Insufficient data provided..   department_id,programme_id and semester_id are ALL required');
         } else {
-            $options = $this->getMapper()->fetchDmc($this,true);
+            $options = $this->getMapper()->fetchDmc($this, true);
             foreach ($options as $dmc_id) {
                 $passed_semesters[] = $dmc_id['semester_id'];
             }

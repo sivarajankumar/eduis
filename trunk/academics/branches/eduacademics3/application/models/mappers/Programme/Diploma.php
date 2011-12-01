@@ -128,7 +128,7 @@ class Acad_Model_Mapper_Programme_Diploma
         $correct_db_options1_keys);
         $table = $this->getDbTable()->info('name');
         //1)get column names of Diploma present in arguments received
-        $diploma_col = $this->getDiploma_cols();
+        $diploma_col = $this->getDbTable()->info('cols');
         $diploma_intrsctn = array();
         $diploma_intrsctn = array_intersect($diploma_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();

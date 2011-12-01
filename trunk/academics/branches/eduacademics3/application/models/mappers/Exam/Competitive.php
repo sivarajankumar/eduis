@@ -149,7 +149,7 @@ class Acad_Model_Mapper_Exam_Competitive
         $correct_db_options1_keys);
         $table = $this->getDbTable()->info('name');
         //1)get column names of tenth present in arguments received
-        $tenth_col = $this->getTenth_cols();
+        $tenth_col = $this->getDbTable()->info('cols');
         $tenth_intrsctn = array();
         $tenth_intrsctn = array_intersect($tenth_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
