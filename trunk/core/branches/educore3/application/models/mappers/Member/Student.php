@@ -50,8 +50,8 @@ class Core_Model_Mapper_Member_Student
         } else {
             $adapter = $this->getDbTable()->getAdapter();
             $stu_prs_cols = $this->getDbTable()->info('cols');
-            $stu_dep_cols = array('department_id', 'prgramme_id', 'batch_start', 
-            'group_id');
+            $stu_dep_cols = array('department_id', 'programme_id', 
+            'batch_start', 'group_id');
             $stu_sem_cols = array('semester_id');
             $select = $adapter->select()->from(
             $this->getDbTable()
@@ -194,7 +194,7 @@ class Core_Model_Mapper_Member_Student
         $name6 = array('bus_st' => 'bus_stations');
         $cond6 = "$name3.boarding_station = bus_st.boarding_station";
         //1)get column names of student_department present in arguments received
-        $student_department_col = array('department_id', 'prgramme_id', 
+        $student_department_col = array('department_id', 'programme_id', 
         'batch_start', 'group_id');
         $student_department_intrsctn = array();
         $student_department_intrsctn = array_intersect($student_department_col, 
