@@ -126,6 +126,11 @@ var status ;
 var day_late;
 resetAll();	 
 $(function(){
+	$('input').keyup(function(event) {
+        var value = $(this).val();
+        value = $.trim(value);
+        $(this).val(value);
+	});
 	$("#main_div span").parent().attr("class", "ui-state-highlight ui-corner-all");
 	$("#btnreset").click(function(){
 		resetAll();	 

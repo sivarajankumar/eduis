@@ -71,6 +71,7 @@ class SearchController extends Libz_Base_BaseController {
         $this->dbCols[] = 'acc_no';
         $this->dbCols[] = 'title';
         $this->dbCols[] = 'author';
+        $this->dbCols[] = 'place_publisher';
         //$this->dbCols [] = 'subject_code';
         $this->dbCols[] = 'edition';
         $this->dbCols[] = 'status_id';
@@ -83,7 +84,7 @@ class SearchController extends Libz_Base_BaseController {
             $this->grid->sql = $this->model->getDefaultAdapter()
                 ->select()
                 ->from($this->model->info('name'), 
-            array('isbn_id', 'title', 'author', 'edition'))
+            array('isbn_id', 'title', 'author', 'edition','place_publisher'))
                 ->join('book', 'book.isbn_id = isbn.isbn_id', 
             array('acc_no', 'status', 'rack_id', 'shelf'));
             $searchOn = $request->getParam('_search');
@@ -95,11 +96,7 @@ class SearchController extends Libz_Base_BaseController {
                             $this->grid->sql->where("book.isbn_id = ?", $value);
                             break;
                         case 'acc_no':
-                            $this->grid->sql->where("$key = ?", $value);
-                            break;
                         case 'edition':
-                            $this->grid->sql->where("$key = ?", $value);
-                            break;
                         case 'status':
                             $this->grid->sql->where("$key = ?", $value);
                             break;

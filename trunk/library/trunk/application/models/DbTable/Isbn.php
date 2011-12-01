@@ -32,5 +32,18 @@ class Lib_Model_DbTable_Isbn extends Libz_Base_Model {
         }
         return $thumbnail_img;
     }
+    
+    public function findPublisher($publisher = NULL,$limit = 10){
+        $sql = $this->select()
+                    ->distinct()
+                    ->from($this->info('name'),array('place_publisher'))
+                    ->where('place_publisher like ?','%'.$publisher.'%');
+                    
+        if ($limit) {
+            $sql->limit($limit);
+        }
+        
+        return $sql->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+    }
 }
 ?>

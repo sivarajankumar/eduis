@@ -59,17 +59,31 @@ class Lib_Model_DbTable_Member extends Libz_Base_Model {
 					 */
 					//throw new Zend_Exception ( $remoteErr, Zend_Log::ERR );
 					$memberInfo['info'] = array();
-					return $memberInfo;
-				} else {
-					$jsonContent = $response->getBody ( $response );
-					
-					$memberInfo['info'] = Zend_Json_Decoder::decode ( $jsonContent );
-					return $memberInfo;
+				    return $memberInfo;
 				}
-			
-			case 'FACULTY' :
-				$URL_STAFF_INFO = $PROTOCOL . CORE_SERVER . '/staff/getinfo' . "?id=$memberId";
-				return $URL_STAFF_INFO;
+				
+				$jsonContent = $response->getBody ( $response );
+				$memberInfo['info'] = Zend_Json_Decoder::decode ( $jsonContent );
+				return $memberInfo;
+			case 'STAFF' :
+				$URL_STAFF_INFO = $PROTOCOL . CORE_SERVER . '/staff/getinfo' . "?staff_id=$memberId";
+				$client = new Zend_Http_Client ( $URL_STAFF_INFO );
+				$client->setCookie ( 'PHPSESSID', $_COOKIE ['PHPSESSID'] );
+				$response = $client->request ();
+				if ($response->isError ()) {
+					$remoteErr = 'REMOTE ERROR: ('.$response->getStatus () . ') ' . $response->getMessage ();
+					Zend_Registry::get('logger')->err($remoteErr);
+					/**
+					 * @todo Surpress Remote Error.
+					 */
+					//throw new Zend_Exception ( $remoteErr, Zend_Log::ERR );
+					$memberInfo['info'] = array();
+				    return $memberInfo;
+				}
+				
+				$jsonContent = $response->getBody ( $response );
+				$memberInfo['info'] = Zend_Json_Decoder::decode ( $jsonContent );
+				return $memberInfo;
 			case 'BOOKBANK' :
 			    $memberInfo['info'] = array('first_name'=>strtoupper($memberId));
 				return $memberInfo;
