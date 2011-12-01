@@ -64,12 +64,40 @@ class Acad_Model_Mapper_Course_Dmc
     public function fetchDmcInfoIds (Acad_Model_Course_Dmc $dmc)
     {
         $member_id = $dmc->getMember_id();
+        $semester = $this->getSemester_id();
         $adapter = $this->getDbTable()->getAdapter();
         $table = $this->getDbTable()->info('name');
         $select = $adapter->select()
             ->from($table, 'dmc_info_id')
             ->where('member_id = ?', $member_id);
+        if (isset($semester)) {
+            $select->where('semester_id = ?', $semester);
+        }
         $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $result;
+    }
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $dmc
+     */
+    public function fetchDmc (Acad_Model_Course_Dmc $dmc)
+    {
+        $member_id = $dmc->getMember_id();
+        $semester = $this->getSemester_id();
+        $adapter = $this->getDbTable()->getAdapter();
+        $table = $this->getDbTable()->info('name');
+        $fields = array('dmc_id', 'semester_id', 'roll_no', 'examination', 
+        'marks_obtained', 'total_marks', 'scaled_marks');
+        $cond = 'student_subject.semester_id = dmc_info.semester_id';
+        $select = $adapter->select()
+            ->from($table, $fields)
+            ->join('student_subject', $cond)
+            ->where('member_id = ?', $member_id);
+        if (isset($semester)) {
+            $select->where('dmc_info.semester_id = ?', $semester);
+        }
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $result;
     }
     /**
