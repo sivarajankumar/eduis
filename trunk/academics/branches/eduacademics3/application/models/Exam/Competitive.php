@@ -2,11 +2,11 @@
 class Acad_Model_Exam_Competitive extends Acad_Model_Generic
 {
     protected $_member_id;
-    protected $_exam_name;
-    protected $_exam_abbr;
+    protected $_name;
+    protected $_abbr;
     protected $_exam_id;
-    protected $_exam_roll_no;
-    protected $_exam_date;
+    protected $_roll_no;
+    protected $_date;
     protected $_total_score;
     protected $_all_india_rank;
     protected $_mapper;
@@ -25,32 +25,32 @@ class Acad_Model_Exam_Competitive extends Acad_Model_Generic
         $this->_member_id = $_member_id;
     }
     /**
-     * @return the $_exam_name
+     * @return the $_name
      */
-    public function getExam_name ()
+    public function getName ()
     {
-        return $this->_exam_name;
+        return $this->_name;
     }
     /**
-     * @param field_type $_exam_name
+     * @param field_type $_name
      */
-    public function setExam_name ($_exam_name)
+    public function setName ($_name)
     {
-        $this->_exam_name = $_exam_name;
+        $this->_name = $_name;
     }
     /**
-     * @return the $_exam_abbr
+     * @return the $_abbr
      */
-    public function getExam_abbr ()
+    public function getAbbr ()
     {
-        return $this->_exam_abbr;
+        return $this->_abbr;
     }
     /**
-     * @param field_type $_exam_abbr
+     * @param field_type $_abbr
      */
-    public function setExam_abbr ($_exam_abbr)
+    public function setAbbr ($_abbr)
     {
-        $this->_exam_abbr = $_exam_abbr;
+        $this->_abbr = $_abbr;
     }
     /**
      * @return the $_exam_id
@@ -67,32 +67,32 @@ class Acad_Model_Exam_Competitive extends Acad_Model_Generic
         $this->_exam_id = $_exam_id;
     }
     /**
-     * @return the $_exam_roll_no
+     * @return the $_roll_no
      */
-    public function getExam_roll_no ()
+    public function getRoll_no ()
     {
-        return $this->_exam_roll_no;
+        return $this->_roll_no;
     }
     /**
-     * @param field_type $_exam_roll_no
+     * @param field_type $_roll_no
      */
-    public function setExam_roll_no ($_exam_roll_no)
+    public function setRoll_no ($_roll_no)
     {
-        $this->_exam_roll_no = $_exam_roll_no;
+        $this->_roll_no = $_roll_no;
     }
     /**
-     * @return the $_exam_date
+     * @return the $_date
      */
-    public function getExam_date ()
+    public function getDate ()
     {
-        return $this->_exam_date;
+        return $this->_date;
     }
     /**
-     * @param field_type $_exam_date
+     * @param field_type $_date
      */
-    public function setExam_date ($_exam_date)
+    public function setDate ($_date)
     {
-        $this->_exam_date = $_exam_date;
+        $this->_date = $_date;
     }
     /**
      * @return the $_total_score

@@ -1,10 +1,9 @@
 <?php
 class Acad_Model_Mapper_Exam_Competitive
 {
-    protected $_competitive_exam_cols = array('exam_id', 'exam_name', 
-    'exam_abbr');
+    protected $_competitive_exam_cols = array('exam_id', 'name', 'abbr');
     protected $_student_competitive_exam_cols = array('member_id', 'exam_id', 
-    'exam_roll_no', 'exam_date', 'total_score', 'all_india_rank');
+    'oll_no', 'date', 'total_score', 'all_india_rank');
     /**
      * @var Zend_Db_Table_Abstract
      */
