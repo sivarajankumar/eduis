@@ -127,7 +127,9 @@ class Acad_Model_Mapper_Course_Dmc
     $semSpecific = false)
     {
         $member_id = $dmc->getMember_id();
+        //
         $semester = $dmc->getSemester_id();
+        //
         $dmc_id = $dmc->getDmc_id();
         $dmc_info_id = $dmc->getDmc_info_id();
         $adapter = $this->getDbTable()->getAdapter();
@@ -139,23 +141,33 @@ class Acad_Model_Mapper_Course_Dmc
             ->from($table, $fields)
             ->join('student_subject', $cond)
             ->where('member_id = ?', $member_id)
-            ->where('dmc_info.semester_id = ?', $semester)
-            ->where('marks_obtained != ?', null);
+            ->where('marks_obtained != null');
         if (isset($dmc_id)) {
             $select->where('dmc_id = ?', $dmc_id);
-        } else {
-            if (isset($dmc_info_id)) {
-                $select->where('dmc_info_id = ?', $dmc_info_id);
-            }
+        }
+        if (isset($dmc_info_id)) {
+            $select->where('dmc_info_id = ?', $dmc_info_id);
         }
         if ($all) {
+            Zend_Registry::get('logger')->debug($select->__toString());
             $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            return $result;
+            if (sizeof($result) == 0) {
+                throw new Exception(
+                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+            } else {
+                return $result;
+            }
         } else {
             if ($semSpecific) {
-                if (isset($dmc_id)) {
+                if (isset($semester)) {
+                    $select->where('dmc_info.semester_id = ?', $semester);
                     $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-                    return $result[$dmc_id];
+                    if (sizeof($result) == 0) {
+                        throw new Exception(
+                        'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+                    } else {
+                        return $result[$dmc_id];
+                    }
                 }
             }
         }
