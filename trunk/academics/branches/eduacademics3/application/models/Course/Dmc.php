@@ -463,6 +463,19 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
             $this->setOptions($options);
         }
     }
-    public function initPassedSemesterInfo ()
-    {}
+    public function getPassedSemesters ()
+    {
+        $member_id = $this->getMember_id();
+        $passed_semesters = array();
+        if (! isset($member_id)) {
+            throw new Exception(
+            'Insufficient data provided..   department_id,programme_id and semester_id are ALL required');
+        } else {
+            $options = $this->getMapper()->fetchDmc($this);
+            foreach ($options as $dmc_id) {
+                $passed_semesters[] = $dmc_id['semester_id'];
+            }
+            return $passed_semesters;
+        }
+    }
 }
