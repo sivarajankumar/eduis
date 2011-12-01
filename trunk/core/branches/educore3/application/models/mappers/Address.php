@@ -89,7 +89,12 @@ class Core_Model_Mapper_Address
                 ->where('address_type = ?', $address_type);
             $address_info = array();
             $address_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            return $address_info[$member_id];
+            if (sizeof($address_info) == 0) {
+                throw new Exception(
+                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+            } else {
+                return $address_info[$member_id];
+            }
         }
     }
     /**

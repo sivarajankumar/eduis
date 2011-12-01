@@ -96,7 +96,12 @@ class Acad_Model_Mapper_Member_StudentSemester
             ->where('semester_id = ?', $semester_id)
             ->where('roll_no = ?', $roll_no);
         $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
-        return $result[0];
+        if (sizeof($result) == 0) {
+            throw new Exception(
+            'NO DATA EXISTS FOR roll_no' . $roll_no . '!!');
+        } else {
+            return $result[0];
+        }
     }
     /**
      * 
@@ -117,7 +122,12 @@ class Acad_Model_Mapper_Member_StudentSemester
             ->where('semester_id = ?', $semester_id)
             ->where('member_id = ?', $member_id);
         $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
-        return $result[0];
+        if (sizeof($result) == 0) {
+            throw new Exception(
+            'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+        } else {
+            return $result[0];
+        }
     }
     /**
      * Provides correct db column names corresponding to model properties
