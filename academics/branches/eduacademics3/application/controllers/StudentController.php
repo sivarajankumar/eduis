@@ -132,4 +132,84 @@ class StudentController extends Zend_Controller_Action
         $callback = $this->getRequest()->getParam('callback');
         echo $callback . '(' . $this->_helper->json($response, false) . ')';
     }
+
+    public function saveprofileAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $stu_sem_data = array('member_id' => $params['member_id'], 
+        'department_id' => $params['department_id'], 
+        'programme_id' => $params['programme_id'], 
+        'semester_id' => $params['semester_id'], 'roll_no' => $params['roll_no']);
+        $model = new Acad_Model_Member_StudentSemester();
+        $model->initSave();
+        $model->enroll($stu_sem_data);
+        //
+        $model->initSave();
+        $model->setSave_student(true);
+        $data = array('member_id' => $params['member_id']);
+        $model->save($data);
+        //
+        $twelfth_data = array();
+        $tenth_data = array();
+        $diploma_data = array();
+        $aieee_data = array();
+        foreach ($params as $key => $value) {
+            $element_id = substr($key, 0, 1);
+            switch ($element_id) {
+                case ('1'):
+                    $twelfth_data[substr($key, 1)] = $value;
+                    break;
+                case ('2'):
+                    $tenth_data[substr($key, 1)] = $value;
+                    break;
+                case ('3'):
+                    $diploma_data[substr($key, 1)] = $value;
+                    break;
+                case ('4'):
+                    $aieee_data[substr($key, 1)] = $value;
+                    break;
+            }
+        }
+        if (sizeof($tenth_data) != 0) {
+            $tenth_data['member_id'] = $params['member_id'];
+            $tenth_model = new Acad_Model_Exam_Aisse();
+            $tenth_model->initSave();
+            $tenth_model->save($tenth_data);
+        }
+        if (sizeof($diploma_data) != 0) {
+            $diploma_data['member_id'] = $params['member_id'];
+            $diploma_model = new Acad_Model_Programme_Diploma();
+            $diploma_model->initSave();
+            $diploma_model->save($diploma_data);
+        }
+        if (sizeof($twelfth_data) != 0) {
+            $twelfth_data['member_id'] = $params['member_id'];
+            $twelfth_model = new Acad_Model_Exam_Aissce();
+            $twelfth_model->initSave();
+            $twelfth_model->save($twelfth_data);
+        }
+        if (sizeof($aieee_data) != 0) {
+            $aieee_data['member_id'] = $params['member_id'];
+            $aieee_data['exam_id'] = '1';
+            $aieee_model = new Acad_Model_Exam_Competitive();
+            $aieee_model->initSave();
+            $aieee_model->save($aieee_data);
+        }
+    }
+    public function testAction ()
+    {
+        $stu_sem_data = array('member_id' => 123, 'department_id' => 'cse', 
+        'programme_id' => 'btech', 'semester_id' => 46, 'roll_no' => 547886);
+        $model = new Acad_Model_Member_StudentSemester();
+        $model->initSave();
+        $model->enroll($stu_sem_data);
+        //
+        $model->initSave();
+        $model->setSave_student(true);
+        $data = array('member_id' => 123);
+        $model->save($data);
+    }
 }
