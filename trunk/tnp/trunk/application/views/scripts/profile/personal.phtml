@@ -39,10 +39,10 @@
         <div class="ctrlHolder">
           <p class="label">Gender</p>
           <ul class="blockLabels alternate">
-            <li><label for="gender"><input name="gender" type="radio" value="M" <?php if (isset($this->applicant->gender)) {
-                echo ('m' == strtolower($this->applicant->gender)?'checked="checked"':'');
+            <li><label for="gender"><input name="gender" type="radio" value="MALE" <?php if (isset($this->applicant->gender)) {
+                echo ('male' == strtolower($this->applicant->gender)?'checked="checked"':'');
             } else {echo 'checked="checked"';} ?> title="Male">Male</label></li>
-            <li><label for=""><input  name="gender" type="radio" value="F" <?php echo ('f' == strtolower($this->applicant->gender)?'checked="checked"':'');?> title="Female">Female</label></li>
+            <li><label for=""><input  name="gender" type="radio" value="FEMALE" <?php echo ('female' == strtolower($this->applicant->gender)?'checked="checked"':'');?> title="Female">Female</label></li>
           </ul>
           <p class="formHint">Gender</p>
         </div>

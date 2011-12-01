@@ -15,7 +15,7 @@ echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$step
 <hr />
 <?php 
 $form = null;
-$basis = strtolower($this->applicant->application_type);
+$basis = strtolower($this->applicant->programme_id);
 switch ($basis) {
 case 'mtech':?>
 <div id="mtech">
