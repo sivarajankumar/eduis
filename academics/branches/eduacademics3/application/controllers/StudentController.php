@@ -70,8 +70,9 @@ class StudentController extends Zend_Controller_Action
         $dmc = array();
         foreach ($passed_semesters as $passed_semester) {
             $degree->setSemester_id($passed_semester);
+            $dmc_id = $degree->getConsideredDmcId();
+            $degree->setDmc_id($dmc_id);
             $degree->initDmc();
-            $dmc_id = $degree->getDmc_id();
             $marks_obtained = $degree->getMarks();
             $total_marks = $degree->getTotal_marks();
             $scaled_marks = $degree->getScaled_marks();
