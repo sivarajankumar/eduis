@@ -139,8 +139,8 @@ class Acad_Model_Member_StudentSemester extends Acad_Model_Generic
     }
     /**
      * Set Subject Mapper
-     * @param Acad_Model_Mapper_Programme_Diploma $mapper
-     * @return Acad_Model_Programme_Diploma
+     * @param Acad_Model_Mapper_Member_StudentSemester
+     * @return Acad_Model_Member_StudentSemester
      */
     public function setMapper ($mapper)
     {
@@ -149,12 +149,12 @@ class Acad_Model_Member_StudentSemester extends Acad_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Mapper_Programme_Diploma
+     * @return Acad_Model_Mapper_Member_StudentSemester
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Mapper_Programme_Btech());
+            $this->setMapper(new Acad_Model_Mapper_Member_StudentSemester());
         }
         return $this->_mapper;
     }
