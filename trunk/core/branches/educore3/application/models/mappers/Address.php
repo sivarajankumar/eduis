@@ -1,28 +1,10 @@
 <?php
 class Core_Model_Mapper_Address
 {
-    protected $_table_cols = null;
     /**
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
-    /**
-     * @return the $_table_cols
-     */
-    protected function getTable_cols ()
-    {
-        if (! isset($this->_table_cols)) {
-            $this->setTable_cols();
-        }
-        return $this->_table_cols;
-    }
-    /**
-     * @param field_type $_table_cols
-     */
-    protected function setTable_cols ()
-    {
-        $this->_table_cols = $this->getDbTable()->info('cols');
-    }
     /**
      * Specify Zend_Db_Table instance to use for data operations
      * 
@@ -59,27 +41,27 @@ class Core_Model_Mapper_Address
      */
     public function save ($options, Core_Model_Address $address = null)
     {
-        $address_cols = $this->getTable_cols();
+        $dbtable = $this->getDbTable();
+        $cols = $dbtable->info('cols');
         //$db_options is $options with keys renamed a/q to db_columns
         $db_options = array();
         foreach ($options as $key => $value) {
             $db_options[$this->correctDbKeys($key)] = $value;
         }
         $db_options_keys = array_keys($db_options);
-        $recieved_address_keys = array_intersect($db_options_keys, 
-        $address_cols);
-        $address_data = array();
-        foreach ($recieved_address_keys as $key_name) {
+        $recieved_keys = array_intersect($db_options_keys, $cols);
+        $data = array();
+        foreach ($recieved_keys as $key_name) {
             $str = "get" . ucfirst($this->correctModelKeys($key_name));
-            $address_data[$key_name] = $address->$str();
+            $data[$key_name] = $address->$str();
         }
         //$adapter = $this->getDbTable()->getAdapter();
         //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
-        $adapter = $this->getDbTable()->getAdapter();
-        $table = $this->getDbTable()->info('name');
+        $adapter = $dbtable->getAdapter();
+        $table = $dbtable->info('name');
         $adapter->beginTransaction();
         try {
-            $sql = $adapter->insert($table, $address_data);
+            $sql = $adapter->insert($table, $data);
             $adapter->commit();
         } catch (Exception $exception) {
             $adapter->rollBack();
