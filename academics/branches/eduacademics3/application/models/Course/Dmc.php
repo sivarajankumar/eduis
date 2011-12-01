@@ -24,6 +24,8 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
     protected $_appear_type;
     protected $_marks_type;
     protected $_mapper;
+    protected $_total_marks;
+    protected $_scaled_marks;
     /**
      * @return the $_save_dmc_info
      */
@@ -333,6 +335,34 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
     public function setMarks_type ($_marks_type)
     {
         $this->_marks_type = $_marks_type;
+    }
+    /**
+     * @return the $_total_marks
+     */
+    public function getTotal_marks ()
+    {
+        return $this->_total_marks;
+    }
+    /**
+     * @return the $_scaled_marks
+     */
+    public function getScaled_marks ()
+    {
+        return $this->_scaled_marks;
+    }
+    /**
+     * @param field_type $_total_marks
+     */
+    public function setTotal_marks ($_total_marks)
+    {
+        $this->_total_marks = $_total_marks;
+    }
+    /**
+     * @param field_type $_scaled_marks
+     */
+    public function setScaled_marks ($_scaled_marks)
+    {
+        $this->_scaled_marks = $_scaled_marks;
     }
     /**
      * 
