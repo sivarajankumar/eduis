@@ -105,7 +105,7 @@ class Tnp_Model_Mapper_Profile_Member_Student
         }
     }
     /**
-     * @todo reg no
+     * 
      * Enter description here ...
      * @param unknown_type $student
      */
@@ -125,6 +125,11 @@ class Tnp_Model_Mapper_Profile_Member_Student
         $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
         return $result[0];
     }
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $student
+     */
     public function fetchRollNo (Tnp_Model_Profile_Member_Student $student)
     {
         $member_id = $student->getMember_id();
