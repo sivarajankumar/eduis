@@ -34,7 +34,7 @@ class Acad_Model_Mapper_Programme_Btech
         return $this->_dbTable;
     }
     /**
-     * Fetches Diploma Details of a student
+     * Fetches btech Details of a student
      * @param Acad_Model_Programme_Btech $btech
      */
     public function fetchMemberExamInfo (Acad_Model_Programme_Btech $btech)
@@ -127,8 +127,8 @@ class Acad_Model_Mapper_Programme_Btech
         $merge = array_merge($correct_db_options_keys, 
         $correct_db_options1_keys);
         $table = $this->getDbTable()->info('name');
-        //1)get column names of Diploma present in arguments received
-        $btech_col = $this->getDiploma_cols();
+        //1)get column names of btech present in arguments received
+        $btech_col = $this->getDbTable()->info('cols');
         $btech_intrsctn = array();
         $btech_intrsctn = array_intersect($btech_col, $merge);
         $adapter = $this->getDbTable()->getAdapter();
