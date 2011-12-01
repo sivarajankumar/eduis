@@ -96,14 +96,19 @@ class ProfileController extends Zend_Controller_Action
             throw new Zend_Exception($remoteErr, Zend_Log::ERR);
         } else {
             $jsonContent = $response->getBody($response);
-            $memberId = Zend_Json_Decoder::decode($jsonContent);
-            $this->_applicant->memberId = $memberId;
-            Zend_Registry::get('logger')->debug($this->_applicant->memberId);
-            return $memberId;
+            $member_id = Zend_Json_Decoder::decode($jsonContent);
+            $this->_applicant->member_id = $member_id;
+            Zend_Registry::get('logger')->debug($this->_applicant->member_id);
+            return $member_id;
         }
-        $this->_applicant->memberId = $memberId;
-        Zend_Registry::get('logger')->debug($this->_applicant->memberId);
+        $this->_applicant->member_id = $member_id;
+        $this->_applicant->department_id = $params['departement_id'];
+        $this->_applicant->programme_id = $params['programme_id'];
+        $this->_applicant->semester_id = $params['semester_id'];
+        $this->_applicant->roll_no = $params['roll_no'];
         
+        
+        Zend_Registry::get('logger')->debug($this->_applicant->member_id);
     }
     public function personalAction ()
     {
@@ -111,10 +116,10 @@ class ProfileController extends Zend_Controller_Action
     }
     public function setpersonalAction ()
     {
-        Zend_Registry::get('logger')->debug($this->_applicant->memberId);
+        Zend_Registry::get('logger')->debug($this->_applicant->member_id);
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $params['member_id'] = $this->_applicant->memberId;
+        $params['member_id'] = $this->_applicant->member_id;
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
         foreach ($params as $colName => $value) {
@@ -164,10 +169,16 @@ class ProfileController extends Zend_Controller_Action
     }
     public function setacademicAction ()
     {
+    	$this->_helper->viewRenderer->setNoRender(TRUE);
+        $this->_helper->layout()->disableLayout();
+        
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $this->_helper->viewRenderer->setNoRender(TRUE);
-        $this->_helper->layout()->disableLayout();
+        $params['member_id'] = $this->_applicant->member_id;
+        $params['department_id'] = $this->_applicant->department_id;
+        $params['programme_id'] = $this->_applicant->programme_id;
+        $params['semester_id'] = $this->_applicant->semester_id;
+        $params['roll_no'] = $this->_applicant->roll_no;
         foreach ($params as $colName => $value) {
             $value = is_array($value) ? $value : htmlentities(trim($value));
             $this->_applicant_academic->$colName = $value;
@@ -180,7 +191,6 @@ class ProfileController extends Zend_Controller_Action
              $value . '<br/>';
         }
         $PROTOCOL = 'http://';
-        Zend_Registry::get('logger')->debug($params);
         $URL = $PROTOCOL . ACADEMIC_SERVER . '/student/saveprofile' . '?' .
          http_build_query($params);
         $client = new Zend_Http_Client($URL);
