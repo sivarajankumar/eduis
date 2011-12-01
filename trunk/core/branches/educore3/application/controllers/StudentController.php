@@ -90,7 +90,7 @@ class StudentController extends Corez_Base_BaseController
         }
         elseif ($this->getRequest()->getParam('roll_no'))
         {
-            $model->setStudent_roll_no($this->_roll_no);
+            $model->setRoll_no($this->_roll_no);
             $model->getMember_id();
             $model->getStudentInfo();
         }
@@ -102,7 +102,7 @@ class StudentController extends Corez_Base_BaseController
         $this->setMember_id($member_id);
         $this->setRoll_no('2308009');
         $model->setMember_id($this->getMember_id());
-        $model->setStudent_roll_no($this->getRoll_no());
+        $model->setRoll_no($this->getRoll_no());
         $model->initStudentInfo();
         $info = array('roll_no' => $model->getRoll_no(), 
         'regn_no' => $model->getReg_no(), 
