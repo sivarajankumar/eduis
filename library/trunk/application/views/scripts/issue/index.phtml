@@ -110,7 +110,11 @@ var manageBook = function(){
 $(function(){
 	//Initial Cursor position
     $("#member_id").focus();
-    
+    $('input').keyup(function(event) {
+        var value = $(this).val();
+        value = $.trim(value);
+        $(this).val(value);
+	});
     // On Verification
     $('#cbkVerify').change(function() {
     	if(this.checked){
@@ -186,8 +190,8 @@ var fetchMemberInfo = function(member_id){
                             memberInfoBasic.degree = member.info.degree_id;
                             memberInfoBasic.semester = member.info.semester_id;
                     	break;
-                    	case 'FACULTY' : 
-                            memberInfoBasic.name = member.info.first_name;
+                    	case 'STAFF' : 
+                            memberInfoBasic.name = member.info.initial+' '+member.info.first_name+' '+member.info.last_name;
                             memberInfoBasic.deptt = member.info.department_id;
                     	break;
                     	case 'BOOKBANK' :
@@ -412,7 +416,7 @@ var issueBook = function(acc_no, member_id){
             } else {
                 alert(objMemberInfo.info.first_name+' has already borrowed '+issued+' out of '+maximum+'  documents of "'+objBookMoreInfo.document_type_id+'" type.' );
 			}
-            resetBookInfoArea();
+            resetBookSection();
         }
 };
 

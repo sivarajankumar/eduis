@@ -123,7 +123,11 @@ resetAll();
 $(function(){
 	$("#main_div span").parent().attr("class", "ui-state-highlight ui-corner-all");
 	$("#btnreturn").attr("class","ui-corner-all");
-
+	$('input').keyup(function(event) {
+        var value = $(this).val();
+        value = $.trim(value);
+        $(this).val(value);
+	});
 	$("#btnreset").click(function(){
 		resetAll();	 
 	});

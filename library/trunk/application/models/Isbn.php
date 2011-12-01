@@ -73,6 +73,8 @@ class Lib_Model_Isbn {
 	 */
 	protected $_remark;
 	
+	protected $_mapper;
+	
 	/**
 	 * Constructor
 	 * 
@@ -109,7 +111,7 @@ class Lib_Model_Isbn {
 	public function __get($name) {
 		$method = 'get' . $name;
 		if ('mapper' == $name || ! method_exists ( $this, $method )) {
-			throw new Zend_Exception ( 'Invalid property specified', Zend_Log::ERR );
+			throw new Zend_Exception ( 'Invalid property specified'.$name, Zend_Log::ERR );
 		}
 		return $this->$method ();
 	}
@@ -310,6 +312,37 @@ class Lib_Model_Isbn {
 	public function getRemark() {
 	
 	}
+	
+	public function findPublisher($publisherString, $limit = 10) {
+	    return $this->getMapper()->getDbTable()->findPublisher($publisherString,$limit);
+	}
+	
 
+    /**
+     * Set data mapper
+     * 
+     * @param  mixed $mapper 
+     * @return Lib_Model_Isbn
+     */
+    public function setMapper ($mapper)
+    {
+        $this->_mapper = $mapper;
+        return $this;
+    }
+    
+    /**
+     * Get data mapper
+     *
+     * Lazy loads Lib_Model_Mapper_IsbnMapper instance if no mapper registered.
+     * 
+     * @return Lib_Model_Mapper_IsbnMapper
+     */
+    public function getMapper ()
+    {
+        if (null === $this->_mapper) {
+            $this->setMapper(new Lib_Model_Mapper_IsbnMapper());
+        }
+        return $this->_mapper;
+    }
 }
 ?>

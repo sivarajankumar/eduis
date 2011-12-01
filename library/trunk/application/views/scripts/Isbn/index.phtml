@@ -9,8 +9,11 @@
 <script type="text/javascript">
 
 $(function(){
+
+	var cache = {},
+		lastXhr;
 	var urlBookInfo = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'bookinfo' ), 'default', true )?>";
-	var urlPublisherInfo = "<?=$this->url ( array ('module' => $this->module, 'controller' => 'publisher', 'action' => 'ispublisher' ), 'default', true )?>";
+	var urlPublisherInfo = "<?=$this->url ( array ('controller' => 'publisher', 'action' => 'getpublisher' ))?>";
 
 	var gridTable = "#tblgrid";
     var gridPager = "#gridpager";
@@ -27,7 +30,7 @@ $(function(){
                             editoptions: {
                                 dataEvents: [{
                                     type: 'change',
-                                    fn: function(e) {                               
+                                    fn: function(e) {
                                 	/*$(this).attr('disabled', 'disabled');
 	                                	$.getJSON(urlBookInfo,
 	                                			{isbn : this.value},
@@ -109,6 +112,27 @@ $(function(){
                         {name:'place_publisher',
                             index:'place_publisher',
                             editable:true,
+                            editoptions: {
+                                dataInit : function (elem) {
+                                    $(elem).autocomplete({
+                                			minLength: 3,
+                                			source: function( request, response ) {
+                                				var term = request.term;
+                                				if ( term in cache ) {
+                                					response( cache[ term ] );
+                                					return;
+                                				}
+
+                                				lastXhr = $.getJSON( urlPublisherInfo, request, function( data, status, xhr ) {
+                                					cache[ term ] = data;
+                                					if ( xhr === lastXhr ) {
+                                						response( data );
+                                					}
+                                				});
+                                			}
+                                    });
+                                }
+                            },
                             editrules:{required:true} 
                         },
                         {name:'cost',

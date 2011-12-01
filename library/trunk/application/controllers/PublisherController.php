@@ -57,6 +57,22 @@ class PublisherController extends Libz_Base_BaseController {
 		
 	}
 
+	public function getpublisherAction() {
+		$publisherString = $this->getRequest ()->getParam ( 'term' );
+		$format = $this->getRequest ()->getParam ( 'format', 'json' );
+		$isbn = new Lib_Model_Isbn();
+		
+		$result = $isbn->findPublisher($publisherString);
+		switch (strtolower($format)) {
+		    case 'json':
+		        echo $this->_helper->json($result,false);
+		    return;
+		    
+		    default:
+		        ;
+		    break;
+		}
+	}
 }
 ?>
 
