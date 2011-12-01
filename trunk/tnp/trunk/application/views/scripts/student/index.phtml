@@ -229,11 +229,26 @@ $(".career_detail_link").click(function(){
 			}
 			if(test_obj!=null)
 			{
-				table_string +='<th><b>Skillset</b></th><tr></tr>';
+				table_string +='<th><b>Employability Test</b></th><tr></tr>';
         		$.each(test_obj,function(test_number,test_detail){
+        			
         			$.each(test_detail,function(index,value){
         				table_string += '<td>'+index.toUpperCase()+'</td>';
-        	        	table_string += '<td>'+value+'</td></tr>';
+        				if(index=='sections_info'){
+            				$.each(value,function(index,section_detail){
+                				$.each(section_detail,function(index,value){
+                					table_string += '<td>'+index.toUpperCase()+'</td>';
+                    	        	table_string += '<td>'+value.toUpperCase()+'</td></tr>';
+
+                    				});
+
+
+                				});
+        				}
+        				else{
+        					table_string += '<td>'+index.toUpperCase()+'</td>';
+        	        	    table_string += '<td>'+value+'</td></tr>';
+        				}
         			});
         		});
 			}
