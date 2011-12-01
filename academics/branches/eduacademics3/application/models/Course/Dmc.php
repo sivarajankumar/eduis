@@ -395,39 +395,42 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
         $this->setSave_marks(true);
         parent::save($options);
     }
-    public function getAllDmcInfoIds ()
+    public function getDmcIds ($all = false, $semSpecific = false)
     {
+        $semester_id = $this->getSemester_id();
         $member_id = $this->getMember_id();
-        if (! isset($member_id)) {
-            throw new Exception(
-            'Insufficient data provided..   Member_id required');
-        } else {
-            return $this->getMapper()->fetchDmcInfoIds($this);
+        if ($all) {
+            if (! isset($member_id)) {
+                throw new Exception(
+                'Insufficient data provided .. Member_id required');
+                return $this->getMapper()->fetchDmcId($this, true);
+            }
+        }
+        if ($semSpecific) {
+            if (! isset($member_id) or ! isset($semester_id)) {
+                throw new Exception(
+                'Insufficient data provided .. SemesterID and Member_id required');
+                return $this->getMapper()->fetchDmcId($this, false, true);
+            }
         }
     }
-    public function getAllDmcIds ()
+    public function getDmcInfoIds ($all = false, $semSpecific = false)
     {
+        $semester_id = $this->getSemester_id();
         $member_id = $this->getMember_id();
-        if (! isset($member_id)) {
-            throw new Exception(
-            'Insufficient data provided..   Member_id required');
-        } else {
-            $options = $this->getMapper()->fetchDmc($this);
-            return array_keys($options);
+        if ($all) {
+            if (! isset($member_id)) {
+                throw new Exception(
+                'Insufficient data provided .. Member_id required');
+                return $this->getMapper()->fetchDmcInfoIds($this, true);
+            }
         }
-    }
-    public function initDmc ()
-    {
-        $dmc_id = $this->getDmc_id();
-        $member_id = $this->getMember_id();
-        $semester = $this->getSemester_id();
-        if (! isset($member_id)) {
-            throw new Exception(
-            'Insufficient data provided..   Member_id required');
-        } else {
-            $temp = $this->getMapper()->fetchDmc($this);
-            $options = $temp[$dmc_id];
-            $this->setOptions($options);
+        if ($semSpecific) {
+            if (! isset($member_id) or ! isset($semester_id)) {
+                throw new Exception(
+                'Insufficient data provided .. SemesterID and Member_id required');
+                return $this->getMapper()->fetchDmcInfoIds($this, false, true);
+            }
         }
     }
     public function getStudentSubjects ()
@@ -485,12 +488,18 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
     public function initDmcInfo ()
     {
         $dmc_info_id = $this->getDmc_info_id();
-        if (! isset($dmc_info_id)) {
+        $dmc_id = $this->getDmc_id();
+        if (! isset($dmc_info_id) or ! isset($dmc_id)) {
             throw new Exception(
-            'Insufficient data provided..   dmc_info_id required');
+            'Insufficient data provided..  please provide either dmc_info_id or dmc_id None provided');
         } else {
-            $options = $this->getMapper()->fetchDmcInfo($this);
-            $this->setOptions($options);
+            if (isset($dmc_info_id) and isset($dmc_id)) {
+                throw new Exception(
+                'Please provide either dmc_info_id or dmc_id BOTH cant be provided together');
+            } else {
+                $options = $this->getMapper()->fetchDmcInfo($this);
+                $this->setOptions($options);
+            }
         }
     }
     public function getPassedSemesters ()
@@ -501,11 +510,23 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
             throw new Exception(
             'Insufficient data provided..   department_id,programme_id and semester_id are ALL required');
         } else {
-            $options = $this->getMapper()->fetchDmc($this);
+            $options = $this->getMapper()->fetchDmc($this,true);
             foreach ($options as $dmc_id) {
                 $passed_semesters[] = $dmc_id['semester_id'];
             }
             return $passed_semesters;
+        }
+    }
+    public function initDmc ()
+    {
+        $dmc_id = $this->getDmc_id();
+        $member_id = $this->getMember_id();
+        if (! isset($member_id) or ! isset($dmc_id)) {
+            throw new Exception(
+            'Insufficient data provided..   Member_id and dmc_id required ');
+        } else {
+            $options = $this->getMapper()->fetchDmc($this, false, true);
+            $this->setOptions($options);
         }
     }
 }
