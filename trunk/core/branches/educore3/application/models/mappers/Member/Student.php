@@ -63,7 +63,10 @@ class Core_Model_Mapper_Member_Student
             $select->where('student_personal.member_id = ?', $member_id);
             $student_info = array();
             $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            return $student_info[$member_id];
+            if(sizeof($student_info[$member_id])== 0){
+                throw new Exception('NO DATA EXISTS FOR MEMBER_ID'.$member_id.'!!');
+            }else{
+            return $student_info[$member_id];}
         }
     }
     /**
