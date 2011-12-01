@@ -378,13 +378,26 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
     public function getAllDmcIds ()
     {
         $member_id = $this->getMember_id();
-        $semester = $this->getSemester_id();
-        $test_info_id = $this->getDmc_info_id();
         if (! isset($member_id)) {
             throw new Exception(
             'Insufficient data provided..   Member_id required');
         } else {
-            return $this->getMapper()->fetchDmcInfoIds($this);
+            $options = $this->getMapper()->fetchDmc($this);
+            return array_keys($options);
+        }
+    }
+    public function initDmc ()
+    {
+        $dmc_id = $this->getDmc_id();
+        $member_id = $this->getMember_id();
+        $semester = $this->getSemester_id();
+        if (! isset($member_id)) {
+            throw new Exception(
+            'Insufficient data provided..   Member_id required');
+        } else {
+            $temp = $this->getMapper()->fetchDmc($this);
+            $options = $temp[$dmc_id];
+            $this->setOptions($options);
         }
     }
     public function getStudentSubjects ()
@@ -450,4 +463,6 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
             $this->setOptions($options);
         }
     }
+    public function initPassedSemesterInfo ()
+    {}
 }
