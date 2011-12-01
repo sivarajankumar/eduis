@@ -10,6 +10,7 @@ class Acad_Model_Member_StudentSemester extends Acad_Model_Generic
     protected $_semester_id;
     protected $_start_time;
     protected $_completion;
+    protected $_mapper;
     /**
      * @return the $_save_student
      */
