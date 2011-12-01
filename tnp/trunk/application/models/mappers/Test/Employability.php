@@ -115,7 +115,7 @@ class Tnp_Model_Mapper_Test_Employability
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = array('test_section_id', 'test_name', 
+            $required_fields = array('test_section_id', 
             'test_section_name');
             $select = $adapter->select()
                 ->from('employability_test_section', $required_fields)
