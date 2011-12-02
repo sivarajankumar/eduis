@@ -85,12 +85,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
      */
     public function getMember_id ()
     {
-        if (! isset($this->_member_id)) {
-            $this->fetchMemberId();
-            return $this->_member_id;
-        } else {
-            return $this->_member_id;
-        }
+        return $this->_member_id;
     }
     /**
      * @param field_type $_member_id
@@ -584,8 +579,8 @@ class Core_Model_Member_Student extends Core_Model_Generic
             throw new Exception(
             'Insufficient data provided..   roll_no,department_id,programme_id and semester_id are ALL required');
         } else {
-            $options = $this->getMapper()->fetchMemberID($this);
-            $this->setOptions($options);
+            $member_id = $this->getMapper()->fetchMemberID($this);
+            $this->setMember_id($member_id);
         }
     }
     public function findRollNo ()

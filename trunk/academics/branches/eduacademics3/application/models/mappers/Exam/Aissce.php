@@ -60,7 +60,7 @@ class Acad_Model_Mapper_Exam_Aissce
         $member_exam_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         if (sizeof($member_exam_info) == 0) {
             throw new Exception(
-            'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+            'NO TWELFTH DATA EXISTS FOR MEMBER_ID' . $member_id . '.');
         } else {
             return $member_exam_info[$member_id];
         }

@@ -63,10 +63,12 @@ class Core_Model_Mapper_Member_Student
             $select->where('student_personal.member_id = ?', $member_id);
             $student_info = array();
             $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            if(sizeof($student_info[$member_id])== 0){
-                throw new Exception('NO DATA EXISTS FOR MEMBER_ID'.$member_id.'!!');
-            }else{
-            return $student_info[$member_id];}
+            if (sizeof($student_info[$member_id]) == 0) {
+                throw new Exception(
+                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+            } else {
+                return $student_info[$member_id];
+            }
         }
     }
     /**
@@ -87,8 +89,13 @@ class Core_Model_Mapper_Member_Student
             ->where('programme_id = ?', $programme_id)
             ->where('semester_id = ?', $semester_id)
             ->where('roll_no = ?', $roll_no);
-        $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
-        return $result[0];
+        $result = $select->query()->fetchColumn();
+        if (! $result) {
+            throw new Exception(
+            'No Member Id exists for Roll No : ' . $roll_no . '');
+        } else {
+            return $result;
+        }
     }
     /**
      * 

@@ -122,8 +122,8 @@ class Tnp_Model_Mapper_Profile_Member_Student
             ->where('programme_id = ?', $programme_id)
             ->where('semester_id = ?', $semester_id)
             ->where('roll_no = ?', $roll_no);
-        $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
-        return $result[0];
+        $result = $select->query()->fetchColumn();
+        return $result;
     }
     /**
      * 

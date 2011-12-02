@@ -81,7 +81,8 @@ class Core_Model_Mapper_Address
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $required_fields = $this->getDbTable()->info('key');
+            $required_fields = array('member_id', 'postal_code', 'adress_type', 
+            'city', 'district', 'state', 'area', 'address');
             $select = $adapter->select()
                 ->from($this->getDbTable()
                 ->info('name'), $required_fields)
@@ -91,7 +92,7 @@ class Core_Model_Mapper_Address
             $address_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
             if (sizeof($address_info) == 0) {
                 throw new Exception(
-                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+                'NO ADDRESS DATA EXISTS FOR MEMBER_ID' . $member_id . '.');
             } else {
                 return $address_info[$member_id];
             }

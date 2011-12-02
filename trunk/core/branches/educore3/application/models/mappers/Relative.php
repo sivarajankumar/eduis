@@ -76,7 +76,9 @@ class Core_Model_Mapper_Relative
     {
         $member_id = $relative->getMember_id();
         $adapter = $this->getDbTable()->getDefaultAdapter();
-        $relatives_fields = $this->getDbTable()->info('key');
+        $relatives_fields = array('member_id', 'relation_id', 'name', 
+        'occupation', 'designation', 'office_add', 'contact', 'annual_income', 
+        'landline_no');
         $relations_fields = array('relation_name');
         $select = $adapter->select()
             ->from($this->getDbTable()
