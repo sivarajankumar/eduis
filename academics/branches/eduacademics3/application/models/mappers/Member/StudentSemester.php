@@ -95,12 +95,12 @@ class Acad_Model_Mapper_Member_StudentSemester
             ->where('programme_id = ?', $programme_id)
             ->where('semester_id = ?', $semester_id)
             ->where('roll_no = ?', $roll_no);
-        $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
-        if (sizeof($result) == 0) {
+        $result = $select->query()->fetchColumn();
+        if (! $result) {
             throw new Exception(
-            'NO DATA EXISTS FOR roll_no' . $roll_no . '!!');
+            'No Member Id exists for Roll No : ' . $roll_no . '');
         } else {
-            return $result[0];
+            return $result;
         }
     }
     /**
@@ -124,7 +124,7 @@ class Acad_Model_Mapper_Member_StudentSemester
         $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
         if (sizeof($result) == 0) {
             throw new Exception(
-            'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+            'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '.');
         } else {
             return $result[0];
         }

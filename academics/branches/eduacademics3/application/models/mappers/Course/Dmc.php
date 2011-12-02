@@ -54,7 +54,7 @@ class Acad_Model_Mapper_Course_Dmc
             $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
             if (sizeof($result) == 0) {
                 throw new Exception(
-                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '.');
             } else {
                 return $result;
             }
@@ -81,7 +81,7 @@ class Acad_Model_Mapper_Course_Dmc
             $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
             if (sizeof($result) == 0) {
                 throw new Exception(
-                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '.');
             } else {
                 return $result;
             }
@@ -93,7 +93,7 @@ class Acad_Model_Mapper_Course_Dmc
                 $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
                 if (sizeof($result) == 0) {
                     throw new Exception(
-                    'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+                    'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '.');
                 } else {
                     return $result;
                 }
@@ -123,7 +123,7 @@ class Acad_Model_Mapper_Course_Dmc
             $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
             if (sizeof($result) == 0) {
                 throw new Exception(
-                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '.');
             } else {
                 return $result;
             }
@@ -135,7 +135,7 @@ class Acad_Model_Mapper_Course_Dmc
                 $result = $select->query()->fetchColumn();
                 if (sizeof($result) == 0) {
                     throw new Exception(
-                    'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+                    'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '.');
                 } else {
                     return $result;
                 }
@@ -176,7 +176,7 @@ class Acad_Model_Mapper_Course_Dmc
             $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
             if (sizeof($result) == 0) {
                 throw new Exception(
-                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '.');
             } else {
                 return $result;
             }
@@ -187,7 +187,7 @@ class Acad_Model_Mapper_Course_Dmc
                     $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
                     if (sizeof($result) == 0) {
                         throw new Exception(
-                        'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+                        'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '.');
                     } else {
                         return $result[$dmc_id];
                     }
@@ -219,7 +219,7 @@ class Acad_Model_Mapper_Course_Dmc
         }
         $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         if (sizeof($result) == 0) {
-            throw new Exception('NO DATA EXISTS FOR DMC_ID' . $dmc_id . '!!');
+            throw new Exception('NO DATA EXISTS FOR DMC_ID' . $dmc_id . '.');
         } else {
             return $result[$dmc_info_id];
         }
@@ -238,7 +238,7 @@ class Acad_Model_Mapper_Course_Dmc
         $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         if (sizeof($result) == 0) {
             throw new Exception(
-            'NO Subject related DATA EXISTS FOR member_id' . $member_id . '!!');
+            'NO Subject related DATA EXISTS FOR member_id' . $member_id . '.');
         } else {
             return $result;
         }
@@ -261,12 +261,12 @@ class Acad_Model_Mapper_Course_Dmc
             ->where('programme_id = ?', $programme_id)
             ->where('semester_id = ?', $semester_id)
             ->where('roll_no = ?', $roll_no);
-        $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
-        if (sizeof($result) == 0) {
+        $result = $select->query()->fetchColumn();
+        if (! $result) {
             throw new Exception(
-            'NO Member id EXISTS FOR roll_no' . $roll_no . '!!');
+            'No Member Id exists for Roll No : ' . $roll_no . '');
         } else {
-            return $result[0];
+            return $result;
         }
     }
     public function fetchRollNo (Acad_Model_Course_Dmc $dmc)
@@ -285,7 +285,7 @@ class Acad_Model_Mapper_Course_Dmc
         $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
         if (sizeof($result) == 0) {
             throw new Exception(
-            'NO roll_no EXISTS FOR Member id' . $member_id . '!!');
+            'NO roll_no EXISTS FOR Member id' . $member_id . '.');
         } else {
             return $result[0];
         }
@@ -320,7 +320,7 @@ class Acad_Model_Mapper_Course_Dmc
             $data[$key_name] = $dmc->$str();
         }
         //$adapter = $this->getDbTable()->getAdapter();
-        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
+        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $dmc->getMember_id());
         $adapter = $dbtable->getAdapter();
         $table = $dbtable->info('name');
         $adapter->beginTransaction();

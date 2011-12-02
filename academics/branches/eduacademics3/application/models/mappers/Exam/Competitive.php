@@ -72,7 +72,7 @@ class Acad_Model_Mapper_Exam_Competitive
         Zend_Db::FETCH_UNIQUE);
         if (sizeof($competitive_exam_info) == 0) {
             throw new Exception(
-            'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+            'NO Competitive_Exam DATA EXISTS FOR MEMBER_ID' . $member_id . '.');
         } else {
             return $competitive_exam_info[$member_id];
         }
@@ -94,7 +94,7 @@ class Acad_Model_Mapper_Exam_Competitive
         Zend_Db::FETCH_UNIQUE);
         if (sizeof($competitive_exam_info) == 0) {
             throw new Exception(
-            'NO Information exists exam_id '. $exam_id . '!!');
+            'NO Information exists for exam_id '. $exam_id . '.');
         } else {
             return $competitive_exam_info[$exam_id];
         }

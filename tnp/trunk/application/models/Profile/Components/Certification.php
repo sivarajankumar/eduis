@@ -147,16 +147,6 @@ class Tnp_Model_Profile_Components_Certification extends Tnp_Model_Generic
         }
         return $this->_mapper;
     }
-    public function saveStuCertification ($options)
-    {
-        $this->setSave_stu_certification(true);
-        parent::save($options);
-    }
-    public function saveCertification ($options)
-    {
-        $this->setSave_certification(true);
-        parent::save($options);
-    }
     /**
      * 
      * Enter description here ...
