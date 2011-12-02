@@ -126,7 +126,7 @@ $(".academic_detail_link").click(function(){
         	table_string = '<table  width="100%" cellspacing="0" cellpadding="3" border="0">';
         	 
         	$.each(academic_detail,function(index,programme){
-        		table_string += '<tr><h1><td>'+index.toUpperCase()+'</td></h1></tr>';
+        		table_string += '<td></td><tr><h1><td><b>'+index.toUpperCase()+'</b></td></h1></tr>';
         		if(index=='degree')
         		{
             		$.each(programme,function(index,semester){
@@ -236,6 +236,7 @@ $(".career_detail_link").click(function(){
         				table_string += '<td>'+index.toUpperCase()+'</td>';
         				if(index=='sections_info'){
             				$.each(value,function(index,section_detail){
+            					table_string += '<td>'+index.toUpperCase()+'</td>';
                 				$.each(section_detail,function(index,value){
                 					table_string += '<td>'+index.toUpperCase()+'</td>';
                     	        	table_string += '<td>'+value.toUpperCase()+'</td></tr>';
