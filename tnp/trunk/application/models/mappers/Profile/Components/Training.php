@@ -35,10 +35,48 @@ class Tnp_Model_Mapper_Profile_Components_Training
     }
     /**
      * 
-     * @todo
+     * Enter description here ...
+     * @param unknown_type $options
+     * @param Tnp_Model_Profile_Components_Training $training
+     * @throws Exception
      */
-    public function save ()
-    {}
+    public function save ($options, 
+    Tnp_Model_Profile_Components_Training $training)
+    {
+        $save_tarining = $training->getSave_training();
+        $save_stu_training = $training->getSave_stu_training();
+        if (isset($save_tarining)) {
+            $dbtable = new Tnp_Model_DbTable_StudentExperience();
+        }
+        if (isset($save_stu_training)) {
+            $dbtable = new Tnp_Model_DbTable_Industries();
+        }
+        $cols = $dbtable->info('cols');
+        //$db_options is $options with keys renamed a/q to db_columns
+        $db_options = array();
+        foreach ($options as $key => $value) {
+            $db_options[$this->correctDbKeys($key)] = $value;
+        }
+        $db_options_keys = array_keys($db_options);
+        $recieved_keys = array_intersect($db_options_keys, $cols);
+        $data = array();
+        foreach ($recieved_keys as $key_name) {
+            $str = "get" . ucfirst($this->correctModelKeys($key_name));
+            $data[$key_name] = $training->$str();
+        }
+        //$adapter = $this->getDbTable()->getAdapter();
+        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
+        $adapter = $dbtable->getAdapter();
+        $table = $dbtable->info('name');
+        $adapter->beginTransaction();
+        try {
+            $sql = $adapter->insert($table, $data);
+            $adapter->commit();
+        } catch (Exception $exception) {
+            $adapter->rollBack();
+            throw $exception;
+        }
+    }
     /**
      * 
      * @param Tnp_Model_Profile_Components_Training $training
