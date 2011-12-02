@@ -47,9 +47,11 @@ class Acad_Model_Mapper_Exam_Aissce
     public function fetchMemberExamInfo (Acad_Model_Exam_Aissce $aissce)
     {
         $member_id = $aissce->getMember_id();
-        Zend_Registry::get('logger')->debug($member_id);
         $adapter = $this->getDbTable()->getAdapter();
-        $required_fields = $this->getDbTable()->info('cols');
+        $required_fields = array('member_id', 'board', 'board_roll_no', 
+        'marks_obtained', 'total_marks', 'percentage', 'pcm_percent', 
+        'passing_year', 'school_rank', 'remarks', 'institution', 
+        'migration_date', 'city_name', 'state_name');
         $table = $this->getDbTable()->info('name');
         $select = $adapter->select()
             ->from($table, $required_fields)
