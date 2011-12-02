@@ -1,6 +1,10 @@
 <?php
 class Tnp_Model_Profile_Components_Experience extends Tnp_Model_Generic
 {
+    protected $_save_stu_exp = false;
+    protected $_save_industry = false;
+    protected $_save_func_area = false;
+    protected $_save_roles = false;
     protected $_member_experiences_info = array();
     protected $_student_experience_id;
     protected $_member_id;
@@ -20,13 +24,66 @@ class Tnp_Model_Profile_Components_Experience extends Tnp_Model_Generic
     protected $_mapper;
     public function getMember_experiences_info ()
     {
-        $member_experiences_info = $this->_member_experiences_info;
-        if (sizeof($member_experiences_info) == 0) {
-            $member_experiences_info = $this->getMapper()->fetchMemberExperienceInfo(
-            $this);
-            $this->setMember_experiences_info($member_experiences_info);
-        }
+        $member_experiences_info = $this->getMapper()->fetchMemberExperienceInfo(
+        $this);
+        $this->setMember_experiences_info($member_experiences_info);
         return $this->_member_experiences_info;
+    }
+    /**
+     * @return the $_save_stu_exp
+     */
+    public function getSave_stu_exp ()
+    {
+        return $this->_save_stu_exp;
+    }
+    /**
+     * @param field_type $_save_stu_exp
+     */
+    public function setSave_stu_exp ($_save_stu_exp)
+    {
+        $this->_save_stu_exp = $_save_stu_exp;
+    }
+    /**
+     * @return the $_save_industry
+     */
+    public function getSave_industry ()
+    {
+        return $this->_save_industry;
+    }
+    /**
+     * @param field_type $_save_industry
+     */
+    public function setSave_industry ($_save_industry)
+    {
+        $this->_save_industry = $_save_industry;
+    }
+    /**
+     * @return the $_save_func_area
+     */
+    public function getSave_func_area ()
+    {
+        return $this->_save_func_area;
+    }
+    /**
+     * @param field_type $_save_func_area
+     */
+    public function setSave_func_area ($_save_func_area)
+    {
+        $this->_save_func_area = $_save_func_area;
+    }
+    /**
+     * @return the $_save_roles
+     */
+    public function getSave_roles ()
+    {
+        return $this->_save_roles;
+    }
+    /**
+     * @param field_type $_save_roles
+     */
+    public function setSave_roles ($_save_roles)
+    {
+        $this->_save_roles = $_save_roles;
     }
     public function setMember_experiences_info ($_member_experiences_info)
     {
