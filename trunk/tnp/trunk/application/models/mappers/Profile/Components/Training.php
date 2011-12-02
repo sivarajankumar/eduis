@@ -43,13 +43,13 @@ class Tnp_Model_Mapper_Profile_Components_Training
     public function save ($options, 
     Tnp_Model_Profile_Components_Training $training)
     {
-        $save_tarining = $training->getSave_training();
+        $save_training = $training->getSave_training();
         $save_stu_training = $training->getSave_stu_training();
-        if (isset($save_tarining)) {
-            $dbtable = new Tnp_Model_DbTable_StudentExperience();
+        if (isset($save_training)) {
+            $dbtable = new Tnp_Model_DbTable_StudentTraining();
         }
         if (isset($save_stu_training)) {
-            $dbtable = new Tnp_Model_DbTable_Industries();
+            $dbtable = new Tnp_Model_DbTable_Training();
         }
         $cols = $dbtable->info('cols');
         //$db_options is $options with keys renamed a/q to db_columns
