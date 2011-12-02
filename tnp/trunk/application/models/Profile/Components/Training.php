@@ -1,6 +1,8 @@
 <?php
 class Tnp_Model_Profile_Components_Training extends Tnp_Model_Generic
 {
+    protected $_save_stu_training = false;
+    protected $_save_training = false;
     protected $_member_trainings_info = array();
     protected $_training_id;
     protected $_training_technology;
@@ -13,14 +15,39 @@ class Tnp_Model_Profile_Components_Training extends Tnp_Model_Generic
     protected $_training_semester;
     protected $_member_id;
     protected $_mapper;
+    /**
+     * @return the $_save_stu_training
+     */
+    public function getSave_stu_training ()
+    {
+        return $this->_save_stu_training;
+    }
+    /**
+     * @param field_type $_save_stu_training
+     */
+    public function setSave_stu_training ($_save_stu_training)
+    {
+        $this->_save_stu_training = $_save_stu_training;
+    }
+    /**
+     * @return the $_save_training
+     */
+    public function getSave_training ()
+    {
+        return $this->_save_training;
+    }
+    /**
+     * @param field_type $_save_training
+     */
+    public function setSave_training ($_save_training)
+    {
+        $this->_save_training = $_save_training;
+    }
     protected function getMember_trainings_info ()
     {
-        $member_trainings_info = $this->_member_trainings_info;
-        if (sizeof($member_trainings_info) == 0) {
-            $member_trainings_info = $this->getMapper()->fetchMemberTrainingsInfo(
-            $this);
-            $this->setMember_trainings_info($member_trainings_info);
-        }
+        $member_trainings_info = $this->getMapper()->fetchMemberTrainingsInfo(
+        $this);
+        $this->setMember_trainings_info($member_trainings_info);
         return $this->_member_trainings_info;
     }
     protected function setMember_trainings_info ($_member_trainings_info)
