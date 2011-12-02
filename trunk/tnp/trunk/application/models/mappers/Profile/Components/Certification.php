@@ -97,7 +97,12 @@ class Tnp_Model_Mapper_Profile_Components_Certification
             $certification_info = array();
             $certification_info = $select->query()->fetchAll(
             Zend_Db::FETCH_UNIQUE);
-            return $certification_info;
+            if (sizeof($certification_info) == 0) {
+                throw new Exception(
+                'NO Certification DATA EXISTS FOR member_id' . $member_id . '!!');
+            } else {
+                return $certification_info;
+            }
         }
     }
     /**
@@ -142,7 +147,13 @@ class Tnp_Model_Mapper_Profile_Components_Certification
             $certification_info = array();
             $certification_info = $select->query()->fetchAll(
             Zend_Db::FETCH_UNIQUE);
-            return $certification_info[$certification_id];
+            if (sizeof($certification_info) == 0) {
+                throw new Exception(
+                'NO Certification DATA EXISTS FOR certification_id' .
+                 $certification_id . '!!');
+            } else {
+                return $certification_info[$certification_id];
+            }
         }
     }
     /**
@@ -187,7 +198,13 @@ class Tnp_Model_Mapper_Profile_Components_Certification
                 ->where('technical_field_id = ?', $technical_field_id);
             $technical_field_info = $select->query()->fetchAll(
             Zend_Db::FETCH_UNIQUE);
-            return $technical_field_info[$technical_field_id];
+            if (sizeof($technical_field_info) == 0) {
+                throw new Exception(
+                'NO INFORMATION EXISTS FOR technical_field_id' .
+                 $technical_field_id . '!!');
+            } else {
+                return $technical_field_info[$technical_field_id];
+            }
         }
     }
     /**
@@ -248,6 +265,38 @@ class Tnp_Model_Mapper_Profile_Components_Certification
             return $serach_error;
         } else {
             return $result;
+        }
+    }
+    /**
+     * Provides correct db column names corresponding to model properties
+     * @todo add correct names where required
+     * @param string $key
+     */
+    protected function correctDbKeys ($key)
+    {
+        switch ($key) {
+            /*case 'nationalit':
+                return 'nationality';
+                break;*/
+            default:
+                return $key;
+                break;
+        }
+    }
+    /**
+     * Provides correct model property names corresponding to db column names
+     * @todo add correct names where required
+     * @param string $key
+     */
+    protected function correctModelKeys ($key)
+    {
+        switch ($key) {
+            /*case 'nationality':
+                return 'nationalit';
+                break;*/
+            default:
+                return $key;
+                break;
         }
     }
 }

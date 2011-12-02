@@ -1,6 +1,5 @@
 <?php
 /**
- * @todo incomplete
  * Enter description here ...
  * 
  */
@@ -40,13 +39,29 @@ class Tnp_Model_Mapper_Profile_Components_Experience
     }
     /**
      * 
-     * @todo
+     * Enter description here ...
+     * @param unknown_type $options
+     * @param Tnp_Model_Profile_Components_Experience $experience
+     * @throws Exception
      */
     public function save ($options, 
     Tnp_Model_Profile_Components_Experience $experience)
     {
-        if (isset($save_stu)) {
-            $dbtable = new Tnp_Model_DbTable_Student();
+        $save_stu_exp = $experience->getSave_stu_exp();
+        $save_industry = $experience->getSave_industry();
+        $save_func_area = $experience->getSave_func_area();
+        $save_roles = $experience->getSave_roles();
+        if (isset($save_stu_exp)) {
+            $dbtable = new Tnp_Model_DbTable_StudentExperience();
+        }
+        if (isset($save_industry)) {
+            $dbtable = new Tnp_Model_DbTable_Industries();
+        }
+        if (isset($save_func_area)) {
+            $dbtable = new Tnp_Model_DbTable_FunctionalArea();
+        }
+        if (isset($save_roles)) {
+            $dbtable = new Tnp_Model_DbTable_Roles();
         }
         $cols = $dbtable->info('cols');
         //$db_options is $options with keys renamed a/q to db_columns
@@ -93,7 +108,12 @@ class Tnp_Model_Mapper_Profile_Components_Experience
             ->where('member_id = ?', $member_id);
         $experience_info = array();
         $experience_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $experience_info;
+        if (sizeof($experience_info) == 0) {
+            throw new Exception(
+            'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
+        } else {
+            return $experience_info;
+        }
     }
     /**
      *@todo 
@@ -131,7 +151,12 @@ class Tnp_Model_Mapper_Profile_Components_Experience
                 ->from('industries', $required_fields)
                 ->where('industry_id = ?', $industry_id);
             $industry_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            return $industry_info[$industry_id];
+            if (sizeof($industry_info) == 0) {
+                throw new Exception(
+                'NO DATA EXISTS FOR INDUSTRY_ID' . $industry_id . '!!');
+            } else {
+                return $industry_info[$industry_id];
+            }
         }
     }
     /**
@@ -174,7 +199,12 @@ class Tnp_Model_Mapper_Profile_Components_Experience
                 ->where('functional_area_id = ?', $functionalAreaId);
             $functionalAreaInfo = $select->query()->fetchAll(
             Zend_Db::FETCH_UNIQUE);
-            return $functionalAreaInfo[$functionalAreaId];
+            if (sizeof($functionalAreaInfo) == 0) {
+                throw new Exception(
+                'NO DATA EXISTS FOR functionalAreaId' . $functionalAreaId . '!!');
+            } else {
+                return $functionalAreaInfo[$functionalAreaId];
+            }
         }
     }
     /**
@@ -208,18 +238,14 @@ class Tnp_Model_Mapper_Profile_Components_Experience
             $select = $adapter->select()
                 ->from('roles', $required_fields)
                 ->where('role_id = ?', $roleId);
-            $experience_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            return $experience_info[$roleId];
+            $role_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            if (sizeof($role_info) == 0) {
+                throw new Exception('NO DATA EXISTS FOR roleId' . $roleId . '!!');
+            } else {
+                return $role_info[$roleId];
+            }
         }
     }
-    /**
-     * 
-     * @todo decide the params
-     * @param Tnp_Model_Profile_Components_Experience $params
-     */
-    protected function searchPreRequisite (
-    Tnp_Model_Profile_Components_Experience $experience)
-    {}
     /**
      * Enter description here ...
      * @param Tnp_Model_Profile_Components_Experience $experience
