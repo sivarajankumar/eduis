@@ -58,7 +58,6 @@ class Acad_Model_Mapper_Course_Dmc
             } else {
                 return $result;
             }
-             // Zend_Registry::get('logger')->debug($result);
         }
     }
     /**
@@ -133,7 +132,7 @@ class Acad_Model_Mapper_Course_Dmc
             if (isset($semester_id)) {
                 $select->where('dmc_info.semester_id = ?', $semester_id)->order(
                 array('dmc_id DESC'));
-                $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+                $result = $select->query()->fetchColumn();
                 if (sizeof($result) == 0) {
                     throw new Exception(
                     'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
@@ -166,7 +165,7 @@ class Acad_Model_Mapper_Course_Dmc
             ->from($table, $fields)
             ->join('student_subject', $cond)
             ->where('member_id = ?', $member_id)
-            ->where('marks_obtained != null');
+            ->where('marks_obtained > ?', 0);
         if (isset($dmc_id)) {
             $select->where('dmc_id = ?', $dmc_id);
         }
@@ -174,7 +173,6 @@ class Acad_Model_Mapper_Course_Dmc
             $select->where('dmc_info_id = ?', $dmc_info_id);
         }
         if ($all) {
-            Zend_Registry::get('logger')->debug($select->__toString());
             $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
             if (sizeof($result) == 0) {
                 throw new Exception(

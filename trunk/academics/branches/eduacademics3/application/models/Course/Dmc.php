@@ -416,13 +416,14 @@ class Acad_Model_Course_Dmc extends Acad_Model_Generic
             if (! isset($member_id) or ! isset($semester_id)) {
                 throw new Exception(
                 'Insufficient data provided .. SemesterID and Member_id required');
+            } else {
                 return $this->getMapper()->fetchDmcId($this, false, true);
             }
         }
     }
     public function getConsideredDmcId ()
     {
-        $all = $this->getDmcIds(false,true);
+        $all = $this->getDmcIds(false, true);
         return $all[0];
     }
     public function getDmcInfoIds ($all = false, $semSpecific = false)
