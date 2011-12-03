@@ -45,5 +45,40 @@ class Lib_Model_DbTable_Isbn extends Libz_Base_Model {
         
         return $sql->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
+    
+
+    public function findIsbn($isbn = NULL,$limit = 10){
+        $sql = $this->select()
+                    ->distinct()
+                    ->from($this->info('name'),array('isbn_id'))
+                    ->where('isbn_id like ?','%'.$isbn.'%');
+                    
+        if ($limit) {
+            $sql->limit($limit);
+        }
+        
+        return $sql->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+    }
+    
+    public function update($data, $where) {
+        try {
+           $status = parent::update ( $data, $where );
+        } catch (Exception $e) {
+            if (23000 == $e->getCode()) {
+                $this->getLogger()->info('Duplicate ISBN found:'.$where);
+                $this->getLogger()->notice('Dependent books are updated to new ISBN and current ISBN deleted');
+                try {
+                    $newData = array_intersect_key($data, array('isbn_id'=>0));
+                    $status = $this->getAdapter()->update('book', $newData , $where );
+                    $this->delete($where);
+                    return $status;
+                } catch (Exception $e) {
+                    throw $e;
+                }
+            }
+            throw $e;
+        }
+        return $status;
+    }
 }
 ?>

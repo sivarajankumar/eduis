@@ -9,9 +9,11 @@
 <script type="text/javascript">
 $(function(){
 
-    var urlDocType = "<?php echo $this->url ( array ('module' => $this->module, 'controller' => 'documenttype', 'action' => 'getdoctype' ), 'default', true )?>";
-    var urlBookStatus  = "<?php echo $this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'getstatusval'  ), 'default', true )?>";
-
+	var cache = {},
+		lastXhr;
+    var urlDocType = "<?php echo $this->url ( array ('module' => $this->module, 'controller' => 'documenttype', 'action' => 'getdoctype' ))?>";
+    var urlBookStatus  = "<?php echo $this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'getstatusval'  ))?>";
+    var urlIsbnFind = "<?php echo $this->url ( array ('controller' => 'isbn', 'action' => 'getisbnlist'  ))?>";
 	var gridTable = "#tblgrid";
     var gridPager = "#gridpager";
 	var urlFillGrid = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid' ), 'default', true )?>";
@@ -28,6 +30,27 @@ $(function(){
 						{name:'isbn_id',
 							index:'isbn_id',
 							editable:true,
+                            editoptions: {
+                                dataInit : function (elem) {
+                                    $(elem).autocomplete({
+                                			minLength: 3,
+                                			source: function( request, response ) {
+                                				var term = request.term;
+                                				if ( term in cache ) {
+                                					response( cache[ term ] );
+                                					return;
+                                				}
+
+                                				lastXhr = $.getJSON( urlIsbnFind, request, function( data, status, xhr ) {
+                                					cache[ term ] = data;
+                                					if ( xhr === lastXhr ) {
+                                						response( data );
+                                					}
+                                				});
+                                			}
+                                    });
+                                }
+                            },
 							editrules:{required:true}
 						},
 						{name:'document_type_id',
@@ -36,6 +59,7 @@ $(function(){
 							edittype: 'select',
 							editoptions: {
 				                dataUrl: urlDocType,
+				                defaultValue:'Regular',
 				                buildSelect : function(jDocType){
 				                	var jDocType = $.parseJSON(jDocType);
 				                	var selectString = '<select><option value ="">Select one</option>';
@@ -51,8 +75,7 @@ $(function(){
 						{name:'copy_no',
                             hidden: true,
 							index:'copy_no',
-							editable: true,
-							editrules:{edithidden: true}
+							editable: true
 						},
 						{name:'rack_id',
                             hidden: true,
@@ -78,6 +101,7 @@ $(function(){
 							edittype: 'select',
 							editoptions: { 
 				                dataUrl: urlBookStatus,
+				                defaultValue:'AVAILABLE',
 				                buildSelect : function(jBookStatus){
 				                	var jBookStatus = $.parseJSON(jBookStatus);
 				                	var selectString = '<select><option value ="">Select one</option>';

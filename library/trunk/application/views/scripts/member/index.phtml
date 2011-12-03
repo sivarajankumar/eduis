@@ -6,7 +6,7 @@ $this->headScript()->appendFile(
 ?>
 <br/>
 <div id="member-area" style="width: 49%; float: left; display: none;">
-<fieldset class="ui-widget-content  ui-corner-all"><legend
+<fieldset class="ui-corner-all"><legend
 	class="ui-widget-header ui-corner-all">Member Info</legend>
 	<table style="width: 100%;">
 		<tr>
@@ -18,7 +18,7 @@ $this->headScript()->appendFile(
 </div>
 
 <div id="bookArea" style="width: 49%; float: right; display: none;">
-<fieldset class="ui-widget-content  ui-corner-all"><legend
+<fieldset class="ui-corner-all"><legend
 	class="ui-widget-header ui-corner-all">Issued Documents List</legend>
 <div id="bookInfo">&nbsp;</div>
 </fieldset>
@@ -290,7 +290,7 @@ var traverse = function(jsonObj, targetDiv, clean){
 	$.each(jsonObj, function (key, value) {
 		if( value && typeof value == "object" ) {
 			prepareSelectOption(value, targetDiv);
-		} else if( value && typeof value == "string" ) {
+		} else if( value && (typeof value == "string" || typeof value == "number" ) ) {
 			if(clean){
 				key = key.replace('_', ' ');
 				key = key.replace('id', '');

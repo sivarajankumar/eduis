@@ -54,6 +54,8 @@ class IsbnController extends Libz_Base_BaseController {
 			echo ('<b>Oops!! </b><br/>No use of peeping like that.. :)');
 		}
 	}
+	
+	
 	public function getbookimageAction() {
 		self::getModel();
 		$request = $this->getRequest ();
@@ -62,4 +64,20 @@ class IsbnController extends Libz_Base_BaseController {
 		$this->_helper->json ( $book_image );
 	}
 
+	public function getisbnlistAction() {
+		$isbnString = $this->getRequest ()->getParam ( 'term' );
+		$format = $this->getRequest ()->getParam ( 'format', 'json' );
+		$isbn = new Lib_Model_Isbn();
+		
+		$result = $isbn->findIsbn($isbnString);
+		switch (strtolower($format)) {
+		    case 'json':
+		        echo $this->_helper->json($result,false);
+		    return;
+		    
+		    default:
+		        ;
+		    break;
+		}
+	}
 }

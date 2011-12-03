@@ -160,7 +160,7 @@ class Libz_Base_BaseController extends Zend_Controller_Action {
 	 * @param array Array of request data.
 	 * @return array Array of processed request data.
 	 */
-	private function paramData($rdata) {
+	protected function paramData($rdata) {
 		$data = array ();
 		foreach ( $this->dbCols as $key => $param ) {
 			if (isset ( $rdata [$param] )) {
@@ -181,7 +181,7 @@ class Libz_Base_BaseController extends Zend_Controller_Action {
 	 * Process rowId to use in where condition.
 	 * @return string String with formatted where condition.
 	 */
-	private function whereData($id) {
+	protected function whereData($id) {
 		$where = array ();
 		/**
 		 * If multiple rows are selected then their primary keys are seprated by ','
