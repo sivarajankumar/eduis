@@ -317,6 +317,10 @@ class Lib_Model_Isbn {
 	    return $this->getMapper()->getDbTable()->findPublisher($publisherString,$limit);
 	}
 	
+	public function findIsbn($isbnString, $limit = 10) {
+	    return $this->getMapper()->getDbTable()->findIsbn($isbnString,$limit);
+	}
+	
 
     /**
      * Set data mapper

@@ -14,6 +14,7 @@ $(function(){
 		lastXhr;
 	var urlBookInfo = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'bookinfo' ), 'default', true )?>";
 	var urlPublisherInfo = "<?=$this->url ( array ('controller' => 'publisher', 'action' => 'getpublisher' ))?>";
+    var urlIsbnFind = "<?php echo $this->url ( array ('controller' => 'isbn', 'action' => 'getisbnlist'  ))?>";
 
 	var gridTable = "#tblgrid";
     var gridPager = "#gridpager";
@@ -28,10 +29,29 @@ $(function(){
                             editable:true,
                             editrules:{required:true},
                             editoptions: {
+                                dataInit : function (elem) {
+                                    $(elem).autocomplete({
+                                			minLength: 3,
+                                			source: function( request, response ) {
+                                				var term = request.term;
+                                				if ( term in cache ) {
+                                					response( cache[ term ] );
+                                					return;
+                                				}
+
+                                				lastXhr = $.getJSON( urlIsbnFind, request, function( data, status, xhr ) {
+                                					cache[ term ] = data;
+                                					if ( xhr === lastXhr ) {
+                                						response( data );
+                                					}
+                                				});
+                                			}
+                                    });
+                                }/*,
                                 dataEvents: [{
                                     type: 'change',
                                     fn: function(e) {
-                                	/*$(this).attr('disabled', 'disabled');
+                                	$(this).attr('disabled', 'disabled');
 	                                	$.getJSON(urlBookInfo,
 	                                			{isbn : this.value},
 	                                	        function(data, textStatus){
@@ -74,9 +94,9 @@ $(function(){
 	                                                }
 	                                	          
 	                                	        });
-	                                	*/
+	                                	
                                      }
-                                }]
+                                }]*/
                             }
                  
                         },
@@ -142,7 +162,11 @@ $(function(){
                         },
                         {name:'currency_id',
                             index:'currency_id',
-                            editable:true
+                            editable:true,
+                            edittype: 'select', 
+                            editoptions:{
+                                value : {'INR':'INR','USD':'USD'}                   
+                            }
                         },
                         {name:'ddc',
                             index:'ddc',
@@ -160,9 +184,12 @@ $(function(){
                         },
                         {name:'language_id',
                             index:'language_id',
-                            editoptions:{ edithidden:true},
-                                editrules:{required:true} ,
-                            editable:true
+                            editable:true,
+                            edittype: 'select',   
+                            editoptions:{
+                                value : {'ENG':'English','HIN':'Hindi','FRE':'French','JAP':'Japani :)'},
+                                edithidden:true},
+                            editrules:{required:true}
                         },
                         {name:'physical_desc',
                             index:'physical_desc',

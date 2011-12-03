@@ -13,7 +13,7 @@ $this->headScript()->appendFile(
 </label></form> </div>
 <br/>
 <div id="member-area" style="width: 49%; float: left; display: none;">
-<fieldset class="ui-widget-content  ui-corner-all"><legend
+<fieldset class="ui-corner-all"><legend
 	class="ui-widget-header ui-corner-all">Member Info</legend>
 	<table style="width: 100%;">
 		<tr>
@@ -25,7 +25,7 @@ $this->headScript()->appendFile(
 </div>
 
 <div id="bookArea" style="width: 49%; float: right; display: none;">
-<fieldset class="ui-widget-content  ui-corner-all"><legend
+<fieldset class="ui-corner-all"><legend
 	class="ui-widget-header ui-corner-all">Issued Documents List</legend>
 <div id="bookInfo">&nbsp;</div>
 </fieldset>
@@ -133,22 +133,31 @@ $(function(){
                 data : {'member_id' : member_id },
                 success : function(member){
 
+            		var memberInfoBasic = {};
                     if(member.member_type_id){
                         switch(member.member_type_id.toUpperCase()){
                         	case 'STUDENT' : 
-                        		var memberInfoBasic = {};
                                 memberInfoBasic.name = member.info.first_name;
                                 memberInfoBasic.deptt = member.info.department_id;
                                 memberInfoBasic.degree = member.info.degree_id;
                                 memberInfoBasic.semester = member.info.semester_id;
                                 memberInfoBasic.type = member.member_type_id;
                         	break;
-                        	case 'FACULTY' : alert('Hi!! Im Faculty. But my case is not considered yet.');
+                        	case 'STAFF' : 
+                                memberInfoBasic.name = member.info.initial+' '+member.info.first_name+' '+member.info.last_name;
+                                memberInfoBasic.deptt = member.info.department_id;
+                                memberInfoBasic.membership = member.membership_type_id;
+                        	break;
+                        	case 'BOOKBANK' :
+                                memberInfoBasic.name = member.info.first_name;
+                                memberInfoBasic.membership = member.membership_type_id;
+                                memberInfoBasic.membership = member.membership_type_id;
                         	break;
                         	default: var alertText = 'Oops, "'+member.member_type_id.toUpperCase()+'" is unknown member type!!';
                         			alert(alertText);
                         }
 
+                        memberInfoBasic.type = member.member_type_id;
                         objMemberInfo = member;
                         if(!(objMemberType[objMemberInfo.membership_type_id])){
                             fetchMemberLimit(member_id);

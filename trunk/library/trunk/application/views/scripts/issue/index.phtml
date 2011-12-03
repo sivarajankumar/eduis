@@ -1,3 +1,5 @@
+<?php $this->headTitle('Issue Book',true); ?>
+<h3 align="center">Issue Book</h3>
 <div id="showIssue" >
 <form id="formMember" action="javascript: manageMember();"><label
 	for="member_id" accesskey="M" id="lbl_member_id"
@@ -22,7 +24,7 @@
 	
 	
 <div id="member-area" style="width: 49%; float: left; display: none;">
-<fieldset class="ui-widget-content  ui-corner-all"><legend
+<fieldset class="ui-corner-all"><legend
 	class="ui-widget-header ui-corner-all">Member Info</legend>
 	<table style="width: 100%;">
 		<tr>
@@ -37,7 +39,7 @@
 <span style="clear: both;"><a id="moreAccInfo" href="#">more...</a></span>
 </fieldset>
 <div style="clear: both">
-<fieldset id="fset_accountInfo" class="ui-widget-content  ui-corner-all"><legend
+<fieldset id="fset_accountInfo" class="ui-corner-all"><legend
 	class="ui-widget-header ui-corner-all">Account Information</legend>
 <div id="accountInfo">&nbsp;</div>
 <div style="clear: both;"><a id="lessAccInfo" href="#"
@@ -48,7 +50,7 @@
 
 
 <div id="bookArea" style="width: 49%; float: right; display: none;">
-<fieldset class="ui-widget-content  ui-corner-all"><legend
+<fieldset class="ui-corner-all"><legend
 	class="ui-widget-header ui-corner-all">Document Info</legend>
 <div id="bookInfo">&nbsp;</div>
 <div style="clear: both">
@@ -57,7 +59,6 @@
 <div style="clear: both"><a id="lessInfo" tabindex="5" href="#"
 	style="display: none;">less...</a></div>
 </div>
-
 </fieldset>
 </div>
 <div id="divIssue"
@@ -145,9 +146,6 @@ $(function(){
       Show-Hide things...
     */
     $('a#moreInfo').click(function() {
-        if(null == objBookMoreInfo){
-            fetchBookMoreInfo();
-        }
         toggleBookInfo();
         return false;
       });
@@ -316,27 +314,16 @@ var fetchBookInfo = function(acc_no){
             data : {'acc_no' : acc_no },
             success: function(bookDetail){
                 if(bookDetail.long_title || bookDetail.title){
-	                if(0 == bookDetail.status){
-	                    objBookInfo = {"Title":bookDetail.title,
-	    	                    "Long Title":bookDetail.long_title,
-	                            "Author":bookDetail.author,
-	                            "Edition":bookDetail.edition,
-	                            "Volume":bookDetail.volume,
-	                            "Place_Pub.":bookDetail.place_publisher,
-                                "Remarks":bookDetail.remarks
-	                            };
-	                } else {
-	                    objBookInfo = {"Title":bookDetail.title,
-                                "Long Title":bookDetail.long_title,
-                                "Author":bookDetail.author,
-                                "Edition":bookDetail.edition,
-                                "Volume":bookDetail.volume,
-                                "Place_Pub.":bookDetail.place_publisher,
-                                "Remarks":bookDetail.remarks,
-	                           "Issued to":bookDetail.member_id,
-	                           "Issue Date":bookDetail.issue_date
-	                           };
-	                }
+                    objBookInfo = {"Title":bookDetail.title,
+                            "Long Title":bookDetail.long_title,
+                            "Author":bookDetail.author,
+                            "Edition":bookDetail.edition,
+                            "Volume":bookDetail.volume,
+                            "Place_Pub.":bookDetail.place_publisher,
+                            "Remarks":bookDetail.remarks,
+                           "Issued to":bookDetail.member_id,
+                           "Issue Date":bookDetail.issue_date
+                           };
 
 	                $('#bookInfo').html('');
 	                traverse(objBookInfo,'#bookInfo');
@@ -346,16 +333,19 @@ var fetchBookInfo = function(acc_no){
 	                if(objBookMoreInfo.isbn_id){
 	                    $('#moreBookInfo').html('');
 	                    parsedBookInfo = {"ISBN": objBookMoreInfo.isbn_id,
+	                            "Year":bookDetail.year,
 	                            "Document Type": objBookMoreInfo.document_type_id,
+	                            "Cost": (bookDetail.currency_id+' '+bookDetail.cost),
 	                            "Status": objBookMoreInfo.status,
-	                            "Remarks": objBookMoreInfo.remarks
+	                            "Remarks": objBookMoreInfo.remarks,
+	                            "Physical":bookDetail.physical_desc
 	                           };
 	                    
 	                    traverse(parsedBookInfo,'#moreBookInfo');
 
 	                    // CHECK IF BOOK CAN BE ISSUED OR NOT.
 	                    // TODO It should not be here.
-	                    setIssueState();
+	                    checkIssueState();
 	                }else{
 	                    alert('Recieved book information is partially incompatible!!');
 	                }
@@ -441,7 +431,7 @@ var toggleAccountInfo = function(){
     $('a#lessAccInfo').slideToggle("slow");
 };
 
-var setIssueState = function(){
+var checkIssueState = function(){
 	if('AVAILABLE' == (objBookMoreInfo.status).toUpperCase()){
 	    $("#divIssue").slideDown();
 	    scroll("#showIssue");

@@ -37,6 +37,7 @@ class MemberController extends Libz_Base_BaseController {
 			}*/
             if ($memberInfo) {
                 $this->_helper->json($memberInfo);
+                //echo $this->_helper->json($memberInfo,false);
             } else {
                 $this->getResponse()->setHttpResponseCode(400);
                 echo 'Member "' . $member_id . '" not found.';
