@@ -15,7 +15,7 @@ $(function(){
 	var urlBookInfo = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'bookinfo' ), 'default', true )?>";
 	var urlPublisherInfo = "<?=$this->url ( array ('controller' => 'publisher', 'action' => 'getpublisher' ))?>";
     var urlIsbnFind = "<?php echo $this->url ( array ('controller' => 'isbn', 'action' => 'getisbnlist'  ))?>";
-
+    var urlISBNInfo = "http://xisbn.worldcat.org/webservices/xid/isbn/";
 	var gridTable = "#tblgrid";
     var gridPager = "#gridpager";
     var urlFillGrid = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid' ), 'default', true )?>";
@@ -47,56 +47,39 @@ $(function(){
                                 				});
                                 			}
                                     });
-                                }/*,
+                                },
                                 dataEvents: [{
                                     type: 'change',
                                     fn: function(e) {
-                                	$(this).attr('disabled', 'disabled');
-	                                	$.getJSON(urlBookInfo,
-	                                			{isbn : this.value},
-	                                	        function(data, textStatus){
-	                                	          if("success" == textStatus){
-		                                	          if(data != null){
-	                                                    $('#title').val(data.Title);
-	                                                    $('#long_title').val(data.TitleLong);
-	                                                    $('#publisher_id').val(data.PublisherText.publisher_id);
-	                                                    $('#author').val(data.AuthorsText);
-	                                                    $('#ddc').val(data.Details.dewey_decimal_normalized);
-	                                                    $('#lcc').val(data.Details.lcc_number);
-	                                                    $('#physical_desc').val(data.Details.physical_description_text);
-	                                                    $('#edition').val(data.Details.edition_info);
-	                                                    $('#language_id').val(data.Details.language);
-	                                                    $('#isbn_id').removeAttr("disabled");
-	                                                    if (data.PublisherText.publisher_id){
-	                                                        $.ajax({url : urlPublisherInfo,
-	                                                            type : 'GET',
-	                                                            data : {publisher_id : data.PublisherText.publisher_id},
-	                                                            success: function(data){
-	                                                                if(1 == eval(data)){
-	                                                                    $('#publisher_id').css({color:"green"});
-	                                                                } else {
-	                                                                    $('#publisher_id').css({color:"red"});
-	                                                                }
-	                                                            },
-	                                                            error: function(data){
-	                                                                    alert(data);
-	                                                            }
-	                                                        });
-	                                                    }
-		                                	          }else {
-	                                                        alert('No information available');
-	                                                        $('#isbn_id').removeAttr("disabled");
-	                                                    }
-	                                                }
-	                                                else {
-	                                                    alert('No data is fetched!!');
-	                                                    $('#isbn_id').removeAttr("disabled");
-	                                                }
-	                                	          
-	                                	        });
-	                                	
+                                    	$(this).attr('disabled', 'disabled');
+                                        var isbn = $(this).val();
+                                    	urlISBNInfo = urlISBNInfo+$.trim(isbn);
+                                        $.ajax({
+                                            url : urlISBNInfo,
+                                            ifModified : true,
+                                            dataType : "jsonp",
+                                            data : {method:'getMetadata',
+                                                	format:'jsonp',
+                                                	fl:'*' },
+                                            success : function(response){
+                                                if ('ok' == response.stat.toLowerCase()) {
+                                                    var data = response.list[0];
+                                                	$('#title').prop('value','').val(data.title);
+                                                	$('#author').val(data.author);
+                                                	$('#edition').val(data.ed);
+                                                	$('#year').val(data.year);
+                                                	$('#place_publisher').val(data.publisher);
+    											}
+    
+                                                $('#isbn_id').prop('disabled', '');
+                                            },
+                                            error: function(xhr, text){
+                                            	$('#isbn_id').prop('disabled', '');
+                                                alert(xhr.responseText);
+                                            }
+                                        });
                                      }
-                                }]*/
+                                }]
                             }
                  
                         },
@@ -221,7 +204,7 @@ $(function(){
     }, // options
             {
         width : 400,
-        savekey : [ true, 13 ],
+        //savekey : [ true, 13 ],
         navkeys : [ true, 38, 40 ],
         jqModal : false,
         closeOnEscape : true,
@@ -231,7 +214,7 @@ $(function(){
     }, // edit options
     {
         width : 400,
-        savekey : [ true, 13 ],
+        //savekey : [ true, 13 ],
         navkeys : [ true, 38, 40 ],
         jqModal : false,
         closeOnEscape : true,
