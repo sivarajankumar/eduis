@@ -47,8 +47,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 		$container = new Zend_Navigation($pages);
 		$view->navigation($container);
 		
-		$view->doctype ( 'XHTML1_STRICT' );
-		
 		// Set the initial title and separator:
 		$view->headTitle ( 'Library' )->setSeparator ( ' :: ' );
 	

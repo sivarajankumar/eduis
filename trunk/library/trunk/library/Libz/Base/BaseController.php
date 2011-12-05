@@ -266,9 +266,7 @@ class Libz_Base_BaseController extends Zend_Controller_Action {
 						$this->_helper->logger->alert ( 'Processed data :' );
 						$this->_helper->logger ( $data );
 						
-						$this->getResponse ()->setHttpResponseCode ( $errorCode );
-						echo 'DATA SUBMIT FAILED: Either criteria is not fulfilled or inputs are wrong.';
-						return false;
+						throw $e;
 					}
 					if ($status) {
 						$this->_helper->logger->debug ( 'Status :' );
@@ -289,8 +287,7 @@ class Libz_Base_BaseController extends Zend_Controller_Action {
 						$this->_helper->logger->alert ( 'WHERE clause :' );
 						$this->_helper->logger ( $where );
 						$this->getResponse ()->setHttpResponseCode ( $errorCode );
-						echo 'CANNOT DELETE: Either dependents exists or permission not granted.';
-						return false;
+						throw $e;
 					}
 					if ($status) {
 						$this->_helper->logger->debug ( 'Status :' );
@@ -313,8 +310,7 @@ class Libz_Base_BaseController extends Zend_Controller_Action {
 						$this->_helper->logger ( 'Status = ' . $status );
 						
 						$this->getResponse ()->setHttpResponseCode ( $errorCode );
-						echo 'CANNOT UPDATE: Either criteria not fulfilled or permission not granted.';
-						return false;
+						throw $e;
 					}
 					if ($status) {
 						$this->_helper->logger->debug ( 'Status :' );

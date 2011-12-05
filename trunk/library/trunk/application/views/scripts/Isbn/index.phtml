@@ -220,20 +220,26 @@ $(function(){
         refresh : false
     }, // options
             {
-                width : 400,
-                savekey : [ true, 113 ],
-                navkeys : [ true, 38, 40 ],
-                jqModal : false,
-                closeOnEscape : true
-            }, // edit options
-            {
-                width : 400,
-                savekey : [ true, 113 ],
-                navkeys : [ true, 38, 40 ],
-                jqModal : false,
-                closeOnEscape : true
-            }, // add options
-            {
+        width : 400,
+        savekey : [ true, 13 ],
+        navkeys : [ true, 38, 40 ],
+        jqModal : false,
+        closeOnEscape : true,
+        errorTextFormat:function(response){
+            return response.responseText;
+        }
+    }, // edit options
+    {
+        width : 400,
+        savekey : [ true, 13 ],
+        navkeys : [ true, 38, 40 ],
+        jqModal : false,
+        closeOnEscape : true,
+        errorTextFormat:function(response){
+            return response.responseText;
+        }
+    }, // add options
+    {
                 reloadAfterSubmit : false,
                 jqModal : false,
                 closeOnEscape : true
