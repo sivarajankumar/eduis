@@ -70,11 +70,15 @@
 <script type="text/javascript">
 var imgServer = 'http://localhost/';
 var imgType = '.jpg';
-var urlMemberInfo = "<?php echo $this->url ( array ('controller' => 'member', 'action' => 'getmemberinfo' ), 'default', true )?>";
-var urlMemberLimit = "<?php echo $this->url ( array ('controller' => 'membershiplimit', 'action' => 'getmembershiplimit' ), 'default', true )?>";
-var urlBookDetail = "<?php echo $this->url ( array ('controller' => 'book', 'action' => 'getbookdetails' ), 'default', true )?>";
-var urlBookMoreInfo = "<?php echo $this->url ( array ('controller' => 'issue', 'action' => 'getbookinfo' ), 'default', true )?>";
-var urlIssueBook = "<?php echo $this->url ( array ('controller' => 'issue', 'action' => 'issuebook' ), 'default', true )?>";
+var urlMemberInfo = "<?php echo $this->url ( array ('controller' => 'member',
+														'action' => 'getmemberinfo' ))?>";
+var urlMemberLimit = "<?php echo $this->url ( array ('controller' => 'membershiplimit',
+														'action' => 'getmembershiplimit' ))?>";
+var urlBookDetail = "<?php echo $this->url ( array ('controller' => 'book', 
+														'action' => 'getbookdetails' ))?>";
+var urlBookMoreInfo = "<?php echo $this->url ( array ('controller' => 'issue', 
+														'action' => 'getbookinfo' ))?>";
+var urlIssueBook = "<?php echo $this->url ( array ('controller' => 'issue', 'action' => 'issuebook' ))?>";
 var objMemberInfo = null;
 var objMemberType = {};
 var objBookMoreInfo = null;
@@ -189,14 +193,18 @@ var fetchMemberInfo = function(member_id){
                             memberInfoBasic.semester = member.info.semester_id;
                     	break;
                     	case 'STAFF' : 
-                            memberInfoBasic.name = member.info.initial+' '+member.info.first_name+' '+member.info.last_name;
+                            memberInfoBasic.name = member.info.initial
+                            				+' '+member.info.first_name
+                            				+' '+member.info.last_name;
                             memberInfoBasic.deptt = member.info.department_id;
                     	break;
                     	case 'BOOKBANK' :
                             memberInfoBasic.name = member.info.first_name;
                             memberInfoBasic.membership = member.membership_type_id;
                     	break;
-                    	default: var alertText = 'Oops, "'+member.member_type_id.toUpperCase()+'" is unknown member type!!';
+                    	default: var alertText = 'Oops, "'
+                        					+member.member_type_id.toUpperCase()
+                        					+'" is unknown member type!!';
                     			alert(alertText);
                     }
                     memberInfoBasic.type = member.member_type_id;
@@ -293,9 +301,17 @@ var processAccountInfo = function(){
 		if(objMemberInfo.issued[documentType]){
 		    var issued = objMemberInfo.issued[documentType].counts;
 	        var remaining = parseInt(maximum) - parseInt(issued);
-	   			$("#accountInfo").append('<div><div class="infoHeader" >'+documentType+' : </div><div class="infoContent ui-state-highlight ui-corner-all">Limit:'+maximum+', Issued:'+(maximum-remaining)+'</div></div>');
+	   			$("#accountInfo").append('<div><div class="infoHeader" >'
+	   		   								+documentType
+	   		   					+' : </div><div class="infoContent ui-state-highlight ui-corner-all">Limit:'
+	   		   								+maximum
+	   		   								+', Issued:'+(maximum-remaining)
+	   		   								+'</div></div>');
 		} else {
-			$("#accountInfo").append('<div><div class="infoHeader" >'+documentType+' : </div><div class="infoContent ui-state-highlight ui-corner-all">'+maximum+'/'+maximum+'</div></div>');
+			$("#accountInfo").append('<div><div class="infoHeader" >'
+										+documentType
+										+' : </div><div class="infoContent ui-state-highlight ui-corner-all">'
+										+maximum+'/'+maximum+'</div></div>');
 		}
 	//to get the value for each position
 	//alert(opensource[script]);
