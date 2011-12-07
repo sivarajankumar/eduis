@@ -30,7 +30,7 @@ $(function(){
     var urlCRUD = "<? echo $this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud'), 'default', true)?>";
     $(gridTable).jqGrid({
         url : urlFillGrid,
-        colNames:['ISBN','Title','Author', 'Edition','Publisher','Acc_no', 'Status', 'Rack', 'Shelf'],
+        colNames:['ISBN','Title','Author', 'Edition','Publisher','Acc_no', 'Status','Document Type', 'Rack', 'Shelf'],
         colModel:[{name:'isbn_id',
             index:'isbn_id',
             width:90
@@ -57,6 +57,14 @@ $(function(){
                 stype:'select',
                 editoptions:{value:{'':'Status Filter',AVAILABLE:'AVAILABLE',ISSUED:'ISSUED'}} ,
                 searchoptions:{attr:{title:'Book Status'}}},
+            {name:'document_type_id', 
+                index:'document_type_id',
+                width:60,
+                search:true,
+                hidden: true,
+                stype:'select',
+                editoptions:{value:{'':'Documents',REG:'REGULAR',REF:'REFERENCE'}} ,
+                searchoptions:{attr:{title:'Document Type'}}},
             {name:'rack_id', 
                 index:'rack_id',
                 hidden: true},
