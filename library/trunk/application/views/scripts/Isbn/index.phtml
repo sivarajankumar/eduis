@@ -12,18 +12,22 @@ $(function(){
 
 	var cache = {},
 		lastXhr;
-	var urlBookInfo = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'bookinfo' ), 'default', true )?>";
-	var urlPublisherInfo = "<?=$this->url ( array ('controller' => 'publisher', 'action' => 'getpublisher' ))?>";
+	var urlBookInfo = "<?php echo $this->url ( array ('module' => $this->module,
+												'controller' => $this->controller,
+												'action' => 'bookinfo' ))?>";
+	var urlPublisherInfo = "<?php echo $this->url ( array ('controller' => 'publisher',
+															'action' => 'getpublisher' ))?>";
     var urlIsbnFind = "<?php echo $this->url ( array ('controller' => 'isbn', 'action' => 'getisbnlist'  ))?>";
     var urlISBNInfo = "http://xisbn.worldcat.org/webservices/xid/isbn/";
 	var gridTable = "#tblgrid";
     var gridPager = "#gridpager";
-    var urlFillGrid = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid' ), 'default', true )?>";
-    var urlCRUD = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud' ), 'default', true )?>";
+    var urlFillGrid = "<?php echo $this->url ( array ('action' => 'fillgrid' ))?>";
+    var urlCRUD = "<?php echo $this->url ( array ('action' => 'crud' ))?>";
     $(gridTable).jqGrid(
             {
             url : urlFillGrid,
-            colNames:['ISBN','Title','Long Title','Edition','Volume','Year', 'Author(s)','Publisher','Cost','Currency' ,'DDC','LCC','Language','Physical desc' ,  'Remarks'], 
+            colNames:['ISBN','Title','Long Title','Edition','Volume','Year','Author(s)',
+                      'Publisher','Cost','Currency' ,'DDC','LCC','Language','Physical desc','Remarks'], 
             colModel:[  {name:'isbn_id',
                             index:'isbn_id',
                             editable:true,
@@ -39,12 +43,14 @@ $(function(){
                                 					return;
                                 				}
 
-                                				lastXhr = $.getJSON( urlIsbnFind, request, function( data, status, xhr ) {
-                                					cache[ term ] = data;
-                                					if ( xhr === lastXhr ) {
-                                						response( data );
-                                					}
-                                				});
+                                				lastXhr = $.getJSON( urlIsbnFind,
+                                        							request,
+                                        							function( data, status, xhr ) {
+                                                    					cache[ term ] = data;
+                                                    					if ( xhr === lastXhr ) {
+                                                    						response( data );
+                                                    					}
+                                									});
                                 			}
                                     });
                                 },
@@ -126,12 +132,14 @@ $(function(){
                                 					return;
                                 				}
 
-                                				lastXhr = $.getJSON( urlPublisherInfo, request, function( data, status, xhr ) {
-                                					cache[ term ] = data;
-                                					if ( xhr === lastXhr ) {
-                                						response( data );
-                                					}
-                                				});
+                                				lastXhr = $.getJSON( urlPublisherInfo,
+                                        							request,
+                                        							function( data, status, xhr ) {
+                                                    					cache[ term ] = data;
+                                                    					if ( xhr === lastXhr ) {
+                                                    						response( data );
+                                                    					}
+                                                    				});
                                 			}
                                     });
                                 }
