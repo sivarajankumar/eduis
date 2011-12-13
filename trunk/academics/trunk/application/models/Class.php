@@ -6,11 +6,13 @@ class Acad_Model_Class
      * @var string
      */
     protected $_department;
+    
     /**
-     * Class degree
+     * Class Programme
      * @var string
      */
-    protected $_degree;
+    protected $_programme_id;
+    
     /**
      * Semester of class
      * @var int
@@ -71,21 +73,41 @@ class Acad_Model_Class
     }
     /**
      * Set class degree
+     * @deprecated  Use setProgramme_id($programme_id)
      * @param string $degree class degree
      * @return Acad_Model_Class
      */
     public function setDegree ($degree)
     {
-        $this->_degree = $degree;
-        return $this;
+        return self::setProgramme_id($degree);
     }
     /**
      * Get class degree
+     * @deprecated Use getProgramme_id()
      * @return string $degree class degree
      */
     public function getDegree ()
     {
-        return $this->_degree;
+        return self::getProgramme_id();
+    }
+
+    /**
+     * Set class programme
+     * @param string $degree class degree
+     * @return Acad_Model_Class
+     */
+    public function setProgramme_id ($programme_id)
+    {
+        $this->_programme_id = $programme_id;
+        return $this;
+    }
+    /**
+     * Get class programme
+     * @return string $programme_id class Programme
+     */
+    public function getProgramme_id ()
+    {
+        return $this->_programme_id;
     }
     /**
      * Set semester of class
@@ -97,7 +119,7 @@ class Acad_Model_Class
         if ($semester != null) {
             $this->_semester = $semester;
         } else {
-            throw new Zend_Exception('Could not determine semester of class', 
+            throw new Exception('Semester of class is required.', 
             Zend_Log::ERR);
         }
         return $this;
