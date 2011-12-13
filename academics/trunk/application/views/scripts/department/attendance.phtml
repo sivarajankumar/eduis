@@ -48,7 +48,7 @@
 .dataCell {
 	
 }
-.dataRow {
+.dataRow,table a  {
 	font-size:1em;
 	font-family: serif;	
 	color: #444;
@@ -67,10 +67,24 @@
 	position: relative;
 	right: 1em;
 }
+table a {
+	text-decoration: none;
+	padding: 0.2em 0.5em;
+}
+table a:hover {
+	background-color: #eeeeee;
+	color: blue;
+}
+table a:visited {
+	color: maroon;
+}
 @MEDIA print{
 	table tr {		
 		page-break-inside: avoid;
 	}
+    table a:visited {
+		color: #444;
+    }
 	.noprint {
 		display: none;
 	}
@@ -82,14 +96,17 @@
 -->
 </style>
 <div style="padding :0.5em 0 0.5em 0; text-align: center; " >
-<form class="noprint" id="departmentWise"><label>Department: <select id="department_id" name="department_id" 
-	class="ui-widget-content  ui-corner-all" style="text-align: center" 
-	>
-	<option value="BT">Biotech</option>
-	<option value="CSE">Computer Science</option>
-	<option value="ECE">Electronics</option>
-	<option value="ME">Mechanical</option>
+<form class="noprint" id="departmentWise">
+<?php if ($this->aboveDepartment) { ?>
+    <label>Department: <select id="department_id" name="department_id" 
+	class="ui-widget-content  ui-corner-all" style="text-align: center" >
+	<option value="BT" <?php echo (strtolower($this->department_id)=='bt')?'selected="selected"':'' ?> >Biotech</option>
+	<option value="CSE" <?php echo (strtolower($this->department_id)=='cse')?'selected="selected"':'' ?> >Computer Science</option>
+	<option value="ECE" <?php echo (strtolower($this->department_id)=='ece')?'selected="selected"':'' ?> >Electronics</option>
+	<option value="ME" <?php echo (strtolower($this->department_id)=='me')?'selected="selected"':'' ?> >Mechanical</option>
 	</select></label>
+<?php }?>
+
 	<label>Programme: <select id="programme_id" name="programme_id"
 	class="ui-widget-content  ui-corner-all" style="text-align: center" 
 	>
@@ -99,7 +116,7 @@
 </form>
 <?php 
 if (isset($this->department_id) and isset($this->programme_id)) { ?>
-    <h1>ATTENDANCE REPORT</h1>
+    <h1>DEPARTMENT REPORT</h1>
 	<h2><?php  echo $this->department_id?> - <?php  echo $this->programme_id?></h2>
 <?php 
 $this->headTitle('Attendance Report for '.$this->department_id.'-'.$this->programme_id);
@@ -163,26 +180,46 @@ if (isset($this->attendance)) {
                     ?>
                 <tr  class="<?php echo $semester_id.'_'.$subject_mode_id?>_row dataRow" >
              <?php
+			$subjectParams = array('department_id'=>$this->department_id,
+                            'subject_code'=>$subject_code,
+                            'subject_mode_id'=>$subject_mode_id);
 			
 			if($record['subject_name']==$prevSubjectName){
 			    echo '<td></td>';
 			} else {
-			    echo '<td class="dataCellBordered"  style="text-align:left" >'. 
-			                ucwords(strtolower($record['subject_name'])) .'</td>';
+			    $subjectURL = $this->url(array('controller'=>'subject',
+			    							'action'=>'attendance')).'?'.http_build_query($subjectParams);
+			    echo '<td class="dataCellBordered"  style="text-align:left" >
+			    	<a href='. $subjectURL.' >'. 
+			                ucwords(strtolower($record['subject_name'])) .'</a></td>';
 			    $prevSubjectName=$record['subject_name'];
 			}
                 
 			if($subject_code==$prevSubjectCode){
 			    echo '<td></td>';
 			} else {
-			    echo '<td class="dataCellBordered"  style="text-align:left">'.$subject_code.'</td>';
+			    $subjectURL = $this->url(array('controller'=>'subject',
+			    							'action'=>'attendance')).'?'.http_build_query($subjectParams);
+			    echo '<td class="dataCellBordered"  style="text-align:left">
+			    		<a href='. $subjectURL.' >'
+			                    .$subject_code.'</a></td>';
 			    $prevSubjectCode=$subject_code;
 			}
                 
              if($record['faculty_id']==$prevFaculty){
 			    echo '<td></td>';
 			} else {
-			    echo '<td class="dataCellBordered" style="text-align:left">'.$record['faculty_id'].'</td>';
+			    $faculty = new Acad_Model_Member_Faculty();
+			    $facultyName = $faculty->setFacultyId($record['faculty_id'])->getName();
+			    
+    			$facultyParams = array('department_id'=>$this->department_id,
+    							/*'programme_id'=>$this->programme_id,
+    							'semester_id'=>$semester_id,*/
+                                'faculty_id'=>$record['faculty_id']);
+			    $facultyURL = $this->url(array('controller'=>'faculty',
+			    							'action'=>'attendance')).'?'.http_build_query($facultyParams);
+			    echo '<td class="dataCellBordered" style="text-align:left">'.
+			    				'<a href='.$facultyURL.'>'.$facultyName.'</td>';
 			    $prevFaculty=$record['faculty_id'];
 			}
 			

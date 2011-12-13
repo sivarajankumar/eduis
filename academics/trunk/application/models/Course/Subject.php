@@ -104,6 +104,27 @@ class Acad_Model_Course_Subject
         return $this->_subject_code;
     }
     /**
+	 * @return the $_subject_name
+	 */
+	public function getSubject_name() {
+	    if (!isset($this->_subject_name)) {
+	        $this->setSubject_name();
+	    }
+	    return $this->_subject_name;
+	}
+
+	/**
+	 * @param string $_subject_name
+	 */
+	public function setSubject_name($_subject_name = NULL) {
+	    if ($_subject_name != NULL) {
+		    $this->_subject_name = $_subject_name;
+	    } else {
+	        $this->_subject_name = $this->getMapper()->getSubjectName($this);
+	    }
+	}
+
+	/**
      * Set subject department
      * @param string $department - subject department
      * @return Acad_Model_Course_Subject
@@ -189,7 +210,7 @@ class Acad_Model_Course_Subject
      * @param array $faculty class/semester wise faculty of subject and corresponding mode
      * @return Acad_Model_Course_Subject
      */
-    public function setFaculty (array $faculty = NULL)
+    public function setFaculty (array $faculty = NULL,$dateFrom = NULL, $dateUpto = NULL)
     {
         if (! empty($faculty)) {
             $this->_faculty = $faculty;
@@ -202,10 +223,10 @@ class Acad_Model_Course_Subject
      * Get class/semester wise faculty of subject and corresponding mode of subject.
      * @return array $faculty class/semester wise faculty of subject and corresponding mode of subject.
      */
-    public function getFaculty ()
+    public function getFaculty ($dateFrom = NULL, $dateUpto = NULL)
     {
         if (null === $this->_faculty) {
-            $this->setFaculty();
+            $this->setFaculty(NULL,$dateFrom, $dateUpto);
         }
         return $this->_faculty;
     }
@@ -238,13 +259,19 @@ class Acad_Model_Course_Subject
      * @param date $dateUpto
      */
     public function getStudentAttendance ($dateFrom = NULL, $dateUpto = NULL, 
-    $status_id = NULL, $group_id = NULL, $forceUpdate = FALSE)
+    $status_id = NULL, $group_id = NULL, $minPercentage = NULL, $maxPercentage = NULL,$forceUpdate = FALSE)
     {
         $rawAttendance = array();
+        $maxAbsent = $minAbsent = null;
+        if (isset($minPercentage) or isset($maxPercentage)) {
+            self::getAttendanceTotal($dateFrom, $dateUpto, $group_id, $forceUpdate);
+            
+        }
+        
         if (empty($this->_studentAttendance) or $forceUpdate) {
             $rawAttendance = $this->getMapper()
                         ->fetchStudentAttendance($this, $dateFrom, $dateUpto, 
-                                                $status_id, $group_id);
+                                                $status_id, $group_id, $maxAbsent,$minAbsent);
                                                 
         
             foreach ($rawAttendance as $subject_mode => $studentsList) {
@@ -274,30 +301,32 @@ class Acad_Model_Course_Subject
         }
         
         if (empty($this->_totalAttendance)) {
-            self::getStudentAttendance ($dateFrom, $dateUpto, 
+            self::getAttendanceTotal ($dateFrom, $dateUpto, 
                                         $status, $group_id);
         }
         $this->_attendanceStat = $this->_totalAttendance;
-        foreach ($this->_studentAttendance as $subject_mode => $groups) {
-            foreach ($groups as $group => $students) {
-                $stuCount = count($students);
-                $avg = array();
-                foreach ($students as $roll => $records) {
-                    foreach ($records as $stuStatus => $counts) {
-                        if (!isset($avg[$stuStatus]['counts'])) {
-                            $avg[$stuStatus]['counts'] = 0;
+        if (!empty($this->_studentAttendance)) {
+            foreach ($this->_studentAttendance as $subject_mode => $groups) {
+                foreach ($groups as $group => $students) {
+                    $stuCount = count($students);
+                    $avg = array();
+                    foreach ($students as $roll => $records) {
+                        foreach ($records as $stuStatus => $counts) {
+                            if (!isset($avg[$stuStatus]['counts'])) {
+                                $avg[$stuStatus]['counts'] = 0;
+                            }
+                            $avg[$stuStatus]['counts'] += $counts;
                         }
-                        $avg[$stuStatus]['counts'] = $avg[$stuStatus]['counts']+$counts;
                     }
-                }
-                /**
-                 * @todo The STUDENTS should be the students enrolled to the subject.
-                 * So it should call $this->studentsEnrolled($subject_mode, $group)
-                 */
-                $this->_attendanceStat[$subject_mode][$group]['STUDENTS']=$stuCount;
-                foreach ($avg as $stuStatus => $counts) {
-                    $this->_attendanceStat[$subject_mode][$group]['AVERAGE'][$stuStatus] = 
-                                                        round($counts['counts']/$stuCount);
+                    /**
+                     * @todo The STUDENTS should be the number of students enrolled to the subject.
+                     * So it should call $this->studentsEnrolled($subject_mode, $group)
+                     */
+                    $this->_attendanceStat[$subject_mode][$group]['STUDENTS']=$stuCount;
+                    foreach ($avg as $stuStatus => $counts) {
+                        $this->_attendanceStat[$subject_mode][$group]['AVERAGE'][$stuStatus] = 
+                                                            round($counts['counts']/$stuCount);
+                    }
                 }
             }
         }

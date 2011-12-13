@@ -146,18 +146,20 @@ WHERE totalprd.staff_id = ? ';
 	/**
      * Get Faculty Subjects
      * @param Acad_Model_Member_Faculty $faculty
+     * @param Acad_Model_Class|Acad_Model_Department $viewLevel = null
+     * @param bool $showModes = null
      * @return array
      */
     public function fetchSubjects (Acad_Model_Member_Faculty $faculty, 
-                                    Acad_Model_Class $class = NULL, 
+                                    $viewLevel = NULL, 
                                     $showModes = NULL){
         $select = $this->getDbTable()->getAdapter()->select();
         $select->distinct()
                 ->from('subject_faculty',
                             array('subject_code'))
-                ->join('subject', 
+               /* ->join('subject', 
                 		'subject_faculty.subject_code = subject.subject_code',
-                        array('subject_name'))
+                        array('subject_name'))*/
                 ->join('subject_department', 
                 		'subject_department.subject_code = subject.subject_code',
                         array())
@@ -166,11 +168,51 @@ WHERE totalprd.staff_id = ? ';
         if (isset($showModes)) {
             $select->columns('subject_mode_id');
         }
+                                    
+        if ($viewLevel instanceof Acad_Model_Class) {
+            $select->where('department_id = ?', $viewLevel->getDepartment())
+                    ->where('programme_id = ?', $viewLevel->getProgramme_id())
+                    ->where('semester_id = ?', $viewLevel->getSemester());
+        } elseif ($viewLevel instanceof Acad_Model_Department){
+            $select->where('department_id = ?', $viewLevel->getDepartment())
+                    ->columns(array('programme_id','semester_id'));
+        } else {
+            $select->columns(array('department_id','programme_id','semester_id'));
+        }
         
-        if (isset($class)) {
-            $select->where('subject_department.department_id = ?', $class->getDepartment())
-                    ->where('subject_department.degree_id = ?', $class->getDegree())
-                    ->where('subject_department.semester_id = ?', $class->getSemester());
+        return  $select->query()->fetchAll(Zend_Db::FETCH_GROUP);
+    }
+    
+
+	/**
+     * Get Faculty Subjects in hand
+     * @param Acad_Model_Member_Faculty $faculty
+     * @param Acad_Model_Class|Acad_Model_Department $viewLevel = null
+     * @param bool $showModes = null
+     * @return array
+     */
+    public function fetchInHandSubjects (Acad_Model_Member_Faculty $faculty, 
+                                    $viewLevel = NULL, 
+                                    $showModes = NULL){
+        $select = $this->getDbTable()->getAdapter()->select();
+        $select->distinct()
+                ->from('period_attendance2',
+                            array('subject_code'))
+                ->where('faculty_id = ?',$faculty->getMemberId());
+                
+        if (isset($showModes)) {
+            $select->columns('subject_mode_id');
+        }
+        
+        if ($viewLevel instanceof Acad_Model_Class) {
+            $select->where('department_id = ?', $viewLevel->getDepartment())
+                    ->where('programme_id = ?', $viewLevel->getProgramme_id())
+                    ->where('semester_id = ?', $viewLevel->getSemester());
+        } elseif ($viewLevel instanceof Acad_Model_Department){
+            $select->where('department_id = ?', $viewLevel->getDepartment())
+                    ->columns(array('programme_id','semester_id'));
+        } else {
+            $select->columns(array('department_id','programme_id','semester_id'));
         }
         
         return  $select->query()->fetchAll(Zend_Db::FETCH_GROUP);

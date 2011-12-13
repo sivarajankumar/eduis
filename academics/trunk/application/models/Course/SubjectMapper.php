@@ -61,6 +61,19 @@ class Acad_Model_Course_SubjectMapper
         return $sql->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
     /**
+     * Fetches the subject name
+     * 
+     * @param Acad_Model_Course_Subject $subject
+     */
+    public function getSubjectName(Acad_Model_Course_Subject $subject) {
+        $select = $this->getDbTable()
+                    ->select()
+                    ->from('subject','subject_name')
+                    ->where('subject_code = ?',$subject->getSubject_code());
+                    
+        return $select->query()->fetchColumn();
+    }
+    /**
      * Fetches only those semesters in which subject is taught
      * 
      * @param Acad_Model_Course_Subject $subject
@@ -68,12 +81,12 @@ class Acad_Model_Course_SubjectMapper
      */
     public function getSemesters (Acad_Model_Course_Subject $subject)
     {
-        $sql = $this->getDbTable()
+        $select = $this->getDbTable()->getAdapter()
             ->select()
-            ->from(`subject_department`, 
+            ->from('subject_department', 
         array('department_id', 'degree_id', 'semester_id'))
-            ->where('subject_code = ?', $subject->getCode());
-        return $sql->query()->fetchAll();
+            ->where('subject_code = ?', $subject->getSubject_code());
+        return $select->query()->fetchAll();
     }
     /**
      * Fetches Faculty members who are assigned the subject
@@ -81,18 +94,56 @@ class Acad_Model_Course_SubjectMapper
      * @param Acad_Model_Course_Subject $subject
      * @return array of department,degree,semester,faculty id,mode in which subject is taught
      */
-    public function getFaculties (Acad_Model_Course_Subject $subject)
+    public function getFaculties (Acad_Model_Course_Subject $subject,$dateFrom = NULL, $dateUpto = NULL)
     {
-        $sql = $this->getDbTable()
+        $department = $subject->getDepartment();
+        $select = $this->getDbTable()->getAdapter()
             ->select()
-            ->from(`subject_department`, 
-        array('department_id', 'degree_id', 'semester_id'))
-            ->join('subject_faculty', 
-        '(`subject_faculty`.`department_id` = `subject_department`.`department_id`)
-        AND (`subject_faculty`.`subject_code` = `subject_department`.`subject_code`)', 
-        array('`staff_id`', '`subject_mode_id`'))
-            ->where('`subject_code` = ?', $subject->getCode());
-        return $sql->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            ->from('period_attendance2', array('programme_id',
+                                        		'semester_id',
+                                                'group_id',
+                                                'faculty_id',
+                                                'subject_mode_id'))
+            ->where('`subject_code` = ?', $subject->getSubject_code())
+            ->group(array('faculty_id','group_id','subject_mode_id'));
+            
+        
+        $modeString = self::_subjectModeQuery($subject);
+        $select->where($modeString);
+        $subjectModeCount = count($subject->getModes());
+    
+        if ($department) {
+            $select->where('department_id = ?', $department);
+        }
+        if ($dateFrom) {
+            $select->where('`date_from` >= ?', $dateFrom);
+        } else {
+            $select->columns('MIN(period_date) AS date_from');
+        }
+    
+        if ($dateUpto) {
+            $select->where('`date_upto` <= ?', $dateUpto);
+        } else {
+            $select->columns('MAX(period_date) AS date_upto');
+        }
+        $dbResult =  $select->query()->fetchAll();
+        
+        /**
+         * Data is required to be in understandable format.
+         * @var array
+         */
+        $processedResult = array();
+        foreach ($dbResult as $key => $facultySubject) {
+            $gid = $facultySubject['group_id'];
+            $semId = $facultySubject['semester_id'];
+            $subModeId = $facultySubject['subject_mode_id'];
+            $facultyId = $facultySubject['faculty_id'];
+            $processedResult[$subModeId][$gid][$facultyId][] = array_diff_key($facultySubject, 
+                                                            array('group_id'=>'dummy',
+                                                                    'subject_mode_id'=>'tummy',
+                                                                    'faculty_id'=>'pummy'));
+        }
+        return $processedResult;
     }
     public function fetchTest (Acad_Model_Course_Subject $subject, 
     $locked = FALSE)
@@ -167,9 +218,11 @@ class Acad_Model_Course_SubjectMapper
         $groupByCols = array('department_id',
             				'programme_id',
             				'semester_id',
-            				'group_id',
             				'subject_code',
-            				'subject_mode_id');
+            				'subject_mode_id',
+            				'group_id');
+        
+        $orderByCols = array('subject_mode_id ASC');
         
         $select = $this->getDbTable()
             ->getAdapter()
@@ -179,7 +232,8 @@ class Acad_Model_Course_SubjectMapper
         'delievered' => 'COUNT(attendance_id)', 
         'total_duration' => 'SUM(duration)'))
             ->where('subject_code = ?', $subject_code)
-            ->group($groupByCols);
+            ->group($groupByCols)
+            ->order($orderByCols);
         if ($department) {
             $select->where('department_id = ?', $department);
         }
@@ -220,14 +274,17 @@ class Acad_Model_Course_SubjectMapper
      * 
      * Enter description here ...
      * @param Acad_Model_Course_Subject $subject
-     * @param unknown_type $dateFrom
-     * @param unknown_type $dateUpto
-     * @param unknown_type $status
-     * @param unknown_type $group_id
-     * @param unknown_type $subject_mode_id
+     * @param Date $dateFrom
+     * @param Date $dateUpto
+     * @param string $status
+     * @param string $group_id
+     * @param string $subject_mode_id
+     * @param int $maxAbsent Maximum limit of absentism (It means minimum present)
+     * @param int $minAbsent Minimum limit of absentism (maximum present count)
      */
     public function fetchStudentAttendance (Acad_Model_Course_Subject $subject, 
-    $dateFrom = NULL, $dateUpto = NULL, $status = NULL, $group_id = NULL)
+    $dateFrom = NULL, $dateUpto = NULL, $status = NULL, $group_id = NULL,
+    $maxAbsent = NULL,$minAbsent = NULL)
     {
         $subject_code = $subject->getSubject_code();
         $department = $subject->getDepartment();
@@ -237,8 +294,16 @@ class Acad_Model_Course_SubjectMapper
             				'group_id',
             				'subject_code',
             				'subject_mode_id',
-                            'student_roll_no');
+                            'student_roll_no',
+                            'status');
         
+        $orderByCols = array('programme_id ASC',
+            				'semester_id ASC',
+            				'subject_code ASC',
+            				'subject_mode_id ASC',
+            				'group_id ASC',
+                            'student_roll_no ASC',
+                            'status ASC');
         $select = $this->getDbTable()
             ->getAdapter()
             ->select()
@@ -246,8 +311,9 @@ class Acad_Model_Course_SubjectMapper
                     array('subject_mode_id', 'student_roll_no', 'status',
                     'counts' => 'COUNT(student_roll_no)'))
             ->where('subject_code = ?', $subject_code)
+            ->where('student_roll_no IS NOT NULL')
             ->group($groupByCols)
-            ->group('status');
+            ->order($orderByCols);
             
         if ($department) {
             $select->where('department_id = ?', $department);
@@ -266,7 +332,13 @@ class Acad_Model_Course_SubjectMapper
         } else {
             $select->columns('group_id');
         }
-        
+    
+        if ($minAbsent) {
+            $select->having('counts >= ?', $minAbsent);
+        }
+        if ($maxAbsent) {
+            $select->where('counts <= ?', $maxAbsent);
+        }
         $modeString = self::_subjectModeQuery($subject);
         $select->where($modeString);
         

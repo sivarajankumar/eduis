@@ -57,7 +57,7 @@ class Acad_Model_ClassMapper
         '`subject`.`subject_type_id` = `subject_mode`.`subject_type_id`', 
         array('group_together'))
             ->where('department_id = ?', $class->getDepartment())
-            ->where('degree_id = ?', $class->getDegree())
+            ->where('degree_id = ?', $class->getProgramme_id())
             ->where('semester_id = ?', $class->getSemester());
         if (isset($subjectType)) {
             $sql->where('`subject_mode`.`subject_type_id` = ?', $subjectType);
@@ -83,7 +83,7 @@ class Acad_Model_ClassMapper
     $group)
     {
         $department = $class->getDepartment();
-        $degree = $class->getDegree();
+        $degree = $class->getProgramme_id();
         $semester = $class->getSemester();
         $cacheManager = Zend_Registry::get('cacheManager');
         $cache = $cacheManager->getCache('remote');
@@ -256,7 +256,7 @@ WHERE totalprd.department_id = ?
     AND totalprd.degree_id = ?
     AND totalprd.semester_id = ?';
         $bind = array($class->getDepartment(),
-                        $class->getDegree(), 
+                        $class->getProgramme_id(), 
                         $class->getSemester());
                         
         return $this->getDbTable()->getAdapter()->query($sql,$bind)->fetchAll();
@@ -280,7 +280,7 @@ WHERE totalprd.department_id = ?
                        AND `subject_department`.`semester_id` = ?)';
         
         $bind = array($class->getDepartment(),
-                        $class->getDegree(), 
+                        $class->getProgramme_id(), 
                         $class->getSemester());
                         
                       
@@ -295,7 +295,7 @@ WHERE totalprd.department_id = ?
     public function save (Acad_Model_Class $class)
     {
         $data = array('department_id' => $class->getDepartment(), 
-        'degree_id' => $class->getDegree(), 
+        'degree_id' => $class->getProgramme_id(), 
         'batchstart' => $class->getBatchStart());
     }
 }

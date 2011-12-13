@@ -1,5 +1,5 @@
 <?php
-abstract class Acad_Model_Member_Generic {
+abstract class Acad_Model_Member_Generic extends Acadz_Base_Model {
 	/**
 	 * Member identification
 	 * @var string|int
@@ -189,7 +189,7 @@ abstract class Acad_Model_Member_Generic {
 	 * @return Acad_Model_Member_Generic
 	 */
 	public function setPersonalInfo($personalInfo){
-	    
+	    $this->_personalInfo = $personalInfo;
 	    return $this;
 	}
 	
@@ -198,9 +198,12 @@ abstract class Acad_Model_Member_Generic {
 	 * @return array $personalInfo personal information of member
 	 */
 	public function getPersonalInfo(){
-	    $this->_personalInfo;
+	    if (!isset($this->_personalInfo)) {
+	        $personalInfo = $this->_fetchPersonalInfo();
+	        $this->setPersonalInfo($personalInfo);
+	    }
+	    return $this->_personalInfo;
 	}
-	
 	 
 	/**
 	 * Set professional/academic information of member
@@ -226,7 +229,7 @@ abstract class Acad_Model_Member_Generic {
 	 * @return Acad_Model_Member_Generic
 	 */
 	public function setDepartment($department){
-	    
+	    $this->_department = $department;
 	    return $this;
 	}
 	
