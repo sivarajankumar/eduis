@@ -27,7 +27,7 @@ class SearchController extends Libz_Base_BaseController {
             $filter = $request->getParam('filter');
             $this->view->assign('checked', $filter);
             $searchObj = new Lib_Model_DbTable_Search();
-            $result = $searchObj->search($q, $filter,$offset,$limit);
+            $result = $searchObj->search($q, $filter,$offset,$limit,'REG');
             $this->_helper->logger($result);
             $this->view->assign("search_result", $result);
             $row_num = $searchObj->resultCount();
