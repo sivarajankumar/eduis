@@ -4,7 +4,7 @@ class Lib_Model_DbTable_Search extends Libz_Base_Model {
 	protected $_result = NULL;
 	protected  $_processedResult = NULL;
 	 
-	protected function _search($q, $filter = NULL, $offset = 0,$limit = 10) {
+	protected function _search($q, $filter = NULL, $offset = 0,$limit = 10, $docType = NULL) {
 	    $select = $this->getAdapter()->select()
 	                    ->from('book',array('isbn_id','status',
 	                    					'COUNT(`acc_no`) AS counts'))
@@ -29,11 +29,14 @@ class Lib_Model_DbTable_Search extends Libz_Base_Model {
 		$this->_resultCount = $select->query(Zend_Db::FETCH_GROUP)->rowCount();
 		$select->limit($limit,$offset);
 		$select->order(array('title','author','status'));
+		if ($docType) {
+		    $select->where('document_type_id = ?', $docType);
+		}
 		$this->_result = $select->query ()->fetchAll (Zend_Db::FETCH_GROUP);
 		return $this;
 	}
-	public function search($q, $filter = NULL, $offset = 0,$limit = 10) {
-	    self::_search($q, $filter, $offset,$limit);
+	public function search($q, $filter = NULL, $offset = 0,$limit = 10, $docType= NULL) {
+	    self::_search($q, $filter, $offset,$limit,$docType);
 	    $processedresult = array();
 	    foreach ($this->_result as $isbn_id =>$isbn) {
 	        foreach ($isbn as $key => $book) {
