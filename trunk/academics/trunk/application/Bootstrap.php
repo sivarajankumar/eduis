@@ -8,24 +8,31 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
     protected function _initAppConfig ()
     {
+		// Define path to application domain name.
+		/**
+		 * @todo Dynamically define DOMAIN_NAME from $_SERVER
+		 */
+		defined('DOMAIN_NAME')
+		    || define('DOMAIN_NAME', 'aceambala.com');
+		    
         // Define path to CDN server.
         defined('CDN_SERVER') ||
-         define('CDN_SERVER', 'site.cdn.aceambala.com');
+         define('CDN_SERVER', 'site.cdn.'.DOMAIN_NAME);
         // Define path to CDN server.
         defined('AUTH_SERVER') ||
-         define('AUTH_SERVER', 'auth.aceambala.com');
+         define('AUTH_SERVER', 'auth.'.DOMAIN_NAME);
         // Define path to Core server.
         defined('CORE_SERVER') ||
-         define('CORE_SERVER', 'core.aceambala.com');
+         define('CORE_SERVER', 'core.'.DOMAIN_NAME);
         // Define path to Academics server.
         defined('ACADEMIC_SERVER') ||
-         define('ACADEMIC_SERVER', 'academic.aceambala.com');
+         define('ACADEMIC_SERVER', 'academic.'.DOMAIN_NAME);
         // Define path to Library server.
         defined('LIBRARY_SERVER') ||
-         define('LIBRARY_SERVER', 'library.aceambala.com');
+         define('LIBRARY_SERVER', 'library.'.DOMAIN_NAME);
         // Define path to Academics server.
         defined('ACCOUNT_SERVER') ||
-         define('ACCOUNT_SERVER', 'account.aceambala.com');
+         define('ACCOUNT_SERVER', 'account.'.DOMAIN_NAME);
     }
     protected function _initViewBase ()
     {
