@@ -7,10 +7,12 @@ class ErrorController extends Zend_Controller_Action
         $this->getResponse()->clearBody();
         $errors = $this->_getParam('error_handler');
         $message = null;
-        if (! $errors) {
+    
+        if (!$errors || !$errors instanceof ArrayObject) {
             $this->view->message = 'You have reached the error page';
             return;
         }
+        
         switch ($errors->type) {
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
@@ -26,16 +28,17 @@ class ErrorController extends Zend_Controller_Action
         }
         $exception = $errors->exception;
         if ($exception instanceof Exception) {
-            $code = $exception->getCode();
+            $priority = $exception->getCode();
             $message = $exception->getMessage();
             
             // Log exception, if logger available
             $log = $this->getLog();
             if ($log) {
-                if (0 <= $code and $code <= 8) {
-                    $log->log($exception->getMessage(), $code);
+                if (0 <= $priority and $priority <= 8) {
+		            $log->log($message, $priority, $errors->exception);
+		            $log->log('Request Parameters', $priority, $errors->request->getParams());
                 } else {
-                    $log->crit($code . ' ' . $message);
+                    $log->crit($priority . ' ' . $message);
                 }
             }
             

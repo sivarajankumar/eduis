@@ -27,6 +27,10 @@ $this->jQuery()->setLocalPath($cdnServer . '/js/jquery-1.6.2.min.js');
 // Jquery UI
 $this->jQuery()->setUiLocalPath(
 $cdnServer . '/js/jquery-ui-1.8.16.custom.min.js');
+
+$this->headLink()
+    ->appendStylesheet($protocol.CDN_SERVER . '/css/menu/stylesheet.css');
+
 /*
  * Adding JqGrid as default grid.
  */
@@ -91,35 +95,21 @@ echo $cdnServer . '/images/logos/mainLogo_' . $baseTheme . '.png';
 ?>">
 
 <div id="divTopNav">
-<ul id="topnav" class="ui-widget">
-	<li><a href="#" class="main">Home</a></li>
-	<li><a href="#" class="main">Department</a>
-	<div style="opacity: 0; display: none;" class="sub">
-	<ul>
-	</ul>
-	</div>
-	</li>
-	<li><a href="#" class="main">Library</a>
-	<div id="library" style="opacity: 0; display: none;" class="sub">
-	<div class="row">
-	<ul>
-	</ul>
-	</div>
-	</div>
-	</li>
-	<!--
-	<li><a href="#" class="main">Transport</a></li>
-	<li><a href="#" class="main">Hostel</a></li>
--->
+<div id="nav"> 
+<ul>
+	<li><a href="http://auth.aceambala.com" class="main">Home</a></li>
+	<li><a href="/" class="main">Core</a></li>
+	<li><a href="http://library.aceambala.com" class="main">Library</a></li>
 </ul>
 </div>
 </div>
 </div>
+</div>
 
 
 
 
-<div class="ui-widget container ui-corner-all"><!--<div id="moduleRibbon"></div>-->
+<div class="ui-widget container ui-corner-all">
 <div id="content">
     <?php
     echo $this->layout()->content;
@@ -128,70 +118,6 @@ echo $cdnServer . '/images/logos/mainLogo_' . $baseTheme . '.png';
 <div id="lastDiv"></div>
 <?php
 echo $this->headScript()?>
-
-<script type="text/javascript">
-$(document).ready(function() {
-    function megaHoverOver(){
-        $(this).find(".sub").stop().fadeTo('fast', 1).show();
-            
-        //Calculate width of all ul's
-        (function($) { 
-            jQuery.fn.calcSubWidth = function() {
-                rowWidth = 0;
-                //Calculate row
-                $(this).find("ul").each(function() {                    
-                    rowWidth += $(this).width(); 
-                }); 
-            };
-        })(jQuery); 
-        
-        if ( $(this).find(".row").length > 0 ) { //If row exists...
-            var biggestRow = 0; 
-            //Calculate each row
-            $(this).find(".row").each(function() {                             
-                $(this).calcSubWidth();
-                //Find biggest row
-                if(rowWidth > biggestRow) {
-                    biggestRow = rowWidth;
-                }
-            });
-            //Set width
-            $(this).find(".sub").css({'width' :biggestRow});
-            $(this).find(".main").addClass('ui-state-active ui-corner-top').removeClass('ui-corner-all');
-            $(this).find(".row:last").css({'margin':'0'});
-            
-        } else { //If row does not exist...
-            
-            $(this).calcSubWidth();
-            //Set Width
-            $(this).find(".sub").css({'width' : rowWidth});
-            $(this).find(".main").addClass('ui-state-active ui-corner-top').removeClass('ui-corner-all');
-            
-        }
-    }
-    
-    function megaHoverOut(){
-        $(this).find(".main").removeClass('ui-state-active').addClass('ui-corner-all');
-      $(this).find(".sub").stop().fadeTo('fast', 0, function() {
-          $(this).hide(); 
-      });
-    }
-
-
-    var config = {    
-         sensitivity: 2, // number = sensitivity threshold (must be 1 or higher)    
-         interval: 100, // number = milliseconds for onMouseOver polling interval    
-         over: megaHoverOver, // function = onMouseOver callback (REQUIRED)    
-         timeout: 500, // number = milliseconds delay before onMouseOut    
-         out: megaHoverOut // function = onMouseOut callback (REQUIRED)    
-    };
-
-    $("ul#topnav li .sub").css({'opacity':'0'});
-    $("ul#topnav li").hoverIntent(config);
-    $(".main").addClass("ui-widget-header ui-corner-all");
-    $(".sub").addClass("ui-state-highlight");
-
-});
-</script></div>
+</div>
 </body>
 </html>

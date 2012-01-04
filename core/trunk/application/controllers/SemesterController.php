@@ -34,8 +34,8 @@ class SemesterController extends Corez_Base_BaseController
         $valid = $request->getParam('nd');
         if ($request->isXmlHttpRequest() and $valid) {
             $this->grid = new $this->_helper->grid();
-            $this->grid->sql = $this->table->select()->from(
-            $this->table->info('name'));
+            $this->grid->sql = $this->model->select()->from(
+            $this->model->info('name'));
             $searchOn = $request->getParam('_search');
             if ($searchOn != 'false') {
                 $sarr = $request->getParams();

@@ -8,9 +8,6 @@ body {
 	text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */ ;
 	color: #000000;
 	font-family: Century;
-	background-repeat: repeat;
-	background-attachment: scroll;
-	background-color: #EEEECC;
 }
 
 #topContent {
@@ -61,6 +58,7 @@ padding:0;
 	text-align: left;
 	position: relative;
 	top: -1.5em;
+	box-shadow: 0 1px 0 #FFFFFF inset, 0 0 5px #EEEEEE inset;
 }
 
 
