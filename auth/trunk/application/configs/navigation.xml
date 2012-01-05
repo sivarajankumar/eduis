@@ -10,28 +10,9 @@
 			<resource>login_authenticate_index</resource>
 		</home>
 
-		<test_popo>
-			<label>popo test</label>
-			<module>login</module>
-			<controller>test</controller>
-			<action>popo</action>
-			<resource>login_test_popo</resource>
-		</test_popo>
-		
-		<test_gogo>
-			<label>gogo test</label>
-			<module>login</module>
-			<controller>test</controller>
-			<action>gogo</action>
-			<resource>login_test_gogo</resource>
-		</test_gogo>
-		
-		<test_gettest>
-			<label>gettest test</label>
-			<module>login</module>
-			<controller>test</controller>
-			<action>gettest</action>
-			<resource>login_test_gettest</resource>
-		</test_gettest>
+		<library_home>
+			<label>Library</label>
+			<uri>http://library.aceambala.com/</uri>
+		</library_home>
 	</nav>
 </config>
