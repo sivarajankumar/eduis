@@ -168,7 +168,7 @@ class BookController extends Libz_Base_BaseController {
 
 	public function circulationAction() {
 		$request = $this->getRequest ();
-		$process = $request->getParam ( 'process');
+		$process = $request->getParam ( 'process','issue');
 		$pDate = $request->getParam ( 'date');
 		$format = $request->getParam ( 'format', 'html' );
 		$book = new Lib_Model_Document_Book();
