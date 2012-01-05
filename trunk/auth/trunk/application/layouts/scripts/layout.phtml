@@ -7,7 +7,7 @@ $baseTheme = 'ui-lightness';
 // Various Servers and Addresses
 $baseUrl = $this->baseUrl ();
 // Content Delievery Server i.e. static Files, e.g. CSS, JS, Themes and related images etc
-$cdnServer = 'http://site.cdn.aceambala.com';
+$cdnServer = 'http://'.CDN_SERVER;
 // Images of users, events etc
 $imageServer = $baseUrl;
 
@@ -18,6 +18,10 @@ $this->jQuery ()->addStylesheet ( $cdnServer . '/css/themes/jqueryui/'.$baseThem
 
 // Add most common Script files
 $this->headScript()->prependFile($cdnServer . '/js/plugins/jquery.hoverIntent.minified.js');
+
+// Add most common Script files
+$this->headLink()
+    ->appendStylesheet($cdnServer . '/css/menu/stylesheet.css');
 
 // Jquery
 $this->jQuery ()->setLocalPath ( $cdnServer . '/js/jquery-1.6.2.min.js' );
@@ -37,60 +41,39 @@ echo $this->jQuery ()->uiEnable ();
 
 </head>
 
-<body class="ui-helper-reset" >
+<body>
 <div id="topContent" >
 <span id="topRightInfo">
-<span class="ui-state-default ui-corner-bottom">Today&rsquo;s date: <span id="datetext"><?php $date = new Zend_Date(); echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span>
+<span style="float: left;" class="ui-state-default ui-corner-bottom">Today&rsquo;s date: <span id="datetext"><?php $date = new Zend_Date(); echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span>
 <?php if (Zend_Auth::getInstance()->hasIdentity()) {
-	$authContent = Zend_Auth::getInstance()->getStorage ()->read ();
-	if ($authContent['identity'] != 'anon') { ?>
-<span class="ui-state-default ui-corner-bottom">Hi! <span id="userName"><?php echo $authContent['identity'];?></span></span>
-	<span class="ui-state-default ui-corner-bl"><a id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'logout' ), 'default' )?>">
-		Logout<span class="ui-icon ui-icon ui-icon-closethick ui-state-default ui-corner-br" style="float: right; padding-left: 1px; margin-left:-1px;">
-		</span></a></span>
-	<?php }else {?>
-	<span class="ui-state-default ui-corner-bl"><a id="login" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'index'), 'default' )?>">
-		Login</a></span>
+    $authContent = Zend_Auth::getInstance()->getStorage ()->read ();
+    if ($authContent['identity'] != Authz_Resource_Acl_Guest::GUEST_ID) { ?>
+	<span style="float: left;" class="ui-state-default ui-corner-bottom">Hi! <span id="userName"><?php echo $authContent['identity'];?></span></span>
+	<span style="width: 4.8em; float: left; " class="ui-state-default ui-corner-bottom">
+	<a style="float: left; text-decoration: none;"  id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'logout' ), 'default' )?>">
+	<span style="float: left;">Logout</span><span class="ui-icon ui-icon-closethick ui-corner-br" style="float: left; margin:0 -0.2em 0 0;"></span></a>
+	</span> 
+	<?php }?>
 <?php }?>
-<?php } else {?>
-	<span class="ui-state-default ui-corner-bl"><a id="login" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'index'), 'default' )?>">
-		Login</a></span>
-<?php }?>
+
 </span>
 
 <div id="header" >
 <?php 
 echo $this->applicationLogo('smoothness','Ambala College of Engineering')?>
 
-<div id="topNav">
-<?php //$this->navigation()->setAcl($authContent['acl'])->setRole($authContent['identity']);?></div>
+<div id="divTopNav">
+<div id="nav"><?php
+echo $this->navigation()->menu();?>
 </div>
 </div>
-<!-- Div below is required to keep layout at expected place  -->
-<div style="clear:both" >&nbsp;</div> 
+</div>
+</div>
+<div class="ui-widget container ui-corner-all">
+<hr/>
 <!-- Contents begin -->
-<div id="container" class="ui-corner-all">
-<div id="content">
-			<?php echo $this->layout ()->content; ?> </div>
-</div>
-<!-- 
-<div class="container  ui-widget ui-corner-all">
-<div id="module-info">&nbsp;</div>
- <div id="active-section" ><span class="ui-icon ui-icon-arrowreturnthick-1-e" style="float:left">I am here</span></div> 
-	
-<div id="footer" class="ui-state-default">
-<div id="footerCommonList">
-		<p><a href="<?php echo $baseUrl;?>">About us</a> | 
-		   <a href="<?php echo $baseUrl;?>">Contact us</a> | 
-		   <a href="<?php echo $baseUrl;?>">Feedback</a> | 
-		   <a href="<?php echo $baseUrl;?>">Suggestions</a> | 
-		   <a href="<?php echo $baseUrl;?>">Developers</a>
-	   </p>
-	</div>
-</div>
--->
+<div id="content"><?php echo $this->layout ()->content; ?> </div>
 <?php echo $this->headScript()?>
+</div>
 </body>
-<?php 
-		//echo $this->navigation()->menu();?>
 </html>

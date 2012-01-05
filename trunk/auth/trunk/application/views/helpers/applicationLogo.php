@@ -27,8 +27,8 @@ class Zend_View_Helper_ApplicationLogo extends Zend_View_Helper_Abstract
             }
             $classString = ' class = "' . $this->view->escape($class) . '" ';
         }
-        $imgHtmlString = '<img src="http://' . CDN_SERVER .'/images/logos/mainLogo_' . $theme . '.' . $imgFormat . '"' .
-         					'alt="' .$img_alt . '" ' . $classString . '/>';
+        $imgHtmlString = '<a href="/"><img src="http://' . CDN_SERVER .'/images/logos/mainLogo_' . $theme . '.' . $imgFormat . '"' .
+         					'alt="' .$img_alt . '" ' . $classString . '/></a>';
         return $imgHtmlString;
     }
 }
