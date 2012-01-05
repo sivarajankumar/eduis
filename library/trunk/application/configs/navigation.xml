@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 	<nav>
+		<home>
+			<label>Home</label>
+			<order>-100</order>
+			<uri>http://auth.aceambala.com/</uri>
+		</home>
 		<library_home>
 			<label>Library</label>
-			<order>-100</order>
+			<order>-99</order>
 			<module>library</module>
 			<controller>index</controller>
 			<action>index</action>
