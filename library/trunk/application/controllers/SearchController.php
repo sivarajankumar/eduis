@@ -67,17 +67,6 @@ class SearchController extends Libz_Base_BaseController {
 
     public function fillgridAction () {
         $this->model = new Lib_Model_DbTable_Isbn();
-        $this->dbCols[] = 'isbn.isbn_id';
-        $this->dbCols[] = 'acc_no';
-        $this->dbCols[] = 'title';
-        $this->dbCols[] = 'author';
-        $this->dbCols[] = 'place_publisher';
-        //$this->dbCols [] = 'subject_code';
-        $this->dbCols[] = 'edition';
-        $this->dbCols[] = 'status_id';
-        $this->dbCols[] = 'document_type_id';
-        $this->dbCols[] = 'rack_id';
-        $this->dbCols[] = 'shelf';
         $request = $this->getRequest();
         $valid = $request->getParam('nd');
         if ($valid) {
@@ -85,9 +74,9 @@ class SearchController extends Libz_Base_BaseController {
             $this->grid->sql = $this->model->getDefaultAdapter()
                 ->select()
                 ->from($this->model->info('name'), 
-            array('isbn_id', 'title', 'author', 'edition','place_publisher'))
+            array('isbn_id','book.acc_no', 'title', 'author', 'edition','place_publisher'))
                 ->join('book', 'book.isbn_id = isbn.isbn_id', 
-            array('acc_no', 'status','document_type_id', 'rack_id', 'shelf'));
+            array( 'status','document_type_id','isbn.year','isbn.cost', 'rack_id', 'shelf'));
             $searchOn = $request->getParam('_search');
             if ($searchOn != 'false') {
                 $sarr = $request->getParams();
@@ -100,6 +89,8 @@ class SearchController extends Libz_Base_BaseController {
                         case 'edition':
                         case 'status':
                         case 'document_type_id':
+                        case 'year':
+                        case 'cost':
                             $this->grid->sql->where("$key = ?", $value);
                             break;
                         case 'title':
