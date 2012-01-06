@@ -3,6 +3,7 @@ jQuery.extend(jQuery.jgrid.defaults, {
 	datatype : "json",
 	sortable : true,
 	height : '100%',
+    rowList:[10,20,30,40,50],
 	//altRow : true,
 	autowidth : true,
 	gridview : true,   //afterInsertRow will not work if it is true.
