@@ -30,12 +30,12 @@ class Core_Model_DbTable_AcademicSession extends Corez_Base_Model
     public static function getSessionStartDate ()
     {
         $session = self::currentSessionInfo();
-        return $session['start_date'];
+        return new Zend_Date($session['start_date']);
     }
     public static function getSessionEndDate ()
     {
         $session = self::currentSessionInfo();
-        return $session['end_date'];
+        return new Zend_Date($session['end_date']);
     }
 }
 ?>

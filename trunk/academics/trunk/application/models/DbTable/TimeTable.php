@@ -5,7 +5,7 @@
  * @version 2.0
  *
  */
-class Acad_Model_DbTable_TimeTable extends Acadz_Base_Model
+class Acad_Model_DbTable_TimeTable extends Acadz_Base_Model_Dbtable
 {
     protected $_name = 'timetable';
     const TABLE_NAME = 'timetable';

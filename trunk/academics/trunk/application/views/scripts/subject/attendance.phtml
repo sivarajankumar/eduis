@@ -1,6 +1,6 @@
 <?php 
-$fail  = $this->fail;
-$pass = $this->pass;
+$fail  = $this->lowerThreshold;
+$pass = $this->upperThreshold;
 const PASS = 'pass';
 const AVERAGE = 'average';
 const FAIL = 'fail';
@@ -61,6 +61,9 @@ const FAIL = 'fail';
 	border: 1px outset;
 	cursor: pointer;
 }
+.li_container{
+	display: none;
+}
 .<?php echo PASS;?> {
 	color: #339900;
 	
@@ -89,21 +92,25 @@ const FAIL = 'fail';
 		clear: none;
 }
 
-div.smallPie
-{
+div.smallPie{
 	float:right;
-width: 18em;
-height: 140px;
-clear: none;
+    width: 18em;
+    height: 140px;
+    clear: none;
 }
+
 div.factWords{
 	float: left;
 	width: 20em;
-	
 }
-div.listContainer {
+#ranges{
+	float: left;
 }
-	
+#ranges div {
+		width: 25em;	}
+
+
+
 @MEDIA print{
 	.noprint {
 		display: none;
@@ -143,20 +150,35 @@ div.listContainer {
 	class="ui-corner-all" style="text-align: center" value="<?php echo $this->subject_code?>" ></input></label>
 	<label>Subject Mode: <input id="subject_mode_id" name="subject_mode_id" type="text"
 			class="ui-corner-all" style="text-align: center" value="<?php echo $this->subject_mode_id?>" ></input></label>
-	<br/><br/><label>Lower Range: <input id="fail" name="fail" type="text"
-			class="ui-corner-all" style="text-align: center" value="<?php echo $this->fail?>" ></input></label>
-	<label>Upper Range: <input id="pass" name="pass" type="text"
-			class="ui-corner-all" style="text-align: center" value="<?php echo $this->pass?>" ></input></label>
+	<br/><br/>
+<div id="ranges">
+	<span>Highlight range 
+			from <input  id="highlight_lower" name="lower" readonly="readonly" value="<?php echo $this->lowerThreshold?>" style="border:0;" size="2" /> 
+			to <input id="highlight_upper" name="upper" readonly="readonly" value="<?php echo $this->upperThreshold?>"  style="border:0;" size="2"  /></span>
+	<div id="highlight" upper="<?php echo $this->upperThreshold?>"><?php echo $this->lowerThreshold?></div>
+	<span>Filter students range 
+			from <input id="filter_lower" name="filter_below" readonly="readonly" value="<?php echo $this->filterBelow?$this->filterBelow:0 ?>"  style="border:0;" size="2"   /> 
+			to <input id="filter_upper" name="filter_above" readonly="readonly" value="<?php echo $this->filterAbove?$this->filterAbove:100?>"  style="border:0;" size="2"   > </span>
+	<div id="filter" upper="<?php echo $this->filterAbove?$this->filterAbove:100?>"><?php echo $this->filterBelow?$this->filterBelow:0 ?></div>
+</div>
+<label>Date from:<input type="text" id="date_from" name="date_from" readonly="readonly" value="<?php 
+$dateFrom = new Zend_Date();
+if ($this->date_from) {
+    $dateFrom->setDate($this->date_from);
+} else{
+    $dateFrom->setDate($this->session_startdate);
+}
+echo $dateFrom->get(Zend_Date::DATE_MEDIUM); ?>" class="ui-widget-content ui-corner-all" style="text-align: center"></input></label>
+<label>Date upto:<input type="text" id="date_upto" name="date_upto" readonly="readonly" value="<?php
+$dateUpto = new Zend_Date();
+if ($this->date_upto) {
+    $dateUpto->setDate($this->date_upto);
+}
+echo $dateUpto->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-all" style="text-align: center"></input></label>
+
 	<button type="submit" class="ui-corner-all" style="font-size: 0.7em;">Show</button>
 </form>
 <?php 
-$modeArray = array();
-/**
- * 
- * Small facts related to report. e.g. no. of students having short attendance, or average attedance etc
- * @var array
- */
-$factoids = array();
 if (isset($this->department_id) and isset($this->subject_code)) { ?>
     <h1>SUBJECT REPORT</h1>
 	<h2><?php echo $this->subject_name?> / <?php echo $this->subject_code?> </h2>
@@ -168,6 +190,7 @@ $this->headTitle('Subject Report '.$this->subject_name.'('.$this->subject_code.'
 }
 ?>
 <hr/>
+<a id="toggleReport" class="noprint" style="text-decoration: none; float: right; " href="javascript:">Toggle Report</a>
 </div>
 <div class="reportDiv" >
 <a id="panLeft" class="noprint" style="text-decoration: none; display:none;" href="javascript: panLeft();"><span class="arrow-left"></span></a>
@@ -177,66 +200,50 @@ $this->headTitle('Subject Report '.$this->subject_name.'('.$this->subject_code.'
 	style="margin-left: 3em; margin-top: 2em; width: 600px; height: 8em"></div>
 </div>
 <?php 
-if (isset($this->attendance)) {
-    if (empty($this->attendance)) {
+if (isset($this->attendanceSet)) {
+    if (empty($this->attendanceSet)) {
         ?>
         <p>The output is empty.</p>
         <?php
         return;
     }
     
-    $subjectModes = array_keys($this->attendance);
+    $subjectModes = $this->subjectModes;
+    $summary  = $this->summary;
+    $stuModeWiseAtt = $this->stuModeWiseAtt;
     /*echo '<div class="reportNav noprint">';
     foreach ($subjectModes as $key => $subjectMode) {
         echo '<a href="#subjectMode'.$subjectMode.'">'.$subjectMode.'</a>&nbsp;';
     }
     echo '</div>';*/
-    foreach ($this->attendance as $subjectMode => $groups) {
+    foreach ($this->attendanceSet as $subjectMode => $groups) {
         ?>
         <div class="sectionDiv" id="subjectMode<?php echo $subjectMode?>" >
         	<h3><?php echo $subjectMode?></h3>
         <?php 
-        foreach ($groups as $group_id => $students) {
-        $totalDelievered = (int)$this->stat[$subjectMode][$group_id]['delievered'];
-        $avgPresent = $totalDelievered - $this->stat[$subjectMode][$group_id]['AVERAGE']['ABSENT'];
-        $avgPercentage = ($avgPresent/$totalDelievered)*100;
-        $factoids[$subjectMode][$group_id]['total_delievered'] = $totalDelievered;
-        $factoids[$subjectMode][$group_id]['total_duration'] = 
-            $this->stat[$subjectMode][$group_id]['total_duration'];
-        $factoids[$subjectMode][$group_id]['average_attedance'] = round($avgPercentage);?>
+        foreach ($groups as $group_id => $students) {?>
         
                 <h4>Group: <?php echo $group_id; ?></h4>
-                <div class="noprint"><a class="less" href="javascript:">less...</a></div>
-                <div class="listContainer" >
-               <ol class="cellSet">
+                <a class="more noprint" href="javascript:">Expand</a>
+                <ol class="cellSet">
                 <?php
-                    
-                    $factoids[$subjectMode][$group_id][PASS] = 0;
-                    $factoids[$subjectMode][$group_id][AVERAGE] = 0;
-                    $factoids[$subjectMode][$group_id][FAIL] = 0;
+                    $totalDelievered = (int)$this->summary[$subjectMode][$group_id]['total_delievered'];
+                    $totalStudents = 0;
                     foreach ($students as $rollNo => $student) {
-                        //if (isset($student['ABSENT'])) {
                             $present =  $totalDelievered - $student['ABSENT'];
-                            $percentage = ($present/$totalDelievered)*100;
-                            $attendance = round($percentage);
-                            
-                            $modeArray[$rollNo][$subjectMode] = $attendance;
-                            //$modeArray[$subjectMode]['attendance'][] = ;
+                            $attendance = $stuModeWiseAtt[$rollNo][$subjectMode];
                             
                             $division = ceil($attendance);
                             switch ($division) {
                                 case 0:
                                 case ($division < $fail):
                                     $status = FAIL;
-                                    $factoids[$subjectMode][$group_id][FAIL] +=1;
                                 break;
                                 case ($division < $pass):
                                     $status = AVERAGE;
-                                    $factoids[$subjectMode][$group_id][AVERAGE] +=1;
                                 break;
                                 default:
                                     $status = PASS;
-                                    $factoids[$subjectMode][$group_id][PASS] +=1;
                                 break;
                             }
                             ?>
@@ -247,19 +254,19 @@ if (isset($this->attendance)) {
                 				</span>
             				</span>
         				</li>
-                   <?php //} 
+                   <?php $totalStudents++;
                     } ?>
                     
                 </ol>
-                </div>
-                <div class="noprint"><a class="more" href="javascript:"
-	style="display: none;">more...</a></div>
+                <a class="less noprint" href="javascript:"
+	style="display: none;">collapse</a>
             <h5>Summary :</h5>
             <div class="facts">
             <div class="factWords">
             <b>Total Delievered</b>: <?php echo $totalDelievered;?><br/>
-        	<b>Total Duration</b>: <?php echo $factoids[$subjectMode][$group_id]['total_duration'];?><br/>
-        	<b>Avg. Attendance</b>: <?php echo $factoids[$subjectMode][$group_id]['average_attedance']?>%<br/>
+        	<b>Total Duration</b>: <?php echo $summary[$subjectMode][$group_id]['total_duration'];?><br/>
+        	<b>Students</b>: <?php echo $totalStudents;?><br/>
+        	<b>Avg. Attendance</b>: <?php echo $summary[$subjectMode][$group_id]['average_attedance']?>%<br/>
         	<span class="stucount"></span>
             </div>
         	<div id="<?php echo $subjectMode.$group_id?>_pie" class="smallPie" ></div>
@@ -268,9 +275,9 @@ if (isset($this->attendance)) {
         	<script type="text/javascript">
         	$(function(){
             var <?php echo $subjectMode.$group_id?>pieData = [
-                          { label: "above <?php echo $pass?>", data: <?php echo $factoids[$subjectMode][$group_id][PASS]?>},
-                           { label: "<?php echo $fail?> to <?php echo $pass?>", data: <?php echo $factoids[$subjectMode][$group_id][AVERAGE]?>},
-                           { label: "below <?php echo $fail?>", data: <?php echo $factoids[$subjectMode][$group_id][FAIL]?>}
+                          { label: "above <?php echo $pass?>", data: <?php echo $summary[$subjectMode][$group_id][PASS]?>},
+                           { label: "<?php echo $fail?> to <?php echo $pass?>", data: <?php echo $summary[$subjectMode][$group_id][AVERAGE]?>},
+                           { label: "below <?php echo $fail?>", data: <?php echo $summary[$subjectMode][$group_id][FAIL]?>}
                        ];
 
             var pie = $("#<?php echo $subjectMode.$group_id?>_pie");
@@ -306,72 +313,31 @@ if (isset($this->attendance)) {
     		</div>
     		<h5>Faculty Member(s)</h5>
         	<?php 
-        	foreach ($this->faculty[$subjectMode][$group_id] as $facultyId => $facultySubjectInfo) {
-    	            foreach ($facultySubjectInfo as $key => $info) {
-    	            $faculty = new Acad_Model_Member_Faculty(array('facultyId'=>$facultyId));
-            	        $date_from = date_create_from_format('Y-m-d', $info['date_from']);
-            	        $date_upto = date_create_from_format('Y-m-d', $info['date_upto']);
-            	        $name = $faculty->getName();
-            	        echo '<div>'.$name.' ( '.date_format($date_from, 'd/M') .' : '.date_format($date_upto, 'd/M').' ) </div>';
-    	            }
+        	foreach ($summary[$subjectMode][$group_id]['faculty'] as $facultyId => $info) {
+            	        echo '<div>'.$info['name'].' ( '.$info['date_from'] .' : '.$info['date_upto'].' ) </div>';
         	}
         }
     }
 
-        if (!isset($this->subject_mode_id) and (count($subjectModes) > 1)) { ?>
-            
-                <?php
-                    
-                    $factoids['combined'][PASS] = 0;
-                    $factoids['combined'][AVERAGE] = 0;
-                    $factoids['combined'][FAIL] = 0;
-                    $basicModes = array_flip($subjectModes);
-                    $maxPercentage = 100;
-                    /**
-                     * I am doing it this way due to following reasons:
-                     * -> WE have only absent students records
-                     * -> If a student attendance is 100% the raw data dont have its record right now
-                     * and attendance of a student may be 100% in LEC and less in TUT....
-                     * So, I set 100% attendance by default, if a student entry is missing then
-                     * There are two cases, either its attendance not marked or 100%attendance,
-                     * Here, it is assumed that attendance is 100%
-                     */
-                    foreach ($basicModes as $subjectMode => $value) {
-                        $basicModes[$subjectMode] = $maxPercentage;
-                    }
-                    
-                    ?>
-                    
-        			<h3>Combined Result</h3>
+        if (count($subjectModes) > 1) { ?>
+        			<h3>NUTSHELL</h3>
+                    <a class="more noprint" href="javascript:">Expand</a>
                     <ol class="cellSet"><?php
-                    $factoids['combined'][PASS] = 0;
-                    $factoids['combined'][AVERAGE] = 0;
-                    $factoids['combined'][FAIL] = 0;
-                    foreach ($modeArray as $rollNo => $modesAttendance) {
-                        //setting missing modes attendance value to 100%
-                            $modesAttendance = array_merge($basicModes,$modesAttendance);
-                            $totalPercentage = 0;
-                            foreach ($modesAttendance as $subjectMode => $percentage) {
-                                $totalPercentage += $percentage;
-                            }
-                            $modeArray[$rollNo]['average'] = $totalPercentage/(count($modesAttendance));
-                            
-                            $attendance = round($modeArray[$rollNo]['average']);
+                    $totalStudents = 0;
+                    foreach ($stuModeWiseAtt as $rollNo => $modesAttendance) {
+                            $attendance = round($stuModeWiseAtt[$rollNo]['average']);
                             
                             $division = ceil($attendance);
                             switch ($division) {
                                 case 0:
                                 case ($division < $fail):
                                     $status = FAIL;
-                                    $factoids['combined'][FAIL] +=1;
                                 break;
                                 case ($division < $pass):
                                     $status = AVERAGE;
-                                    $factoids['combined'][AVERAGE] +=1;
                                 break;
                                 default:
                                     $status = PASS;
-                                    $factoids['combined'][PASS] +=1;
                                 break;
                             }
                             ?>
@@ -382,11 +348,17 @@ if (isset($this->attendance)) {
                 				</span>
             				</span>
         				</li>
-    		<?php } ?>
+    		<?php $totalStudents++;
+                    } ?>
     		
                 </ol>
+                <a class="less noprint" href="javascript:"
+	style="display: none;">collapse</a>
                 <h5>Combined Summary :</h5>
             <div  style="width: 20em"  class="facts">
+            <div class="factWords">
+        	<b>Students</b>: <?php echo $totalStudents;?><br/>
+            </div>
         	<div id="combined_pie" class="smallPie" ></div>
         	
         	<div  style="float: left;" class="stucount"></div>
@@ -394,9 +366,9 @@ if (isset($this->attendance)) {
         	<script type="text/javascript">
         	$(function(){
             var combinedpieData = [
-                          { label: "above <?php echo $pass?>", data: <?php echo $factoids['combined'][PASS]?>},
-                           { label: "<?php echo $fail?> to <?php echo $pass?>", data: <?php echo $factoids['combined'][AVERAGE]?>},
-                           { label: "below <?php echo $fail?>", data: <?php echo $factoids['combined'][FAIL]?>}
+                          { label: "above <?php echo $pass?>", data: <?php echo $summary['combined'][PASS]?>},
+                           { label: "<?php echo $fail?> to <?php echo $pass?>", data: <?php echo $summary['combined'][AVERAGE]?>},
+                           { label: "below <?php echo $fail?>", data: <?php echo $summary['combined'][FAIL]?>}
                        ];
 
             var pie = $("#combined_pie");
@@ -440,30 +412,30 @@ if (isset($this->attendance)) {
 <script>
 //jQueryfy buttons
 $("button").button();
+
+$( "#ranges > div" ).each(function() {
+	// read initial values from markup and remove that
+	var lValue = parseInt( $( this ).text(), 10 );
+	var uValue = parseInt( $( this ).attr('upper'), 10 );
+	$( this ).empty().slider({
+		animate: true,
+		range: true,
+		values: [lValue,uValue],
+		slide: function( event, ui ) {
+			var rangeName = $( this ).attr('id');
+			var infoSet = $( this ).prev();
+			$( '#'+rangeName+'_lower' ).val( ui.values[ 0 ] );
+			$( '#'+rangeName+'_upper' ).val( ui.values[ 1 ] );
+		}
+	});
+});
+
+
+
+
 var fieldWidth = 2;
 var valueWidth = 2;
 var cellWidth = 2;
-var plot;
-var lastSel;
-var placeholder = $("#placeholder");
-var overviewholder = $("#overview");
-
-var testSets = {};
-var statData = [];
-var students = [];
-
-var subjectMode = '';
-var subjectModes = <?php echo Zend_Json::encode($subjectModes);?>;
-var attendanceData = <?php
-	    
-	    $attendanceData = array();
-	    foreach ($modeArray as $rollNo => $attModes) {
-	        $attendanceData[] = array('roll_no'=>$rollNo,
-	                                    'attendance'=>$attModes);
-	    }
-	    echo Zend_Json::encode($attendanceData); ?>;
-var maxPossibleStu = <?php echo count($attendanceData);?>;
-var maxPossibleMarks = 100;
 $('.cell').each(function(){
 	var field = $(this).children('.field');
 	var value = $(this).children('.value');
@@ -484,7 +456,35 @@ $('.field').css('width', fieldWidth + 'px');
 $('.value').css('width', valueWidth + 'px');
 $('.cell').css('max-width', (cellWidth+30) + 'px');
 
+var plot;
+var lastSel;
+var placeholder = $("#placeholder");
+var overviewholder = $("#overview");
+
 $(function(){
+	
+	var testSets = {};
+	var statData = [];
+	var students = [];
+	var session_startdate = '<?php echo $this->session_startdate->get(Zend_Date::DATE_MEDIUM);?>';
+    var serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+    // @FIXME session_startdate is in different format because its date from db server.
+    var sessionStartdateObj= $.datepicker.parseDate('dd-mm-yy', session_startdate);
+	
+	var subjectMode = '';
+	var subjectModes = <?php echo Zend_Json::encode($subjectModes);?>;
+	var attendanceData = <?php
+		    
+		    $attendanceData = array();
+		    foreach ($stuModeWiseAtt as $rollNo => $attModes) {
+		        $attendanceData[] = array('roll_no'=>$rollNo,
+		                                    'attendance'=>$attModes);
+		    }
+		    echo Zend_Json::encode($attendanceData); ?>;
+
+	var maxPossibleMarks = 100;
+	var maxPossibleStu = <?php echo count($attendanceData);?>;
+	
 	$('.cellSet').makeacolumnlists({cols:4,colWidth:(cellWidth+30)});
 	var pHolderWidth = (placeholder.parent().width()*parseInt(95))/100;
 	placeholder.width(pHolderWidth).height(400);
@@ -648,19 +648,30 @@ $(function(){
       /*
         Show-Hide things...
       */
-      $('a.more').click(function() {
-          $(this).toggle();
-          var parent = $(this).parent().parent();
-          parent.find('.listContainer').slideToggle("slow");
-          parent.find('a.less').slideToggle();
-        });
-
       $('a.less').click(function() {
           $(this).toggle();
-          var parent = $(this).parent().parent();
-          parent.find('.listContainer').slideToggle("slow");
-          parent.find('a.more').slideToggle();
+          var targetDiv = $(this).prev();
+          targetDiv.slideToggle("slow");
+          targetDiv.prev().slideToggle();
+        });
+
+      $('a.more').click(function() {
+          $(this).toggle();
+          var targetDiv = $(this).next();
+          targetDiv.slideToggle("slow");
+          targetDiv.next().slideToggle();
        });
+
+      $('#toggleReport').click(function() {
+    	  $('a.more').trigger('click');
+       });
+
+      $("#date_from,#date_upto").datepicker({
+      	minDate : sessionStartdateObj,
+      	maxDate : serverDateObj,
+      	dateFormat: 'dd-mm-yy',
+      	showButtonPanel: true
+      });
 });
 
 function pieHover(event, pos, obj){

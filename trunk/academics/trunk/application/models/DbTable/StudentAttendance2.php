@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_DbTable_StudentAttendance2 extends Acadz_Base_Model
+class Acad_Model_DbTable_StudentAttendance2 extends Acadz_Base_Model_Dbtable
 {
     protected $_name = 'student_attendance2';
     protected $logger;

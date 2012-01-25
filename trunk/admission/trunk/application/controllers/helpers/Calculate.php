@@ -28,7 +28,7 @@ class Admsn_Controller_Helper_Calculate extends Zend_Controller_Action_Helper_Ab
      */
     function percentage($marksObt, $totMarks) {
         $result = ($marksObt*$totMarks)/100;
-        $result = null;
+        //$result = null;
         return $result;
     }
 }

@@ -103,7 +103,10 @@ class Acad_Model_Course_SubjectMapper
                                         		'semester_id',
                                                 'group_id',
                                                 'faculty_id',
-                                                'subject_mode_id'))
+                                                'subject_mode_id',
+                                                'MIN(period_date) AS date_from',
+                                                'MAX(period_date) AS date_upto'
+                                                ))
             ->where('`subject_code` = ?', $subject->getSubject_code())
             ->group(array('faculty_id','group_id','subject_mode_id'));
             
@@ -116,15 +119,13 @@ class Acad_Model_Course_SubjectMapper
             $select->where('department_id = ?', $department);
         }
         if ($dateFrom) {
-            $select->where('`date_from` >= ?', $dateFrom);
-        } else {
-            $select->columns('MIN(period_date) AS date_from');
+            $date = new Zend_Date($dateFrom);
+            $select->where('`period_date` >= ?', $date->get(Zend_Date::ISO_8601));
         }
     
         if ($dateUpto) {
-            $select->where('`date_upto` <= ?', $dateUpto);
-        } else {
-            $select->columns('MAX(period_date) AS date_upto');
+            $date = new Zend_Date($dateUpto);
+            $select->where('`period_date` <= ?', $date->get(Zend_Date::ISO_8601));
         }
         $dbResult =  $select->query()->fetchAll();
         
@@ -230,7 +231,8 @@ class Acad_Model_Course_SubjectMapper
         $select->from('period_attendance2', 
         array('subject_mode_id', 
         'delievered' => 'COUNT(attendance_id)', 
-        'total_duration' => 'SUM(duration)'))
+        'total_duration' => 'SUM(duration)',
+        'group_id'))
             ->where('subject_code = ?', $subject_code)
             ->group($groupByCols)
             ->order($orderByCols);
@@ -238,15 +240,15 @@ class Acad_Model_Course_SubjectMapper
             $select->where('department_id = ?', $department);
         }
         if ($dateFrom) {
-            $select->where('period_date >= ?', $dateFrom);
+            $date = new Zend_Date($dateFrom);
+            $select->where('period_date >= ?',  $date->get(Zend_Date::ISO_8601));
         }
         if ($dateUpto) {
-            $select->where('period_date <= ?', $dateUpto);
+            $date = new Zend_Date($dateUpto);
+            $select->where('period_date <= ?',  $date->get(Zend_Date::ISO_8601));
         }
         if ($group_id) {
             $select->where('group_id = ?', $group_id);
-        } else {
-            $select->columns('group_id');
         }
         
         $modeString = self::_subjectModeQuery($subject);
@@ -284,7 +286,7 @@ class Acad_Model_Course_SubjectMapper
      */
     public function fetchStudentAttendance (Acad_Model_Course_Subject $subject, 
     $dateFrom = NULL, $dateUpto = NULL, $status = NULL, $group_id = NULL,
-    $maxAbsent = NULL,$minAbsent = NULL)
+    $maxAbsent = NULL,$minAbsent = NULL, $coditionalMode = NULL)
     {
         $subject_code = $subject->getSubject_code();
         $department = $subject->getDepartment();
@@ -318,11 +320,14 @@ class Acad_Model_Course_SubjectMapper
         if ($department) {
             $select->where('department_id = ?', $department);
         }
+        
         if ($dateFrom) {
-            $select->where('period_date >= ?', $dateFrom);
+            $date = new Zend_Date($dateFrom);
+            $select->where('period_date >= ?', $date->get(Zend_Date::ISO_8601));
         }
         if ($dateUpto) {
-            $select->where('period_date <= ?', $dateUpto);
+            $date = new Zend_Date($dateUpto);
+            $select->where('period_date <= ?', $date->get(Zend_Date::ISO_8601));
         }
         if ($status) {
             $select->where('status = ?', $status);
@@ -333,14 +338,19 @@ class Acad_Model_Course_SubjectMapper
             $select->columns('group_id');
         }
     
+        if ($maxAbsent) {
+            $select->having('counts <= ?', $maxAbsent);
+        }
         if ($minAbsent) {
             $select->having('counts >= ?', $minAbsent);
         }
-        if ($maxAbsent) {
-            $select->where('counts <= ?', $maxAbsent);
+        
+        if (is_string($coditionalMode) and $coditionalMode) {
+            $select->where('subject_mode_id = ?',$coditionalMode);
+        } else {
+            $modeString = self::_subjectModeQuery($subject);
+            $select->where($modeString);
         }
-        $modeString = self::_subjectModeQuery($subject);
-        $select->where($modeString);
         
         return $select->query()->fetchAll(Zend_Db::FETCH_GROUP);
     }
