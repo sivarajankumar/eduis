@@ -7,8 +7,13 @@
  * 
  * @uses       Acad_Model_SubjectMapper
  */
-class Acad_Model_Course_Subject
+class Acad_Model_Course_Subject extends Acadz_Base_Model
 {
+    
+     const PASS = 'pass';
+     const AVERAGE = 'average';
+     const FAIL = 'fail';
+     
     /**
      * Subject code
      * @var string
@@ -56,11 +61,26 @@ class Acad_Model_Course_Subject
      */
     protected $_totalAttendance;
     /**
+     * Processed attentdance result from db.
+     * Data for summary of attendance.
+     * @var array
+     */
+    protected $_attendanceStat;
+    
+    /**
      * Processed attentdance result.
      * Summary or abstract of attendance.
      * @var unknown_type
      */
-    protected $_attendanceStat;
+    protected $_summary;
+    
+    /**
+     * Student wise Processed attentdance result.
+     * Student wise Summary or abstract of attendance in each mode.
+     * @var unknown_type
+     */
+    protected $_stuModeWiseAtt;
+    
     /**
      * Set Subject Mapper
      * @param Acad_Model_Course_SubjectMapper $mapper - Subject Mapper
@@ -104,7 +124,7 @@ class Acad_Model_Course_Subject
         return $this->_subject_code;
     }
     /**
-	 * @return the $_subject_name
+	 * @return $_subject_name
 	 */
 	public function getSubject_name() {
 	    if (!isset($this->_subject_name)) {
@@ -215,13 +235,15 @@ class Acad_Model_Course_Subject
         if (! empty($faculty)) {
             $this->_faculty = $faculty;
         } else {
-            $this->_faculty = $this->getMapper()->getFaculties($this);
+            $this->_faculty = $this->getMapper()->getFaculties($this,$dateFrom, $dateUpto);
         }
         return $this;
     }
     /**
      * Get class/semester wise faculty of subject and corresponding mode of subject.
      * @return array $faculty class/semester wise faculty of subject and corresponding mode of subject.
+     * @param date $dateFrom - faculty teaching the subject from given date
+     * @param date $dateUpto - faculty teaching the subject upto given date
      */
     public function getFaculty ($dateFrom = NULL, $dateUpto = NULL)
     {
@@ -237,6 +259,7 @@ class Acad_Model_Course_Subject
     {
         return $this->getMapper()->fetchTest($this, $locked);
     }
+
     /**
      * Total delievered, total duration, corrosponding groups and modes.
      * 
@@ -262,49 +285,67 @@ class Acad_Model_Course_Subject
     $status_id = NULL, $group_id = NULL, $minPercentage = NULL, $maxPercentage = NULL,$forceUpdate = FALSE)
     {
         $rawAttendance = array();
+    
+        self::getAttendanceTotal($dateFrom, $dateUpto, $group_id, $forceUpdate);
+    
         $maxAbsent = $minAbsent = null;
-        if (isset($minPercentage) or isset($maxPercentage)) {
-            self::getAttendanceTotal($dateFrom, $dateUpto, $group_id, $forceUpdate);
+        foreach ($this->_totalAttendance as $subjectMode => $group) {
+            foreach ($group as $group => $delieveredInGroup) {
+                    $delievered = $delieveredInGroup['delievered'];
+                if (isset($minPercentage)) {
+                    $maxAbsent = ((100- $minPercentage)/100)*$delievered;
+                    //$this->getLogger()->debug('$maxAbsent: '.$minPercentage.'% of '.$delievered.' is '.$maxAbsent.' in '.$subjectMode);
+                    
+                }
             
+                if (isset($maxPercentage)) {
+                    $minAbsent = ((100- $maxPercentage)/100)*$delievered;
+                    //$this->getLogger()->debug('$minAbsent: '.$maxPercentage.'% of '.$delievered.' is '.$maxAbsent.' in '.$subjectMode);
+                }
+                
+                $subjectModeWiseResult = $this->getMapper()
+                    ->fetchStudentAttendance($this, $dateFrom, $dateUpto, 
+                                            $status_id, $group_id, $maxAbsent,$minAbsent,$subjectMode);
+                $rawAttendance[$subjectMode] = isset($subjectModeWiseResult[$subjectMode])?$subjectModeWiseResult[$subjectMode]:array();
+            }
         }
         
+        //$this->getLogger()->info('raw attendance');
+        //$this->getLogger()->debug($rawAttendance);
         if (empty($this->_studentAttendance) or $forceUpdate) {
-            $rawAttendance = $this->getMapper()
-                        ->fetchStudentAttendance($this, $dateFrom, $dateUpto, 
-                                                $status_id, $group_id, $maxAbsent,$minAbsent);
-                                                
-        
-            foreach ($rawAttendance as $subject_mode => $studentsList) {
+            
+            
+            
+            foreach ($rawAttendance as $subjectMode => $studentsList) {
                 foreach ($studentsList as $key => $student) {
                     $group = isset($student['group_id'])?$student['group_id']:$group_id;
                     $status = $student['status'];
                     $roll = $student['student_roll_no'];
-                    $this->_studentAttendance[$subject_mode][$group][$roll][$status] = $student['counts'];
+                    $this->_studentAttendance[$subjectMode][$group][$roll][$status] = $student['counts'];
                 }
             }
         }
     
         return $this->_studentAttendance;
     }
+    
     /**
      * Total number of students enrolled in subject and their average attendance percentage.
      * 
      * @param date $dateFrom
      * @param date $dateUpto
      */
-    public function getStudentAttendanceStat ($dateFrom = NULL, $dateUpto = NULL, $status = NULL, 
-                                                $group_id = NULL)
+    public function getStudentAttendanceStat ()
     {
-        if (empty($this->_studentAttendance)) {
-            self::getStudentAttendance($dateFrom, $dateUpto, 
-                                        $status, $group_id);
+        if (isset($this->_attendanceStat)) {
+            return $this->_attendanceStat;
+        }
+        if (NULL === $this->_totalAttendance) {
+            throw new Exception('Subject attendance is not set.(Hint: call getAttendanceTotal() first.)', Zend_Log::DEBUG);
         }
         
-        if (empty($this->_totalAttendance)) {
-            self::getAttendanceTotal ($dateFrom, $dateUpto, 
-                                        $status, $group_id);
-        }
         $this->_attendanceStat = $this->_totalAttendance;
+        
         if (!empty($this->_studentAttendance)) {
             foreach ($this->_studentAttendance as $subject_mode => $groups) {
                 foreach ($groups as $group => $students) {
@@ -329,8 +370,155 @@ class Acad_Model_Course_Subject
                     }
                 }
             }
+        } else {
+            $this->getLogger()->debug('Student attendance is empty.(Hint: call getStudentAttendance() first.)');
         }
+        
         return $this->_attendanceStat;
+    }
+    
+    /**
+     * Set Attendance summary and Students attendance list(Mode wise)
+     * @param int $lowerThreshold
+     * @param int $upperThreshold
+     * @return Acad_Model_Course_Subject
+     */
+    protected function _attendanceSummary($lowerThreshold = 65, $upperThreshold = 75) {
+                                                    
+        $attendanceSet = $this->_studentAttendance;
+        $stat = $this->_attendanceStat;
+        $facultySet = $this->getFaculty();
+        $summary = array();
+        $stuModeWiseAtt = array();
+        if (empty($attendanceSet)) {
+            throw new Exception('Student attendance is empty. So cannot generate a summary.', Zend_Log::NOTICE);
+        }
+        if (empty($stat)) {
+            throw new Exception('Attendance Stats are empty. So cannot generate a summary.', Zend_Log::NOTICE);
+        }
+        
+        foreach ($attendanceSet as $subjectMode => $groups) {
+            foreach ($groups as $group_id => $students) {
+                $totalDelievered = (int) $stat[$subjectMode][$group_id]['delievered'];
+                $avgPresent = $totalDelievered - $stat[$subjectMode][$group_id]['AVERAGE']['ABSENT'];
+                $avgPercentage = ($avgPresent / $totalDelievered) * 100;
+                $summary[$subjectMode][$group_id]['total_delievered'] = $totalDelievered;
+                $summary[$subjectMode][$group_id]['total_duration'] = $stat[$subjectMode][$group_id]['total_duration'];
+                $summary[$subjectMode][$group_id]['average_attedance'] = round($avgPercentage);
+                $summary[$subjectMode][$group_id][self::PASS] = 0;
+                $summary[$subjectMode][$group_id][self::AVERAGE] = 0;
+                $summary[$subjectMode][$group_id][self::FAIL] = 0;
+                foreach ($students as $rollNo => $student) {
+                    $present = $totalDelievered - $student['ABSENT'];
+                    $percentage = ($present / $totalDelievered) * 100;
+                    $attendance = round($percentage);
+                    $stuModeWiseAtt[$rollNo][$subjectMode] = $attendance;
+                    $division = ceil($attendance);
+                    switch ($division) {
+                        case 0:
+                        case ($division < $lowerThreshold):
+                            $summary[$subjectMode][$group_id][self::FAIL] += 1;
+                            break;
+                        case ($division < $upperThreshold):
+                            $summary[$subjectMode][$group_id][self::AVERAGE] += 1;
+                            break;
+                        default:
+                            $summary[$subjectMode][$group_id][self::PASS] += 1;
+                            break;
+                    }
+                }
+                foreach ($facultySet[$subjectMode][$group_id] as $facultyId => $facultySubjectInfo) {
+                    foreach ($facultySubjectInfo as $key => $info) {
+                        $faculty = new Acad_Model_Member_Faculty(array('facultyId' => $facultyId));
+                        
+                        $facultyInfo['name'] = $faculty->getName();
+                        $date_from = date_create_from_format('Y-m-d', $info['date_from']);
+                        $facultyInfo['date_from'] = date_format($date_from, 'd/M');
+                        $date_upto = date_create_from_format('Y-m-d', $info['date_upto']);
+                        $facultyInfo['date_upto'] = date_format($date_upto, 'd/M');
+                        
+                        $summary[$subjectMode][$group_id]['faculty'][$facultyId]= $facultyInfo;
+                    }
+                }
+            }
+        }
+        
+        $subjectModes = array_keys($attendanceSet);
+        if (count($subjectModes) > 1) {
+            $summary['combined'][self::PASS] = 0;
+            $summary['combined'][self::AVERAGE] = 0;
+            $summary['combined'][self::FAIL] = 0;
+            $basicModes = array_flip($subjectModes);
+            $maxPercentage = 100;
+            /**
+             * I am doing it this way due to following reasons:
+             * -> WE have only absent students records
+             * -> If a student attendance is 100% the raw data dont have its record right now
+             * and attendance of a student may be 100% in LEC and less in TUT....
+             * So, I set 100% attendance by default, if a student entry is missing then
+             * There are two cases, either its attendance not marked or 100%attendance,
+             * Here, it is assumed that attendance is 100%
+             */
+            foreach ($basicModes as $subjectMode => $value) {
+                $basicModes[$subjectMode] = $maxPercentage;
+            }
+        
+            foreach ($stuModeWiseAtt as $rollNo => $modesAttendance) {
+                //setting missing modes attendance value to 100%
+                $modesAttendance = array_merge($basicModes,$modesAttendance);
+                $totalPercentage = 0;
+                foreach ($modesAttendance as $subjectMode => $percentage) {
+                    $totalPercentage += $percentage;
+                }
+                $stuModeWiseAtt[$rollNo]['average'] = $totalPercentage/(count($modesAttendance));
+                
+                $attendance = round($stuModeWiseAtt[$rollNo]['average']);
+                
+                $division = ceil($attendance);
+                switch ($division) {
+                    case 0:
+                    case ($division < $lowerThreshold):
+                        $summary['combined'][self::FAIL] +=1;
+                    break;
+                    case ($division < $upperThreshold):
+                        $summary['combined'][self::AVERAGE] +=1;
+                    break;
+                    default:
+                        $summary['combined'][self::PASS] +=1;
+                    break;
+                }
+            }
+        }
+        
+        $this->_stuModeWiseAtt = $stuModeWiseAtt;
+        $this->_summary = $summary;
+        return $this;
+    }
+    
+    /**
+     * Summary of Subject attendance.
+     * @param int $lowerThreshold
+     * @param int $upperThreshold
+     * @return Array Attendance Summary
+     */
+    public function attendanceSummary($lowerThreshold = NULL, $upperThreshold = NULL) {
+        if (null === $this->_summary) {
+            self::_attendanceSummary($lowerThreshold, $upperThreshold);
+        }
+        return $this->_summary;
+    }
+
+    /**
+     * A list of students roll number with attendance in each Mode
+     * @param int $lowerThreshold
+     * @param int $upperThreshold
+     * @return Array Student list with mode wise attendance
+     */
+    public function attendanceStuModeWise($lowerThreshold = NULL, $upperThreshold = NULL) {
+        if (null === $this->_stuModeWiseAtt) {
+            self::_attendanceSummary($lowerThreshold, $upperThreshold);
+        }
+        return $this->_stuModeWiseAtt;
     }
     /**
      * Students enrolled in a subject.

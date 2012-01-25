@@ -5,7 +5,7 @@
  * @subpackage Groups
  * @since	   0.1
  */
-class Acad_Model_DbTable_Groups extends Acadz_Base_Model
+class Acad_Model_DbTable_Groups extends Acadz_Base_Model_Dbtable
 {
     /**
      * Get information about current session.

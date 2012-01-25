@@ -16,7 +16,7 @@
 /*
  * Base Class of all Models
  */
-class Acadz_Base_Model
+class Acadz_Base_Model_Dbtable extends Zend_Db_Table
 {
     /**
      * If TRUE then only logger will log messages.

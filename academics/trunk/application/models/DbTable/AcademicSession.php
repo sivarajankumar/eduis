@@ -4,7 +4,7 @@
  * 
  * 
  */
-class Acad_Model_DbTable_AcademicSession extends Acadz_Base_Model
+class Acad_Model_DbTable_AcademicSession extends Acadz_Base_Model_Dbtable
 {
     /**
      * Get information about current session.
@@ -48,7 +48,7 @@ class Acad_Model_DbTable_AcademicSession extends Acadz_Base_Model
     public static function getSessionStartDate ()
     {
         $acadSession = self::fetchSessionInfo();
-        return $acadSession['start_date'];
+        return new Zend_Date($acadSession['start_date'],Zend_Date::ISO_8601);
     }
     /**
      * Get end date of current session semester.
@@ -56,7 +56,7 @@ class Acad_Model_DbTable_AcademicSession extends Acadz_Base_Model
     public static function getSessionEndDate ()
     {
         $acadSession = self::fetchSessionInfo();
-        return $acadSession['end_date'];
+        return new Zend_Date($acadSession['end_date'],Zend_Date::ISO_8601);
     }
 }
 ?>

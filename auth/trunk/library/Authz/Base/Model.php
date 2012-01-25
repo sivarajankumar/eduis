@@ -53,13 +53,11 @@ class Authz_Base_Model extends Zend_Db_Table {
 	 */
 	public static function getCache($cacheName = 'database') {
 		/**
-		 * 
-		 * Enter description here ...
-		 * @var Zend_Cache_Manager
+		 * @var Zend_Cache_Manager $cacheManager
 		 */
 		$cacheManager = Zend_Registry::get('cacheManager');
-		$cacheManager->getCache ( $cacheName );
-		return $cache;
+		
+		return $cacheManager->getCache ( $cacheName );
 	}
     
 }

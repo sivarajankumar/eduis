@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_DbTable_FacultyAdjustment extends Acadz_Base_Model
+class Acad_Model_DbTable_FacultyAdjustment extends Acadz_Base_Model_Dbtable
 {
     protected $_name = 'adjustment_faculty';
     const TABLE_NAME = 'adjustment_faculty';

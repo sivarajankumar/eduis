@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_DbTable_SubjectMode extends Acadz_Base_Model
+class Acad_Model_DbTable_SubjectMode extends Acadz_Base_Model_Dbtable
 {
     protected $_name = 'subject_mode';
     const TABLE_NAME = 'subject_mode';

@@ -5,7 +5,7 @@
  * @since 1.0
  *
  */
-class Acad_Model_DbTable_PeriodAttendance extends Acadz_Base_Model
+class Acad_Model_DbTable_PeriodAttendance extends Acadz_Base_Model_Dbtable
 {
     protected $_name = 'period_attendance';
     const TABLE_NAME = 'period_attendance';

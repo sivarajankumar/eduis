@@ -39,7 +39,7 @@ class StudentattendanceController extends Acadz_Base_BaseController
         //Getting Request Parameters
         $reqDate = $request->getParam('period_date');
         if ($reqDate) {
-            $period_dateobj = new Zend_Date($reqDate, 'dd-MM-YYYY');
+            $period_dateobj = new Zend_Date($reqDate);
             $weekday_number = $period_dateobj->toString('e');
         } else {
             $period_dateobj = new Zend_Date();
@@ -54,7 +54,7 @@ class StudentattendanceController extends Acadz_Base_BaseController
                 Zend_Log::ERR);
             }
         }
-        $period_date = $period_dateobj->toString('YYYY-MM-dd');
+        $period_date = $period_dateobj->get(Zend_Date::ISO_8601);
         if (isset($staff_id)) {
             $dayPeriods = Acad_Model_DbTable_TimeTable::getFacultyDayPeriods(
             $staff_id, $period_date, $weekday_number);
@@ -97,7 +97,7 @@ class StudentattendanceController extends Acadz_Base_BaseController
         $request = $this->getRequest();
         $period_dateobj = new Zend_Date($request->getParam('period_date'), 
         'dd/MMM/yyyy');
-        $period_date = $period_dateobj->toString('YYYY-MM-dd HH:mm:ss');
+        $period_date = $period_dateobj->get(Zend_Date::ISO_8601);
         $student_list = $request->getParam("studentlst");
         if ($student_list) {
             $token = strtok($student_list, " ");

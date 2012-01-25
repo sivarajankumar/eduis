@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_DbTable_NoAttendanceDay extends Acadz_Base_Model
+class Acad_Model_DbTable_NoAttendanceDay extends Acadz_Base_Model_Dbtable
 {
     protected $_name = 'no_attendanceday';
     public static function isnoattendanceday ($check_date, $department_id, 
