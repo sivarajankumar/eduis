@@ -112,6 +112,21 @@ table a:visited {
 	>
 	<option value="BTECH">BTECH</option>
 	</select></label>
+	<br/><label>Date from:<input type="text" id="date_from" name="date_from" readonly="readonly" value="<?php 
+$dateFrom = new Zend_Date();
+if ($this->date_from) {
+    $dateFrom->setDate($this->date_from);
+} else{
+    $dateFrom->setDate($this->session_startdate);
+}
+echo $dateFrom->get(Zend_Date::DATE_MEDIUM); ?>" class="ui-widget-content ui-corner-all" style="text-align: center"></input></label>
+<br/><label>Date upto:<input type="text" id="date_upto" name="date_upto" readonly="readonly" value="<?php
+$dateUpto = new Zend_Date();
+if ($this->date_upto) {
+    $dateUpto->setDate($this->date_upto);
+}
+echo $dateUpto->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-all" style="text-align: center"></input></label>
+<br/>	
 	<button type="submit" class="ui-corner-all" style="font-size: 0.7em;">Show</button>
 </form>
 <?php 
@@ -132,7 +147,7 @@ if (isset($this->attendance)) {
         ?>
         <p>The output is empty.</p>
         <?php
-        return;
+        goto labeled;
     }
     $semesters = array_keys($this->attendance);
     echo '<div class="reportNav noprint">';
@@ -183,6 +198,12 @@ if (isset($this->attendance)) {
 			$subjectParams = array('department_id'=>$this->department_id,
                             'subject_code'=>$subject_code,
                             'subject_mode_id'=>$subject_mode_id);
+			if ($this->date_from) {
+			    $subjectParams['date_from'] = $this->date_from;
+			}
+			if ($this->date_upto) {
+			    $subjectParams['date_upto'] = $this->date_upto;
+			}
 			
 			if($record['subject_name']==$prevSubjectName){
 			    echo '<td></td>';
@@ -216,6 +237,13 @@ if (isset($this->attendance)) {
     							/*'programme_id'=>$this->programme_id,
     							'semester_id'=>$semester_id,*/
                                 'faculty_id'=>$record['faculty_id']);
+			
+    			if ($this->date_from) {
+    			    $facultyParams['date_from'] = $this->date_from;
+    			}
+    			if ($this->date_upto) {
+    			    $facultyParams['date_upto'] = $this->date_upto;
+    			}
 			    $facultyURL = $this->url(array('controller'=>'faculty',
 			    							'action'=>'attendance')).'?'.http_build_query($facultyParams);
 			    echo '<td class="dataCellBordered" style="text-align:left">'.
@@ -275,8 +303,27 @@ if (isset($this->attendance)) {
 } else {
     ?>
     <p>Department and corrosponding Degree are required!!</p>
-<?php }?>
+<?php }
+labeled: ?>
 <script>
+//jQueryfy buttons
+$("button").button();
+var session_startdate = '<?php echo $this->session_startdate->get(Zend_Date::DATE_MEDIUM);?>';
+var dateFormat = 'dd-mm-yy';
+var serverDateObj = $.datepicker.parseDate(dateFormat, $('#datetext').text());
+// @FIXME session_startdate is in different format because its date from db server.
+var sessionStartdateObj= $.datepicker.parseDate(dateFormat, session_startdate);
+var dateOptions = {
+		defaultDate : sessionStartdateObj,
+		minDate : sessionStartdateObj,
+		maxDate : serverDateObj,
+		dateFormat: dateFormat,
+		hideIfNoPrevNext: true,
+		autoSize: true
+	};
+$("#date_from").datepicker(dateOptions);
+dateOptions.defaultDate = serverDateObj;
+$("#date_upto").datepicker(dateOptions);
 $(document).ready(function() {
 	$('.sectionDiv').hover(function() {
 		$(this).find('.sectionDiv_clt').fadeIn('slow');
@@ -290,12 +337,5 @@ $(document).ready(function() {
 		$('#'+elem).fadeToggle();
 	});
 });
-//jQueryfy buttons
-$("button").button();
-
-var getSubjectAttendance = function() {
-	
-	alert('Hi');
-};
 
 </script>

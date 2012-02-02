@@ -4,7 +4,7 @@
  * @author ACEIS TEAM
  *
  */
-abstract class Acad_Model_Assessment_Abstract
+abstract class Acad_Model_Assessment_Abstract extends Acadz_Base_Model
 {
     /**
      * Test info id

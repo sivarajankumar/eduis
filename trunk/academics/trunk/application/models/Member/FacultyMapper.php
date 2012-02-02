@@ -156,11 +156,11 @@ WHERE totalprd.staff_id = ? ';
         $select = $this->getDbTable()->getAdapter()->select();
         $select->distinct()
                 ->from('subject_faculty',
-                            array('subject_code'))
+                            array('subject_code','department_id','programme_id','semester_id'))
                /* ->join('subject', 
                 		'subject_faculty.subject_code = subject.subject_code',
                         array('subject_name'))*/
-                ->join('subject_department', 
+                ->join('subject_department',
                 		'subject_department.subject_code = subject.subject_code',
                         array())
                 ->where('subject_faculty.staff_id = ?',$faculty->getMemberId());
@@ -174,10 +174,7 @@ WHERE totalprd.staff_id = ? ';
                     ->where('programme_id = ?', $viewLevel->getProgramme_id())
                     ->where('semester_id = ?', $viewLevel->getSemester());
         } elseif ($viewLevel instanceof Acad_Model_Department){
-            $select->where('department_id = ?', $viewLevel->getDepartment())
-                    ->columns(array('programme_id','semester_id'));
-        } else {
-            $select->columns(array('department_id','programme_id','semester_id'));
+            $select->where('department_id = ?', $viewLevel->getDepartment());
         }
         
         return  $select->query()->fetchAll(Zend_Db::FETCH_GROUP);
@@ -197,7 +194,7 @@ WHERE totalprd.staff_id = ? ';
         $select = $this->getDbTable()->getAdapter()->select();
         $select->distinct()
                 ->from('period_attendance2',
-                            array('subject_code'))
+                            array('subject_code','department_id','programme_id','semester_id'))
                 ->where('faculty_id = ?',$faculty->getMemberId());
                 
         if (isset($showModes)) {
@@ -209,10 +206,7 @@ WHERE totalprd.staff_id = ? ';
                     ->where('programme_id = ?', $viewLevel->getProgramme_id())
                     ->where('semester_id = ?', $viewLevel->getSemester());
         } elseif ($viewLevel instanceof Acad_Model_Department){
-            $select->where('department_id = ?', $viewLevel->getDepartment())
-                    ->columns(array('programme_id','semester_id'));
-        } else {
-            $select->columns(array('department_id','programme_id','semester_id'));
+            $select->where('department_id = ?', $viewLevel->getDepartment());
         }
         
         return  $select->query()->fetchAll(Zend_Db::FETCH_GROUP);

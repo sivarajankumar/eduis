@@ -55,21 +55,17 @@ VALUES +';
     $date_upto = NULL, $showSubjectName = NULL,array $order = NULL)
     {
         $select = $this->getAdapter()->select();
-        $select->from(array('patt'=>'period_attendance2'), array());
+        $select->from(array('patt'=>'period_attendance2'), array('department_id',
+        															'programme_id',
+                                                                    'semester_id'));
         if (isset($department)) {
             $select->where('department_id = ?', $department);
-        } else {
-            $select->columns('department_id');
         }
         if (isset($programme)) {
             $select->where('programme_id = ?', $programme);
-        } else {
-            $select->columns('programme_id');
         }
         if (isset($semester)) {
             $select->where('semester_id = ?', $semester);
-        } else {
-            $select->columns('semester_id');
         }
         if (isset($group)) {
             $select->where('group_id = ?', $group);
@@ -87,10 +83,12 @@ VALUES +';
             $select->columns('subject_mode_id');
         }
         if (isset($date_from)) {
-            $select->where('period_date >= ?', $date_from);
+            $date = new Zend_Date($date_from);
+            $select->where('period_date >= ?', $date->get(Zend_Date::ISO_8601));
         }
         if (isset($date_upto)) {
-            $select->where('period_date <= ?', $date_upto);
+            $date = new Zend_Date($date_upto);
+            $select->where('period_date <= ?', $date->get(Zend_Date::ISO_8601));
         }
         
         if (isset($showSubjectName)) {
@@ -113,36 +111,5 @@ VALUES +';
          }
         
         return $select->query()->fetchAll(Zend_Db::FETCH_GROUP);
-    }
-    /**
-     * 
-     * Enter description here ...
-     * @param unknown_type $department
-     * @param unknown_type $programme
-     * @param unknown_type $date_from
-     * @param unknown_type $date_upto
-     * @deprecated Use Acad_Model_Department->fetchAttendance();
-     */
-    public function departmentwise($department= NULL,$programme=NULL, $date_from = NULL, 
-    $date_upto = NULL) {
-        $order = array('semester_id','subject_mode_id', 'subject_code','group_id');
-        $rawResult = self::stats($department,$programme,null,null,null,null,$date_from,$date_upto,true,$order);
-        $processed = array();
-        foreach ($rawResult as $semester_id => $attendanceList) {
-            foreach ($attendanceList as $key => $attendance) {
-                
-                $subjectCode = $attendance['subject_code'];
-                $subjectMode = $attendance['subject_mode_id'];
-                $group_id = $attendance['group_id'];
-                
-                unset($attendance['subject_code']);
-                unset($attendance['subject_mode_id']);
-                unset($attendance['group_id']);
-                
-                $processed[$semester_id][$subjectMode][$subjectCode][$group_id][] = $attendance;
-            }
-            
-        }
-        return $processed;
     }
 }
