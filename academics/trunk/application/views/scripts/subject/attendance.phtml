@@ -109,8 +109,6 @@ div.factWords{
 #ranges div {
 		width: 25em;	}
 
-
-
 @MEDIA print{
 	.noprint {
 		display: none;
@@ -138,8 +136,8 @@ div.factWords{
 }
 -->
 </style>
-<div style="padding :2em 0 2em 0; text-align: center; " >
-<form class="noprint" id="subjectInfo">
+<div  class="noprint"  style="padding :2em 0 2em 0; text-align: center; " >
+<form id="subjectInfo">
 	<label>Department: <select id="department_id" name="department_id" >
 	<option value="BT" <?php echo (strtolower($this->department_id)=='bt')?'selected="selected"':'' ?> >Biotech</option>
 	<option value="CSE" <?php echo (strtolower($this->department_id)=='cse')?'selected="selected"':'' ?> >Computer Science</option>
@@ -178,6 +176,10 @@ echo $dateUpto->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corne
 
 	<button type="submit" class="ui-corner-all" style="font-size: 0.7em;">Show</button>
 </form>
+
+<a id="toggleReport" class="noprint" style="text-decoration: none; float: right; " href="javascript:">Toggle Report</a>
+</div>
+<div id="subjectInfoHead"   style="padding :1em 0 0 0; text-align: center; " >
 <?php 
 if (isset($this->department_id) and isset($this->subject_code)) { ?>
     <h1>SUBJECT REPORT</h1>
@@ -190,7 +192,6 @@ $this->headTitle('Subject Report '.$this->subject_name.'('.$this->subject_code.'
 }
 ?>
 <hr/>
-<a id="toggleReport" class="noprint" style="text-decoration: none; float: right; " href="javascript:">Toggle Report</a>
 </div>
 <div class="reportDiv" >
 <a id="panLeft" class="noprint" style="text-decoration: none; display:none;" href="javascript: panLeft();"><span class="arrow-left"></span></a>
@@ -258,8 +259,7 @@ if (isset($this->attendanceSet)) {
                     } ?>
                     
                 </ol>
-                <a class="less noprint" href="javascript:"
-	style="display: none;">collapse</a>
+                <a class="less noprint" href="javascript:" style="display: none;">collapse</a>
             <h5>Summary :</h5>
             <div class="facts">
             <div class="factWords">
@@ -462,14 +462,15 @@ var placeholder = $("#placeholder");
 var overviewholder = $("#overview");
 
 $(function(){
-	
+
 	var testSets = {};
 	var statData = [];
 	var students = [];
 	var session_startdate = '<?php echo $this->session_startdate->get(Zend_Date::DATE_MEDIUM);?>';
-    var serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
-    // @FIXME session_startdate is in different format because its date from db server.
-    var sessionStartdateObj= $.datepicker.parseDate('dd-mm-yy', session_startdate);
+	var dateFormat = 'dd-mm-yy';
+	var serverDateObj = $.datepicker.parseDate(dateFormat, $('#datetext').text());
+	// @FIXME session_startdate is in different format because its date from db server.
+	var sessionStartdateObj= $.datepicker.parseDate(dateFormat, session_startdate);
 	
 	var subjectMode = '';
 	var subjectModes = <?php echo Zend_Json::encode($subjectModes);?>;
@@ -666,12 +667,27 @@ $(function(){
     	  $('a.more').trigger('click');
        });
 
-      $("#date_from,#date_upto").datepicker({
-      	minDate : sessionStartdateObj,
-      	maxDate : serverDateObj,
-      	dateFormat: 'dd-mm-yy',
-      	showButtonPanel: true
-      });
+      var dateOptions = {
+      		minDate : sessionStartdateObj,
+      		maxDate : serverDateObj,
+      		dateFormat: dateFormat,
+      		hideIfNoPrevNext: true,
+      		autoSize: true
+      	};
+      dateOptions.defaultDate = sessionStartdateObj;
+      $("#date_from").datepicker(dateOptions);
+      dateOptions.defaultDate = serverDateObj;
+      $("#date_upto").datepicker(dateOptions);
+
+    	var isInIFrame = (window.location != window.parent.location) ? true : false;
+    	if (isInIFrame) {
+    		$('.noprint,#subjectInfoHead').hide();
+    		$('#content').css('margin',0);
+    		// get the  Body height of the iframe  page
+       		 var height = document.body.scrollHeight;
+       		//  send a request to parent  to reset the height of the height
+       		 parent.resizeIframe(height,window.frameElement);
+    	}
 });
 
 function pieHover(event, pos, obj){

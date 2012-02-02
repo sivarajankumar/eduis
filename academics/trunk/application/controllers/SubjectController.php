@@ -162,9 +162,9 @@ class SubjectController extends Acadz_Base_BaseController
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
                 $this->_helper->layout()->enableLayout();
-                $this->view->assign('department_id', $department_id);
-                $this->view->assign('subject_code', $subject_code);
-                $this->view->assign('subject_mode_id', $subject_mode_id);
+                $this->view->assign('department_id', $this->view->escape($department_id));
+                $this->view->assign('subject_code', $this->view->escape($subject_code));
+                $this->view->assign('subject_mode_id', $this->view->escape($subject_mode_id));
                 
                 $this->view->assign('lowerThreshold', $lowerThreshold);
                 $this->view->assign('upperThreshold', $upperThreshold);
@@ -183,7 +183,6 @@ class SubjectController extends Acadz_Base_BaseController
                 $this->view->assign('stuModeWiseAtt', $stuModeWiseAtt);
                 $session_startdate = Acad_Model_DbTable_AcademicSession::getSessionStartDate();
                 $this->view->assign('session_startdate', $session_startdate);
-                $this->_helper->logger($stuModeWiseAtt);
                 return;
             case 'json':
                 echo $this->_helper->json($this->summary, false);

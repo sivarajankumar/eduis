@@ -79,8 +79,11 @@ class Acad_Model_Member_Faculty extends Acad_Model_Member_Generic
 
 	public function getName() {
 	    $facultyInfo = $this->getPersonalInfo();
-	    $facultyName = $facultyInfo['initial'].' '.$facultyInfo['first_name'].' '.$facultyInfo['last_name'];
-	    return $facultyName;
+	    $facultyName = array($facultyInfo['initial'],
+	                            $facultyInfo['first_name'],
+	                            $facultyInfo['middle_name'],
+	                            $facultyInfo['last_name']);
+	    return implode(' ', $facultyName);
 	    
 	}
 	/**

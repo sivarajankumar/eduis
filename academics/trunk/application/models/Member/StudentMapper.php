@@ -92,24 +92,4 @@ class Acad_Model_Member_StudentMapper
                   ->setCreated($row->created);
     }
 
-    /**
-     * Fetch all guestbook entries
-     * 
-     * @return array
-     */
-    public function fetchAll()
-    {
-        $resultSet = $this->getDbTable()->fetchAll();
-        $entries   = array();
-        foreach ($resultSet as $row) {
-            $entry = new Default_Model_Guestbook();
-            $entry->setId($row->id)
-                  ->setEmail($row->email)
-                  ->setComment($row->comment)
-                  ->setCreated($row->created)
-                  ->setMapper($this);
-            $entries[] = $entry;
-        }
-        return $entries;
-    }
 }

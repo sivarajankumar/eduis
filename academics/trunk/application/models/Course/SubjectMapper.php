@@ -96,7 +96,7 @@ class Acad_Model_Course_SubjectMapper
      */
     public function getFaculties (Acad_Model_Course_Subject $subject,$dateFrom = NULL, $dateUpto = NULL)
     {
-        $department = $subject->getDepartment();
+        $department = $subject->getDepartment_id();
         $select = $this->getDbTable()->getAdapter()
             ->select()
             ->from('period_attendance2', array('programme_id',
@@ -113,7 +113,7 @@ class Acad_Model_Course_SubjectMapper
         
         $modeString = self::_subjectModeQuery($subject);
         $select->where($modeString);
-        $subjectModeCount = count($subject->getModes());
+        $subjectModeCount = count($subject->getSubject_mode_id());
     
         if ($department) {
             $select->where('department_id = ?', $department);
@@ -157,7 +157,7 @@ class Acad_Model_Course_SubjectMapper
             ->join('test_type', 
         '`test_info`.`test_type_id` = `test_type`.`test_type_id`')
             ->where('`test_info`.`department_id` = ?', 
-        $subject->getDepartment())
+        $subject->getDepartment_id())
             ->where('`test_info`.`subject_code` = ?', 
         $subject->getSubject_code());
         if ($locked) {
@@ -198,7 +198,7 @@ class Acad_Model_Course_SubjectMapper
         WHERE (`test_info`.`department_id` = ?
         AND `test_info`.`subject_code` = ? )
         AND `test_info`.`is_locked` = 1';
-        $data = array($subject->getDepartment(), $subject->getSubject_code());
+        $data = array($subject->getDepartment_id(), $subject->getSubject_code());
         $result = Zend_Db_Table::getDefaultAdapter()->query($sql, $data)->fetchAll();
         return $result;
     }
@@ -215,7 +215,7 @@ class Acad_Model_Course_SubjectMapper
     $dateFrom = NULL, $dateUpto = NULL, $group_id = NULL)
     {
         $subject_code = $subject->getSubject_code();
-        $department = $subject->getDepartment();
+        $department = $subject->getDepartment_id();
         $groupByCols = array('department_id',
             				'programme_id',
             				'semester_id',
@@ -289,7 +289,7 @@ class Acad_Model_Course_SubjectMapper
     $maxAbsent = NULL,$minAbsent = NULL, $coditionalMode = NULL)
     {
         $subject_code = $subject->getSubject_code();
-        $department = $subject->getDepartment();
+        $department = $subject->getDepartment_id();
         $groupByCols = array('department_id',
             				'programme_id',
             				'semester_id',
@@ -363,7 +363,7 @@ class Acad_Model_Course_SubjectMapper
      */
     protected function _subjectModeQuery (Acad_Model_Course_Subject $subject)
     {
-        $subject_modes = $subject->getModes();
+        $subject_modes = $subject->getSubject_mode_id();
         $orArray = NULL;
         foreach ($subject_modes as $key => $subject_mode) {
             $orArray[] = "(subject_mode_id = '$subject_mode')";

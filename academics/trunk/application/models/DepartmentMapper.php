@@ -51,29 +51,26 @@ class Acad_Model_DepartmentMapper
         $studentAttendance = new Acad_Model_DbTable_StudentAttendance2();
         
         $order = array('semester_id','subject_mode_id', 'subject_code','group_id');
-        $rawResult = $studentAttendance->stats($dept, $programme ,null,null,null,null,
+        $rawResult = $studentAttendance->stats($dept, $programme ,$semester,null,null,null,
                                                 $date_from,$date_upto,true,$order);
         $processed = array();
-        foreach ($rawResult as $semester_id => $attendanceList) {
+        foreach ($rawResult as $department_id => $attendanceList) {
             foreach ($attendanceList as $key => $attendance) {
                 
                 $subjectCode = $attendance['subject_code'];
                 $subjectMode = $attendance['subject_mode_id'];
                 $group_id = $attendance['group_id'];
+                $semester_id = $attendance['semester_id'];
                 
                 unset($attendance['subject_code']);
                 unset($attendance['subject_mode_id']);
                 unset($attendance['group_id']);
+                unset($attendance['semester_id']);
                 
                 $processed[$semester_id][$subjectMode][$subjectCode][$group_id][] = $attendance;
             }
             
         }
-        
-        if (isset($semester)) {
-            return $processed[$semester];
-        } else {
-            return $processed;
-        }
+        return $processed;
     }
 }

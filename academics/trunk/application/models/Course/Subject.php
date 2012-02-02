@@ -30,11 +30,22 @@ class Acad_Model_Course_Subject extends Acadz_Base_Model
      */
     protected $_department;
     /**
+     * Subject department
+     * @var string
+     */
+    protected $_department_id;
+    /**
      * Subject Mode(s)
      * @example LEC: Lecture | TUT: Tutorial | PRC: Practical
      * @var array
      */
     protected $_modes;
+    /**
+     * Subject Mode Id
+     * @example LEC: Lecture | TUT: Tutorial | PRC: Practical
+     * @var array
+     */
+    protected $_subject_mode_id;
     /**
      * Class/Semester in which subject is taught
      * @var array
@@ -80,6 +91,20 @@ class Acad_Model_Course_Subject extends Acadz_Base_Model
      * @var unknown_type
      */
     protected $_stuModeWiseAtt;
+    
+
+	/**
+     * Constructor
+     * 
+     * @param  array|null $options 
+     * @return void
+     */
+    public function __construct(array $options = null)
+    {
+        if (is_array($options)) {
+            $this->setOptions($options);
+        }
+    }
     
     /**
      * Set Subject Mapper
@@ -147,63 +172,101 @@ class Acad_Model_Course_Subject extends Acadz_Base_Model
 	/**
      * Set subject department
      * @param string $department - subject department
+     * @deprecated use setDepartment_id()
      * @return Acad_Model_Course_Subject
      */
     public function setDepartment ($department = null)
     {
-        if ($department != null) {
-            $this->_department = $department;
+        
+        return self::setDepartment_id($department);
+    }
+    /**
+     * Get department
+     * @deprecated use getDepartment_id()
+     * @return string $department - department
+     */
+    public function getDepartment ()
+    {
+        return self::getDepartment_id();
+    }
+    /**
+	 * @return the $_department_id
+	 */
+	public function getDepartment_id() {
+        if (! $this->_department_id) {
+            $this->setDepartment_id();
+        }
+        return $this->_department_id;
+	}
+
+	/**
+	 * @param string $_department_id
+	 */
+	public function setDepartment_id($_department_id = null) {
+        if ($_department_id != null) {
+            $this->_department_id = $_department_id;
         } elseif (Zend_Auth::getInstance()->hasIdentity()) {
             $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-            $this->_department = $authInfo['department_id'];
+            $this->_department_id = $authInfo['department_id'];
         } else {
             throw new Zend_Exception('Could not determine department', 
             Zend_Log::ERR);
         }
         return $this;
-    }
-    /**
-     * Get department
-     * @return string $department - department
+	}
+
+	/**
+     * Set possible modes of subject.
+     * @param array $modes subject modes
+     * @example array('LEC','TUT') or array('PRC')
+     * @deprecated call setSubject_mode_id()
+     * @return Acad_Model_Course_Subject
      */
-    public function getDepartment ()
+    public function setModes ($modes = NULL)
     {
-        if (! $this->_department) {
-            $this->setDepartment();
-        }
-        return $this->_department;
+        return self::setSubject_mode_id($modes);
     }
     /**
+     * Get subject modes
+     * @deprecated call getSubject_mode_id()
+     * @return array $modes subject modes
+     */
+    public function getModes ()
+    {
+        return self::getSubject_mode_id();
+    }
+    
+    /**
+     * Get subject modes
+     * @return array $modes subject modes
+     */
+	public function getSubject_mode_id() {
+        if (null === $this->_subject_mode_id) {
+            $this->setSubject_mode_id();
+        }
+        return $this->_subject_mode_id;
+	}
+
+	/**
      * Set possible modes of subject.
      * @param array $modes subject modes
      * @example array('LEC','TUT') or array('PRC')
      * @return Acad_Model_Course_Subject
      */
-    public function setModes ($modes = NULL)
-    {
-        if (! empty($modes)) {
-            if (!is_array($modes)) {
-                $modes = array($modes);
+	public function setSubject_mode_id($_subject_mode_id = NULL) {
+        if (! empty($_subject_mode_id)) {
+            if (!is_array($_subject_mode_id)) {
+                $_subject_mode_id = array($_subject_mode_id);
             }
-            $this->_modes = $modes;
+            $this->_subject_mode_id = $_subject_mode_id;
         } else {
-            $this->_modes = $this->getMapper()->getSubjectModes($this);
+            $this->_subject_mode_id = $this->getMapper()->getSubjectModes($this);
         }
         
         return $this;
-    }
-    /**
-     * Get subject modes
-     * @return array $modes subject modes
-     */
-    public function getModes ()
-    {
-        if (null === $this->_modes) {
-            $this->setModes();
-        }
-        return $this->_modes;
-    }
-    /**
+	}
+
+	/**
      * Set Class/Semester in which subject is taught
      * @param array $semester Class/Semester in which subject is taught
      * @return Acad_Model_Course_Subject
