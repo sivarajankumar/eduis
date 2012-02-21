@@ -93,7 +93,7 @@ class SubjectController extends Acadz_Base_BaseController
         $locked = $this->_getParam('locked');
         $format = $this->getRequest()->getParam('format', 'json');
         $subject = new Acad_Model_Course_Subject();
-        $subject->setSubject_code($subject_code)->setDepartment($department);
+        $subject->setSubject_code($subject_code)->setDepartment_id($department);
         $result = $subject->getTest($locked);
         switch (strtolower($format)) {
             case 'json':
@@ -143,8 +143,8 @@ class SubjectController extends Acadz_Base_BaseController
         if ($subject_code and $department_id) {
             $subject = new Acad_Model_Course_Subject();
             $subject->setSubject_code($subject_code)
-                ->setDepartment($department_id)
-                ->setModes($subject_mode_id);
+                ->setDepartment_id($department_id)
+                ->setSubject_mode_id($subject_mode_id);
             $attendanceSet = $subject->getStudentAttendance($dateFrom,$dateUpto,$status,$group,$filterBelow,$filterAbove);
             $attendanceTotal = $subject->getAttendanceTotal();
             $facultySet = $subject->getFaculty($dateFrom,$dateUpto);
@@ -152,6 +152,8 @@ class SubjectController extends Acadz_Base_BaseController
             $summary = $subject->attendanceSummary($lowerThreshold, $upperThreshold);
             $stuModeWiseAtt = $subject->attendanceStuModeWise();
             $subject_name = $subject->getSubject_name();
+        } else {
+            throw new Exception('<b>Department Id</b>(department_id) as well as <b>Subject code</b>(subject_code) are <b>required</b>.', Zend_Log::INFO);
         }
         
         switch (strtolower($format)) {
