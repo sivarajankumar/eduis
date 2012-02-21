@@ -4,13 +4,9 @@ class Acad_Model_DbTable_StudentAttendance2 extends Acadz_Base_Model_Dbtable
     protected $_name = 'student_attendance2';
     protected $logger;
     protected $dbSelect;
-    public function init ()
-    {
-        $this->logger = Zend_Registry::get('logger');
-    }
     public function insert ($data)
     {
-        $this->logger->debug($data);
+        $this->getLogger()->debug($data);
         /*try {
             $this->getAdapter()
                 ->beginTransaction();
