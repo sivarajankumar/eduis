@@ -96,6 +96,7 @@ class SearchController extends Libz_Base_BaseController {
                         case 'title':
                         case 'long_title':
                         case 'author':
+                        case 'place_publisher':
                             $this->grid->sql->where("$key LIKE ?", 
                             '%' . $value . '%');
                             break;
