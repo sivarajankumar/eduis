@@ -149,7 +149,6 @@ class StudentController extends Corez_Base_BaseController
         $model->initSave();
         $model->setSave_stu_per(true);
         $model->save($params);
-        
     }
     public function enrollAction ()
     {
@@ -175,18 +174,24 @@ class StudentController extends Corez_Base_BaseController
     public function testAction ()
     {
         $model = new Core_Model_Member_Student();
-        $options = array('department_id' => 'cse', 'member_id' => 90);
+        //$options = array('department_id' => 'cse', 'member_id' => 90);
+        $options = array('reg_no' => '9-a-2', 'first_name' => 'A', 
+        'last_name' => 'S', 'dob' => '2012-02-20', 'gender' => 'MALE', 
+        'nationality_id' => 1, 'blood_group_id' => 'A+', 'religion_id' => 1, 
+        'cast_id' => 0, 'e_mail' => 'a@a.com', 'member_id' => 1, 
+        'programme_id' => 'btech', 'department_id' => 'cse');
         $model->initSave();
         $model->setSave_stu_dep(true);
         $model->save($options);
         $model->initSave();
         $model->setSave_stu_per(true);
-        $options['member_id'] = 90;
+        $model->save($options);
+        /*$options['member_id'] = 90;
         $options['reg_no'] = 70;
         $options['religion_id'] = 1;
         $options['cast_id'] = 1;
         $options['nationality_id'] = 1;
-        $model->save($options);
+        $model->save($options);*/
     }
 }
 
