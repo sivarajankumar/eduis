@@ -14,9 +14,7 @@ class RegisterController extends Zend_Controller_Action
      */
     protected $_applicant;
     protected $_applicant_personal;
-   
     protected $_member_id;
-    
     public function getMember_id ()
     {
         return $this->_member_id;
@@ -33,10 +31,8 @@ class RegisterController extends Zend_Controller_Action
         $this->_applicant = new Zend_Session_Namespace('applicant');
         $this->_applicant_personal = new Zend_Session_Namespace(
         'applicant_personal');
-    
         $this->view->assign('applicant', $this->_applicant);
-        $this->view->assign('steps', 
-        array('personal'));
+        $this->view->assign('steps', array('personal'));
     }
     public function validaterollnoAction ()
     {
@@ -75,20 +71,25 @@ class RegisterController extends Zend_Controller_Action
             $value = is_array($value) ? $value : htmlentities(trim($value));
             $this->_applicant->$colName = $value;
         }
-        //$PROTOCOL = 'http://';
-        
-        //$URL = '/student/enroll' . '?' .http_build_query($params);
         $model = new Core_Model_Member_Student();
         $model->initSave();
         $model->enroll($params);
+        $model->initSave();
         $model->setRoll_no($params['roll_no']);
         $model->setDepartment_id($params['department_id']);
         $model->setProgramme_id($params['programme_id']);
         $model->setSemester_id($params['semester_id']);
         $model->findMemberID();
         $member_id = $model->getMember_id();
-        
-       /* $client = new Zend_Http_Client($URL);
+        $this->_applicant->member_id = $member_id;
+        $this->_applicant->department_id = $params['department_id'];
+        $this->_applicant->programme_id = $params['programme_id'];
+        $this->_applicant->semester_id = $params['semester_id'];
+        $this->_applicant->roll_no = $params['roll_no'];
+        /*$PROTOCOL = 'http://';
+        $URL = '/student/enroll' . '?' .http_build_query($params);
+        Zend_Registry::get('logger')->debug($params);
+        $client = new Zend_Http_Client($URL);
         $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
         $response = $client->request();
         if ($response->isError()) {
@@ -102,15 +103,7 @@ class RegisterController extends Zend_Controller_Action
             Zend_Registry::get('logger')->debug($this->_applicant->member_id);
             return $member_id;
         }*/
-        
-        $this->_applicant->member_id = $member_id;
-        $this->_applicant->department_id = $params['department_id'];
-        $this->_applicant->programme_id = $params['programme_id'];
-        $this->_applicant->semester_id = $params['semester_id'];
-        $this->_applicant->roll_no = $params['roll_no'];
-        
-        
-        //Zend_Registry::get('logger')->debug($this->_applicant->member_id);
+    //Zend_Registry::get('logger')->debug($this->_applicant->member_id);
     }
     public function personalAction ()
     {
@@ -118,14 +111,12 @@ class RegisterController extends Zend_Controller_Action
     }
     public function setpersonalAction ()
     {
-        //Zend_Registry::get('logger')->debug($this->_applicant->member_id);
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $params['member_id'] = $this->_applicant->member_id;
         $params['department_id'] = $this->_applicant->department_id;
         $params['programme_id'] = $this->_applicant->programme_id;
         $params['semester_id'] = $this->_applicant->semester_id;
-        
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
         foreach ($params as $colName => $value) {
@@ -159,13 +150,12 @@ class RegisterController extends Zend_Controller_Action
             throw new Zend_Exception($remoteErr, Zend_Log::ERR);
         }
         $body = $response->getBody();*/
-        //Zend_Registry::get('logger')->debug($body);
+    //Zend_Registry::get('logger')->debug($body);
     }
-    public function saveAction() {
-        
-        
-    }
-    public function testAction(){
+    public function saveAction ()
+    {}
+    public function testAction ()
+    {
         $params = array('programme_id');
         $model = new Core_Model_Member_Student();
         $model->initSave();
