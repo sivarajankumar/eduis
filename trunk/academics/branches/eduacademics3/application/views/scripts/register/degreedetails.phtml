@@ -1,0 +1,334 @@
+
+
+<!--[if lte ie 7]>
+      <style type="text/css" media="screen">
+        /* Move these to your IE6/7 specific stylesheet if possible */
+        .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+      </style>
+    <![endif]-->
+
+
+<form action="javascript:submit();" class="uniForm">
+<h2><?php
+$stepNo = $this->stepNo;
+echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$stepNo]);?> Information:</h2>
+<hr />
+<?php 
+$form = null;
+$basis = $this->programme_id;
+switch ($basis) {
+case 'mtech':?>
+<div id="mtech">
+<fieldset><h3>M.Tech Details</h3>
+<div id="mtech_details" class="ctrlHolder"><label for=""><em>*</em>Marks
+Obtained(Semester wise)</label>
+
+<table id="mtech_sem1_details" cellspacing="">
+
+	<thead></thead>
+	
+		<tr>
+			<td>Code</td>
+			<td>Subject Name</td>
+			<td>Marks Obtained</td>
+			<td>Total Marks</td>
+		</tr>
+		<tr id="mtech_sem1_row1">
+		
+			<td><input name="mtech_sem1_subcode1" id="mtech_sem1_subcode1" value="<?php echo $this->applicant->mtech_sem1_subcode1 ?>"
+				data-default-value="e.g. CSE-712E" size="35" maxlength="50" 
+				type="text" class="textInput validateAlpha" /></td>
+			<td><input name="mtech_sem1_subname1" id="mtech_sem1_subname1" value="<?php echo $this->applicant->mtech_sem1_subname1 ?>"
+				data-default-value="e.g. Data Structures" size="35" maxlength="50"
+				type="text" class="textInput validateAlpha" /></td>
+			<td><input name="mtech_sem1_marks1" id="mtech_sem1_marks1" value="<?php echo $this->applicant->mtech_sem1_marks1 ?>"
+				data-default-value="e.g. 500" size="35" maxlength="50" type="text"
+				class="textInput validateInteger" /></td>
+			<td><input name="mtech_sem1_total_marks1" id="mtech_sem1_total_marks1" value="<?php echo $this->applicant->mtech_sem1_total_marks1 ?>"
+				data-default-value="e.g. 500" size="35" maxlength="50" type="text"
+				class="textInput validateInteger" /></td>
+		</tr>		
+</table>
+
+</div>
+<a href="#" onclick="show_newRow('mtech')">Add new row</a><br><br>
+<a href="#" onclick="show_newTable('mtech')">Add new semester</a>
+
+<div class="ctrlHolder"><label for=""><em>*</em>Total Marks</label> <input
+	name="mtech_total_marks" id="mtech_total_marks" value="<?php echo $this->applicant->mtech_total_marks ?>"
+	data-default-value="e.g. 500" size="35" maxlength="50" type="text"
+	class="textInput validateInteger" />
+<p class="formHint">Total Marks obtained</p>
+</div>
+<div class="ctrlHolder"><label for=""><em>*</em>Cumulative %</label> <input
+	name="mtech_percentage" id="mtech_percentage" value="<?php echo $this->applicant->mtech_percentage ?>"
+	data-default-value="e.g. 76%" size="35" maxlength="50" type="text"
+	class="textInput validateInteger" /></div>
+
+<div class="ctrlHolder"><label for=""><em>*</em>Year of Passing</label>
+<input name="mtech_passing_year" id="mtech_passing_year" value="<?php echo $this->applicant->mtech_passing_year ?>"
+	data-default-value="e.g. 2007" size="35" maxlength="50" type="text"
+	class="textInput  validateInteger" />
+<p class="formHint">Year in which <span class="cName">Candidate</span>
+passed theDegree</p>
+</div>
+
+</fieldset>
+
+</div>
+<fieldset>
+<h3>B.Tech Details</h3>
+<div class="ctrlHolder"><label for=""><em>*</em>Marks Obtained</label> <input
+	name="btech_marks_obtained" id="btech_marks_obtained" value="<?php echo $this->applicant->btech_marks_obtained ?>"
+	data-default-value="e.g. 500" size="35" maxlength="50" type="text"
+	class="textInput  validateInteger" />
+<p class="formHint">Marks obtained</p>
+</div>
+<div class="ctrlHolder"><label for=""><em>*</em>Total Marks</label> <input
+	name="btech_total_marks" id="btech_total_marks" value="<?php echo $this->applicant->btech_total_marks ?>"
+	data-default-value="e.g. 500" size="35" maxlength="50" type="text"
+	class="textInput  validateInteger" />
+<p class="formHint">Total Marks </p>
+</div>
+<div class="ctrlHolder"><label for=""><em>*</em>Cumulative %</label> <input
+	name="btech_percentage" id="btech_percentage" value="<?php echo $this->applicant->btech_percentage ?>"
+	data-default-value="e.g. 76%" size="35" maxlength="50" type="text"
+	class="textInput  validateInteger" /></div>
+
+<div class="ctrlHolder"><label for=""><em>*</em>Year of Passing</label>
+<input name="btech_passing_year" id="btech_passing_year" value="<?php echo $this->applicant->btech_passing_year ?>"
+	data-default-value="e.g. 2007" size="35" maxlength="50" type="text"
+	class="textInput  validateInteger" />
+<p class="formHint">Year in which <span class="cName">Candidate</span>
+passed theDegree</p>
+</div>
+<div class="ctrlHolder"><label for=""><em>*</em>University</label>
+<input name="btech_university" id="btech_university" value="<?php echo $this->applicant->btech_university ?>"
+	data-default-value="e.g. 2007" size="35" maxlength="50" type="text"
+	class="textInput  validateAlpha" />
+<p class="formHint">Unversity from which <span class="cName">Candidate</span>
+passed B.Tech</p>
+</div>
+</fieldset>
+
+<?php break;
+case 'btech'?>
+<div id="btech">
+<fieldset><h3>B.Tech Details</h3>
+<div id="btech_details" class="ctrlHolder"><label for=""><em>*</em>Marks
+Obtained(Semester wise)</label>
+
+<table id="btech_sem1_details" cellspacing="">
+
+	<thead></thead>
+	
+		<tr>
+			<td>Code</td>
+			<td>Subject Name</td>
+			<td>Marks Obtained</td>
+			<td>Total Marks</td>
+		</tr>
+		<tr id="btech_sem1_row1">
+		
+			<td><input name="btech_sem1_subcode1" id="btech_sem1_subcode1" value="<?php echo $this->applicant->btech_sem1_subcode1 ?>"
+				data-default-value="e.g. CSE-712E" size="35" maxlength="50" 
+				type="text" class="textInput  validateAlpha" /></td>
+			<td><input name="btech_sem1_subname1" id="btech_sem1_subname1" value="<?php echo $this->applicant->btech_sem1_subname1 ?>"
+				data-default-value="e.g. Data Structures" size="35" maxlength="50"
+				type="text" class="textInput  validateAlpha" /></td>
+			<td><input name="btech_sem1_marks1" id="btech_sem1_marks1" value="<?php echo $this->applicant->btech_sem1_marks1 ?>"
+				data-default-value="e.g. 500" size="35" maxlength="50" type="text"
+				class="textInput  validateInteger" /></td>
+			<td><input name="btech_sem1_total_marks1" id="btech_sem1_total_marks1" value="<?php echo $this->applicant->btech_sem1_total_marks1 ?>"
+				data-default-value="e.g. 500" size="35" maxlength="50" type="text"
+				class="textInput  validateInteger" /></td>
+		</tr>		
+</table>
+
+</div>
+<a href="#" onclick="show_newRow('btech')">Add new row</a><br><br>
+<a href="#" onclick="show_newTable('btech')">Add new semester</a>
+
+<div class="ctrlHolder"><label for=""><em>*</em>Total Marks</label> <input
+	name="btech_total_marks" id="btech_total_marks" value="<?php echo $this->applicant->btech_total_marks ?>"
+	data-default-value="e.g. 500" size="35" maxlength="50" type="text"
+	class="textInput  validateInteger" />
+<p class="formHint">Total Marks obtained</p>
+</div>
+<div class="ctrlHolder"><label for=""><em>*</em>Cumulative %</label> <input
+	name="btech_percentage" id="btech_percentage" value="<?php echo $this->applicant->btech_percentage ?>"
+	data-default-value="e.g. 76%" size="35" maxlength="50" type="text"
+	class="textInput  validateInteger" /></div>
+
+<div class="ctrlHolder"><label for=""><em>*</em>Year of Passing</label>
+<input name="btech_passing_year" id="btech_passing_year" value="<?php echo $this->applicant->btech_passing_year ?>"
+	data-default-value="e.g. 2007" size="35" maxlength="50" type="text"
+	class="textInput  validateInteger" />
+<p class="formHint">Year in which <span class="cName">Candidate</span>
+passed theDegree</p>
+</div>
+</fieldset>
+
+</div>
+<?php 
+          break;
+          default:
+              throw new Zend_Exception('The basis of enrollment is unknown.(i.e.'.var_export($basis,true).')',Zend_Log::WARN);
+      }
+      ?>
+
+
+<div id="submitStatus" style="display: none; padding: 1em;"
+	class="ui-state-highlight ui-corner-all"></div>
+
+<div class="buttonHolder">
+<button type="reset" class="secondaryAction">Reset</button>
+<button type="submit" class="primaryAction">Next</button>
+</div>
+</form>
+
+<script>
+	var row_no_one = 1;
+	var sem_no = 1;
+	var urlDegreeInfo = "<?php echo $this->url(array('controller' => 'register', 'action' => 'set'.$this->steps[$stepNo]))?>";
+
+$(function(){
+  		
+        $('form.uniForm').uniform({
+          prevent_submit : true
+        });
+        
+        $(function() {
+    		$( "#progressbar" ).progressbar({
+    			value: <?php echo (100/count($this->steps))*($stepNo+1); ?>
+    		});
+    	});
+		
+      });
+
+    function calcPercent(marks,total) {
+        return ((marks/total)*100).toFixed(2);
+    }
+      function submit() {
+          $.ajax({
+              url : urlDegreeInfo,
+              data : getValues(),
+              success: function(jStatus){
+                  $( "#submitStatus" ).html(jStatus).slideDown('slow', function(){
+                    	setTimeout(function(){
+                    		window.location = "/register/<?php echo $this->steps[$stepNo+1];?> ";
+                        	},10000);
+                  }).append('<br/><a href="/register/<?php echo $this->steps[$stepNo-1];?>" >&lt;&lt;PREV</a>:<a href="/register/<?php echo $this->steps[$stepNo+1];?>" >NEXT&gt;&gt;</a>');
+
+
+              },
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+                      console.log(response);
+                      }
+                  });
+      }
+      function getValues() {
+          var formData = {}; 
+          $('form.uniForm :input')
+          		.not('button,:input[value^="e.g."]')
+          		.each(function(){ 
+          			formData[this.name] = this.value; 
+              });
+
+          var compartments = $('input:radio[name=compartments]:checked').val();
+          formData.compartments = compartments; 
+          
+          var first_attempt = $('input:radio[name=first_attempt]:checked').val();
+          formData.first_attempt = first_attempt; 
+    
+          var ever_disqualified = $('input:radio[name=ever_disqualified]:checked').val();
+          formData.ever_disqualified = ever_disqualified;
+
+
+          var marks = parseInt($('#marks_obtained').val());
+          var total = parseInt($('#total_marks').val());
+          formData.percentage = calcPercent(marks,total);
+
+          marks = parseInt($('#matric_marks_obtained').val());
+          total = parseInt($('#matric_total_marks').val());
+          formData.matric_percentage = calcPercent(marks,total);
+          
+		return formData;
+      }
+      
+      /*function show_newRow(programe) {
+          alert(i);
+          i++;
+          var tableName = "#"+programe+"_sub_marks tr:last";
+          var rowName = "#"+programe+"_sub_marks tr:last";
+    	  $(tableName).clone(true).insertAfter(rowName);
+           return false;   
+      }*/
+      function show_newRow(program){
+    	  row_no_one++;
+    	  var tableName = "#"+program+"_sem"+sem_no+"_details";
+          var abc = "<tr id='"+program+"_sem"+sem_no+"_row"+row_no_one+"'>"
+			+" <td><input name='"+program+"_sem"+sem_no+"_subcode"+row_no_one+"' id='"+program+"_sem"+sem_no+"_subcode"+row_no_one+"' value=''"
+			+"data-default-value='e.g. CSE-712E' size='35' maxlength='50 '"
+			+"type='text' class='textInput  validateAlpha' /></td>"
+			+"<td><input name='"+program+"_sem"+sem_no+"_sub_name"+row_no_one+"' id='"+program+"_sem"+sem_no+"_sub_name"+row_no_one+"' value='' "
+			+"data-default-value='e.g. Data Structures' size='35' maxlength='50' "
+			+"type='text' class='textInput  validateAlpha' /></td> "
+			+"<td><input name='"+program+"_sem"+sem_no+"_marks"+row_no_one+"' id='"+program+"_sem"+sem_no+"_marks"+row_no_one+"' value='' "
+			+"data-default-value='e.g. 500' size='35' maxlength='50' type='text' "
+			+"class='textInput  validateInteger' /></td> "
+			+"<td><input name='"+program+"_sem"+sem_no+"_total_marks"+row_no_one+"' id='"+program+"_sem"+sem_no+"_total_marks"+row_no_one+"' value=' '"
+			+"data-default-value='e.g. 500' size='35' maxlength='50' type='text' "
+			+"class='textInput  validateInteger' /></td>"
+			+"</tr>";
+			
+      	  	$(tableName).append(abc);
+         }
+
+      function show_newTable(program){
+    	  var row_no_one = 1;
+    	  sem_no++;
+    	  
+    	  var tableName = "#"+program+"_details";
+    	  var abc= "<br><table id='"+program+"_sem"+sem_no+"_details'>"
+    	+"<thead> "
+  		+"</thead> "
+	    +"<tr> "
+		+"<td>Code</td> "
+		+"<td>Subject Name</td> "
+		+"<td>Marks Obtained</td> "
+		+"<td>Total Marks</td> "
+		+"</tr> "
+		+"<tr id='"+program+"_sem"+sem_no+"_row"+row_no_one+"'>"
+		+" <td><input name='"+program+"_sem"+sem_no+"_subcode"+row_no_one+"' id='"+program+"_sem"+sem_no+"_subcode"+row_no_one+"' value='' "
+		+"data-default-value='e.g. CSE-712E' size='35' maxlength='50 '"
+		+"type='text' class='textInput  validateAlpha' /></td>"
+		+"<td><input name='"+program+"_sem"+sem_no+"_sub_name"+row_no_one+"' id='"+program+"_sem"+sem_no+"_sub_name"+row_no_one+"' value='' "
+		+"data-default-value='e.g. Data Structures' size='35' maxlength='50' "
+		+"type='text' class='textInput  validateAlpha' /></td> "
+		+"<td><input name='"+program+"_sem"+sem_no+"_marks"+row_no_one+"' id='"+program+"_sem"+sem_no+"_marks"+row_no_one+"' value='' "
+		+"data-default-value='e.g. 500' size='35' maxlength='50' type='text' "
+		+"class='textInput  validateInteger' /></td> "
+		+"<td><input name='"+program+"_sem"+sem_no+"_total_marks"+row_no_one+"' id='"+program+"_sem"+sem_no+"_total_marks"+row_no_one+"' value=' '"
+		+"data-default-value='e.g. 500' size='35' maxlength='50' type='text' "
+		+"class='textInput  validateInteger' /></td>"
+		+"</tr>"
+		+"</table>";
+	    
+        $(tableName).append(abc);
+    	}
+     
+     
+    </script>
+
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
