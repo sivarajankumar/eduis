@@ -568,7 +568,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
      * Enter description here ...
      * @throws Exception
      */
-    public function findMemberID ()
+    public function findMemberId ()
     {
         $roll_no = $this->getRoll_no();
         $department_id = $this->getDepartment_id();
@@ -602,10 +602,19 @@ class Core_Model_Member_Student extends Core_Model_Generic
      * You cant use it directly in 
      * controller To get info of student,
      * first setMember_id and then call getter functions to retrieve properties.
+     * @param boolean $personal
+     * @param boolean $basic
      */
-    public function initStudentInfo ()
+    public function initStudentInfo ($personal = false, $basic = false)
     {
-        $options = $this->getMapper()->fetchStudentInfo($this);
+        if ($personal) {
+            $options = $this->getMapper()->fetchStudentInfo($this, true);
+        } elseif ($basic) {
+            $options = $this->getMapper()->fetchStudentInfo($this, false, true);
+        } else {//for backward compatibility .. older code calls this
+            //function for personal info
+            $options = $this->getMapper()->fetchStudentInfo($this, true);
+        }
         $this->setOptions($options);
     }
     public function enroll ($options)

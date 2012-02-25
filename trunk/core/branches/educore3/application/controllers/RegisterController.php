@@ -130,6 +130,7 @@ class RegisterController extends Zend_Controller_Action
             echo '<b>' . ucwords(str_ireplace('_', ' ', $colName)) . '</b> : ' .
              $value . '<br/>';
         }
+        Zend_Registry::get('logger')->debug($params);
         $model = new Core_Model_Member_Student();
         $model->initSave();
         $model->setSave_stu_dep(true);
@@ -160,16 +161,15 @@ class RegisterController extends Zend_Controller_Action
         $params['semester_id'] = $this->_applicant->semester_id;
         print_r($params);
         $PROTOCOL = 'http://';
-        $URL = $PROTOCOL . ACADEMIC_SERVER . '/register' . '?' .http_build_query($params);
+        $URL = $PROTOCOL . ACADEMIC_SERVER . '/register' . '?' .
+         http_build_query($params);
         $client = new Zend_Http_Client($URL);
         $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
         //$response = $client->request();
-         $this->_redirect($URL);
+        $this->_redirect($URL);
     }
     public function testAction ()
-    {
-        
-    }
+    {}
 }
 
 

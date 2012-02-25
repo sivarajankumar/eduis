@@ -41,7 +41,8 @@ class Core_Model_Mapper_Member_Student
      * Fetches personal information of a Student
      * @param Core_Model_Member_Student $student
      */
-    public function fetchStudentInfo (Core_Model_Member_Student $student)
+    public function fetchStudentInfo (Core_Model_Member_Student $student, 
+    $personal = false, $basic = false)
     {
         $member_id = $student->getMember_id();
         if (empty($member_id)) {
@@ -49,20 +50,33 @@ class Core_Model_Mapper_Member_Student
             throw new Exception($error);
         } else {
             $adapter = $this->getDbTable()->getAdapter();
-            $stu_prs_cols = $this->getDbTable()->info('cols');
-            $stu_dep_cols = array('department_id', 'programme_id', 
-            'batch_start', 'group_id');
-            $stu_sem_cols = array('semester_id');
-            $select = $adapter->select()->from(
-            $this->getDbTable()
-                ->info('name'), $stu_prs_cols);
-            $cond1 = 'student_personal.member_id = student_department.member_id';
-            $cond2 = 'student_personal.member_id = student_semester.member_id';
-            $select->joinInner('student_department', $cond1, $stu_dep_cols);
-            $select->joinInner('student_semester', $cond2, $stu_sem_cols);
-            $select->where('student_personal.member_id = ?', $member_id);
-            $student_info = array();
-            $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            if ($personal == true) {
+                $stu_prs_cols = $this->getDbTable()->info('cols');
+                $stu_dep_cols = array('department_id', 'programme_id', 
+                'batch_start', 'group_id');
+                $stu_sem_cols = array('semester_id');
+                $select = $adapter->select()->from(
+                $this->getDbTable()
+                    ->info('name'), $stu_prs_cols);
+                $cond1 = 'student_personal.member_id = student_department.member_id';
+                $cond2 = 'student_personal.member_id = student_semester.member_id';
+                $select->joinInner('student_department', $cond1, $stu_dep_cols);
+                $select->joinInner('student_semester', $cond2, $stu_sem_cols);
+                $select->where('student_personal.member_id = ?', $member_id);
+                $student_info = array();
+                $student_info = $select->query()->fetchAll(
+                Zend_Db::FETCH_UNIQUE);
+            } else {
+                $db_table = new Core_Model_DbTable_StudentSemester();
+                $required_cols = array('roll_no', 'department_id', 
+                'programme_id', 'semester_id', 'start_time', 'completition');
+                $select = $adapter->select()
+                    ->from($db_table->info('name'), $required_cols)
+                    ->where('member_id = ?', $member_id);
+                $student_info = array();
+                $student_info = $select->query()->fetchAll(
+                Zend_Db::FETCH_UNIQUE);
+            }
             if (sizeof($student_info[$member_id]) == 0) {
                 throw new Exception(
                 'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
