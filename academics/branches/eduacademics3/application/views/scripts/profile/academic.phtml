@@ -1,0 +1,424 @@
+
+<!--[if lte ie 7]>
+      <style type="text/css" media="screen">
+        /* Move these to your IE6/7 specific stylesheet if possible */
+        .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+      </style>
+    <![endif]-->
+
+
+<form action="javascript:submit();" class="uniForm">
+<h2><?php
+$stepNo = $this->stepNo;
+?> Information:</h2>
+<hr />
+ <?php
+    $form = null;
+    $basis = strtolower($this->applicant->admission_basis);
+    switch ($basis) {
+        case 'aieee':
+            ?>
+          <fieldset>
+<h3>AIEEE</h3>
+<div class="ctrlHolder"><label for=""><em> </em>All India Rank (AIR)</label>
+<input name="4all_india_rank" id="4all_india_rank"
+	value="<?php
+            echo $this->applicant->ai_rank?>"
+	data-default-value="  450" size="35" maxlength="50" type="text"
+	class="textInput validateInteger" />
+<p class="formHint">All India Rank of <span class="cName">Candidate</span></p>
+</div>
+
+
+<div class="ctrlHolder"><label for=""><em> </em>AIEEE Marks</label> <input
+	name="4total_marks" id="4total_marks"
+	value="<?php
+            echo $this->applicant->aieee_marks?>"
+	data-default-value="  145" size="35" maxlength="50" type="text"
+	class="textInput validateInteger" />
+<p class="formHint">Marks of AIEEE Form</p>
+</div>
+</fieldset>
+          <?php
+
+        case 'twelfth':
+            ?>
+              <fieldset>
+<h3>Twelfth Marks</h3>
+
+<div class="ctrlHolder"><label for=""><em> </em>Marks Obtained</label> <input
+	name="1marks_obtained" id="1marks_obtained"
+	value="<?php
+            echo $this->applicant->marks_obtained?>"
+	data-default-value="  450" size="35" maxlength="50" type="text"
+	class="textInput   validateInteger" />
+<p class="formHint">Marks Obtained by <span class="cName">Candidate</span></p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>Total Marks</label> <input
+	name="1total_marks" id="1total_marks"
+	value="<?php
+            echo $this->applicant->total_marks?>"
+	data-default-value="  500" size="35" maxlength="50" type="text"
+	class="textInput   validateInteger" />
+<p class="formHint">Total Marks</p>
+</div>
+<div class="ctrlHolder">
+            <label for=""><em></em>Percentage</label>
+            <input name="1percentage" id="1percentage" data-default-value="  90" size="35" maxlength="50" type="text" class="textInput  "/>
+            <p class="formHint">Percentage obtained by <span class="cName" >Candidate</span></p>
+          </div>
+<div class="ctrlHolder"><label for=""><em> </em>PCM/PCB Percentage</label>
+<input name="1pcm_percent" id="1pcm_percent"
+	value="<?php
+            echo $this->applicant->pcm_percent?>"
+	data-default-value="  90" size="35" maxlength="50" type="text"
+	class="textInput   validateNumber  validateMax val-100" />
+<p class="formHint">Percentage obtained by <span class="cName">Candidate</span>
+in Physics, Chemistry, Math/Biology</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em> 10+2 Roll no.</label> <input
+	name="1board_roll_no" id="1board_roll_no"
+	value="<?php
+            echo $this->applicant->board_roll?>"
+	data-default-value="  2310654" size="35" maxlength="20" type="text"
+	class="textInput" />
+<p class="formHint">10+2 roll number of <?php
+            echo $this->applicant->first_name?></p>
+</div>
+<div class="ctrlHolder"><label for=""><em> </em>Year of Passing</label>
+<input name="1passing_year" id="1passing_year"
+	value="<?php
+            echo $this->applicant->passing_year?>"
+	data-default-value="  2007" size="35" maxlength="50" type="text"
+	class="textInput   validateInteger validateMax val-<?php
+            echo date('Y');
+            ?>" />
+<p class="formHint">Year in which <span class="cName">Candidate</span>
+passed the 12th</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>Institution</label> <input
+	name="1institution" id="1institution"
+	value="<?php
+            echo $this->applicant->institution?>"
+	data-default-value="  Saraswati Senior Secondary School" size="35"
+	maxlength="50" type="text" class="textInput  " />
+<p class="formHint">Institution in 12th</p>
+</div>
+<div class="ctrlHolder"><label for=""><em> </em>City</label> <input
+	name="1city_name" id="1city_name"
+	value="<?php
+            echo $this->applicant->institution_city?>"
+	data-default-value="  Ambala" size="35" maxlength="50" type="text"
+	class="textInput  " />
+<p class="formHint">City of Institution</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>State</label> <input
+	name="1state_name" id="1state_name"
+	value="<?php
+            echo $this->applicant->institution_state?>"
+	data-default-value="  Haryana" size="35" maxlength="50" type="text"
+	class="textInput  " />
+<p class="formHint">State of Institution</p>
+</div>
+<div class="ctrlHolder"><label for=""><em> </em>Board</label> <input
+	name="1board" id="1board" value="<?php
+            echo $this->applicant->board?>"
+	data-default-value="  CBSE" size="35" maxlength="50" type="text"
+	class="textInput  " />
+<p class="formHint">Education Board in 12th</p>
+</div>
+
+<div class="ctrlHolder"><label for="">School Rank</label> <input
+	name="1school_rank" id="1school_rank"
+	value="<?php
+            echo $this->applicant->school_rank?>"
+	data-default-value="  1" size="35" maxlength="50" type="text"
+	class="textInput validateInteger" />
+<p class="formHint">School rank of <span class="cName">Candidate</span></p>
+</div>
+</fieldset>
+          <?php
+            break;
+        case 'leet':
+            ?>
+          <fieldset>
+<h3>Diploma Marks</h3>
+
+<div class="ctrlHolder"><label for=""><em> </em>Marks Obtained</label> <input
+	name="3marks_obtained" id="3marks_obtained"
+	value="<?php
+            echo $this->applicant->marks_obtained?>"
+	data-default-value="  450" size="35" maxlength="50" type="text"
+	class="textInput   validateInteger" />
+<p class="formHint">Marks Obtained by <span class="cName">Candidate</span></p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>Total Marks</label> <input
+	name="3total_marks" id="3total_marks"
+	value="<?php
+            echo $this->applicant->total_marks?>"
+	data-default-value="  500" size="35" maxlength="50" type="text"
+	class="textInput   validateInteger" />
+<p class="formHint">Total Marks</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>Year of Passing</label>
+<input name="3passing_year" id="3passing_year"
+	value="<?php
+            echo $this->applicant->passing_year?>"
+	data-default-value="  2007" size="35" maxlength="50" type="text"
+	class="textInput   validateInteger" />
+<p class="formHint">Year in which <span class="cName">Candidate</span>
+passed the Diploma</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>Institution</label> <input
+	name="3institution" id="3institution"
+	value="<?php
+            echo $this->applicant->institution?>"
+	data-default-value="  Govt. Polytechnic" size="35" maxlength="50"
+	type="text" class="textInput  " />
+<p class="formHint">Institution in Diploma</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>City</label> <input
+	name="3city_name" id="3city_name"
+	value="<?php
+            echo $this->applicant->institution_city?>"
+	data-default-value="  Ambala" size="35" maxlength="50" type="text"
+	class="textInput  " />
+<p class="formHint">City of Institution</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>State</label> <input
+	name="3state_name" id="3state_name"
+	value="<?php
+            echo $this->applicant->institution_state?>"
+	data-default-value="  Haryana" size="35" maxlength="50" type="text"
+	class="textInput  " />
+<p class="formHint">State of Institution</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>Branch</label> <input
+	name="3discipline_name" id="3discipline_name"
+	value="<?php
+            echo $this->applicant->branch?>"
+	data-default-value="  Computer Science" size="35" maxlength="50"
+	type="text" class="textInput   validatePhrase" />
+<p class="formHint">Branch of <span class="cName">Candidate</span>(in
+full form only)</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>University</label> <input
+	name="3board" id="3board" value="<?php
+            echo $this->applicant->board?>"
+	data-default-value="  KUK" size="35" maxlength="50" type="text"
+	class="textInput  " />
+<p class="formHint">Education University in Diploma</p>
+</div>
+
+</fieldset>
+          <?php
+            break;
+        default:
+            throw new Zend_Exception(
+            'The basis of enrollment is unknown.(i.e.' . var_export($basis, 
+            true) . ')', Zend_Log::WARN);
+    }
+    ?>
+      <fieldset>
+<h3>Matric Information</h3>
+
+<div class="ctrlHolder"><label for=""><em> </em>Marks Obtained</label> <input
+	name="2marks_obtained" id="2marks_obtained"
+	value="<?php
+echo $this->applicant->matric_marks_obtained?>"
+	data-default-value="  450" size="35" maxlength="50" type="text"
+	class="textInput   validateInteger" />
+<p class="formHint">Marks Obtained by <span class="cName">Candidate</span></p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>Total Marks</label> <input
+	name="2total_marks" id="2total_marks"
+	value="<?php
+echo $this->applicant->matric_total_marks?>"
+	data-default-value="  500" size="35" maxlength="50" type="text"
+	class="textInput   validateInteger" />
+<p class="formHint">Total Marks</p>
+</div>
+          
+       
+            <div class="ctrlHolder">
+            <label for=""><em></em>Percentage</label>
+            <input name="2percentage" id="2percentage" data-default-value="  90" size="35" maxlength="50" type="text" class="textInput  "/>
+            <p class="formHint">Percentage obtained by <span class="cName" >Candidate</span></p>
+          </div>
+        
+      
+         
+          
+          <div class="ctrlHolder"><label for=""><em> </em> Matric Roll
+no.</label> <input name="2board_roll_no" id="2board_roll_no"
+	value="<?php
+echo $this->applicant->matric_roll_no?>"
+	data-default-value="  10654" size="35" maxlength="20" type="text"
+	class="textInput  " />
+<p class="formHint">matric(10th) roll number of <?php
+echo $this->applicant->first_name?></p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>Institution</label> <input
+	name="2institution" id="2institution"
+	value="<?php
+echo $this->applicant->matric_institution?>"
+	data-default-value="  DAV Public School" size="35" maxlength="50"
+	type="text" class="textInput  " />
+<p class="formHint">Institution in 10th</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>City</label> <input
+	name="2city_name" id="2city_name"
+	value="<?php
+echo $this->applicant->matric_city?>"
+	data-default-value="  Kanina" size="35" maxlength="50" type="text"
+	class="textInput  " />
+<p class="formHint">City of Institution</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em>State</label> <input
+	name="2state_name" id="2state_name"
+	value="<?php
+echo $this->applicant->matric_state?>"
+	data-default-value="  Haryana" size="35" maxlength="50" type="text"
+	class="textInput  " />
+<p class="formHint">State of Institution</p>
+</div>
+
+<div class="ctrlHolder"><label for=""><em> </em> Board</label> <input
+	name="2board" id="2board"
+	value="<?php
+echo $this->applicant->matric_board?>"
+	data-default-value="  HSBE" size="35" maxlength="20" type="text"
+	class="textInput  " />
+<p class="formHint">Education Board in matric(10th)</p>
+</div>
+<div class="ctrlHolder"><label for=""><em> </em> Passing year</label> <input
+	name="2passing_year" id="2passing_year"
+	value="<?php
+echo $this->applicant->matric_passing_year?>"
+	data-default-value="  2005" size="35" maxlength="20" type="text"
+	class="textInput   validateInteger" />
+<p class="formHint">Year in which <?php
+echo $this->applicant->first_name?> passed the matriculation.</p>
+</div>
+<div class="ctrlHolder"><label for="">School Rank</label> <input
+	name="2school_rank" id="2school_rank"
+	value="<?php
+echo $this->applicant->matric_school_rank?>"
+	data-default-value="  3" size="35" maxlength="20" type="text"
+	class="textInput validateInteger" />
+<p class="formHint">Mention school rank of <?php
+echo $this->applicant->first_name?> if applicable.</p>
+</div>
+</fieldset>
+
+<div id="submitStatus" style="display: none; padding: 1em;"
+	class="ui-state-highlight ui-corner-all"></div>
+
+<div class="buttonHolder">
+<button type="reset" class="secondaryAction">Reset</button>
+<button type="submit" class="primaryAction">Next</button>
+</div>
+</form>
+
+<script>
+	var urlAcadmicInfo = "<?php echo $this->url( array('controller' => 'profile',
+	 'action' => 'set' . $this->steps[$stepNo]))?>";
+
+    $(function(){
+  		 $('form.uniForm').uniform({
+          prevent_submit : true
+        });
+        
+        $(function() {
+    		$( "#progressbar" ).progressbar({
+    			value: <?php
+    echo (100 / count($this->steps)) * ($stepNo + 1);
+    ?>
+    		});
+    	});
+		
+      });
+
+    function calcPercent(marks,total) {
+        return ((marks/total)*100).toFixed(2);
+    }
+      function submit() {
+          $.ajax({
+              url : urlAcadmicInfo,
+              data : getValues(),
+              success: function(jStatus){
+                  $( "#submitStatus" ).html(jStatus).slideDown('slow', function(){
+                    	setTimeout(function(){
+                    		window.location = "/profile/<?php
+                    echo $this->steps[$stepNo + 1];
+                    ?> ";
+                        	},10000);
+                  }).append('<br/><a href="/profile/<?php
+                echo $this->steps[$stepNo - 1];
+                ?>" >&lt;&lt;PREV</a>:<a href="/profile/<?php
+                echo $this->steps[$stepNo + 1];
+                ?>" >NEXT&gt;&gt;</a>');
+
+
+              },
+                  error: function(response) {
+                	  $('#errorBox').text(response.responseText).parent().show();
+                      console.log(response);
+                      }
+                  });
+      }
+      function getValues() {
+          var formData = {}; 
+          $('form.uniForm :input')
+          		.not('button,:input[value^="e.g."]')
+          		.each(function(){ 
+          			formData[this.name] = this.value; 
+              });
+
+          var compartments = $('input:radio[name=compartments]:checked').val();
+          formData.compartments = compartments; 
+          
+          var first_attempt = $('input:radio[name=first_attempt]:checked').val();
+          formData.first_attempt = first_attempt; 
+    
+          var ever_disqualified = $('input:radio[name=ever_disqualified]:checked').val();
+          formData.ever_disqualified = ever_disqualified;
+
+
+          var marks = parseInt($('#1marks_obtained').val());
+          var total = parseInt($('#1total_marks').val());
+          formData.percentage = calcPercent(marks,total);
+
+          marks = parseInt($('#2marks_obtained').val());
+          total = parseInt($('#2total_marks').val());
+          formData.matric_percentage = calcPercent(marks,total);
+          
+		return formData;
+	}
+    </script>
+<?php
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/demos/css/demo.css');
+
+?>
