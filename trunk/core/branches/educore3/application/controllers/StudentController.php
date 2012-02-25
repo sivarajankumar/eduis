@@ -44,21 +44,23 @@ class StudentController extends Corez_Base_BaseController
     public function getinfoAction ()
     {
         /*   $request = $this->getRequest();
+        //the basic vars like roll dep prog sem mem_id must be saved in session vars 
+        */
         $roll_no = $this->getRequest()->getParam('roll_no');
         $department_id = $this->getRequest()->getParam('department_id');
         $programme_id = $this->getRequest()->getParam('programme_id');
-        $semester_id = $this->getRequest()->getParam('semester_id');*/
+        $semester_id = $this->getRequest()->getParam('semester_id');
         $model = new Core_Model_Member_Student();
-        $model->setRoll_no(2308010);
-        $model->setDepartment_id('cse');
-        $model->setProgramme_id('btech');
-        $model->setSemester_id(6);
+        $model->setRoll_no($roll_no);
+        $model->setDepartment_id($department_id);
+        $model->setProgramme_id($programme_id);
+        $model->setSemester_id($semester_id);
         $model->findMemberId();
         $member_id = $model->getMember_id();
         $callback = $this->getRequest()->getParam('callback');
         echo $callback . '(' . $this->_helper->json($member_id, false) . ')';
-        //$this->_helper->json($member_id);
-        /* $request = $this->getRequest();
+         //$this->_helper->json($member_id);
+    /* $request = $this->getRequest();
         $format = $request->getParam('format', 'json');
         $rollno = $request->getParam('rollno');
         if (isset($rollno)) {
@@ -88,9 +90,8 @@ class StudentController extends Corez_Base_BaseController
         }*/
     }
     /**
-     * @todo incomplete. the sources of information are not defined
-     * @todo must be renamed to getInfoAction($personal = false,$basic = false)
-     * this action returns the profile solely on the basis of Member_Id
+     * 
+     * Enter description here ...
      */
     public function getprofileAction ()
     {
