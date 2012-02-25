@@ -153,19 +153,22 @@ class RegisterController extends Zend_Controller_Action
     //Zend_Registry::get('logger')->debug($body);
     }
     public function saveAction ()
-    {}
+    {
+        $params['member_id'] = $this->_applicant->member_id;
+        $params['department_id'] = $this->_applicant->department_id;
+        $params['programme_id'] = $this->_applicant->programme_id;
+        $params['semester_id'] = $this->_applicant->semester_id;
+        print_r($params);
+        $PROTOCOL = 'http://';
+        $URL = $PROTOCOL . ACADEMIC_SERVER . '/register' . '?' .http_build_query($params);
+        $client = new Zend_Http_Client($URL);
+        $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+        //$response = $client->request();
+         $this->_redirect($URL);
+    }
     public function testAction ()
     {
-        $params = array('programme_id');
-        $model = new Core_Model_Member_Student();
-        $model->initSave();
-        $model->enroll($params);
-        $model->setRoll_no($params['roll_no']);
-        $model->setDepartment_id($params['department_id']);
-        $model->setProgramme_id($params['programme_id']);
-        $model->setSemester_id($params['semester_id']);
-        $model->findMemberID();
-        $member_id = $model->getMember_id();
+        
     }
 }
 
