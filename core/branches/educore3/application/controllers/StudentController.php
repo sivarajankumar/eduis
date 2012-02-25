@@ -43,7 +43,22 @@ class StudentController extends Corez_Base_BaseController
     }
     public function getinfoAction ()
     {
-        $request = $this->getRequest();
+        /*   $request = $this->getRequest();
+        $roll_no = $this->getRequest()->getParam('roll_no');
+        $department_id = $this->getRequest()->getParam('department_id');
+        $programme_id = $this->getRequest()->getParam('programme_id');
+        $semester_id = $this->getRequest()->getParam('semester_id');*/
+        $model = new Core_Model_Member_Student();
+        $model->setRoll_no(2308010);
+        $model->setDepartment_id('cse');
+        $model->setProgramme_id('btech');
+        $model->setSemester_id(6);
+        $model->findMemberId();
+        $member_id = $model->getMember_id();
+        $callback = $this->getRequest()->getParam('callback');
+        echo $callback . '(' . $this->_helper->json($member_id, false) . ')';
+        //$this->_helper->json($member_id);
+        /* $request = $this->getRequest();
         $format = $request->getParam('format', 'json');
         $rollno = $request->getParam('rollno');
         if (isset($rollno)) {
@@ -53,13 +68,13 @@ class StudentController extends Corez_Base_BaseController
                     $this->_helper->json($result);
                     return;
                 case 'select' :
-					/*echo '<select>';
+					echo '<select>';
 					echo '<option>Select one</option>';
 					foreach ( $result as $key => $row ) {
 						echo '<option value="' . $row ['batch_start'] . '">' . $row ['batch_start'] . '</option>';
 					}
 					echo '</select>';
-					*/
+					
 					return;
                 case 'xml':
                     return;
@@ -70,39 +85,19 @@ class StudentController extends Corez_Base_BaseController
             }
         } else {
             header("HTTP/1.1 400 Bad Request");
-        }
+        }*/
     }
-    /*
-     * RETURNS THE PROFILE OF GIVEN ROLL NUMBER
+    /**
+     * @todo incomplete. the sources of information are not defined
+     * @todo must be renamed to getInfoAction($personal = false,$basic = false)
+     * this action returns the profile solely on the basis of Member_Id
      */
     public function getprofileAction ()
     {
         $model = new Core_Model_Member_Student();
-        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
         $member_id = '1';
-        /* 
-       if (isset($member_id) 
-        {
-           
-            $model->setMember_id($member_id);
-            $model->getStudentInfo();
-            
-        }
-        elseif ($this->getRequest()->getParam('roll_no'))
-        {
-            $model->setRoll_no($this->_roll_no);
-            $model->getMember_id();
-            $model->getStudentInfo();
-        }
-        else 
-        {
-           throw new Exception('..................ABE ROLL NUMBER DAAL...........',Zend_Log::ERR);
-        }
-        */
-        $this->setMember_id($member_id);
-        $this->setRoll_no('2308009');
-        $model->setMember_id($this->getMember_id());
-        $model->setRoll_no($this->getRoll_no());
+        $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+        $model->setMember_id($member_id);
         $model->initStudentInfo();
         $info = array('roll_no' => $model->getRoll_no(), 
         'regn_no' => $model->getReg_no(), 
@@ -113,7 +108,7 @@ class StudentController extends Corez_Base_BaseController
         'email' => $model->getE_mail());
         $callback = $this->getRequest()->getParam('callback');
         echo $callback . '(' . $this->_helper->json($info, false) . ')';
-         //$this->_helper->json($info);
+         //$this->_helper->json($info);        
     }
     public function searchAction ()
     {
@@ -166,6 +161,18 @@ class StudentController extends Corez_Base_BaseController
         $model->findMemberID();
         $member_id = $model->getMember_id();
         $this->_helper->json($member_id);
+    }
+    /**
+     * 
+     * in our project member_id works as identifying
+     */
+    public function getIdentityAction ()
+    {
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $this->_helper->viewRenderer->setNoRender(TRUE);
+        $this->_helper->layout()->disableLayout();
+        $model = new Core_Model_Member_Student();
     }
     /**
      * 
