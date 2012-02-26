@@ -151,4 +151,20 @@ class ProfileController extends Zend_Controller_Action
              $value . '<br/>';
         }
     }
+    public function testAction ()
+    {
+        $model = new Acad_Model_Programme_Subject();
+        $model->setSubject_code('cse-101');
+        $model->findAssociatedDepartments();
+        $result = $model->getAssociated_departments();
+        if (sizeof($result) != 0) {
+            print_r($result);
+        }
+        $model->setDepartment_id('cse');
+        $model->setProgramme_id('btech');
+        $model->setSemester_id(6);
+        $model->findSemesterSubjects();
+        $res = $model->getSemester_subjects();
+        Zend_Registry::get('logger')->debug($res);
+    }
 }
