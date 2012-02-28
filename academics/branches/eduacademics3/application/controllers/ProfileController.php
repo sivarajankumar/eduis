@@ -18,6 +18,55 @@ class ProfileController extends Zend_Controller_Action
         $this->view->assign('steps', 
         array('admissionbasis', 'academic', 'degreedetails'));
     }
+    /**
+     * Checks the existence of Member in academic module.
+     * returns true or false according to result
+     * true, if member exists
+     * false, if member does not exist
+     * 
+     * Paramsters to this function must be passed through Http request only
+     */
+    public function checkAction ()
+    {
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $this->_helper->viewRenderer->setNoRender(TRUE);
+        $this->_helper->layout()->disableLayout();
+        $format = $this->_getParam('format', 'json');
+        if (false) {
+            // @todo Get member_id from session/cookie.
+        //$member_id from session;
+        } else {
+            $member_id = $params['member_id'];
+        }
+        if (isset($member_id)) {
+            $student = new Acad_Model_Member_Student();
+            $exists = $student->setMember_id($member_id)->initStudentInfo(false, 
+            true);
+            if ($exists) {
+                $info['department_id'] = $student->getDepartment_id();
+                $info['programme_id'] = $student->getProgramme_id();
+                $info['semester_id'] = $student->getSemester_id();
+                $info['roll_no'] = $student->getRoll_no();
+                switch (strtolower($format)) {
+                    case 'json':
+                        $this->_helper->json($info);
+                        break;
+                    case 'test':
+                        $this->_helper->logger($info);
+                        break;
+                    default:
+                        throw new Exception('Invalid "format" request');
+                        break;
+                }
+            } else {
+                throw new Exception('Member does not exists');
+            }
+        } else {
+            throw new Exception(
+            'No member_id provided in params passed to check() function');
+        }
+    }
     public function indexAction ()
     {
         $request = $this->getRequest();
@@ -26,7 +75,7 @@ class ProfileController extends Zend_Controller_Action
             $value = is_array($value) ? $value : htmlentities(trim($value));
             $this->_applicant->$colName = $value;
         }
-        //print_r($params);
+        Zend_Registry::get('logger')->debug($params);
         $params['member_id'] = $this->_applicant->member_id;
         $params['department_id'] = $this->_applicant->department_id;
         $params['programme_id'] = $this->_applicant->programme_id;
@@ -51,7 +100,8 @@ class ProfileController extends Zend_Controller_Action
             $value = is_array($value) ? $value : htmlentities(trim($value));
             $this->_applicant->$colName = $value;
         }
-        print_r($params);
+        Zend_Registry::get('logger')->debug($this->_applicant);
+        Zend_Registry::get('logger')->debug($params);
         $this->_redirect('/profile/academic');
     }
     public function academicAction ()
@@ -62,7 +112,7 @@ class ProfileController extends Zend_Controller_Action
     {
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $params['member_id'] = 1;
+        $params['member_id'] = 5;
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
         foreach ($value as $colName => $value) {
@@ -76,7 +126,6 @@ class ProfileController extends Zend_Controller_Action
             echo '<b>' . ucwords(str_ireplace('_', ' ', $colName)) . '</b> : ' .
              $value . '<br/>';
         }
-        Zend_Registry::get('logger')->debug($params);
         //
         $twelfth_data = array();
         $tenth_data = array();
@@ -125,7 +174,6 @@ class ProfileController extends Zend_Controller_Action
             $aieee_model->initSave();
             $aieee_model->save($aieee_data);
         }
-         //$URL = '/student/saveprofile' . '?' . http_build_query($params);
     }
     public function degreedetailsAction ()
     {
