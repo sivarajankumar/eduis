@@ -131,7 +131,8 @@ class IssueController extends Libz_Base_BaseController {
 					$result ['totBooksIssued'] = $issuedCount + 1;
 					$this->_helper->logger->notice ( 'Result' );
 					$this->_helper->logger->debug ( $result );
-					$this->_helper->json ( $result );
+					echo $this->_helper->json ( $result, false );
+					return;
 				} else {
 					$this->getResponse ()->setHttpResponseCode ( 400 );
 					echo $issuedCount . ' books are already issued to ' . $memberId . '.<br/> (Max limit = ' . $memberConstraints ['document_limit'] . ')';
