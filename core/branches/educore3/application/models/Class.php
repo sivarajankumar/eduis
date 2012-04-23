@@ -201,15 +201,16 @@ class Core_Model_Test_Class extends Core_Model_Generic
      */
     public function fetchInfo ()
     {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $careless_error = 'Please provide a Member Id';
+        $class_id = $this->getMember_id();
+        if (empty($class_id)) {
+            $careless_error = 'Please provide a Class Id';
             throw new Exception($careless_error);
         } else {
-            $options = $this->getMapper()->fetchPersonalInfo($member_id);
-            if (sizeof($options) == 0) {} else {
-                $no_data_error = 'NO DATA EXISTS FOR MEMBER ID : ' . $member_id;
+            $options = $this->getMapper()->fetchInfo($class_id);
+            if (sizeof($options) == 0) {
+                $no_data_error = 'NO DATA EXISTS FOR CLASS ID : ' . $class_id;
                 throw new Exception($no_data_error);
+            } else {
                 $this->setOptions($options);
             }
         }

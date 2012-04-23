@@ -1,101 +1,116 @@
 <?php
-class Core_Model_Batch extends Core_Model_Generic
+class Core_Model_MemberAddress extends Core_Model_Generic
 {
-    protected $_batch_id;
-    protected $_department_id;
-    protected $_programme_id;
-    protected $_batch_start;
-    protected $_batch_number;
-    protected $_is_active;
+    protected $_member_id;
+    protected $_postal_code;
+    protected $_city;
+    protected $_district;
+    protected $_state;
+    protected $_address;
+    protected $_adress_type;
     protected $_mapper;
     /**
-     * @return the $_batch_id
+     * @return the $_member_id
      */
-    public function getBatch_id ()
+    protected function getMember_id ()
     {
-        return $this->_batch_id;
+        return $this->_member_id;
     }
     /**
-     * @param field_type $_batch_id
+     * @param field_type $_member_id
      */
-    public function setBatch_id ($_batch_id)
+    protected function setMember_id ($_member_id)
     {
-        $this->_batch_id = $_batch_id;
+        $this->_member_id = $_member_id;
     }
     /**
-     * @return the $_department_id
+     * @return the $_postal_code
      */
-    public function getDepartment_id ()
+    protected function getPostal_code ()
     {
-        return $this->_department_id;
+        return $this->_postal_code;
     }
     /**
-     * @param field_type $_department_id
+     * @param field_type $_postal_code
      */
-    public function setDepartment_id ($_department_id)
+    protected function setPostal_code ($_postal_code)
     {
-        $this->_department_id = $_department_id;
+        $this->_postal_code = $_postal_code;
     }
     /**
-     * @return the $_programme_id
+     * @return the $_city
      */
-    public function getProgramme_id ()
+    protected function getCity ()
     {
-        return $this->_programme_id;
+        return $this->_city;
     }
     /**
-     * @param field_type $_programme_id
+     * @param field_type $_city
      */
-    public function setProgramme_id ($_programme_id)
+    protected function setCity ($_city)
     {
-        $this->_programme_id = $_programme_id;
+        $this->_city = $_city;
     }
     /**
-     * @return the $_batch_start
+     * @return the $_district
      */
-    public function getBatch_start ()
+    protected function getDistrict ()
     {
-        return $this->_batch_start;
+        return $this->_district;
     }
     /**
-     * @param field_type $_batch_start
+     * @param field_type $_district
      */
-    public function setBatch_start ($_batch_start)
+    protected function setDistrict ($_district)
     {
-        $this->_batch_start = $_batch_start;
+        $this->_district = $_district;
     }
     /**
-     * @return the $_batch_number
+     * @return the $_state
      */
-    public function getBatch_number ()
+    protected function getState ()
     {
-        return $this->_batch_number;
+        return $this->_state;
     }
     /**
-     * @param field_type $_batch_number
+     * @param field_type $_state
      */
-    public function setBatch_number ($_batch_number)
+    protected function setState ($_state)
     {
-        $this->_batch_number = $_batch_number;
+        $this->_state = $_state;
     }
     /**
-     * @return the $_is_active
+     * @return the $_address
      */
-    public function getIs_active ()
+    protected function getAddress ()
     {
-        return $this->_is_active;
+        return $this->_address;
     }
     /**
-     * @param field_type $_is_active
+     * @param field_type $_address
      */
-    public function setIs_active ($_is_active)
+    protected function setAddress ($_address)
     {
-        $this->_is_active = $_is_active;
+        $this->_address = $_address;
+    }
+    /**
+     * @return the $_adress_type
+     */
+    protected function getAdress_type ()
+    {
+        return $this->_adress_type;
+    }
+    /**
+     * @param field_type $_adress_type
+     */
+    protected function setAdress_type ($_adress_type)
+    {
+        $this->_adress_type = $_adress_type;
     }
     /**
      * Sets Mapper
-     * @param Core_Model_Mapper_Batch $mapper
-     * @return Core_Model_Batch
+     * @param Core_Model_Mapper_MemberAddress $mapper
+     * @return Core_Model_MemberAddress
      */
     public function setMapper ($mapper)
     {
@@ -104,12 +119,12 @@ class Core_Model_Batch extends Core_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Core_Model_Mapper_Batch
+     * @return Core_Model_Mapper_MemberAddress
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Core_Model_Mapper_Batch());
+            $this->setMapper(new Core_Model_Mapper_MemberAddress());
         }
         return $this->_mapper;
     }
@@ -158,12 +173,13 @@ class Core_Model_Batch extends Core_Model_Generic
     {
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
-            $careless_error = 'Please provide a Batch_Id';
+            $careless_error = 'Please provide a Member Id';
             throw new Exception($careless_error);
         } else {
-            $options = $this->getMapper()->fetchPersonalInfo($member_id);
+            $options = $this->getMapper()->fetchInfo($member_id);
             if (sizeof($options) == 0) {} else {
-                $no_data_error = 'NO DATA EXISTS FOR BATCH ID : ' . $member_id;
+                $no_data_error = 'NO ADDRESS DETAILS EXISTS FOR MEMBER ID : ' .
+                 $member_id;
                 throw new Exception($no_data_error);
                 $this->setOptions($options);
             }
