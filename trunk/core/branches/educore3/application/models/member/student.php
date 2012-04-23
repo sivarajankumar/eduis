@@ -93,6 +93,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
     public function setMember_id ($_member_id)
     {
         $this->_member_id = $_member_id;
+        return $this;
     }
     /**
      * @return the $_reg_no
@@ -598,12 +599,11 @@ class Core_Model_Member_Student extends Core_Model_Generic
         }
     }
     /**
-     * Gets information of a student
-     * You cant use it directly in 
-     * controller To get info of student,
-     * first setMember_id and then call getter functions to retrieve properties.
+     * 
+     * Enter description here ...
      * @param boolean $personal
      * @param boolean $basic
+     * returns false if no data exists for member 
      */
     public function initStudentInfo ($personal = false, $basic = false)
     {
@@ -611,11 +611,17 @@ class Core_Model_Member_Student extends Core_Model_Generic
             $options = $this->getMapper()->fetchStudentInfo($this, true);
         } elseif ($basic) {
             $options = $this->getMapper()->fetchStudentInfo($this, false, true);
-        } else {//for backward compatibility .. older code calls this
+        } else { //for backward compatibility .. older code calls this
             //function for personal info
-            $options = $this->getMapper()->fetchStudentInfo($this, true);
+            $options = $this->getMapper()->fetchStudentInfo(
+            $this, true);
         }
-        $this->setOptions($options);
+        if ($options === false) {
+            return false;
+        } else {
+            $this->setOptions($options);
+            return true;
+        }
     }
     public function enroll ($options)
     {
