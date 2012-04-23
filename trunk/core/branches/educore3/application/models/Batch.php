@@ -1,5 +1,5 @@
 <?php
-class Core_Model_Test_batch extends Core_Model_Generic
+class Core_Model_Batch extends Core_Model_Generic
 {
     protected $_batch_id;
     protected $_department_id;
@@ -95,7 +95,7 @@ class Core_Model_Test_batch extends Core_Model_Generic
     /**
      * Sets Mapper
      * @param Core_Model_Mapper_Batch $mapper
-     * @return Core_Model_Test_batch
+     * @return Core_Model_Batch
      */
     public function setMapper ($mapper)
     {
