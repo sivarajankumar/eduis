@@ -66,7 +66,7 @@ abstract class Core_Model_Generic
             $options[] = substr($value, 1);
         }
         //put names of all properties you want to deny acess to
-        $not_allowed = array('mapper');
+        $not_allowed = array('mapper','init_save');
         //return only acessible properties
         return array_diff($options, $not_allowed);
     }
