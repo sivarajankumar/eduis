@@ -66,7 +66,7 @@ abstract class Tnp_Model_Generic
             $options[] = substr($value, 1);
         }
         //put names of all properties you want to deny acess to
-        $not_allowed = array('mapper');
+        $not_allowed = array('mapper', 'init_save');
         //return only acessible properties
         return array_diff($options, $not_allowed);
     }
@@ -129,29 +129,52 @@ abstract class Tnp_Model_Generic
         $this->unsetAll();
         $this->setInit_save(true);
     }
-    /**
-     * Saves Object to database
-     * 
-     * @param array $options
-     */
-    public function save ($options)
+    protected function validateData ($data_to_validate)
     {
-        if ($this->getInit_save() == true) {
-            $properties = $this->getAllowedProperties();
-            $recieved = array_keys($options);
-            $valid_props = array_intersect($recieved, $properties);
+        $this->setOptions($data_to_validate);
+        //now, preparing validated database operations
+        $preparedDataForSaveProcess = array();
+        foreach ($data_to_validate as $valid_key => $value_to_validate) {
+            $getter_string = 'get' . ucfirst($valid_key);
+            $validated_value = $this->$getter_string();
+            $validatedData[$valid_key] = $value_to_validate;
+        }
+        return $validatedData;
+    }
+    /**
+     * 
+     * Filters genuine data for saving process
+     * @param array $data
+     * @throws Exception
+     * @return array
+     */
+    public function prepareDataForSaveProcess ($data)
+    {
+        $init_save_status = $this->getInit_save();
+        if ($init_save_status) {
+            $all_allowed_props = $this->getAllowedProperties();
+            $recieved_props = array_keys($data);
+            $valid_props = array_intersect($recieved_props, $all_allowed_props);
             foreach ($valid_props as $value) {
-                $setter_options[$value] = $options[$value];
+                $data_to_validate[$value] = $data[$value];
             }
-            if (! empty($setter_options)) {
-                $this->setOptions($setter_options);
-                $this->getMapper()->save($setter_options, $this);
+            if (! empty($data_to_validate)) {
+                //now, preparing validated database operations
+                $validated_data = $this->validateData(
+                $data_to_validate);
+                $preparedDataForSaveProcess = array();
+                foreach ($validated_data as $valid_key => $valid_value) {
+                    $db_column_name = $this->correctDbKeys($valid_key);
+                    $preparedDataForSaveProcess[$db_column_name] = $valid_value;
+                }
+                return $preparedDataForSaveProcess;
             } else {
                 throw new Exception(
-                'No valid option was supplied for save process');
+                'No Valid Data was supplied for save process');
             }
         } else {
-            throw new Exception('Save not initialised');
+            throw new Exception(
+            'Please initialise the save process prior to saving data');
         }
     }
     /**
@@ -197,7 +220,7 @@ abstract class Tnp_Model_Generic
         $message = "$error_append " . "</br>" . "$suggestion";
         $deciding_intersection = array_intersect($valid_options, 
         $valid_range_keys);
-        if (!empty($invalid_names) or !empty($invalid_names_1)) {
+        if (! empty($invalid_names) or ! empty($invalid_names_1)) {
             Zend_Registry::get('logger')->debug(
             var_export($error1 . ' ' . $error2 . $message));
             echo "</br>";
