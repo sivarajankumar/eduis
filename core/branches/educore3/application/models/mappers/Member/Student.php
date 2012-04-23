@@ -33,148 +33,95 @@ class Core_Model_Mapper_Member_Student
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Core_Model_DbTable_StudentPersonal');
+            $this->setDbTable('Core_Model_DbTable_Members');
         }
         return $this->_dbTable;
     }
     /**
-     * Fetches personal information of a Student
-     * @param Core_Model_Member_Student $student
-     */
-    public function fetchStudentInfo (Core_Model_Member_Student $student, 
-    $personal = false, $basic = false)
-    {
-        $member_id = $student->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error);
-        } else {
-            $adapter = $this->getDbTable()->getAdapter();
-            if ($personal == true) {
-                $stu_prs_cols = $this->getDbTable()->info('cols');
-                $stu_dep_cols = array('department_id', 'programme_id', 
-                'batch_start', 'group_id');
-                $stu_sem_cols = array('semester_id');
-                $select = $adapter->select()->from(
-                $this->getDbTable()
-                    ->info('name'), $stu_prs_cols);
-                $cond1 = 'student_personal.member_id = student_department.member_id';
-                $cond2 = 'student_personal.member_id = student_semester.member_id';
-                $select->joinInner('student_department', $cond1, $stu_dep_cols);
-                $select->joinInner('student_semester', $cond2, $stu_sem_cols);
-                $select->where('student_personal.member_id = ?', $member_id);
-                $student_info = array();
-                $student_info = $select->query()->fetchAll(
-                Zend_Db::FETCH_UNIQUE);
-            } else {
-                $db_table = new Core_Model_DbTable_StudentSemester();
-                $required_cols = array('roll_no', 'department_id', 
-                'programme_id', 'semester_id', 'start_time', 'completition');
-                $select = $adapter->select()
-                    ->from($db_table->info('name'), $required_cols)
-                    ->where('member_id = ?', $member_id);
-                $student_info = array();
-                $student_info = $select->query()->fetchAll(
-                Zend_Db::FETCH_UNIQUE);
-            }
-            if (sizeof($student_info[$member_id]) == 0) {
-                throw new Exception(
-                'NO DATA EXISTS FOR MEMBER_ID' . $member_id . '!!');
-            } else {
-                return $student_info[$member_id];
-            }
-        }
-    }
-    /**
+     * Fetches CRITICAL information of a Student
      * 
-     * Enter description here ...
-     * @param Core_Model_Member_Student $student
+     * @param integer $member_id
      */
-    public function fetchMemberID (Core_Model_Member_Student $student)
+    public function fetchCriticalInfo ($member_id)
     {
-        $roll_no = $student->getRoll_no();
-        $department_id = $student->getDepartment_id();
-        $programme_id = $student->getProgramme_id();
-        $semester_id = $student->getSemester_id();
         $adapter = $this->getDbTable()->getAdapter();
+        $req_cols = array('member_id', 'member_type_id', 'first_name', 
+        'last_name', 'middle_name', 'dob', 'blood_group', 'gender', 
+        'religion_id', 'cast_id', 'nationality_id', 'join_date', 'relieve_date', 
+        'image_no', 'is_active');
+        $table_name = $this->getDbTable()->info('name');
         $select = $adapter->select()
-            ->from('student_semester', 'member_id')
-            ->where('department_id = ?', $department_id)
-            ->where('programme_id = ?', $programme_id)
-            ->where('semester_id = ?', $semester_id)
-            ->where('roll_no = ?', $roll_no);
-        $result = $select->query()->fetchColumn();
-        if (! $result) {
-            throw new Exception(
-            'No Member Id exists for Roll No : ' . $roll_no . '');
-        } else {
-            return $result;
-        }
-    }
-    /**
-     * 
-     * Enter description here ...
-     * @param unknown_type $student
-     */
-    public function fetchRollNo (Core_Model_Member_Student $student)
-    {
-        $member_id = $student->getMember_id();
-        $department_id = $student->getDepartment_id();
-        $programme_id = $student->getProgramme_id();
-        $semester_id = $student->getSemester_id();
-        $adapter = $this->getDbTable()->getAdapter();
-        $select = $adapter->select()
-            ->from('student_semester', 'roll_no')
-            ->where('department_id = ?', $department_id)
-            ->where('programme_id = ?', $programme_id)
-            ->where('semester_id = ?', $semester_id)
+            ->from($table_name, $req_cols)
             ->where('member_id = ?', $member_id);
-        $result = $select->query()->fetchAll(Zend_Db::FETCH_NAMED);
-        return $result[0];
+        $student_info = array();
+        $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $student_info[$member_id];
     }
     /**
+     * Fetches information regarding CLASS of a Student
      * 
-     * Enter description here ...
-     * @param array $options
-     * @param Core_Model_Member_Student $student
+     * @param integer $member_id
      */
-    public function save ($options, Core_Model_Member_Student $student = null)
+    public function fetchClassInfo ($member_id)
     {
-        $save_stu_dep = $student->getSave_stu_dep();
-        $save_stu_per = $student->getSave_stu_per();
-        $save_student = $student->getSave_student();
-        if (isset($save_stu_dep)) {
-            $dbtable = new Core_Model_DbTable_StudentDepartment();
-        }
-        if (isset($save_stu_per)) {
-            $dbtable = new Core_Model_DbTable_StudentPersonal();
-        }
-        if (isset($save_student)) {
-            $dbtable = new Core_Model_DbTable_StudentSemester();
-        }
-        $cols = $dbtable->info('cols');
-        //$db_options is $options with keys renamed a/q to db_columns
-        $db_options = array();
-        foreach ($options as $key => $value) {
-            $db_options[$this->correctDbKeys($key)] = $value;
-        }
-        $db_options_keys = array_keys($db_options);
-        $recieved_keys = array_intersect($db_options_keys, $cols);
-        $data = array();
-        foreach ($recieved_keys as $key_name) {
-            $str = "get" . ucfirst($this->correctModelKeys($key_name));
-            $data[$key_name] = $student->$str();
-        }
-        //$adapter = $this->getDbTable()->getAdapter();
-        //$where = $adapter->quoteInto("$this->correctDbKeys('member_id') = ?", $student->getMember_id());
-        $adapter = $dbtable->getAdapter();
-        $table = $dbtable->info('name');
-        $adapter->beginTransaction();
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = new Core_Model_DbTable_StudentClass();
+        $students_class = $db_table->info('name');
+        $required_cols = array('member_id', 'class_id', 'group_id', 'roll_no', 
+        'start_date', 'completion_date', 'is_initial_batch_identifier');
+        $select = $adapter->select()
+            ->from($students_class, $required_cols)
+            ->where('member_id = ?', $member_id);
+        $student_info = array();
+        $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $student_info[$member_id];
+    }
+    /**
+     * Fetches information regarding ADMISSION of a Student in the Institution
+     * 
+     * @param integer $member_id
+     */
+    public function fetchAdmissionInfo (integer $member_id)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = new Core_Model_DbTable_StudentAdmission();
+        $table_for_class = $db_table->info('name');
+        $required_cols = array('member_id', 'marital_status', 'councelling_no', 
+        'admission_date', 'alloted_category', 'alloted_branch', 
+        'state_of_domicile', 'urban', 'avails_hostel', 'avails_bus');
+        $select = $adapter->select()
+            ->from($table_for_class, $required_cols)
+            ->where('member_id = ?', $member_id);
+        $student_info = array();
+        $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $student_info[$member_id];
+    }
+    public function saveCriticalInfo ($prepared_data)
+    {
+        $dbtable = $this->getDbTable();
         try {
-            $sql = $adapter->insert($table, $data);
-            $adapter->commit();
+            $row_id = $dbtable->insert($prepared_data);
         } catch (Exception $exception) {
-            $adapter->rollBack();
+            throw $exception;
+        }
+    }
+    public function saveAdmissionInfo ($prepared_data)
+    {
+        $dbtable = new Core_Model_DbTable_StudentAdmission();
+        $dbtable = $this->getDbTable();
+        try {
+            $row_id = $dbtable->insert($prepared_data);
+        } catch (Exception $exception) {
+            throw $exception;
+        }
+    }
+    public function saveClassInfo ($prepared_data)
+    {
+        $dbtable = new Core_Model_DbTable_StudentClass();
+        $dbtable = $this->getDbTable();
+        try {
+            $row_id = $dbtable->insert($prepared_data);
+        } catch (Exception $exception) {
             throw $exception;
         }
     }
@@ -188,11 +135,12 @@ class Core_Model_Mapper_Member_Student
     public function fetchStudents (Core_Model_Member_Student $student, 
     array $setter_options = null, array $property_range = null)
     {
+        Zend_Registry::get('logger')->debug($setter_options);
         $correct_db_options = array();
         foreach ($setter_options as $k => $val) {
             $correct_db_options[$this->correctDbKeys($k)] = $val;
+            $correct_db_options_keys = array_keys($correct_db_options);
         }
-        $correct_db_options_keys = array_keys($correct_db_options);
         $correct_db_options1 = array();
         foreach ($property_range as $k1 => $val1) {
             $correct_db_options1[$this->correctDbKeys($k1)] = $val1;
@@ -288,38 +236,6 @@ class Core_Model_Mapper_Member_Student
             throw new Exception($search_error, Zend_Log::WARN);
         } else {
             return $result;
-        }
-    }
-    /**
-     * Provides correct db column names corresponding to model properties
-     * @todo add correct names where required
-     * @param string $key
-     */
-    protected function correctDbKeys ($key)
-    {
-        switch ($key) {
-            /*case 'nationalit':
-                return 'nationality';
-                break;*/
-            default:
-                return $key;
-                break;
-        }
-    }
-    /**
-     * Provides correct model property names corresponding to db column names
-     * @todo add correct names where required
-     * @param string $key
-     */
-    protected function correctModelKeys ($key)
-    {
-        switch ($key) {
-            /*case 'nationality':
-                return 'nationalit';
-                break;*/
-            default:
-                return $key;
-                break;
         }
     }
 }
