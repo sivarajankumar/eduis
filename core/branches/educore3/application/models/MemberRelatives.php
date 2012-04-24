@@ -237,11 +237,13 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
             throw new Exception($careless_error);
         } else {
             $options = $this->getMapper()->fetchInfo($member_id);
-            if (sizeof($options) == 0) {} else {
+            if (sizeof($options) == 0) {
                 $no_data_error = 'NO DATA REGARDING RELATIVES EXISTS FOR MEMBER ID : ' .
                  $member_id;
                 throw new Exception($no_data_error);
+            } else {
                 $this->setOptions($options);
+                return true;
             }
         }
     }
