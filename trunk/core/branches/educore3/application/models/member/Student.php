@@ -515,6 +515,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
                 throw new Exception($no_data_error);
             } else {
                 $this->setOptions($options);
+                return true;
             }
         }
     }
@@ -536,6 +537,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
                 throw new Exception($no_data_error);
             } else {
                 $this->setOptions($options);
+                return true;
             }
         }
     }
@@ -553,6 +555,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
                 throw new Exception($no_data_error);
             } else {
                 $this->setOptions($options);
+                return true;
             }
         }
     }

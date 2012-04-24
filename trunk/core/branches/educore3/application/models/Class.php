@@ -212,6 +212,7 @@ class Core_Model_Test_Class extends Core_Model_Generic
                 throw new Exception($no_data_error);
             } else {
                 $this->setOptions($options);
+                return true;
             }
         }
     }
