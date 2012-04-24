@@ -511,8 +511,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         } else {
             $options = $this->getMapper()->fetchCriticalInfo($member_id);
             if (sizeof($options) == 0) {
-                $no_data_error = 'NO DATA EXISTS FOR MEMBER ID : ' . $member_id;
-                throw new Exception($no_data_error);
+                return false;
             } else {
                 $this->setOptions($options);
                 return true;
@@ -532,9 +531,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         } else {
             $options = $this->getMapper()->fetchClassInfo($member_id);
             if (sizeof($options) == 0) {
-                $no_data_error = 'NO INFORMATION REGARDING CLASS EXISTS FOR MEMBER ID : ' .
-                 $member_id;
-                throw new Exception($no_data_error);
+                return false;
             } else {
                 $this->setOptions($options);
                 return true;
@@ -550,9 +547,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         } else {
             $options = $this->getMapper()->fetchAdmissionInfo($member_id);
             if (sizeof($options) == 0) {
-                $no_data_error = 'NO INFORMATION REGARDING ADMISSION EXISTS FOR MEMBER ID : ' .
-                 $member_id;
-                throw new Exception($no_data_error);
+                return false;
             } else {
                 $this->setOptions($options);
                 return true;
