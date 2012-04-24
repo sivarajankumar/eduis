@@ -21,18 +21,6 @@ class Core_Model_Member_Student extends Core_Model_Generic
     protected $_relieve_date;
     protected $_image_no;
     protected $_is_active;
-    // Registartion properties
-    protected $_reg_id;
-    //  Other properties registered at the time of admission 
-    protected $_marital_status;
-    protected $_councelling_no;
-    protected $_admission_date;
-    protected $_alloted_category;
-    protected $_alloted_branch;
-    protected $_state_of_domicile;
-    protected $_urban;
-    protected $_avails_hostel;
-    protected $_avails_bus;
     protected $_mapper;
     /**
      * @return the $_member_id
@@ -518,82 +506,10 @@ class Core_Model_Member_Student extends Core_Model_Generic
             }
         }
     }
-    /**
-     * Fetches information regarding CLASS of a Student
-     * 
-     */
-    public function fetchClassInfo ()
-    {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error);
-        } else {
-            $info = $this->getMapper()->fetchClassInfo($member_id);
-            if (sizeof($info) == 0) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return true;
-            }
-        }
-    }
-    public function fetchRegistrationInfo ()
-    {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error);
-        } else {
-            $info = $this->getMapper()->fetchRegistrationInfo($member_id);
-            if (sizeof($info) == 0) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return true;
-            }
-        }
-    }
-    public function fetchAdmissionInfo ()
-    {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error);
-        } else {
-            $info = $this->getMapper()->fetchAdmissionInfo($member_id);
-            if (sizeof($info) == 0) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return true;
-            }
-        }
-    }
     public function saveCriticalInfo ($data_array)
     {
         $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
         $data_array);
         $this->getMapper()->saveCriticalInfo($preparedDataForSaveProcess);
-    }
-    public function saveRegistrationInfo ($data_array)
-    {
-        $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
-        $data_array);
-        $this->getMapper()->saveRegistrationInfo($preparedDataForSaveProcess);
-    }
-    public function saveAdmissionInfo ($data_array)
-    {
-        $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
-        $data_array);
-        $this->setOptions($preparedDataForSaveProcess);
-        $this->getMapper()->saveAdmissionInfo($preparedDataForSaveProcess);
-    }
-    public function saveClassInfo ($data_array)
-    {
-        $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
-        $data_array);
-        $this->setOptions($preparedDataForSaveProcess);
-        $this->getMapper()->saveClassInfo($preparedDataForSaveProcess);
     }
 }

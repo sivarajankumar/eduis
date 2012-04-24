@@ -1,5 +1,5 @@
 <?php
-class Core_Model_Test_Class extends Core_Model_Generic
+class Core_Model_StudentClass extends Core_Model_Generic
 {
     protected $_class_id;
     protected $_batch_id;
@@ -139,8 +139,8 @@ class Core_Model_Test_Class extends Core_Model_Generic
     }
     /**
      * Sets Mapper
-     * @param Core_Model_Mapper_Class $mapper
-     * @return Core_Model_Test_Class
+     * @param Core_Model_Mapper_StudentClass $mapper
+     * @return Core_Model_StudentClass
      */
     public function setMapper ($mapper)
     {
@@ -154,7 +154,7 @@ class Core_Model_Test_Class extends Core_Model_Generic
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Core_Model_Mapper_Class());
+            $this->setMapper(new Core_Model_Mapper_StudentClass());
         }
         return $this->_mapper;
     }
