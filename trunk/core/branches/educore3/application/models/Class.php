@@ -206,11 +206,11 @@ class Core_Model_Test_Class extends Core_Model_Generic
             $careless_error = 'Please provide a Class Id';
             throw new Exception($careless_error);
         } else {
-            $options = $this->getMapper()->fetchInfo($class_id);
-            if (sizeof($options) == 0) {
+            $info = $this->getMapper()->fetchInfo($class_id);
+            if (sizeof($info) == 0) {
                 return false;
             } else {
-                $this->setOptions($options);
+                $this->setOptions($info);
                 return true;
             }
         }

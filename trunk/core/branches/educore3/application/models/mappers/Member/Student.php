@@ -123,6 +123,24 @@ class Core_Model_Mapper_Member_Student
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $student_info[$member_id];
     }
+ /**
+     * Fetches Registration information of a Student in the Institution
+     * 
+     * @param integer $member_id
+     */
+    public function fetchRegistrationInfo (integer $member_id)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = new Core_Model_DbTable_StudentRegistration();
+        $table_for_class = $db_table->info('name');
+        $required_cols = array('member_id','registration_id');
+        $select = $adapter->select()
+            ->from($table_for_class, $required_cols)
+            ->where('member_id = ?', $member_id);
+        $student_info = array();
+        $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $student_info[$member_id];
+    }
     public function saveCriticalInfo ($prepared_data)
     {
         $dbtable = $this->getDbTable();
@@ -135,6 +153,16 @@ class Core_Model_Mapper_Member_Student
     public function saveAdmissionInfo ($prepared_data)
     {
         $dbtable = new Core_Model_DbTable_StudentAdmission();
+        $dbtable = $this->getDbTable();
+        try {
+            $row_id = $dbtable->insert($prepared_data);
+        } catch (Exception $exception) {
+            throw $exception;
+        }
+    }
+    public function saveRegistrationInfo ($prepared_data)
+    {
+        $dbtable = new Core_Model_DbTable_StudentRegistration();
         $dbtable = $this->getDbTable();
         try {
             $row_id = $dbtable->insert($prepared_data);

@@ -509,11 +509,11 @@ class Core_Model_Member_Student extends Core_Model_Generic
             $careless_error = 'Please provide a Member Id';
             throw new Exception($careless_error);
         } else {
-            $options = $this->getMapper()->fetchCriticalInfo($member_id);
-            if (sizeof($options) == 0) {
+            $info = $this->getMapper()->fetchCriticalInfo($member_id);
+            if (sizeof($info) == 0) {
                 return false;
             } else {
-                $this->setOptions($options);
+                $this->setOptions($info);
                 return true;
             }
         }
@@ -529,11 +529,27 @@ class Core_Model_Member_Student extends Core_Model_Generic
             $error = 'Please provide a Member Id';
             throw new Exception($error);
         } else {
-            $options = $this->getMapper()->fetchClassInfo($member_id);
-            if (sizeof($options) == 0) {
+            $info = $this->getMapper()->fetchClassInfo($member_id);
+            if (sizeof($info) == 0) {
                 return false;
             } else {
-                $this->setOptions($options);
+                $this->setOptions($info);
+                return true;
+            }
+        }
+    }
+    public function fetchRegistrationInfo ()
+    {
+        $member_id = $this->getMember_id();
+        if (empty($member_id)) {
+            $error = 'Please provide a Member Id';
+            throw new Exception($error);
+        } else {
+            $info = $this->getMapper()->fetchRegistrationInfo($member_id);
+            if (sizeof($info) == 0) {
+                return false;
+            } else {
+                $this->setOptions($info);
                 return true;
             }
         }
@@ -545,11 +561,11 @@ class Core_Model_Member_Student extends Core_Model_Generic
             $error = 'Please provide a Member Id';
             throw new Exception($error);
         } else {
-            $options = $this->getMapper()->fetchAdmissionInfo($member_id);
-            if (sizeof($options) == 0) {
+            $info = $this->getMapper()->fetchAdmissionInfo($member_id);
+            if (sizeof($info) == 0) {
                 return false;
             } else {
-                $this->setOptions($options);
+                $this->setOptions($info);
                 return true;
             }
         }
@@ -559,6 +575,12 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
         $data_array);
         $this->getMapper()->saveCriticalInfo($preparedDataForSaveProcess);
+    }
+    public function saveRegistrationInfo ($data_array)
+    {
+        $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
+        $data_array);
+        $this->getMapper()->saveRegistrationInfo($preparedDataForSaveProcess);
     }
     public function saveAdmissionInfo ($data_array)
     {
