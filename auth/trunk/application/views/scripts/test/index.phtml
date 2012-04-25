@@ -1,0 +1,45 @@
+<form name="relativeInfo" id="relativeInfo" >
+<input type="text" id="fatherName" name="fatherName" />
+<input type="text" id="motherName" name="motherName" />
+<input type="text" id="childName" name="childName" />
+</form>
+
+<form name="basicInfo" id="basicInfo" >
+<input type="text" id="firstName" name="firstName" />
+<input type="text" id="lastName" name="lastName" />
+</form>
+
+<form name="otherInfo" id="otherInfo" >
+<input type="text" id="gender" name="gender" />
+<input type="text" id="address" name="address" />
+</form>
+
+<script type="text/javascript">
+var data = {};
+$("form").each(function(index,form){
+	var inputs = $(form).children("input");
+	var obj = $.map(inputIndex, function(n, i)
+	{
+	    var o = {};
+	    o[n.name] = $(n).val();
+	    return o;
+	});
+		
+	data[form.name]= obj;
+});
+var relation1 = {1:{name:"Hemant",address:"2135,Chandigarh"},2:{name:"Harsh",address:"2000,Delhi"}};
+
+$(document).ready(function(){
+	 $.ajax({
+  	url : "test/gogo",
+      dataType : 'json',
+      data : {myarray:relation1},
+      success: function(jDegree){
+          alert("Done");
+          },
+          error: function(data){
+              alert(data);
+              }
+          });
+});
+</script>
