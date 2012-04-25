@@ -1,17 +1,17 @@
 <form name="relativeInfo" id="relativeInfo" >
-<input type="text" id="fatherName" name="fatherName" />
-<input type="text" id="motherName" name="motherName" />
-<input type="text" id="childName" name="childName" />
+<input type="text" id="fatherName" name="fatherName" value="BAAP" />
+<input type="text" id="motherName" name="motherName" value="MAA" />
+<input type="text" id="childName" name="childName" value="BETA" />
 </form>
 
 <form name="basicInfo" id="basicInfo" >
-<input type="text" id="firstName" name="firstName" />
-<input type="text" id="lastName" name="lastName" />
+<input type="text" id="firstName" name="firstName" value="NAAM" />
+<input type="text" id="lastName" name="lastName" value="UPNAAM" />
 </form>
 
 <form name="otherInfo" id="otherInfo" >
-<input type="text" id="gender" name="gender" />
-<input type="text" id="address" name="address" />
+<input type="text" id="gender" name="gender" value="AADMI" />
+<input type="text" id="address" name="address" value="ZAMEEN" />
 </form>
 
 <script type="text/javascript">
@@ -25,13 +25,11 @@ $("form").each(function(index,form){
 		
 	data[form.name]= o;
 });
-var relation1 = {1:{name:"Hemant",address:"2135,Chandigarh"},2:{name:"Harsh",address:"2000,Delhi"}};
-
 $(document).ready(function(){
 	 $.ajax({
   	url : "test/gogo",
       dataType : 'json',
-      data : {myarray:relation1},
+      data : {myarray:data},
       success: function(jDegree){
           alert("Done");
           },
