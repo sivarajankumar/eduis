@@ -1,28 +1,16 @@
 <?php
-class Core_Model_StudentClass extends Core_Model_Generic
+class Core_Model_Class extends Core_Model_Generic
 {
-    protected $_member_id;
     protected $_class_id;
-    protected $_group_id;
-    protected $_roll_no;
+    protected $_batch_id;
+    protected $_semester_id;
+    protected $_semester_type;
+    protected $_semester_duration;
+    protected $_handled_by_dept;
     protected $_start_date;
     protected $_completion_date;
-    protected $_is_initial_batch_identifier;
+    protected $_is_active;
     protected $_mapper;
-    /**
-     * @return the $_member_id
-     */
-    public function getMember_id ()
-    {
-        return $this->_member_id;
-    }
-    /**
-     * @param field_type $_member_id
-     */
-    public function setMember_id ($_member_id)
-    {
-        $this->_member_id = $_member_id;
-    }
     /**
      * @return the $_class_id
      */
@@ -38,32 +26,74 @@ class Core_Model_StudentClass extends Core_Model_Generic
         $this->_class_id = $_class_id;
     }
     /**
-     * @return the $_group_id
+     * @return the $_batch_id
      */
-    public function getGroup_id ()
+    public function getBatch_id ()
     {
-        return $this->_group_id;
+        return $this->_batch_id;
     }
     /**
-     * @param field_type $_group_id
+     * @param field_type $_batch_id
      */
-    public function setGroup_id ($_group_id)
+    public function setBatch_id ($_batch_id)
     {
-        $this->_group_id = $_group_id;
+        $this->_batch_id = $_batch_id;
     }
     /**
-     * @return the $_roll_no
+     * @return the $_semester_id
      */
-    public function getRoll_no ()
+    public function getSemester_id ()
     {
-        return $this->_roll_no;
+        return $this->_semester_id;
     }
     /**
-     * @param field_type $_roll_no
+     * @param field_type $_semester_id
      */
-    public function setRoll_no ($_roll_no)
+    public function setSemester_id ($_semester_id)
     {
-        $this->_roll_no = $_roll_no;
+        $this->_semester_id = $_semester_id;
+    }
+    /**
+     * @return the $_semester_type
+     */
+    public function getSemester_type ()
+    {
+        return $this->_semester_type;
+    }
+    /**
+     * @param field_type $_semester_type
+     */
+    public function setSemester_type ($_semester_type)
+    {
+        $this->_semester_type = $_semester_type;
+    }
+    /**
+     * @return the $_semester_duration
+     */
+    public function getSemester_duration ()
+    {
+        return $this->_semester_duration;
+    }
+    /**
+     * @param field_type $_semester_duration
+     */
+    public function setSemester_duration ($_semester_duration)
+    {
+        $this->_semester_duration = $_semester_duration;
+    }
+    /**
+     * @return the $_handled_by_dept
+     */
+    public function getHandled_by_dept ()
+    {
+        return $this->_handled_by_dept;
+    }
+    /**
+     * @param field_type $_handled_by_dept
+     */
+    public function setHandled_by_dept ($_handled_by_dept)
+    {
+        $this->_handled_by_dept = $_handled_by_dept;
     }
     /**
      * @return the $_start_date
@@ -94,24 +124,23 @@ class Core_Model_StudentClass extends Core_Model_Generic
         $this->_completion_date = $_completion_date;
     }
     /**
-     * @return the $_is_initial_batch_identifier
+     * @return the $_is_active
      */
-    public function getIs_initial_batch_identifier ()
+    public function getIs_active ()
     {
-        return $this->_is_initial_batch_identifier;
+        return $this->_is_active;
     }
     /**
-     * @param field_type $_is_initial_batch_identifier
+     * @param field_type $_is_active
      */
-    public function setIs_initial_batch_identifier (
-    $_is_initial_batch_identifier)
+    public function setIs_active ($_is_active)
     {
-        $this->_is_initial_batch_identifier = $_is_initial_batch_identifier;
+        $this->_is_active = $_is_active;
     }
     /**
      * Sets Mapper
-     * @param Core_Model_Mapper_StudentClass $mapper
-     * @return Core_Model_StudentClass
+     * @param Core_Model_Mapper_Class $mapper
+     * @return Core_Model_Class
      */
     public function setMapper ($mapper)
     {
@@ -120,12 +149,12 @@ class Core_Model_StudentClass extends Core_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Core_Model_Mapper_StudentClass
+     * @return Core_Model_Mapper_Class
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Core_Model_Mapper_StudentClass());
+            $this->setMapper(new Core_Model_Mapper_Class());
         }
         return $this->_mapper;
     }
@@ -172,13 +201,12 @@ class Core_Model_StudentClass extends Core_Model_Generic
      */
     public function fetchInfo ()
     {
-        $member_id = $this->getMember_id();
-        $class_id = $this->getClass_id();
-        if (empty($member_id) or empty($class_id)) {
-            $careless_error = 'Please provide a Member Id and a Class id';
+        $class_id = $this->getMember_id();
+        if (empty($class_id)) {
+            $careless_error = 'Please provide a Class Id';
             throw new Exception($careless_error);
         } else {
-            $info = $this->getMapper()->fetchInfo($member_id,$class_id);
+            $info = $this->getMapper()->fetchInfo($class_id);
             if (sizeof($info) == 0) {
                 return false;
             } else {
@@ -187,21 +215,10 @@ class Core_Model_StudentClass extends Core_Model_Generic
             }
         }
     }
-    public function fetchClassIds ()
-    {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $careless_error = 'Please provide a Member Id';
-            throw new Exception($careless_error);
-        } else {
-            $class_ids = $this->getMapper()->fetchClassIds($member_id);
-            if (sizeof($class_ids) == 0) {
-                return false;
-            } else {
-                return $class_ids;
-            }
-        }
-    }
+    public function fetchStudents ()
+    {}
+    public function fetchBatches ()
+    {}
     public function save ($data_array)
     {
         $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(

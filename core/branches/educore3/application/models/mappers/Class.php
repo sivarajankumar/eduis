@@ -1,5 +1,5 @@
 <?php
-class Core_Model_Mapper_MemberAddress
+class Core_Model_Mapper_Class
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Core_Model_Mapper_MemberAddress
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Core_Model_Mapper_MemberAddress
+     * @return Core_Model_Mapper_Class
      */
     public function setDbTable ($dbTable)
     {
@@ -29,29 +29,29 @@ class Core_Model_Mapper_MemberAddress
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Core_Model_DbTable_MemberAddress');
+            $this->setDbTable('Core_Model_DbTable_Class');
         }
         return $this->_dbTable;
     }
     /**
-     * Fetches Address details of a Member
+     * Fetches Class details
      * 
-     * @param integer $member_id
+     * @param integer $class_id
      */
-    public function fetchInfo ($member_id, $address_type)
+    public function fetchInfo ($class_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
-        $db_table = new Core_Model_DbTable_Class();
-        $address_table = $db_table->info('name');
-        $required_cols = array('member_id', 'postal_code', 'city', 'district', 
-        'state', 'address', 'adress_type');
+        $db_table = $this->getDbTable();
+        $class_table = $db_table->info('name');
+        $required_cols = array('class_id', 'batch_id', 'semester_id', 
+        'semester_type', 'semester_duration', 'handled_by_dept', 'start_date', 
+        'completion_date', 'is_active');
         $select = $adapter->select()
-            ->from($address_table, $required_cols)
-            ->where('member_id = ?', $member_id)
-            ->where('address_type=?', $address_type);
-        $address_info = array();
-        $address_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $address_info[$member_id];
+            ->from($class_table, $required_cols)
+            ->where('class_id = ?', $class_id);
+        $class_info = array();
+        $class_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $class_info[$class_id];
     }
     public function save ($prepared_data)
     {

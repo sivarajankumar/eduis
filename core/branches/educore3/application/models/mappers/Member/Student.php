@@ -84,7 +84,7 @@ class Core_Model_Mapper_Member_Student
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $student_info[$member_id];
     }
-    public function saveCriticalInfo ($prepared_data)
+    public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
         try {

@@ -172,15 +172,16 @@ class Core_Model_MemberAddress extends Core_Model_Generic
     public function fetchInfo ()
     {
         $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $careless_error = 'Please provide a Member Id';
+        $address_type = $this->getAdress_type();
+        if (empty($member_id) or empty($address_type)) {
+            $careless_error = 'Please provide a Member Id and Address Type';
             throw new Exception($careless_error);
         } else {
-            $info = $this->getMapper()->fetchInfo($member_id);
-            if (sizeof($info) == 0) {
+            $address_info = $this->getMapper()->fetchInfo($member_id,$address_type);
+            if (sizeof($address_info) == 0) {
                 return false;
             } else {
-                $this->setOptions($info);
+                $this->setOptions($address_info);
                 return true;
             }
         }
