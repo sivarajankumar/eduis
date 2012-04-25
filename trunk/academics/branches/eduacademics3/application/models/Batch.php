@@ -1,30 +1,13 @@
 <?php
-class Acad_Model_Class extends Acad_Model_Generic
+class Acad_Model_Batch extends Acad_Model_Generic
 {
-    protected $_class_id;
     protected $_batch_id;
-    protected $_semester_id;
-    protected $_semester_type;
-    protected $_semester_duration;
-    protected $_handled_by_dept;
-    protected $_start_date;
-    protected $_completion_date;
+    protected $_department_id;
+    protected $_programme_id;
+    protected $_batch_start;
+    protected $_batch_number;
     protected $_is_active;
     protected $_mapper;
-    /**
-     * @return the $_class_id
-     */
-    public function getClass_id ()
-    {
-        return $this->_class_id;
-    }
-    /**
-     * @param field_type $_class_id
-     */
-    public function setClass_id ($_class_id)
-    {
-        $this->_class_id = $_class_id;
-    }
     /**
      * @return the $_batch_id
      */
@@ -40,88 +23,60 @@ class Acad_Model_Class extends Acad_Model_Generic
         $this->_batch_id = $_batch_id;
     }
     /**
-     * @return the $_semester_id
+     * @return the $_department_id
      */
-    public function getSemester_id ()
+    public function getDepartment_id ()
     {
-        return $this->_semester_id;
+        return $this->_department_id;
     }
     /**
-     * @param field_type $_semester_id
+     * @param field_type $_department_id
      */
-    public function setSemester_id ($_semester_id)
+    public function setDepartment_id ($_department_id)
     {
-        $this->_semester_id = $_semester_id;
+        $this->_department_id = $_department_id;
     }
     /**
-     * @return the $_semester_type
+     * @return the $_programme_id
      */
-    public function getSemester_type ()
+    public function getProgramme_id ()
     {
-        return $this->_semester_type;
+        return $this->_programme_id;
     }
     /**
-     * @param field_type $_semester_type
+     * @param field_type $_programme_id
      */
-    public function setSemester_type ($_semester_type)
+    public function setProgramme_id ($_programme_id)
     {
-        $this->_semester_type = $_semester_type;
+        $this->_programme_id = $_programme_id;
     }
     /**
-     * @return the $_semester_duration
+     * @return the $_batch_start
      */
-    public function getSemester_duration ()
+    public function getBatch_start ()
     {
-        return $this->_semester_duration;
+        return $this->_batch_start;
     }
     /**
-     * @param field_type $_semester_duration
+     * @param field_type $_batch_start
      */
-    public function setSemester_duration ($_semester_duration)
+    public function setBatch_start ($_batch_start)
     {
-        $this->_semester_duration = $_semester_duration;
+        $this->_batch_start = $_batch_start;
     }
     /**
-     * @return the $_handled_by_dept
+     * @return the $_batch_number
      */
-    public function getHandled_by_dept ()
+    public function getBatch_number ()
     {
-        return $this->_handled_by_dept;
+        return $this->_batch_number;
     }
     /**
-     * @param field_type $_handled_by_dept
+     * @param field_type $_batch_number
      */
-    public function setHandled_by_dept ($_handled_by_dept)
+    public function setBatch_number ($_batch_number)
     {
-        $this->_handled_by_dept = $_handled_by_dept;
-    }
-    /**
-     * @return the $_start_date
-     */
-    public function getStart_date ()
-    {
-        return $this->_start_date;
-    }
-    /**
-     * @param field_type $_start_date
-     */
-    public function setStart_date ($_start_date)
-    {
-        $this->_start_date = $_start_date;
-    }
-    /**
-     * @return the $_completion_date
-     */
-    public function getCompletion_date ()
-    {
-        return $this->_completion_date;
-    }
-    /**
-     * @param field_type $_completion_date
-     */
-    public function setCompletion_date ($_completion_date)
-    {
-        $this->_completion_date = $_completion_date;
+        $this->_batch_number = $_batch_number;
     }
     /**
      * @return the $_is_active
@@ -139,8 +94,8 @@ class Acad_Model_Class extends Acad_Model_Generic
     }
     /**
      * Sets Mapper
-     * @param Acad_Model_Mapper_Class $mapper
-     * @return Acad_Model_Class
+     * @param Acad_Model_Mapper_Batch $mapper
+     * @return Acad_Model_Batch
      */
     public function setMapper ($mapper)
     {
@@ -149,12 +104,12 @@ class Acad_Model_Class extends Acad_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Mapper_Class
+     * @return Acad_Model_Mapper_Batch
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Mapper_Class());
+            $this->setMapper(new Acad_Model_Mapper_Batch());
         }
         return $this->_mapper;
     }
@@ -201,12 +156,12 @@ class Acad_Model_Class extends Acad_Model_Generic
      */
     public function fetchInfo ()
     {
-        $class_id = $this->getMember_id();
-        if (empty($class_id)) {
-            $careless_error = 'Please provide a Class Id';
+        $member_id = $this->getMember_id();
+        if (empty($member_id)) {
+            $careless_error = 'Please provide a Batch_Id';
             throw new Exception($careless_error);
         } else {
-            $info = $this->getMapper()->fetchInfo($class_id);
+            $info = $this->getMapper()->fetchPersonalInfo($member_id);
             if (sizeof($info) == 0) {
                 return false;
             } else {
@@ -215,10 +170,6 @@ class Acad_Model_Class extends Acad_Model_Generic
             }
         }
     }
-    public function fetchStudents ()
-    {}
-    public function fetchBatches ()
-    {}
     public function save ($data_array)
     {
         $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
