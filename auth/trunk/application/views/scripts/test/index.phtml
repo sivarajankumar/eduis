@@ -17,15 +17,13 @@
 <script type="text/javascript">
 var data = {};
 $("form").each(function(index,form){
-	var inputs = $(form).children("input");
-	var obj = $.map(inputIndex, function(n, i)
+    var o = {};
+	$(form).children("input").each(function(i, n)
 	{
-	    var o = {};
 	    o[n.name] = $(n).val();
-	    return o;
 	});
 		
-	data[form.name]= obj;
+	data[form.name]= o;
 });
 var relation1 = {1:{name:"Hemant",address:"2135,Chandigarh"},2:{name:"Harsh",address:"2000,Delhi"}};
 
