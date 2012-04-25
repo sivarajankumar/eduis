@@ -38,22 +38,24 @@ class Core_Model_Mapper_MemberContacts
      * 
      * @param integer $member_id
      */
-    public function fetchInfo ($member_id)
+    public function fetchInfo ($member_id, $contact_type_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
-        $db_table = new Core_Model_DbTable_Class();
-        $contacts_table = $db_table->info('name');
+        $db_table = new Core_Model_DbTable_MemberContacts();
+        $member_contacts_table = $db_table->info('name');
         $required_cols = array('member_id', 'contact_type_id', 
         'contact_details', 'member_id');
         $contacts_type_db_table = new Core_Model_DbTable_ContactType();
         $contacts_type_table = $contacts_type_db_table->info('name');
         $contacts_type_cols = 'contact_type_name';
-        $cond = $contacts_table . '.contact_type_id=' . $contacts_type_table .
-         '.contact_type_id';
+        $cond = $member_contacts_table . '.contact_type_id=' .
+         $contacts_type_table . '.contact_type_id';
         $select = $adapter->select()
-            ->from($contacts_table, $required_cols)
-            ->joinInner($contacts_table, $cond, $contacts_type_cols)
-            ->where('member_id = ?', $member_id);
+            ->from($member_contacts_table, $required_cols)
+            ->joinInner($contacts_type_table, $cond, $contacts_type_cols)
+            ->where('member_id = ?', $member_id)
+            ->where(strval($member_contacts_table . '.contact_type_id = ?'), 
+        $contact_type_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $student_info[$member_id];

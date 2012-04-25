@@ -38,7 +38,7 @@ class Core_Model_Mapper_MemberRelatives
      * 
      * @param integer $member_id
      */
-    public function fetchInfo ($member_id)
+    public function fetchInfo ($member_id,$relation_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
@@ -53,7 +53,9 @@ class Core_Model_Mapper_MemberRelatives
          '.relation_id';
         $select = $adapter->select()
             ->from($relaives_table, $required_cols)
-            ->where('member_id = ?', $member_id);
+           ->joinInner($relations_table, $cond, $relations_cols)
+            ->where('member_id = ?', $member_id)
+            ->where(strval($relaives_table . '.relation_id = ?'),$relation_id );
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $student_info[$member_id];

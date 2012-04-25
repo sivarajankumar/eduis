@@ -38,7 +38,7 @@ class Core_Model_Mapper_StudentClass
      * 
      * @param integer $member_id
      */
-    public function fetchInfo ($member_id)
+    public function fetchInfo ($member_id, $class_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
@@ -47,10 +47,28 @@ class Core_Model_Mapper_StudentClass
         'start_date', 'completion_date', 'is_initial_batch_identifier');
         $select = $adapter->select()
             ->from($stu_class_table, $required_cols)
-            ->where('member_id = ?', $member_id);
+            ->where('member_id = ?', $member_id)
+            ->where('class_id = ?', $class_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $student_info[$member_id];
+    }
+    /**
+     * Fetches all Classes in which a student has/had enrolled
+     * 
+     * @param integer $member_id
+     */
+    public function fetchClassIds ($member_id)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $stu_class_table = $db_table->info('name');
+        $required_cols = array('class_id');
+        $select = $adapter->select()
+            ->from($stu_class_table, $required_cols)
+            ->where('member_id = ?', $member_id);
+        $class_ids = array();
+        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
     public function save ($prepared_data)
     {

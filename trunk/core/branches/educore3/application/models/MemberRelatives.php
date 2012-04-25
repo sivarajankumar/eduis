@@ -232,11 +232,12 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
     public function fetchInfo ()
     {
         $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $careless_error = 'Please provide a Member Id';
+        $relation_id = $this->getRelation_id();
+        if (empty($member_id) or empty($relation_id)) {
+            $careless_error = 'Please provide a Member Id and a Relation Id';
             throw new Exception($careless_error);
         } else {
-            $info = $this->getMapper()->fetchInfo($member_id);
+            $info = $this->getMapper()->fetchInfo($member_id, $relation_id);
             if (sizeof($info) == 0) {
                 return false;
             } else {
