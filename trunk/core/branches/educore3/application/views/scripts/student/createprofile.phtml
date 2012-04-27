@@ -1,0 +1,469 @@
+<!--[if lte ie 7]>
+	<style type="text/css" media="screen">
+		/* Move these to your IE6/7 specific stylesheet if possible */
+		.uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+	</style>
+<![endif]-->
+	
+<h2>Personal Information:<span id='critical_edit' onclick="javascript:show_div('critical')"></span></h2>
+
+<form id="critical_info_div" action="javascript:getValues('critical')" class="uniForm">
+    <fieldset id="loginInfo">
+	<div class="ctrlHolder">
+		<p class="label"><em>*</em>Your Degree</p>
+		<ul class="blockLabels">
+		<li><label for="programme_id"><input name="programme_id" type="radio" value="btech"
+			title="BTECH" class="required">B.Tech</label></li>
+		<li><label for="programme_id"><input name="programme_id" type="radio" value="mtech"
+			title="MTECH" class="required">M.Tech</label></li>
+		</ul>
+	</div>
+	<div class="ctrlHolder">
+		<label for="department_id"><em>*</em>Department</label>
+		<select id="department_id" name="department_id" class="selectInput required">
+			<option value="cse">Computer Science</option>
+			<option value="ece">Electronics and Communication</option>
+			<option value="bio">Biotechnology</option>
+			<option value="me">Mechanical</option>
+		</select>
+		<p class="formHint">Select Your Trade</p>
+	</div>
+	<div class="ctrlHolder"><label for="semester_id"><em>*</em>Semester</label>
+		<input name="semester_id" id="semester_id" data-default-value="e.g.4"
+			size="35" maxlength="50" type="text" class="textInput required validateInteger validateMax val-8" />
+		<p class="formHint">Enter your Semester Number</p>
+	</div>
+			<div class="ctrlHolder"><label for="roll_no"><em>*</em>Roll number</label> <input
+		name="roll_no" id="roll_no" data-default-value="e.g. 2308015" size="35"
+		maxlength="50" type="text" class="textInput required validateInteger" />
+		<p class="formHint">Enter your University Roll Number</p>
+	</div>
+       <div class="ctrlHolder"><label for="registration_id"><em>*</em>Registration Number</label>
+	 		<input name="registration_id" id="registration_id" data-default-value="e.g. 08-ECA-74"
+		size="35" maxlength="50" type="text" class="textInput required " />
+		<p class="formHint">Enter your University Registration Number</p>
+	</div>
+       <div class="ctrlHolder noLabel">
+		<ul class="alternate">
+           	<li><label for="first_name"><em>*</em> First Name</label>
+         		<input name="first_name" id="first_name" data-default-value="e.g. Ravi" value="" size="10" maxlength="50" type="text" class="textInput required validateAlpha"/></li>
+           	<li><label for="middle_name"> Middle Name</label>
+         		<input name="middle_name" id="middle_name" data-default-value="e.g. Kumar" value=""  size="10" maxlength="50" type="text" class="textInput validateAlpha"/></li>
+           	<li><label for="last_name"> Last Name</label>
+         		<input name="last_name" id="last_name" data-default-value="e.g. Gupta" value=""  size="10" maxlength="50" type="text" class="textInput validateAlpha"/></li>
+		</ul>
+		<p class="formHint">Full Name of candidate</p>
+	</div>
+       
+       <div class="ctrlHolder">
+		<label for="dob"><em>*</em>Date of Birth</label>
+		<input name="dob" id="dob" data-default-value="1990-12-31" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+       </div>
+      
+	<div class="ctrlHolder">
+		<p class="label">Gender</p>
+		<ul class="blockLabels alternate">
+           	<li><label for="gender"><input name="gender" type="radio" value="MALE"  title="Male">Male</label></li>
+           	<li><label for=""><input  name="gender" type="radio" value="FEMALE" title="Female">Female</label></li>
+		</ul>
+		<p class="formHint">Gender</p>
+	</div>
+     
+       <div class="ctrlHolder">
+		<label for="nationality_id">Nationality</label>
+		<select id="nationality_id" name="nationality_id" class="selectInput">
+			<option value="1">INDIAN</option>
+         		<option value="2">NRI</option>
+		</select>
+		<p class="formHint">Nationality</p>
+	</div>
+       
+     
+	<div class="ctrlHolder">
+		<label for="blood_group">Blood Group</label>
+		<select id="blood_group" name="blood_group" class="selectInput">
+       		<option value="A+">A+</option>
+      		<option value="A-">A-</option>
+      		<option value="B+">B+</option>
+       		<option value="B-">B-</option>
+       		<option value="AB+">AB+</option>
+      		<option value="AB-">AB-</option>
+       		<option value="O+">O+</option>
+       		<option value="O-">O-</option>
+		</select>
+		<p class="formHint">Blood group of Candidate</p>
+	</div>
+       
+        
+    <div class="ctrlHolder">
+		<label for="religion_id">Religion</label>
+		<select id="religion_id" name="religion_id" class="selectInput required">
+       		<option value="1">Hindu</option>
+       		<option value="2">Muslim</option>
+       		<option value="3">Sikh</option>
+       		<option value="4">Christian</option>
+		</select>
+		<p class="formHint">Religion of Candidate</p>
+	</div>
+       
+    <div class="ctrlHolder">
+		<label for="cast_id">Cast</label>
+		<select id="cast_id" name="cast_id" class="selectInput required">
+       		<option value="0">GEN</option>
+       		<option value="1">BC</option>
+       		<option value="2">SC</option>
+       		<option value="3">ST</option>
+		</select>
+		<p class="formHint">Cast of Candidate</p>
+	</div>
+       
+    <div class="ctrlHolder">
+		<label for="email">Email address</label>
+		<input name="email" id="email" value="" data-default-value="e.g. ravigupta@gmail.com"  size="35" maxlength="50" type="text" class=" required textInput validateEmail"/>
+		<p class="formHint">A valid email address</p>
+    </div>
+     
+    <div class="ctrlHolder">
+		<label for="e_mail_confirm">Email confirm</label>
+		<input name="e_mail_confirm" id="e_mail_confirm" data-default-value="i.e. same as above" value=""  size="35" maxlength="50" type="text" class="required textInput validateSameAs e_mail"/>
+		<p class="formHint"></p>
+	</div>
+	</fieldset>
+	
+	<!-- <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> -->
+    <div class="buttonHolder">
+       	<button type="submit" class="secondaryAction">Cancel and go back</button>
+       	<button type="submit" class="primaryAction">Next</button>
+    </div>
+    
+</form>
+	<h2>Address:<span id='address_edit' onclick="javascript:show_div('address')"></span></h2>
+    <form id="address_info_div" action="javascript:getValues('address');" class="uniForm">
+    <div class="ctrlHolder noLabel">
+		<ul>
+			<li><label for="is_cp_same"><input name="is_cp_same" id="is_cp_same" value="false" type="checkbox"/> Communication and Permanent Addesses are same.</label></li>
+		</ul>
+		<p class="formHint"></p>
+    </div>
+        
+	<div class="ctrlHolder">
+		<p class="label">Area</p>
+		<ul class="blockLabels alternate">
+			<li><label ><input name="urban" type="radio" value="true" checked="checked" title="Urban">Urban</label></li>
+			<li><label ><input  name="urban" type="radio" value="false" title="Rural">Rural</label></li>
+		</ul>
+		<p class="formHint">Area which you belong to</p>
+	</div>
+	
+	<h3>Communication Address:</h3>
+	<div class="ctrlHolder">
+		<label for="c_pin">Pin Code</label>
+		<input name="c_pin" id="c_pin" value="" data-default-value="e.g. 125001" size="35" maxlength="10" type="text" class="textInput validateInteger"/> 
+		<p class="formHint">Pincode of communication address.</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="c_state"><em>*</em>State/Provience</label>
+		<input name="c_state" id="c_state" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">State/Territory of communication address.</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>District</label>
+		<input name="c_district" id="c_district" value="" data-default-value="e.g. Mohindergarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">District of communication address.<br/>(It should be same as above if Union Territory)</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="c_city"><em>*</em>City/Town/Village</label>
+		<input name="c_city" id="c_city" value="" data-default-value="e.g. Narnaul" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">City/Town/Village of communication address.<br/>(It may be same as District)</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="c_add"><em>*</em>Address</label>
+		<textarea name="c_add" id="c_add" data-default-value="e.g. H.no. 3, PWD B&R Colony, Near Old court"    rows="25" cols="25"></textarea>
+		<p class="formHint">House number and Area etc.</p>
+	</div>  
+
+	<h3>Permanent Address:</h3>
+	<div class="ctrlHolder">
+		<label for="p_pin">Pin Code</label>
+		<input name="p_pin" id="p_pin" value="" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
+		<p class="formHint">Pincode of permanent address.</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="p_state"><em>*</em>State/Territory</label>
+		<input name="p_state" id="p_state" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">State/Territory of permanent address.</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="p_district"><em>*</em>District</label>
+		<input name="p_district" id="p_district" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">District of permanent address.<br/>(It should be same as above if Union Territory)</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="p_city"><em>*</em>City/Town/Village</label>
+		<input name="p_city" id="p_city" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="p_add"><em>*</em>Address</label>
+		<textarea name="p_add" id="p_add"  data-default-value="e.g. H.no. 2135, Sector 9C"     rows="25" cols="25"></textarea>
+		<p class="formHint">House number and Area etc.</p>
+	</div>
+        
+	<!-- <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> -->   
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</form>
+
+    
+<h2>Parent/Guardian Information:<span id='guardian_edit' onclick="javascript:show_div('guardian')"></span></h2>
+<form id="guardian_info_div" action="javascript:getValues('guardian');" class="uniForm">
+	<div class="ctrlHolder">
+		<label for="landline_no"> Landline No.</label>
+		<input name="landline_no" id="landline_no" value=""  data-default-value="e.g. 017226544331" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
+		<p class="formHint">Landline number, if available.</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="father_name"><em>*</em> Father's name</label>
+		<input name="father_name" id="father_name" data-default-value="e.g. Sh. Madan Kumar" value=""  size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">Father's name of <span class="cName" >Candidate</span></p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="father_occupation">Father's occupation</label>
+		<input name="father_occupation" id="father_occupation" value="" data-default-value="e.g. Teacher" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Father's occupation</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="father_designation" >Father's designation</label>
+		<input name="father_designation" id="father_designation" value="" data-default-value="e.g. Lecturer" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Father's designation</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="father_contact" > Father's contact</label>
+		<input name="father_contact" id="father_contact" value=""  data-default-value="e.g. 9416123494" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
+		<p class="formHint">Father's contact number, it should be a mobile number.</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="father_office_add">Father's Office Address</label>
+		<textarea name="father_office_add" id="father_office_add" data-default-value="e.g. PWD B and R Office, Near SDM office, Narnaul"    rows="25" cols="25"></textarea>
+		<p class="formHint">Father's Office Address</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="mother_name"><em>*</em> Mother's name</label>
+		<input name="mother_name" id="mother_name" value=""  data-default-value="e.g. Smt. Sita Devi" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">Mother's name of <span class="cName" >Candidate</span></p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="mother_occupation">Mother's occupation</label>
+		<input name="mother_occupation" id="mother_occupation" value="" data-default-value="e.g. Banking" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Mother's occupation</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="mother_designation">Mother's designation</label>
+		<input name="mother_designation" id="mother_designation" value="" data-default-value="e.g. Probationary officer" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Mother's designation</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="mother_office_add">Mother's Office Address</label>
+		<textarea name="mother_office_add" id="mother_office_add" data-default-value="e.g. H.no. 3, PWD B and R Colony, Near Old court"  rows="25" cols="25"></textarea>
+		<p class="formHint">Mother's Office Address (if applicable)</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="">Guardian's name (if any)</label>
+		<input name="guardian_name" id="guardian_name" value="" data-default-value="e.g. Sh. Ravi Dutt" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Guardian's name, if <span class="cName" >Candidate</span> is not with parents.</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="guardian_relation">Guardian's relation</label>
+		<input name="guardian_relation" id="guardian_relation" value="" data-default-value="e.g. Uncle" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
+		<p class="formHint">Guardian's relationship with <span class="cName" >Candidate</span></p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="guardian_contact">Guardian's contact number</label>
+		<input name="guardian_contact" id="guardian_contact" value="" data-default-value="e.g. +919799123132" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Guardian's contact number, it should be a mobile number.</p>
+	</div>
+        
+	<!-- <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> -->
+        
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Next</button>
+    </div>
+</form>
+<br><br>
+<form id="final_form" class="uniForm" action="javascript:submit();">
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Click here to submit all the filled information</button>
+    </div>
+</form>
+     
+    
+<script>
+	var urlBasicInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'saveprofile'))?>";
+	var criticalData = {};
+	var addressData = {};
+	var guardianData = {};
+	var count_address_info = 1;
+	var count_guardian_info = 1;
+	
+	$(document).ready(function() {
+	    $('form.uniForm').uniform({
+		      prevent_submit : true
+		 });
+
+        serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+        $("#dob").datepicker({
+        	dateFormat: 'yy-mm-dd',
+        	changeMonth: true,
+			changeYear: true,
+			yearRange: '-25:-15',
+			onClose : function(dateText, inst) {
+				this.focus();
+				}
+        });
+		$('#address_info_div').hide();
+		$('#guardian_info_div').hide();
+		$('#final_form').hide();
+	});
+
+    function submit() {
+        var data = {};
+        data['critical_data'] = criticalData;
+        data['address_data'] = addressData;
+        data['guardian_data'] = guardianData;
+        
+		$.ajax({
+			url : urlBasicInfo,
+			data : {myarray:data},
+			success: function(jStatus){
+				alert('yo');
+            },
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+					console.log(response);
+				}
+			});
+	}
+
+	function getValues(type) {
+		//alert(type);
+		var div_name = '#'+type+'_info_div';
+		$(div_name).hide();
+		var html = 'Click here to edit';
+		var span_name = 'span#'+type+'_edit';
+		$(span_name).html(html);
+		window.scrollTo(0,0);
+		switch(type){
+			case 'critical':
+			{ 
+				$('form#critical_info_div :input')
+				.not('button,#e_mail_confirm,:input[value^="e.g."]')
+				.each(function(){ 
+					criticalData[this.name] = this.value;
+					//$('form#critical_info_div :input').attr('disabled','disabled');
+				});
+				var gender = $('input:radio[name=gender]:checked').val();
+				criticalData.gender = gender;
+				if(count_address_info==1){
+					$('#address_info_div').show(2000);
+				}
+				count_address_info++;
+			}
+			break;
+			case 'address':
+			{ 
+				$('form#address_info_div :input')
+				.not('button,:input[value^="e.g."]')
+				.each(function(){ 
+					addressData[this.name] = this.value; 
+                });
+                if(count_guardian_info == 1){
+                	$('#guardian_info_div').show(2000);
+                }
+                count_guardian_info++;
+            }
+            break;
+            case 'guardian':
+            { 
+            	$('form#guardian_info_div :input')
+            	.not('button,:input[value^="e.g."]')
+            	.each(function(){ 
+            		guardianData[this.name] = this.value; 
+            	});
+            	$('#final_form').show(1000);
+        	}
+        	break;
+        	default:
+            	alert('default');
+        	break;
+		}
+  		//return formData;
+	}
+	function show_div(type){
+		var div_name = '#'+type+'_info_div';
+		$(div_name).show(2000);
+		var span_name = 'span#'+type+'_edit';
+		$(span_name).html('');
+	}
+	
+</script>
+    
+<style type="text/css">
+.uniForm{
+	background-color:white;
+	padding:10px 10px 10px 25px;
+	border:1px solid #b4c1da;
+	margin:-5px 0 40px 0;
+	box-shadow:#e4e4e4 0px 0px 1px 1px; 
+}
+h2{
+	padding:3px 3px 3px 10px;
+	background-color:#eceff4;
+	border:1px solid #b4c1da;
+	width:57%;
+	font-size:17px;
+	font-weight:100;
+}
+span{
+	float:right;
+	font-size:14px;
+	font-weight:100;	
+}
+</style>
+    
+    
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form.jquery.js');
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
