@@ -1,8 +1,4 @@
 <?php
-/**
- * @package CORE
- *
- */
 class Core_Model_Mapper_Member_Student
 {
     /**
@@ -50,41 +46,14 @@ class Core_Model_Mapper_Member_Student
         'religion_id', 'cast_id', 'nationality_id', 'join_date', 'relieve_date', 
         'image_no', 'is_active');
         $table_name = $this->getDbTable()->info('name');
-        //
-        $cast_db_table = new Core_Model_DbTable_Casts();
-        $cast_table = $cast_db_table->info('name');
-        $cast_cols = 'cast_name';
-        //
-        $religion_db_table = new Core_Model_DbTable_Religions();
-        $religion_table = $religion_db_table->info('name');
-        $religion_cols = 'religion_name';
-        //
-        $nationaities_db_table = new Core_Model_DbTable_Nationalities();
-        $nationaities_table = $nationaities_db_table->info('name');
-        $nationaities_cols = 'nationality_name';
-        //
-        $member_type_db_table = new Core_Model_DbTable_MemberType();
-        $member_type_table = $member_type_db_table->info('name');
-        $member_type_cols = 'member_type_name';
-        //
-        $cond1 = $table_name . '.cast_id=' . $cast_table . '.cast_id';
-        $cond2 = $table_name . '.religion_id=' . $religion_table . '.religion_id';
-        $cond3 = $table_name . '.nationality_id=' . $nationaities_table .
-         '.nationality_id';
-        $cond4 = $table_name . '.member_type_id=' . $member_type_table .
-         '.member_type_id';
         $select = $adapter->select()
             ->from($table_name, $req_cols)
-            ->joinInner($cast_table, $cond1, $cast_cols)
-            ->joinInner($religion_table, $cond2, $religion_cols)
-            ->joinInner($nationaities_table, $cond3, $nationaities_cols)
-            ->joinInner($member_type_table, $cond4, $member_type_cols)
             ->where('member_id = ?', $member_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $student_info[$member_id];
     }
-    public function save ($prepared_data)
+    public function saveCriticalInfo ($prepared_data)
     {
         $dbtable = $this->getDbTable();
         try {
@@ -92,7 +61,6 @@ class Core_Model_Mapper_Member_Student
         } catch (Exception $exception) {
             throw $exception;
         }
-        return mysql_insert_id();
     }
     /**
      * Enter description here ...

@@ -156,34 +156,12 @@ class Core_Model_Batch extends Core_Model_Generic
      */
     public function fetchInfo ()
     {
-        $batch_id = $this->getBatch_id();
-        if (empty($batch_id)) {
+        $member_id = $this->getMember_id();
+        if (empty($member_id)) {
             $careless_error = 'Please provide a Batch_Id';
             throw new Exception($careless_error);
         } else {
-            $info = $this->getMapper()->fetchInfo($batch_id);
-            if (sizeof($info) == 0) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return true;
-            }
-        }
-    }
- /**
-     * Fetches information regarding class
-     *
-     */
-    public function fetchBatchId ()
-    {
-        $department_id = $this->getDepartment_id();
-        $programme_id=$this->getProgramme_id();
-        $start_year = $this->getBatch_start();
-        if (empty($department_id) or empty($programme_id) or empty($start_year)) {
-            $careless_error = 'Please provide a department_id ,programme_id and Batch Start year ';
-            throw new Exception($careless_error);
-        } else {
-            $info = $this->getMapper()->fetchBatchId($department_id,$programme_id,$start_year);
+            $info = $this->getMapper()->fetchPersonalInfo($member_id);
             if (sizeof($info) == 0) {
                 return false;
             } else {
