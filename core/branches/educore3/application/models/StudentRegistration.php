@@ -2,7 +2,7 @@
 class Core_Model_StudentRegistration extends Core_Model_Generic
 {
     protected $_member_id;
-    protected $_reg_id;
+    protected $_registration_id;
     protected $_mapper;
     /**
      * @return the $_member_id
@@ -19,18 +19,18 @@ class Core_Model_StudentRegistration extends Core_Model_Generic
         $this->_member_id = $_member_id;
     }
     /**
-     * @return the $_reg_id
+     * @return the $_registration_id
      */
-    public function getReg_id ()
+    public function getRegistration_id ()
     {
-        return $this->_reg_id;
+        return $this->_registration_id;
     }
     /**
-     * @param field_type $_reg_id
+     * @param field_type $_registration_id
      */
-    public function setReg_id ($_reg_id)
+    public function setRegistration_id ($_registration_id)
     {
-        $this->_reg_id = $_reg_id;
+        $this->_registration_id = $_registration_id;
     }
     /**
      * Sets Mapper

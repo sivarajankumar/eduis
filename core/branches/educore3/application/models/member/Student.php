@@ -506,127 +506,78 @@ class Core_Model_Member_Student extends Core_Model_Generic
             }
         }
     }
-    /**
-     * Fetches Admission information of a Student
-     *
-     */
-    public function fetchAdmissionInfo ()
-    {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error);
-        } else {
-            $admission_object = new Core_Model_StudentAdmission();
-            $admission_object->setMember_id($member_id);
-            $admission_info = $admission_object->fetchInfo();
-            if (! $admission_info) {
-                return false;
-            } else {
-                return $admission_object;
-            }
-        }
-    }
-    /**
-     * Fetches Registration information of a Student
-     *
-     */
-    public function fetchRegistrationInfo ()
-    {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error);
-        } else {
-            $registration_object = new Core_Model_StudentRegistration();
-            $registration_object->setMember_id($member_id);
-            $registration_info = $registration_object->fetchInfo();
-            if (! $registration_info) {
-                return false;
-            } else {
-                return $registration_object;
-            }
-        }
-    }
-    /**
-     * Fetches Address information of a Student
-     * 
-     */
-    public function fetchAddressInfo ($address_type)
-    {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error);
-        } else {
-            $address_object = new Core_Model_MemberAddress();
-            $address_object->setAdress_type($address_type);
-            $address_object->setMember_id($member_id);
-            $address_info = $address_object->fetchInfo();
-            if (! $address_info) {
-                return false;
-            } else {
-                return $address_object;
-            }
-        }
-    }
-    /**
-     * Fetches Contact information of a Student
-     */
-    public function fetchContactInfo ($contact_type_id)
-    {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error);
-        } else {
-            $contacts_object = new Core_Model_MemberContacts();
-            $contacts_object->setMember_id($member_id);
-            $contacts_object->setContact_type_id($contact_type_id);
-            $contacts_info = $contacts_object->fetchInfo();
-            if (! $contacts_info) {
-                return false;
-            } else {
-                return $contacts_object;
-            }
-        }
-    }
-    /**
-     * Fetches information about Relative of a Student
-     *
-     */
-    public function fetchRelativeInfo ($relation_id)
-    {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error);
-        } else {
-            $relative_object = new Core_Model_MemberRelatives();
-            $relative_object->setMember_id($member_id);
-            $relative_object->setRelation_id($relation_id);
-            $relative_info = $relative_object->fetchInfo();
-            if (! $relative_info) {
-                return false;
-            } else {
-                return $relative_object;
-            }
-        }
-    }
     public function fetchClassIds ()
     {
         $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error);
+        $student_class_object = new Core_Model_StudentClass();
+        $student_class_object->setMember_id($member_id);
+        $class_ids = $student_class_object->fetchClassIds(true);
+        if (! $class_ids) {
+            return false;
         } else {
+            return $class_ids;
+        }
+    }
+    /**
+     * 
+     * Enter description here ...
+     * @param integer $semester_id
+     * @param boolean $current
+     */
+    public function fetchClassId ($semester_id = null, $current = null, $all = null)
+    {
+        $basis = '';
+        if (! empty($semester_id) and ! empty($current) and ! empty($all)) {
+            $careless_error = 'In fetchClassId() set ATMOST one parameter. More than One set';
+            throw new Exception($careless_error);
+        } else {
+            if (! empty($semester_id)) {
+                $basis = 'semester';
+            }
+            if (! empty($current) and $current == true) {
+                $basis = 'current';
+            }
+            if (! empty($all) and $all == true) {
+                $basis = 'all';
+            }
+        }
+        if (! empty($basis)) {
+            $member_id = $this->getMember_id();
+            $batch_id = $this->fetchBatchId();
             $student_class_object = new Core_Model_StudentClass();
             $student_class_object->setMember_id($member_id);
-            $class_ids = $student_class_object->fetchClassIds();
-            if (! $class_ids) {
-                return false;
-            } else {
-                return $class_ids;
+            $class_ids = $student_class_object->fetchClassIds(null, true);
+            switch ($basis) {
+                case 'current':
+                    $class_object = new Core_Model_Class();
+                    $class_object->setBatch_id($batch_id);
+                    $class_object->setIs_active(1);
+                    $class_id = $class_object->fetchBatchClassIds(null, true);
+                    return $class_id;
+                    break;
+                case 'semester':
+                    $class_object = new Core_Model_Class();
+                    $class_object->setBatch_id($batch_id);
+                    $class_object->setSemester_id($semester_id);
+                    $class_id = $class_object->fetchBatchClassIds(true);
+                    return $class_id;
+                    break;
+                case 'all':
+                    $class_object = new Core_Model_Class();
+                    $class_object->setBatch_id($batch_id);
+                    $class_ids = array();
+                    $class_ids = $class_object->fetchBatchClassIds();
+                    return $class_ids;
+                    /*
+                 * can be done this way also 
+                 * /
+                /*$student_class_object = new Core_Model_StudentClass();
+                $student_class_object->setMember_id($member_id);
+                $class_ids = $student_class_object->fetchClassIds();*/
+                    break;
+                default:
+                    ;
+                    break;
             }
         }
     }
@@ -637,45 +588,31 @@ class Core_Model_Member_Student extends Core_Model_Generic
     public function fetchClassInfo ($class_id)
     {
         $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error);
+        $student_class_object = new Core_Model_StudentClass();
+        $student_class_object->setMember_id($member_id);
+        $student_class_object->setClass_id($class_id);
+        $info_flag = $student_class_object->fetchInfo();
+        if (! $info_flag) {
+            return false;
         } else {
-            $student_class_object = new Core_Model_StudentClass();
-            $student_class_object->setMember_id($member_id);
-            $student_class_object->setClass_id($class_id);
-            $info_flag = $student_class_object->fetchInfo();
-            if (! $info_flag) {
-                return false;
-            } else {
-                return $student_class_object;
-            }
+            return $student_class_object;
         }
+    }
+    public function fetchBatchId ()
+    {
+        $member_id = $this->getMember_id();
+        $student_class_object = new Core_Model_StudentClass();
+        $student_class_object->setMember_id($member_id);
+        $batch_identifier_class_id = $student_class_object->fetchBatchIdentifierClassId();
+        $class_object = new Core_Model_Class();
+        $class_object->setClass_id($batch_identifier_class_id);
+        $class_info = $class_object->fetchInfo();
+        $batch_id = $class_object->getBatch_id();
+        return $batch_id;
     }
     public function saveCriticalInfo ($data_array)
     {
-        $member_id = $this->save('Core_Model_Member_Student', $data_array);
-        return $member_id;
-    }
-    public function saveAdmissionInfo ($data_array)
-    {
-        $this->save('Core_Model_StudentAdmission', $data_array);
-    }
-    public function saveRegistrationInfo ($data_array)
-    {
-        $this->save('Core_Model_StudentRegistration', $data_array);
-    }
-    public function saveAddressInfo ($data_array)
-    {
-        $this->save('Core_Model_MemberAddress', $data_array);
-    }
-    public function saveContactsInfo ($data_array)
-    {
-        $this->save('Core_Model_MemberContacts', $data_array);
-    }
-    public function saveRelativesInfo ($data_array)
-    {
-        $this->save('Core_Model_MemberRelatives', $data_array);
+        $this->save('Core_Model_Member_Student', $data_array);
     }
     public function saveClassInfo ($data_array)
     {
