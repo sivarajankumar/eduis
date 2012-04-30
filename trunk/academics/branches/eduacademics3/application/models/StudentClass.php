@@ -178,13 +178,23 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
             $careless_error = 'Please provide a Member Id and a Class id';
             throw new Exception($careless_error);
         } else {
-            $info = $this->getMapper()->fetchInfo($member_id,$class_id);
+            $info = $this->getMapper()->fetchInfo($member_id, $class_id);
             if (sizeof($info) == 0) {
                 return false;
             } else {
                 $this->setOptions($info);
                 return true;
             }
+        }
+    }
+    public function fetchBatchIdentifierClassId ()
+    {
+        $member_id = $this->getMember_id();
+        if (empty($member_id)) {
+            $careless_error = 'Insufficient Params supplied to fetchBatchIdentifierClassId .Member_id required';
+            throw new Exception($careless_error);
+        } else {
+            return $this->getMapper()->fetchBatchIdentifierClassId($member_id);
         }
     }
     public function fetchClassIds ()

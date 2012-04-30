@@ -5,6 +5,34 @@ class Core_Model_StudentRegistration extends Core_Model_Generic
     protected $_reg_id;
     protected $_mapper;
     /**
+     * @return the $_member_id
+     */
+    public function getMember_id ()
+    {
+        return $this->_member_id;
+    }
+    /**
+     * @param field_type $_member_id
+     */
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
+    }
+    /**
+     * @return the $_reg_id
+     */
+    public function getReg_id ()
+    {
+        return $this->_reg_id;
+    }
+    /**
+     * @param field_type $_reg_id
+     */
+    public function setReg_id ($_reg_id)
+    {
+        $this->_reg_id = $_reg_id;
+    }
+    /**
      * Sets Mapper
      * @param Core_Model_Mapper_StudentRegistration $mapper
      * @return Core_Model_StudentRegistration

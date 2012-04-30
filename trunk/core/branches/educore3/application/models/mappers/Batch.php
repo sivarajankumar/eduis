@@ -41,7 +41,7 @@ class Core_Model_Mapper_Batch
     public function fetchInfo ($batch_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
-        $db_table = new Core_Model_DbTable_Batch();
+        $db_table = $this->getDbTable();
         $batch_table = $db_table->info('name');
         $required_cols = array('batch_id', 'department_id', 'programme_id', 
         'batch_start', 'batch_number', 'is_active');
@@ -51,6 +51,21 @@ class Core_Model_Mapper_Batch
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $student_info[$batch_id];
+    }
+    public function fetchBatchId ($department_id, $programme_id, $start_year)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $batch_table = $db_table->info('name');
+        $required_cols = array('batch_id');
+        $select = $adapter->select()
+            ->from($batch_table, $required_cols)
+            ->where('department_id = ?', $department_id)
+            ->where('programme_id = ?', $programme_id)
+            ->where('batch_start = ?', $start_year);
+        $batch_id = array();
+        $batch_id = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $batch_id;
     }
     public function save ($prepared_data)
     {
