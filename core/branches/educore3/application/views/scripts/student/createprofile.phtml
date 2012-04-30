@@ -158,41 +158,56 @@
 	
 	<h3>Communication Address:</h3>
 	<div class="ctrlHolder">
-		<label for="c_pin">Pin Code</label>
-		<input name="c_pin" id="c_pin" value="" data-default-value="e.g. 125001" size="35" maxlength="10" type="text" class="textInput validateInteger"/> 
+		<label for="postal_code">Pin Code</label>
+		<input name="postal_code" id="postal_code" value="" data-default-value="e.g. 125001" size="35" maxlength="10" type="text" class="textInput validateInteger"/> 
 		<p class="formHint">Pincode of communication address.</p>
 	</div>
-        
-	<div class="ctrlHolder">
-		<label for="c_state"><em>*</em>State/Provience</label>
-		<input name="c_state" id="c_state" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-		<p class="formHint">State/Territory of communication address.</p>
+        <div class="ctrlHolder">
+		<label for="city"><em>*</em>City/Town/Village</label>
+		<input name="city" id="city" value="" data-default-value="e.g. Narnaul" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">City/Town/Village of communication address.<br/>(It may be same as District)</p>
 	</div>
 	
 	<div class="ctrlHolder">
 		<label for=""><em>*</em>District</label>
-		<input name="c_district" id="c_district" value="" data-default-value="e.g. Mohindergarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<input name="district" id="district" value="" data-default-value="e.g. Mohindergarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
 		<p class="formHint">District of communication address.<br/>(It should be same as above if Union Territory)</p>
 	</div>
 	
 	<div class="ctrlHolder">
-		<label for="c_city"><em>*</em>City/Town/Village</label>
-		<input name="c_city" id="c_city" value="" data-default-value="e.g. Narnaul" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-		<p class="formHint">City/Town/Village of communication address.<br/>(It may be same as District)</p>
+		<label for="state"><em>*</em>State/Provience</label>
+		<input name="state" id="state" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">State/Territory of communication address.</p>
 	</div>
+	
+	
+	
+	
         
 	<div class="ctrlHolder">
-		<label for="c_add"><em>*</em>Address</label>
-		<textarea name="c_add" id="c_add" data-default-value="e.g. H.no. 3, PWD B&R Colony, Near Old court"    rows="25" cols="25"></textarea>
+		<label for="address"><em>*</em>Address</label>
+		<textarea name="address" id="address" data-default-value="e.g. H.no. 3, PWD B&R Colony, Near Old court"    rows="25" cols="25"></textarea>
 		<p class="formHint">House number and Area etc.</p>
 	</div>  
 
 	<h3>Permanent Address:</h3>
 	<div class="ctrlHolder">
-		<label for="p_pin">Pin Code</label>
-		<input name="p_pin" id="p_pin" value="" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
+		<label for="postal_code">Pin Code</label>
+		<input name="postal_code" id="postal_code" value="" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
 		<p class="formHint">Pincode of permanent address.</p>
 	</div>
+        <div class="ctrlHolder">
+		<label for="city"><em>*</em>City/Town/Village</label>
+		<input name="city" id="city" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="district"><em>*</em>District</label>
+		<input name="district" id="district" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">District of permanent address.<br/>(It should be same as above if Union Territory)</p>
+	</div>
+	
         
 	<div class="ctrlHolder">
 		<label for="p_state"><em>*</em>State/Territory</label>
@@ -200,21 +215,10 @@
 		<p class="formHint">State/Territory of permanent address.</p>
 	</div>
 	
-	<div class="ctrlHolder">
-		<label for="p_district"><em>*</em>District</label>
-		<input name="p_district" id="p_district" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-		<p class="formHint">District of permanent address.<br/>(It should be same as above if Union Territory)</p>
-	</div>
 	
 	<div class="ctrlHolder">
-		<label for="p_city"><em>*</em>City/Town/Village</label>
-		<input name="p_city" id="p_city" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-		<p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
-	</div>
-        
-	<div class="ctrlHolder">
-		<label for="p_add"><em>*</em>Address</label>
-		<textarea name="p_add" id="p_add"  data-default-value="e.g. H.no. 2135, Sector 9C"     rows="25" cols="25"></textarea>
+		<label for="address"><em>*</em>Address</label>
+		<textarea name="address" id="address"  data-default-value="e.g. H.no. 2135, Sector 9C"     rows="25" cols="25"></textarea>
 		<p class="formHint">House number and Area etc.</p>
 	</div>
         
@@ -228,6 +232,34 @@
     
 <h2>Parent/Guardian Information:<span id='guardian_edit' onclick="javascript:show_div('guardian')"></span></h2>
 <form id="guardian_info_div" action="javascript:getValues('guardian');" class="uniForm">
+<div class="ctrlHolder">
+		<label for="father_name"><em>*</em> Father's name</label>
+		<input name="name" id="name" data-default-value="e.g. Sh. Madan Kumar" value=""  size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">Father's name of <span class="cName" >Candidate</span></p>
+	</div>
+	<div class="ctrlHolder">
+		<label for="father_occupation">Father's occupation</label>
+		<input name="occupation" id="occupation" value="" data-default-value="e.g. Teacher" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Father's occupation</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="father_designation" >Father's designation</label>
+		<input name="designation" id="designation" value="" data-default-value="e.g. Lecturer" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Father's designation</p>
+	</div>
+	<div class="ctrlHolder">
+		<label for="father_office_add">Father's Office Address</label>
+		<textarea name="office_add" id="office_add"  data-default-value="e.g. PWD B and R Office, Near SDM office, Narnaul"    rows="25" cols="25"></textarea>
+		<p class="formHint">Father's Office Address</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="father_contact" > Father's contact</label>
+		<input name="contact" id="contact" value=""  data-default-value="e.g. 9416123494" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
+		<p class="formHint">Father's contact number, it should be a mobile number.</p>
+	</div>
+	
 	<div class="ctrlHolder">
 		<label for="landline_no"> Landline No.</label>
 		<input name="landline_no" id="landline_no" value=""  data-default-value="e.g. 017226544331" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
@@ -235,62 +267,45 @@
 	</div>
 	
 	<div class="ctrlHolder">
-		<label for="father_name"><em>*</em> Father's name</label>
-		<input name="father_name" id="father_name" data-default-value="e.g. Sh. Madan Kumar" value=""  size="35" maxlength="50" type="text" class="textInput required"/>
-		<p class="formHint">Father's name of <span class="cName" >Candidate</span></p>
-	</div>
-        
-	<div class="ctrlHolder">
-		<label for="father_occupation">Father's occupation</label>
-		<input name="father_occupation" id="father_occupation" value="" data-default-value="e.g. Teacher" size="35" maxlength="50" type="text" class="textInput"/>
-		<p class="formHint">Father's occupation</p>
+		<label for="email"> Email </label>
+		<input name="email" id="email" value=""  data-default-value="e.g. sunil@abc.com" size="35" maxlength="12" type="text" class="textInput validateSameAs e_mail"/>
+		<p class="formHint">Email, if available.</p>
 	</div>
 	
-	<div class="ctrlHolder">
-		<label for="father_designation" >Father's designation</label>
-		<input name="father_designation" id="father_designation" value="" data-default-value="e.g. Lecturer" size="35" maxlength="50" type="text" class="textInput"/>
-		<p class="formHint">Father's designation</p>
-	</div>
+	  
+	
         
-	<div class="ctrlHolder">
-		<label for="father_contact" > Father's contact</label>
-		<input name="father_contact" id="father_contact" value=""  data-default-value="e.g. 9416123494" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
-		<p class="formHint">Father's contact number, it should be a mobile number.</p>
-	</div>
+	
         
-	<div class="ctrlHolder">
-		<label for="father_office_add">Father's Office Address</label>
-		<textarea name="father_office_add" id="father_office_add" data-default-value="e.g. PWD B and R Office, Near SDM office, Narnaul"    rows="25" cols="25"></textarea>
-		<p class="formHint">Father's Office Address</p>
-	</div>
+	
 	
 	<div class="ctrlHolder">
 		<label for="mother_name"><em>*</em> Mother's name</label>
-		<input name="mother_name" id="mother_name" value=""  data-default-value="e.g. Smt. Sita Devi" size="35" maxlength="50" type="text" class="textInput required"/>
+		<input name="name" id="name" value=""  data-default-value="e.g. Smt. Sita Devi" size="35" maxlength="50" type="text" class="textInput required"/>
 		<p class="formHint">Mother's name of <span class="cName" >Candidate</span></p>
 	</div>
         
 	<div class="ctrlHolder">
 		<label for="mother_occupation">Mother's occupation</label>
-		<input name="mother_occupation" id="mother_occupation" value="" data-default-value="e.g. Banking" size="35" maxlength="50" type="text" class="textInput"/>
+		<input name="occupation" id="occupation" value="" data-default-value="e.g. Banking" size="35" maxlength="50" type="text" class="textInput"/>
 		<p class="formHint">Mother's occupation</p>
 	</div>
         
 	<div class="ctrlHolder">
 		<label for="mother_designation">Mother's designation</label>
-		<input name="mother_designation" id="mother_designation" value="" data-default-value="e.g. Probationary officer" size="35" maxlength="50" type="text" class="textInput"/>
+		<input name="designation" id="designation" value="" data-default-value="e.g. Probationary officer" size="35" maxlength="50" type="text" class="textInput"/>
 		<p class="formHint">Mother's designation</p>
 	</div>
         
 	<div class="ctrlHolder">
 		<label for="mother_office_add">Mother's Office Address</label>
-		<textarea name="mother_office_add" id="mother_office_add" data-default-value="e.g. H.no. 3, PWD B and R Colony, Near Old court"  rows="25" cols="25"></textarea>
+		<textarea name="office_add" id="office_add" data-default-value="e.g. H.no. 3, PWD B and R Colony, Near Old court"  rows="25" cols="25"></textarea>
 		<p class="formHint">Mother's Office Address (if applicable)</p>
 	</div>
 	
 	<div class="ctrlHolder">
 		<label for="">Guardian's name (if any)</label>
-		<input name="guardian_name" id="guardian_name" value="" data-default-value="e.g. Sh. Ravi Dutt" size="35" maxlength="50" type="text" class="textInput"/>
+		<input name="name" id="name" value="" data-default-value="e.g. Sh. Ravi Dutt" size="35" maxlength="50" type="text" class="textInput"/>
 		<p class="formHint">Guardian's name, if <span class="cName" >Candidate</span> is not with parents.</p>
 	</div>
         
@@ -302,7 +317,7 @@
         
 	<div class="ctrlHolder">
 		<label for="guardian_contact">Guardian's contact number</label>
-		<input name="guardian_contact" id="guardian_contact" value="" data-default-value="e.g. +919799123132" size="35" maxlength="50" type="text" class="textInput"/>
+		<input name="contact" id="contact" value="" data-default-value="e.g. +919799123132" size="35" maxlength="50" type="text" class="textInput"/>
 		<p class="formHint">Guardian's contact number, it should be a mobile number.</p>
 	</div>
         
@@ -466,4 +481,5 @@ $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+
 ?>
