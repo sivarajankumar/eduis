@@ -53,6 +53,42 @@ class Acad_Model_Mapper_Class
         $class_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $class_info[$class_id];
     }
+    /**
+     * Fetches Class Id
+     * @param unknown_type $department_id
+     * @param unknown_type $programme_id
+     * @param unknown_type $semester_id
+     */
+    public function fetchClassIds ($department_id = null, $programme_id = null, 
+    $batch_id = null, $semester_id = null, $is_active = null)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $class_dbtable = $this->getDbTable();
+        $class_table = $class_dbtable->info('name');
+        $batch_dbTable = new Acad_Model_DbTable_Batch();
+        $batch_table = $batch_dbTable->info('name');
+        $cond = $class_table . '.batch_id =' . $batch_table . '.batch_id';
+        $class_cols = array('class_id');
+        $select = $adapter->select()->from($class_table, $class_cols);
+        if (isset($department_id)) {
+            $select->where('department_id = ?', $is_active);
+        }
+        if (isset($programme_id)) {
+            $select->where('programme_id = ?', $is_active);
+        }
+        if (isset($programme_id)) {
+            $select->where('semester_id = ?', $is_active);
+        }
+        if (isset($batch_id)) {
+            $select->where('batch_id = ?', $batch_id);
+        }
+        if (isset($is_active)) {
+            $select->where('is_active = ?', $is_active);
+        }
+        $class_ids = array();
+        $class_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $class_ids;
+    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();

@@ -1,0 +1,193 @@
+<!--[if lte ie 7]>
+	<style type="text/css" media="screen">
+		/* Move these to your IE6/7 specific stylesheet if possible */
+		.uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+	</style>
+<![endif]-->
+
+<h2>Detailed Marks Sheet<span id='dmc_param_edit'
+	onclick="javascript:show_div('dmc_param')"></span></h2>
+
+<form id="dmc_param_div" class="uniForm">
+<fieldset id="member_id"><legend>Member Id</legend>
+<div class="ctrlHolder"><input name="member_id" type="text" value=""
+	class="textInput validateInteger">
+<p class="formHint">Input Your Member Id. Ex : 12345</p>
+</div>
+</fieldset>
+<fieldset id="programme_id"><legend>Programme</legend>
+<div class="ctrlHolder">
+<p class="label"><em>*</em></p>
+<ul class="blockLabels">
+	<li><label for="programme_id"><input name="programme_id" type="radio"
+		value="btech" title="BTECH" class="required">B.Tech</label></li>
+	<li><label for="programme_id"><input name="programme_id" type="radio"
+		value="mtech" title="MTECH" class="required">M.Tech</label></li>
+</ul>
+<p class="formHint">Obtained from SESSION</p>
+</div>
+</fieldset>
+<fieldset id="department_id"><legend>Department</legend>
+<div class="ctrlHolder"><label for="department_id"><em>*</em></label> <select
+	id="department_id" name="department_id" class="selectInput required">
+	<option value="cse">Computer Science</option>
+	<option value="ece">Electronics and Communication</option>
+	<option value="bt">Biotechnology</option>
+	<option value="mech">Mechanical</option>
+</select>
+<p class="formHint">Obtained from SESSION</p>
+</div>
+
+</fieldset>
+<fieldset id="semester_id"><legend>Semester</legend>
+<div class="ctrlHolder"><label for="semester_id"><em>*</em></label> <select
+	id="semester_id" name="semester_id" class="selectInput required">
+	<option value=1>1</option>
+	<option value=2>2</option>
+	<option value=3>3</option>
+	<option value=4>4</option>
+	<option value=5>5</option>
+	<option value=6>6</option>
+	<option value=7>7</option>
+	<option value=8>8</option>
+</select>
+<p class="formHint">Provided by USER</p>
+</div>
+</fieldset>
+
+<div class="buttonHolder">
+<button type="button" onclick="javascript : getValues('dmc_param')">Generate
+DMC</button>
+</div>
+
+</form>
+
+
+<div class="ctrlHolder" id="amrit"></div>
+
+
+<script>
+var urlGetDmcData = "<?php
+echo $this->url(array('controller' => 'testing', 'action' => 'studentDmc'))?>";
+//var allData={};
+var dmcParamData = {};
+var recievedDmcData ={};
+var memberData={};
+function showDMC(){
+	html_str = '';
+	$.each(recievedDmcData,function(dmcInfoId,dmcData){
+		html_str +='Dmc ID :'+dmcInfoId;
+		html_str += '<table  width="50%" cellspacing="0" cellpadding="3" border="0"><th>Marks Obtained</th><th>Total Marks</th><th>Percentage</th><tr>';
+		$.each(dmcData,function(index,value){
+			html_str += '<td style="border:0">'+value+'</td>';
+			});
+		html_str +='</tr></table></br>';
+		});
+	
+	$('#amrit').html(html_str);
+	}
+	$(document).ready(function() {
+		$('form.uniForm').uniform({prevent_submit : true });
+		});
+    //
+
+    function submit() {
+       
+        //$.ajax({
+		//	url : urlGetDmcData,
+		//			data : {'allData' : allData},
+		//success: function(jStatus){
+		//			console.log(allData);
+		//},
+		// error: function(response) {
+		//	$('#errorBox').text(response.responseText).parent().show();
+		//		console.log(response);
+		//	}
+		//});
+   	 $.ajax({
+			url : urlGetDmcData,
+			data : {'dmcParams' : dmcParamData},
+			//data : dmcParamData,
+			success: function(dmcData){
+				recievedDmcData = dmcData;
+				console.log(recievedDmcData);
+				showDMC();
+          },
+          error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+					console.log(response);
+				}
+			});
+		
+	}
+	function getValues(type) {
+		var div_name = '#'+type+'_div';
+		$(div_name).hide();
+		var html ='Click here to Edit';
+		var span_name = 'span#'+type+'_edit';
+		$(span_name).html(html);
+		window.scrollTo(0,0);
+		switch(type){
+			case 'dmc_param':
+			{ 
+				
+				$('form#dmc_param_div :input').not('button,#e_mail_confirm,:input[value^="e.g."]').each(function(){ 
+					dmcParamData[this.name] = this.value;
+					
+				});
+				var programme_id = $('input:radio[name=programme_id]:checked').val();
+				dmcParamData.programme_id = programme_id;
+				//allData.dmcParamData= dmcParamData;
+				submit();
+				
+				}
+			
+			}
+		}
+	function show_div(type){
+		var div_name = '#'+type+'_div';
+		$(div_name).show(2000);
+		var span_name = 'span#'+type+'_edit';
+		$(span_name).html('');
+	}
+	
+</script>
+
+<style type="text/css">
+.uniForm {
+	background-color: white;
+	padding: 10px 10px 10px 25px;
+	border: 1px solid #b4c1da;
+	margin: -5px 0 40px 0;
+	box-shadow: #e4e4e4 0px 0px 1px 1px;
+}
+
+h2 {
+	padding: 3px 3px 3px 10px;
+	background-color: #eceff4;
+	border: 1px solid #b4c1da;
+	width: 57%;
+	font-size: 17px;
+	font-weight: 100;
+}
+
+span {
+	float: right;
+	font-size: 14px;
+	font-weight: 100;
+}
+</style>
+
+
+<?php
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form.jquery.js');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/demos/css/demo.css');
+?>

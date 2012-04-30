@@ -1,5 +1,5 @@
 <?php
-class Core_Model_Mapper_MemberAddress
+class Acad_Model_Mapper_DmcMarks
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Core_Model_Mapper_MemberAddress
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Core_Model_Mapper_MemberAddress
+     * @return Acad_Model_Mapper_DmcMarks
      */
     public function setDbTable ($dbTable)
     {
@@ -29,29 +29,35 @@ class Core_Model_Mapper_MemberAddress
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Core_Model_DbTable_MemberAddress');
+            $this->setDbTable('Acad_Model_DbTable_DmcMarks');
         }
         return $this->_dbTable;
     }
     /**
-     * Fetches Address details of a Member
-     * 
-     * @param integer $member_id
+     * Fetches Dmc marks
+     * @param integer $student_subject_id
+     * @param integer $result_type_id
+     * @param boolean
+     * @throws Exception
      */
-    public function fetchInfo ($member_id, $address_type)
+    public function fetchInfo ($student_subject_id, $result_type_id, $considered)
     {
         $adapter = $this->getDbTable()->getAdapter();
-        $db_table = new Core_Model_DbTable_Class();
-        $address_table = $db_table->info('name');
-        $required_cols = array('member_id', 'postal_code', 'city', 'district', 
-        'state', 'address', 'address_type');
+        $db_table = $this->getDbTable();
+        $dmc_marks_table = $db_table->info('name');
+        $required_cols = array('dmc_info_id', 'dmc_marks_id', 
+        'student_subject_id', 'internal', 'external', 'percentage', 'is_pass', 
+        'is_considered', 'is_verified', 'date');
         $select = $adapter->select()
-            ->from($address_table, $required_cols)
-            ->where('member_id = ?', $member_id)
-            ->where('address_type=?', $address_type);
-        $address_info = array();
-        $address_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $address_info[$member_id];
+            ->from($dmc_marks_table, $required_cols)
+            ->where(' student_subject_id= ?', $student_subject_id)
+            ->where(' result_type_id= ?', $result_type_id);
+        if ($considered == true) {
+            $select->where(' is_considered= ?', $considered);
+        }
+        $dmc_marks = array();
+        $dmc_marks = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $dmc_marks;
     }
     public function save ($prepared_data)
     {

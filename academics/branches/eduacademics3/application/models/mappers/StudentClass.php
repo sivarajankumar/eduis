@@ -70,6 +70,24 @@ class Acad_Model_Mapper_StudentClass
         $class_ids = array();
         return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
+    /**
+     * Fetches all Classes in which a student has/had enrolled
+     * 
+     * @param integer $member_id
+     */
+    public function fetchBatchIdentifierClassId ($member_id)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $stu_class_table = $db_table->info('name');
+        $required_cols = array('class_id');
+        $select = $adapter->select()
+            ->from($stu_class_table, $required_cols)
+            ->where('is_initial_batch_identifier = ?', 1);
+        $class_id = array();
+        $class_id = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $class_id[0];
+    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
