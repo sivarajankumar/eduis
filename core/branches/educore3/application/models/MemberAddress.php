@@ -7,7 +7,7 @@ class Core_Model_MemberAddress extends Core_Model_Generic
     protected $_district;
     protected $_state;
     protected $_address;
-    protected $_adress_type;
+    protected $_address_type;
     protected $_mapper;
     /**
      * @return the $_member_id
@@ -94,18 +94,18 @@ class Core_Model_MemberAddress extends Core_Model_Generic
         $this->_address = $_address;
     }
     /**
-     * @return the $_adress_type
+     * @return the $_address_type
      */
-    protected function getAdress_type ()
+    protected function getAddress_type ()
     {
-        return $this->_adress_type;
+        return $this->_address_type;
     }
     /**
-     * @param field_type $_adress_type
+     * @param field_type $_address_type
      */
-    protected function setAdress_type ($_adress_type)
+    protected function setAddress_type ($_address_type)
     {
-        $this->_adress_type = $_adress_type;
+        $this->_address_type = $_address_type;
     }
     /**
      * Sets Mapper
@@ -172,12 +172,13 @@ class Core_Model_MemberAddress extends Core_Model_Generic
     public function fetchInfo ()
     {
         $member_id = $this->getMember_id();
-        $address_type = $this->getAdress_type();
+        $address_type = $this->getAddress_type();
         if (empty($member_id) or empty($address_type)) {
             $careless_error = 'Please provide a Member Id and Address Type';
             throw new Exception($careless_error);
         } else {
-            $address_info = $this->getMapper()->fetchInfo($member_id,$address_type);
+            $address_info = $this->getMapper()->fetchInfo($member_id, 
+            $address_type);
             if (sizeof($address_info) == 0) {
                 return false;
             } else {
