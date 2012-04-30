@@ -210,20 +210,24 @@ class Acad_Model_DmcMarks extends Acad_Model_Generic
      */
     public function initInfo ()
     {}
-    /* public function fetchInfo ()
+    public function fetchInfo ()
     {
-        $result_type_id = $this->getResult_type_id();
         $student_subject_id = $this->getStudent_subject_id();
-        $considered = $this->getIs_considered();
-        $info = $this->getMapper()->fetchInfo($student_subject_id, 
-        $result_type_id, $considered);
+        $dmc_info_id = $this->getDmc_info_id();
+        if (empty($student_subject_id) or empty($dmc_info_id)) {
+            throw new Exception(
+            'Insufficient params supplied to fetchClassIds() function.Please provide a Dmc_info_id and a Student_subject_Id');
+        } else {
+            $info = $this->getMapper()->fetchInfo($dmc_info_id, 
+            $student_subject_id);
+        }
         if (sizeof($info) == 0) {
             return false;
         } else {
             $this->setOptions($info);
             return $this;
         }
-    }*/
+    }
     public function save ($data_array)
     {
         $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(

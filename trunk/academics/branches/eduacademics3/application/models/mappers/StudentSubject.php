@@ -43,27 +43,27 @@ class Acad_Model_Mapper_StudentSubject
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $stu_subject_table = $db_table->info('name');
-        $required_cols = array('subject_id');
+        $required_cols = array('student_subject_id', 'subject_id');
         $select = $adapter->select()
             ->from($stu_subject_table, $required_cols)
             ->where('member_id = ?', $member_id)
             ->where('class_id = ?', $class_id);
-        $student_info = array();
-        $student_info = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $student_info[$member_id];
+        $student_subjects = array();
+        $student_subjects = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $student_info;
     }
-    public function fetchStudentSubjectId ($member_id, $class_id,$subject_id)
+    public function fetchStudentSubjectId ($member_id, $class_id, $subject_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $stu_subject_table = $db_table->info('name');
-        $required_cols = array('member_id','student_subject_id');
+        $required_cols = array('member_id', 'student_subject_id');
         $select = $adapter->select()
             ->from($stu_subject_table, $required_cols)
             ->where('member_id = ?', $member_id)
             ->where('class_id = ?', $class_id)
             ->where('subject_id = ?', $subject_id);
-        $stu_subject_id=array();
+        $stu_subject_id = array();
         $stu_subject_id = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $stu_subject_id[$member_id];
     }

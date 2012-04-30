@@ -220,7 +220,7 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
         $stu_sub_id = $this->fetchStudentSubjectId();
     }
     /**
-     * Fetches information regarding class
+     * Fetches Student_subject_id and Subject_id of All subjects studied by a student in an Academic Class
      *
      */
     public function fetchSubjects ()
@@ -231,11 +231,11 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
             $careless_error = 'Insufficient params supplied to fetchSubjects() function.Please provide a Member Id and a Class id';
             throw new Exception($careless_error);
         } else {
-            $subjects = $this->getMapper()->fetchSubjects($member_id, $class_id);
-            if (sizeof($subjects) == 0) {
+            $student_subjects = $this->getMapper()->fetchSubjects($member_id, $class_id);
+            if (sizeof($student_subjects) == 0) {
                 return false;
             } else {
-                return $subjects;
+                return $student_subjects;
             }
         }
     }

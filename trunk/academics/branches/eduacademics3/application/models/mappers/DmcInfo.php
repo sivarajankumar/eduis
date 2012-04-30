@@ -55,25 +55,25 @@ class Acad_Model_Mapper_DmcInfo
         $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $dmc_info[$dmc_info_id];
     }
-    public function fetchDmcInfoIds ($member_id, $class_id=null)
+    public function fetchDmcInfoIds ($member_id, $class_id = null, 
+    $result_type_id = null)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $dmc_info_table = $db_table->info('name');
         $dmc_info_ids = array();
-        $required_cols = array('dmc_info_id');
+        $required_cols = array('dmc_info_id', 'dmc_id', 'class_id', 
+        'result_type_id');
         $select = $adapter->select()
             ->from($dmc_info_table, $required_cols)
             ->where('member_id = ?', $member_id);
-        if (isset($class_id)) {
-            $required_cols = array('dmc_info_id', 'dmc_id', 'result_type_id');
-            $select->where('class_id = ?', $class_id);
-            $dmc_info_ids = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        } else {
-            $required_cols = array('dmc_info_id', 'class_id', 'dmc_id', 
-            'result_type_id');
-            $dmc_info_ids = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        if (isset($result_type_id)) {
+            $select->where('result_type_id = ?', $result_type_id);
         }
+        if (isset($class_id)) {
+            $select->where('class_id = ?', $class_id);
+        }
+        $dmc_info_ids = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $dmc_info_ids;
     }
     public function save ($prepared_data)
