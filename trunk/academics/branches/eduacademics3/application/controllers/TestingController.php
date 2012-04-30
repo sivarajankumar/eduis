@@ -84,6 +84,8 @@ class TestingController extends Zend_Controller_Action
         $programme_id = $params['programme_id'];
         $semester_id = $params['semester_id'];
         $class_id = $params['class_id'];
+        $dmc_info_id = $params['dmc_info_id'];
+        $student_subject_id = $params['student_subject_id'];
         //
         $student_object = new Acad_Model_Member_Student();
         $student_object->setMember_id($member_id);
@@ -92,8 +94,13 @@ class TestingController extends Zend_Controller_Action
          *  'result_type_id'=1)
          */
         switch ($info_required) {
+            case 'batch_id':
+                $batch_id = $student_object->fetchBatchId();
+                return $batch_id;
+                break;
             case 'dmc_info_ids':
-                $all_dmc_info_ids = $student_object->fetchAllDmcInfoIds();
+                $all_dmc_info_ids = $student_object->fetchClassDmcInfoIds(null, 
+                null, true);
                 return $all_dmc_info_ids;
                 break;
             case 'current_class_id':
@@ -117,9 +124,9 @@ class TestingController extends Zend_Controller_Action
                 $subjects = $student_object->fetchClassSubjects($class_id);
                 return $subjects;
                 break;
-            case 'dmc':
-                $dmc = array();
-                $dmc = $student_object->fetchDmc();
+            case 'dmc_data':
+                $dmc_data = array();
+                $dmc_data = $student_object->fetchDmc($dmc_info_id,$student_subject_id);
                 return $subjects;
                 break;
             default:
