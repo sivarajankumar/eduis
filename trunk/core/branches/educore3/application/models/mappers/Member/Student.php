@@ -92,6 +92,7 @@ class Core_Model_Mapper_Member_Student
         } catch (Exception $exception) {
             throw $exception;
         }
+        return mysql_insert_id();
     }
     /**
      * Enter description here ...

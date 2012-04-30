@@ -654,7 +654,8 @@ class Core_Model_Member_Student extends Core_Model_Generic
     }
     public function saveCriticalInfo ($data_array)
     {
-        $this->save('Core_Model_Member_Student', $data_array);
+        $member_id = $this->save('Core_Model_Member_Student', $data_array);
+        return $member_id;
     }
     public function saveAdmissionInfo ($data_array)
     {
