@@ -541,44 +541,45 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
                 $basis = 'all';
             }
         }
-        if (! empty($basis)) {
-            $member_id = $this->getMember_id();
-            $batch_id = $this->fetchBatchId();
-            $student_class_object = new Acad_Model_StudentClass();
-            $student_class_object->setMember_id($member_id);
-            $class_ids = $student_class_object->fetchClassIds(null, true);
-            switch ($basis) {
-                case 'current':
-                    $class_object = new Acad_Model_Class();
-                    $class_object->setBatch_id($batch_id);
-                    $class_object->setIs_active(1);
-                    $class_id = $class_object->fetchBatchClassIds(null, true);
-                    return $class_id;
-                    break;
-                case 'semester':
-                    $class_object = new Acad_Model_Class();
-                    $class_object->setBatch_id($batch_id);
-                    $class_object->setSemester_id($semester_id);
-                    $class_id = $class_object->fetchBatchClassIds(true);
-                    return $class_id;
-                    break;
-                case 'all':
-                    $class_object = new Acad_Model_Class();
-                    $class_object->setBatch_id($batch_id);
-                    $class_ids = array();
-                    $class_ids = $class_object->fetchBatchClassIds();
-                    return $class_ids;
-                    /*
+        $member_id = $this->getMember_id();
+        $batch_id = $this->fetchBatchId();
+        $student_class_object = new Acad_Model_StudentClass();
+        $student_class_object->setMember_id($member_id);
+        $class_ids = $student_class_object->fetchClassIds(null, true);
+        switch ($basis) {
+            case 'current':
+                $class_object = new Acad_Model_Class();
+                $class_object->setBatch_id($batch_id);
+                $class_object->setIs_active(1);
+                $class_id = $class_object->fetchBatchClassIds(null, true);
+                return $class_id;
+                break;
+            case 'semester':
+                $class_object = new Acad_Model_Class();
+                $class_object->setBatch_id($batch_id);
+                $class_object->setSemester_id($semester_id);
+                $class_id = $class_object->fetchBatchClassIds(true);
+                return $class_id;
+                break;
+            case 'all':
+                $class_object = new Acad_Model_Class();
+                $class_object->setBatch_id($batch_id);
+                $class_ids = array();
+                $class_ids = $class_object->fetchBatchClassIds();
+                return $class_ids;
+                /*
                  * can be done this way also 
                  * /
                 /*$student_class_object = new Acad_Model_StudentClass();
                 $student_class_object->setMember_id($member_id);
                 $class_ids = $student_class_object->fetchClassIds();*/
-                    break;
-                default:
-                    ;
-                    break;
-            }
+                break;
+            default:
+                if ($basis == '') {
+                    throw new Exception(
+                    'Invalid Basis provided to fetchClassId()');
+                }
+                break;
         }
     }
     /**
@@ -599,7 +600,9 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         }
     }
     /**
-     * Fetches All Subjects studied by a student in an Academic Class
+     * Fetches Student_subject_id and Subject_id of All subjects studied by a student in an Academic Class,
+     * Returns an array indexed by Student_subject_id and subject_id as values
+     * @param integer $class_id
      * 
      */
     public function fetchClassSubjects ($class_id)
@@ -608,6 +611,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $student_subject_object = new Acad_Model_StudentSubject();
         $student_subject_object->setMember_id($member_id);
         $student_subject_object->setClass_id($class_id);
+        $subjects = array();
         $subjects = $student_subject_object->fetchSubjects();
         if (! $subjects) {
             return false;
@@ -693,33 +697,43 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             }
         }
     }*/
-    public function fetchClassDmcInfoIds ($class_id)
+    /**
+     * 
+     * Enter description here ...
+     * @param integer $class_id
+     * @param integer $result_type_specific
+     */
+    public function fetchClassDmcInfoIds ($class_id, $result_type_id = null, 
+    $all = null)
     {
         $member_id = $this->getMember_id();
         $dmc_info_obj = new Acad_Model_Course_DmcInfo();
         $dmc_info_obj->setMember_id($member_id);
         $dmc_info_obj->setClass_id($class_id);
-        $dmc_ids = $dmc_info_obj->fetchMemberClassDmcInfoIds();
-        if (empty($dmc_ids)) {
+        if (isset($result_type_id)) {
+            $dmc_info_obj->setResult_type_id($result_type_id);
+            $dmc_ids = $dmc_info_obj->fetchMemberDmcInfoIds(true, true);
+        } elseif ($all == true) {
+            $dmc_ids = $dmc_info_obj->fetchMemberDmcInfoIds(true, null, true);
+        }
+        if (is_array($dmc_ids) and empty($dmc_ids)) {
             return false;
         } else {
             return $dmc_ids;
         }
     }
-    public function fetchAllDmcInfoIds ()
+    public function fetchDmc ($dmc_info_id, $student_subject_id)
     {
-        $member_id = $this->getMember_id();
-        $dmc_info_obj = new Acad_Model_Course_DmcInfo();
-        $dmc_info_obj->setMember_id($member_id);
-        $dmc_ids = $dmc_info_obj->fetchMemberDmcInfoIds();
-        if (empty($dmc_ids)) {
+        $dmc_marks_object = new Acad_Model_DmcMarks();
+        $dmc_marks_object->setDmc_info_id($dmc_info_id);
+        $dmc_marks_object->setStudent_subject_id($student_subject_id);
+        $dmc_marks_info = $dmc_marks_object->fetchInfo();
+        if (is_bool($dmc_marks_info)) {
             return false;
-        } else {
-            return $dmc_ids;
+        } elseif ($dmc_marks_info instanceof Acad_Model_DmcMarks) {
+            return $dmc_marks_info;
         }
     }
-    public function fetchDmc ($dmc_info_id)
-    {}
     public function saveCriticalInfo ($data_array)
     {
         $this->save('Acad_Model_Member_Student', $data_array);

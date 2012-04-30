@@ -331,36 +331,89 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
             }
         }
     }
-    public function fetchMemberDmcInfoIds ($class_specific = null, $all = null)
+    /**
+     * 
+     * Enter description here ...
+     * @param boolean $class_specific
+     * @param boolean $all
+     * @param boolean $result_type_specific
+     */
+    public function fetchMemberDmcInfoIds ($class_specific = null, 
+    $result_type_specific = null, $all = null)
     {
+        $dmc_info_ids = array();
         $basis = '';
         if (! empty($class_specific) and ! empty($all)) {
             $careless_error = 'In fetchMemberDmcInfoIds() set ATMOST one parameter. More than One set';
             throw new Exception($careless_error);
         } else {
-            if (! empty($class_specific)) {
+            /*
+             * Statement 1
+             */
+            if (! empty($class_specific) and $class_specific == true) {
                 $basis = 'class';
                 $class_id = $this->getClass_id();
+                if (empty($class_id)) {
+                    throw new Exception(
+                    'Class_specific flag was set to TRUE but No Class_id was provided to fetchMemberDmcInfoIds()');
+                }
             }
+            /*
+             * Statement 2
+             */
             if (! empty($all) and $all == true) {
                 $basis = 'all';
+            }
+            /*
+             * over writes the $basis variable if already set by Statement 1
+             */
+            if (! empty($result_type_specific) and $result_type_specific == true) {
+                $result_type_id = $this->getResult_type_id();
+                if (empty($result_type_id)) {
+                    throw new Exception(
+                    'Result_type_specific flag was set to TRUE but No Result_type_id was provided to fetchMemberDmcInfoIds()');
+                } else {
+                    $basis = 'result_type';
+                }
             }
         }
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
             throw new Exception(
-            'No Member Id provided to fetchMemberClassDmcInfoIds()');
+            'No Member Id provided to fetchMemberDmcInfoIds()');
         } else {
             switch ($basis) {
                 case 'class':
-                    ;
+                    $class_id = $this->getClass_id();
+                    $dmc_info_ids = $this->getMapper()->fetchDmcInfoIds(
+                    $member_id, $class_id);
                     break;
                 case 'all':
-                    ;
+                    $class_id = $this->getClass_id();
+                    $dmc_info_ids = $this->getMapper()->fetchDmcInfoIds(
+                    $member_id);
+                    break;
+                case 'result_type':
+                    $class_id = $this->getClass_id();
+                    if (isset($class_id)) {
+                        $dmc_info_ids = $this->getMapper()->fetchDmcInfoIds(
+                        $member_id, $class_id, $result_type_id);
+                    } else {
+                        $dmc_info_ids = $this->getMapper()->fetchDmcInfoIds(
+                        $member_id, null, $result_type_id);
+                    }
                     break;
                 default:
-                    ;
+                    if ($basis == '') {
+                        throw new Exception(
+                        'Invalid Basis provided to fetchMemberDmcInfoIds()');
+                    }
                     break;
+            }
+            if (empty($dmc_info_ids)) {
+                return false;
+            } else {
+                return $dmc_info_ids;
             }
         }
     }
