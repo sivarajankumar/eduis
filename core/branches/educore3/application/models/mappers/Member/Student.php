@@ -57,7 +57,8 @@ class Core_Model_Mapper_Member_Student
     {
         $dbtable = $this->getDbTable();
         try {
-            $row_id = $dbtable->insert($prepared_data);
+            $member_id = $dbtable->insert($prepared_data);
+            return $member_id;
         } catch (Exception $exception) {
             throw $exception;
         }
