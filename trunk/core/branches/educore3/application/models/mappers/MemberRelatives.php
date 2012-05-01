@@ -38,7 +38,7 @@ class Core_Model_Mapper_MemberRelatives
      * 
      * @param integer $member_id
      */
-    public function fetchInfo ($member_id,$relation_id)
+    public function fetchInfo ($member_id, $relation_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
@@ -53,12 +53,30 @@ class Core_Model_Mapper_MemberRelatives
          '.relation_id';
         $select = $adapter->select()
             ->from($relaives_table, $required_cols)
-           ->joinInner($relations_table, $cond, $relations_cols)
+            ->joinInner($relations_table, $cond, $relations_cols)
             ->where('member_id = ?', $member_id)
-            ->where(strval($relaives_table . '.relation_id = ?'),$relation_id );
+            ->where(strval($relaives_table . '.relation_id = ?'), $relation_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $student_info[$member_id];
+    }
+    /**
+     * Fetches Relation of a Member
+     * 
+     * @param integer $member_id
+     */
+    public function fetchRelationIds ($member_id)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $relative_table = $db_table->info('name');
+        $required_cols = array('relation_id');
+        $select = $adapter->select()
+            ->from($relative_table, $required_cols)
+            ->where('member_id = ?', $member_id);
+        $relation_ids = array();
+        $relation_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $relation_ids;
     }
     public function save ($prepared_data)
     {

@@ -187,6 +187,26 @@ class Core_Model_MemberAddress extends Core_Model_Generic
             }
         }
     }
+    /**
+     * Fetches all Address Types of a member
+     *
+     */
+    public function fetchAddressTypes ()
+    {
+        $member_id = $this->getMember_id();
+        if (empty($member_id)) {
+            $careless_error = 'Please provide a Member Id in fetchAddressTypes().';
+            throw new Exception($careless_error, Zend_Log::ERR);
+        } else {
+            $address_types = $this->getMapper()->fetchAddressTypes($member_id);
+            if (sizeof($address_types) == 0) {
+                return false;
+            } else {
+                $this->setOptions($address_types);
+                return true;
+            }
+        }
+    }
     public function save ($data_array)
     {
         $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
