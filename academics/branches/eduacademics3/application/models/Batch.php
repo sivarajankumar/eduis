@@ -170,6 +170,64 @@ class Acad_Model_Batch extends Acad_Model_Generic
             }
         }
     }
+    public function fetchBatchId ($department_specific = null, 
+    $programme_specific = null)
+    {
+        $department_id = $this->getDepartment_id();
+        $programme_id = $this->getProgramme_id();
+        $start_year = $this->getBatch_start();
+        $basis = '';
+        if (! empty($department_specific) and $department_specific == true) {
+            $basis = 'department';
+            $department_id=$this->getDepartment_id();
+        }
+        if (! empty($programme_specific) and $programme_specific == true) {
+            $basis = 'programme';
+            $programme_id=$this->getProgramme_id();
+        }
+        switch ($basis) {
+            case 'department':
+                $semester_id = $this->getSemester_id();
+                $batch_id = $this->getBatch_id();
+                if (empty($department_id)) {
+                    $careless_error = 'Insufficient Params supplied to fetchBatchId(). Department id required';
+                    throw new Exception($careless_error);
+                } else {
+                    $class_ids = $this->getMapper()->fetchClassIds(null, null, 
+                    $batch_id, $semester_id);
+                    if (sizeof($class_ids) == 0) {
+                        return false;
+                    } elseif (sizeof($class_ids) == 1) {
+                        return $class_ids[0];
+                    } else {
+                        return $class_ids;
+                    }
+                }
+                break;
+                  case 'programme':
+                $semester_id = $this->getSemester_id();
+                $batch_id = $this->getBatch_id();
+                if (empty($semester_id) or empty($batch_id)) {
+                    $careless_error = 'Insufficient Params supplied to fetchBatchAllClassIds(). Semester id  and Batch id required';
+                    throw new Exception($careless_error);
+                } else {
+                    $class_ids = $this->getMapper()->fetchClassIds(null, null, 
+                    $batch_id, $semester_id);
+                    if (sizeof($class_ids) == 0) {
+                        return false;
+                    } elseif (sizeof($class_ids) == 1) {
+                        return $class_ids[0];
+                    } else {
+                        return $class_ids;
+                    }
+                }
+                break;
+                default:
+                    break;
+                
+        }
+        $this->getMapper()->fetchBatchId();
+    }
     public function save ($data_array)
     {
         $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
