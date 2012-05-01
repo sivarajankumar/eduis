@@ -487,8 +487,8 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     public function initInfo ()
     {}
     /**
-     * Fetches CRITICAL information of a Student
-     *
+     * Fetches CRITICAL information of a Student,
+     * Member_id must be set before calling this function 
      */
     public function fetchCriticalInfo ()
     {
@@ -506,21 +506,9 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             }
         }
     }
-    public function fetchClassIds ()
-    {
-        $member_id = $this->getMember_id();
-        $student_class_object = new Acad_Model_StudentClass();
-        $student_class_object->setMember_id($member_id);
-        $class_ids = $student_class_object->fetchClassIds(true);
-        if (! $class_ids) {
-            return false;
-        } else {
-            return $class_ids;
-        }
-    }
     /**
-     * 
-     * Enter description here ...
+     * Fetches the Class id of a Student
+     * Member_id must be set before calling this function 
      * @param integer $semester_id
      * @param boolean $current
      */
@@ -583,8 +571,8 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         }
     }
     /**
-     * Fetches information regarding CLASS of a Student
-     * 
+     * Fetches the Class id information Student
+     * Member_id must be set before calling this function 
      */
     public function fetchClassInfo ($class_id)
     {
@@ -600,8 +588,11 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         }
     }
     /**
-     * Fetches Student_subject_id and Subject_id of All subjects studied by a student in an Academic Class,
+     * Fetches Student_subject_id and Subject_id of All subjects studied by a student in an Academic Class.
+     * 
      * Returns an array indexed by Student_subject_id and subject_id as values
+     * Fetches the Class id of a Student
+     * Member_id must be set before calling this function 
      * @param integer $class_id
      * 
      */
@@ -736,11 +727,16 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     }
     public function saveCriticalInfo ($data_array)
     {
-        $this->save('Acad_Model_Member_Student', $data_array);
+        $this->initSave();
+        $preparedData = $this->prepareDataForSaveProcess($data_array);
+        $this->getMapper()->save($preparedData);
     }
     public function saveClassInfo ($data_array)
     {
-        $this->save('Acad_Model_StudentClass', $data_array);
+        $class_object = new Acad_Model_StudentClass();
+        $class_object->initSave();
+        $preparedData = $class_object->prepareDataForSaveProcess($data_array);
+        $class_object->getMapper()->save($preparedData);
     }
     protected function save ($class_name, $data_array)
     {

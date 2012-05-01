@@ -487,8 +487,8 @@ class Core_Model_Member_Student extends Core_Model_Generic
     public function initInfo ()
     {}
     /**
-     * Fetches CRITICAL information of a Student
-     *
+     * Fetches CRITICAL information of a Student,
+     * Member_id must be set before calling this function 
      */
     public function fetchCriticalInfo ()
     {
@@ -507,8 +507,8 @@ class Core_Model_Member_Student extends Core_Model_Generic
         }
     }
     /**
-     * Fetches Admission information of a Student
-     *
+     * Fetches Admission information of a Student,
+     * Member_id must be set before calling this function 
      */
     public function fetchAdmissionInfo ()
     {
@@ -528,8 +528,8 @@ class Core_Model_Member_Student extends Core_Model_Generic
         }
     }
     /**
-     * Fetches Registration information of a Student
-     *
+     * Fetches Registration information of a Student,
+     * Member_id must be set before calling this function 
      */
     public function fetchRegistrationInfo ()
     {
@@ -549,8 +549,8 @@ class Core_Model_Member_Student extends Core_Model_Generic
         }
     }
     /**
-     * Fetches Address information of a Student
-     * 
+     * Fetches Address information of a Student,
+     * Member_id must be set before calling this function 
      */
     public function fetchAddressInfo ($address_type)
     {
@@ -571,7 +571,8 @@ class Core_Model_Member_Student extends Core_Model_Generic
         }
     }
     /**
-     * Fetches Contact information of a Student
+     * Fetches Contact information of a Student,
+     * Member_id must be set before calling this function 
      */
     public function fetchContactInfo ($contact_type_id)
     {
@@ -592,8 +593,8 @@ class Core_Model_Member_Student extends Core_Model_Generic
         }
     }
     /**
-     * Fetches information about Relative of a Student
-     *
+     * Fetches information about Relative of a Student,
+     * Member_id must be set before calling this function 
      */
     public function fetchRelativeInfo ($relation_id)
     {
@@ -614,8 +615,8 @@ class Core_Model_Member_Student extends Core_Model_Generic
         }
     }
     /**
-     * 
-     * Enter description here ...
+     * Fetches the class_id of a Student
+     * Member_id must be set before calling this function 
      * @param integer $semester_id
      * @param boolean $current
      */
@@ -677,8 +678,8 @@ class Core_Model_Member_Student extends Core_Model_Generic
         }
     }
     /**
-     * Fetches information regarding CLASS of a Student
-     * 
+     * Fetches information regarding CLASS of a Student,
+     * Member_id must be set before calling this function 
      */
     public function fetchClassInfo ($class_id)
     {
@@ -693,6 +694,11 @@ class Core_Model_Member_Student extends Core_Model_Generic
             return $student_class_object;
         }
     }
+    /**
+     * Fetches Batch Id of a Student,
+     * Member_id must be set before calling this function 
+     * 
+     */
     public function fetchBatchId ()
     {
         $member_id = $this->getMember_id();
@@ -707,37 +713,54 @@ class Core_Model_Member_Student extends Core_Model_Generic
     }
     public function saveCriticalInfo ($data_array)
     {
-        $this->save('Core_Model_Member_Student', $data_array);
+        $this->initSave();
+        $preparedData = $this->prepareDataForSaveProcess($data_array);
+        $this->getMapper()->save($preparedData);
     }
     public function saveAdmissionInfo ($data_array)
     {
-        $this->save('Core_Model_StudentAdmission', $data_array);
+        $admission_object = new Core_Model_StudentAdmission();
+        $admission_object->initSave();
+        $preparedData = $admission_object->prepareDataForSaveProcess(
+        $data_array);
+        $admission_object->getMapper()->save($preparedData);
     }
     public function saveRegistrationInfo ($data_array)
     {
-        $this->save('Core_Model_StudentRegistration', $data_array);
+        $registration_object = new Core_Model_StudentRegistration();
+        $registration_object->initSave();
+        $preparedData = $registration_object->prepareDataForSaveProcess(
+        $data_array);
+        $registration_object->getMapper()->save($preparedData);
     }
     public function saveAddressInfo ($data_array)
     {
-        $this->save('Core_Model_MemberAddress', $data_array);
+        $address_object = new Core_Model_MemberAddress();
+        $address_object->initSave();
+        $preparedData = $address_object->prepareDataForSaveProcess($data_array);
+        $address_object->getMapper()->save($preparedData);
     }
     public function saveContactsInfo ($data_array)
     {
-        $this->save('Core_Model_MemberContacts', $data_array);
+        $contacts_object = new Core_Model_MemberContacts();
+        $contacts_object->initSave();
+        $preparedData = $contacts_object->prepareDataForSaveProcess($data_array);
+        $contacts_object->getMapper()->save($preparedData);
     }
     public function saveRelativesInfo ($data_array)
     {
-        $this->save('Core_Model_MemberRelatives', $data_array);
+        $relatives_object = new Core_Model_MemberRelatives();
+        $relatives_object->initSave();
+        $preparedData = $relatives_object->prepareDataForSaveProcess(
+        $data_array);
+        $relatives_object->getMapper()->save($preparedData);
     }
     public function saveClassInfo ($data_array)
     {
-        $this->save('Core_Model_StudentClass', $data_array);
-    }
-    protected function save ($class_name, $data_array)
-    {
-        $target_object = new $class_name();
-        $target_object->initSave();
-        $preparedData = $target_object->prepareDataForSaveProcess($data_array);
-        $target_object->getMapper()->save($preparedData);
+        $student_class_object = new Core_Model_StudentClass();
+        $student_class_object->initSave();
+        $preparedData = $student_class_object->prepareDataForSaveProcess(
+        $data_array);
+        $student_class_object->getMapper()->save($preparedData);
     }
 }
