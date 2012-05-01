@@ -170,6 +170,11 @@ class Core_Model_Batch extends Core_Model_Generic
             }
         }
     }
+    /**
+     * 
+     * @param boolean $department_specific
+     * @param boolean $programme_specific
+     */
     public function fetchBatchId ($department_specific = null, 
     $programme_specific = null)
     {
