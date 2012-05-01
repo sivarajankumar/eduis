@@ -92,11 +92,12 @@ class Acad_Model_Mapper_Member_Student
         $qualifications = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $qualifications;
     }
-    public function saveCriticalInfo ($prepared_data)
+    public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
         try {
-            $row_id = $dbtable->insert($prepared_data);
+            $member_id = $dbtable->insert($prepared_data);
+            return $member_id;
         } catch (Exception $exception) {
             throw $exception;
         }
