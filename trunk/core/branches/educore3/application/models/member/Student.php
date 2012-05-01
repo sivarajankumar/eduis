@@ -613,18 +613,6 @@ class Core_Model_Member_Student extends Core_Model_Generic
             }
         }
     }
-    public function fetchClassIds ()
-    {
-        $member_id = $this->getMember_id();
-        $student_class_object = new Core_Model_StudentClass();
-        $student_class_object->setMember_id($member_id);
-        $class_ids = $student_class_object->fetchClassIds(true);
-        if (! $class_ids) {
-            return false;
-        } else {
-            return $class_ids;
-        }
-    }
     /**
      * 
      * Enter description here ...
