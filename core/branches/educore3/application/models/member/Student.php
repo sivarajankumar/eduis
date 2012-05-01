@@ -506,6 +506,113 @@ class Core_Model_Member_Student extends Core_Model_Generic
             }
         }
     }
+    /**
+     * Fetches Admission information of a Student
+     *
+     */
+    public function fetchAdmissionInfo ()
+    {
+        $member_id = $this->getMember_id();
+        if (empty($member_id)) {
+            $error = 'Please provide a Member Id';
+            throw new Exception($error);
+        } else {
+            $admission_object = new Core_Model_StudentAdmission();
+            $admission_object->setMember_id($member_id);
+            $admission_info = $admission_object->fetchInfo();
+            if (! $admission_info) {
+                return false;
+            } else {
+                return $admission_object;
+            }
+        }
+    }
+    /**
+     * Fetches Registration information of a Student
+     *
+     */
+    public function fetchRegistrationInfo ()
+    {
+        $member_id = $this->getMember_id();
+        if (empty($member_id)) {
+            $error = 'Please provide a Member Id';
+            throw new Exception($error);
+        } else {
+            $registration_object = new Core_Model_StudentRegistration();
+            $registration_object->setMember_id($member_id);
+            $registration_info = $registration_object->fetchInfo();
+            if (! $registration_info) {
+                return false;
+            } else {
+                return $registration_object;
+            }
+        }
+    }
+    /**
+     * Fetches Address information of a Student
+     * 
+     */
+    public function fetchAddressInfo ($address_type)
+    {
+        $member_id = $this->getMember_id();
+        if (empty($member_id)) {
+            $error = 'Please provide a Member Id';
+            throw new Exception($error);
+        } else {
+            $address_object = new Core_Model_MemberAddress();
+            $address_object->setAdress_type($address_type);
+            $address_object->setMember_id($member_id);
+            $address_info = $address_object->fetchInfo();
+            if (! $address_info) {
+                return false;
+            } else {
+                return $address_object;
+            }
+        }
+    }
+    /**
+     * Fetches Contact information of a Student
+     */
+    public function fetchContactInfo ($contact_type_id)
+    {
+        $member_id = $this->getMember_id();
+        if (empty($member_id)) {
+            $error = 'Please provide a Member Id';
+            throw new Exception($error);
+        } else {
+            $contacts_object = new Core_Model_MemberContacts();
+            $contacts_object->setMember_id($member_id);
+            $contacts_object->setContact_type_id($contact_type_id);
+            $contacts_info = $contacts_object->fetchInfo();
+            if (! $contacts_info) {
+                return false;
+            } else {
+                return $contacts_object;
+            }
+        }
+    }
+    /**
+     * Fetches information about Relative of a Student
+     *
+     */
+    public function fetchRelativeInfo ($relation_id)
+    {
+        $member_id = $this->getMember_id();
+        if (empty($member_id)) {
+            $error = 'Please provide a Member Id';
+            throw new Exception($error);
+        } else {
+            $relative_object = new Core_Model_MemberRelatives();
+            $relative_object->setMember_id($member_id);
+            $relative_object->setRelation_id($relation_id);
+            $relative_info = $relative_object->fetchInfo();
+            if (! $relative_info) {
+                return false;
+            } else {
+                return $relative_object;
+            }
+        }
+    }
     public function fetchClassIds ()
     {
         $member_id = $this->getMember_id();
@@ -613,6 +720,26 @@ class Core_Model_Member_Student extends Core_Model_Generic
     public function saveCriticalInfo ($data_array)
     {
         $this->save('Core_Model_Member_Student', $data_array);
+    }
+    public function saveAdmissionInfo ($data_array)
+    {
+        $this->save('Core_Model_StudentAdmission', $data_array);
+    }
+    public function saveRegistrationInfo ($data_array)
+    {
+        $this->save('Core_Model_StudentRegistration', $data_array);
+    }
+    public function saveAddressInfo ($data_array)
+    {
+        $this->save('Core_Model_MemberAddress', $data_array);
+    }
+    public function saveContactsInfo ($data_array)
+    {
+        $this->save('Core_Model_MemberContacts', $data_array);
+    }
+    public function saveRelativesInfo ($data_array)
+    {
+        $this->save('Core_Model_MemberRelatives', $data_array);
     }
     public function saveClassInfo ($data_array)
     {
