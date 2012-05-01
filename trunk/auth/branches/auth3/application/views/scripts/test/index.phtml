@@ -1,0 +1,41 @@
+<form name="relativeInfo" id="relativeInfo" >
+<input type="text" id="fatherName" name="fatherName" value="BAAP" />
+<input type="text" id="motherName" name="motherName" value="MAA" />
+<input type="text" id="childName" name="childName" value="BETA" />
+</form>
+
+<form name="basicInfo" id="basicInfo" >
+<input type="text" id="firstName" name="firstName" value="NAAM" />
+<input type="text" id="lastName" name="lastName" value="UPNAAM" />
+</form>
+
+<form name="otherInfo" id="otherInfo" >
+<input type="text" id="gender" name="gender" value="AADMI" />
+<input type="text" id="address" name="address" value="ZAMEEN" />
+</form>
+
+<script type="text/javascript">
+var data = {};
+$("form").each(function(index,form){
+    var o = {};
+	$(form).children("input").each(function(i, n)
+	{
+	    o[n.name] = $(n).val();
+	});
+		
+	data[form.name]= o;
+});
+$(document).ready(function(){
+	 $.ajax({
+  	url : "test/gogo",
+      dataType : 'json',
+      data : {myarray:data},
+      success: function(jDegree){
+          alert("Done");
+          },
+          error: function(data){
+              alert(data);
+              }
+          });
+});
+</script>

@@ -1,0 +1,5 @@
+#Thu Dec 16 17:03:33 IST 2010
+eclipse.preferences.version=1
+include_path=5;org.zend.php.framework.CONTAINER
+phpVersion=php5.3
+use_asp_tags_as_php=false

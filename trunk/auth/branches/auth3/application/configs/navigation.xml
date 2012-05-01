@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<nav>
+		<home>
+			<label>Home</label>
+			<order>-100</order>
+			<module>login</module>
+			<controller>index</controller>
+			<action>index</action>
+			<resource>login_authenticate_index</resource>
+		</home>
+
+		<library_home>
+			<label>Library</label>
+			<uri>http://library.aceambala.com/</uri>
+		</library_home>
+	</nav>
+</config>
