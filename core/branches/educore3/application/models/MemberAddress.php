@@ -12,98 +12,98 @@ class Core_Model_MemberAddress extends Core_Model_Generic
     /**
      * @return the $_member_id
      */
-    protected function getMember_id ()
+    public function getMember_id ()
     {
         return $this->_member_id;
     }
     /**
      * @param field_type $_member_id
      */
-    protected function setMember_id ($_member_id)
+    public function setMember_id ($_member_id)
     {
         $this->_member_id = $_member_id;
     }
     /**
      * @return the $_postal_code
      */
-    protected function getPostal_code ()
+    public function getPostal_code ()
     {
         return $this->_postal_code;
     }
     /**
      * @param field_type $_postal_code
      */
-    protected function setPostal_code ($_postal_code)
+    public function setPostal_code ($_postal_code)
     {
         $this->_postal_code = $_postal_code;
     }
     /**
      * @return the $_city
      */
-    protected function getCity ()
+    public function getCity ()
     {
         return $this->_city;
     }
     /**
      * @param field_type $_city
      */
-    protected function setCity ($_city)
+    public function setCity ($_city)
     {
         $this->_city = $_city;
     }
     /**
      * @return the $_district
      */
-    protected function getDistrict ()
+    public function getDistrict ()
     {
         return $this->_district;
     }
     /**
      * @param field_type $_district
      */
-    protected function setDistrict ($_district)
+    public function setDistrict ($_district)
     {
         $this->_district = $_district;
     }
     /**
      * @return the $_state
      */
-    protected function getState ()
+    public function getState ()
     {
         return $this->_state;
     }
     /**
      * @param field_type $_state
      */
-    protected function setState ($_state)
+    public function setState ($_state)
     {
         $this->_state = $_state;
     }
     /**
      * @return the $_address
      */
-    protected function getAddress ()
+    public function getAddress ()
     {
         return $this->_address;
     }
     /**
      * @param field_type $_address
      */
-    protected function setAddress ($_address)
+    public function setAddress ($_address)
     {
         $this->_address = $_address;
     }
     /**
      * @return the $_address_type
      */
-    protected function getAddress_type ()
+    public function getAddress_type ()
     {
         return $this->_address_type;
     }
     /**
      * @param field_type $_address_type
      */
-    protected function setAddress_type ($_address_type)
+    public function setAddress_type ($_address_type)
     {
         $this->_address_type = $_address_type;
     }
