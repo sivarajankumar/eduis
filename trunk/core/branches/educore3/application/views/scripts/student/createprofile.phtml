@@ -23,10 +23,19 @@
 		<select id="department_id" name="department_id" class="selectInput required">
 			<option value="cse">Computer Science</option>
 			<option value="ece">Electronics and Communication</option>
-			<option value="bio">Biotechnology</option>
-			<option value="me">Mechanical</option>
+			<option value="bt">Biotechnology</option>
+			<option value="mech">Mechanical</option>
 		</select>
 		<p class="formHint">Select Your Trade</p>
+	</div>
+	<div class="ctrlHolder">
+		<label for="group_id"><em>*</em>Group</label>
+		<select id="group_id" name="group_id" class="selectInput required">
+			<option value='A1'>A1</option>
+			<option value='A2'>A2</option>
+			<option value='A3'>A3</option>
+		</select>
+		<p class="formHint">Select Your Group</p>
 	</div>
 	<div class="ctrlHolder"><label for="semester_id"><em>*</em>Semester</label>
 		<input name="semester_id" id="semester_id" data-default-value="e.g.4"
@@ -94,7 +103,6 @@
 		</select>
 		<p class="formHint">Blood group of Candidate</p>
 	</div>
-       
         
     <div class="ctrlHolder">
 		<label for="religion_id">Religion</label>
@@ -117,18 +125,6 @@
 		</select>
 		<p class="formHint">Cast of Candidate</p>
 	</div>
-       
-    <div class="ctrlHolder">
-		<label for="email">Email address</label>
-		<input name="email" id="email" value="" data-default-value="e.g. ravigupta@gmail.com"  size="35" maxlength="50" type="text" class=" required textInput validateEmail"/>
-		<p class="formHint">A valid email address</p>
-    </div>
-     
-    <div class="ctrlHolder">
-		<label for="e_mail_confirm">Email confirm</label>
-		<input name="e_mail_confirm" id="e_mail_confirm" data-default-value="i.e. same as above" value=""  size="35" maxlength="50" type="text" class="required textInput validateSameAs e_mail"/>
-		<p class="formHint"></p>
-	</div>
 	</fieldset>
 	
 	<!-- <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> -->
@@ -146,26 +142,19 @@
 		</ul>
 		<p class="formHint"></p>
     </div>
-        
-	<div class="ctrlHolder">
-		<p class="label">Area</p>
-		<ul class="blockLabels alternate">
-			<li><label ><input name="urban" type="radio" value="true" checked="checked" title="Urban">Urban</label></li>
-			<li><label ><input  name="urban" type="radio" value="false" title="Rural">Rural</label></li>
-		</ul>
-		<p class="formHint">Area which you belong to</p>
-	</div>
 	
 	<h3>Communication Address:</h3>
+	<fieldset id="ca">
 	<div class="ctrlHolder">
 		<label for="postal_code">Pin Code</label>
 		<input name="postal_code" id="postal_code" value="" data-default-value="e.g. 125001" size="35" maxlength="10" type="text" class="textInput validateInteger"/> 
 		<p class="formHint">Pincode of communication address.</p>
 	</div>
-        <div class="ctrlHolder">
-		<label for="city"><em>*</em>City/Town/Village</label>
-		<input name="city" id="city" value="" data-default-value="e.g. Narnaul" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-		<p class="formHint">City/Town/Village of communication address.<br/>(It may be same as District)</p>
+        
+	<div class="ctrlHolder">
+		<label for="state"><em>*</em>State/Provience</label>
+		<input name="state" id="state" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">State/Territory of communication address.</p>
 	</div>
 	
 	<div class="ctrlHolder">
@@ -175,31 +164,30 @@
 	</div>
 	
 	<div class="ctrlHolder">
-		<label for="state"><em>*</em>State/Provience</label>
-		<input name="state" id="state" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-		<p class="formHint">State/Territory of communication address.</p>
+		<label for="city"><em>*</em>City/Town/Village</label>
+		<input name="city" id="city" value="" data-default-value="e.g. Narnaul" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">City/Town/Village of communication address.<br/>(It may be same as District)</p>
 	</div>
-	
-	
-	
-	
         
 	<div class="ctrlHolder">
 		<label for="address"><em>*</em>Address</label>
 		<textarea name="address" id="address" data-default-value="e.g. H.no. 3, PWD B&R Colony, Near Old court"    rows="25" cols="25"></textarea>
 		<p class="formHint">House number and Area etc.</p>
-	</div>  
-
+	</div>
+	</fieldset>
+	
 	<h3>Permanent Address:</h3>
+	<fieldset id="pa">
 	<div class="ctrlHolder">
 		<label for="postal_code">Pin Code</label>
 		<input name="postal_code" id="postal_code" value="" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
 		<p class="formHint">Pincode of permanent address.</p>
 	</div>
-        <div class="ctrlHolder">
-		<label for="city"><em>*</em>City/Town/Village</label>
-		<input name="city" id="city" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-		<p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
+        
+	<div class="ctrlHolder">
+		<label for="state"><em>*</em>State/Territory</label>
+		<input name="state" id="state" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">State/Territory of permanent address.</p>
 	</div>
 	
 	<div class="ctrlHolder">
@@ -208,20 +196,59 @@
 		<p class="formHint">District of permanent address.<br/>(It should be same as above if Union Territory)</p>
 	</div>
 	
-        
 	<div class="ctrlHolder">
-		<label for="p_state"><em>*</em>State/Territory</label>
-		<input name="p_state" id="p_state" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-		<p class="formHint">State/Territory of permanent address.</p>
+		<label for="city"><em>*</em>City/Town/Village</label>
+		<input name="city" id="city" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
 	</div>
-	
-	
+        
 	<div class="ctrlHolder">
 		<label for="address"><em>*</em>Address</label>
 		<textarea name="address" id="address"  data-default-value="e.g. H.no. 2135, Sector 9C"     rows="25" cols="25"></textarea>
 		<p class="formHint">House number and Area etc.</p>
 	</div>
-        
+    </fieldset>    
+	<!-- <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> -->   
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</form>
+
+
+<h2>Contact Details:<span id='address_edit' onclick="javascript:show_div('contact')"></span></h2>
+    <form id="contact_info_div" action="javascript:getValues('contact');" class="uniForm">
+    
+	<fieldset id="email_info">
+	<div class="ctrlHolder">
+		<label for="email">Email address</label>
+		<input name="email" id="email" value="" data-default-value="e.g. ravigupta@gmail.com"  size="35" maxlength="50" type="text" class=" required textInput validateEmail"/>
+		<p class="formHint">A valid email address</p>
+    </div>
+     
+    <div class="ctrlHolder">
+		<label for="e_mail_confirm">Email confirm</label>
+		<input name="e_mail_confirm" id="e_mail_confirm" data-default-value="i.e. same as above" value=""  size="35" maxlength="50" type="text" class="required textInput validateSameAs e_mail"/>
+		<p class="formHint"></p>
+	</div>
+    </fieldset>
+    
+    <fieldset id="mobile_info">
+	<div class="ctrlHolder">
+		<label for="contact">Contact number</label>
+		<input name="contact" id="contact" value="" data-default-value="e.g. +919799123132" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Your contact number, it should be a mobile number.</p>
+	</div>
+	</fieldset>
+	
+	<fieldset id="landline_info">
+	<div class="ctrlHolder">
+		<label for="landline_no"> Landline No.</label>
+		<input name="landline_no" id="landline_no" value=""  data-default-value="e.g. 017226544331" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
+		<p class="formHint">Your Landline number, if available.</p>
+	</div>
+	</fieldset>
+	   
 	<!-- <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> -->   
 	<div class="buttonHolder">
 		<button type="submit" class="secondaryAction">Cancel and go back</button>
@@ -232,34 +259,7 @@
     
 <h2>Parent/Guardian Information:<span id='guardian_edit' onclick="javascript:show_div('guardian')"></span></h2>
 <form id="guardian_info_div" action="javascript:getValues('guardian');" class="uniForm">
-<div class="ctrlHolder">
-		<label for="father_name"><em>*</em> Father's name</label>
-		<input name="name" id="name" data-default-value="e.g. Sh. Madan Kumar" value=""  size="35" maxlength="50" type="text" class="textInput required"/>
-		<p class="formHint">Father's name of <span class="cName" >Candidate</span></p>
-	</div>
-	<div class="ctrlHolder">
-		<label for="father_occupation">Father's occupation</label>
-		<input name="occupation" id="occupation" value="" data-default-value="e.g. Teacher" size="35" maxlength="50" type="text" class="textInput"/>
-		<p class="formHint">Father's occupation</p>
-	</div>
-	
-	<div class="ctrlHolder">
-		<label for="father_designation" >Father's designation</label>
-		<input name="designation" id="designation" value="" data-default-value="e.g. Lecturer" size="35" maxlength="50" type="text" class="textInput"/>
-		<p class="formHint">Father's designation</p>
-	</div>
-	<div class="ctrlHolder">
-		<label for="father_office_add">Father's Office Address</label>
-		<textarea name="office_add" id="office_add"  data-default-value="e.g. PWD B and R Office, Near SDM office, Narnaul"    rows="25" cols="25"></textarea>
-		<p class="formHint">Father's Office Address</p>
-	</div>
-	
-	<div class="ctrlHolder">
-		<label for="father_contact" > Father's contact</label>
-		<input name="contact" id="contact" value=""  data-default-value="e.g. 9416123494" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
-		<p class="formHint">Father's contact number, it should be a mobile number.</p>
-	</div>
-	
+<fieldset id="father_info">
 	<div class="ctrlHolder">
 		<label for="landline_no"> Landline No.</label>
 		<input name="landline_no" id="landline_no" value=""  data-default-value="e.g. 017226544331" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
@@ -267,60 +267,110 @@
 	</div>
 	
 	<div class="ctrlHolder">
-		<label for="email"> Email </label>
-		<input name="email" id="email" value=""  data-default-value="e.g. sunil@abc.com" size="35" maxlength="12" type="text" class="textInput validateSameAs e_mail"/>
-		<p class="formHint">Email, if available.</p>
+		<label for="name"><em>*</em> Father's name</label>
+		<input name="name" id="name" data-default-value="e.g. Sh. Madan Kumar" value=""  size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">Father's name of <span class="cName" >Candidate</span></p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="occupation">Father's occupation</label>
+		<input name="occupation" id="occupation" value="" data-default-value="e.g. Teacher" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Father's occupation</p>
 	</div>
 	
-	  
-	
+	<div class="ctrlHolder">
+		<label for="designation" >Father's designation</label>
+		<input name="designation" id="designation" value="" data-default-value="e.g. Lecturer" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Father's designation</p>
+	</div>
         
-	
+	<div class="ctrlHolder">
+		<label for="contact" > Father's contact</label>
+		<input name="contact" id="contact" value=""  data-default-value="e.g. 9416123494" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
+		<p class="formHint">Father's contact number, it should be a mobile number.</p>
+	</div>
         
+	<div class="ctrlHolder">
+		<label for="office_add">Father's Office Address</label>
+		<textarea name="office_add" id="office_add" data-default-value="e.g. PWD B and R Office, Near SDM office, Narnaul"    rows="25" cols="25"></textarea>
+		<p class="formHint">Father's Office Address</p>
+	</div>
+	</fieldset>
 	
+	<fieldset id="mother_info">
+	<div class="ctrlHolder">
+		<label for="landline_no"> Landline No.</label>
+		<input name="landline_no" id="landline_no" value=""  data-default-value="e.g. 017226544331" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
+		<p class="formHint">Landline number, if available.</p>
+	</div>
 	
 	<div class="ctrlHolder">
-		<label for="mother_name"><em>*</em> Mother's name</label>
+		<label for="name"><em>*</em> Mother's name</label>
 		<input name="name" id="name" value=""  data-default-value="e.g. Smt. Sita Devi" size="35" maxlength="50" type="text" class="textInput required"/>
 		<p class="formHint">Mother's name of <span class="cName" >Candidate</span></p>
 	</div>
         
 	<div class="ctrlHolder">
-		<label for="mother_occupation">Mother's occupation</label>
+		<label for="occupation">Mother's occupation</label>
 		<input name="occupation" id="occupation" value="" data-default-value="e.g. Banking" size="35" maxlength="50" type="text" class="textInput"/>
 		<p class="formHint">Mother's occupation</p>
 	</div>
         
 	<div class="ctrlHolder">
-		<label for="mother_designation">Mother's designation</label>
+		<label for="designation">Mother's designation</label>
 		<input name="designation" id="designation" value="" data-default-value="e.g. Probationary officer" size="35" maxlength="50" type="text" class="textInput"/>
 		<p class="formHint">Mother's designation</p>
 	</div>
         
 	<div class="ctrlHolder">
-		<label for="mother_office_add">Mother's Office Address</label>
+		<label for="office_add">Mother's Office Address</label>
 		<textarea name="office_add" id="office_add" data-default-value="e.g. H.no. 3, PWD B and R Colony, Near Old court"  rows="25" cols="25"></textarea>
 		<p class="formHint">Mother's Office Address (if applicable)</p>
 	</div>
 	
 	<div class="ctrlHolder">
+		<label for="contact" > Mother's contact</label>
+		<input name="contact" id="contact" value=""  data-default-value="e.g. 9416123494" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
+		<p class="formHint">Mother's contact number, it should be a mobile number.</p>
+	</div>
+	</fieldset>
+	<fieldset id="guardian_info">
+	<div class="ctrlHolder">
 		<label for="">Guardian's name (if any)</label>
 		<input name="name" id="name" value="" data-default-value="e.g. Sh. Ravi Dutt" size="35" maxlength="50" type="text" class="textInput"/>
 		<p class="formHint">Guardian's name, if <span class="cName" >Candidate</span> is not with parents.</p>
 	</div>
-        
-	<div class="ctrlHolder">
-		<label for="guardian_relation">Guardian's relation</label>
-		<input name="guardian_relation" id="guardian_relation" value="" data-default-value="e.g. Uncle" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
-		<p class="formHint">Guardian's relationship with <span class="cName" >Candidate</span></p>
+       
+    <div class="ctrlHolder">
+		<label for="occupation">Guardian's occupation</label>
+		<input name="occupation" id="occupation" value="" data-default-value="e.g. Banking" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Guardian's occupation</p>
 	</div>
         
 	<div class="ctrlHolder">
-		<label for="guardian_contact">Guardian's contact number</label>
+		<label for="designation">Guardian's designation</label>
+		<input name="designation" id="designation" value="" data-default-value="e.g. Probationary officer" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Guardian's designation</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="office_add">Guardian's Office Address</label>
+		<textarea name="office_add" id="office_add" data-default-value="e.g. H.no. 3, PWD B and R Colony, Near Old court"  rows="25" cols="25"></textarea>
+		<p class="formHint">Mother's Office Address (if applicable)</p>
+	</div>
+       
+	<div class="ctrlHolder">
+		<label for="contact">Guardian's contact number</label>
 		<input name="contact" id="contact" value="" data-default-value="e.g. +919799123132" size="35" maxlength="50" type="text" class="textInput"/>
 		<p class="formHint">Guardian's contact number, it should be a mobile number.</p>
 	</div>
-        
+	
+	<div class="ctrlHolder">
+		<label for="landline_no"> Landline No.</label>
+		<input name="landline_no" id="landline_no" value=""  data-default-value="e.g. 017226544331" size="35" maxlength="12" type="text" class="textInput validateInteger"/>
+		<p class="formHint">Landline number, if available.</p>
+	</div>
+    </fieldset>
 	<!-- <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> -->
         
 	<div class="buttonHolder">
@@ -340,10 +390,12 @@
 <script>
 	var urlBasicInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'saveprofile'))?>";
 	var criticalData = {};
-	var addressData = {};
-	var guardianData = {};
+	var addressData = new Array();
+	var guardianData = new Array();
+	var contactData = new Array();
 	var count_address_info = 1;
 	var count_guardian_info = 1;
+	var count_contact_info = 1;
 	
 	$(document).ready(function() {
 	    $('form.uniForm').uniform({
@@ -361,15 +413,35 @@
 				}
         });
 		$('#address_info_div').hide();
+		$('#contact_info_div').hide();
 		$('#guardian_info_div').hide();
 		$('#final_form').hide();
 	});
-
+	$('#department_id').change(function(){
+		switch($('#department_id').val())
+		{
+			case 'cse':
+				$('#group_id').html("<option value='A1'>A1</option><option value='A2'>A2</option><option value='A3'>A3</option>");
+				break;
+			case 'ece':
+				$('#group_id').html("<option value='B1'>B1</option><option value='B2'>B2</option><option value='B3'>B3</option>");
+				break;
+			case 'bt':
+				$('#group_id').html("<option value='C1'>C1</option><option value='C2'>C2</option><option value='C3'>C3</option>");
+				break;
+			case 'mech':
+				$('#group_id').html("<option value='D1'>D1</option><option value='D2'>D2</option><option value='D3'>D3</option>");
+				break;
+			default:
+				break;
+		}
+	});
     function submit() {
         var data = {};
         data['critical_data'] = criticalData;
         data['address_data'] = addressData;
-        data['guardian_data'] = guardianData;
+        data['relative_data'] = guardianData;
+        data['contact_data'] = contactData;
         
 		$.ajax({
 			url : urlBasicInfo,
@@ -385,7 +457,6 @@
 	}
 
 	function getValues(type) {
-		//alert(type);
 		var div_name = '#'+type+'_info_div';
 		$(div_name).hide();
 		var html = 'Click here to edit';
@@ -399,36 +470,104 @@
 				.not('button,#e_mail_confirm,:input[value^="e.g."]')
 				.each(function(){ 
 					criticalData[this.name] = this.value;
-					//$('form#critical_info_div :input').attr('disabled','disabled');
 				});
 				var gender = $('input:radio[name=gender]:checked').val();
 				criticalData.gender = gender;
 				if(count_address_info==1){
-					$('#address_info_div').show(2000);
+					$('#address_info_div').show(1000);
 				}
 				count_address_info++;
 			}
 			break;
 			case 'address':
 			{ 
-				$('form#address_info_div :input')
+				var ca = {};
+				ca['address_type'] = 'MAILING/POSTAL/CORRESPONDENCE';
+				$('fieldset#ca :input')
 				.not('button,:input[value^="e.g."]')
 				.each(function(){ 
-					addressData[this.name] = this.value; 
+					ca[this.name] = this.value; 
                 });
+				addressData.push(ca);
+
+				var pa = {};
+				pa['address_type'] = 'RESIDENTIAL';
+				$('fieldset#pa :input')
+				.not('button,:input[value^="e.g."]')
+				.each(function(){ 
+					pa[this.name] = this.value; 
+                });
+				addressData.push(pa);
+				
                 if(count_guardian_info == 1){
-                	$('#guardian_info_div').show(2000);
+                	$('#contact_info_div').show(1000);
+                }
+                count_contact_info++;
+            }
+            break;
+			case 'contact':
+			{ 
+				var email_info = {};
+				$('fieldset#email_info :input')
+				.not('button,:input[name="e_mail_confirm"]')
+				.each(function(){ 
+					email_info['contact_detail'] = this.value;
+					email_info['contact_type_id'] = 1;
+                });
+				contactData.push(email_info);
+
+				var mobile_info = {};
+				$('fieldset#mobile_info :input')
+				.not('button,:input[value^="e.g."]')
+				.each(function(){ 
+					mobile_info['contact_detail'] = this.value;
+					mobile_info['contact_type_id'] = 2;
+                });
+				contactData.push(mobile_info);
+
+				var landline_info = {};
+				$('fieldset#landline_info :input')
+				.not('button,:input[value^="e.g."]')
+				.each(function(){ 
+					landline_info['contact_detail'] = this.value;
+					landline_info['contact_type_id'] = 3;
+                });
+				contactData.push(landline_info);
+				
+                if(count_guardian_info == 1){
+                	$('#guardian_info_div').show(1000);
                 }
                 count_guardian_info++;
             }
             break;
             case 'guardian':
             { 
-            	$('form#guardian_info_div :input')
+                var father_info = {};
+                father_info['relation_id'] = 1;
+            	$('fieldset#father_info :input')
             	.not('button,:input[value^="e.g."]')
-            	.each(function(){ 
-            		guardianData[this.name] = this.value; 
+            	.each(function(){
+            		father_info[this.name] = this.value;
             	});
+            	guardianData.push(father_info);
+
+            	var mother_info = {};
+            	mother_info['relation_id'] = 2;
+            	$('fieldset#mother_info :input')
+            	.not('button,:input[value^="e.g."]')
+            	.each(function(){
+            		mother_info[this.name] = this.value;
+            	});
+            	guardianData.push(mother_info);
+
+            	var guardian_info = {};
+            	guardian_info['relation_id'] = 3;
+            	$('fieldset#guardian_info :input')
+            	.not('button,:input[value^="e.g."]')
+            	.each(function(){
+            		guardian_info[this.name] = this.value;
+            	});
+            	guardianData.push(guardian_info);
             	$('#final_form').show(1000);
         	}
         	break;
@@ -440,7 +579,7 @@
 	}
 	function show_div(type){
 		var div_name = '#'+type+'_info_div';
-		$(div_name).show(2000);
+		$(div_name).show(1000);
 		var span_name = 'span#'+type+'_edit';
 		$(span_name).html('');
 	}
@@ -472,8 +611,8 @@ span{
     
     
 <?php
-$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form.jquery.js');
 $this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form.jquery.js');
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
 
@@ -481,5 +620,4 @@ $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
-
 ?>
