@@ -729,7 +729,8 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     {
         $this->initSave();
         $preparedData = $this->prepareDataForSaveProcess($data_array);
-        $this->getMapper()->save($preparedData);
+        $member_id = $this->getMapper()->save($preparedData);
+        $this->setMember_id($member_id);
     }
     public function saveClassInfo ($data_array)
     {
