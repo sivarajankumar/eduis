@@ -246,6 +246,26 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
             }
         }
     }
+    /**
+     * Fetches all Relation Ids of a member
+     *
+     */
+    public function fetchRelationIds ()
+    {
+        $member_id = $this->getMember_id();
+        if (empty($member_id)) {
+            $careless_error = 'Please provide a Member Id in fetchRelationIds().';
+            throw new Exception($careless_error, Zend_Log::ERR);
+        } else {
+            $relative_ids = $this->getMapper()->fetchRelationIds($member_id);
+            if (sizeof($relative_ids) == 0) {
+                return false;
+            } else {
+                $this->setOptions($relative_ids);
+                return true;
+            }
+        }
+    }
     public function save ($data_array)
     {
         $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(

@@ -515,7 +515,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
             $error = 'Please provide a Member Id';
-            throw new Exception($error);
+            throw new Exception($error,Zend_Log::ERR);
         } else {
             $admission_object = new Core_Model_StudentAdmission();
             $admission_object->setMember_id($member_id);
@@ -536,7 +536,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
             $error = 'Please provide a Member Id';
-            throw new Exception($error);
+            throw new Exception($error,Zend_Log::ERR);
         } else {
             $registration_object = new Core_Model_StudentRegistration();
             $registration_object->setMember_id($member_id);
@@ -557,10 +557,10 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
             $error = 'Please provide a Member Id';
-            throw new Exception($error);
+            throw new Exception($error,Zend_Log::ERR);
         } else {
             $address_object = new Core_Model_MemberAddress();
-            $address_object->setAdress_type($address_type);
+            $address_object->setAddress_type($address_type);
             $address_object->setMember_id($member_id);
             $address_info = $address_object->fetchInfo();
             if (! $address_info) {
@@ -579,7 +579,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
             $error = 'Please provide a Member Id';
-            throw new Exception($error);
+            throw new Exception($error,Zend_Log::ERR);
         } else {
             $contacts_object = new Core_Model_MemberContacts();
             $contacts_object->setMember_id($member_id);
@@ -601,7 +601,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
             $error = 'Please provide a Member Id';
-            throw new Exception($error);
+            throw new Exception($error,Zend_Log::ERR);
         } else {
             $relative_object = new Core_Model_MemberRelatives();
             $relative_object->setMember_id($member_id);
@@ -710,6 +710,32 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $class_info = $class_object->fetchInfo();
         $batch_id = $class_object->getBatch_id();
         return $batch_id;
+    }
+    /**
+     * Fetches Relative Ids of a Student,
+     * Member_id must be set before calling this function 
+     * 
+     */
+    public function fetchRelationIds ()
+    {
+        $member_id = $this->getMember_id();
+        $relatives_object = new Core_Model_MemberRelatives();
+        $relatives_object->setMember_id($member_id);
+        $relatives_ids = $relatives_object->fetchRelativeIds();
+        return $relatives_ids;
+    }
+    /**
+     * Fetches Relative Ids of a Student,
+     * Member_id must be set before calling this function 
+     * 
+     */
+    public function fetchAddressTypes ()
+    {
+        $member_id = $this->getMember_id();
+        $address_object = new Core_Model_MemberAddress();
+        $address_object->setMember_id($member_id);
+        $address_ids = $address_object->fetchRelativeIds();
+        return $address_ids;
     }
     public function saveCriticalInfo ($data_array)
     {

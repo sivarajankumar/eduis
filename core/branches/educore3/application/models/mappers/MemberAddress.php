@@ -41,7 +41,7 @@ class Core_Model_Mapper_MemberAddress
     public function fetchInfo ($member_id, $address_type)
     {
         $adapter = $this->getDbTable()->getAdapter();
-        $db_table = new Core_Model_DbTable_Class();
+        $db_table = $this->getDbTable();
         $address_table = $db_table->info('name');
         $required_cols = array('member_id', 'postal_code', 'city', 'district', 
         'state', 'address', 'address_type');
@@ -52,6 +52,24 @@ class Core_Model_Mapper_MemberAddress
         $address_info = array();
         $address_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $address_info[$member_id];
+    }
+    /**
+     * Fetches Address Types of a Member
+     * 
+     * @param integer $member_id
+     */
+    public function fetchAddressTypes ($member_id)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $address_table = $db_table->info('name');
+        $required_cols = array('address_type');
+        $select = $adapter->select()
+            ->from($address_table, $required_cols)
+            ->where('member_id = ?', $member_id);
+        $address_types = array();
+        $address_types = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $address_types;
     }
     public function save ($prepared_data)
     {
