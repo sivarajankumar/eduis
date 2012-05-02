@@ -378,6 +378,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
                 return false;
             } else {
                 $this->setOptions($info);
+                return $this;
             }
         }
     }

@@ -242,6 +242,7 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
                 return false;
             } else {
                 $this->setOptions($info);
+                return $this;
             }
         }
     }

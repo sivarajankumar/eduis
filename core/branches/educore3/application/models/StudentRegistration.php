@@ -106,7 +106,7 @@ class Core_Model_StudentRegistration extends Core_Model_Generic
                 return false;
             } else {
                 $this->setOptions($info);
-                return true;
+                return $this;
             }
         }
     }
