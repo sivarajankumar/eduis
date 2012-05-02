@@ -152,22 +152,16 @@ class Core_Model_Batch extends Core_Model_Generic
     {}
     /**
      * Fetches information regarding class
-     *
+     *@return false if no info present for given batch_id (else info is set in the current object)
      */
     public function fetchInfo ()
     {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Batch_Id';
-            throw new Exception($error, Zend_Log::ERR);
+        $batch_id = $this->getBatch_id(true);
+        $info = $this->getMapper()->fetchInfo($batch_id);
+        if (sizeof($info) == 0) {
+            return false;
         } else {
-            $info = $this->getMapper()->fetchPersonalInfo($member_id);
-            if (sizeof($info) == 0) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return true;
-            }
+            $this->setOptions($info);
         }
     }
     /**
