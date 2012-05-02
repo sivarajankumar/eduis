@@ -42,8 +42,12 @@ class Core_Model_Class extends Core_Model_Generic
     /**
      * @return the $_semester_id
      */
-    public function getSemester_id ()
+    public function getSemester_id ($throw_exception = FALSE)
     {
+        if ($throw_exception) {
+            $error = 'Semester is empty.';
+            throw new Exception($error, Zend_Log::ERR);
+        }
         return $this->_semester_id;
     }
     /**
@@ -203,8 +207,8 @@ class Core_Model_Class extends Core_Model_Generic
     {
         $class_id = $this->getClass_id();
         if (empty($class_id)) {
-            $careless_error = 'Please provide a Class Id';
-            throw new Exception($careless_error);
+            $error = 'Please provide a Class Id';
+            throw new Exception($error, Zend_Log::ERR);
         } else {
             $info = $this->getMapper()->fetchInfo($class_id);
             if (sizeof($info) == 0) {
@@ -214,84 +218,35 @@ class Core_Model_Class extends Core_Model_Generic
             }
         }
     }
+    /**
+     * 
+     * fetches the Class Ids of a batch
+     * @param bool $semester_specific optional
+     * @param bool $active optional
+     * @throws Exception
+     * @return array|int|false
+     */
     public function fetchBatchClassIds ($semester_specific = null, $active = null)
     {
-        $basis = '';
-        if (! empty($semester_specific) and ! empty($active)) {
-            $careless_error = 'In fetchBatchAllClassIds() set ATMOST one parameter. More than One set';
-            throw new Exception($careless_error);
+        $batch_id = $this->getBatch_id(true);
+        if ($semester_specific == true) {
+            $semester_id = $this->getSemester_id(true);
+        }
+        if ($active == true) {
+            $is_active = $this->getIs_active(true);
+        }
+        $class_ids = array();
+        $class_ids = $this->getMapper()->fetchClassIds(null, null, $batch_id, 
+        $semester_id);
+        if (empty($class_ids) == 0) {
+            return false;
+        } elseif (sizeof($class_ids) == 1) {
+            return $class_ids[0];
         } else {
-            if (! empty($semester_specific) and $semester_specific == true) {
-                $basis = 'semester';
-            }
-            if (! empty($active) and $active == true) {
-                $basis = 'active';
-            }
-        }
-        switch ($basis) {
-            case 'semester':
-                $semester_id = $this->getSemester_id();
-                $batch_id = $this->getBatch_id();
-                if (empty($semester_id) or empty($batch_id)) {
-                    $careless_error = 'Insufficient Params supplied to fetchBatchAllClassIds(). Semester id  and Batch id required';
-                    throw new Exception($careless_error);
-                } else {
-                    $class_ids = $this->getMapper()->fetchClassIds(null, null, 
-                    $batch_id, $semester_id);
-                    if (sizeof($class_ids) == 0) {
-                        return false;
-                    } elseif (sizeof($class_ids) == 1) {
-                        return $class_ids[0];
-                    } else {
-                        return $class_ids;
-                    }
-                }
-                break;
-            case 'active':
-                $batch_id = $this->getBatch_id();
-                $is_active = $this->getIs_active();
-                if (empty($semester_id) or empty($is_active)) {
-                    $careless_error = 'Insufficient Params supplied to fetchBatchAllClassIds().Batch id and Is_active flag required';
-                    throw new Exception($careless_error);
-                } else {
-                    $class_ids = $this->getMapper()->fetchClassIds(null, null, 
-                    $batch_id, $is_active);
-                    if (sizeof($class_ids) == 0) {
-                        return false;
-                    } elseif (sizeof($class_ids) == 1) {
-                        return $class_ids[0];
-                    } else {
-                        return $class_ids;
-                    }
-                }
-                break;
-            default:
-                $batch_id = $this->getBatch_id();
-                if (empty($batch_id)) {
-                    $careless_error = 'Insufficient Params supplied to fetchBatchAllClassIds(). Batch id required';
-                    throw new Exception($careless_error);
-                } else {
-                    $class_ids = $this->getMapper()->fetchClassIds(null, null, 
-                    $batch_id);
-                    if (sizeof($class_ids) == 0) {
-                        return false;
-                    } elseif (sizeof($class_ids) == 1) {
-                        return $class_ids[0];
-                    } else {
-                        return $class_ids;
-                    }
-                }
-                ;
-                break;
-        }
-        if ($basis == '') {
-            throw new Exception(
-            'Invalid Basis provided to fetchBatchClassIds()');
+            return $class_ids;
         }
     }
     public function fetchStudents ()
-    {}
-    public function fetchBatchId ()
     {}
     public function save ($data_array)
     {

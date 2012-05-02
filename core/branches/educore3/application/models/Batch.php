@@ -158,8 +158,8 @@ class Core_Model_Batch extends Core_Model_Generic
     {
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
-            $careless_error = 'Please provide a Batch_Id';
-            throw new Exception($careless_error);
+            $error = 'Please provide a Batch_Id';
+            throw new Exception($error, Zend_Log::ERR);
         } else {
             $info = $this->getMapper()->fetchPersonalInfo($member_id);
             if (sizeof($info) == 0) {
@@ -171,66 +171,36 @@ class Core_Model_Batch extends Core_Model_Generic
         }
     }
     /**
+     * fetches the Batch Ids
      * 
-     * @param boolean $department_specific
-     * @param boolean $programme_specific
+     * @param bool $batch_start_year_specific optional
+     * @param bool $department_specific optional
+     * @param bool $programme_specific optional
+     * @throws Exception
+     * @return array|int|flase
      */
-    public function fetchBatchId ($department_specific = null, 
-    $programme_specific = null)
+    public function fetchBatchIds ($batch_start_year_specific = null, 
+    $department_specific = null, $programme_specific = null)
     {
-        $department_id = $this->getDepartment_id();
-        $programme_id = $this->getProgramme_id();
-        $start_year = $this->getBatch_start();
-        $basis = '';
-        if (! empty($department_specific) and $department_specific == true) {
-            $basis = 'department';
-            $department_id = $this->getDepartment_id();
+        $batch_ids = array();
+        if ($batch_start_year_specific == true) {
+            $batch_start = $this->getBatch_start(true);
         }
-        if (! empty($programme_specific) and $programme_specific == true) {
-            $basis = 'programme';
-            $programme_id = $this->getProgramme_id();
+        if ($department_specific == true) {
+            $department_id = $this->getDepartment_id(true);
         }
-        switch ($basis) {
-            case 'department':
-                $semester_id = $this->getSemester_id();
-                $batch_id = $this->getBatch_id();
-                if (empty($department_id)) {
-                    $careless_error = 'Insufficient Params supplied to fetchBatchId(). Department id required';
-                    throw new Exception($careless_error);
-                } else {
-                    $class_ids = $this->getMapper()->fetchClassIds(null, null, 
-                    $batch_id, $semester_id);
-                    if (sizeof($class_ids) == 0) {
-                        return false;
-                    } elseif (sizeof($class_ids) == 1) {
-                        return $class_ids[0];
-                    } else {
-                        return $class_ids;
-                    }
-                }
-                break;
-            case 'programme':
-                $semester_id = $this->getSemester_id();
-                $batch_id = $this->getBatch_id();
-                if (empty($semester_id) or empty($batch_id)) {
-                    $careless_error = 'Insufficient Params supplied to fetchBatchAllClassIds(). Semester id  and Batch id required';
-                    throw new Exception($careless_error);
-                } else {
-                    $class_ids = $this->getMapper()->fetchClassIds(null, null, 
-                    $batch_id, $semester_id);
-                    if (sizeof($class_ids) == 0) {
-                        return false;
-                    } elseif (sizeof($class_ids) == 1) {
-                        return $class_ids[0];
-                    } else {
-                        return $class_ids;
-                    }
-                }
-                break;
-            default:
-                break;
+        if ($programme_specific == true) {
+            $programme_id = $this->getProgramme_id(true);
         }
-        $this->getMapper()->fetchBatchId();
+        $batch_ids = $this->getMapper()->fetchBatchIds($batch_start, 
+        $department_id, $programme_id);
+        if (empty($batch_ids) == 0) {
+            return false;
+        } elseif (sizeof($batch_ids) == 1) {
+            return $batch_ids[0];
+        } else {
+            return $batch_ids;
+        }
     }
     public function save ($data_array)
     {

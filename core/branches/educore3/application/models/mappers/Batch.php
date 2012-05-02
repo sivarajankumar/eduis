@@ -41,7 +41,7 @@ class Core_Model_Mapper_Batch
     public function fetchInfo ($batch_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
-        $db_table = new Core_Model_DbTable_Batch();
+        $db_table = $this->getDbTable();
         $batch_table = $db_table->info('name');
         $required_cols = array('batch_id', 'department_id', 'programme_id', 
         'batch_start', 'batch_number', 'is_active');
@@ -51,6 +51,35 @@ class Core_Model_Mapper_Batch
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $student_info[$batch_id];
+    }
+    /**
+     * 
+     * fetches the Batch Ids
+     * @param bool $batch_start optional
+     * @param bool $department_id optional
+     * @param bool $programme_id optional
+     * @return array
+     */
+    public function fetchBatchIds ($batch_start = null, $department_id = null, 
+    $programme_id = null)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $batch_table = $db_table->info('name');
+        $required_cols = array('batch_id');
+        $select = $adapter->select()->from($batch_table, $required_cols);
+        if (isset($batch_start)) {
+            $select->where('batch_start = ?', $batch_start);
+        }
+        if (isset($department_id)) {
+            $select->where('department_id = ?', $department_id);
+        }
+        if (isset($programme_id)) {
+            $select->where('programme_id = ?', $programme_id);
+        }
+        $batch_ids = array();
+        $batch_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $batch_ids;
     }
     public function save ($prepared_data)
     {
