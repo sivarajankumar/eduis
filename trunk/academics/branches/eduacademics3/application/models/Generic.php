@@ -54,25 +54,6 @@ abstract class Acad_Model_Generic
         return $this;
     }
     /**
-     * Checks whether the property has been set in the object (
-     * If the propert is set normal execution proceed)
-     * @param string $var_name name of the property
-     * @param bool $throw_exception optional
-     * @throws Exception
-     */
-    protected function exceptionThrow ($var_name, $throw_exception = null)
-    {
-        $property_name = '_' . $var_name;
-        $property_value = $this->$property_name;
-        if (empty($property_value) and $throw_exception == true) {
-            $message = $var_name . ' is not set';
-            $code = Zend_Log::ERR;
-            throw new Exception($message, $code);
-        } else {
-            return $property_value;
-        }
-    }
-    /**
      * Returns an array of acessible properties of class
      * Enter description here ...
      */
