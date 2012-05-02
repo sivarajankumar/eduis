@@ -202,8 +202,7 @@ class Core_Model_MemberAddress extends Core_Model_Generic
             if (sizeof($address_types) == 0) {
                 return false;
             } else {
-                $this->setOptions($address_types);
-                return true;
+                return $address_types;
             }
         }
     }

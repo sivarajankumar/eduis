@@ -608,7 +608,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $member_id = $this->getMember_id(true);
         $address_object = new Core_Model_MemberAddress();
         $address_object->setMember_id($member_id);
-        $address_ids = $address_object->fetchRelativeIds();
+        $address_ids = $address_object->fetchAddressTypes();
         return $address_ids;
     }
     public function saveCriticalInfo ($data_array)
