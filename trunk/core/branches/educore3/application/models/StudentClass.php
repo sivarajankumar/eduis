@@ -175,8 +175,8 @@ class Core_Model_StudentClass extends Core_Model_Generic
         $member_id = $this->getMember_id();
         $class_id = $this->getClass_id();
         if (empty($member_id) or empty($class_id)) {
-            $careless_error = 'Please provide a Member Id and a Class id';
-            throw new Exception($careless_error);
+            $error = 'Please provide a Member Id and a Class id';
+            throw new Exception($error, Zend_Log::ERR);
         } else {
             $info = $this->getMapper()->fetchInfo($member_id, $class_id);
             if (sizeof($info) == 0) {
@@ -191,8 +191,8 @@ class Core_Model_StudentClass extends Core_Model_Generic
     {
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
-            $careless_error = 'Insufficient Params supplied to fetchBatchIdentifierClassId .Member_id required';
-            throw new Exception($careless_error);
+            $error = 'Insufficient Params supplied to fetchBatchIdentifierClassId .Member_id required';
+            throw new Exception($error, Zend_Log::ERR);
         } else {
             return $this->getMapper()->fetchBatchIdentifierClassId($member_id);
         }
@@ -201,8 +201,8 @@ class Core_Model_StudentClass extends Core_Model_Generic
     {
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
-            $careless_error = 'Please provide a Member Id';
-            throw new Exception($careless_error);
+            $error = 'Please provide a Member Id';
+            throw new Exception($error, Zend_Log::ERR);
         } else {
             $class_ids = $this->getMapper()->fetchClassIds($member_id);
             if (sizeof($class_ids) == 0) {
