@@ -183,7 +183,7 @@ class Core_Model_MemberAddress extends Core_Model_Generic
                 return false;
             } else {
                 $this->setOptions($address_info);
-                return true;
+                return $this;
             }
         }
     }

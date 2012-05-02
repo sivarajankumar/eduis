@@ -137,7 +137,7 @@ class Core_Model_MemberContacts extends Core_Model_Generic
                 return false;
             } else {
                 $this->setOptions($info);
-                return true;
+                return $this;
             }
         }
     }
