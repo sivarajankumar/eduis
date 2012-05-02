@@ -41,13 +41,33 @@ class Core_Model_Mapper_Member_Student
     public function fetchCriticalInfo ($member_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
+        $table_name = $this->getDbTable()->info('name');
         $req_cols = array('member_id', 'member_type_id', 'first_name', 
         'last_name', 'middle_name', 'dob', 'blood_group', 'gender', 
         'religion_id', 'cast_id', 'nationality_id', 'join_date', 'relieve_date', 
         'image_no', 'is_active');
-        $table_name = $this->getDbTable()->info('name');
+        $nat_columns = 'nationality_name';
+        $nat_db_table = new Core_Model_DbTable_Nationalities();
+        $nat_table = $nat_db_table->info('name');
+        //
+        $cast_cols = 'cast_name';
+        $cast_db_table = new Core_Model_DbTable_Casts();
+        $cast_table = $cast_db_table->info('name');
+        //
+        $religion_cols = 'religion_name';
+        $rel_db_table = new Core_Model_DbTable_Religions();
+        $religion_table = $rel_db_table->info('name');
+        //conditions
+        $nat_cond = $table_name . '.nationality_id =' . $nat_table .
+         '.nationality_id';
+        $cast_cond = $table_name . '.cast_id =' . $cast_table . '.cast_id';
+        $rel_cond = $table_name . '.religion_id =' . $religion_table .
+         '.religion_id';
         $select = $adapter->select()
             ->from($table_name, $req_cols)
+            ->join($nat_table, $nat_cond, $nat_columns)
+            ->join($nat_table, $cast_cond, $cast_cols)
+            ->join($nat_table, $rel_cond, $req_cols)
             ->where('member_id = ?', $member_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
