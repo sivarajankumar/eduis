@@ -242,7 +242,6 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
                 return false;
             } else {
                 $this->setOptions($info);
-                return true;
             }
         }
     }
@@ -252,18 +251,12 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
      */
     public function fetchRelationIds ()
     {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $careless_error = 'Please provide a Member Id in fetchRelationIds().';
-            throw new Exception($careless_error, Zend_Log::ERR);
+        $member_id = $this->getMember_id(true);
+        $relation_ids = $this->getMapper()->fetchRelationIds($member_id);
+        if (sizeof($relation_ids) == 0) {
+            return false;
         } else {
-            $relative_ids = $this->getMapper()->fetchRelationIds($member_id);
-            if (sizeof($relative_ids) == 0) {
-                return false;
-            } else {
-                $this->setOptions($relative_ids);
-                return true;
-            }
+            return $relation_ids;
         }
     }
     public function save ($data_array)

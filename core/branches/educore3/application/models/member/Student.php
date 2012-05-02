@@ -595,7 +595,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $member_id = $this->getMember_id(true);
         $relatives_object = new Core_Model_MemberRelatives();
         $relatives_object->setMember_id($member_id);
-        $relatives_ids = $relatives_object->fetchRelativeIds();
+        $relatives_ids = $relatives_object->fetchRelationIds();
         return $relatives_ids;
     }
     /**
