@@ -221,23 +221,27 @@ class Core_Model_Class extends Core_Model_Generic
     /**
      * 
      * fetches the Class Ids of a batch
-     * @param bool $semester_specific optional
+     * @param bool $batch_specific optional
+     * @param bool $semester_specific optional 
      * @param bool $active optional
      * @throws Exception
      * @return array|int|false
      */
-    public function fetchBatchClassIds ($semester_specific = null, $active = null)
+    public function fetchClassIds ($batch_specific = null, $semester_specific = null, 
+    $active = null)
     {
-        $batch_id = $this->getBatch_id(true);
         if ($semester_specific == true) {
             $semester_id = $this->getSemester_id(true);
+        }
+        if (isset($batch_specific)) {
+            $batch_id = $this->getBatch_id(true);
         }
         if ($active == true) {
             $is_active = $this->getIs_active(true);
         }
         $class_ids = array();
         $class_ids = $this->getMapper()->fetchClassIds(null, null, $batch_id, 
-        $semester_id);
+        $semester_id,$is_active);
         if (empty($class_ids) == 0) {
             return false;
         } elseif (sizeof($class_ids) == 1) {
