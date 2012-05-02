@@ -118,10 +118,10 @@
     <div class="ctrlHolder">
 		<label for="cast_id">Cast</label>
 		<select id="cast_id" name="cast_id" class="selectInput required">
-       		<option value="0">GEN</option>
-       		<option value="1">BC</option>
-       		<option value="2">SC</option>
-       		<option value="3">ST</option>
+       		<option value="1">GEN</option>
+       		<option value="2">BC</option>
+       		<option value="3">SC</option>
+       		<option value="4">ST</option>
 		</select>
 		<p class="formHint">Cast of Candidate</p>
 	</div>
@@ -447,7 +447,7 @@
 			url : urlBasicInfo,
 			data : {myarray:data},
 			success: function(jStatus){
-				alert('yo');
+				alert('Your information has been sucessfully submitted...');
             },
             error: function(response) {
 				$('#errorBox').text(response.responseText).parent().show();
@@ -512,7 +512,7 @@
 				.not('button,:input[name="e_mail_confirm"]')
 				.each(function(){ 
 					email_info['contact_detail'] = this.value;
-					email_info['contact_type_id'] = 1;
+					email_info['contact_type_id'] = 3;
                 });
 				contactData.push(email_info);
 
@@ -521,7 +521,7 @@
 				.not('button,:input[value^="e.g."]')
 				.each(function(){ 
 					mobile_info['contact_detail'] = this.value;
-					mobile_info['contact_type_id'] = 2;
+					mobile_info['contact_type_id'] = 1;
                 });
 				contactData.push(mobile_info);
 
@@ -530,7 +530,7 @@
 				.not('button,:input[value^="e.g."]')
 				.each(function(){ 
 					landline_info['contact_detail'] = this.value;
-					landline_info['contact_type_id'] = 3;
+					landline_info['contact_type_id'] = 2;
                 });
 				contactData.push(landline_info);
 				
