@@ -588,7 +588,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
     /**
      * Fetches Relative Ids of a Student,
      * Member_id must be set before calling this function 
-     * @return array the Relation_ids
+     * @return array the Relation_ids of the given Student
      */
     public function fetchRelationIds ()
     {
@@ -599,7 +599,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         return $relatives_ids;
     }
     /**
-     * Fetches Relative Ids of a Student,
+     * Fetches Address Type Ids of a Student,
      * Member_id must be set before calling this function 
      * @return array the Type of Addresses submitted by the Student 
      */
@@ -610,6 +610,19 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $address_object->setMember_id($member_id);
         $address_ids = $address_object->fetchAddressTypes();
         return $address_ids;
+    }
+    /**
+     * Fetches Contact Type Ids of a Student,
+     * Member_id must be set before calling this function 
+     * @return array the Type of Contacts submitted by the Student 
+     */
+    public function fetchContactTypeIds ()
+    {
+        $member_id = $this->getMember_id(true);
+        $contacts_object = new Core_Model_MemberContacts();
+        $contacts_object->setMember_id($member_id);
+        $contact_type_ids = $contacts_object->fetchContactTypeIds();
+        return $contact_type_ids;
     }
     public function saveCriticalInfo ($data_array)
     {
