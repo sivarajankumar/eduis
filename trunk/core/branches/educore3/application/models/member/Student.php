@@ -28,152 +28,147 @@ class Core_Model_Member_Student extends Core_Model_Generic
      */
     public function getMember_id ($throw_exception = null)
     {
-        $property_name = 'member_id';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        $member_id = $this->_member_id;
+        if (empty($member_id) and $throw_exception == true) {
+            $message = 'Member_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $member_id;
+        }
     }
     /**
      * @return the $_member_type_id
      */
     public function getMember_type_id ($throw_exception = null)
     {
-        $property_name = 'member_type_id';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        $member_type_id = $this->_member_type_id;
+        if (empty($member_type_id) and $throw_exception == true) {
+            $message = 'Member_type_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $member_type_id;
+        }
     }
     /**
      * @return the $_member_type_name
      */
-    public function getMember_type_name ($throw_exception = null)
+    public function getMember_type_name ()
     {
-        $property_name = 'member_type_name';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_member_type_name;
     }
     /**
      * @return the $_first_name
      */
-    public function getFirst_name ($throw_exception = null)
+    public function getFirst_name ()
     {
-        $property_name = 'first_name';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_first_name;
     }
     /**
      * @return the $_middle_name
      */
-    public function getMiddle_name ($throw_exception = null)
+    public function getMiddle_name ()
     {
-        $property_name = 'middle_name';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_middle_name;
     }
     /**
      * @return the $_last_name
      */
-    public function getLast_name ($throw_exception = null)
+    public function getLast_name ()
     {
-        $property_name = 'last_name';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_last_name;
     }
     /**
      * @return the $_dob
      */
-    public function getDob ($throw_exception = null)
+    public function getDob ()
     {
-        $property_name = 'dob';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_dob;
     }
     /**
      * @return the $_gender
      */
-    public function getGender ($throw_exception = null)
+    public function getGender ()
     {
-        $property_name = 'gender';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_gender;
     }
     /**
      * @return the $_blood_group
      */
-    public function getBlood_group ($throw_exception = null)
+    public function getBlood_group ()
     {
-        $property_name = 'blood_group';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_blood_group;
     }
     /**
      * @return the $_cast_id
      */
-    public function getCast_id ($throw_exception = null)
+    public function getCast_id ()
     {
-        $property_name = 'cast_id';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_cast_id;
     }
     /**
      * @return the $_nationality_id
      */
-    public function getNationality_id ($throw_exception = null)
+    public function getNationality_id ()
     {
-        $property_name = 'nationality_id';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_nationality_id;
     }
     /**
      * @return the $_religion_id
      */
-    public function getReligion_id ($throw_exception = null)
+    public function getReligion_id ()
     {
-        $property_name = 'religion_id';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_religion_id;
     }
     /**
      * @return the $_cast_name
      */
-    public function getCast_name ($throw_exception = null)
+    public function getCast_name ()
     {
-        $property_name = 'cast_name';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_cast_name;
     }
     /**
      * @return the $_nationality_name
      */
-    public function getNationality_name ($throw_exception = null)
+    public function getNationality_name ()
     {
-        $property_name = 'nationality_name';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_nationality_name;
     }
     /**
      * @return the $_religion_name
      */
-    public function getReligion_name ($throw_exception = null)
+    public function getReligion_name ()
     {
-        $property_name = 'religion_name';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_religion_name;
     }
     /**
      * @return the $_join_date
      */
-    public function getJoin_date ($throw_exception = null)
+    public function getJoin_date ()
     {
-        $property_name = 'join_date';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_join_date;
     }
     /**
      * @return the $_relieve_date
      */
-    public function getRelieve_date ($throw_exception = null)
+    public function getRelieve_date ()
     {
-        $property_name = 'relieve_date';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_relieve_date;
     }
     /**
      * @return the $_image_no
      */
-    public function getImage_no ($throw_exception = null)
+    public function getImage_no ()
     {
-        $property_name = 'image_no';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_image_no;
     }
     /**
      * @return the $_is_active
      */
     public function getIs_active ($throw_exception = null)
     {
-        $property_name = 'is_active';
-        return parent::exceptionThrow($property_name, $throw_exception);
+        return $this->_is_active;
     }
     /**
      * @param field_type $_member_id
