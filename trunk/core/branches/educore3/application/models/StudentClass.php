@@ -198,17 +198,12 @@ class Core_Model_StudentClass extends Core_Model_Generic
     }
     public function fetchClassIds ()
     {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error, Zend_Log::ERR);
+        $member_id = $this->getMember_id(true);
+        $class_ids = $this->getMapper()->fetchClassIds($member_id);
+        if (sizeof($class_ids) == 0) {
+            return false;
         } else {
-            $class_ids = $this->getMapper()->fetchClassIds($member_id);
-            if (sizeof($class_ids) == 0) {
-                return false;
-            } else {
-                return $class_ids;
-            }
+            return $class_ids;
         }
     }
     public function save ($data_array)

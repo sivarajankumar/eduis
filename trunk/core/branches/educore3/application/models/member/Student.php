@@ -487,8 +487,9 @@ class Core_Model_Member_Student extends Core_Model_Generic
     public function initInfo ()
     {}
     /**
-     * Fetches CRITICAL information of a Student,
-     * Member_id must be set before calling this function 
+     * Fetches CRITICAL information of a Student(
+     * Member_id must be set before calling this function)
+     * @return Student|false object of Core_Model_Member_Student
      */
     public function fetchCriticalInfo ()
     {
@@ -502,20 +503,20 @@ class Core_Model_Member_Student extends Core_Model_Generic
                 return false;
             } else {
                 $this->setOptions($info);
-                return true;
             }
         }
     }
     /**
      * Fetches Admission information of a Student,
      * Member_id must be set before calling this function 
+     * @return Admission|false object of Core_Model_StudentAdmission
      */
     public function fetchAdmissionInfo ()
     {
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
             $error = 'Please provide a Member Id';
-            throw new Exception($error,Zend_Log::ERR);
+            throw new Exception($error, Zend_Log::ERR);
         } else {
             $admission_object = new Core_Model_StudentAdmission();
             $admission_object->setMember_id($member_id);
@@ -530,13 +531,14 @@ class Core_Model_Member_Student extends Core_Model_Generic
     /**
      * Fetches Registration information of a Student,
      * Member_id must be set before calling this function 
+     * @return Registration|false object of Core_Model_StudentRegistration
      */
     public function fetchRegistrationInfo ()
     {
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
             $error = 'Please provide a Member Id';
-            throw new Exception($error,Zend_Log::ERR);
+            throw new Exception($error, Zend_Log::ERR);
         } else {
             $registration_object = new Core_Model_StudentRegistration();
             $registration_object->setMember_id($member_id);
@@ -551,13 +553,14 @@ class Core_Model_Member_Student extends Core_Model_Generic
     /**
      * Fetches Address information of a Student,
      * Member_id must be set before calling this function 
+     * @return Address|false object of Core_Model_MemberAddress
      */
     public function fetchAddressInfo ($address_type)
     {
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
             $error = 'Please provide a Member Id';
-            throw new Exception($error,Zend_Log::ERR);
+            throw new Exception($error, Zend_Log::ERR);
         } else {
             $address_object = new Core_Model_MemberAddress();
             $address_object->setAddress_type($address_type);
@@ -573,13 +576,14 @@ class Core_Model_Member_Student extends Core_Model_Generic
     /**
      * Fetches Contact information of a Student,
      * Member_id must be set before calling this function 
+     * @return contact|false object of Core_Model_MemberContacts
      */
     public function fetchContactInfo ($contact_type_id)
     {
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
             $error = 'Please provide a Member Id';
-            throw new Exception($error,Zend_Log::ERR);
+            throw new Exception($error, Zend_Log::ERR);
         } else {
             $contacts_object = new Core_Model_MemberContacts();
             $contacts_object->setMember_id($member_id);
@@ -595,13 +599,14 @@ class Core_Model_Member_Student extends Core_Model_Generic
     /**
      * Fetches information about Relative of a Student,
      * Member_id must be set before calling this function 
+     * @return relative|false object of Core_Model_MemberRelatives
      */
     public function fetchRelativeInfo ($relation_id)
     {
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
             $error = 'Please provide a Member Id';
-            throw new Exception($error,Zend_Log::ERR);
+            throw new Exception($error, Zend_Log::ERR);
         } else {
             $relative_object = new Core_Model_MemberRelatives();
             $relative_object->setMember_id($member_id);
@@ -615,71 +620,65 @@ class Core_Model_Member_Student extends Core_Model_Generic
         }
     }
     /**
-     * Fetches the class_id of a Student
+     * Fetches the Active class_ids of a Student
      * Member_id must be set before calling this function 
-     * @param integer $semester_id
-     * @param boolean $current
+     * @return false|array an array containing all class ids in which member is active
      */
-    public function fetchClassId ($semester_id = null, $current = null, $all = null)
+    public function fetchActiveClassIds ()
     {
-        $basis = '';
-        if (! empty($semester_id) and ! empty($current) and ! empty($all)) {
-            $careless_error = 'In fetchClassId() set ATMOST one parameter. More than One set';
-            throw new Exception($careless_error);
+        $student_class_ids = $this->fetchAllClassIds();
+        $member_id = $this->getMember_id(true);
+        $class_obj = new Core_Model_Class();
+        $active_class_ids = $class_obj->fetchClassIds(null, null, true);
+        $student_active_class_ids = array();
+        $student_active_class_ids = array_intersect($student_class_ids, 
+        $active_class_ids);
+        if (empty($student_active_class_ids)) {
+            return false;
         } else {
-            if (! empty($semester_id)) {
-                $basis = 'semester';
-            }
-            if (! empty($current) and $current == true) {
-                $basis = 'current';
-            }
-            if (! empty($all) and $all == true) {
-                $basis = 'all';
-            }
+            return $student_active_class_ids;
         }
-        if (! empty($basis)) {
-            $member_id = $this->getMember_id();
-            $batch_id = $this->fetchBatchId();
-            $student_class_object = new Core_Model_StudentClass();
-            $student_class_object->setMember_id($member_id);
-            $class_ids = $student_class_object->fetchClassIds(null, true);
-            switch ($basis) {
-                case 'current':
-                    $class_object = new Core_Model_Class();
-                    $class_object->setBatch_id($batch_id);
-                    $class_object->setIs_active(1);
-                    $class_id = $class_object->fetchBatchClassIds(null, true);
-                    return $class_id;
-                    break;
-                case 'semester':
-                    $class_object = new Core_Model_Class();
-                    $class_object->setBatch_id($batch_id);
-                    $class_object->setSemester_id($semester_id);
-                    $class_id = $class_object->fetchBatchClassIds(true);
-                    return $class_id;
-                    break;
-                case 'all':
-                    $class_object = new Core_Model_Class();
-                    $class_object->setBatch_id($batch_id);
-                    $class_ids = array();
-                    $class_ids = $class_object->fetchBatchClassIds();
-                    return $class_ids;
-                    /*
-                 * can be done this way also 
-                 * /
-                /*$student_class_object = new Core_Model_StudentClass();
-                $student_class_object->setMember_id($member_id);
-                $class_ids = $student_class_object->fetchClassIds();*/
-                    break;
-                default:
-                    ;
-                    break;
-            }
+    }
+    /**
+     * Fetches the All class_ids of a Student
+     * Member_id must be set before calling this function 
+     * @return false|array an array containing all class ids in which member was admitted
+     */
+    public function fetchAllClassIds ()
+    {
+        $member_id = $this->getMember_id(true);
+        $student_class_obj = new Core_Model_StudentClass();
+        $student_class_obj->setMember_id($member_id);
+        $student_class_ids = $student_class_obj->fetchClassIds();
+        if (empty($student_class_ids)) {
+            return false;
+        } else {
+            return $student_class_ids;
+        }
+    }
+    /**
+     * Fetches class_ids in which member was admitted in the given semester(
+     * Member_id must be set before calling this function )
+     * @param int $batch_id batch_id of the student( Required because a student may have been admitted in more than one batch)
+     * @param int $semester_id semester_id of the student
+     * @return false|array 
+     */
+    public function fetchSemesterClassId ($batch_id, $semester_id)
+    {
+        $class_object = new Core_Model_Class();
+        $class_object->setBatch_id($batch_id);
+        $class_object->setSemester_id($semester_id);
+        $class_ids = $class_object->fetchClassIds(true, true);
+        if (empty($class_ids)) {
+            return false;
+        } else {
+            return $class_ids;
         }
     }
     /**
      * Fetches information regarding CLASS of a Student,
      * Member_id must be set before calling this function 
+     * @return StudentClass|false object of Core_Model_StudentClass
      */
     public function fetchClassInfo ($class_id)
     {
@@ -697,7 +696,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
     /**
      * Fetches Batch Id of a Student,
      * Member_id must be set before calling this function 
-     * 
+     * @return int the Batch_id of student
      */
     public function fetchBatchId ()
     {
@@ -714,7 +713,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
     /**
      * Fetches Relative Ids of a Student,
      * Member_id must be set before calling this function 
-     * 
+     * @return array the Relation_ids
      */
     public function fetchRelationIds ()
     {
@@ -727,7 +726,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
     /**
      * Fetches Relative Ids of a Student,
      * Member_id must be set before calling this function 
-     * 
+     * @return array the Type of Addresses submitted by the Student 
      */
     public function fetchAddressTypes ()
     {

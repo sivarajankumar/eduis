@@ -134,7 +134,7 @@ class Acad_Model_Exam_Competitive extends Acad_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Exam_CompetitiveMapper
+     * @return Acad_Model_Exam_Competitive
      */
     public function getMapper ()
     {
@@ -144,31 +144,31 @@ class Acad_Model_Exam_Competitive extends Acad_Model_Generic
         return $this->_mapper;
     }
     /**
-     * Gets Competitive exam information of a member
      * 
+     * Enter description here ...
      */
-    public function initMemberExamInfo ()
+    public function fetchExamIds ()
     {
-        $options = $this->getMapper()->fetchMemberExamInfo($this);
-        $this->setOptions($options);
+        $member_id = $this->getMember_id(true);
+        $exam_ids = array();
+        $exam_ids = $this->getMapper()->fetchExamIds($member_id);
+        if (empty($exam_ids)) {
+            return false;
+        } else {
+            return $exam_ids;
+        }
     }
-    /**
-     * Gets Competitive exam information of a member
-     * 
-     */
-    public function initExamInfo ()
+    public function fetchStudentExamInfo ()
     {
-        $options = $this->getMapper()->fetchExamInfo($this);
-        $this->setOptions($options);
-    }
-    /**
-     * Initialises the save process
-     * by unsetting all object properties
-     */
-    public function initSave ()
-    {
-        $this->unsetAll();
-        $this->setInit_save(true);
+        $member_id = $this->getMember_id(true);
+        $exam_id = $this->getExam_id(true);
+        $student_exam_info = array();
+        $student_exam_info = $this->getMapper()->fetchStudentExamInfo($member_id,$exam_id);
+        if (empty($student_exam_info)) {
+            return false;
+        } else {
+            $this->setOptions($student_exam_info);
+        }
     }
 }
 ?>

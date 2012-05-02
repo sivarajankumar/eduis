@@ -50,7 +50,7 @@ class Acad_Model_Mapper_StudentSubject
             ->where('class_id = ?', $class_id);
         $student_subjects = array();
         $student_subjects = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $student_info;
+        return $student_subjects;
     }
     public function fetchStudentSubjectId ($member_id, $class_id, $subject_id)
     {

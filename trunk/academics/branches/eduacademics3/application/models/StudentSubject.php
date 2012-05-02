@@ -125,8 +125,8 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
         $member_id = $this->getMember_id();
         $subject_id = $this->getSubject_id();
         if (empty($member_id) or empty($subject_id)) {
-            $careless_error = 'Insufficient params supplied to fetchClassIds() function.Please provide a Member Id and a Subject id';
-            throw new Exception($careless_error);
+            $error = 'Insufficient params supplied to fetchClassIds() function.Please provide a Member Id and a Subject id';
+            throw new Exception($error, Zend_Log::ERR);
         } else {
             $class_ids = $this->getMapper()->fetchClassIds($member_id);
             if (sizeof($class_ids) == 0) {
@@ -146,20 +146,19 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
      */
     public function fetchDMC ($result_type_id, $considered = null)
     {
-        $member_id = $this->getMember_id();
-        $subject_id = $this->getSubject_id();
-        $class_id = $this->getClass_id();
-        if (empty($member_id) or empty($subject_id) or empty($class_id) or
-         empty($result_type_id)) {
-            $careless_error = 'Insufficient params supplied to fetchDMC() function .Member Id, Subject id, Class_id and Result_type_id Required';
-            throw new Exception($careless_error);
+        $member_id = $this->getMember_id(true);
+        $subject_id = $this->getSubject_id(true);
+        $class_id = $this->getClass_id(true);
+        if (empty($result_type_id)) {
+            $error = 'Insufficient params supplied to fetchDMC() function .Result_type_id Required';
+            throw new Exception($error, Zend_Log::ERR);
             return;
         } else {
             $student_subject_id = $this->fetchStudentSubjectId();
             if (! $student_subject_id) {
-                throw new Exception(
-                'The Subject with subject id - ' . $subject_id .
-                 'was not studied by member_id -' . $member_id);
+                $error = 'The Subject with subject id - ' . $subject_id .
+                 'was not studied by member_id -' . $member_id;
+                throw new Exception($error, Zend_Log::ERR);
             } else {
                 $dmc_marks_obj = new Acad_Model_DmcMarks();
                 $dmc_marks_obj->setStudent_subject_id($student_subject_id);
@@ -178,20 +177,15 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
     }
     public function fetchStudentSubjectId ()
     {
-        $member_id = $this->getMember_id();
-        $class_id = $this->getClass_id();
-        $subject_id = $this->getSubject_id();
-        if (empty($member_id) or empty($class_id) or empty($subject_id)) {
-            $careless_error = 'Insufficient params supplied to fetchStudentSubjectId() function.Please provide a Member Id, Class id, and Subject id';
-            throw new Exception($careless_error);
+        $member_id = $this->getMember_id(true);
+        $class_id = $this->getClass_id(true);
+        $subject_id = $this->getSubject_id(true);
+        $stu_subj_id = $this->getMapper()->fetchStudentSubjectId($member_id, 
+        $class_id, $subject_id);
+        if (sizeof($stu_subj_id) == 0) {
+            return false;
         } else {
-            $stu_subj_id = $this->getMapper()->fetchStudentSubjectId($member_id, 
-            $class_id, $subject_id);
-            if (sizeof($stu_subj_id) == 0) {
-                return false;
-            } else {
-                return $stu_subj_id;
-            }
+            return $stu_subj_id;
         }
     }
     /**
@@ -201,19 +195,14 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
      */
     public function fetchSubjectsPassed ($class_id)
     {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error);
-        } else {
-            $student_subject_object = new Acad_Model_StudentSubject();
-            $student_subject_object->setMember_id($member_id);
-            $student_subject_object->setClass_id($class_id);
-            $stu_sub_id = $student_subject_object->fetchStudentSubjectId();
-            $student_subject_object->setStudent_subject_id($stu_sub_id);
-            $dmc_marks = new Acad_Model_DmcMarks();
-            $dmc_marks->fetchInfo();
-        }
+        $member_id = $this->getMember_id(true);
+        $student_subject_object = new Acad_Model_StudentSubject();
+        $student_subject_object->setMember_id($member_id);
+        $student_subject_object->setClass_id($class_id);
+        $stu_sub_id = $student_subject_object->fetchStudentSubjectId();
+        $student_subject_object->setStudent_subject_id($stu_sub_id);
+        $dmc_marks = new Acad_Model_DmcMarks();
+        $dmc_marks->fetchInfo();
     }
     public function fetchSubjectPassedStatus ()
     {
@@ -225,18 +214,14 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
      */
     public function fetchSubjects ()
     {
-        $member_id = $this->getMember_id();
-        $class_id = $this->getClass_id();
-        if (empty($member_id) or empty($class_id)) {
-            $careless_error = 'Insufficient params supplied to fetchSubjects() function.Please provide a Member Id and a Class id';
-            throw new Exception($careless_error);
+        $member_id = $this->getMember_id(true);
+        $class_id = $this->getClass_id(true);
+        $student_subjects = $this->getMapper()->fetchSubjects($member_id, 
+        $class_id);
+        if (sizeof($student_subjects) == 0) {
+            return false;
         } else {
-            $student_subjects = $this->getMapper()->fetchSubjects($member_id, $class_id);
-            if (sizeof($student_subjects) == 0) {
-                return false;
-            } else {
-                return $student_subjects;
-            }
+            return $student_subjects;
         }
     }
     public function fetchResultTypes ()

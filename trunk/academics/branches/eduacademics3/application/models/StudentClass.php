@@ -175,15 +175,14 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
         $member_id = $this->getMember_id();
         $class_id = $this->getClass_id();
         if (empty($member_id) or empty($class_id)) {
-            $careless_error = 'Please provide a Member Id and a Class id';
-            throw new Exception($careless_error);
+            $error = 'Please provide a Member Id and a Class id';
+            throw new Exception($error, Zend_Log::ERR);
         } else {
             $info = $this->getMapper()->fetchInfo($member_id, $class_id);
             if (sizeof($info) == 0) {
                 return false;
             } else {
                 $this->setOptions($info);
-                return true;
             }
         }
     }
@@ -191,25 +190,20 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
     {
         $member_id = $this->getMember_id();
         if (empty($member_id)) {
-            $careless_error = 'Insufficient Params supplied to fetchBatchIdentifierClassId .Member_id required';
-            throw new Exception($careless_error);
+            $error = 'Insufficient Params supplied to fetchBatchIdentifierClassId .Member_id required';
+            throw new Exception($error, Zend_Log::ERR);
         } else {
             return $this->getMapper()->fetchBatchIdentifierClassId($member_id);
         }
     }
     public function fetchClassIds ()
     {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $careless_error = 'Please provide a Member Id';
-            throw new Exception($careless_error);
+        $member_id = $this->getMember_id(true);
+        $class_ids = $this->getMapper()->fetchClassIds($member_id);
+        if (sizeof($class_ids) == 0) {
+            return false;
         } else {
-            $class_ids = $this->getMapper()->fetchClassIds($member_id);
-            if (sizeof($class_ids) == 0) {
-                return false;
-            } else {
-                return $class_ids;
-            }
+            return $class_ids;
         }
     }
     public function save ($data_array)
