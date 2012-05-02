@@ -230,6 +230,9 @@ class Core_Model_Class extends Core_Model_Generic
     public function fetchClassIds ($batch_specific = null, $semester_specific = null, 
     $active = null)
     {
+        $semester_id = null;
+        $batch_id = null;
+        $is_active = null;
         if ($semester_specific == true) {
             $semester_id = $this->getSemester_id(true);
         }
@@ -241,11 +244,9 @@ class Core_Model_Class extends Core_Model_Generic
         }
         $class_ids = array();
         $class_ids = $this->getMapper()->fetchClassIds(null, null, $batch_id, 
-        $semester_id,$is_active);
-        if (empty($class_ids) == 0) {
+        $semester_id, $is_active);
+        if (empty($class_ids)) {
             return false;
-        } elseif (sizeof($class_ids) == 1) {
-            return $class_ids[0];
         } else {
             return $class_ids;
         }
