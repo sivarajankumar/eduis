@@ -188,7 +188,7 @@ class Core_Model_Batch extends Core_Model_Generic
         }
         $batch_ids = $this->getMapper()->fetchBatchIds($batch_start, 
         $department_id, $programme_id);
-        if (empty($batch_ids) == 0) {
+        if (empty($batch_ids)) {
             return false;
         } elseif (sizeof($batch_ids) == 1) {
             return $batch_ids[0];
