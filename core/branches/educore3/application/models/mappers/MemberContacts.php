@@ -60,6 +60,24 @@ class Core_Model_Mapper_MemberContacts
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $student_info[$member_id];
     }
+    /**
+     * Fetches Contact Type Ids of a Member
+     * 
+     * @param integer $member_id
+     */
+    public function fetchContactTypeIds ($member_id)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $contacts_table = $db_table->info('name');
+        $required_cols = array('contact_type_id');
+        $select = $adapter->select()
+            ->from($contacts_table, $required_cols)
+            ->where('member_id = ?', $member_id);
+        $contacty_type_ids = array();
+        $contacty_type_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $contacty_type_ids;
+    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();

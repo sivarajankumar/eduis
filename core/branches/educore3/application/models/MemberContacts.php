@@ -132,12 +132,32 @@ class Core_Model_MemberContacts extends Core_Model_Generic
             $careless_error = 'Please provide a Member Id and a Contact Type_id';
             throw new Exception($careless_error);
         } else {
-            $info = $this->getMapper()->fetchInfo($member_id,$contact_type_id);
+            $info = $this->getMapper()->fetchInfo($member_id, $contact_type_id);
             if (sizeof($info) == 0) {
                 return false;
             } else {
                 $this->setOptions($info);
                 return true;
+            }
+        }
+    }
+    /**
+     * Fetches all contact Types of a member
+     *
+     */
+    public function fetchContactTypeIds ()
+    {
+        $member_id = $this->getMember_id();
+        if (empty($member_id)) {
+            $careless_error = 'Please provide a Member Id in fetchContactTypeIds().';
+            throw new Exception($careless_error, Zend_Log::ERR);
+        } else {
+            $contact_type_ids = $this->getMapper()->fetchContactTypeIds(
+            $member_id);
+            if (sizeof($contact_type_ids) == 0) {
+                return false;
+            } else {
+                return $contact_type_ids;
             }
         }
     }
