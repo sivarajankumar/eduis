@@ -1,6 +1,7 @@
 <?php
 class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
 {
+    protected $_is_considered;
     protected $_dmc_info_id;
     protected $_dmc_id;
     protected $_result_type_id;
@@ -19,6 +20,27 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     protected $_scaled_marks;
     protected $_percentage;
     protected $_mapper;
+    /**
+     * @return the $_is_considered
+     */
+    public function getIs_considered ($throw_exception = null)
+    {
+        $is_considered = $this->_is_considered;
+        if (empty($is_considered) and $throw_exception == true) {
+            $message = 'dmc_info_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $is_considered;
+        }
+    }
+    /**
+     * @param field_type $_is_considered
+     */
+    public function setIs_considered ($_is_considered)
+    {
+        $this->_is_considered = $_is_considered;
+    }
     /**
      * @return the $_dmc_info_id
      */
@@ -352,18 +374,13 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     {}
     public function fetchInfo ()
     {
-        $dmc_info_id = $this->getDmc_info_id();
-        if (empty($dmc_info_id)) {
-            $careless_error = 'Please provide a DmcInfoId.';
-            throw new Exception($careless_error);
+        $dmc_info_id = $this->getDmc_info_id(true);
+        $info = $this->getMapper()->fetchInfo($dmc_info_id);
+        if (empty($info)) {
+            return false;
         } else {
-            $info = $this->getMapper()->fetchInfo($dmc_info_id);
-            if (empty($info)) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return $this;
-            }
+            $this->setOptions($info);
+            return $this;
         }
     }
     /**
@@ -374,12 +391,15 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
      * @param boolean $result_type_specific
      */
     public function fetchMemberDmcInfoIds ($class_specific = null, 
-    $result_type_specific = null, $all = null)
+    $result_type_specific = null, $all = null, $considered_only = null)
     {
         $member_id = $this->getMember_id(true);
+        //
         $class_id = null;
         $result_type_id = null;
         $all_dmc_info_ids = null;
+        $is_considered = null;
+        //
         $dmc_info_ids = array();
         if ($class_specific == true) {
             $class_id = $this->getClass_id(true);
@@ -390,8 +410,11 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
         if ($all == true) {
             $all_dmc_info_ids = true;
         }
+        if ($considered_only == true) {
+            $is_considered = $this->getIs_considered(true);
+        }
         $dmc_info_ids = $this->getMapper()->fetchDmcInfoIds($member_id, 
-        $result_type_id, $class_id);
+        $class_id, $result_type_id, $all_dmc_info_ids, $is_considered);
         if (empty($dmc_info_ids)) {
             return false;
         } else {
