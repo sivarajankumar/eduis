@@ -10,18 +10,19 @@ class Core_Model_MemberAddress extends Core_Model_Generic
     protected $_address_type;
     protected $_mapper;
     /**
+     * @param bool $throw_exception optional
      * @return the $_member_id
      */
-    public function getMember_id ()
+    public function getMember_id ($throw_exception = null)
     {
-        return $this->_member_id;
-    }
-    /**
-     * @param field_type $_member_id
-     */
-    public function setMember_id ($_member_id)
-    {
-        $this->_member_id = $_member_id;
+        $member_id = $this->_member_id;
+        if (empty($member_id) and $throw_exception == true) {
+            $message = 'Member_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $member_id;
+        }
     }
     /**
      * @return the $_postal_code
@@ -31,25 +32,11 @@ class Core_Model_MemberAddress extends Core_Model_Generic
         return $this->_postal_code;
     }
     /**
-     * @param field_type $_postal_code
-     */
-    public function setPostal_code ($_postal_code)
-    {
-        $this->_postal_code = $_postal_code;
-    }
-    /**
      * @return the $_city
      */
     public function getCity ()
     {
         return $this->_city;
-    }
-    /**
-     * @param field_type $_city
-     */
-    public function setCity ($_city)
-    {
-        $this->_city = $_city;
     }
     /**
      * @return the $_district
@@ -59,25 +46,11 @@ class Core_Model_MemberAddress extends Core_Model_Generic
         return $this->_district;
     }
     /**
-     * @param field_type $_district
-     */
-    public function setDistrict ($_district)
-    {
-        $this->_district = $_district;
-    }
-    /**
      * @return the $_state
      */
     public function getState ()
     {
         return $this->_state;
-    }
-    /**
-     * @param field_type $_state
-     */
-    public function setState ($_state)
-    {
-        $this->_state = $_state;
     }
     /**
      * @return the $_address
@@ -87,18 +60,60 @@ class Core_Model_MemberAddress extends Core_Model_Generic
         return $this->_address;
     }
     /**
+     * @return the $_address_type
+     */
+    public function getAddress_type ($throw_exception = null)
+    {
+        $address_type = $this->_address_type;
+        if (empty($address_type) and $throw_exception == true) {
+            $message = '_address_type is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $address_type;
+        }
+    }
+    /**
+     * @param field_type $_member_id
+     */
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
+    }
+    /**
+     * @param field_type $_postal_code
+     */
+    public function setPostal_code ($_postal_code)
+    {
+        $this->_postal_code = $_postal_code;
+    }
+    /**
+     * @param field_type $_city
+     */
+    public function setCity ($_city)
+    {
+        $this->_city = $_city;
+    }
+    /**
+     * @param field_type $_district
+     */
+    public function setDistrict ($_district)
+    {
+        $this->_district = $_district;
+    }
+    /**
+     * @param field_type $_state
+     */
+    public function setState ($_state)
+    {
+        $this->_state = $_state;
+    }
+    /**
      * @param field_type $_address
      */
     public function setAddress ($_address)
     {
         $this->_address = $_address;
-    }
-    /**
-     * @return the $_address_type
-     */
-    public function getAddress_type ()
-    {
-        return $this->_address_type;
     }
     /**
      * @param field_type $_address_type
