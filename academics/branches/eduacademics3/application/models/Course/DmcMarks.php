@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_DmcMarks extends Acad_Model_Generic
+class Acad_Model_Course_DmcMarks extends Acad_Model_Generic
 {
     protected $_dmc_marks_id;
     protected $_student_subject_id;
@@ -176,7 +176,7 @@ class Acad_Model_DmcMarks extends Acad_Model_Generic
     /**
      * Sets Mapper
      * @param Acad_Model_Mapper_Course_DmcMarks $mapper
-     * @return Acad_Model_DmcMarks
+     * @return Acad_Model_Course_DmcMarks
      */
     public function setMapper ($mapper)
     {

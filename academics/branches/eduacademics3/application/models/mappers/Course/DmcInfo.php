@@ -62,8 +62,7 @@ class Acad_Model_Mapper_Course_DmcInfo
         $db_table = $this->getDbTable();
         $dmc_info_table = $db_table->info('name');
         $dmc_info_ids = array();
-        $required_cols = array('dmc_info_id', 'dmc_id', 'class_id', 
-        'result_type_id');
+        $required_cols = array('dmc_info_id');
         $select = $adapter->select()
             ->from($dmc_info_table, $required_cols)
             ->where('member_id = ?', $member_id);
@@ -76,7 +75,7 @@ class Acad_Model_Mapper_Course_DmcInfo
         if (isset($result_type_id)) {
             $select->where('is_considered = ?', $is_considered);
         }
-        $dmc_info_ids = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        $dmc_info_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $dmc_info_ids;
     }
     public function fetchResultTypes ()
