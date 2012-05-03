@@ -81,11 +81,13 @@ class Admsn_Model_Member_Candidate {
      * Get roll number
      * @return string|number $roll_no - roll number
      */
-    public function getRoll_no(){
+    public function getRoll_no($raiseError = NULL){
         if (isset($this->_roll_no)) {
             return $this->_roll_no;
         }
-        throw new Zend_Exception('Roll number is not set!!', Zend_Log::ERR);
+        if ($raiseError) {
+        	throw new Zend_Exception('Roll number is not set!!', Zend_Log::ERR);
+        }
     }
     
 
