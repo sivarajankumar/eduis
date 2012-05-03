@@ -105,16 +105,6 @@ class Acad_Model_Mapper_StudentSubject
         $class_ids = array();
         return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
-    public function fetchResultTypes ()
-    {
-        $db_table = new Acad_Model_DbTable_ResultType();
-        $adapter = $db_table->getAdapter();
-        $result_type_table = $db_table->info('name');
-        $required_cols = array('result_type_id', 'result_type_name');
-        $select = $adapter->select()->from($result_type_table, $required_cols);
-        $result_types = array();
-        return $select->query()->fetchAll();
-    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();

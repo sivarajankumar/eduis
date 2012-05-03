@@ -17,25 +17,11 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
         return $this->_member_id;
     }
     /**
-     * @param field_type $_member_id
-     */
-    public function setMember_id ($_member_id)
-    {
-        $this->_member_id = $_member_id;
-    }
-    /**
      * @return the $_class_id
      */
     public function getClass_id ()
     {
         return $this->_class_id;
-    }
-    /**
-     * @param field_type $_class_id
-     */
-    public function setClass_id ($_class_id)
-    {
-        $this->_class_id = $_class_id;
     }
     /**
      * @return the $_group_id
@@ -45,25 +31,11 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
         return $this->_group_id;
     }
     /**
-     * @param field_type $_group_id
-     */
-    public function setGroup_id ($_group_id)
-    {
-        $this->_group_id = $_group_id;
-    }
-    /**
      * @return the $_roll_no
      */
     public function getRoll_no ()
     {
         return $this->_roll_no;
-    }
-    /**
-     * @param field_type $_roll_no
-     */
-    public function setRoll_no ($_roll_no)
-    {
-        $this->_roll_no = $_roll_no;
     }
     /**
      * @return the $_start_date
@@ -73,13 +45,6 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
         return $this->_start_date;
     }
     /**
-     * @param field_type $_start_date
-     */
-    public function setStart_date ($_start_date)
-    {
-        $this->_start_date = $_start_date;
-    }
-    /**
      * @return the $_completion_date
      */
     public function getCompletion_date ()
@@ -87,18 +52,53 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
         return $this->_completion_date;
     }
     /**
-     * @param field_type $_completion_date
-     */
-    public function setCompletion_date ($_completion_date)
-    {
-        $this->_completion_date = $_completion_date;
-    }
-    /**
      * @return the $_is_initial_batch_identifier
      */
     public function getIs_initial_batch_identifier ()
     {
         return $this->_is_initial_batch_identifier;
+    }
+    /**
+     * @param field_type $_member_id
+     */
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
+    }
+    /**
+     * @param field_type $_class_id
+     */
+    public function setClass_id ($_class_id)
+    {
+        $this->_class_id = $_class_id;
+    }
+    /**
+     * @param field_type $_group_id
+     */
+    public function setGroup_id ($_group_id)
+    {
+        $this->_group_id = $_group_id;
+    }
+    /**
+     * @param field_type $_roll_no
+     */
+    public function setRoll_no ($_roll_no)
+    {
+        $this->_roll_no = $_roll_no;
+    }
+    /**
+     * @param field_type $_start_date
+     */
+    public function setStart_date ($_start_date)
+    {
+        $this->_start_date = $_start_date;
+    }
+    /**
+     * @param field_type $_completion_date
+     */
+    public function setCompletion_date ($_completion_date)
+    {
+        $this->_completion_date = $_completion_date;
     }
     /**
      * @param field_type $_is_initial_batch_identifier
@@ -179,10 +179,11 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
             throw new Exception($error, Zend_Log::ERR);
         } else {
             $info = $this->getMapper()->fetchInfo($member_id, $class_id);
-            if (sizeof($info) == 0) {
+            if (empty($info)) {
                 return false;
             } else {
                 $this->setOptions($info);
+                return $this;
             }
         }
     }
@@ -200,7 +201,7 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
     {
         $member_id = $this->getMember_id(true);
         $class_ids = $this->getMapper()->fetchClassIds($member_id);
-        if (sizeof($class_ids) == 0) {
+        if (empty($class_ids)) {
             return false;
         } else {
             return $class_ids;

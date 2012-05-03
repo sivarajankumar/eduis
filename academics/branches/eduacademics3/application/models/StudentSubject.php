@@ -14,25 +14,11 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
         return $this->_student_subject_id;
     }
     /**
-     * @param field_type $_student_subject_id
-     */
-    public function setStudent_subject_id ($_student_subject_id)
-    {
-        $this->_student_subject_id = $_student_subject_id;
-    }
-    /**
      * @return the $_member_id
      */
     public function getMember_id ()
     {
         return $this->_member_id;
-    }
-    /**
-     * @param field_type $_member_id
-     */
-    public function setMember_id ($_member_id)
-    {
-        $this->_member_id = $_member_id;
     }
     /**
      * @return the $_class_id
@@ -42,18 +28,32 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
         return $this->_class_id;
     }
     /**
-     * @param field_type $_class_id
-     */
-    public function setClass_id ($_class_id)
-    {
-        $this->_class_id = $_class_id;
-    }
-    /**
      * @return the $_subject_id
      */
     public function getSubject_id ()
     {
         return $this->_subject_id;
+    }
+    /**
+     * @param field_type $_student_subject_id
+     */
+    public function setStudent_subject_id ($_student_subject_id)
+    {
+        $this->_student_subject_id = $_student_subject_id;
+    }
+    /**
+     * @param field_type $_member_id
+     */
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
+    }
+    /**
+     * @param field_type $_class_id
+     */
+    public function setClass_id ($_class_id)
+    {
+        $this->_class_id = $_class_id;
     }
     /**
      * @param field_type $_subject_id
@@ -128,8 +128,9 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
             $error = 'Insufficient params supplied to fetchClassIds() function.Please provide a Member Id and a Subject id';
             throw new Exception($error, Zend_Log::ERR);
         } else {
-            $class_ids = $this->getMapper()->fetchClassIds($member_id);
-            if (sizeof($class_ids) == 0) {
+            $class_ids = $this->getMapper()->fetchClassIds($member_id, 
+            $subject_id);
+            if (empty($class_ids)) {
                 return false;
             } else {
                 return $class_ids;
@@ -182,7 +183,7 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
         $subject_id = $this->getSubject_id(true);
         $stu_subj_id = $this->getMapper()->fetchStudentSubjectId($member_id, 
         $class_id, $subject_id);
-        if (sizeof($stu_subj_id) == 0) {
+        if (empty($stu_subj_id)) {
             return false;
         } else {
             return $stu_subj_id;
@@ -218,15 +219,11 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
         $class_id = $this->getClass_id(true);
         $student_subjects = $this->getMapper()->fetchSubjects($member_id, 
         $class_id);
-        if (sizeof($student_subjects) == 0) {
+        if (empty($student_subjects)) {
             return false;
         } else {
             return $student_subjects;
         }
-    }
-    public function fetchResultTypes ()
-    {
-        return $this->getMapper()->fetchResultTypes();
     }
     public function save ($data_array)
     {

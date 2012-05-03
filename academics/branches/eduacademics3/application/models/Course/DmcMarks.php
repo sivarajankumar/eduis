@@ -19,7 +19,7 @@ class Acad_Model_DmcMarks extends Acad_Model_Generic
     {
         $dmc_marks_id = $this->_dmc_marks_id;
         if (empty($dmc_marks_id) and $throw_exception == true) {
-            $message = 'dmc_info_id is not set';
+            $message = 'dmc_marks_id is not set';
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -33,7 +33,7 @@ class Acad_Model_DmcMarks extends Acad_Model_Generic
     {
         $student_subject_id = $this->_student_subject_id;
         if (empty($student_subject_id) and $throw_exception == true) {
-            $message = 'dmc_info_id is not set';
+            $message = 'student_subject_id is not set';
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

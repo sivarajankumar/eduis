@@ -20,25 +20,11 @@ class Acad_Model_Qualification_Mtech extends Acad_Model_Generic
         return $this->_member_id;
     }
     /**
-     * @param field_type $_member_id
-     */
-    public function setMember_id ($_member_id)
-    {
-        $this->_member_id = $_member_id;
-    }
-    /**
      * @return the $_qualification_id
      */
     public function getQualification_id ()
     {
         return $this->_qualification_id;
-    }
-    /**
-     * @param field_type $_qualification_id
-     */
-    public function setQualification_id ($_qualification_id)
-    {
-        $this->_qualification_id = $_qualification_id;
     }
     /**
      * @return the $_discipline_id
@@ -48,25 +34,11 @@ class Acad_Model_Qualification_Mtech extends Acad_Model_Generic
         return $this->_discipline_id;
     }
     /**
-     * @param field_type $_discipline_id
-     */
-    public function setDiscipline_id ($_discipline_id)
-    {
-        $this->_discipline_id = $_discipline_id;
-    }
-    /**
      * @return the $_marks_obtained
      */
     public function getMarks_obtained ()
     {
         return $this->_marks_obtained;
-    }
-    /**
-     * @param field_type $_marks_obtained
-     */
-    public function setMarks_obtained ($_marks_obtained)
-    {
-        $this->_marks_obtained = $_marks_obtained;
     }
     /**
      * @return the $_total_marks
@@ -76,25 +48,11 @@ class Acad_Model_Qualification_Mtech extends Acad_Model_Generic
         return $this->_total_marks;
     }
     /**
-     * @param field_type $_total_marks
-     */
-    public function setTotal_marks ($_total_marks)
-    {
-        $this->_total_marks = $_total_marks;
-    }
-    /**
      * @return the $_percentage
      */
     public function getPercentage ()
     {
         return $this->_percentage;
-    }
-    /**
-     * @param field_type $_percentage
-     */
-    public function setPercentage ($_percentage)
-    {
-        $this->_percentage = $_percentage;
     }
     /**
      * @return the $_passing_year
@@ -104,25 +62,11 @@ class Acad_Model_Qualification_Mtech extends Acad_Model_Generic
         return $this->_passing_year;
     }
     /**
-     * @param field_type $_passing_year
-     */
-    public function setPassing_year ($_passing_year)
-    {
-        $this->_passing_year = $_passing_year;
-    }
-    /**
      * @return the $_istitution
      */
     public function getIstitution ()
     {
         return $this->_istitution;
-    }
-    /**
-     * @param field_type $_istitution
-     */
-    public function setIstitution ($_istitution)
-    {
-        $this->_istitution = $_istitution;
     }
     /**
      * @return the $_university
@@ -132,13 +76,6 @@ class Acad_Model_Qualification_Mtech extends Acad_Model_Generic
         return $this->_university;
     }
     /**
-     * @param field_type $_university
-     */
-    public function setUniversity ($_university)
-    {
-        $this->_university = $_university;
-    }
-    /**
      * @return the $_city_name
      */
     public function getCity_name ()
@@ -146,18 +83,81 @@ class Acad_Model_Qualification_Mtech extends Acad_Model_Generic
         return $this->_city_name;
     }
     /**
-     * @param field_type $_city_name
-     */
-    public function setCity_name ($_city_name)
-    {
-        $this->_city_name = $_city_name;
-    }
-    /**
      * @return the $_state_name
      */
     public function getState_name ()
     {
         return $this->_state_name;
+    }
+    /**
+     * @param field_type $_member_id
+     */
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
+    }
+    /**
+     * @param field_type $_qualification_id
+     */
+    public function setQualification_id ($_qualification_id)
+    {
+        $this->_qualification_id = $_qualification_id;
+    }
+    /**
+     * @param field_type $_discipline_id
+     */
+    public function setDiscipline_id ($_discipline_id)
+    {
+        $this->_discipline_id = $_discipline_id;
+    }
+    /**
+     * @param field_type $_marks_obtained
+     */
+    public function setMarks_obtained ($_marks_obtained)
+    {
+        $this->_marks_obtained = $_marks_obtained;
+    }
+    /**
+     * @param field_type $_total_marks
+     */
+    public function setTotal_marks ($_total_marks)
+    {
+        $this->_total_marks = $_total_marks;
+    }
+    /**
+     * @param field_type $_percentage
+     */
+    public function setPercentage ($_percentage)
+    {
+        $this->_percentage = $_percentage;
+    }
+    /**
+     * @param field_type $_passing_year
+     */
+    public function setPassing_year ($_passing_year)
+    {
+        $this->_passing_year = $_passing_year;
+    }
+    /**
+     * @param field_type $_istitution
+     */
+    public function setIstitution ($_istitution)
+    {
+        $this->_istitution = $_istitution;
+    }
+    /**
+     * @param field_type $_university
+     */
+    public function setUniversity ($_university)
+    {
+        $this->_university = $_university;
+    }
+    /**
+     * @param field_type $_city_name
+     */
+    public function setCity_name ($_city_name)
+    {
+        $this->_city_name = $_city_name;
     }
     /**
      * @param field_type $_state_name
@@ -236,11 +236,11 @@ class Acad_Model_Qualification_Mtech extends Acad_Model_Generic
             throw new Exception($careless_error);
         } else {
             $info = $this->getMapper()->fetchInfo($member_id);
-            if (sizeof($info) == 0) {
+            if (empty($info)) {
                 return false;
             } else {
                 $this->setOptions($info);
-                return true;
+                return $this;
             }
         }
     }
