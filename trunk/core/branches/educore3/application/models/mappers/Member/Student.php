@@ -66,8 +66,8 @@ class Core_Model_Mapper_Member_Student
         $select = $adapter->select()
             ->from($table_name, $req_cols)
             ->join($nat_table, $nat_cond, $nat_columns)
-            ->join($nat_table, $cast_cond, $cast_cols)
-            ->join($nat_table, $rel_cond, $req_cols)
+            ->join($cast_table, $cast_cond, $cast_cols)
+            ->join($religion_table, $rel_cond, $religion_cols)
             ->where('member_id = ?', $member_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);

@@ -254,7 +254,7 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
     {
         $member_id = $this->getMember_id(true);
         $relation_ids = $this->getMapper()->fetchRelationIds($member_id);
-        if (sizeof($relation_ids) == 0) {
+        if (empty($relation_ids)) {
             return false;
         } else {
             return $relation_ids;

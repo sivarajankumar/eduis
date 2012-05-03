@@ -215,6 +215,7 @@ class Core_Model_Class extends Core_Model_Generic
                 return false;
             } else {
                 $this->setOptions($info);
+                return $this;
             }
         }
     }
