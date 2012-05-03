@@ -62,8 +62,7 @@ class Acad_Model_Mapper_DmcInfo
         $db_table = $this->getDbTable();
         $dmc_info_table = $db_table->info('name');
         $dmc_info_ids = array();
-        $required_cols = array('dmc_info_id', 'dmc_id', 'class_id', 
-        'result_type_id');
+        $required_cols = array('dmc_info_id');
         $select = $adapter->select()
             ->from($dmc_info_table, $required_cols)
             ->where('member_id = ?', $member_id);
