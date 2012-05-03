@@ -289,7 +289,7 @@ public function getinfoAction ()
                     $this->view->assign('critical_data', $critical_data);
                 }
                 if (! empty($page_header)) {
-                    $this->view->assign('critical_data', $page_header);
+                    $this->view->assign('page_header', $page_header);
                 }
                 if (! empty($relative_data)) {
                     $this->view->assign('relative_data', $relative_data);
