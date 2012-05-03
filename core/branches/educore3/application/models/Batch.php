@@ -206,7 +206,6 @@ class Core_Model_Batch extends Core_Model_Generic
      * @param bool $batch_start_year_specific optional
      * @param bool $department_specific optional
      * @param bool $programme_specific optional
-     * @throws Exception
      * @return array|int|flase
      */
     public function fetchBatchIds ($batch_start_year_specific = null, 
