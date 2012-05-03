@@ -14,77 +14,77 @@
 		$( "#tabs" ).tabs();
 	});
 </script>
-<?php 
-    $class_array = array_slice($this->critical_data,5);
-?>
+
 <center><h1>Personal Profile</h1></center>
-<div id="class_info"  style="float:inherit; width:1264px; height:125px; padding:4px" >
-<h3></h3><p>
-<span style="float:left; ">Roll No.: <?php echo strtoupper($this->critical_data['roll_no']);?></span>
-<span style="float:right; ">Regn No.: <?php echo strtoupper($this->critical_data['registration_id']);?></span><br>
-<span style="float:left; ">Degree: <?php echo strtoupper($this->critical_data['programme_id']);?></span>
-<span style="float:right; ">Depatment: <?php echo strtoupper($this->critical_data['department_id']);?></span><br>
-<span style="float:left; ">Semester: <?php echo strtoupper($this->critical_data['semester_id']);?></span>
-</p>
-</div>
-<div id="tabs">
-	<ul>
-		<li><a href="#tabs-1">Basic Information</a></li>
-		<li><a class="relative_data" href="#tabs-2">Relatives Information</a></li>
-		<li><a class="address" href="#tabs-3">Contact Details</a></li>
-	</ul>
+    <div id="class_info"  style="float:inherit; width:1264px; height:125px; padding:4px" >
+        <p>
+            <span style="float:left; "><strong>Roll Number: <?php echo strtoupper($this->page_header['roll_no']);?></strong></span>
+            <span style="float:right;"><strong>Degree  : <?php echo strtoupper($this->page_header['programme_id']);?></strong></span><br>
+            <span style="float:right;"><strong>Depatment: <?php echo strtoupper($this->page_header['department_id']);?></strong></span>
+            <span style="float:left; "><strong>Semester: <?php echo strtoupper($this->page_header['semester_id']);?></strong></span><br>
+            <span style="float:left; "><strong>Group  : <?php echo strtoupper($this->page_header['group_id']);?></strong></span>
+        </p>
+    </div>
+    
+    <div id="tabs">
+    	<ul>
+    		<li><a href="#tabs-1">Basic Information</a></li>
+    		<li><a class="relative_data" href="#tabs-2">Relatives Information</a></li>
+    		<li><a class="address" href="#tabs-3">Contact Details</a></li>
+    	</ul>
+    	
 	<div id="tabs-1">
-	<table style="width: 100%">
-	<?php 
-	//$class_array = array_slice($this->critical_data,5);
-		foreach ($class_array as $key => $value) {
-    	echo '<tr>';
-    	echo '<td>'.ucfirst(str_replace('_', ' ', str_replace("_id", '',$key))).'</td>';
-    	echo '<td>'.ucfirst($value).'</td>';
-    	echo '</tr>';
-          //echo $key." ".$value."</br>";
-        }
-    ?>
-	</table>
+    	<table style="width: 100%">
+            <?php 
+        	foreach ($this->critical_data as $key => $value) 
+        		{
+                    echo '<tr>';
+        	        echo '<td>'.ucfirst(str_replace('_', ' ', str_replace("_id", '',$key))).'</td>';
+                	echo '<td>'.ucfirst($value).'</td>';
+        	        echo '</tr>'; 
+        		}  
+            ?>
+        	
+    	</table>
 	</div>
-
-<div id="tabs-2">
-	<table style="width: 100%">	
-		<?php 
-		   	foreach ($this->relative_data as $key => $array){
-	        echo '<tr>';
-	        echo '<th>'.ucfirst($key).'</th>';
-    	    echo '</tr>';
-	        echo '<br>';
-	        foreach ($array as $param => $value) {
+    
+    <div id="tabs-2">
+    	<table style="width: 100%">	
+    		<?php 
+    		   	foreach ($this->relative_data as $key => $array){
     	        echo '<tr>';
-        		echo '<td>'.ucfirst(str_replace('_', ' ', str_replace("_id", '',$param))).'</td>';
-    	    	echo '<td>'.ucfirst($value).'</td>';
-    		    echo '</tr>';
-	        }
-	    
-	    }
-	    ?>
-	</table>
-</div>
-
-<div id="tabs-3">
-	<table style="width: 100%">
-	
-	<?php 
-    	foreach ($this->address as $key => $array){
-	        echo '<tr>';
-    	    echo '<th>'.ucfirst($key).'</th>';
-	        echo '</tr>';
-	        echo '<br>';
-    	    foreach ($array as $param => $value) {
-	            echo '<tr>';
-    	    	echo '<td>'.ucfirst(str_replace('_', ' ', str_replace("_id", '',$param))).'</td>';
-    		    echo '<td>'.ucfirst($value).'</td>';
-        		echo '</tr>';
-	        } 
-	    }
-	?>
-	</table>
-</div>
+    	        echo '<th>'.ucfirst($key).'</th>';
+        	    echo '</tr>';
+    	        echo '<br>';
+    	        foreach ($array as $param => $value) {
+        	        echo '<tr>';
+            		echo '<td>'.ucfirst(str_replace('_', ' ', str_replace("_id", '',$param))).'</td>';
+        	    	echo '<td>'.ucfirst($value).'</td>';
+        		    echo '</tr>';
+    	        }
+    	    
+    	    }
+    	    ?>
+    	</table>
+    </div>
+    
+    <div id="tabs-3">
+    	<table style="width: 100%">
+    	
+    	<?php 
+        	foreach ($this->address as $key => $array){
+    	        echo '<tr>';
+        	    echo '<th>'.ucfirst($key).'</th>';
+    	        echo '</tr>';
+    	        echo '<br>';
+        	    foreach ($array as $param => $value) {
+    	            echo '<tr>';
+        	    	echo '<td>'.ucfirst(str_replace('_', ' ', str_replace("_id", '',$param))).'</td>';
+        		    echo '<td>'.ucfirst($value).'</td>';
+            		echo '</tr>';
+    	        } 
+    	    }
+    	?>
+    	</table>
+    </div>
 </div>
