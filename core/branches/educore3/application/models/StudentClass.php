@@ -179,7 +179,7 @@ class Core_Model_StudentClass extends Core_Model_Generic
             throw new Exception($error, Zend_Log::ERR);
         } else {
             $info = $this->getMapper()->fetchInfo($member_id, $class_id);
-            if (sizeof($info) == 0) {
+            if (empty($info)) {
                 return false;
             } else {
                 $this->setOptions($info);
@@ -201,7 +201,7 @@ class Core_Model_StudentClass extends Core_Model_Generic
     {
         $member_id = $this->getMember_id(true);
         $class_ids = $this->getMapper()->fetchClassIds($member_id);
-        if (sizeof($class_ids) == 0) {
+        if (empty($class_ids)) {
             return false;
         } else {
             return $class_ids;

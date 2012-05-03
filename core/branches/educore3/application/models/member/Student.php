@@ -369,18 +369,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
     public function fetchCriticalInfo ()
     {
         $member_id = $this->getMember_id(true);
-        if (empty($member_id)) {
-            $careless_error = 'Please provide a Member Id';
-            throw new Exception($careless_error);
-        } else {
-            $info = $this->getMapper()->fetchCriticalInfo($member_id);
-            if (sizeof($info) == 0) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return $this;
-            }
-        }
+        return $this->getMapper()->fetchCriticalInfo($member_id);
     }
     /**
      * Fetches Admission information of a Student,
@@ -390,19 +379,9 @@ class Core_Model_Member_Student extends Core_Model_Generic
     public function fetchAdmissionInfo ()
     {
         $member_id = $this->getMember_id(true);
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error, Zend_Log::ERR);
-        } else {
-            $admission_object = new Core_Model_StudentAdmission();
-            $admission_object->setMember_id($member_id);
-            $admission_info = $admission_object->fetchInfo();
-            if (! $admission_info) {
-                return false;
-            } else {
-                return $admission_object;
-            }
-        }
+        $admission_object = new Core_Model_StudentAdmission();
+        $admission_object->setMember_id($member_id);
+        return $admission_object->fetchInfo();
     }
     /**
      * Fetches Registration information of a Student,
@@ -412,19 +391,9 @@ class Core_Model_Member_Student extends Core_Model_Generic
     public function fetchRegistrationInfo ()
     {
         $member_id = $this->getMember_id(true);
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error, Zend_Log::ERR);
-        } else {
-            $registration_object = new Core_Model_StudentRegistration();
-            $registration_object->setMember_id($member_id);
-            $registration_info = $registration_object->fetchInfo();
-            if (! $registration_info) {
-                return false;
-            } else {
-                return $registration_object;
-            }
-        }
+        $registration_object = new Core_Model_StudentRegistration();
+        $registration_object->setMember_id($member_id);
+        return $registration_object->fetchInfo();
     }
     /**
      * Fetches Address information of a Student,
@@ -434,20 +403,10 @@ class Core_Model_Member_Student extends Core_Model_Generic
     public function fetchAddressInfo ($address_type)
     {
         $member_id = $this->getMember_id(true);
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error, Zend_Log::ERR);
-        } else {
-            $address_object = new Core_Model_MemberAddress();
-            $address_object->setAddress_type($address_type);
-            $address_object->setMember_id($member_id);
-            $address_info = $address_object->fetchInfo();
-            if (! $address_info) {
-                return false;
-            } else {
-                return $address_object;
-            }
-        }
+        $address_object = new Core_Model_MemberAddress();
+        $address_object->setAddress_type($address_type);
+        $address_object->setMember_id($member_id);
+        return $address_object->fetchInfo();
     }
     /**
      * Fetches Contact information of a Student,
@@ -457,20 +416,9 @@ class Core_Model_Member_Student extends Core_Model_Generic
     public function fetchContactInfo ($contact_type_id)
     {
         $member_id = $this->getMember_id(true);
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error, Zend_Log::ERR);
-        } else {
-            $contacts_object = new Core_Model_MemberContacts();
-            $contacts_object->setMember_id($member_id);
-            $contacts_object->setContact_type_id($contact_type_id);
-            $contacts_info = $contacts_object->fetchInfo();
-            if (! $contacts_info) {
-                return false;
-            } else {
-                return $contacts_object;
-            }
-        }
+        $contacts_object = new Core_Model_MemberContacts();
+        $contacts_object->setMember_id($member_id);
+        return $contacts_object->setContact_type_id($contact_type_id);
     }
     /**
      * Fetches information about Relative of a Student,
@@ -480,20 +428,10 @@ class Core_Model_Member_Student extends Core_Model_Generic
     public function fetchRelativeInfo ($relation_id)
     {
         $member_id = $this->getMember_id(true);
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error, Zend_Log::ERR);
-        } else {
-            $relative_object = new Core_Model_MemberRelatives();
-            $relative_object->setMember_id($member_id);
-            $relative_object->setRelation_id($relation_id);
-            $relative_info = $relative_object->fetchInfo();
-            if (! $relative_info) {
-                return false;
-            } else {
-                return $relative_object;
-            }
-        }
+        $relative_object = new Core_Model_MemberRelatives();
+        $relative_object->setMember_id($member_id);
+        $relative_object->setRelation_id($relation_id);
+        return $relative_object->fetchInfo();
     }
     /**
      * Fetches the Active class_ids of a Student
@@ -502,18 +440,16 @@ class Core_Model_Member_Student extends Core_Model_Generic
      */
     public function fetchActiveClassIds ()
     {
+        $student_active_class_ids = array();
         $student_class_ids = $this->fetchAllClassIds();
         $member_id = $this->getMember_id(true);
         $class_obj = new Core_Model_Class();
         $active_class_ids = $class_obj->fetchClassIds(null, null, true);
-        $student_active_class_ids = array();
-        $student_active_class_ids = array_intersect($student_class_ids, 
-        $active_class_ids);
-        if (empty($student_active_class_ids)) {
-            return false;
-        } else {
-            return $student_active_class_ids;
+        if (! empty($student_class_ids) and ! empty($active_class_ids)) {
+            $student_active_class_ids = array_intersect($student_class_ids, 
+            $active_class_ids);
         }
+        return $student_active_class_ids;
     }
     /**
      * Fetches the All class_ids of a Student
@@ -525,12 +461,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $member_id = $this->getMember_id(true);
         $student_class_obj = new Core_Model_StudentClass();
         $student_class_obj->setMember_id($member_id);
-        $student_class_ids = $student_class_obj->fetchClassIds();
-        if (empty($student_class_ids)) {
-            return false;
-        } else {
-            return $student_class_ids;
-        }
+        return $student_class_obj->fetchClassIds();
     }
     /**
      * Fetches class_ids in which member was admitted in the given semester(
@@ -544,12 +475,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $class_object = new Core_Model_Class();
         $class_object->setBatch_id($batch_id);
         $class_object->setSemester_id($semester_id);
-        $class_ids = $class_object->fetchClassIds(true, true);
-        if (empty($class_ids)) {
-            return false;
-        } else {
-            return $class_ids;
-        }
+        return $class_object->fetchClassIds(true, true);
     }
     /**
      * Fetches information regarding CLASS of a Student,
@@ -562,12 +488,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $student_class_object = new Core_Model_StudentClass();
         $student_class_object->setMember_id($member_id);
         $student_class_object->setClass_id($class_id);
-        $info_flag = $student_class_object->fetchInfo();
-        if (! $info_flag) {
-            return false;
-        } else {
-            return $student_class_object;
-        }
+        return $student_class_object->fetchInfo();
     }
     /**
      * Fetches Batch Id of a Student,
@@ -582,7 +503,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $batch_identifier_class_id = $student_class_object->fetchBatchIdentifierClassId();
         $class_object = new Core_Model_Class();
         $class_object->setClass_id($batch_identifier_class_id);
-        $class_info = $class_object->fetchInfo();
+        $class_object->fetchInfo();
         $batch_id = $class_object->getBatch_id();
         return $batch_id;
     }
@@ -596,8 +517,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $member_id = $this->getMember_id(true);
         $relatives_object = new Core_Model_MemberRelatives();
         $relatives_object->setMember_id($member_id);
-        $relatives_ids = $relatives_object->fetchRelationIds();
-        return $relatives_ids;
+        return $relatives_object->fetchRelationIds();
     }
     /**
      * Fetches Address Type Ids of a Student,
@@ -609,8 +529,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $member_id = $this->getMember_id(true);
         $address_object = new Core_Model_MemberAddress();
         $address_object->setMember_id($member_id);
-        $address_ids = $address_object->fetchAddressTypes();
-        return $address_ids;
+        return $address_object->fetchAddressTypes();
     }
     /**
      * Fetches Contact Type Ids of a Student,
@@ -622,8 +541,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $member_id = $this->getMember_id(true);
         $contacts_object = new Core_Model_MemberContacts();
         $contacts_object->setMember_id($member_id);
-        $contact_type_ids = $contacts_object->fetchContactTypeIds();
-        return $contact_type_ids;
+        return $contacts_object->fetchContactTypeIds();
     }
     public function saveCriticalInfo ($data_array)
     {

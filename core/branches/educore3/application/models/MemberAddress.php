@@ -199,7 +199,7 @@ class Core_Model_MemberAddress extends Core_Model_Generic
             throw new Exception($careless_error, Zend_Log::ERR);
         } else {
             $address_types = $this->getMapper()->fetchAddressTypes($member_id);
-            if (sizeof($address_types) == 0) {
+            if (empty($address_types)) {
                 return false;
             } else {
                 return $address_types;
