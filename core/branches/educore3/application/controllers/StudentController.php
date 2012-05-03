@@ -31,6 +31,52 @@ class StudentController extends Zend_Controller_Action
      * 
      *to show the form on view for personal information
      */
+    
+public function getinfoAction ()
+    {
+        /*   $request = $this->getRequest();
+        //the basic vars like roll dep prog sem mem_id must be saved in session vars 
+        */
+        $roll_no = $this->getRequest()->getParam('roll_no');
+        $department_id = $this->getRequest()->getParam('department_id');
+        $programme_id = $this->getRequest()->getParam('programme_id');
+        $semester_id = $this->getRequest()->getParam('semester_id');
+        $model = new Core_Model_Member_Student();
+        $model->setRoll_no($roll_no);
+        $model->setDepartment_id($department_id);
+        $model->setProgramme_id($programme_id);
+        $model->setSemester_id($semester_id);
+        $model->findMemberId();
+        $member_id = $model->getMember_id();
+        $callback = $this->getRequest()->getParam('callback');
+        echo $callback . '(' . $this->_helper->json($member_id, false) . ')';
+         //$this->_helper->json($member_id);
+    /* $request = $this->getRequest();
+        $format = $request->getParam('format', 'json');
+        $rollno = $request->getParam('rollno');
+        if (isset($rollno)) {
+            $result = Core_Model_DbTable_Student::getStudentInfo($rollno);
+            switch (strtolower($format)) {
+                case 'json':
+                    $this->_helper->json($result);
+                    return;
+                case 'select' :
+					echo '<select>';
+					echo '<option>Select one</option>';
+					foreach ( $result as $key => $row ) {
+						echo '<option value="' . $row ['batch_start'] . '">' . $row ['batch_start'] . '</option>';
+					}
+					echo '</select>';
+					
+					return;
+                case 'xml':
+                    return;
+                default:
+                    $this->getResponse()
+                        ->setException('Unsupported format request')
+                        ->setHttpResponseCode(400);*/
+            }
+        
     public function createprofileAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -136,13 +182,13 @@ class StudentController extends Zend_Controller_Action
         $name['first_name'] = $raw_critical_data['first_name'];
         $name['middle_name'] = $raw_critical_data['middle_name'];
         $name['last_name'] = $raw_critical_data['last_name'];
-        $critical_data['basic_info']['name'] = implode(' ', $name);
-        $critical_data['basic_info']['cast'] = $raw_critical_data['cast'];
-        $critical_data['basic_info']['nationality'] = $raw_critical_data['nationality'];
-        $critical_data['basic_info']['religion'] = $raw_critical_data['religion'];
-        $critical_data['basic_info']['blood_group'] = $raw_critical_data['blood_group'];
-        $critical_data['basic_info']['dob'] = $raw_critical_data['dob'];
-        $critical_data['basic_info']['gender'] = $raw_critical_data['gender'];
+        $critical_data['name'] = implode(' ', $name);
+        $critical_data['cast'] = $raw_critical_data['cast'];
+        $critical_data['nationality'] = $raw_critical_data['nationality'];
+        $critical_data['religion'] = $raw_critical_data['religion'];
+        $critical_data['blood_group'] = $raw_critical_data['blood_group'];
+        $critical_data['dob'] = $raw_critical_data['dob'];
+        $critical_data['gender'] = $raw_critical_data['gender'];
         //registration info
         $student_model = new Core_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
@@ -157,21 +203,21 @@ class StudentController extends Zend_Controller_Action
             $student_class_model = $student_model->fetchClassInfo(
             $current_class_id);
             if ($student_class_model instanceof Core_Model_StudentClass) {
-                $critical_data['page_header'][$current_class_id]['roll_no'] = $student_class_model->getRoll_no();
-                $critical_data['page_header'][$current_class_id]['group_id'] = $student_class_model->getGroup_id();
+                $page_header['roll_no'] = $student_class_model->getRoll_no();
+                $page_header['group_id'] = $student_class_model->getGroup_id();
             }
         }
         //student_class info
         $class_model = new Core_Model_Class();
         $class_model->setClass_id($current_class_id);
         $class_model->fetchInfo();
-        $critical_data['page_header']['semester_id'] = $class_model->getSemester_id();
+        $page_header['semester_id'] = $class_model->getSemester_id();
         $batch_id = $student_model->fetchBatchId();
         $batch_model = new Core_Model_Batch();
         $batch_model->setBatch_id($batch_id);
         $batch_model->fetchInfo();
-        $critical_data['page_header']['department_id'] = $batch_model->getDepartment_id();
-        $critical_data['page_header']['programme_id'] = $batch_model->getProgramme_id();
+        $page_header['department_id'] = $batch_model->getDepartment_id();
+        $page_header['programme_id'] = $batch_model->getProgramme_id();
         //for relative info
         $relative_data = array();
         $relationIds = $student_model->fetchRelationIds();
@@ -231,6 +277,9 @@ class StudentController extends Zend_Controller_Action
         if (! empty($contact_data)) {
             $response['contact_data'] = $contact_data;
         }
+        if (! empty($page_header)) {
+            $response['page_header'] = $page_header;
+        }
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -238,6 +287,9 @@ class StudentController extends Zend_Controller_Action
                 Zend_Registry::get('logger')->debug($response);
                 if (! empty($critical_data)) {
                     $this->view->assign('critical_data', $critical_data);
+                }
+                if (! empty($page_header)) {
+                    $this->view->assign('critical_data', $page_header);
                 }
                 if (! empty($relative_data)) {
                     $this->view->assign('relative_data', $relative_data);
@@ -280,6 +332,18 @@ class StudentController extends Zend_Controller_Action
         $critical_data['blood_group'] = $student_model->getBlood_group();
         $critical_data['dob'] = $student_model->getDob();
         $critical_data['gender'] = $student_model->getGender();
+        $critical_data['member_type_id'] = $student_model->getMember_type_id();
+        $critical_data['religion_id'] = $student_model->getReligion_id();
+        $critical_data['nationality_id'] = $student_model->getNationality_id();
+        $critical_data['cast_id'] = $student_model->getCast_id();
         return $critical_data;
     }
+    
+    public function fetchcriticalinfoAction()
+    {
+        $this->_helper->viewRenderer->setNoRender(TRUE);
+        $this->_helper->layout()->disableLayout();
+        $critical_data = self::fetchcriticalinfo();
+        $this->_helper->json($critical_data);
+     }
 }
