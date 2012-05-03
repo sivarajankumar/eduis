@@ -180,13 +180,13 @@ class StudentController extends Zend_Controller_Action
             $relative_model = $student_model->fetchRelativeInfo($relation_id);
             
             if ($relative_model instanceof Core_Model_MemberRelatives) {
-                $relative_data[$relation_id]['name'] = $relative_model->getName();
-                $relative_data[$relation_id]['contact'] = $relative_model->getContact();
-                $relative_data[$relation_id]['designation'] = $relative_model->getDesignation();
-                $relative_data[$relation_id]['email'] = $relative_model->getEmail();
-                $relative_data[$relation_id]['occupation'] = $relative_model->getOccupation();
-                $relative_data[$relation_id]['office_add'] = $relative_model->getOffice_add();
-                $relative_data[$relation_id]['landline_no'] = $relative_model->getLandline_no();
+                $relative_data[$relative_model->getRelation_name()]['name'] = $relative_model->getName();
+                $relative_data[$relative_model->getRelation_name()]['contact'] = $relative_model->getContact();
+                $relative_data[$relative_model->getRelation_name()]['designation'] = $relative_model->getDesignation();
+                $relative_data[$relative_model->getRelation_name()]['email'] = $relative_model->getEmail();
+                $relative_data[$relative_model->getRelation_name()]['occupation'] = $relative_model->getOccupation();
+                $relative_data[$relative_model->getRelation_name()]['office_add'] = $relative_model->getOffice_add();
+                $relative_data[$relative_model->getRelation_name()]['landline_no'] = $relative_model->getLandline_no();
                
                 
             } elseif (! $relative_model) {
