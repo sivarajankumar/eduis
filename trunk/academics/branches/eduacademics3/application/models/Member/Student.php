@@ -322,7 +322,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         if (null === $this->_mapper) {
             $this->setMapper(new Acad_Model_Mapper_Member_Student());
         }
-        return $this->_mapperr;
+        return $this->_mapper;
     }
     /**
      * Provides correct db column names corresponding to model properties
@@ -499,7 +499,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             $student_subject_object->setSubject_id($subject_id);
             $student_subject_object->setClass_id($class_id);
             $marks = $student_subject_object->fetchDMC($result_type_id);
-            if ($marks instanceof Acad_Model_DmcMarks) {
+            if ($marks instanceof Acad_Model_Course_DmcMarks) {
                 return $marks;
             } else {
                 return false;
@@ -564,14 +564,25 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
      * Fetches DMC of a Student,
      * @param int $dmc_info_id
      * @param int $student_subject_id
-     * @return DMC|false object of Acad_Model_DmcMarks
+     * @return DMC|false object of Acad_Model_Course_DmcMarks
      */
     public function fetchDmc ($dmc_info_id, $student_subject_id)
     {
-        $dmc_marks_object = new Acad_Model_DmcMarks();
+        $dmc_marks_object = new Acad_Model_Course_DmcMarks();
         $dmc_marks_object->setDmc_info_id($dmc_info_id);
         $dmc_marks_object->setStudent_subject_id($student_subject_id);
         return $dmc_marks_object->fetchInfo();
+    }
+    /**
+     * Fetches DMC information
+     * @param int $dmc_info_id
+     * @return DMC|false object of Acad_Model_Course_DmcInfo
+     */
+    public function fetchDmcInfo ($dmc_info_id)
+    {
+        $dmc_info_object = new Acad_Model_Course_DmcInfo();
+        $dmc_info_object->setDmc_info_id($dmc_info_id);
+        return $dmc_info_object->fetchInfo();
     }
     public function fetchCompetitveExamIds ()
     {
