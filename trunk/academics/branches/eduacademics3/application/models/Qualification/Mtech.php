@@ -15,23 +15,44 @@ class Acad_Model_Qualification_Mtech extends Acad_Model_Generic
     /**
      * @return the $_member_id
      */
-    public function getMember_id ()
+    public function getMember_id ($throw_exception = null)
     {
-        return $this->_member_id;
+        $member_id = $this->_member_id;
+        if (empty($member_id) and $throw_exception == true) {
+            $message = '_member_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $member_id;
+        }
     }
     /**
      * @return the $_qualification_id
      */
-    public function getQualification_id ()
+    public function getQualification_id ($throw_exception = null)
     {
-        return $this->_qualification_id;
+        $qualification_id = $this->_qualification_id;
+        if (empty($qualification_id) and $throw_exception == true) {
+            $message = '_qualification_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $qualification_id;
+        }
     }
     /**
      * @return the $_discipline_id
      */
-    public function getDiscipline_id ()
+    public function getDiscipline_id ($throw_exception = null)
     {
-        return $this->_discipline_id;
+        $discipline_id = $this->_discipline_id;
+        if (empty($discipline_id) and $throw_exception == true) {
+            $message = '_discipline_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $discipline_id;
+        }
     }
     /**
      * @return the $_marks_obtained

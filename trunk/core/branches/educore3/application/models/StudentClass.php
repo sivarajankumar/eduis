@@ -10,46 +10,47 @@ class Core_Model_StudentClass extends Core_Model_Generic
     protected $_is_initial_batch_identifier;
     protected $_mapper;
     /**
+     * @param bool $throw_exception optional
      * @return the $_member_id
      */
-    public function getMember_id ()
+    public function getMember_id ($throw_exception = null)
     {
-        return $this->_member_id;
-    }
-    /**
-     * @param field_type $_member_id
-     */
-    public function setMember_id ($_member_id)
-    {
-        $this->_member_id = $_member_id;
+        $member_id = $this->_member_id;
+        if (empty($member_id) and $throw_exception == true) {
+            $message = 'Member_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $member_id;
+        }
     }
     /**
      * @return the $_class_id
      */
-    public function getClass_id ()
+    public function getClass_id ($throw_exception = null)
     {
-        return $this->_class_id;
-    }
-    /**
-     * @param field_type $_class_id
-     */
-    public function setClass_id ($_class_id)
-    {
-        $this->_class_id = $_class_id;
+        $class_id = $this->_class_id;
+        if (empty($class_id) and $throw_exception == true) {
+            $message = '_class_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $class_id;
+        }
     }
     /**
      * @return the $_group_id
      */
-    public function getGroup_id ()
+    public function getGroup_id ($throw_exception = null)
     {
-        return $this->_group_id;
-    }
-    /**
-     * @param field_type $_group_id
-     */
-    public function setGroup_id ($_group_id)
-    {
-        $this->_group_id = $_group_id;
+        $group_id = $this->_group_id;
+        if (empty($group_id) and $throw_exception == true) {
+            $message = '_group_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $group_id;
+        }
     }
     /**
      * @return the $_roll_no
@@ -59,25 +60,11 @@ class Core_Model_StudentClass extends Core_Model_Generic
         return $this->_roll_no;
     }
     /**
-     * @param field_type $_roll_no
-     */
-    public function setRoll_no ($_roll_no)
-    {
-        $this->_roll_no = $_roll_no;
-    }
-    /**
      * @return the $_start_date
      */
     public function getStart_date ()
     {
         return $this->_start_date;
-    }
-    /**
-     * @param field_type $_start_date
-     */
-    public function setStart_date ($_start_date)
-    {
-        $this->_start_date = $_start_date;
     }
     /**
      * @return the $_completion_date
@@ -87,18 +74,60 @@ class Core_Model_StudentClass extends Core_Model_Generic
         return $this->_completion_date;
     }
     /**
+     * @return the $_is_initial_batch_identifier
+     */
+    public function getIs_initial_batch_identifier ($throw_exception = null)
+    {
+        $is_initial_batch_identifier = $this->_is_initial_batch_identifier;
+        if (empty($is_initial_batch_identifier) and $throw_exception == true) {
+            $message = '_is_initial_batch_identifier is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $is_initial_batch_identifier;
+        }
+    }
+    /**
+     * @param field_type $_member_id
+     */
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
+    }
+    /**
+     * @param field_type $_class_id
+     */
+    public function setClass_id ($_class_id)
+    {
+        $this->_class_id = $_class_id;
+    }
+    /**
+     * @param field_type $_group_id
+     */
+    public function setGroup_id ($_group_id)
+    {
+        $this->_group_id = $_group_id;
+    }
+    /**
+     * @param field_type $_roll_no
+     */
+    public function setRoll_no ($_roll_no)
+    {
+        $this->_roll_no = $_roll_no;
+    }
+    /**
+     * @param field_type $_start_date
+     */
+    public function setStart_date ($_start_date)
+    {
+        $this->_start_date = $_start_date;
+    }
+    /**
      * @param field_type $_completion_date
      */
     public function setCompletion_date ($_completion_date)
     {
         $this->_completion_date = $_completion_date;
-    }
-    /**
-     * @return the $_is_initial_batch_identifier
-     */
-    public function getIs_initial_batch_identifier ()
-    {
-        return $this->_is_initial_batch_identifier;
     }
     /**
      * @param field_type $_is_initial_batch_identifier

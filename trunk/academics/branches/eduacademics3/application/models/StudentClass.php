@@ -10,25 +10,47 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
     protected $_is_initial_batch_identifier;
     protected $_mapper;
     /**
+     * @param bool $throw_exception optional
      * @return the $_member_id
      */
-    public function getMember_id ()
+    public function getMember_id ($throw_exception = null)
     {
-        return $this->_member_id;
+        $member_id = $this->_member_id;
+        if (empty($member_id) and $throw_exception == true) {
+            $message = 'Member_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $member_id;
+        }
     }
     /**
      * @return the $_class_id
      */
-    public function getClass_id ()
+    public function getClass_id ($throw_exception = null)
     {
-        return $this->_class_id;
+        $class_id = $this->_class_id;
+        if (empty($class_id) and $throw_exception == true) {
+            $message = '_class_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $class_id;
+        }
     }
     /**
      * @return the $_group_id
      */
-    public function getGroup_id ()
+    public function getGroup_id ($throw_exception = null)
     {
-        return $this->_group_id;
+        $group_id = $this->_group_id;
+        if (empty($group_id) and $throw_exception == true) {
+            $message = '_group_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $group_id;
+        }
     }
     /**
      * @return the $_roll_no
@@ -54,9 +76,16 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
     /**
      * @return the $_is_initial_batch_identifier
      */
-    public function getIs_initial_batch_identifier ()
+    public function getIs_initial_batch_identifier ($throw_exception = null)
     {
-        return $this->_is_initial_batch_identifier;
+        $is_initial_batch_identifier = $this->_is_initial_batch_identifier;
+        if (empty($is_initial_batch_identifier) and $throw_exception == true) {
+            $message = '_is_initial_batch_identifier is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $is_initial_batch_identifier;
+        }
     }
     /**
      * @param field_type $_member_id

@@ -11,58 +11,58 @@ class Core_Model_Batch extends Core_Model_Generic
     /**
      * @return the $_batch_id
      */
-    public function getBatch_id ()
+    public function getBatch_id ($throw_exception = null)
     {
-        return $this->_batch_id;
-    }
-    /**
-     * @param field_type $_batch_id
-     */
-    public function setBatch_id ($_batch_id)
-    {
-        $this->_batch_id = $_batch_id;
+        $batch_id = $this->_batch_id;
+        if (empty($batch_id) and $throw_exception == true) {
+            $message = '_batch_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $batch_id;
+        }
     }
     /**
      * @return the $_department_id
      */
-    public function getDepartment_id ()
+    public function getDepartment_id ($throw_exception = null)
     {
-        return $this->_department_id;
-    }
-    /**
-     * @param field_type $_department_id
-     */
-    public function setDepartment_id ($_department_id)
-    {
-        $this->_department_id = $_department_id;
+        $department_id = $this->_department_id;
+        if (empty($department_id) and $throw_exception == true) {
+            $message = '_department_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $department_id;
+        }
     }
     /**
      * @return the $_programme_id
      */
-    public function getProgramme_id ()
+    public function getProgramme_id ($throw_exception = null)
     {
-        return $this->_programme_id;
-    }
-    /**
-     * @param field_type $_programme_id
-     */
-    public function setProgramme_id ($_programme_id)
-    {
-        $this->_programme_id = $_programme_id;
+        $programme_id = $this->_programme_id;
+        if (empty($programme_id) and $throw_exception == true) {
+            $message = '_programme_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $programme_id;
+        }
     }
     /**
      * @return the $_batch_start
      */
-    public function getBatch_start ()
+    public function getBatch_start ($throw_exception = null)
     {
-        return $this->_batch_start;
-    }
-    /**
-     * @param field_type $_batch_start
-     */
-    public function setBatch_start ($_batch_start)
-    {
-        $this->_batch_start = $_batch_start;
+        $batch_start = $this->_batch_start;
+        if (empty($batch_start) and $throw_exception == true) {
+            $message = '_batch_start is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $batch_start;
+        }
     }
     /**
      * @return the $_batch_number
@@ -72,18 +72,53 @@ class Core_Model_Batch extends Core_Model_Generic
         return $this->_batch_number;
     }
     /**
+     * @return the $_is_active
+     */
+    public function getIs_active ($throw_exception = null)
+    {
+        $is_active = $this->_is_active;
+        if (empty($is_active) and $throw_exception == true) {
+            $message = '_is_active is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $is_active;
+        }
+    }
+    /**
+     * @param field_type $_batch_id
+     */
+    public function setBatch_id ($_batch_id)
+    {
+        $this->_batch_id = $_batch_id;
+    }
+    /**
+     * @param field_type $_department_id
+     */
+    public function setDepartment_id ($_department_id)
+    {
+        $this->_department_id = $_department_id;
+    }
+    /**
+     * @param field_type $_programme_id
+     */
+    public function setProgramme_id ($_programme_id)
+    {
+        $this->_programme_id = $_programme_id;
+    }
+    /**
+     * @param field_type $_batch_start
+     */
+    public function setBatch_start ($_batch_start)
+    {
+        $this->_batch_start = $_batch_start;
+    }
+    /**
      * @param field_type $_batch_number
      */
     public function setBatch_number ($_batch_number)
     {
         $this->_batch_number = $_batch_number;
-    }
-    /**
-     * @return the $_is_active
-     */
-    public function getIs_active ()
-    {
-        return $this->_is_active;
     }
     /**
      * @param field_type $_is_active
@@ -152,16 +187,22 @@ class Core_Model_Batch extends Core_Model_Generic
     {}
     /**
      * Fetches information regarding class
-     *@return false if no info present for given batch_id (else info is set in the current object)
+     *
      */
     public function fetchInfo ()
     {
-        $batch_id = $this->getBatch_id(true);
-        $info = $this->getMapper()->fetchInfo($batch_id);
-        if (sizeof($info) == 0) {
-            return false;
+        $member_id = $this->getMember_id();
+        if (empty($member_id)) {
+            $error = 'Please provide a Batch_Id';
+            throw new Exception($error, Zend_Log::ERR);
         } else {
-            $this->setOptions($info);
+            $info = $this->getMapper()->fetchPersonalInfo($member_id);
+            if (empty($info)) {
+                return false;
+            } else {
+                $this->setOptions($info);
+                return $this;
+            }
         }
     }
     /**
@@ -176,6 +217,9 @@ class Core_Model_Batch extends Core_Model_Generic
     public function fetchBatchIds ($batch_start_year_specific = null, 
     $department_specific = null, $programme_specific = null)
     {
+        $batch_start = null;
+        $department_id = null;
+        $programme_id = null;
         $batch_ids = array();
         if ($batch_start_year_specific == true) {
             $batch_start = $this->getBatch_start(true);
@@ -190,8 +234,6 @@ class Core_Model_Batch extends Core_Model_Generic
         $department_id, $programme_id);
         if (empty($batch_ids)) {
             return false;
-        } elseif (sizeof($batch_ids) == 1) {
-            return $batch_ids[0];
         } else {
             return $batch_ids;
         }
