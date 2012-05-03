@@ -27,7 +27,7 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     {
         $is_considered = $this->_is_considered;
         if (empty($is_considered) and $throw_exception == true) {
-            $message = 'dmc_info_id is not set';
+            $message = 'is_considered is not set';
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -62,7 +62,7 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     {
         $dmc_id = $this->_dmc_id;
         if (empty($dmc_id) and $throw_exception == true) {
-            $message = 'dmc_info_id is not set';
+            $message = 'dmc_id is not set';
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -76,7 +76,7 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     {
         $result_type_id = $this->_result_type_id;
         if (empty($result_type_id) and $throw_exception == true) {
-            $message = 'dmc_info_id is not set';
+            $message = 'result_type_id is not set';
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -90,7 +90,7 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     {
         $class_id = $this->_class_id;
         if (empty($class_id) and $throw_exception == true) {
-            $message = 'dmc_info_id is not set';
+            $message = 'class_id is not set';
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -104,7 +104,7 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     {
         $member_id = $this->_member_id;
         if (empty($member_id) and $throw_exception == true) {
-            $message = 'dmc_info_id is not set';
+            $message = 'member_id is not set';
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

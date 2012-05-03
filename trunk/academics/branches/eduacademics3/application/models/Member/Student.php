@@ -362,19 +362,14 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     public function initInfo ()
     {}
     /**
-     * Fetches CRITICAL information of a Student,
-     * Member_id must be set before calling this function 
+     * Fetches CRITICAL information of a Student(
+     * Member_id must be set before calling this function)
      * @return Student|false object of Acad_Model_Member_Student
      */
     public function fetchCriticalInfo ()
     {
         $member_id = $this->getMember_id(true);
-        $info = $this->getMapper()->fetchCriticalInfo($member_id);
-        if (sizeof($info) == 0) {
-            return false;
-        } else {
-            $this->setOptions($info);
-        }
+        return $this->getMapper()->fetchCriticalInfo($member_id);
     }
     /**
      * Fetches the Active class_ids of a Student
@@ -383,18 +378,16 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
      */
     public function fetchActiveClassIds ()
     {
+        $student_active_class_ids = array();
         $student_class_ids = $this->fetchAllClassIds();
         $member_id = $this->getMember_id(true);
         $class_obj = new Acad_Model_Class();
         $active_class_ids = $class_obj->fetchClassIds(null, null, true);
-        $student_active_class_ids = array();
-        $student_active_class_ids = array_intersect($student_class_ids, 
-        $active_class_ids);
-        if (empty($student_active_class_ids)) {
-            return false;
-        } else {
-            return $student_active_class_ids;
+        if (! empty($student_class_ids) and ! empty($active_class_ids)) {
+            $student_active_class_ids = array_intersect($student_class_ids, 
+            $active_class_ids);
         }
+        return $student_active_class_ids;
     }
     /**
      * Fetches the All class_ids of a Student
@@ -406,12 +399,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $member_id = $this->getMember_id(true);
         $student_class_obj = new Acad_Model_StudentClass();
         $student_class_obj->setMember_id($member_id);
-        $student_class_ids = $student_class_obj->fetchClassIds();
-        if (empty($student_class_ids)) {
-            return false;
-        } else {
-            return $student_class_ids;
-        }
+        return $student_class_obj->fetchClassIds();
     }
     /**
      * Fetches class_ids in which member was admitted in the given semester(
@@ -425,12 +413,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $class_object = new Acad_Model_Class();
         $class_object->setBatch_id($batch_id);
         $class_object->setSemester_id($semester_id);
-        $class_ids = $class_object->fetchClassIds(true, true);
-        if (empty($class_ids)) {
-            return false;
-        } else {
-            return $class_ids;
-        }
+        return $class_object->fetchClassIds(true, true);
     }
     /**
      * Fetches information regarding CLASS of a Student,
@@ -443,12 +426,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $student_class_object = new Acad_Model_StudentClass();
         $student_class_object->setMember_id($member_id);
         $student_class_object->setClass_id($class_id);
-        $info_flag = $student_class_object->fetchInfo();
-        if (! $info_flag) {
-            return false;
-        } else {
-            return $student_class_object;
-        }
+        return $student_class_object->fetchInfo();
     }
     /**
      * Fetches Batch Id of a Student,
@@ -463,7 +441,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $batch_identifier_class_id = $student_class_object->fetchBatchIdentifierClassId();
         $class_object = new Acad_Model_Class();
         $class_object->setClass_id($batch_identifier_class_id);
-        $class_info = $class_object->fetchInfo();
+        $class_object->fetchInfo();
         $batch_id = $class_object->getBatch_id();
         return $batch_id;
     }
@@ -483,12 +461,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $student_subject_object->setMember_id($member_id);
         $student_subject_object->setClass_id($class_id);
         $subjects = array();
-        $subjects = $student_subject_object->fetchSubjects();
-        if (! $subjects) {
-            return false;
-        } else {
-            return $subjects;
-        }
+        return $student_subject_object->fetchSubjects();
     }
     /**
      * Fetches Class in which a student Studied the given Subject.
@@ -503,12 +476,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $student_subject_object = new Acad_Model_StudentSubject();
         $student_subject_object->setMember_id($member_id);
         $student_subject_object->setSubject_id($subject_id);
-        $class_id = $student_subject_object->fetchClassIds();
-        if (! $class_id) {
-            return false;
-        } else {
-            return $class_id;
-        }
+        return $student_subject_object->fetchClassIds();
     }
     /**
      * Fetches Marks scored by the student in the given Subject
@@ -559,30 +527,37 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     /**
      * 
      * Enter description here ...
-     * @param integer $class_id
-     * @param integer $result_type_specific
+     * @param bool $class_specific  
      * @param bool $result_type_specific
-     * @return false|array
-     * 
+     * @param bool $all
+     * @param bool $considered_only
      */
-    public function fetchClassDmcInfoIds ($class_id, $result_type_id = null, 
-    $all = null)
+    public function fetchDmcInfoIds ($class_specific = null, 
+    $result_type_specific = null, $all = null, $considered_only = null)
     {
         $member_id = $this->getMember_id(true);
-        $dmc_info_obj = new Acad_Model_Course_DmcInfo();
-        $dmc_info_obj->setMember_id($member_id);
-        $dmc_info_obj->setClass_id($class_id);
-        if (isset($result_type_id)) {
-            $dmc_info_obj->setResult_type_id($result_type_id);
-            $dmc_ids = $dmc_info_obj->fetchMemberDmcInfoIds(true, true);
-        } elseif ($all == true) {
-            $dmc_ids = $dmc_info_obj->fetchMemberDmcInfoIds(true, null, true);
+        //
+        $class_id = null;
+        $result_type_id = null;
+        $all_dmc_info_ids = null;
+        $is_considered = null;
+        //
+        $dmc_info_ids = array();
+        if ($class_specific == true) {
+            $class_id = $this->getClass_id(true);
         }
-        if (empty($dmc_ids)) {
-            return false;
-        } else {
-            return $dmc_ids;
+        if ($result_type_specific == true) {
+            $result_type_id = $this->getResult_type_id(true);
         }
+        if ($all == true) {
+            $all_dmc_info_ids = true;
+        }
+        if ($considered_only == true) {
+            $is_considered = $this->getIs_considered(true);
+        }
+        $dmc_info_object = new Acad_Model_Course_DmcInfo();
+        return $dmc_info_object->fetchMemberDmcInfoIds($member_id, $class_id, 
+        $result_type_id, $all_dmc_info_ids, $is_considered);
     }
     /**
      * Fetches DMC of a Student,
@@ -595,24 +570,14 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $dmc_marks_object = new Acad_Model_DmcMarks();
         $dmc_marks_object->setDmc_info_id($dmc_info_id);
         $dmc_marks_object->setStudent_subject_id($student_subject_id);
-        $dmc_marks_info = $dmc_marks_object->fetchInfo();
-        if (! $dmc_marks_info) {
-            return false;
-        } else {
-            return $dmc_marks_info;
-        }
+        return $dmc_marks_object->fetchInfo();
     }
     public function fetchCompetitveExamIds ()
     {
         $member_id = $this->getMember_id(true);
         $competitive_object = new Acad_Model_Exam_Competitive();
         $competitive_object->setMember_id($member_id);
-        $exam_ids = $competitive_object->fetchExamIds();
-        if (! $exam_ids) {
-            return false;
-        } else {
-            return $exam_ids;
-        }
+        return $competitive_object->fetchExamIds();
     }
     /**
      * 
@@ -624,12 +589,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $member_id = $this->getMember_id(true);
         $competitive_object = new Acad_Model_Exam_Competitive();
         $competitive_object->setMember_id($member_id);
-        $exam_info = $competitive_object->fetchExamIds();
-        if (! $exam_info) {
-            return false;
-        } else {
-            return $exam_info;
-        }
+        return $competitive_object->fetchExamIds();
     }
     /**
      * 

@@ -85,7 +85,7 @@ abstract class Acad_Model_Generic
         foreach ($valid_options as $valid_option) {
             $validated_options[$valid_option] = $options[$valid_option];
         }
-        if (sizeof($validated_options) == 0) {
+        if (empty($validated_options)) {
             $error = 'No valid option was provided';
             throw new Exception($error);
         } else {

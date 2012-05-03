@@ -16,25 +16,11 @@ class Acad_Model_Batch extends Acad_Model_Generic
         return $this->_batch_id;
     }
     /**
-     * @param field_type $_batch_id
-     */
-    public function setBatch_id ($_batch_id)
-    {
-        $this->_batch_id = $_batch_id;
-    }
-    /**
      * @return the $_department_id
      */
     public function getDepartment_id ()
     {
         return $this->_department_id;
-    }
-    /**
-     * @param field_type $_department_id
-     */
-    public function setDepartment_id ($_department_id)
-    {
-        $this->_department_id = $_department_id;
     }
     /**
      * @return the $_programme_id
@@ -44,25 +30,11 @@ class Acad_Model_Batch extends Acad_Model_Generic
         return $this->_programme_id;
     }
     /**
-     * @param field_type $_programme_id
-     */
-    public function setProgramme_id ($_programme_id)
-    {
-        $this->_programme_id = $_programme_id;
-    }
-    /**
      * @return the $_batch_start
      */
     public function getBatch_start ()
     {
         return $this->_batch_start;
-    }
-    /**
-     * @param field_type $_batch_start
-     */
-    public function setBatch_start ($_batch_start)
-    {
-        $this->_batch_start = $_batch_start;
     }
     /**
      * @return the $_batch_number
@@ -72,18 +44,46 @@ class Acad_Model_Batch extends Acad_Model_Generic
         return $this->_batch_number;
     }
     /**
-     * @param field_type $_batch_number
-     */
-    public function setBatch_number ($_batch_number)
-    {
-        $this->_batch_number = $_batch_number;
-    }
-    /**
      * @return the $_is_active
      */
     public function getIs_active ()
     {
         return $this->_is_active;
+    }
+    /**
+     * @param field_type $_batch_id
+     */
+    public function setBatch_id ($_batch_id)
+    {
+        $this->_batch_id = $_batch_id;
+    }
+    /**
+     * @param field_type $_department_id
+     */
+    public function setDepartment_id ($_department_id)
+    {
+        $this->_department_id = $_department_id;
+    }
+    /**
+     * @param field_type $_programme_id
+     */
+    public function setProgramme_id ($_programme_id)
+    {
+        $this->_programme_id = $_programme_id;
+    }
+    /**
+     * @param field_type $_batch_start
+     */
+    public function setBatch_start ($_batch_start)
+    {
+        $this->_batch_start = $_batch_start;
+    }
+    /**
+     * @param field_type $_batch_number
+     */
+    public function setBatch_number ($_batch_number)
+    {
+        $this->_batch_number = $_batch_number;
     }
     /**
      * @param field_type $_is_active
@@ -162,11 +162,11 @@ class Acad_Model_Batch extends Acad_Model_Generic
             throw new Exception($error, Zend_Log::ERR);
         } else {
             $info = $this->getMapper()->fetchPersonalInfo($member_id);
-            if (sizeof($info) == 0) {
+            if (empty($info)) {
                 return false;
             } else {
                 $this->setOptions($info);
-                return true;
+                return $this;
             }
         }
     }
@@ -182,6 +182,9 @@ class Acad_Model_Batch extends Acad_Model_Generic
     public function fetchBatchIds ($batch_start_year_specific = null, 
     $department_specific = null, $programme_specific = null)
     {
+        $batch_start = null;
+        $department_id = null;
+        $programme_id = null;
         $batch_ids = array();
         if ($batch_start_year_specific == true) {
             $batch_start = $this->getBatch_start(true);
@@ -194,10 +197,8 @@ class Acad_Model_Batch extends Acad_Model_Generic
         }
         $batch_ids = $this->getMapper()->fetchBatchIds($batch_start, 
         $department_id, $programme_id);
-        if (empty($batch_ids) == 0) {
+        if (empty($batch_ids)) {
             return false;
-        } elseif (sizeof($batch_ids) == 1) {
-            return $batch_ids[0];
         } else {
             return $batch_ids;
         }
