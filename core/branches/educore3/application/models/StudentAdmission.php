@@ -13,18 +13,19 @@ class Core_Model_StudentAdmission extends Core_Model_Generic
     protected $_avails_bus;
     protected $_mapper;
     /**
+     * @param bool $throw_exception optional
      * @return the $_member_id
      */
-    public function getMember_id ()
+    public function getMember_id ($throw_exception = null)
     {
-        return $this->_member_id;
-    }
-    /**
-     * @param field_type $_member_id
-     */
-    public function setMember_id ($_member_id)
-    {
-        $this->_member_id = $_member_id;
+        $member_id = $this->_member_id;
+        if (empty($member_id) and $throw_exception == true) {
+            $message = 'Member_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $member_id;
+        }
     }
     /**
      * @return the $_marital_status
@@ -34,25 +35,11 @@ class Core_Model_StudentAdmission extends Core_Model_Generic
         return $this->_marital_status;
     }
     /**
-     * @param field_type $_marital_status
-     */
-    public function setMarital_status ($_marital_status)
-    {
-        $this->_marital_status = $_marital_status;
-    }
-    /**
      * @return the $_councelling_no
      */
     public function getCouncelling_no ()
     {
         return $this->_councelling_no;
-    }
-    /**
-     * @param field_type $_councelling_no
-     */
-    public function setCouncelling_no ($_councelling_no)
-    {
-        $this->_councelling_no = $_councelling_no;
     }
     /**
      * @return the $_admission_date
@@ -62,25 +49,11 @@ class Core_Model_StudentAdmission extends Core_Model_Generic
         return $this->_admission_date;
     }
     /**
-     * @param field_type $_admission_date
-     */
-    public function setAdmission_date ($_admission_date)
-    {
-        $this->_admission_date = $_admission_date;
-    }
-    /**
      * @return the $_alloted_category
      */
     public function getAlloted_category ()
     {
         return $this->_alloted_category;
-    }
-    /**
-     * @param field_type $_alloted_category
-     */
-    public function setAlloted_category ($_alloted_category)
-    {
-        $this->_alloted_category = $_alloted_category;
     }
     /**
      * @return the $_alloted_branch
@@ -90,25 +63,11 @@ class Core_Model_StudentAdmission extends Core_Model_Generic
         return $this->_alloted_branch;
     }
     /**
-     * @param field_type $_alloted_branch
-     */
-    public function setAlloted_branch ($_alloted_branch)
-    {
-        $this->_alloted_branch = $_alloted_branch;
-    }
-    /**
      * @return the $_state_of_domicile
      */
     public function getState_of_domicile ()
     {
         return $this->_state_of_domicile;
-    }
-    /**
-     * @param field_type $_state_of_domicile
-     */
-    public function setState_of_domicile ($_state_of_domicile)
-    {
-        $this->_state_of_domicile = $_state_of_domicile;
     }
     /**
      * @return the $_urban
@@ -118,13 +77,6 @@ class Core_Model_StudentAdmission extends Core_Model_Generic
         return $this->_urban;
     }
     /**
-     * @param field_type $_urban
-     */
-    public function setUrban ($_urban)
-    {
-        $this->_urban = $_urban;
-    }
-    /**
      * @return the $_avails_hostel
      */
     public function getAvails_hostel ()
@@ -132,18 +84,74 @@ class Core_Model_StudentAdmission extends Core_Model_Generic
         return $this->_avails_hostel;
     }
     /**
-     * @param field_type $_avails_hostel
-     */
-    public function setAvails_hostel ($_avails_hostel)
-    {
-        $this->_avails_hostel = $_avails_hostel;
-    }
-    /**
      * @return the $_avails_bus
      */
     public function getAvails_bus ()
     {
         return $this->_avails_bus;
+    }
+    /**
+     * @param field_type $_member_id
+     */
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
+    }
+    /**
+     * @param field_type $_marital_status
+     */
+    public function setMarital_status ($_marital_status)
+    {
+        $this->_marital_status = $_marital_status;
+    }
+    /**
+     * @param field_type $_councelling_no
+     */
+    public function setCouncelling_no ($_councelling_no)
+    {
+        $this->_councelling_no = $_councelling_no;
+    }
+    /**
+     * @param field_type $_admission_date
+     */
+    public function setAdmission_date ($_admission_date)
+    {
+        $this->_admission_date = $_admission_date;
+    }
+    /**
+     * @param field_type $_alloted_category
+     */
+    public function setAlloted_category ($_alloted_category)
+    {
+        $this->_alloted_category = $_alloted_category;
+    }
+    /**
+     * @param field_type $_alloted_branch
+     */
+    public function setAlloted_branch ($_alloted_branch)
+    {
+        $this->_alloted_branch = $_alloted_branch;
+    }
+    /**
+     * @param field_type $_state_of_domicile
+     */
+    public function setState_of_domicile ($_state_of_domicile)
+    {
+        $this->_state_of_domicile = $_state_of_domicile;
+    }
+    /**
+     * @param field_type $_urban
+     */
+    public function setUrban ($_urban)
+    {
+        $this->_urban = $_urban;
+    }
+    /**
+     * @param field_type $_avails_hostel
+     */
+    public function setAvails_hostel ($_avails_hostel)
+    {
+        $this->_avails_hostel = $_avails_hostel;
     }
     /**
      * @param field_type $_avails_bus

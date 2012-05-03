@@ -14,32 +14,33 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
     protected $_email;
     protected $_mapper;
     /**
+     * @param bool $throw_exception optional
      * @return the $_member_id
      */
-    public function getMember_id ()
+    public function getMember_id ($throw_exception = null)
     {
-        return $this->_member_id;
-    }
-    /**
-     * @param field_type $_member_id
-     */
-    public function setMember_id ($_member_id)
-    {
-        $this->_member_id = $_member_id;
+        $member_id = $this->_member_id;
+        if (empty($member_id) and $throw_exception == true) {
+            $message = 'Member_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $member_id;
+        }
     }
     /**
      * @return the $_relation_id
      */
-    public function getRelation_id ()
+    public function getRelation_id ($throw_exception = null)
     {
-        return $this->_relation_id;
-    }
-    /**
-     * @param field_type $_relation_id
-     */
-    public function setRelation_id ($_relation_id)
-    {
-        $this->_relation_id = $_relation_id;
+        $relation_id = $this->_relation_id;
+        if (empty($relation_id) and $throw_exception == true) {
+            $message = '_relation_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $relation_id;
+        }
     }
     /**
      * @return the $_relation_name
@@ -49,25 +50,11 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
         return $this->_relation_name;
     }
     /**
-     * @param field_type $_relation_name
-     */
-    public function setRelation_name ($_relation_name)
-    {
-        $this->_relation_name = $_relation_name;
-    }
-    /**
      * @return the $_name
      */
     public function getName ()
     {
         return $this->_name;
-    }
-    /**
-     * @param field_type $_name
-     */
-    public function setName ($_name)
-    {
-        $this->_name = $_name;
     }
     /**
      * @return the $_occupation
@@ -77,25 +64,11 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
         return $this->_occupation;
     }
     /**
-     * @param field_type $_occupation
-     */
-    public function setOccupation ($_occupation)
-    {
-        $this->_occupation = $_occupation;
-    }
-    /**
      * @return the $_designation
      */
     public function getDesignation ()
     {
         return $this->_designation;
-    }
-    /**
-     * @param field_type $_designation
-     */
-    public function setDesignation ($_designation)
-    {
-        $this->_designation = $_designation;
     }
     /**
      * @return the $_office_add
@@ -105,25 +78,11 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
         return $this->_office_add;
     }
     /**
-     * @param field_type $_office_add
-     */
-    public function setOffice_add ($_office_add)
-    {
-        $this->_office_add = $_office_add;
-    }
-    /**
      * @return the $_contact
      */
     public function getContact ()
     {
         return $this->_contact;
-    }
-    /**
-     * @param field_type $_contact
-     */
-    public function setContact ($_contact)
-    {
-        $this->_contact = $_contact;
     }
     /**
      * @return the $_annual_income
@@ -133,13 +92,6 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
         return $this->_annual_income;
     }
     /**
-     * @param field_type $_annual_income
-     */
-    public function setAnnual_income ($_annual_income)
-    {
-        $this->_annual_income = $_annual_income;
-    }
-    /**
      * @return the $_landline_no
      */
     public function getLandline_no ()
@@ -147,18 +99,81 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
         return $this->_landline_no;
     }
     /**
-     * @param field_type $_landline_no
-     */
-    public function setLandline_no ($_landline_no)
-    {
-        $this->_landline_no = $_landline_no;
-    }
-    /**
      * @return the $_email
      */
     public function getEmail ()
     {
         return $this->_email;
+    }
+    /**
+     * @param field_type $_member_id
+     */
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
+    }
+    /**
+     * @param field_type $_relation_id
+     */
+    public function setRelation_id ($_relation_id)
+    {
+        $this->_relation_id = $_relation_id;
+    }
+    /**
+     * @param field_type $_relation_name
+     */
+    public function setRelation_name ($_relation_name)
+    {
+        $this->_relation_name = $_relation_name;
+    }
+    /**
+     * @param field_type $_name
+     */
+    public function setName ($_name)
+    {
+        $this->_name = $_name;
+    }
+    /**
+     * @param field_type $_occupation
+     */
+    public function setOccupation ($_occupation)
+    {
+        $this->_occupation = $_occupation;
+    }
+    /**
+     * @param field_type $_designation
+     */
+    public function setDesignation ($_designation)
+    {
+        $this->_designation = $_designation;
+    }
+    /**
+     * @param field_type $_office_add
+     */
+    public function setOffice_add ($_office_add)
+    {
+        $this->_office_add = $_office_add;
+    }
+    /**
+     * @param field_type $_contact
+     */
+    public function setContact ($_contact)
+    {
+        $this->_contact = $_contact;
+    }
+    /**
+     * @param field_type $_annual_income
+     */
+    public function setAnnual_income ($_annual_income)
+    {
+        $this->_annual_income = $_annual_income;
+    }
+    /**
+     * @param field_type $_landline_no
+     */
+    public function setLandline_no ($_landline_no)
+    {
+        $this->_landline_no = $_landline_no;
     }
     /**
      * @param field_type $_email

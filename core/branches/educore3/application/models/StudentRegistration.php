@@ -5,18 +5,19 @@ class Core_Model_StudentRegistration extends Core_Model_Generic
     protected $_registration_id;
     protected $_mapper;
     /**
+     * @param bool $throw_exception optional
      * @return the $_member_id
      */
-    public function getMember_id ()
+    public function getMember_id ($throw_exception = null)
     {
-        return $this->_member_id;
-    }
-    /**
-     * @param field_type $_member_id
-     */
-    public function setMember_id ($_member_id)
-    {
-        $this->_member_id = $_member_id;
+        $member_id = $this->_member_id;
+        if (empty($member_id) and $throw_exception == true) {
+            $message = 'Member_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $member_id;
+        }
     }
     /**
      * @return the $_registration_id
@@ -24,6 +25,13 @@ class Core_Model_StudentRegistration extends Core_Model_Generic
     public function getRegistration_id ()
     {
         return $this->_registration_id;
+    }
+    /**
+     * @param field_type $_member_id
+     */
+    public function setMember_id ($_member_id)
+    {
+        $this->_member_id = $_member_id;
     }
     /**
      * @param field_type $_registration_id
