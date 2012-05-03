@@ -224,18 +224,13 @@ class Core_Model_StudentAdmission extends Core_Model_Generic
      */
     public function fetchInfo ()
     {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $careless_error = 'Please provide a Member Id';
-            throw new Exception($careless_error);
+        $member_id = $this->getMember_id(true);
+        $info = $this->getMapper()->fetchInfo($member_id);
+        if (empty($info)) {
+            return false;
         } else {
-            $info = $this->getMapper()->fetchInfo($member_id);
-            if (sizeof($info) == 0) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return $this;
-            }
+            $this->setOptions($info);
+            return $this;
         }
     }
     public function save ($data_array)

@@ -186,20 +186,14 @@ class Core_Model_MemberAddress extends Core_Model_Generic
      */
     public function fetchInfo ()
     {
-        $member_id = $this->getMember_id();
-        $address_type = $this->getAddress_type();
-        if (empty($member_id) or empty($address_type)) {
-            $careless_error = 'Please provide a Member Id and Address Type';
-            throw new Exception($careless_error);
+        $member_id = $this->getMember_id(true);
+        $address_type = $this->getAddress_type(true);
+        $address_info = $this->getMapper()->fetchInfo($member_id, $address_type);
+        if (empty($address_info)) {
+            return false;
         } else {
-            $address_info = $this->getMapper()->fetchInfo($member_id, 
-            $address_type);
-            if (sizeof($address_info) == 0) {
-                return false;
-            } else {
-                $this->setOptions($address_info);
-                return $this;
-            }
+            $this->setOptions($address_info);
+            return $this;
         }
     }
     /**
@@ -208,17 +202,12 @@ class Core_Model_MemberAddress extends Core_Model_Generic
      */
     public function fetchAddressTypes ()
     {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $careless_error = 'Please provide a Member Id in fetchAddressTypes().';
-            throw new Exception($careless_error, Zend_Log::ERR);
+        $member_id = $this->getMember_id(true);
+        $address_types = $this->getMapper()->fetchAddressTypes($member_id);
+        if (empty($address_types)) {
+            return false;
         } else {
-            $address_types = $this->getMapper()->fetchAddressTypes($member_id);
-            if (empty($address_types)) {
-                return false;
-            } else {
-                return $address_types;
-            }
+            return $address_types;
         }
     }
     public function save ($data_array)

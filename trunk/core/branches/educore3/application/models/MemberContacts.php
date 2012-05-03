@@ -141,19 +141,14 @@ class Core_Model_MemberContacts extends Core_Model_Generic
      */
     public function fetchInfo ()
     {
-        $member_id = $this->getMember_id();
-        $contact_type_id = $this->getContact_type_id();
-        if (empty($member_id) or empty($contact_type_id)) {
-            $careless_error = 'Please provide a Member Id and a Contact Type_id';
-            throw new Exception($careless_error);
+        $member_id = $this->getMember_id(true);
+        $contact_type_id = $this->getContact_type_id(true);
+        $info = $this->getMapper()->fetchInfo($member_id, $contact_type_id);
+        if (empty($info)) {
+            return false;
         } else {
-            $info = $this->getMapper()->fetchInfo($member_id, $contact_type_id);
-            if (sizeof($info) == 0) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return $this;
-            }
+            $this->setOptions($info);
+            return $this;
         }
     }
     /**
@@ -162,18 +157,12 @@ class Core_Model_MemberContacts extends Core_Model_Generic
      */
     public function fetchContactTypeIds ()
     {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $careless_error = 'Please provide a Member Id in fetchContactTypeIds().';
-            throw new Exception($careless_error, Zend_Log::ERR);
+        $member_id = $this->getMember_id(true);
+        $contact_type_ids = $this->getMapper()->fetchContactTypeIds($member_id);
+        if (empty($contact_type_ids)) {
+            return false;
         } else {
-            $contact_type_ids = $this->getMapper()->fetchContactTypeIds(
-            $member_id);
-            if (sizeof($contact_type_ids) == 0) {
-                return false;
-            } else {
-                return $contact_type_ids;
-            }
+            return $contact_type_ids;
         }
     }
     public function save ($data_array)
