@@ -1,9 +1,24 @@
 <?php
-class Acad_Model_Qualification extends Acad_Model_Generic
+class Acad_Model_Member_Qualification extends Acad_Model_Generic
 {
+    protected $_member_id;
     protected $_qualification_id;
-    protected $_qualification_name;
     protected $_mapper;
+    /**
+     * @param bool $throw_exception optional
+     * @return the $_member_id
+     */
+    public function getMember_id ($throw_exception = null)
+    {
+        $member_id = $this->_member_id;
+        if (empty($member_id) and $throw_exception == true) {
+            $message = 'Member_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $member_id;
+        }
+    }
     /**
      * @return the $_qualification_id
      */
@@ -19,11 +34,11 @@ class Acad_Model_Qualification extends Acad_Model_Generic
         }
     }
     /**
-     * @return the $_qualification_name
+     * @param field_type $_member_id
      */
-    public function getQualification_name ()
+    public function setMember_id ($_member_id)
     {
-        return $this->_qualification_name;
+        $this->_member_id = $_member_id;
     }
     /**
      * @param field_type $_qualification_id
@@ -33,17 +48,9 @@ class Acad_Model_Qualification extends Acad_Model_Generic
         $this->_qualification_id = $_qualification_id;
     }
     /**
-     * @param field_type $_qualification_name
-     */
-    public function setQualification_name ($_qualification_name)
-    {
-        $qualification_name = strtoupper($_qualification_name);
-        $this->_qualification_name = $qualification_name;
-    }
-    /**
      * Sets Mapper
-     * @param Acad_Model_Mapper_Qualification $mapper
-     * @return Acad_Model_Qualification
+     * @param Acad_Model_Mapper_Member_Qualification $mapper
+     * @return Acad_Model_Member_Qualification
      */
     public function setMapper ($mapper)
     {
@@ -52,12 +59,12 @@ class Acad_Model_Qualification extends Acad_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Mapper_Qualification
+     * @return Acad_Model_Mapper_Member_Qualification
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Mapper_Qualification());
+            $this->setMapper(new Acad_Model_Mapper_Member_Qualification());
         }
         return $this->_mapper;
     }
@@ -99,30 +106,36 @@ class Acad_Model_Qualification extends Acad_Model_Generic
     public function initInfo ()
     {}
     /**
-     * Fetches Qualification Details
-     *
+     * Fetches Qualification ids of a member(
+     * Member_id must be set before calling this function)
+     * @return array|false 
      */
-    public function fetchInfo ()
+    public function fetchQualificationIds ()
     {
-        $qualification_id = $this->getQualification_id();
-        if (empty($qualification_id)) {
-            $careless_error = 'Please provide a Qualification_Id';
-            throw new Exception($careless_error);
+        $member_id = $this->getMember_id(true);
+        $qualification_ids = $this->getMapper()->fetchQualificationIds(
+        $member_id);
+        if (empty($qualification_ids)) {
+            return false;
         } else {
-            $info = $this->getMapper()->fetchInfo($qualification_id);
-            if (sizeof($info) == 0) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return true;
-            }
+            return $qualification_ids;
         }
     }
-    public function save ($data_array)
+    /**
+     * 
+     * Saves the Qualifications of a member
+     * Member_id must be set before calling this function
+     * @param array $qualifications an array containing qualification ids of a member
+     */
+    public function saveQualifications ($qualifications)
     {
-        $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
-        $data_array);
-        $this->setOptions($preparedDataForSaveProcess);
-        $this->getMapper()->save($preparedDataForSaveProcess);
+        $member_id = $this->getMember_id(true);
+        foreach ($qualifications as $qualification) {
+            $this->initSave();
+            $data_array = array('member_id' => $member_id, 
+            'qualification_id' => $qualification);
+            $preparedData = $this->prepareDataForSaveProcess($data_array);
+            $this->getMapper()->save($preparedData);
+        }
     }
 }

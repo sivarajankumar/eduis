@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_Mapper_Qualification
+class Acad_Model_Mapper_Member_Qualification
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Acad_Model_Mapper_Qualification
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Acad_Model_Mapper_Qualification
+     * @return Acad_Model_Mapper_Member_Qualification
      */
     public function setDbTable ($dbTable)
     {
@@ -29,28 +29,27 @@ class Acad_Model_Mapper_Qualification
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Acad_Model_DbTable_Qualification');
+            $this->setDbTable('Acad_Model_DbTable_MemberQualification');
         }
         return $this->_dbTable;
     }
     /**
-     * Fetches Qualification details
+     * Fetches Member Qualification ids
      * 
-     * @param integer $batch_id
+     * @param integer $member_id
      */
-    public function fetchInfo ($qualification_id)
+    public function fetchQualificationIds ($member_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $qualification_table = $db_table->info('name');
-        $required_cols = array('qualification_id', 'qualification_name');
+        $member_qualification_table = $db_table->info('name');
+        $required_cols = array('qualification_id');
         $select = $adapter->select()
-            ->from($qualification_table, $required_cols)
-            ->where('qualification_id = ?', $qualification_id);
-        $qualification_info = array();
-        $qualification_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        Zend_Registry::get('logger')->debug($qualification_info);
-        return $qualification_info[$qualification_id];
+            ->from($member_qualification_table, $required_cols)
+            ->where('member_id = ?', $member_id);
+        $student_info = array();
+        $student_info = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $student_info;
     }
     public function save ($prepared_data)
     {

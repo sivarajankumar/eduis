@@ -478,10 +478,16 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $student_subject_object->setSubject_id($subject_id);
         return $student_subject_object->fetchClassIds();
     }
+    public function fetchQualificationsIds(){
+        $member_id=$this->getMember_id(true);
+        $qualification_object = new Acad_Model_Member_Qualification();
+        $qualification_object->setMember_id($member_id);
+        return $qualification_object->fetchQualificationIds();
+    }
     /**
      * Fetches Qualification Details of a member
      * 
-     * @param  int $qualification_id
+     * @param int $qualification_id
      * @return Qualifiaction|false object of  Acad_Model_Qualification|Acad_Model_Qualification_Matric|Acad_Model_Qualification_Twelfth|Acad_Model_Qualification_Diploma|Acad_Model_Qualification_Btech|Acad_Model_Qualification_Mtech
      */
     public function fetchQualifiactionInfo ($qualification_id)
