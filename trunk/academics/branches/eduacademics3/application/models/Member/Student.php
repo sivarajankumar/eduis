@@ -556,7 +556,8 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             $is_considered = $this->getIs_considered(true);
         }
         $dmc_info_object = new Acad_Model_Course_DmcInfo();
-        return $dmc_info_object->fetchMemberDmcInfoIds($member_id, $class_id, 
+        $dmc_info_object->setMember_id($member_id);
+        return $dmc_info_object->fetchMemberDmcInfoIds($class_id, 
         $result_type_id, $all_dmc_info_ids, $is_considered);
     }
     /**
