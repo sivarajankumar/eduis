@@ -14,23 +14,44 @@ class Acad_Model_Class extends Acad_Model_Generic
     /**
      * @return the $_class_id
      */
-    public function getClass_id ()
+    public function getClass_id ($throw_exception = null)
     {
-        return $this->_class_id;
+        $class_id = $this->_class_id;
+        if (empty($class_id) and $throw_exception == true) {
+            $message = '_class_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $class_id;
+        }
     }
     /**
      * @return the $_batch_id
      */
-    public function getBatch_id ()
+    public function getBatch_id ($throw_exception = null)
     {
-        return $this->_batch_id;
+        $batch_id = $this->_batch_id;
+        if (empty($batch_id) and $throw_exception == true) {
+            $message = '_batch_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $batch_id;
+        }
     }
     /**
      * @return the $_semester_id
      */
-    public function getSemester_id ()
+    public function getSemester_id ($throw_exception = null)
     {
-        return $this->_semester_id;
+        $semester_id = $this->_semester_id;
+        if (empty($semester_id) and $throw_exception == true) {
+            $message = '_semester_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $semester_id;
+        }
     }
     /**
      * @return the $_semester_type
@@ -49,9 +70,16 @@ class Acad_Model_Class extends Acad_Model_Generic
     /**
      * @return the $_handled_by_dept
      */
-    public function getHandled_by_dept ()
+    public function getHandled_by_dept ($throw_exception = null)
     {
-        return $this->_handled_by_dept;
+        $handled_by_dept = $this->_handled_by_dept;
+        if (empty($handled_by_dept) and $throw_exception == true) {
+            $message = '_handled_by_dept is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $handled_by_dept;
+        }
     }
     /**
      * @return the $_start_date
@@ -70,9 +98,16 @@ class Acad_Model_Class extends Acad_Model_Generic
     /**
      * @return the $_is_active
      */
-    public function getIs_active ()
+    public function getIs_active ($throw_exception = null)
     {
-        return $this->_is_active;
+        $is_active = $this->_is_active;
+        if (empty($is_active) and $throw_exception == true) {
+            $message = '_is_active is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $is_active;
+        }
     }
     /**
      * @param field_type $_class_id

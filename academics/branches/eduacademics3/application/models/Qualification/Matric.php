@@ -18,16 +18,30 @@ class Acad_Model_Qualification_Matric extends Acad_Model_Generic
     /**
      * @return the $_member_id
      */
-    public function getMember_id ()
+    public function getMember_id ($throw_exception = null)
     {
-        return $this->_member_id;
+        $member_id = $this->_member_id;
+        if (empty($member_id) and $throw_exception == true) {
+            $message = 'Member_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $member_id;
+        }
     }
     /**
      * @return the $_qualification_id
      */
-    public function getQualification_id ()
+    public function getQualification_id ($throw_exception = null)
     {
-        return $this->_qualification_id;
+        $qualification_id = $this->_qualification_id;
+        if (empty($qualification_id) and $throw_exception == true) {
+            $message = '_qualification_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $qualification_id;
+        }
     }
     /**
      * @return the $_board

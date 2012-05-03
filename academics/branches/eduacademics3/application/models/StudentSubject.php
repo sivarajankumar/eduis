@@ -9,30 +9,59 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
     /**
      * @return the $_student_subject_id
      */
-    public function getStudent_subject_id ()
+    public function getStudent_subject_id ($throw_exception = null)
     {
-        return $this->_student_subject_id;
+        $student_subject_id = $this->_student_subject_id;
+        if (empty($student_subject_id) and $throw_exception == true) {
+            $message = '_student_subject_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $student_subject_id;
+        }
     }
     /**
+     * @param bool $throw_exception optional
      * @return the $_member_id
      */
-    public function getMember_id ()
+    public function getMember_id ($throw_exception = null)
     {
-        return $this->_member_id;
+        $member_id = $this->_member_id;
+        if (empty($member_id) and $throw_exception == true) {
+            $message = 'Member_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $member_id;
+        }
     }
     /**
      * @return the $_class_id
      */
-    public function getClass_id ()
+    public function getClass_id ($throw_exception = null)
     {
-        return $this->_class_id;
+        $class_id = $this->_class_id;
+        if (empty($class_id) and $throw_exception == true) {
+            $message = '_class_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $class_id;
+        }
     }
     /**
      * @return the $_subject_id
      */
-    public function getSubject_id ()
+    public function getSubject_id ($throw_exception = null)
     {
-        return $this->_subject_id;
+        $subject_id = $this->_subject_id;
+        if (empty($subject_id) and $throw_exception == true) {
+            $message = '_subject_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $subject_id;
+        }
     }
     /**
      * @param field_type $_student_subject_id
@@ -161,14 +190,14 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
                  'was not studied by member_id -' . $member_id;
                 throw new Exception($error, Zend_Log::ERR);
             } else {
-                $dmc_marks_obj = new Acad_Model_DmcMarks();
+                $dmc_marks_obj = new Acad_Model_Course_DmcMarks();
                 $dmc_marks_obj->setStudent_subject_id($student_subject_id);
                 $dmc_marks_obj->setResult_type_id($result_type_id);
                 if (isset($considered)) {
                     $dmc_marks_obj->setIs_considered($considered);
                 }
                 $marks = $dmc_marks_obj->fetchInfo();
-                if ($marks instanceof Acad_Model_DmcMarks) {
+                if ($marks instanceof Acad_Model_Course_DmcMarks) {
                     return $marks;
                 } else {
                     return false;
@@ -195,16 +224,7 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
      * 
      */
     public function fetchSubjectsPassed ($class_id)
-    {
-        $member_id = $this->getMember_id(true);
-        $student_subject_object = new Acad_Model_StudentSubject();
-        $student_subject_object->setMember_id($member_id);
-        $student_subject_object->setClass_id($class_id);
-        $stu_sub_id = $student_subject_object->fetchStudentSubjectId();
-        $student_subject_object->setStudent_subject_id($stu_sub_id);
-        $dmc_marks = new Acad_Model_DmcMarks();
-        $dmc_marks->fetchInfo();
-    }
+    {}
     public function fetchSubjectPassedStatus ()
     {
         $stu_sub_id = $this->fetchStudentSubjectId();

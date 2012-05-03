@@ -11,30 +11,58 @@ class Acad_Model_Batch extends Acad_Model_Generic
     /**
      * @return the $_batch_id
      */
-    public function getBatch_id ()
+    public function getBatch_id ($throw_exception = null)
     {
-        return $this->_batch_id;
+        $batch_id = $this->_batch_id;
+        if (empty($batch_id) and $throw_exception == true) {
+            $message = '_batch_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $batch_id;
+        }
     }
     /**
      * @return the $_department_id
      */
-    public function getDepartment_id ()
+    public function getDepartment_id ($throw_exception = null)
     {
-        return $this->_department_id;
+        $department_id = $this->_department_id;
+        if (empty($department_id) and $throw_exception == true) {
+            $message = '_department_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $department_id;
+        }
     }
     /**
      * @return the $_programme_id
      */
-    public function getProgramme_id ()
+    public function getProgramme_id ($throw_exception = null)
     {
-        return $this->_programme_id;
+        $programme_id = $this->_programme_id;
+        if (empty($programme_id) and $throw_exception == true) {
+            $message = '_programme_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $programme_id;
+        }
     }
     /**
      * @return the $_batch_start
      */
-    public function getBatch_start ()
+    public function getBatch_start ($throw_exception = null)
     {
-        return $this->_batch_start;
+        $batch_start = $this->_batch_start;
+        if (empty($batch_start) and $throw_exception == true) {
+            $message = '_batch_start is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $batch_start;
+        }
     }
     /**
      * @return the $_batch_number
@@ -46,9 +74,16 @@ class Acad_Model_Batch extends Acad_Model_Generic
     /**
      * @return the $_is_active
      */
-    public function getIs_active ()
+    public function getIs_active ($throw_exception = null)
     {
-        return $this->_is_active;
+        $is_active = $this->_is_active;
+        if (empty($is_active) and $throw_exception == true) {
+            $message = '_is_active is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $is_active;
+        }
     }
     /**
      * @param field_type $_batch_id
