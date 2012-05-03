@@ -49,7 +49,6 @@ class Acad_Model_Mapper_Qualification
             ->where('qualification_id = ?', $qualification_id);
         $qualification_info = array();
         $qualification_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        Zend_Registry::get('logger')->debug($qualification_info);
         return $qualification_info[$qualification_id];
     }
     public function save ($prepared_data)
