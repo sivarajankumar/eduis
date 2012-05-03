@@ -479,6 +479,57 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         return $student_subject_object->fetchClassIds();
     }
     /**
+     * Fetches Class in which a student Studied the given Subject.
+     * A student may have studied a Subject more than Once but in Different classes. Ex - Detained Student.
+     * @param  int $qualification_id
+     * @return Qualifiaction|false object of  Acad_Model_Qualification
+     */
+    public function fetchQualifiactionInfo ($qualification_id)
+    {
+        $member_id = $this->getMember_id(true);
+        $qualification_object = new Acad_Model_Qualification();
+        $qualification_object->setQualification_id($qualification_id);
+        $qualification = $qualification_object->fetchInfo();
+        $qualification_name = $qualification_object->getQualification_name();
+        $qualification_detail = array('qualification_id' => $qualification_id, 
+        'qualification_name' => $qualification_name);
+        switch ($qualification_name) {
+            case 'MATRIC':
+                $matric_object = new Acad_Model_Qualification_Matric();
+                $matric_object->setQualification_id(
+                $qualification_detail['qualification_id']);
+                return $matric_object->fetchInfo();
+                break;
+            case 'TWELFTH':
+                $twelfth_object = new Acad_Model_Qualification_Twelfth();
+                $twelfth_object->setQualification_id(
+                $qualification_detail['qualification_id']);
+                return $twelfth_object->fetchInfo();
+                break;
+            case 'DIPLOMA':
+                $diploma_object = new Acad_Model_Qualification_Diploma();
+                $diploma_object->setQualification_id(
+                $qualification_detail['qualification_id']);
+                return $diploma_object->fetchInfo();
+                break;
+            case 'BTECH':
+                $btech_object = new Acad_Model_Qualification_Btech();
+                $btech_object->setQualification_id(
+                $qualification_detail['qualification_id']);
+                return $btech_object->fetchInfo();
+                break;
+            case 'MTECH':
+                $mtech_object = new Acad_Model_Qualification_Mtech();
+                $mtech_object->setQualification_id(
+                $qualification_detail['qualification_id']);
+                return $mtech_object->fetchInfo();
+                break;
+            default:
+                return false;
+                break;
+        }
+    }
+    /**
      * Fetches Marks scored by the student in the given Subject
      * A student may have studied a Subject more than Once but in Different classes. Ex - Detained Student,
      * therefore subject_id and class_id are required.
