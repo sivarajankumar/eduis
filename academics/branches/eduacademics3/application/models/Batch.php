@@ -237,7 +237,6 @@ class Acad_Model_Batch extends Acad_Model_Generic
     {
         $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
         $data_array);
-        $this->setOptions($preparedDataForSaveProcess);
         $this->getMapper()->save($preparedDataForSaveProcess);
     }
 }

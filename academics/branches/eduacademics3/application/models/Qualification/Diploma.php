@@ -298,18 +298,18 @@ class Acad_Model_Qualification_Diploma extends Acad_Model_Generic
      */
     public function fetchInfo ()
     {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $careless_error = 'Please provide a Member Id';
-            throw new Exception($careless_error);
+        $member_id = $this->getMember_id(true);
+        $info = $this->getMapper()->fetchInfo($member_id);
+        if (empty($info)) {
+            return false;
         } else {
-            $info = $this->getMapper()->fetchInfo($member_id);
-            if (empty($info)) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return $this;
-            }
+            $this->setOptions($info);
+            return $this;
         }
+    }
+    public function save ($data_array)
+    {
+        $preparedData = $this->prepareDataForSaveProcess($data_array);
+        $this->getMapper()->save($preparedData);
     }
 }

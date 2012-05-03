@@ -427,9 +427,7 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     }
     public function save ($data_array)
     {
-        $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
-        $data_array);
-        $this->setOptions($preparedDataForSaveProcess);
-        $this->getMapper()->save($preparedDataForSaveProcess);
+        $preparedData = $this->prepareDataForSaveProcess($data_array);
+        $this->getMapper()->save($preparedData);
     }
 }
