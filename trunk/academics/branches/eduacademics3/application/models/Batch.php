@@ -186,13 +186,13 @@ class Acad_Model_Batch extends Acad_Model_Generic
     public function initInfo ()
     {}
     /**
-     * Fetches information regarding class
+     * Fetches information regarding batch_id
      *
      */
     public function fetchInfo ()
     {
         $batch_id = $this->getBatch_id(true);
-        $info = $this->getMapper()->fetchPersonalInfo($batch_id);
+        $info = $this->getMapper()->fetchInfo($batch_id);
         if (empty($info)) {
             return false;
         } else {

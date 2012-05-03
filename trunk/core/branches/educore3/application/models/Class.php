@@ -236,18 +236,13 @@ class Core_Model_Class extends Core_Model_Generic
      */
     public function fetchInfo ()
     {
-        $class_id = $this->getClass_id();
-        if (empty($class_id)) {
-            $error = 'Please provide a Class Id';
-            throw new Exception($error, Zend_Log::ERR);
+        $class_id = $this->getClass_id(true);
+        $info = $this->getMapper()->fetchInfo($class_id);
+        if (empty($info)) {
+            return false;
         } else {
-            $info = $this->getMapper()->fetchInfo($class_id);
-            if (empty($info)) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return $this;
-            }
+            $this->setOptions($info);
+            return $this;
         }
     }
     /**

@@ -444,6 +444,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $student_class_ids = $this->fetchAllClassIds();
         $member_id = $this->getMember_id(true);
         $class_obj = new Core_Model_Class();
+        $class_obj->setIs_active(true);
         $active_class_ids = $class_obj->fetchClassIds(null, null, true);
         if (! empty($student_class_ids) and ! empty($active_class_ids)) {
             $student_active_class_ids = array_intersect($student_class_ids, 
