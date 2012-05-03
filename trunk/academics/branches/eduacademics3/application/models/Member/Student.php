@@ -478,8 +478,9 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $student_subject_object->setSubject_id($subject_id);
         return $student_subject_object->fetchClassIds();
     }
-    public function fetchQualificationsIds(){
-        $member_id=$this->getMember_id(true);
+    public function fetchQualificationsIds ()
+    {
+        $member_id = $this->getMember_id(true);
         $qualification_object = new Acad_Model_Member_Qualification();
         $qualification_object->setMember_id($member_id);
         return $qualification_object->fetchQualificationIds();
@@ -502,30 +503,35 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         switch ($qualification_name) {
             case 'MATRIC':
                 $matric_object = new Acad_Model_Qualification_Matric();
+                $matric_object->setMember_id($member_id);
                 $matric_object->setQualification_id(
                 $qualification_detail['qualification_id']);
                 return $matric_object->fetchInfo();
                 break;
             case 'TWELFTH':
                 $twelfth_object = new Acad_Model_Qualification_Twelfth();
+                $twelfth_object->setMember_id($member_id);
                 $twelfth_object->setQualification_id(
                 $qualification_detail['qualification_id']);
                 return $twelfth_object->fetchInfo();
                 break;
             case 'DIPLOMA':
                 $diploma_object = new Acad_Model_Qualification_Diploma();
+                $diploma_object->setMember_id($member_id);
                 $diploma_object->setQualification_id(
                 $qualification_detail['qualification_id']);
                 return $diploma_object->fetchInfo();
                 break;
             case 'BTECH':
                 $btech_object = new Acad_Model_Qualification_Btech();
+                $btech_object->setMember_id($member_id);
                 $btech_object->setQualification_id(
                 $qualification_detail['qualification_id']);
                 return $btech_object->fetchInfo();
                 break;
             case 'MTECH':
                 $mtech_object = new Acad_Model_Qualification_Mtech();
+                $mtech_object->setMember_id($member_id);
                 $mtech_object->setQualification_id(
                 $qualification_detail['qualification_id']);
                 return $mtech_object->fetchInfo();
@@ -535,52 +541,6 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
                 break;
         }
     }
-    /**
-     * Fetches Marks scored by the student in the given Subject
-     * A student may have studied a Subject more than Once but in Different classes. Ex - Detained Student,
-     * therefore subject_id and class_id are required.
-     * An Array indexed by result_type_id
-     * @param integer $class_id
-     * @param integer $subject_id
-     * @throws Exception
-     */
-    /*    public function fetchSubjectDMC ($class_id, $subject_id, $result_type_id)
-    {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error,Zend_Log::ERR);
-        } else {
-            $student_subject_object = new Acad_Model_StudentSubject();
-            $student_subject_object->setMember_id($member_id);
-            $student_subject_object->setSubject_id($subject_id);
-            $student_subject_object->setClass_id($class_id);
-            $marks = $student_subject_object->fetchDMC($result_type_id);
-            if ($marks instanceof Acad_Model_Course_DmcMarks) {
-                return $marks;
-            } else {
-                return false;
-            }
-        }
-    }
-    public function fetchSubjectsPassed ($class_id)
-    {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Please provide a Member Id';
-            throw new Exception($error,Zend_Log::ERR);
-        } else {
-            $student_subject_object = new Acad_Model_StudentSubject();
-            $student_subject_object->setClass_id($class_id);
-            $student_subject_object->setMember_id($member_id);
-            $subjects = $student_subject_object->fetchSubjects();
-            if (is_bool($subjects)) {} elseif (is_array($subjects)) {
-                foreach ($subjects as $subject) {
-                    $student_subject_object->fetchSubjectPassedStatus();
-                }
-            }
-        }
-    }*/
     /**
      * 
      * Enter description here ...

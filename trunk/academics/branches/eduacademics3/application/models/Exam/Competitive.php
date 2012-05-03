@@ -149,7 +149,7 @@ class Acad_Model_Exam_Competitive extends Acad_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Exam_Competitive
+     * @return Acad_Model_Mapper_Exam_Competitive
      */
     public function getMapper ()
     {
@@ -186,6 +186,11 @@ class Acad_Model_Exam_Competitive extends Acad_Model_Generic
             $this->setOptions($student_exam_info);
             return $this;
         }
+    }
+    public function save ($data_array)
+    {
+        $preparedData = $this->prepareDataForSaveProcess($data_array);
+        $this->getMapper()->save($preparedData);
     }
 }
 ?>
