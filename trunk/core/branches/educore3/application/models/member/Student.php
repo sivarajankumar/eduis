@@ -546,10 +546,20 @@ class Core_Model_Member_Student extends Core_Model_Generic
     }
     public function saveCriticalInfo ($data_array)
     {
-        $this->initSave();
-        $preparedData = $this->prepareDataForSaveProcess($data_array);
-        $member_id = $this->getMapper()->save($preparedData);
-        $this->setMember_id($member_id);
+        $member_id = $this->getMember_id(true);
+        $info = $this->fetchCriticalInfo();
+        $data_array['member_id'] = $member_id;
+        $info = $this->fetchCriticalInfo();
+        if ($info == false) {
+            $this->initSave();
+            $preparedData = $this->prepareDataForSaveProcess($data_array);
+            return $this->getMapper()->save($preparedData);
+        } else {
+            $this->initSave();
+            $preparedData = $this->prepareDataForSaveProcess($data_array);
+            $data_array['member_id'] = null;
+            $this->getMapper()->update($preparedData, $member_id);
+        }
     }
     public function saveAdmissionInfo ($data_array)
     {
@@ -557,7 +567,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $admission_object->initSave();
         $preparedData = $admission_object->prepareDataForSaveProcess(
         $data_array);
-        $admission_object->getMapper()->save($preparedData);
+        return $admission_object->getMapper()->save($preparedData);
     }
     public function saveRegistrationInfo ($data_array)
     {
@@ -565,21 +575,21 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $registration_object->initSave();
         $preparedData = $registration_object->prepareDataForSaveProcess(
         $data_array);
-        $registration_object->getMapper()->save($preparedData);
+        return $registration_object->getMapper()->save($preparedData);
     }
     public function saveAddressInfo ($data_array)
     {
         $address_object = new Core_Model_MemberAddress();
         $address_object->initSave();
         $preparedData = $address_object->prepareDataForSaveProcess($data_array);
-        $address_object->getMapper()->save($preparedData);
+        return $address_object->getMapper()->save($preparedData);
     }
     public function saveContactsInfo ($data_array)
     {
         $contacts_object = new Core_Model_MemberContacts();
         $contacts_object->initSave();
         $preparedData = $contacts_object->prepareDataForSaveProcess($data_array);
-        $contacts_object->getMapper()->save($preparedData);
+        return $contacts_object->getMapper()->save($preparedData);
     }
     public function saveRelativesInfo ($data_array)
     {
@@ -587,7 +597,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $relatives_object->initSave();
         $preparedData = $relatives_object->prepareDataForSaveProcess(
         $data_array);
-        $relatives_object->getMapper()->save($preparedData);
+        return $relatives_object->getMapper()->save($preparedData);
     }
     public function saveClassInfo ($data_array)
     {
@@ -595,6 +605,6 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $student_class_object->initSave();
         $preparedData = $student_class_object->prepareDataForSaveProcess(
         $data_array);
-        $student_class_object->getMapper()->save($preparedData);
+        return $student_class_object->getMapper()->save($preparedData);
     }
 }
