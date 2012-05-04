@@ -58,16 +58,14 @@ class TestingController extends Zend_Controller_Action
         'Percentage' => 90));*/
         $this->_helper->json($response);
     }
-    public function paramCheckAction ()
+    public function paramcheckAction ()
     {
-        $params = $this->getRequest()->getParams();
-        $member_id = $params['member_id'];
-        if (! empty($member_id) and is_int($member_id)) {
-            $dmc_info_ids = $this->studentInfoAction('dmc_info_ids');
-        }
-        $department_id = $params['department_id'];
-        $programme_id = $params['programme_id'];
-        $department_id = $params['department_id'];
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        $qualifiaction_obj = new Acad_Model_Qualification();
+        $qualifiactions = $qualifiaction_obj->fetchQualifications();
+        $qualifiaction_name = $qualifiaction_obj->fetchQualifications();
+        Zend_Registry::get('logger')->debug($qualifiaction_name);
     }
     public function studentInfoAction ($info_required)
     {
@@ -126,7 +124,8 @@ class TestingController extends Zend_Controller_Action
                 break;
             case 'dmc_data':
                 $dmc_data = array();
-                $dmc_data = $student_object->fetchDmc($dmc_info_id,$student_subject_id);
+                $dmc_data = $student_object->fetchDmc($dmc_info_id, 
+                $student_subject_id);
                 return $subjects;
                 break;
             default:
