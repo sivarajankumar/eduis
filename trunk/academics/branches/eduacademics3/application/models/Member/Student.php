@@ -632,6 +632,63 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $member_id = $this->getMapper()->save($preparedData);
         $this->setMember_id($member_id);
     }
+    /**
+     * 
+     * save Competitive Exam Info
+     * requires member_id to be set
+     * @param array $data_array
+     */
+    public function saveCompetitiveExamInfo ($data_array)
+    {
+        $member_id = $this->getMember_id(true);
+        $competitive_object = new Acad_Model_Exam_Competitive();
+        $this->initSave();
+        $preparedData = $competitive_object->prepareDataForSaveProcess(
+        $data_array);
+        $preparedData['member_id'] = $member_id;
+        $competitive_object->getMapper()->save($preparedData);
+    }
+    /**
+     * 
+     * Saves Students Qualification Information to Database
+     * @param int $qualifiaction_id
+     * @param array $data_array
+     * @throws Exception if Invalid Qualifiaction_name provided
+     */
+    public function saveQualificationInfo ($qualifiaction_id, $data)
+    {
+        $member_id = $this->getMember_id(true);
+        $qualifiaction_obj = new Acad_Model_Qualification();
+        $qualifiactions = $qualifiaction_obj->fetchQualifications();
+        $qualifiactions = $qualifiaction_obj->fetchQualifications();
+        $qualifiaction_name = $qualifiactions[$qualifiaction_id]['qualifiaction_name'];
+        switch ($qualifiaction_name) {
+            case 'MATRIC':
+                $object = new Acad_Model_Qualification_Matric();
+                break;
+            case 'TWELFTH':
+                $object = new Acad_Model_Qualification_Twelfth();
+                break;
+            case 'DIPLOMA':
+                $object = new Acad_Model_Qualification_Diploma();
+                break;
+            case 'BTECH':
+                $object = new Acad_Model_Qualification_Btech();
+                break;
+            case 'MTECH':
+                $object = new Acad_Model_Qualification_Mtech();
+                break;
+            default:
+                throw new Exception(
+                'Attempt to save Invalid Qualification\'s data. Qualification Name Provided : ' .
+                 $qualifiaction_name . '.', Zend_Log::ERR);
+                break;
+        }
+        $object->initSave();
+        $preparedData = $object->prepareDataForSaveProcess($data);
+        $preparedData['member_id'] = $member_id;
+        $object->getMapper()->save($preparedData);
+    }
     public function saveClassInfo ($data_array)
     {
         $class_object = new Acad_Model_StudentClass();
