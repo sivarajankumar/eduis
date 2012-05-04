@@ -104,18 +104,22 @@ class Acad_Model_Qualification extends Acad_Model_Generic
      */
     public function fetchInfo ()
     {
-        $qualification_id = $this->getQualification_id();
-        if (empty($qualification_id)) {
-            $careless_error = 'Please provide a Qualification_Id';
-            throw new Exception($careless_error);
+        $qualification_id = $this->getQualification_id(true);
+        $info = $this->getMapper()->fetchInfo($qualification_id);
+        if (sizeof($info) == 0) {
+            return false;
         } else {
-            $info = $this->getMapper()->fetchInfo($qualification_id);
-            if (sizeof($info) == 0) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return true;
-            }
+            $this->setOptions($info);
+            return true;
+        }
+    }
+    public function fetchQualifications ()
+    {
+        $qualifications = $this->getMapper()->fetchQualifications();
+        if (sizeof($qualifications) == 0) {
+            return false;
+        } else {
+            return $qualifications;
         }
     }
     public function save ($data_array)
