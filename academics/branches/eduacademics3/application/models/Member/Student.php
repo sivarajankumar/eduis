@@ -550,13 +550,13 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
      * @param bool $considered_only
      */
     public function fetchDmcInfoIds ($class_specific = null, 
-    $result_type_specific = null, $all = null, $considered_only = null)
+    $result_type_specific = null, $all = null, $considered_only = null, 
+    $ordered_by_date = null)
     {
         $member_id = $this->getMember_id(true);
         //
         $class_id = null;
         $result_type_id = null;
-        $all_dmc_info_ids = null;
         $is_considered = null;
         //
         $dmc_info_ids = array();
@@ -566,16 +566,13 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         if ($result_type_specific == true) {
             $result_type_id = $this->getResult_type_id(true);
         }
-        if ($all == true) {
-            $all_dmc_info_ids = true;
-        }
         if ($considered_only == true) {
             $is_considered = $this->getIs_considered(true);
         }
         $dmc_info_object = new Acad_Model_Course_DmcInfo();
         $dmc_info_object->setMember_id($member_id);
         return $dmc_info_object->fetchMemberDmcInfoIds($class_id, 
-        $result_type_id, $all_dmc_info_ids, $is_considered);
+        $result_type_id, $all, $is_considered, $ordered_by_date);
     }
     /**
      * Fetches DMC of a Student,

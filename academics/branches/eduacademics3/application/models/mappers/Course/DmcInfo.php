@@ -56,7 +56,7 @@ class Acad_Model_Mapper_Course_DmcInfo
         return $dmc_info[$dmc_info_id];
     }
     public function fetchDmcInfoIds ($member_id, $class_id = null, 
-    $result_type_id = null, $all = null, $is_considered = null)
+    $result_type_id = null, $all = null, $is_considered = null, $ordered_by_date = null)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
@@ -74,6 +74,12 @@ class Acad_Model_Mapper_Course_DmcInfo
         }
         if (isset($result_type_id)) {
             $select->where('is_considered = ?', $is_considered);
+        }
+        if (isset($ordered_by_date)) {
+            $required_cols[] ='dispatch_date' ;
+            $select->order('dispatch_date desc');
+            $dmc_info_ids = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            return $dmc_info_ids;
         }
         $dmc_info_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $dmc_info_ids;
