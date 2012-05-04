@@ -626,8 +626,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     {
         $this->initSave();
         $preparedData = $this->prepareDataForSaveProcess($data_array);
-        $member_id = $this->getMapper()->save($preparedData);
-        $this->setMember_id($member_id);
+        return $this->getMapper()->save($preparedData);
     }
     /**
      * 
@@ -643,7 +642,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $preparedData = $competitive_object->prepareDataForSaveProcess(
         $data_array);
         $preparedData['member_id'] = $member_id;
-        $competitive_object->getMapper()->save($preparedData);
+        return $competitive_object->getMapper()->save($preparedData);
     }
     /**
      * 
@@ -684,20 +683,35 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $object->initSave();
         $preparedData = $object->prepareDataForSaveProcess($data);
         $preparedData['member_id'] = $member_id;
-        $object->getMapper()->save($preparedData);
+        return $object->getMapper()->save($preparedData);
     }
     public function saveClassInfo ($data_array)
     {
         $class_object = new Acad_Model_StudentClass();
         $class_object->initSave();
         $preparedData = $class_object->prepareDataForSaveProcess($data_array);
-        $class_object->getMapper()->save($preparedData);
+        return $class_object->getMapper()->save($preparedData);
+    }
+    public function saveDmcInfo ($data_array)
+    {
+        $dmc_info_object = new Acad_Model_Course_DmcInfo();
+        $dmc_info_object->initSave();
+        $preparedData = $dmc_info_object->prepareDataForSaveProcess($data_array);
+        return $dmc_info_object->getMapper()->save($preparedData);
+    }
+    public function saveDmcMarks ($data_array)
+    {
+        $dmc_marks_object = new Acad_Model_Course_DmcMarks();
+        $dmc_marks_object->initSave();
+        $preparedData = $dmc_marks_object->prepareDataForSaveProcess(
+        $data_array);
+        return $dmc_marks_object->getMapper()->save($preparedData);
     }
     protected function save ($class_name, $data_array)
     {
         $target_object = new $class_name();
         $target_object->initSave();
         $preparedData = $target_object->prepareDataForSaveProcess($data_array);
-        $target_object->getMapper()->save($preparedData);
+        return $target_object->getMapper()->save($preparedData);
     }
 }
