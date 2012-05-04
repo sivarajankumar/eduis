@@ -51,6 +51,21 @@ class Acad_Model_Mapper_Qualification
         $qualification_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $qualification_info[$qualification_id];
     }
+    /**
+     * Fetches All Qualifications stored in db
+     * 
+     */
+    public function fetchQualifications ()
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $qualification_table = $db_table->info('name');
+        $required_cols = array('qualification_id', 'qualification_name');
+        $select = $adapter->select()->from($qualification_table, $required_cols);
+        $qualifications = array();
+        $qualifications = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $qualifications;
+    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
