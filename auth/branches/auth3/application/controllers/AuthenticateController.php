@@ -21,7 +21,7 @@ class AuthenticateController extends Zend_Controller_Action {
 			switch (strtolower ( $authService )) {
 				case 'dbtable' :
 					$db = $this->_getParam ( 'db' );
-					$authAdapter = new Zend_Auth_Adapter_DbTable ( $db, 'auth_user', 'user_id', 'sec_passwd' );
+					$authAdapter = new Zend_Auth_Adapter_DbTable ( $db, 'auth_user', 'login_id', 'sec_passwd' );
 					
 					$authAdapter->setIdentity ( $loginForm->getValue ( 'username' ) );
 					$authAdapter->setCredential ( $loginForm->getValue ( 'password' ) );
