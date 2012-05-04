@@ -76,7 +76,7 @@ class Acad_Model_Mapper_Course_DmcInfo
             $select->where('is_considered = ?', $is_considered);
         }
         if (isset($ordered_by_date)) {
-            $required_cols[] ='dispatch_date' ;
+            $required_cols[] = 'dispatch_date';
             $select->order('dispatch_date desc');
             $dmc_info_ids = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
             return $dmc_info_ids;
@@ -97,11 +97,7 @@ class Acad_Model_Mapper_Course_DmcInfo
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
-        try {
-            $row_id = $dbtable->insert($prepared_data);
-        } catch (Exception $exception) {
-            throw $exception;
-        }
+        return $dbtable->insert($prepared_data);
     }
 }
 ?>

@@ -59,11 +59,7 @@ class Acad_Model_Mapper_Course_DmcMarks
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
-        try {
-            $row_id = $dbtable->insert($prepared_data);
-        } catch (Exception $exception) {
-            throw $exception;
-        }
+        return $dbtable->insert($prepared_data);
     }
 }
 ?>
