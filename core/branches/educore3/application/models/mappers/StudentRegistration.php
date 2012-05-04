@@ -54,11 +54,13 @@ class Core_Model_Mapper_StudentRegistration
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
-        try {
-            $row_id = $dbtable->insert($prepared_data);
-        } catch (Exception $exception) {
-            throw $exception;
-        }
+        return $dbtable->insert($prepared_data);
+    }
+    public function update ($prepared_data, $member_id)
+    {
+        $dbtable = $this->getDbTable();
+        $where = 'member_id = ' . $member_id;
+        return $dbtable->update($prepared_data, $where);
     }
 }
 ?>

@@ -81,11 +81,14 @@ class Core_Model_Mapper_MemberContacts
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
-        try {
-            $row_id = $dbtable->insert($prepared_data);
-        } catch (Exception $exception) {
-            throw $exception;
-        }
+        return $dbtable->insert($prepared_data);
+    }
+    public function update ($prepared_data, $member_id, $contact_type_id)
+    {
+        $dbtable = $this->getDbTable();
+        $where1 = 'member_id = ' . $member_id;
+        $where2 = 'contact_type_id = ' . $contact_type_id;
+        return $dbtable->update($prepared_data, array($where1, $where2));
     }
 }
 ?>
