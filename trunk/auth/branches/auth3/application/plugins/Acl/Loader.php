@@ -170,30 +170,31 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
     /**
      * getUserRoles() - Fetch User roles from database.
      *
-     * @param string $user_id
+     * @param string Login ID of a member
      * @return array $userRole Array of Roles, department_id,userType
      */
-    public static function getUserInfo ($user_id)
+    public static function getUserInfo ($login_id)
     {
-        $userInfo['identity'] = $user_id;
+        $userInfo['identity'] = $login_id;
         $userInfo['roles'][] = self::GUEST;
         $db = self::getDb();
         $objSelect = new Zend_Db_Select($db);
         $dbInfo = $objSelect->from('user_role', 'role_id')
-            ->join('auth_user', '`user_role`.`user_id` = `auth_user`.`user_id`', 
-        array('department_id', 'user_type_id'))
-            ->where("`user_role`.`user_id` = ?", $user_id)
+            ->join('auth_user', '`user_role`.`member_id` = `auth_user`.`member_id`', 
+        array('member_id','department_id', 'user_type_id'))
+            ->where("`login_id` = ?", $login_id)
             ->query()
             ->fetchAll();
         Zend_Registry::get('logger')->debug('Common ACL from Cache.');
         if (count($dbInfo)) {
             $userInfo['department_id'] = $dbInfo[0]['department_id'];
             $userInfo['userType'] = $dbInfo[0]['user_type_id'];
+            $userInfo['member_id'] = $dbInfo[0]['member_id'];
             foreach ($dbInfo as $row => $data) {
                 $userInfo['roles'][] = strtolower($data['role_id']);
             }
         } else {
-            Zend_Registry::get('logger')->warn('No role found for ' . $user_id);
+            Zend_Registry::get('logger')->warn('No role found for ' . $login_id);
         }
         return $userInfo;
     }
