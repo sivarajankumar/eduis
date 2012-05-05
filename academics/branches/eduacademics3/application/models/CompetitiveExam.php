@@ -1,49 +1,62 @@
 <?php
-class Acad_Model_Qualification extends Acad_Model_Generic
+class Acad_Model_CompetitiveExam extends Acad_Model_Generic
 {
-    protected $_qualification_id;
-    protected $_qualification_name;
-    protected $_mapper;
+    protected $_exam_id;
+    protected $_name;
+    protected $_abbreviation;
     /**
-     * @return the $_qualification_id
+     * @return the $_exam_id
      */
-    public function getQualification_id ($throw_exception = null)
+    public function getExam_id ($throw_exception = null)
     {
-        $qualification_id = $this->_qualification_id;
-        if (empty($qualification_id) and $throw_exception == true) {
-            $message = '_qualification_id is not set';
+        $exam_id = $this->_exam_id;
+        if (empty($exam_id) and $throw_exception == true) {
+            $message = 'exam_id is not set';
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
-            return $qualification_id;
+            return $exam_id;
         }
     }
     /**
-     * @return the $_qualification_name
+     * @return the $_name
      */
-    public function getQualification_name ()
+    public function getName ()
     {
-        return $this->_qualification_name;
+        return $this->_name;
     }
     /**
-     * @param field_type $_qualification_id
+     * @return the $_abbreviation
      */
-    public function setQualification_id ($_qualification_id)
+    public function getAbbreviation ()
     {
-        $this->_qualification_id = $_qualification_id;
+        return $this->_abbreviation;
     }
     /**
-     * @param field_type $_qualification_name
+     * @param field_type $_exam_id
      */
-    public function setQualification_name ($_qualification_name)
+    public function setExam_id ($_exam_id)
     {
-        $qualification_name = strtoupper($_qualification_name);
-        $this->_qualification_name = $qualification_name;
+        $this->_exam_id = $_exam_id;
+    }
+    /**
+     * @param field_type $_name
+     */
+    public function setName ($_name)
+    {
+        $this->_name = $_name;
+    }
+    /**
+     * @param field_type $_abbreviation
+     */
+    public function setAbbreviation ($_abbreviation)
+    {
+        $this->_abbreviation = $_abbreviation;
     }
     /**
      * Sets Mapper
-     * @param Acad_Model_Mapper_Qualification $mapper
-     * @return Acad_Model_Qualification
+     * @param Acad_Model_Mapper_CompetitiveExam $mapper
+     * @return Acad_Model_CompetitiveExam
      */
     public function setMapper ($mapper)
     {
@@ -52,12 +65,12 @@ class Acad_Model_Qualification extends Acad_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Mapper_Qualification
+     * @return Acad_Model_Mapper_CompetitiveExam
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Mapper_Qualification());
+            $this->setMapper(new Acad_Model_Mapper_CompetitiveExam());
         }
         return $this->_mapper;
     }
@@ -99,13 +112,13 @@ class Acad_Model_Qualification extends Acad_Model_Generic
     public function initInfo ()
     {}
     /**
-     * Fetches Qualification Details
+     * Fetches Exam Details
      *
      */
     public function fetchInfo ()
     {
-        $qualification_id = $this->getQualification_id(true);
-        $info = $this->getMapper()->fetchInfo($qualification_id);
+        $exam_id = $this->getExam_id(true);
+        $info = $this->getMapper()->fetchInfo($exam_id);
         if (empty($info)) {
             return false;
         } else {
@@ -113,13 +126,13 @@ class Acad_Model_Qualification extends Acad_Model_Generic
             return true;
         }
     }
-    public function fetchQualifications ()
+    public function fetchExams ()
     {
-        $qualifications = $this->getMapper()->fetchQualifications();
-        if (empty($qualifications)) {
+        $comp_exams = $this->getMapper()->fetchExams();
+        if (empty($comp_exams)) {
             return false;
         } else {
-            return $qualifications;
+            return $comp_exams;
         }
     }
 }
