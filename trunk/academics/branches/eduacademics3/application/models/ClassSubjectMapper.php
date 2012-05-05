@@ -46,7 +46,7 @@ class Acad_Model_Mapper_ClassSubject
         $class_subjects = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $class_subjects;
     }
- public function fetchSubjectClass ($subject_id)
+    public function fetchSubjectClass ($subject_id)
     {
         $db_table = $this->gclass_idetDbTable();
         $adapter = $db_table->getAdapter();

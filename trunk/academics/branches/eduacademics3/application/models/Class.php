@@ -257,8 +257,7 @@ class Acad_Model_Class extends Acad_Model_Generic
         if (empty($info)) {
             return false;
         } else {
-            $this->setOptions($info);
-            return $this;
+            return $info;
         }
     }
     /**
