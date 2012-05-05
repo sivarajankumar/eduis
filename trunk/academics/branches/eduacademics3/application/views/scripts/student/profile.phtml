@@ -21,6 +21,21 @@
             }
         }
     ?>
+    <?php
+        foreach ($this->exams as $key => $value)
+        {
+            echo '<span class="name_span">'.$value.' Information : </span>';
+            if($this->filled_exams[$key] != null){
+                //$view_fxn_name = 'show_'.strtolower($value).'_div()';
+                $action_name = 'view'.strtolower($value).'info';
+                echo '<span class="view_span"><a href="'.$this->url(array('controller' => 'student', 'action' => $action_name)).'">View Information</a></span><br><br>';
+            }
+            else {
+                $create_fxn_name = 'show_'.strtolower($value).'_div()';
+                echo '<span class="create_span" onclick="javascript:'.$create_fxn_name.'">Fill Information</span><br><br>';
+            }
+        }
+    ?>
     <br>
     <hr>
     <br>
@@ -28,13 +43,14 @@
         foreach ($this->degree_data as $sem_no => $data){
             echo 'Sem No.'.$sem_no.' ';
             foreach ($data as $dmc_no => $dmc_data){
-                echo 'DMC No.'.$dmc_no.' ';
-                foreach ($dmc_data as $key => $value){
-                    echo $key.' '.$value;
-                }
+                echo '<a href="/student/viewdmc?dmc_info_id='.$dmc_no.'&class_id='.$dmc_data[class_id].'&dmc_view_type=single">DMC No.'.$dmc_no.' </a>';
+                //foreach ($dmc_data as $key => $value){
+                    echo $dmc_data[dispatch_date].' ';
+                //}
                 echo '<br>';
-                echo '       ';
+                echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             }
+            echo '<a href="/student/createdmc?class_id='.$dmc_data[class_id].'&dmc_view_type=latest">+ Add More</a>';
             echo '<br>';
         }
     ?>

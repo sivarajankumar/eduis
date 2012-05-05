@@ -1,32 +1,39 @@
 
 <div class="ui-widget-content ui-corner-all"><center><H3>AIEEE Details</H3></center></div>
 <div id="Matric Details">
-    	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+    	<table id="corner" cellspacing="10" cellpadding="10">
           
         <?php 
         	foreach ($this->aieee as $key => $value) 
         		{
                     echo '<tr>';
-        	        echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
-                	echo '<td>'.ucfirst($value).'</td>';
-        	        echo '</tr>'; 
+    	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
+    	            if($value !=null){
+            	        echo '<td>'.ucfirst($value).'</td>';
+    	            }
+    	            else {
+    	                echo '<td><i>Not Mentioned</i></td>';
+    	            }
+    	            echo '</tr>';
         		} 
             ?>
         	
     	</table>
 	</div>
 <style type="text/css">
-table {
+	table {
       	border-color: #c20f2e;
-}
-#corner
-{
-	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
-	font-size: 12px;
-	margin: 15px;
-	width: 1000px;
-	text-align: left;
-	border-collapse: collapse;
-}
-
+		width:97%;
+	}
+	tr{
+		border-bottom:1px dashed #999;
+	}
+	#corner
+	{
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+		font-size: 14px;
+		margin: 15px;
+		text-align: left;
+		border-collapse: collapse;
+	}
 </style>
