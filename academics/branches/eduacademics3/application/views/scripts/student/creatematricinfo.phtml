@@ -1,0 +1,85 @@
+<form id="matric_form" class="uniForm" action="javascript:submit('matric')">
+<fieldset id="matric">
+<h3>Matric Information</h3>
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Board</label>
+		<input name="board" id="board" value="" data-default-value="e.g. CBSE" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">Education Board in 12th</p>
+	</div>
+            
+    <div class="ctrlHolder">
+		<label for=""><em>*</em> 10+2 Roll no.</label>
+		<input name="board_roll_no" id="board_roll_no" value="" data-default-value="e.g. 2310654" size="35" maxlength="20" type="text" class="textInput required"/>
+		<p class="formHint">10+2 roll number of </p>
+	</div>
+				
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Marks Obtained</label>
+		<input name="marks_obtained" id="marks_obtained" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Marks Obtained by <span class="cName" >Candidate</span></p>
+	</div>
+				  
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Total Marks</label>
+		<input name="total_marks" id="total_marks" value="" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Total Marks</p>
+	</div>
+			
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Percentage</label>
+		<input name="percentage" id="percentage" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
+		<p class="formHint">Percentage obtained by <span class="cName" >Candidate</span> in Physics, Chemistry, Math/Biology</p>
+	</div>
+				  
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Year of Passing</label>
+		<input name="passing_year" id="passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput required validateInteger validateMax val-<?php echo date('Y');?>"/>
+		<p class="formHint">Year in which <span class="cName" >Candidate</span> passed the 12th</p>
+	</div>
+			
+	<div class="ctrlHolder">
+		<label for="">School Rank</label>
+		<input name="school_rank" id="school_rank" value="" data-default-value="e.g. 1" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+		<p class="formHint">School rank of  <span class="cName" >Candidate</span></p>
+	</div>
+				  
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Institution</label>
+		<input name="institution" id="institution" value="" data-default-value="e.g. Saraswati Senior Secondary School" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">Institution in 12th</p>
+	</div>
+				
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>City</label>
+		<input name="city_name" id="city_name" value="" data-default-value="e.g. Ambala" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">City of Institution</p>
+    </div>
+				  
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>State</label>
+		<input name="state_name" id="state_name" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">State of Institution</p>
+	</div>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</fieldset>
+</form>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
+<script type="text/javascript">
+$('form.uniForm').uniform({
+    prevent_submit : true
+  });
+</script>

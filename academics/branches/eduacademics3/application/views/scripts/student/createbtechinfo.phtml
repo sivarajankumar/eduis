@@ -1,0 +1,76 @@
+<form id="btech_form" class="uniForm" action="javascript:submit('btech')">
+<fieldset id="btech">
+<h3>Btech</h3>
+			
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Branch</label>
+		<input name="discipline_name" id="discipline_name" value=""  data-default-value="e.g. Computer Science" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">Branch of  <span class="cName" >Candidate</span>(in full form only)</p>
+	</div>
+			
+	<div class="ctrlHolder">
+		<label for=""><em>*</em> Roll no.</label>
+		<input name="board_roll_no" id="board_roll_no" value="" data-default-value="e.g. 2310654" size="35" maxlength="20" type="text" class="textInput"/>
+		<p class="formHint">  </p>
+	</div>
+				
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Marks Obtained</label>
+		<input name="marks_obtained" id="marks_obtained" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Marks Obtained by <span class="cName" >Candidate</span></p>
+	</div>
+			 	
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Total Marks</label>
+		<input name="total_marks" id="total_marks" value="" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Total Marks</p>
+	</div>
+				
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Percentage</label>
+		<input name="percentage" id="percentage" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
+		<p class="formHint">Percentage obtained by <span class="cName" >Candidate</span> in Physics, Chemistry, Math/Biology</p>
+	</div>
+				
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Year of Passing</label>
+		<input name="passing_year" id="passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Year in which <span class="cName" >Candidate</span> passed the Btech</p>
+	</div>
+		        
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Institution</label>
+		<input name="istitution" id="istitution" value="" data-default-value="e.g. Govt. Polytechnic" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">Institution in Btech</p>
+	</div>
+		        
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>University</label>
+		<input name="university" id="university" value="" data-default-value="e.g. Govt. Polytechnic" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">University in Btech</p>
+	</div>
+		        			
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>City</label>
+		<input name="institution_city" id="institution_city" value="" data-default-value="e.g. Ambala" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">City of Institution</p>
+	</div>
+          
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>State</label>
+		<input name="institution_state" id="institution_state" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">State of Institution</p>
+	</div>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</fieldset>
+</form>
+<script type="text/javascript">
+    $('form.uniForm').uniform({
+        prevent_submit : true
+ 	});
+</script>
