@@ -106,7 +106,7 @@ class Acad_Model_Qualification extends Acad_Model_Generic
     {
         $qualification_id = $this->getQualification_id(true);
         $info = $this->getMapper()->fetchInfo($qualification_id);
-        if (sizeof($info) == 0) {
+        if (empty($info)) {
             return false;
         } else {
             $this->setOptions($info);
@@ -116,7 +116,7 @@ class Acad_Model_Qualification extends Acad_Model_Generic
     public function fetchQualifications ()
     {
         $qualifications = $this->getMapper()->fetchQualifications();
-        if (sizeof($qualifications) == 0) {
+        if (empty($qualifications)) {
             return false;
         } else {
             return $qualifications;
