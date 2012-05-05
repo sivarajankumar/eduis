@@ -3,7 +3,7 @@ class Acad_Model_StudentCompetitiveExam extends Acad_Model_Generic
 {
     protected $_member_id;
     protected $_name;
-    protected $_abbr;
+    protected $_abbreviation;
     protected $_exam_id;
     protected $_roll_no;
     protected $_date;
@@ -33,11 +33,11 @@ class Acad_Model_StudentCompetitiveExam extends Acad_Model_Generic
         return $this->_name;
     }
     /**
-     * @return the $_abbr
+     * @return the $_abbreviation
      */
-    public function getAbbr ()
+    public function getAbbreviation ()
     {
-        return $this->_abbr;
+        return $this->_abbreviation;
     }
     /**
      * @return the $_exam_id
@@ -96,11 +96,11 @@ class Acad_Model_StudentCompetitiveExam extends Acad_Model_Generic
         $this->_name = $_name;
     }
     /**
-     * @param field_type $_abbr
+     * @param field_type $_abbreviation
      */
-    public function setAbbr ($_abbr)
+    public function setAbbreviation ($_abbreviation)
     {
-        $this->_abbr = $_abbr;
+        $this->_abbreviation = $_abbreviation;
     }
     /**
      * @param field_type $_exam_id
@@ -139,7 +139,7 @@ class Acad_Model_StudentCompetitiveExam extends Acad_Model_Generic
     }
     /**
      * Set Subject Mapper
-     * @param Acad_Model_Mapper__StudentCompetitiveExam $mapper
+     * @param Acad_Model_Mapper_StudentCompetitiveExam $mapper
      * @return Acad_Model_StudentCompetitiveExam
      */
     public function setMapper ($mapper)
@@ -149,7 +149,7 @@ class Acad_Model_StudentCompetitiveExam extends Acad_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Mapper__StudentCompetitiveExam
+     * @return Acad_Model_Mapper_StudentCompetitiveExam
      */
     public function getMapper ()
     {
