@@ -389,7 +389,7 @@ class StudentController extends Zend_Controller_Action
                     $this->view->assign('degree_data', $degree_data);
                     $this->view->assign('qualifications', $qualifications);
                     $this->view->assign('exams', $exams);
-                     $thFis->view->assign('filled_exams', $filled_exams);
+                    $this->view->assign('filled_exams', $filled_exams);
                     Zend_Registry::get('logger')->debug($qualifications);
                     Zend_Registry::get('logger')->debug($filled_qualifications);
                     Zend_Registry::get('logger')->debug($degree_data);
