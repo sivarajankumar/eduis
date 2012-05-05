@@ -364,62 +364,12 @@ class StudentController extends Zend_Controller_Action
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         $qualification_data = array();
-        $qualfication_ids = $student_model->fetchQualificationsIds();
-        foreach ($qualfication_ids as $qualfication_id) {
-            $qualfication_model = new Acad_Model_Qualification();
-            $qualifications = $qualfication_model->fetchQualifications();
-            $qualification_name = $qualifications[$qualfication_id];
-             Zend_Registry::get('logger')->debug($qualification_name);
-            switch ($qualification_name) {
-                case 'MATRIC':
-                    {
-                    $specific_qualfication_model = $student_model->fetchQualifiactionInfo(
-                    $qualfication_id);
-                    if ($specific_qualfication_model instanceof Acad_Model_Qualification_Matric) {
-                        $qualification_data[$qualfication_id]['name'] = $specific_qualfication_model->getQualification_name();
-                        $qualification_data[$qualfication_id]['id'] = $qualfication_id;
-                    }
-                    Zend_Registry::get('logger')->debug($qualification_data);
-                    
-                    }
-                    break ;
-             case 'TWELFTH':
-                    {
-                    $specific_qualfication_model = $student_model->fetchQualifiactionInfo(
-                    $qualfication_id);
-                    if ($specific_qualfication_model instanceof Acad_Model_Qualification_Twelfth) {
-                        $qualification_data[$qualfication_id]['name'] = $specific_qualfication_model->getQualification_name();
-                        $qualification_data[$qualfication_id]['id'] = $qualfication_id;
-                    }
-                    Zend_Registry::get('logger')->debug($qualification_data);
-                    }
-                    break ;
-             case 'DIPLOMA':
-                    {
-                    $specific_qualfication_model = $student_model->fetchQualifiactionInfo(
-                    $qualfication_id);
-                    if ($specific_qualfication_model instanceof Acad_Model_Qualification_Diploma) {
-                        $qualification_data[$qualfication_id]['name'] = $specific_qualfication_model->getQualification_name();
-                        $qualification_data[$qualfication_id]['id'] = $qualfication_id;
-                    }
-                    Zend_Registry::get('logger')->debug($qualification_data);
-                    }
-                    break ;
-             case 'BTECH':
-                    {
-                        
-                    $specific_qualfication_model = $student_model->fetchQualifiactionInfo(
-                    $qualfication_id);
-                    if ($specific_qualfication_model instanceof Acad_Model_Qualification_Btech) {
-                        $qualification_data[$qualfication_id]['name'] = $specific_qualfication_model->getQualification_name();
-                        $qualification_data[$qualfication_id]['id'] = $qualfication_id;
-                    }
-                    Zend_Registry::get('logger')->debug('hello');
-                    }break ;
-                    
-                    default:'nothing found';
-            }
-        }
+        $qualification_model = new Acad_Model_Qualification();
+        $qualifications = $qualification_model->fetchQualifications();
+        $qualfication_id_array = $student_model->fetchQualificationsIds();
+        $qualification_ids = array_flip($qualfication_id_array);
+        $qualification_data = array_intersect_key($qualifications, 
+        $qualification_ids);
         $class_ids = $student_model->fetchAllClassIds();
         $model_member_id = $student_model->getMember_id();
         $degree_data = array();
@@ -430,6 +380,7 @@ class StudentController extends Zend_Controller_Action
             $semester_id = $class_model->getSemester_id();
             $dmc_info_ids = $student_model->fetchDmcInfoIds(null, null, true);
             foreach ($dmc_info_ids as $dmc_info_id) {
+                
                 $dmc_object = $student_model->fetchDmcInfo($dmc_info_id);
                 if ($dmc_object instanceof Acad_Model_Course_DmcInfo) {
                     $degree_data[$semester_id][$dmc_info_id]['dispatch_date'] = $dmc_object->getDispatch_date();
@@ -444,9 +395,9 @@ class StudentController extends Zend_Controller_Action
                     $this->view->assign('qualification_data', 
                     $qualification_data);
                     $this->view->assign('degree_data', $degree_data);
+                    Zend_Registry::get('logger')->debug($qualification_data);
+                    Zend_Registry::get('logger')->debug($degree_data);
                 }
-                Zend_Registry::get('logger')->debug($qualification_data);
-                Zend_Registry::get('logger')->debug($degree_data);
                 break;
             case 'jsonp':
                 $callback = $this->getRequest()->getParam('callback');
