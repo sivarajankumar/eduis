@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_Industries
+class Tnp_Model_Mapper_Roles
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_Industries
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_Industries
+     * @return Tnp_Model_Mapper_Roles
      */
     public function setDbTable ($dbTable)
     {
@@ -29,7 +29,7 @@ class Tnp_Model_Mapper_Industries
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Tnp_Model_DbTable_Industries');
+            $this->setDbTable('Tnp_Model_DbTable_Roles');
         }
         return $this->_dbTable;
     }
@@ -37,43 +37,43 @@ class Tnp_Model_Mapper_Industries
      * 
      * @param integer $industry_id
      */
-    public function fetchInfo ($industry_id)
+    public function fetchInfo ($role_id)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
-        $industry_table = $db_table->info('name');
-        $required_cols = array('industry_id', 'industry_name');
+        $role_table = $db_table->info('name');
+        $required_cols = array('role_id', 'role_name');
         $select = $adapter->select()
-            ->from($industry_table, $required_cols)
-            ->where('industry_id = ?', $industry_id);
-        $industry_info = array();
-        $industry_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $industry_info[$industry_id];
+            ->from($role_table, $required_cols)
+            ->where('role_id = ?', $role_id);
+        $role_info = array();
+        $role_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $role_info[$role_id];
     }
-    public function fetchIndustryIds ()
+    public function fetchRoles ()
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
-        $industry_table = $db_table->info('name');
-        $required_cols = array('industry_id');
-        $select = $adapter->select()->from($industry_table, $required_cols);
-        $industries = array();
+        $role_table = $db_table->info('name');
+        $required_cols = array('role_id', 'role_name');
+        $select = $adapter->select()->from($role_table, $required_cols);
+        $roles = array();
         $result = array();
         $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        foreach ($result as $industry_id => $industry_names) {
-            $industries[$industry_id] = $industry_names['language_name'];
+        foreach ($result as $role_id => $role_info_array) {
+            $roles[$role_id] = $role_info_array['role_name'];
         }
-        return $industries;
+        return $roles;
     }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
-    public function update ($prepared_data, $industry_id)
+    public function update ($prepared_data, $role_id)
     {
         $dbtable = $this->getDbTable();
-        $where = 'industry_id = ' . $industry_id;
+        $where = 'role_id = ' . $role_id;
         return $dbtable->update($prepared_data, $where);
     }
 }

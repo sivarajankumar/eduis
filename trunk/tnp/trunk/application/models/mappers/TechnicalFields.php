@@ -54,11 +54,11 @@ class Tnp_Model_Mapper_TechnicalFields
     }
     public function fetchIds ($technical_field_name = null, $technical_sector = null)
     {
+        $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $adapter = $db_table->getAdapter();
-        $skills_table = $db_table->info('name');
+        $technical_field_table = $db_table->info('name');
         $required_cols = array('member_id');
-        $select = $adapter->select()->from($skills_table, $required_cols);
+        $select = $adapter->select()->from($technical_field_table, $required_cols);
         if (! empty($technical_field_name)) {
             $select->where('technical_field_name = ?', $technical_field_name);
         }
