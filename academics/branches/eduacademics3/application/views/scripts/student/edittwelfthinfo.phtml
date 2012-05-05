@@ -1,4 +1,4 @@
-<form id="twelfth_form" action="javascript:submit('twelfth')" class="uniForm">
+<form id="twelfth_form" action="javascript:submit_twelfth_info()" class="uniForm">
 <fieldset id="twelfth">
 	<h3>Twelfth Marks</h3>
 
@@ -89,4 +89,30 @@ $this->headLink()->prependStylesheet(
 	$('form.uniForm').uniform({
     	prevent_submit : true
 	});
+
+	function submit_twelfth_info(){
+    	var data = {};
+		var urlSaveTwelfthInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savetwelfthinfo'))?>";
+    	var qualificationData = {};
+		$('fieldset#twelfth :input')
+		.not('button,:input[value^="e.g."]')
+		.each(function(){ 
+			qualificationData[this.name] = this.value;
+		});
+		data['qualification_name'] = 'TWELFTH';
+		data['qualification_data'] = qualificationData;
+		$.ajax({
+			url : urlSaveTwelfthInfo,
+			data : {myarray:data},
+			success: function(jStatus){
+				$('#twelfth_div').hide();
+				$('#aieee_div').show();
+            },
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+					console.log(response);
+			}
+		});
+	}
+    	
 </script>

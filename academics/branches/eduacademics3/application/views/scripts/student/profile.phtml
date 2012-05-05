@@ -4,12 +4,23 @@
         .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
       </style>
 <![endif]-->
-<h2>Academic Information:</h2>
+<h2>Academic Information:<span id="goback"></span></h2>
 <div id="initial_div">
-	<h2 onclick="javascript:show_matric_div()">Matric Information</h2>
-	<h2 onclick="javascript:show_twelfth_div()">Twelfth Information</h2>
-	<h2 onclick="javascript:show_diploma_div()">Diploma Information</h2>
-	<h2 onclick="javascript:show_btech_div()">Btech Information</h2>
+	<?php
+        foreach ($this->qualifications as $key => $value)
+        {
+            echo '<span class="name_span">'.$value.' Information : </span>';
+            if($this->filled_qualifications[$key] != null){
+                //$view_fxn_name = 'show_'.strtolower($value).'_div()';
+                $action_name = 'view'.strtolower($value).'info';
+                echo '<span class="view_span"><a href="'.$this->url(array('controller' => 'student', 'action' => $action_name)).'">View Information</a></span><br><br>';
+            }
+            else {
+                $create_fxn_name = 'show_'.strtolower($value).'_div()';
+                echo '<span class="create_span" onclick="javascript:'.$create_fxn_name.'">Fill Information</span><br><br>';
+            }
+        }
+    ?>
 </div>
 
 <div id="matric_div"></div>
@@ -21,7 +32,7 @@
 <div id="gate_div"></div>
 
 
-<script><!--
+<script>
 	var urlCreateMatricInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'editmatricinfo'))?>";
 	var urlCreateTwelfthInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'edittwelfthinfo'))?>";
 	var urlCreateAieeeInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'editaieeeinfo'))?>";
@@ -30,37 +41,6 @@
 	var urlCreateBtechInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'editbtechinfo'))?>";
 	var urlCreateGateInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'editgateinfo'))?>";
 	
-    $(function(){
-        serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
-        $("#doc").datepicker({
-        	dateFormat: 'yy-mm-dd',
-        	changeMonth: true,
-			changeYear: true,
-			yearRange: '-25:-15',
-			onClose : function(dateText, inst) {
-				this.focus();
-				}
-        });
-        $("#doc1").datepicker({
-        	dateFormat: 'yy-mm-dd',
-        	changeMonth: true,
-			changeYear: true,
-			yearRange: '-25:-15',
-			onClose : function(dateText, inst) {
-				this.focus();
-				}
-        });
-        $("#doc2").datepicker({
-        	dateFormat: 'yy-mm-dd',
-        	changeMonth: true,
-			changeYear: true,
-			yearRange: '-25:-15',
-			onClose : function(dateText, inst) {
-				this.focus();
-				}
-        });
-    });
-    
     function show_matric_div(){
     	$('#initial_div').hide();
         var formDiv = '#matric_div';
@@ -70,8 +50,8 @@
                 $(".content").html(msg + xhr.status + " " + xhr.statusText);
                 return;
             }
+        	show_goback();
         });
-    	
     }
     function show_twelfth_div(){
     	$('#initial_div').hide();
@@ -82,7 +62,9 @@
                 $(".content").html(msg + xhr.status + " " + xhr.statusText);
                 return;
             }
+        	show_goback();
         });
+    	show_goback();
     	var formDiv = '#aieee_div';
     	$(formDiv).load(urlCreateAieeeInfo, '', function(response, status, xhr) {
         	if (status == 'error') {
@@ -90,6 +72,7 @@
                 $(".content").html(msg + xhr.status + " " + xhr.statusText);
                 return;
             }
+        	show_goback();
             $('#aieee_div').hide();
         });
     }
@@ -102,6 +85,7 @@
                 $(".content").html(msg + xhr.status + " " + xhr.statusText);
                 return;
             }
+        	show_goback();
         });
     	var formDiv = '#leet_div';
     	$(formDiv).load(urlCreateLeetInfo, '', function(response, status, xhr) {
@@ -110,6 +94,7 @@
                 $(".content").html(msg + xhr.status + " " + xhr.statusText);
                 return;
             }
+        	show_goback();
         	$('#leet_div').hide();
         });
     }
@@ -122,6 +107,7 @@
                 $(".content").html(msg + xhr.status + " " + xhr.statusText);
                 return;
             }
+        	show_goback();
         });
     	var formDiv = '#gate_div';
     	$(formDiv).load(urlCreateGateInfo, '', function(response, status, xhr) {
@@ -130,205 +116,21 @@
                 $(".content").html(msg + xhr.status + " " + xhr.statusText);
                 return;
             }
+        	show_goback();
         	$('#gate_div').hide();
         });
     }
-    
-	function submit(div_name){
-    	var data = {};
-        switch(div_name){
-        	case 'matric':
-        	{
-				var urlSaveTenthInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savematricinfo'))?>";
-				var qualificationData = {};
-				$('fieldset#matric :input')
-    			.not('button,:input[value^="e.g."]')
-    			.each(function(){ 
-    				qualificationData[this.name] = this.value;
-    			});
-        		data['qualification_name'] = 'MATRIC';
-    			data['qualification_data'] = qualificationData;
-    			$.ajax({
-    				url : urlSaveTenthInfo,
-    				data : {myarray:data},
-    				success: function(jStatus){
-    					alert('Your information has been sucessfully submitted...');
-    					window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
-    					//return;
-    	            },
-    	            error: function(response) {
-    					$('#errorBox').text(response.responseText).parent().show();
-    						console.log(response);
-    				}
-    			});
-        	}
-        	break;
-        	
-        	case 'twelfth':
-        	{
-        		var urlSaveTwelfthInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savetwelfthinfo'))?>";
-            	var qualificationData = {};
-        		$('fieldset#twelfth :input')
-    			.not('button,:input[value^="e.g."]')
-    			.each(function(){ 
-    				qualificationData[this.name] = this.value;
-    			});
-        		data['qualification_name'] = 'TWELFTH';
-    			data['qualification_data'] = qualificationData;
-    			$.ajax({
-    				url : urlSaveTwelfthInfo,
-    				data : {myarray:data},
-    				success: function(jStatus){
-        				$('#twelfth_div').hide();
-        				$('#aieee_div').show();
-    	            },
-    	            error: function(response) {
-    					$('#errorBox').text(response.responseText).parent().show();
-    						console.log(response);
-    				}
-    			});
-        	}
-        	break;
-        	
-        	case 'aieee':
-        	{
-            	var urlSaveAieeeInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'saveaieeeinfo'))?>";
-            	var qualificationData = {};
-        		$('fieldset#aieee :input')
-    			.not('button,:input[value^="e.g."]')
-    			.each(function(){ 
-    				qualificationData[this.name] = this.value;
-    			});
-        		data['qualification_name'] = 'AIEEE';
-    			data['qualification_data'] = qualificationData;
-    			$.ajax({
-    				url : urlSaveAieeeInfo,
-    				data : {myarray:data},
-    				success: function(jStatus){
-    					$('#aieee_div').hide();
-    					window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
-    	            },
-    	            error: function(response) {
-    					$('#errorBox').text(response.responseText).parent().show();
-    						console.log(response);
-    				}
-    			});
-        	}
-        	break;
-        	
-        	case 'diploma':
-        	{
-            	var urlSaveDiplomaInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savediplomainfo'))?>";
-            	var qualificationData = {};
-        		$('fieldset#diploma :input')
-    			.not('button,:input[value^="e.g."]')
-    			.each(function(){ 
-    				qualificationData[this.name] = this.value;
-    			});
-        		data['qualification_name'] = 'DIPLOMA';
-    			data['qualification_data'] = qualificationData;
-    			$.ajax({
-    				url : urlSaveDiplomaInfo,
-    				data : {myarray:data},
-    				success: function(jStatus){
-    					$('#diploma_div').hide();
-    					$('#leet_div').show();
-    	            },
-    	            error: function(response) {
-    					$('#errorBox').text(response.responseText).parent().show();
-    						console.log(response);
-    				}
-    			});
-        	}
-        	break;
-        	
-        	case 'leet':
-        	{
-            	var urlSaveLeetInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'saveleetinfo'))?>";
-            	var qualificationData = {};
-        		$('fieldset#leet :input')
-    			.not('button,:input[value^="e.g."]')
-    			.each(function(){ 
-    				qualificationData[this.name] = this.value;
-    			});
-        		data['qualification_name'] = 'LEET';
-    			data['qualification_data'] = qualificationData;
-    			$.ajax({
-    				url : urlSaveLeetInfo,
-    				data : {myarray:data},
-    				success: function(jStatus){
-    					$('#leet_div').hide();
-    					window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
-    	            },
-    	            error: function(response) {
-    					$('#errorBox').text(response.responseText).parent().show();
-    						console.log(response);
-    				}
-    			});
-        	}
-        	break;
-
-            case 'btech':
-        	{
-            	var urlSaveBtechInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savebtechinfo'))?>";
-            	var qualificationData = {};
-        		$('fieldset#btech :input')
-        		.not('button,:input[value^="e.g."]')
-        		.each(function(){ 
-        			qualificationData[this.name] = this.value;
-        		});
-        		data['qualification_name'] = 'BTECH';
-        		data['qualification_data'] = qualificationData;
-        		$.ajax({
-        			url : urlSaveBtechInfo,
-        			data : {myarray:data},
-        			success: function(jStatus){
-        				$('#btech_div').hide();
-        				$('#gate_div').show();
-                    },
-                    error: function(response) {
-        				$('#errorBox').text(response.responseText).parent().show();
-        					console.log(response);
-        			}
-        		});
-        	}
-        	break;
-        	
-        	case 'gate':
-        	{
-            	var urlSaveGateInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savegateinfo'))?>";
-            	var qualificationData = {};
-        		$('fieldset#gate :input')
-        		.not('button,:input[value^="e.g."]')
-        		.each(function(){ 
-        			qualificationData[this.name] = this.value;
-        		});
-        		data['qualification_name'] = 'GATE';
-        		data['qualification_data'] = qualificationData;
-        		$.ajax({
-        			url : urlSaveGateInfo,
-        			data : {myarray:data},
-        			success: function(jStatus){
-        				$('#gate_div').hide();
-        				window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
-                    },
-                    error: function(response) {
-        				$('#errorBox').text(response.responseText).parent().show();
-        					console.log(response);
-        			}
-        		});
-        	}
-        	break;
-		}
+    function show_goback(){
+    	$('span#goback').html('<a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a>');
     }
-   	</script>
+	</script>
     
     <style type="text/css">
     #initial_div{
     	padding:10px;
 		background-color:white;
 		box-shadow:#e4e4e4 0px 0px 1px 1px;
-		width:300px;
+		width:57%
 	}
 	.checkbox_name{
 		font-size:14px;
@@ -349,7 +151,46 @@
 		font-size:17px;
 		font-weight:100;
 	}
-    </style>
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+	.name_span{
+		padding:3px 3px 3px 10px;
+		/*background-color:#eceff4;
+		border:1px solid #b4c1da;*/
+		font-size:17px;
+		margin:0 10px 10px 0;
+	}
+	.view_span{
+		padding:3px 3px 3px 10px;
+		background-color:#fef8f6;
+		border:1px solid #cd0a0a;
+		font-size:17px;
+	}
+	.view_span a{
+		text-decoration: none;
+		color:black;
+	}
+	.view_span:hover{
+		box-shadow:#b99393 0px 0px 1px 1px;
+		cursor: pointer;
+	}
+	.create_span{
+		padding:3px 3px 3px 10px;
+		background-color:#fcfaf1;
+		border:1px solid #fcefa1;
+		font-size:17px;
+	}
+	.create_span:hover{
+		box-shadow:#aca162 0px 0px 1px 1px;
+		cursor: pointer;
+	}
+	
+</style>
+
 <?php
 $this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
     

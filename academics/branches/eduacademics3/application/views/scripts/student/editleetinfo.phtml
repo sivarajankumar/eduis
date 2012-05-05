@@ -1,4 +1,4 @@
-<form id="leet_form" class="uniForm" action="javascript:submit('leet')">
+<form id="leet_form" class="uniForm" action="javascript:submit_leet_info()">
 <fieldset id="leet">
 <h3>LEET</h3>
 				
@@ -10,7 +10,7 @@
 					
 	<div class="ctrlHolder">
 		<label for="doc"><em>*</em>Date of Conduct</label>
-		<input name="doc" id="doc2" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<input name="doc" id="doc" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
 		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
 	</div>
         
@@ -37,4 +37,41 @@
     $('form.uniForm').uniform({
         prevent_submit : true
  	});
+ 	
+    $("#doc").datepicker({
+    	dateFormat: 'yy-mm-dd',
+    	changeMonth: true,
+		changeYear: true,
+		yearRange: '-25:-15',
+		onClose : function(dateText, inst) {
+			this.focus();
+			}
+    });
+    
+    function submit_leet_info(){
+    	var data = {};
+    	var urlSaveLeetInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'saveleetinfo'))?>";
+    	var qualificationData = {};
+		$('fieldset#leet :input')
+		.not('button,:input[value^="e.g."]')
+		.each(function(){ 
+			qualificationData[this.name] = this.value;
+		});
+		data['qualification_name'] = 'LEET';
+		data['qualification_data'] = qualificationData;
+		$.ajax({
+			url : urlSaveLeetInfo,
+			data : {myarray:data},
+			success: function(jStatus){
+				$('#leet_div').hide();
+				alert('Your information has been sucessfully submitted...');
+				window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
+            },
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+					console.log(response);
+			}
+		});
+	}
+        	
 </script>

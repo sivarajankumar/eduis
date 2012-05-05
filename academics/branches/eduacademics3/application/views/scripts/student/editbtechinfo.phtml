@@ -1,4 +1,4 @@
-<form id="btech_form" class="uniForm" action="javascript:submit('btech')">
+<form id="btech_form" class="uniForm" action="javascript:submit_btech_info()">
 <fieldset id="btech">
 <h3>Btech</h3>
 			
@@ -73,4 +73,30 @@
     $('form.uniForm').uniform({
         prevent_submit : true
  	});
+
+    function submit_btech_info(){
+    	var data = {};
+        var urlSaveBtechInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savebtechinfo'))?>";
+    	var qualificationData = {};
+    	$('fieldset#btech :input')
+    	.not('button,:input[value^="e.g."]')
+    	.each(function(){ 
+    		qualificationData[this.name] = this.value;
+    	});
+    	data['qualification_name'] = 'BTECH';
+    	data['qualification_data'] = qualificationData;
+    	$.ajax({
+    		url : urlSaveBtechInfo,
+    		data : {myarray:data},
+    		success: function(jStatus){
+    			$('#btech_div').hide();
+    			$('#gate_div').show();
+            },
+            error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+    	});
+    }
+        	
 </script>

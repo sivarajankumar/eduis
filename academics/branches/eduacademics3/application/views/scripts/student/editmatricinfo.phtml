@@ -1,4 +1,4 @@
-<form id="matric_form" class="uniForm" action="javascript:submit('matric')">
+<form id="matric_form" class="uniForm" action="javascript:submit_matric_info()">
 <fieldset id="matric">
 <h3>Matric Information</h3>
 	<div class="ctrlHolder">
@@ -82,4 +82,31 @@ $this->headLink()->prependStylesheet(
 $('form.uniForm').uniform({
     prevent_submit : true
   });
+
+function submit_matric_info(){
+	var data = {};
+	var urlSaveMatricInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savematricinfo'))?>";
+	var qualificationData = {};
+	$('fieldset#matric :input')
+	.not('button,:input[value^="e.g."]')
+	.each(function(){ 
+		qualificationData[this.name] = this.value;
+	});
+	data['qualification_name'] = 'MATRIC';
+	data['qualification_data'] = qualificationData;
+	$.ajax({
+		url : urlSaveMatricInfo,
+		data : {myarray:data},
+		success: function(jStatus){
+			alert('Your information has been sucessfully submitted...');
+			window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
+			//return;
+        },
+        error: function(response) {
+			$('#errorBox').text(response.responseText).parent().show();
+				console.log(response);
+		}
+	});
+}
+    	
 </script>
