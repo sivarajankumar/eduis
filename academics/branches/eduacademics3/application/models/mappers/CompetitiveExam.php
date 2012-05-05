@@ -51,7 +51,7 @@ class Acad_Model_Mapper_CompetitiveExam
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $comp_table = $db_table->info('name');
-        $required_cols = array('exam_id', 'abbrr');
+        $required_cols = array('exam_id', 'abbreviation');
         $select = $adapter->select()->from($comp_table, $required_cols);
         $comp_exams = array();
         $comp_exams = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
