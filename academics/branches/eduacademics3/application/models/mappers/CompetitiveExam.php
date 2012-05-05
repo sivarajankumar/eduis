@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_Mapper_Exam_CompetitiveExam
+class Acad_Model_Mapper_CompetitiveExam
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Acad_Model_Mapper_Exam_CompetitiveExam
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Acad_Model_Mapper_Exam_CompetitiveExam
+     * @return Acad_Model_Mapper_CompetitiveExam
      */
     public function setDbTable ($dbTable)
     {
@@ -33,7 +33,20 @@ class Acad_Model_Mapper_Exam_CompetitiveExam
         }
         return $this->_dbTable;
     }
-    public function fetchExamIds ($member_id)
+    public function fetchInfo ($exam_id)
+    {
+       $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $comp_table = $db_table->info('name');
+        $required_cols = array('exam_id','name','abbreviation');
+        $select = $adapter->select()
+            ->from($comp_table, $required_cols)
+            ->where('exam_id = ?', $exam_id);
+        $exam_info = array();
+        $exam_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $exam_info[$exam_id];
+    }
+    public function fetchExams()
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
