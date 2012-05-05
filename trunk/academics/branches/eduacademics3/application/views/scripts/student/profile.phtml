@@ -21,6 +21,23 @@
             }
         }
     ?>
+    <br>
+    <hr>
+    <br>
+    <?php 
+        foreach ($this->degree_data as $sem_no => $data){
+            echo 'Sem No.'.$sem_no.' ';
+            foreach ($data as $dmc_no => $dmc_data){
+                echo 'DMC No.'.$dmc_no.' ';
+                foreach ($dmc_data as $key => $value){
+                    echo $key.' '.$value;
+                }
+                echo '<br>';
+                echo '       ';
+            }
+            echo '<br>';
+        }
+    ?>
 </div>
 
 <div id="matric_div"></div>
@@ -64,7 +81,9 @@
             }
         	show_goback();
         });
-    	show_goback();
+    }
+	function show_aieee_div(){
+    	$('#initial_div').hide();
     	var formDiv = '#aieee_div';
     	$(formDiv).load(urlCreateAieeeInfo, '', function(response, status, xhr) {
         	if (status == 'error') {
@@ -73,7 +92,6 @@
                 return;
             }
         	show_goback();
-            $('#aieee_div').hide();
         });
     }
     function show_diploma_div(){
@@ -87,6 +105,9 @@
             }
         	show_goback();
         });
+    }
+	function show_leet_div(){
+    	$('#initial_div').hide();
     	var formDiv = '#leet_div';
     	$(formDiv).load(urlCreateLeetInfo, '', function(response, status, xhr) {
         	if (status == 'error') {
@@ -95,7 +116,6 @@
                 return;
             }
         	show_goback();
-        	$('#leet_div').hide();
         });
     }
     function show_btech_div(){
@@ -109,6 +129,9 @@
             }
         	show_goback();
         });
+    }
+	function show_gate_div(){
+    	$('#initial_div').hide();
     	var formDiv = '#gate_div';
     	$(formDiv).load(urlCreateGateInfo, '', function(response, status, xhr) {
         	if (status == 'error') {
@@ -117,7 +140,6 @@
                 return;
             }
         	show_goback();
-        	$('#gate_div').hide();
         });
     }
     function show_goback(){

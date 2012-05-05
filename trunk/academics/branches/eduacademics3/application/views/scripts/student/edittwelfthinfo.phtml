@@ -105,8 +105,8 @@ $this->headLink()->prependStylesheet(
 			url : urlSaveTwelfthInfo,
 			data : {myarray:data},
 			success: function(jStatus){
-				$('#twelfth_div').hide();
-				$('#aieee_div').show();
+				alert('Your information has been sucessfully submitted...');
+				window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
             },
             error: function(response) {
 				$('#errorBox').text(response.responseText).parent().show();
