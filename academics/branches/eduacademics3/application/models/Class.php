@@ -246,6 +246,22 @@ class Acad_Model_Class extends Acad_Model_Generic
         }
     }
     /**
+     * Fetches Subjects of a class
+     *
+     */
+    public function fetchSubjects ()
+    {
+        $class_id = $this->getClass_id(true);
+        $class_subject_mapper = new Acad_Model_Mapper_ClassSubject();
+        $info = $class_subject_mapper->fetchClassSubjects($class_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            $this->setOptions($info);
+            return $this;
+        }
+    }
+    /**
      * 
      * fetches the Class Ids of a batch
      * @param bool $batch_specific optional
