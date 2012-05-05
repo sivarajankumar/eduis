@@ -4,6 +4,7 @@ class Acad_Model_CompetitiveExam extends Acad_Model_Generic
     protected $_exam_id;
     protected $_name;
     protected $_abbreviation;
+    protected $_mapper;
     /**
      * @return the $_exam_id
      */
