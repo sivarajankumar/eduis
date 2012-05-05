@@ -1,0 +1,85 @@
+<form action="javascript:submit();" class="uniForm">
+<h2>Sign Up  </h2>
+        
+        <fieldset>
+        <h3>Username</h3>
+			<div class="ctrlHolder">
+	            <label for="login_id"><em>*</em>Name</label>
+	            <input name="login_id" id="login_id" value="" data-default-value="amit_kumar" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+	            <p class="formHint">Enter the desired username </p>
+          </div>
+           
+          
+        <div class="ctrlHolder">
+            <label for="sec_passwd"><em>*</em>Feild</label>
+            <input name="sec_passwd" id="sec_passwd" value=""  size="35" maxlength="50" type="text" class="textInput required validateAlphaNum"/>
+            <p class="formHint">Enter the password not less than six characters in length </p>
+          </div>
+          <div class="ctrlHolder">
+				<label for="sec_passwd_confirm">Confirm Password</label>
+				<input name="sec_passwd_confirm" id="sec_passwd_confirm" data-default-value="" value=""  size="35" maxlength="50" type="text" class="required textInput validateSameAs sec_passwd"/>
+				<p class="formHint"></p>
+		  </div>
+          
+          <div class="ctrlHolder">
+            <label for=""><em>*</em>User Type</label>
+             <select id="user_type_id" name="user_type_id" class="selectInput required">
+          		 <option value="STU">Student</option>
+          		<option value="STAFF">Staff</option>
+          	  </select>
+            <p class="formHint">Select the type of user</p>
+          </div>
+          
+          <div class="ctrlHolder">
+            <label for=""><em>*</em>Deaprtment</label>
+             <select id="department_id" name="department_id" class="selectInput required">
+          		<option value="CSE">Computer Science and Engineeing</option>
+          		<option value="BT">Biotechnology</option>
+          		<option value="ECE">Electronics and Communication Engineering</option>
+          		<option value="ME">Mechanical Engineering</option>
+          		<option value="MGMT">Management</option>
+          	 </select>
+            <p class="formHint">Select the department</p>
+          </div>
+          
+          
+      </fieldset>
+      <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+      
+      	<div class="buttonHolder">
+            <button type="reset" class="secondaryAction">Reset</button>
+            <button type="submit" class="primaryAction">Next</button>
+    	</div>
+</form>
+<script>	
+$(function(){
+	
+    $('form.uniForm').uniform({
+      prevent_submit : true
+    });
+  });
+
+function submit() {
+      $.ajax({
+          url : urlAcadmicInfo,
+          data : getValues(),
+          success: function(jStatus){
+              
+          },
+              error: function(response) {
+            	  $('#errorBox').text(response.responseText).parent().show();
+                  console.log(response);
+                  }
+              });
+  }
+ </script>
+ <?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
