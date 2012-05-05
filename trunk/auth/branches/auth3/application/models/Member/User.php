@@ -268,7 +268,7 @@ class Auth_Model_Member_User extends Auth_Model_Generic
                 break;
         }
     }
-    public function fetchAuthlInfo ()
+    public function fetchAuthInfo ()
     {
         $member_id = $this->getMember_id(true);
         $info = array();
@@ -284,7 +284,7 @@ class Auth_Model_Member_User extends Auth_Model_Generic
         $login_id = $this->getLogin_id(true);
         return $this->getMapper()->fetchAuthUserInfo(null, $login_id);
     }
-    public function saveAuthlInfo ($data_array)
+    public function saveAuthInfo ($data_array)
     {
         $login_id = $data_array['login_id'];
         $this->setLogin_id($login_id);
