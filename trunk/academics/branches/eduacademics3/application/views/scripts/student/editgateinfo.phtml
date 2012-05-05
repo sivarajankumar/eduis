@@ -1,4 +1,4 @@
-<form id="gate_form" class="uniForm" action="javascript:submit('gate')">
+<form id="gate_form" class="uniForm" action="javascript:submit_gate_info()">
 <fieldset id="gate">
 	<h3>GATE</h3>
 	
@@ -37,4 +37,40 @@
     $('form.uniForm').uniform({
         prevent_submit : true
  	});
+
+    $("#doc").datepicker({
+    	dateFormat: 'yy-mm-dd',
+    	changeMonth: true,
+		changeYear: true,
+		yearRange: '-25:-15',
+		onClose : function(dateText, inst) {
+			this.focus();
+			}
+    });
+
+    function submit_gate_info(){
+    	var data = {};
+        var urlSaveGateInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savegateinfo'))?>";
+        var qualificationData = {};
+        $('fieldset#gate :input')
+        .not('button,:input[value^="e.g."]')
+        .each(function(){ 
+        	qualificationData[this.name] = this.value;
+        });
+        data['qualification_name'] = 'GATE';
+        data['qualification_data'] = qualificationData;
+        $.ajax({
+        	url : urlSaveGateInfo,
+        	data : {myarray:data},
+        	success: function(jStatus){
+        		$('#gate_div').hide();
+        		alert('Your information has been sucessfully submitted...');
+        		window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
+            },
+            error: function(response) {
+        		$('#errorBox').text(response.responseText).parent().show();
+        			console.log(response);
+        	}
+        });
+    }
 </script>

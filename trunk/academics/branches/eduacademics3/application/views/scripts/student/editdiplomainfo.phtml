@@ -1,4 +1,4 @@
-<form id="diploma_form" class="uniForm" action="javascript:submit('diploma')">
+<form id="diploma_form" class="uniForm" action="javascript:submit_diploma_info()">
 <fieldset id="diploma">
 	<h3>Diploma Marks</h3>
 			
@@ -79,4 +79,30 @@
     $('form.uniForm').uniform({
         prevent_submit : true
  	});
+
+    function submit_diploma_info(){
+    	var data = {};
+    	var urlSaveDiplomaInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savediplomainfo'))?>";
+    	var qualificationData = {};
+		$('fieldset#diploma :input')
+		.not('button,:input[value^="e.g."]')
+		.each(function(){ 
+			qualificationData[this.name] = this.value;
+		});
+		data['qualification_name'] = 'DIPLOMA';
+		data['qualification_data'] = qualificationData;
+		$.ajax({
+			url : urlSaveDiplomaInfo,
+			data : {myarray:data},
+			success: function(jStatus){
+				$('#diploma_div').hide();
+				$('#leet_div').show();
+            },
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+					console.log(response);
+			}
+		});
+	}
+    		
 </script>
