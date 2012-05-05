@@ -41,7 +41,7 @@ class Acad_Model_Mapper_ClassSubject
         $required_cols = array('subject_id');
         $select = $adapter->select()
             ->from($table_name, $required_cols)
-            ->where(' = ?', $class_id);
+            ->where('class_id= ?', $class_id);
         $class_subjects = array();
         $class_subjects = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $class_subjects;
