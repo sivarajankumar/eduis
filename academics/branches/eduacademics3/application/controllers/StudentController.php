@@ -387,10 +387,10 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->viewRenderer->setNoRender(false);
                 $this->_helper->layout()->enableLayout();
                 if (! empty($filled_qualifications)) {
-                    $this->view->assign('qualification_data', 
+                    $this->view->assign('filled_qualifications', 
                     $filled_qualifications);
                     $this->view->assign('degree_data', $degree_data);
-                    $this->view->assign('qualifications', $qualification_ids);
+                    $this->view->assign('qualifications', $qualifications);
                     Zend_Registry::get('logger')->debug($qualifications);
                     Zend_Registry::get('logger')->debug($filled_qualifications);
                     Zend_Registry::get('logger')->debug($degree_data);
