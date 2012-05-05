@@ -1,0 +1,14 @@
+<div id="aieee">
+    	<table style="width: 100%">
+            <?php 
+        	foreach ($this->matric as $key => $value) 
+        		{
+                    echo '<tr>';
+        	        echo '<td>'.ucfirst(str_replace('_', ' ', str_replace("_id", '',$key))).'</td>';
+                	echo '<td>'.ucfirst($value).'</td>';
+        	        echo '</tr>'; 
+        		}  
+            ?>
+        	
+    	</table>
+	</div>
