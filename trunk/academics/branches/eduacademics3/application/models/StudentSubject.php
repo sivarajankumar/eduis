@@ -245,9 +245,4 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
             return $student_subjects;
         }
     }
-    public function save ($data_array)
-    {
-        $preparedData = $this->prepareDataForSaveProcess($data_array);
-        $this->getMapper()->save($preparedData);
-    }
 }

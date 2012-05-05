@@ -227,11 +227,4 @@ class Core_Model_StudentClass extends Core_Model_Generic
             return $class_ids;
         }
     }
-    public function save ($data_array)
-    {
-        $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
-        $data_array);
-        $this->setOptions($preparedDataForSaveProcess);
-        $this->getMapper()->save($preparedDataForSaveProcess);
-    }
 }

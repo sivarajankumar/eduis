@@ -270,11 +270,4 @@ class Core_Model_MemberRelatives extends Core_Model_Generic
             return $relation_ids;
         }
     }
-    public function save ($data_array)
-    {
-        $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
-        $data_array);
-        $this->setOptions($preparedDataForSaveProcess);
-        $this->getMapper()->save($preparedDataForSaveProcess);
-    }
 }

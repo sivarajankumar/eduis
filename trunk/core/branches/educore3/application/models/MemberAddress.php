@@ -210,11 +210,4 @@ class Core_Model_MemberAddress extends Core_Model_Generic
             return $address_types;
         }
     }
-    public function save ($data_array)
-    {
-        $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
-        $data_array);
-        $this->setOptions($preparedDataForSaveProcess);
-        $this->getMapper()->save($preparedDataForSaveProcess);
-    }
 }

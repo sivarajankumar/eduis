@@ -84,10 +84,12 @@ class Acad_Model_Mapper_Batch
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
-        try {
-            $row_id = $dbtable->insert($prepared_data);
-        } catch (Exception $exception) {
-            throw $exception;
-        }
+        return $dbtable->insert($prepared_data);
+    }
+    public function update ($prepared_data, $batch_id)
+    {
+        $dbtable = $this->getDbTable();
+        $where = 'batch_id = ' . $batch_id;
+        return $dbtable->update($prepared_data, $where);
     }
 }

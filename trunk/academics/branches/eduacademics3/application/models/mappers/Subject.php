@@ -58,5 +58,11 @@ class Acad_Model_Mapper_Subject
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
+    public function update ($prepared_data, $subject_id)
+    {
+        $dbtable = $this->getDbTable();
+        $where = 'subject_id = ' . $subject_id;
+        return $dbtable->update($prepared_data, $where);
+    }
 }
 ?>

@@ -284,9 +284,4 @@ class Acad_Model_Qualification_Matric extends Acad_Model_Generic
             return $this;
         }
     }
-    public function save ($data_array)
-    {
-        $preparedData = $this->prepareDataForSaveProcess($data_array);
-        $this->getMapper()->save($preparedData);
-    }
 }

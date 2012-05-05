@@ -33,19 +33,30 @@ class Auth_Model_Mapper_Member_User
         }
         return $this->_dbTable;
     }
-    public function fetchAuthUserInfo ($member_id)
+    public function fetchAuthUserInfo ($member_id, $login_id = null)
     {
         $adapter = $this->getDbTable()->getAdapter();
-        $req_cols = array('member_id', 'login_id', 'sec_passwd', 'user_salt', 
-        'user_type_id', 'department_id', 'valid_from', 'valid_upto', 'is_active', 
-        'remarks');
         $table_name = $this->getDbTable()->info('name');
-        $select = $adapter->select()
-            ->from($table_name, $req_cols)
-            ->where('member_id = ?', $member_id);
-        $auth_info = array();
-        $auth_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $auth_info[$member_id];
+        if (isset($member_id)) {
+            $req_cols = array('member_id', 'login_id', 'sec_passwd', 
+            'user_salt', 'user_type_id', 'department_id', 'valid_from', 
+            'valid_upto', 'is_active', 'remarks');
+            $select = $adapter->select()
+                ->from($table_name, $req_cols)
+                ->where('member_id = ?', $member_id);
+            $auth_info = array();
+            $auth_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            return $auth_info[$member_id];
+        }
+        if (isset($login_id)) {
+            $req_cols = array('member_id');
+            $select = $adapter->select()
+                ->from($table_name, $req_cols)
+                ->where('login_id = ?', $login_id);
+            $member_id = array();
+            $member_id = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+            return $member_id[0];
+        }
     }
     public function save ($prepared_data)
     {

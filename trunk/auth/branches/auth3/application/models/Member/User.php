@@ -279,17 +279,24 @@ class Auth_Model_Member_User extends Auth_Model_Generic
             return $info;
         }
     }
+    public function fetchMemberId ()
+    {
+        $login_id = $this->getLogin_id(true);
+        return $this->getMapper()->fetchAuthUserInfo(null, $login_id);
+    }
     public function saveAuthlInfo ($data_array)
     {
-        $this->initSave();
-        $preparedData = $this->prepareDataForSaveProcess($data_array);
-        return $this->getMapper()->save($preparedData);
-    }
-    public function updateAuthlInfo ($data_array)
-    {
-        $member_id = $this->getMember_id(true);
-        $this->initSave();
-        $prepared_data = $this->prepareDataForSaveProcess($data_array);
-        return $this->getMapper()->update($prepared_data, $member_id);
+        $login_id = $data_array['login_id'];
+        $this->setLogin_id($login_id);
+        $member_id = $this->fetchMemberId($login_id);
+        if (empty($member_id)) {
+            $this->initSave();
+            $preparedData = $this->prepareDataForSaveProcess($data_array);
+            return $this->getMapper()->save($preparedData);
+        } else {
+            $this->initSave();
+            $preparedData = $this->prepareDataForSaveProcess($data_array);
+            return $this->getMapper()->update($preparedData, $member_id);
+        }
     }
 }

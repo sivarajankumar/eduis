@@ -383,6 +383,16 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
             return $this;
         }
     }
+    public function fetchDmcInfoId ()
+    {
+        $dmc_id = $this->getDmc_id(true);
+        $dmc_info_id = $this->getMapper()->fetchInfo(null, $dmc_id);
+        if (empty($dmc_info_id)) {
+            return false;
+        } else {
+            return $dmc_info_id;
+        }
+    }
     /**
      * 
      * Enter description here ...
@@ -422,10 +432,5 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     public function fetchResultTypes ()
     {
         return $this->getMapper()->fetchResultTypes();
-    }
-    public function save ($data_array)
-    {
-        $preparedData = $this->prepareDataForSaveProcess($data_array);
-        return $this->getMapper()->save($preparedData);
     }
 }

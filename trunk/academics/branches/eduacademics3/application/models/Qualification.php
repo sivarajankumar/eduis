@@ -122,9 +122,4 @@ class Acad_Model_Qualification extends Acad_Model_Generic
             return $qualifications;
         }
     }
-    public function save ($data_array)
-    {
-        $preparedData = $this->prepareDataForSaveProcess($data_array);
-        $this->getMapper()->save($preparedData);
-    }
 }

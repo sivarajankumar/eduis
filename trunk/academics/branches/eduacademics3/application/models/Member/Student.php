@@ -376,12 +376,18 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
      * Member_id must be set before calling this function 
      * @return false|array an array containing all class ids in which member is active
      */
+    /**
+     * Fetches the Active class_ids of a Student
+     * Member_id must be set before calling this function 
+     * @return false|array an array containing all class ids in which member is active
+     */
     public function fetchActiveClassIds ()
     {
         $student_active_class_ids = array();
         $student_class_ids = $this->fetchAllClassIds();
         $member_id = $this->getMember_id(true);
         $class_obj = new Acad_Model_Class();
+        $class_obj->setIs_active(true);
         $active_class_ids = $class_obj->fetchClassIds(null, null, true);
         if (! empty($student_class_ids) and ! empty($active_class_ids)) {
             $student_active_class_ids = array_intersect($student_class_ids, 
@@ -617,16 +623,21 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $competitive_object->setMember_id($member_id);
         return $competitive_object->fetchExamIds();
     }
-    /**
-     * 
-     * Saves Critical info and sets member_id in the current object
-     * @param array $data_array
-     */
     public function saveCriticalInfo ($data_array)
     {
-        $this->initSave();
-        $preparedData = $this->prepareDataForSaveProcess($data_array);
-        return $this->getMapper()->save($preparedData);
+        $member_id = $this->getMember_id(true);
+        $data_array['member_id'] = $member_id;
+        $info = $this->fetchCriticalInfo();
+        if ($info == false) {
+            $this->initSave();
+            $preparedData = $this->prepareDataForSaveProcess($data_array);
+            return $this->getMapper()->save($preparedData);
+        } else {
+            $this->initSave();
+            $preparedData = $this->prepareDataForSaveProcess($data_array);
+            $data_array['member_id'] = null;
+            return $this->getMapper()->update($preparedData, $member_id);
+        }
     }
     /**
      * 
@@ -637,12 +648,25 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     public function saveCompetitiveExamInfo ($data_array)
     {
         $member_id = $this->getMember_id(true);
+        $data_array['member_id'] = $member_id;
         $competitive_object = new Acad_Model_Exam_Competitive();
-        $this->initSave();
-        $preparedData = $competitive_object->prepareDataForSaveProcess(
-        $data_array);
-        $preparedData['member_id'] = $member_id;
-        return $competitive_object->getMapper()->save($preparedData);
+        $exam_id = $data_array['exam_id'];
+        $competitive_object->setMember_id($member_id);
+        $competitive_object->setExam_id($exam_id);
+        $info = $competitive_object->fetchStudentExamInfo();
+        if ($info == false) {
+            $competitive_object->initSave();
+            $preparedData = $competitive_object->prepareDataForSaveProcess(
+            $data_array);
+            return $competitive_object->getMapper()->save($preparedData);
+        } else {
+            $competitive_object->initSave();
+            $prepared_data = $competitive_object->prepareDataForSaveProcess(
+            $data_array);
+            $data_array['member_id'] = null;
+            return $competitive_object->getMapper()->update($prepared_data, 
+            $member_id, $exam_id);
+        }
     }
     /**
      * 
@@ -653,26 +677,30 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
      */
     public function saveQualificationInfo ($qualifiaction_id, $data)
     {
-        $member_id = $this->getMember_id(true);
+        $qualification_id = $data['qualification_id'];
         $qualifiaction_obj = new Acad_Model_Qualification();
-        $qualifiactions = $qualifiaction_obj->fetchQualifications();
         $qualifiactions = $qualifiaction_obj->fetchQualifications();
         $qualifiaction_name = $qualifiactions[$qualifiaction_id]['qualifiaction_name'];
         switch ($qualifiaction_name) {
             case 'MATRIC':
                 $object = new Acad_Model_Qualification_Matric();
+                $info = $this->fetchQualifiactionInfo($qualification_id);
                 break;
             case 'TWELFTH':
                 $object = new Acad_Model_Qualification_Twelfth();
+                $info = $this->fetchQualifiactionInfo($qualification_id);
                 break;
             case 'DIPLOMA':
                 $object = new Acad_Model_Qualification_Diploma();
+                $info = $this->fetchQualifiactionInfo($qualification_id);
                 break;
             case 'BTECH':
                 $object = new Acad_Model_Qualification_Btech();
+                $info = $this->fetchQualifiactionInfo($qualification_id);
                 break;
             case 'MTECH':
                 $object = new Acad_Model_Qualification_Mtech();
+                $info = $this->fetchQualifiactionInfo($qualification_id);
                 break;
             default:
                 throw new Exception(
@@ -680,38 +708,81 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
                  $qualifiaction_name . '.', Zend_Log::ERR);
                 break;
         }
-        $object->initSave();
-        $preparedData = $object->prepareDataForSaveProcess($data);
-        $preparedData['member_id'] = $member_id;
-        return $object->getMapper()->save($preparedData);
+        $member_id = $this->getMember_id();
+        $data['member_id'] = $member_id;
+        if ($info == false) {
+            $object->initSave();
+            $preparedData = $object->prepareDataForSaveProcess($data);
+            return $object->getMapper()->save($preparedData);
+        } else {
+            $object->initSave();
+            $prepared_data = $object->prepareDataForSaveProcess($data);
+            $data['member_id'] = null;
+            return $object->getMapper()->update($prepared_data, $member_id);
+        }
     }
     public function saveClassInfo ($data_array)
     {
-        $class_object = new Acad_Model_StudentClass();
-        $class_object->initSave();
-        $preparedData = $class_object->prepareDataForSaveProcess($data_array);
-        return $class_object->getMapper()->save($preparedData);
+        $class_id = $data_array['class_id'];
+        $info = $this->fetchClassInfo($class_id);
+        $member_id = $this->getMember_id();
+        $data_array['member_id'] = $member_id;
+        if ($info == false) {
+            $student_class_object = new Acad_Model_StudentClass();
+            $student_class_object->initSave();
+            $preparedData = $student_class_object->prepareDataForSaveProcess(
+            $data_array);
+            return $student_class_object->getMapper()->save($preparedData);
+        } else {
+            $student_class_object = new Acad_Model_StudentClass();
+            $student_class_object->initSave();
+            $prepared_data = $student_class_object->prepareDataForSaveProcess(
+            $data_array);
+            $data_array['member_id'] = null;
+            return $student_class_object->getMapper()->update($prepared_data, 
+            $member_id, $class_id);
+        }
     }
     public function saveDmcInfo ($data_array)
     {
+        $member_id = $this->getMember_id();
+        $data_array['member_id'] = $member_id;
         $dmc_info_object = new Acad_Model_Course_DmcInfo();
-        $dmc_info_object->initSave();
-        $preparedData = $dmc_info_object->prepareDataForSaveProcess($data_array);
-        return $dmc_info_object->getMapper()->save($preparedData);
+        $dmc_id = $data_array['dmc_id'];
+        $dmc_info_object->setDmc_id($dmc_id);
+        $dmc_info_id = $dmc_info_object->fetchDmcInfoId();
+        if ($dmc_info_id == false) {
+            $dmc_info_object->initSave();
+            $preparedData = $dmc_info_object->prepareDataForSaveProcess(
+            $data_array);
+            return $dmc_info_object->getMapper()->save($preparedData);
+        } else {
+            $dmc_info_object->initSave();
+            $prepared_data = $dmc_info_object->prepareDataForSaveProcess(
+            $data_array);
+            $data_array['member_id'] = null;
+            return $dmc_info_object->getMapper()->update($prepared_data, 
+            $dmc_info_id);
+        }
     }
     public function saveDmcMarks ($data_array)
     {
+        $member_id = $this->getMember_id(true);
         $dmc_marks_object = new Acad_Model_Course_DmcMarks();
-        $dmc_marks_object->initSave();
-        $preparedData = $dmc_marks_object->prepareDataForSaveProcess(
-        $data_array);
-        return $dmc_marks_object->getMapper()->save($preparedData);
-    }
-    protected function save ($class_name, $data_array)
-    {
-        $target_object = new $class_name();
-        $target_object->initSave();
-        $preparedData = $target_object->prepareDataForSaveProcess($data_array);
-        return $target_object->getMapper()->save($preparedData);
+        $dmc_info_id = $data_array['dmc_info_id'];
+        $student_subject_id = $data_array['student_subject_id'];
+        $dmc_marks = $this->fetchDmcInfo($dmc_info_id, $student_subject_id);
+        if ($dmc_marks == false) {
+            $dmc_marks_object->initSave();
+            $preparedData = $dmc_marks_object->prepareDataForSaveProcess(
+            $data_array);
+            return $dmc_marks_object->getMapper()->save($preparedData);
+        } else {
+            $dmc_marks_object->initSave();
+            $prepared_data = $dmc_marks_object->prepareDataForSaveProcess(
+            $data_array);
+            return $dmc_marks_object->getMapper()->update($prepared_data, 
+            $dmc_info_id, $student_subject_id);
+        }
     }
 }
