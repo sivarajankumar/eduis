@@ -607,19 +607,19 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     public function fetchCompetitveExamIds ()
     {
         $member_id = $this->getMember_id(true);
-        $competitive_object = new Acad_Model_Exam_Competitive();
+        $competitive_object = new Acad_Model_StudentCompetitiveExam();
         $competitive_object->setMember_id($member_id);
         return $competitive_object->fetchExamIds();
     }
     /**
      * 
      * Enter description here ...
-     * @param object|false object of Acad_Model_Exam_Competitive
+     * @param object|false object of Acad_Model_StudentCompetitiveExam
      */
     public function fetchCompetitveExamInfo ($competitive_exam_id)
     {
         $member_id = $this->getMember_id(true);
-        $competitive_object = new Acad_Model_Exam_Competitive();
+        $competitive_object = new Acad_Model_StudentCompetitiveExam();
         $competitive_object->setMember_id($member_id);
         $competitive_object->setExam_id($competitive_exam_id);
         return $competitive_object->fetchStudentExamInfo();
@@ -650,7 +650,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     {
         $member_id = $this->getMember_id(true);
         $data_array['member_id'] = $member_id;
-        $competitive_object = new Acad_Model_Exam_Competitive();
+        $competitive_object = new Acad_Model_StudentCompetitiveExam();
         $exam_id = $data_array['exam_id'];
         $competitive_object->setMember_id($member_id);
         $competitive_object->setExam_id($exam_id);
