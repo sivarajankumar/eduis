@@ -1,0 +1,40 @@
+<form id="leet_form" class="uniForm" action="javascript:submit('leet')">
+<fieldset id="leet">
+<h3>LEET</h3>
+				
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Roll Number</label>
+		<input name="roll_no" id="roll_no" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">All India Roll No. of <span class="cName" >Candidate</span></p>
+	</div>
+					
+	<div class="ctrlHolder">
+		<label for="doc"><em>*</em>Date of Conduct</label>
+		<input name="doc" id="doc2" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>All India Rank (AIR)</label>
+		<input name="all_india_rank" id="all_india_rank" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">All India Rank of <span class="cName" >Candidate</span></p>
+	</div>
+					
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>LEET Marks</label>
+		<input name="total_score" id="total_score" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+		<p class="formHint">Marks of LEET Form</p>
+	</div>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</fieldset>
+</form>
+<script type="text/javascript">
+    $('form.uniForm').uniform({
+        prevent_submit : true
+ 	});
+</script>

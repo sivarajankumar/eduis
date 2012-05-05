@@ -22,13 +22,13 @@
 
 
 <script><!--
-	var urlCreateMatricInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'creatematricinfo'))?>";
-	var urlCreateTwelfthInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'createtwelfthinfo'))?>";
-	var urlCreateAieeeInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'createaieeeinfo'))?>";
-	var urlCreateDiplomaInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'creatediplomainfo'))?>";
-	var urlCreateLeetInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'createleetinfo'))?>";
-	var urlCreateBtechInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'createbtechinfo'))?>";
-	var urlCreateGateInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'creategateinfo'))?>";
+	var urlCreateMatricInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'editmatricinfo'))?>";
+	var urlCreateTwelfthInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'edittwelfthinfo'))?>";
+	var urlCreateAieeeInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'editaieeeinfo'))?>";
+	var urlCreateDiplomaInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'editdiplomainfo'))?>";
+	var urlCreateLeetInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'editleetinfo'))?>";
+	var urlCreateBtechInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'editbtechinfo'))?>";
+	var urlCreateGateInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'editgateinfo'))?>";
 	
     $(function(){
         serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
@@ -153,7 +153,7 @@
     				data : {myarray:data},
     				success: function(jStatus){
     					alert('Your information has been sucessfully submitted...');
-    					window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'createprofile'))?>';
+    					window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
     					//return;
     	            },
     	            error: function(response) {
@@ -206,7 +206,7 @@
     				data : {myarray:data},
     				success: function(jStatus){
     					$('#aieee_div').hide();
-    					window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'createprofile'))?>';
+    					window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
     	            },
     	            error: function(response) {
     					$('#errorBox').text(response.responseText).parent().show();
@@ -258,7 +258,7 @@
     				data : {myarray:data},
     				success: function(jStatus){
     					$('#leet_div').hide();
-    					window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'createprofile'))?>';
+    					window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
     	            },
     	            error: function(response) {
     					$('#errorBox').text(response.responseText).parent().show();
@@ -310,7 +310,7 @@
         			data : {myarray:data},
         			success: function(jStatus){
         				$('#gate_div').hide();
-        				window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'createprofile'))?>';
+        				window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
                     },
                     error: function(response) {
         				$('#errorBox').text(response.responseText).parent().show();
