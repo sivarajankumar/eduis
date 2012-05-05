@@ -149,7 +149,7 @@ class StudentController extends Zend_Controller_Action
         $student_model->setMember_id($this->getMember_id());
         $exam_data = array();
         $exam_model = $student_model->fetchCompetitveExamInfo($exam_id);
-        if ($exam_model instanceof Acad_Model_Exam_Competitive) {
+        if ($exam_model instanceof Acad_Model_StudentCompetitiveExam) {
             $exam_data['name'] = $exam_model->getName();
             $exam_data['total_score'] = $exam_model->getTotal_score();
             $exam_data['abbr'] = $exam_model->getAbbr();
@@ -165,7 +165,7 @@ class StudentController extends Zend_Controller_Action
         $student_model->setMember_id($this->getMember_id());
         $exam_data = array();
         $exam_model = $student_model->fetchCompetitveExamInfo($exam_id);
-        if ($exam_model instanceof Acad_Model_Exam_Competitive) {
+        if ($exam_model instanceof Acad_Model_StudentCompetitiveExam) {
             $exam_data['name'] = $exam_model->getName();
             $exam_data['total_score'] = $exam_model->getTotal_score();
             $exam_data['abbr'] = $exam_model->getAbbr();
@@ -181,7 +181,7 @@ class StudentController extends Zend_Controller_Action
         $student_model->setMember_id($this->getMember_id());
         $exam_data = array();
         $exam_model = $student_model->fetchCompetitveExamInfo($exam_id);
-        if ($exam_model instanceof Acad_Model_Exam_Competitive) {
+        if ($exam_model instanceof Acad_Model_StudentCompetitiveExam) {
             $exam_data['name'] = $exam_model->getName();
             $exam_data['total_score'] = $exam_model->getTotal_score();
             $exam_data['abbr'] = $exam_model->getAbbr();
@@ -334,21 +334,12 @@ class StudentController extends Zend_Controller_Action
                 throw new Exception('$msg');
             }
         }
-        $this->_redirect('student/checkstatus');
+        $this->_redirect('student/profile');
     }
     /**
      * @todo check status of profile in auth that it is filled or not
      * Enter description here ...
      */
-    public function checkstatusAction ()
-    {
-        $profile_present = 1;
-        if ($profile_present) {
-            $this->_redirect('student/viewprofile');
-        } else {
-            $this->_redirect('student/createprofile');
-        }
-    }
     public function profileAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -378,10 +369,16 @@ class StudentController extends Zend_Controller_Action
             foreach ($dmc_info_ids as $dmc_info_id) {
                 $dmc_object = $student_model->fetchDmcInfo($dmc_info_id);
                 if ($dmc_object instanceof Acad_Model_Course_DmcInfo) {
+                    $degree_data[$semester_id][$dmc_info_id]['class_id'] = $class_id;
                     $degree_data[$semester_id][$dmc_info_id]['dispatch_date'] = $dmc_object->getDispatch_date();
                 }
             }
         }
+        $exam_model = new Acad_Model_CompetitiveExam();
+        $exam_ids = $exam_model->fetchExams();
+        $present_exam_ids_array = $student_model->fetchCompetitveExamIds();
+        $present_exam_ids = array_flip($present_exam_ids_array);
+        $filled_exams = array_intersect_key($exam_ids, $present_exam_ids);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -419,7 +416,11 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $qualification_data = self::fetchMatricData(1);
+        $qualification_name = 'MATRIC';
+        $qualification_model = new Acad_Model_Qualification();
+        $qualifications = $qualification_model->fetchQualifications();
+        $qualification_id = array_search($qualification_name, $qualifications);
+        $qualification_data = self::fetchMatricData($qualification_id);
         Zend_Registry::get('logger')->debug($qualification_data);
         switch ($format) {
             case 'html':
@@ -454,7 +455,11 @@ class StudentController extends Zend_Controller_Action
         $format = $this->_getParam('format', 'html');
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
-        $qualification_data = self::fetchTwelfthData(2);
+        $qualification_name = 'TWELFTH';
+        $qualification_model = new Acad_Model_Qualification();
+        $qualifications = $qualification_model->fetchQualifications();
+        $qualification_id = array_search($qualification_name, $qualifications);
+        $qualification_data = self::fetchTwelfthData($qualification_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -489,7 +494,11 @@ class StudentController extends Zend_Controller_Action
         $format = $this->_getParam('format', 'html');
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
-        $qualification_data = self::fetchDiplomaData(4);
+        $qualification_name = 'DIPLOMA';
+        $qualification_model = new Acad_Model_Qualification();
+        $qualifications = $qualification_model->fetchQualifications();
+        $qualification_id = array_search($qualification_name, $qualifications);
+        $qualification_data = self::fetchDiplomaData($qualification_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -524,7 +533,11 @@ class StudentController extends Zend_Controller_Action
         $format = $this->_getParam('format', 'html');
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
-        $qualification_data = self::fetchBtechData(3);
+        $qualification_name = 'BTECH';
+        $qualification_model = new Acad_Model_Qualification();
+        $qualifications = $qualification_model->fetchQualifications();
+        $qualification_id = array_search($qualification_name, $qualifications);
+        $qualification_data = self::fetchBtechData($qualification_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -561,7 +574,10 @@ class StudentController extends Zend_Controller_Action
         $format = $this->_getParam('format', 'html');
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
-       $exam_id = 2; //$params['exam_id'];
+        $exam_name = 'LEET';
+        $exam_model = new Acad_Model_CompetitiveExam();
+        $exams = $exam_model->fetchExams();
+        $exam_id = array_search($exam_name, $exams);
         $exam_data = self::fetchleetData($exam_id);
         switch ($format) {
             case 'html':
@@ -596,7 +612,11 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $exam_data = self::fetchaieeeData(1);
+        $exam_name = 'AIEEE';
+        $exam_model = new Acad_Model_CompetitiveExam();
+        $exams = $exam_model->fetchExams();
+        $exam_id = array_search($exam_name, $exams);
+        $exam_data = self::fetchaieeeData($exam_id);
         switch ($format) {
             case 'html':
                 if (! empty($exam_data)) {
@@ -631,18 +651,11 @@ class StudentController extends Zend_Controller_Action
         $format = $this->_getParam('format', 'html');
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
-        $exam_id = 3; //$params['exam_id'];
-        $exam_data = array();
+        $exam_name = 'GATE';
+        $exam_model = new Acad_Model_CompetitiveExam();
+        $exams = $exam_model->fetchExams();
+        $exam_id = array_search($exam_name, $exams);
         $exam_data = self::fetchgateData($exam_id);
-        $exam_model = $student_model->fetchCompetitveExamInfo($exam_id);
-        if ($exam_model instanceof Acad_Model_Exam_Competitive) {
-            $exam_data['name'] = $exam_model->getName();
-            $exam_data['total_score'] = $exam_model->getTotal_score();
-            $exam_data['abbr'] = $exam_model->getAbbr();
-            $exam_data['air'] = $exam_model->getAll_india_rank();
-            $exam_data['roll_no'] = $exam_model->getRoll_no();
-            $exam_data['total_score'] = $exam_model->getTotal_score();
-        }
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
