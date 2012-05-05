@@ -375,10 +375,10 @@ class StudentController extends Zend_Controller_Action
             }
         }
         $exam_model = new Acad_Model_CompetitiveExam();
-        $exam_ids = $exam_model->fetchExams();
+        $exams = $exam_model->fetchExams();
         $present_exam_ids_array = $student_model->fetchCompetitveExamIds();
         $present_exam_ids = array_flip($present_exam_ids_array);
-        $filled_exams = array_intersect_key($exam_ids, $present_exam_ids);
+        $filled_exams = array_intersect_key($exams, $present_exam_ids);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -388,6 +388,8 @@ class StudentController extends Zend_Controller_Action
                     $filled_qualifications);
                     $this->view->assign('degree_data', $degree_data);
                     $this->view->assign('qualifications', $qualifications);
+                    $this->view->assign('exams', $exams);
+                     $thFis->view->assign('filled_exams', $filled_exams);
                     Zend_Registry::get('logger')->debug($qualifications);
                     Zend_Registry::get('logger')->debug($filled_qualifications);
                     Zend_Registry::get('logger')->debug($degree_data);
