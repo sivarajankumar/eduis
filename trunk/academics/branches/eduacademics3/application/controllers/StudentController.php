@@ -152,7 +152,7 @@ class StudentController extends Zend_Controller_Action
         if ($exam_model instanceof Acad_Model_StudentCompetitiveExam) {
             $exam_data['name'] = $exam_model->getName();
             $exam_data['total_score'] = $exam_model->getTotal_score();
-            $exam_data['abbr'] = $exam_model->getAbbr();
+            $exam_data['abbr'] = $exam_model->getAbbreviation();
             $exam_data['air'] = $exam_model->getAll_india_rank();
             $exam_data['roll_no'] = $exam_model->getRoll_no();
             $exam_data['total_score'] = $exam_model->getTotal_score();
@@ -168,7 +168,7 @@ class StudentController extends Zend_Controller_Action
         if ($exam_model instanceof Acad_Model_StudentCompetitiveExam) {
             $exam_data['name'] = $exam_model->getName();
             $exam_data['total_score'] = $exam_model->getTotal_score();
-            $exam_data['abbr'] = $exam_model->getAbbr();
+            $exam_data['abbr'] = $exam_model->getAbbreviation();
             $exam_data['air'] = $exam_model->getAll_india_rank();
             $exam_data['roll_no'] = $exam_model->getRoll_no();
             $exam_data['total_score'] = $exam_model->getTotal_score();
@@ -184,7 +184,7 @@ class StudentController extends Zend_Controller_Action
         if ($exam_model instanceof Acad_Model_StudentCompetitiveExam) {
             $exam_data['name'] = $exam_model->getName();
             $exam_data['total_score'] = $exam_model->getTotal_score();
-            $exam_data['abbr'] = $exam_model->getAbbr();
+            $exam_data['abbr'] = $exam_model->getAbbreviation();
             $exam_data['air'] = $exam_model->getAll_india_rank();
             $exam_data['roll_no'] = $exam_model->getRoll_no();
             $exam_data['total_score'] = $exam_model->getTotal_score();
@@ -1241,16 +1241,12 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
     }
-    public function fetchclassdmcAction ()
+    public function fetchclassdmc ($class_id, $dmc_view_type, 
+    $dmc_info_id = null)
     {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
         $format = $this->_getParam('format', 'html');
-        $class_id = $params['class_id'];
-        $dmc_view_type = $params['dmc_view_type'];
-        $dmc_info_id = $params['dmc_info_id'];
         $class_object = new Acad_Model_Class();
         $class_object->setClass_id($class_id);
         $subject_ids = $class_object->fetchSubjects();
@@ -1259,18 +1255,16 @@ class StudentController extends Zend_Controller_Action
         $dmc_info_data = array();
         switch ($dmc_view_type) {
             case 'latest':
-                $class_id = $params['class_id'];
                 $subject_data = $this->fetchClassSubjects($class_id);
                 $dmc_info_data = self::fetchDmcInfo(null, null, null, null, 
                 null, true);
                 $dmc_info_id = $dmc_info_data[0][0];
-                $dmc_data = self::fetchDmcMarks($dmc_info_id, $subject_ids);
+                $dmc_data = self::fetchsubjectDmc($dmc_info_id, $subject_ids);
                 break;
             case 'single':
-                $class_id = $params['class_id'];
                 $dmc_info_data = self::fetchDmcInfo(null, null, null, null, 
                 null, true);
-                $dmc_data = self::fetchDmcMarks($dmc_info_id, $subject_ids);
+                $dmc_data = self::fetchsubjectDmc($dmc_info_id, $subject_ids);
                 break;
         }
         $response = array('subject_data' => $subject_data, 
@@ -1299,6 +1293,8 @@ class StudentController extends Zend_Controller_Action
                 break;
         }
     }
+    public function editdmcAction ()
+    {}
     public function savedmcAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
