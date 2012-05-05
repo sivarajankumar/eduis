@@ -47,7 +47,7 @@ class Acad_Model_Mapper_Course_DmcMarks
         $dmc_marks_table = $db_table->info('name');
         $required_cols = array('dmc_info_id', 'dmc_marks_id', 'internal', 
         'external', 'percentage', 'is_pass', 'is_considered', 'is_verified', 
-        'date');
+        'date', 'student_subject_id');
         $select = $adapter->select()
             ->from($dmc_marks_table, $required_cols)
             ->where(' dmc_info_id= ?', $dmc_info_id)
@@ -60,6 +60,13 @@ class Acad_Model_Mapper_Course_DmcMarks
     {
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
+    }
+    public function update ($prepared_data, $dmc_info_id, $student_subject_id)
+    {
+        $dbtable = $this->getDbTable();
+        $where1 = 'dmc_info_id = ' . $dmc_info_id;
+        $where2 = 'student_subject_id = ' . $student_subject_id;
+        return $dbtable->update($prepared_data, array($where1,$where2));
     }
 }
 ?>

@@ -225,9 +225,4 @@ class Acad_Model_Subject extends Acad_Model_Generic
             return $this;
         }
     }
-    public function save ($data_array)
-    {
-        $preparedData = $this->prepareDataForSaveProcess($data_array);
-        return $this->getMapper()->save($preparedData);
-    }
 }

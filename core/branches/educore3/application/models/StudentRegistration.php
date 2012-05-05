@@ -113,11 +113,4 @@ class Core_Model_StudentRegistration extends Core_Model_Generic
             return $this;
         }
     }
-    public function save ($data_array)
-    {
-        $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
-        $data_array);
-        $this->setOptions($preparedDataForSaveProcess);
-        $this->getMapper()->save($preparedDataForSaveProcess);
-    }
 }

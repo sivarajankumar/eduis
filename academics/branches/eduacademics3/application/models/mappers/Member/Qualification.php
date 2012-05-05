@@ -51,13 +51,19 @@ class Acad_Model_Mapper_Member_Qualification
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $student_info;
     }
-    public function save ($prepared_data)
+    public function saveQualifications ($member_id, $qualification_id)
     {
         $dbtable = $this->getDbTable();
-        try {
-            $row_id = $dbtable->insert($prepared_data);
-        } catch (Exception $exception) {
-            throw $exception;
-        }
+        $data = array('member_id' => $member_id, 
+        'qualification_id' => $qualification_id);
+        return $dbtable->insert($data);
     }
+    public function deleteQualification ($member_id, $qualification_id)
+    {
+        $where1 = 'member_id = ' . $member_id;
+        $where2 = 'qualification_id = ' . $qualification_id;
+        $dbtable = $this->getDbTable();
+        return $dbtable->delete(array($where1, $where2));
+    }
+    //no need for update function
 }

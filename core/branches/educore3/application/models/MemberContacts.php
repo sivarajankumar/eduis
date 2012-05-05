@@ -165,11 +165,4 @@ class Core_Model_MemberContacts extends Core_Model_Generic
             return $contact_type_ids;
         }
     }
-    public function save ($data_array)
-    {
-        $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
-        $data_array);
-        $this->setOptions($preparedDataForSaveProcess);
-        $this->getMapper()->save($preparedDataForSaveProcess);
-    }
 }

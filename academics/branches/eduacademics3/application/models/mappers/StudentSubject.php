@@ -36,7 +36,9 @@ class Acad_Model_Mapper_StudentSubject
     /**
      * Fetches Subject Studied by a Student in the given Class
      * 
-     * @param integer $member_id
+     * @param int $member_id
+     * @param int $class_id
+
      */
     public function fetchSubjects ($member_id, $class_id)
     {
@@ -52,6 +54,13 @@ class Acad_Model_Mapper_StudentSubject
         $student_subjects = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $student_subjects;
     }
+    /**
+     * 
+     * Enter description here ...
+     * @param int $member_id
+     * @param int $class_id
+     * @param int $subject_id
+     */
     public function fetchStudentSubjectId ($member_id, $class_id, $subject_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
@@ -69,8 +78,8 @@ class Acad_Model_Mapper_StudentSubject
     }
     /**
      * Fetches Class in which a student Studied the given Subject
-     * 
-     * @param  $subject_id
+     * @param int $member_id
+     * @param int $subject_id
      */
     public function fetchClassIds ($member_id, $subject_id)
     {
@@ -86,33 +95,38 @@ class Acad_Model_Mapper_StudentSubject
         return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
     /**
-     * Fetches Marks scored by the student in the given Subject
-     * A student may have studied a Subject more than Once but in Different classes. Ex - Detained Student,
-     * therefore subject_id and class_id are required.
-     * @param  $subject_id
+     * 
+     * Enter description here ...
+     * @param array $prepared_data
      */
-    public function fetchDMC ($member_id, $class_id, $subject_id)
-    {
-        $adapter = $this->getDbTable()->getAdapter();
-        $db_table = $this->getDbTable();
-        $stu_subject_table = $db_table->info('name');
-        $required_cols = array('class_id');
-        $select = $adapter->select()
-            ->from($stu_subject_table, $required_cols)
-            ->where('member_id = ?', $member_id)
-            ->where('subject_id = ?', $subject_id)
-            ->where('class_id = ?', $class_id);
-        $class_ids = array();
-        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
-        try {
-            $row_id = $dbtable->insert($prepared_data);
-        } catch (Exception $exception) {
-            throw $exception;
+        return $dbtable->insert($prepared_data);
+    }
+    /**
+     * 
+     * Enter description here ...
+     * @param array $prepared_data
+     * @param int $member_id
+     * @param int $class_id
+     * @param int $subject_id
+     */
+    public function update ($prepared_data, $member_id = null, $class_id = null, 
+    $subject_id = null)
+    {
+        $dbtable = $this->getDbTable();
+        if (! empty($member_id)) {
+            $where1 = 'member_id = ' . $member_id;
         }
+        if (! empty($class_id)) {
+            $where2 = 'class_id =' . $class_id;
+        }
+        if (! empty($subject_id)) {
+            $where3 = 'subject_id = ' . $subject_id;
+        }
+        return $dbtable->update($prepared_data, 
+        array($where1, $where2, $where3));
     }
 }
 ?>

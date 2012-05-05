@@ -123,19 +123,21 @@ class Acad_Model_Member_Qualification extends Acad_Model_Generic
     }
     /**
      * 
-     * Saves the Qualifications of a member
-     * Member_id must be set before calling this function
-     * @param array $qualifications an array containing qualification ids of a member
+     * Saves the Qualification of a member
+     * 
      */
-    public function saveQualifications ($qualifications)
+    public function saveQualifications ()
     {
         $member_id = $this->getMember_id(true);
-        foreach ($qualifications as $qualification) {
-            $this->initSave();
-            $data_array = array('member_id' => $member_id, 
-            'qualification_id' => $qualification);
-            $preparedData = $this->prepareDataForSaveProcess($data_array);
-            $this->getMapper()->save($preparedData);
-        }
+        $qualification_id = $this->getQualification_id(true);
+        return $this->getMapper()->saveQualifications($member_id, 
+        $qualification_id);
+    }
+    public function deleteQualification ()
+    {
+        $member_id = $this->getMember_id(true);
+        $qualification_id = $this->getQualification_id(true);
+        return $this->getMapper()->deleteQualification($member_id, 
+        $qualification_id);
     }
 }

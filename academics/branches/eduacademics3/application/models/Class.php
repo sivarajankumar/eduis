@@ -251,7 +251,6 @@ class Acad_Model_Class extends Acad_Model_Generic
      * @param bool $batch_specific optional
      * @param bool $semester_specific optional 
      * @param bool $active optional
-     * @throws Exception
      * @return array|int|false
      */
     public function fetchClassIds ($batch_specific = null, $semester_specific = null, 
@@ -282,15 +281,4 @@ class Acad_Model_Class extends Acad_Model_Generic
     }
     public function fetchStudents ()
     {}
-    public function fetchSubjects ()
-    {
-        $class_id = $this->getClass_id(true);
-        $class_subject_mapper = new Acad_Model_Mapper_ClassSubject();
-        return $class_subject_mapper->fetchSubjects($class_id);
-    }
-    public function save ($data_array)
-    {
-        $preparedData = $this->prepareDataForSaveProcess($data_array);
-        $this->getMapper()->save($preparedData);
-    }
 }

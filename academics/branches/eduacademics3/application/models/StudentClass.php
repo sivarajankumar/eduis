@@ -201,30 +201,21 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
      */
     public function fetchInfo ()
     {
-        $member_id = $this->getMember_id();
-        $class_id = $this->getClass_id();
-        if (empty($member_id) or empty($class_id)) {
-            $error = 'Please provide a Member Id and a Class id';
-            throw new Exception($error, Zend_Log::ERR);
+        $member_id = $this->getMember_id(true);
+        $class_id = $this->getClass_id(true);
+        $info = $this->getMapper()->fetchInfo($member_id, $class_id);
+        if (empty($info)) {
+            return false;
         } else {
-            $info = $this->getMapper()->fetchInfo($member_id, $class_id);
-            if (empty($info)) {
-                return false;
-            } else {
-                $this->setOptions($info);
-                return $this;
-            }
+            $this->setOptions($info);
+            return $this;
         }
     }
     public function fetchBatchIdentifierClassId ()
     {
-        $member_id = $this->getMember_id();
-        if (empty($member_id)) {
-            $error = 'Insufficient Params supplied to fetchBatchIdentifierClassId .Member_id required';
-            throw new Exception($error, Zend_Log::ERR);
-        } else {
-            return $this->getMapper()->fetchBatchIdentifierClassId($member_id);
-        }
+        $member_id = $this->getMember_id(true);
+        $batch_id = $this->getMapper()->fetchBatchIdentifierClassId($member_id);
+        return $batch_id;
     }
     public function fetchClassIds ()
     {
@@ -235,10 +226,5 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
         } else {
             return $class_ids;
         }
-    }
-    public function save ($data_array)
-    {
-        $preparedData = $this->prepareDataForSaveProcess($data_array);
-        $this->getMapper()->save($preparedData);
     }
 }

@@ -281,11 +281,4 @@ class Core_Model_Class extends Core_Model_Generic
     }
     public function fetchStudents ()
     {}
-    public function save ($data_array)
-    {
-        $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
-        $data_array);
-        $this->setOptions($preparedDataForSaveProcess);
-        $this->getMapper()->save($preparedDataForSaveProcess);
-    }
 }

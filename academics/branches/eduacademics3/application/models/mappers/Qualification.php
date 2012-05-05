@@ -66,13 +66,18 @@ class Acad_Model_Mapper_Qualification
         $qualifications = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $qualifications;
     }
-    public function save ($prepared_data)
+    public function saveQualifications ($qualification_id, $qualification_name)
     {
         $dbtable = $this->getDbTable();
-        try {
-            $row_id = $dbtable->insert($prepared_data);
-        } catch (Exception $exception) {
-            throw $exception;
-        }
+        $data = array('qualification_id' => $qualification_id, 
+        'qualification_name' => $qualification_name);
+        return $dbtable->insert($data);
+    }
+    public function deleteQualification ($qualification_id, $qualification_name)
+    {
+        $dbtable = $this->getDbTable();
+        $where1 = 'qualification_id = ' . $qualification_id;
+        $where2 = 'qualification_name = ' . $qualification_name;
+        return $dbtable->delete(array($where1, $where2));
     }
 }

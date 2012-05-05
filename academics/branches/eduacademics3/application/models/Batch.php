@@ -206,7 +206,6 @@ class Acad_Model_Batch extends Acad_Model_Generic
      * @param bool $batch_start_year_specific optional
      * @param bool $department_specific optional
      * @param bool $programme_specific optional
-     * @throws Exception
      * @return array|int|flase
      */
     public function fetchBatchIds ($batch_start_year_specific = null, 
@@ -232,11 +231,5 @@ class Acad_Model_Batch extends Acad_Model_Generic
         } else {
             return $batch_ids;
         }
-    }
-    public function save ($data_array)
-    {
-        $preparedDataForSaveProcess = $this->prepareDataForSaveProcess(
-        $data_array);
-        $this->getMapper()->save($preparedDataForSaveProcess);
     }
 }

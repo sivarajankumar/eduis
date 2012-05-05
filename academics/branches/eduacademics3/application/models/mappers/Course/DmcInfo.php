@@ -38,22 +38,29 @@ class Acad_Model_Mapper_Course_DmcInfo
      * 
      * @param integer $dmc_info_id
      */
-    public function fetchInfo ($dmc_info_id)
+    public function fetchInfo ($dmc_info_id, $dmc_id = null)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $dmc_info_table = $db_table->info('name');
-        $required_cols = array('dmc_info_id', 'dmc_id', 'is_considered', 
-        'result_type_id', 'class_id', 'member_id', 'roll_no', 'examination', 
-        'custody_date', 'is_granted', 'grant_date', 'recieveing_date', 
-        'is_copied', 'dispatch_date', 'marks_obtained', 'total_marks', 
-        'scaled_marks', 'percentage');
-        $select = $adapter->select()
-            ->from($dmc_info_table, $required_cols)
-            ->where('dmc_info_id = ?', $dmc_info_id);
-        $dmc_info = array();
-        $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $dmc_info[$dmc_info_id];
+        $select = $adapter->select();
+        if (isset($dmc_info_id)) {
+            $required_cols = array('dmc_info_id', 'dmc_id', 'is_considered', 
+            'result_type_id', 'class_id', 'member_id', 'roll_no', 'examination', 
+            'custody_date', 'is_granted', 'grant_date', 'recieveing_date', 
+            'is_copied', 'dispatch_date', 'marks_obtained', 'total_marks', 
+            'scaled_marks', 'percentage');
+            $select->where('dmc_info_id = ?', $dmc_info_id);
+            $dmc_info = array();
+            $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            return $dmc_info[$dmc_info_id];
+        }
+        if (isset($dmc_id)) {
+            $required_cols = array('dmc_info_id');
+            $select->from($dmc_info_table, $required_cols)->where('dmc_id = ?', 
+            $dmc_id);
+            return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        }
     }
     public function fetchDmcInfoIds ($member_id, $class_id = null, 
     $result_type_id = null, $all = null, $is_considered = null, $ordered_by_date = null)
@@ -98,6 +105,12 @@ class Acad_Model_Mapper_Course_DmcInfo
     {
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
+    }
+    public function update ($prepared_data, $dmc_info_id)
+    {
+        $dbtable = $this->getDbTable();
+        $where = 'dmc_info_id = ' . $dmc_info_id;
+        return $dbtable->update($prepared_data, $where);
     }
 }
 ?>
