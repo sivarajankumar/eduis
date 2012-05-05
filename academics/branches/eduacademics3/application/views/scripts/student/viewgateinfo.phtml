@@ -1,14 +1,32 @@
-<div id="GATE Details">
-    	<table style="width: 100%">
-            <?php 
-        	foreach ($this->matric as $key => $value) 
+
+<div class="ui-widget-content ui-corner-all"><center><H3>Gate Details</H3></center></div>
+<div id="Matric Details">
+    	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+          
+        <?php 
+        	foreach ($this->gate as $key => $value) 
         		{
                     echo '<tr>';
-        	        echo '<td>'.ucfirst(str_replace('_', ' ', str_replace("_id", '',$key))).'</td>';
+        	        echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
                 	echo '<td>'.ucfirst($value).'</td>';
         	        echo '</tr>'; 
-        		}  
+        		} 
             ?>
         	
     	</table>
 	</div>
+<style type="text/css">
+table {
+      	border-color: #c20f2e;
+}
+#corner
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	margin: 15px;
+	width: 1000px;
+	text-align: left;
+	border-collapse: collapse;
+}
+
+</style>
