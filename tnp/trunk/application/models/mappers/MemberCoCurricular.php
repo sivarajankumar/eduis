@@ -41,11 +41,11 @@ class Tnp_Model_Mapper_MemberCoCurricular
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $stu_class_table = $db_table->info('name');
+        $stu_cc_table = $db_table->info('name');
         $required_cols = array('member_id', 'achievements', 'activities', 
         'hobbies');
         $select = $adapter->select()
-            ->from($stu_class_table, $required_cols)
+            ->from($stu_cc_table, $required_cols)
             ->where('member_id = ?', $member_id);
         $co_curricular_info = array();
         $co_curricular_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
@@ -54,11 +54,11 @@ class Tnp_Model_Mapper_MemberCoCurricular
     public function fetchMemberIds ($achievements = null, $activities = null, 
     $hobbies = null)
     {
+        $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $adapter = $db_table->getAdapter();
-        $profile_status_table = $db_table->info('name');
+        $stu_cc_table = $db_table->info('name');
         $required_cols = array('member_id');
-        $select = $adapter->select()->from($profile_status_table, 
+        $select = $adapter->select()->from($stu_cc_table, 
         $required_cols);
         if (! empty($achievements)) {
             $select->where('achievements = ?', $achievements);

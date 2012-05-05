@@ -54,9 +54,9 @@ class Tnp_Model_Mapper_StudentTraining
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
-        $student_skills_table = $db_table->info('name');
+        $student_training_table = $db_table->info('name');
         $required_cols = array('member_id');
-        $select = $adapter->select()->from($student_skills_table, 
+        $select = $adapter->select()->from($student_training_table, 
         $required_cols);
         if (! empty($training_id)) {
             $select->where('training_id = ?', $training_id);
