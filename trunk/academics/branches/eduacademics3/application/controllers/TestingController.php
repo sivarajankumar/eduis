@@ -2,7 +2,14 @@
 class TestingController extends Zend_Controller_Action
 {
     public function newAction ()
-    {}
+    {
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(flase);
+        $obj = new Acad_Model_Course_DmcInfo();
+        $obj->setDmc_id(1);
+        $r = $obj->fetchDmcInfoId();
+        Zend_Registry::get('logger')->debug($r);
+    }
     public function newsAction ()
     {
         /*
