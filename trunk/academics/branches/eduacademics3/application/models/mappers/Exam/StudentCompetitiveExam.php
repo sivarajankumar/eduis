@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_Mapper_Exam_Competitive
+class Acad_Model_Mapper_StudentCompetitiveExam
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Acad_Model_Mapper_Exam_Competitive
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Acad_Model_Mapper_Exam_Competitive
+     * @return Acad_Model_Mapper_StudentCompetitiveExam
      */
     public function setDbTable ($dbTable)
     {

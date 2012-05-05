@@ -1,5 +1,5 @@
 <?php
-class Acad_Model_Exam_Competitive extends Acad_Model_Generic
+class Acad_Model_StudentCompetitiveExam extends Acad_Model_Generic
 {
     protected $_member_id;
     protected $_name;
@@ -139,8 +139,8 @@ class Acad_Model_Exam_Competitive extends Acad_Model_Generic
     }
     /**
      * Set Subject Mapper
-     * @param Acad_Model_Mapper_Exam_Competitive $mapper
-     * @return Acad_Model_Exam_Competitive
+     * @param Acad_Model_Mapper__StudentCompetitiveExam $mapper
+     * @return Acad_Model_StudentCompetitiveExam
      */
     public function setMapper ($mapper)
     {
@@ -149,12 +149,12 @@ class Acad_Model_Exam_Competitive extends Acad_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Mapper_Exam_Competitive
+     * @return Acad_Model_Mapper__StudentCompetitiveExam
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_Mapper_Exam_Competitive());
+            $this->setMapper(new Acad_Model_Mapper_StudentCompetitiveExam());
         }
         return $this->_mapper;
     }
