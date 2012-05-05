@@ -369,6 +369,7 @@ class StudentController extends Zend_Controller_Action
             $qualfication_model = new Acad_Model_Qualification();
             $qualifications = $qualfication_model->fetchQualifications();
             $qualification_name = $qualifications[$qualfication_id];
+             Zend_Registry::get('logger')->debug($qualification_name);
             switch ($qualification_name) {
                 case 'MATRIC':
                     {
@@ -379,8 +380,9 @@ class StudentController extends Zend_Controller_Action
                         $qualification_data[$qualfication_id]['id'] = $qualfication_id;
                     }
                     Zend_Registry::get('logger')->debug($qualification_data);
-                    break ;
+                    
                     }
+                    break ;
              case 'TWELFTH':
                     {
                     $specific_qualfication_model = $student_model->fetchQualifiactionInfo(
@@ -390,8 +392,8 @@ class StudentController extends Zend_Controller_Action
                         $qualification_data[$qualfication_id]['id'] = $qualfication_id;
                     }
                     Zend_Registry::get('logger')->debug($qualification_data);
-                    break ;
                     }
+                    break ;
              case 'DIPLOMA':
                     {
                     $specific_qualfication_model = $student_model->fetchQualifiactionInfo(
@@ -401,19 +403,21 @@ class StudentController extends Zend_Controller_Action
                         $qualification_data[$qualfication_id]['id'] = $qualfication_id;
                     }
                     Zend_Registry::get('logger')->debug($qualification_data);
-                    break ;
                     }
+                    break ;
              case 'BTECH':
                     {
+                        
                     $specific_qualfication_model = $student_model->fetchQualifiactionInfo(
                     $qualfication_id);
                     if ($specific_qualfication_model instanceof Acad_Model_Qualification_Btech) {
                         $qualification_data[$qualfication_id]['name'] = $specific_qualfication_model->getQualification_name();
                         $qualification_data[$qualfication_id]['id'] = $qualfication_id;
                     }
-                    Zend_Registry::get('logger')->debug($qualification_data);
-                    break ;
-                    }
+                    Zend_Registry::get('logger')->debug('hello');
+                    }break ;
+                    
+                    default:'nothing found';
             }
         }
         $class_ids = $student_model->fetchAllClassIds();
