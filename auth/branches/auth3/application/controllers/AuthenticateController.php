@@ -140,4 +140,13 @@ class AuthenticateController extends Zend_Controller_Action {
 		$this->_helper->json ( $authData );
 	}
 
+	public function registerAction()
+	{
+		$this->_helper->viewRenderer->setNoRender (false);
+		$this->_helper->layout ()->enableLayout();
+	}
+	public function saveregistrationinfoAction()
+	{
+		
+	}
 }
