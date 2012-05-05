@@ -50,7 +50,8 @@ class Acad_Model_Mapper_Course_DmcInfo
             'custody_date', 'is_granted', 'grant_date', 'recieveing_date', 
             'is_copied', 'dispatch_date', 'marks_obtained', 'total_marks', 
             'scaled_marks', 'percentage');
-            $select->where('dmc_info_id = ?', $dmc_info_id);
+            $select->from($dmc_info_table, $required_cols)->where(
+            'dmc_info_id = ?', $dmc_info_id);
             $dmc_info = array();
             $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
             return $dmc_info[$dmc_info_id];
