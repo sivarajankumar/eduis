@@ -621,7 +621,8 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $member_id = $this->getMember_id(true);
         $competitive_object = new Acad_Model_Exam_Competitive();
         $competitive_object->setMember_id($member_id);
-        return $competitive_object->fetchExamIds();
+        $competitive_object->setExam_id($competitive_exam_id);
+        return $competitive_object->fetchStudentExamInfo();
     }
     public function saveCriticalInfo ($data_array)
     {

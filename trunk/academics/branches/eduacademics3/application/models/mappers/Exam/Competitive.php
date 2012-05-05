@@ -51,7 +51,7 @@ class Acad_Model_Mapper_Exam_Competitive
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $stu_comp_table = $db_table->info('name');
-        $required_cols = array('exam_id');
+        $required_cols = array('member_id', 'exam_id');
         $select = $adapter->select()
             ->from($stu_comp_table, $required_cols)
             ->where('member_id = ?', $member_id)

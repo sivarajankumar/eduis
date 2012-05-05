@@ -178,8 +178,8 @@ class Acad_Model_Exam_Competitive extends Acad_Model_Generic
         $member_id = $this->getMember_id(true);
         $exam_id = $this->getExam_id(true);
         $student_exam_info = array();
-        $student_exam_info = $this->getMapper()->fetchStudentExamInfo(
-        $member_id, $exam_id);
+        $student_exam_info = $this->getMapper()->fetchExamInfo($member_id, 
+        $exam_id);
         if (empty($student_exam_info)) {
             return false;
         } else {
