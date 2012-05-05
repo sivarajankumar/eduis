@@ -63,7 +63,6 @@
         	url : urlSaveGateInfo,
         	data : {myarray:data},
         	success: function(jStatus){
-        		$('#gate_div').hide();
         		alert('Your information has been sucessfully submitted...');
         		window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
             },

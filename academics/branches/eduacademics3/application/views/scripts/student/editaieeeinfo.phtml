@@ -74,7 +74,6 @@ $this->headLink()->prependStylesheet(
     		url : urlSaveAieeeInfo,
     		data : {myarray:data},
     		success: function(jStatus){
-    			$('#aieee_div').hide();
     			alert('Your information has been sucessfully submitted...');
     			window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
             },
