@@ -570,7 +570,7 @@ class StudentController extends Zend_Controller_Action
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         $exam_id = $params['exam_id'];
-        $exam_data = self::fetchaieeData($params['exam_id']);
+        $exam_data = self::fetchleetData($params['exam_id']);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -604,7 +604,7 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $exam_data = self::fetchaieeData($params['exam_id']);
+        $exam_data = self::fetchaieeeData($params['exam_id']);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -642,7 +642,7 @@ class StudentController extends Zend_Controller_Action
         $student_model->setMember_id($this->getMember_id());
         $exam_id = $params['exam_id'];
         $exam_data = array();
-        $exam_data = self::fetchaieeData($params['exam_id']);
+        $exam_data = self::fetchgateData($params['exam_id']);
         $exam_model = $student_model->fetchCompetitveExamInfo($exam_id);
         if ($exam_model instanceof Acad_Model_Exam_Competitive) {
             $exam_data['name'] = $exam_model->getName();
