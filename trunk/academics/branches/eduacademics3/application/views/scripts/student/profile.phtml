@@ -41,15 +41,17 @@
     <hr>
     <br>
     <?php 
-        foreach ($this->degree_data as $sem_no => $data){
-            echo 'Sem No.'.$sem_no.' ';
-            foreach ($data as $dmc_no => $dmc_data){
-                echo '<a href="/student/viewdmc?dmc_info_id='.$dmc_no.'&class_id='.$dmc_data['class_id'].'&dmc_view_type=single">DMC No.'.$dmc_no.' </a>';
-                echo $dmc_data['dispatch_date'].' ';
-                echo '<br>';
-                echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+        foreach ($this->class_semester as $class_id => $sem_no){
+            echo 'Sem No. '.$sem_no.' ';
+            foreach ($this->degree_data[$sem_no] as $dmc_info_id => $dmc_data){
+                if($dmc_data != null){
+                    echo '<a href="/student/viewdmc?dmc_info_id='.$dmc_info_id.'&class_id='.$dmc_data['class_id'].'&dmc_view_type=single">DMC No.'.$dmc_info_id.' </a>';
+                    echo $dmc_data['dispatch_date'].'  ';
+                    echo '<br>';
+                    echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+                }
             }
-            echo '<a href="/student/editdmc?class_id='.$dmc_data['class_id'].'&dmc_view_type=latest">+ Add More</a>';
+            echo '<a href="/student/editdmc?class_id='.$class_id.'&dmc_view_type=latest">+ Add More</a>';
             echo '<br>';
         }
     ?>
