@@ -854,12 +854,13 @@ class StudentController extends Zend_Controller_Action
             $params = array_diff($request->getParams(), 
             $request->getUserParams());
             $format = $this->_getParam('format', 'html');
-            $qualification_name = $request['qualification_name'];
+            $qualification_name = $params['myarray']['qualification_name'];
             $qualification_model = new Acad_Model_Qualification();
             $qualifications = $qualification_model->fetchQualifications();
             $qualification_id = array_search($qualification_name, 
             $qualifications);
-            $save_data = $request['qualification_data'];
+            $save_data = $params['myarray']['qualification_data'];
+            Zend_Registry::get('logger')->debug($save_data);
             $student_model = new Acad_Model_Member_Student();
             $student_model->setMember_id($this->getMember_id());
             $student_model->saveQualificationInfo($qualification_id, $save_data);
@@ -1103,7 +1104,9 @@ class StudentController extends Zend_Controller_Action
         $student_model->setMember_id($this->getMember_id());
         $qualification_name = 'BTECH';
         $qualification_model = new Acad_Model_Qualification();
+        
         $qualifications = $student_model->fetchQualificationsIds();
+           if ($qualifications) {
         $qualification_id = array_search($qualification_name, $qualifications);
         Zend_Registry::get('logger')->debug($qualification_id);
         if ($qualification_id) {
@@ -1133,7 +1136,7 @@ class StudentController extends Zend_Controller_Action
                     ;
                     break;
             }
-        }
+        }}
     }
     public function editdiplomainfoAction ()
     {
@@ -1182,7 +1185,7 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-         $exam_name = 'AIEEE';
+        $exam_name = 'AIEEE';
         $exam_model = new Acad_Model_CompetitiveExam();
         $exams = $exam_model->fetchExams();
         $exam_id = array_search($exam_name, $exams);
