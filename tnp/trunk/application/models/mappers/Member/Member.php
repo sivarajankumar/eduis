@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_Member_Student
+class Tnp_Model_Mapper_Member_Member
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_Member_Student
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_Member_Student
+     * @return Tnp_Model_Mapper_Member_Member
      */
     public function setDbTable ($dbTable)
     {

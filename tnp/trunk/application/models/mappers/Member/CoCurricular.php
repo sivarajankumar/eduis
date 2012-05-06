@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_MemberJobPreferred
+class Tnp_Model_Mapper_Member_CoCurricular
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_MemberJobPreferred
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_MemberJobPreferred
+     * @return Tnp_Model_Mapper_Member_CoCurricular
      */
     public function setDbTable ($dbTable)
     {
@@ -29,7 +29,7 @@ class Tnp_Model_Mapper_MemberJobPreferred
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Tnp_Model_DbTable_JobPreferred');
+            $this->setDbTable('Tnp_Model_DbTable_CoCurricular');
         }
         return $this->_dbTable;
     }
@@ -41,45 +41,35 @@ class Tnp_Model_Mapper_MemberJobPreferred
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $stu_class_table = $db_table->info('name');
-        $required_cols = array('job_area');
+        $stu_cc_table = $db_table->info('name');
+        $required_cols = array('member_id', 'achievements', 'activities', 
+        'hobbies');
         $select = $adapter->select()
-            ->from($stu_class_table, $required_cols)
+            ->from($stu_cc_table, $required_cols)
             ->where('member_id = ?', $member_id);
-        $job_area_preferred = array();
-        $job_area_preferred = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $job_area_preferred;
+        $co_curricular_info = array();
+        $co_curricular_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $co_curricular_info[$member_id];
     }
-    /**
-     * 
-     * @param integer $member_id
-     */
-    public function fetchMemberIds ($job_area_preferred)
+    public function fetchMemberIds ($achievements = null, $activities = null, 
+    $hobbies = null)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $stu_class_table = $db_table->info('name');
+        $stu_cc_table = $db_table->info('name');
         $required_cols = array('member_id');
-        $select = $adapter->select()
-            ->from($stu_class_table, $required_cols)
-            ->where('job_area = ?', $job_area_preferred);
-        $class_ids = array();
-        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-    }
-    public function fetchAll ()
-    {
-        $db_table = $this->getDbTable();
-        $adapter = $db_table->getAdapter();
-        $language_table = $db_table->info('name');
-        $required_cols = array('member_id', 'job_area');
-        $select = $adapter->select()->from($language_table, $required_cols);
-        $member_job_preferred = array();
-        $result = array();
-        $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        foreach ($result as $member_id => $job_preferred_array) {
-            $member_job_preferred[$member_id] = $job_preferred_array['job_area'];
+        $select = $adapter->select()->from($stu_cc_table, $required_cols);
+        if (! empty($achievements)) {
+            $select->where('achievements = ?', $achievements);
         }
-        return $member_job_preferred;
+        if (! empty($activities)) {
+            $select->where('activities = ?', $activities);
+        }
+        if (! empty($$hobbies)) {
+            $select->where('hobbies = ?', $hobbies);
+        }
+        $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $member_ids;
     }
     public function save ($prepared_data)
     {
