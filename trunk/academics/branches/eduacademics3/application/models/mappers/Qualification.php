@@ -72,14 +72,14 @@ class Acad_Model_Mapper_Qualification
         }
         return $info;
     }
-    public function saveQualifications ($qualification_id, $qualification_name)
+    public function save ($qualification_id, $qualification_name)
     {
         $dbtable = $this->getDbTable();
         $data = array('qualification_id' => $qualification_id, 
         'qualification_name' => $qualification_name);
         return $dbtable->insert($data);
     }
-    public function deleteQualification ($qualification_id, $qualification_name)
+    public function delete ($qualification_id, $qualification_name)
     {
         $dbtable = $this->getDbTable();
         $where1 = 'qualification_id = ' . $qualification_id;

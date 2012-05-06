@@ -59,7 +59,7 @@ class Acad_Model_Member_Qualification extends Acad_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Mapper_Member_Qualification
+     * @return class Acad_Model_Mapper_Member_Qualification
      */
     public function getMapper ()
     {
@@ -121,23 +121,10 @@ class Acad_Model_Member_Qualification extends Acad_Model_Generic
             return $qualification_ids;
         }
     }
-    /**
-     * 
-     * Saves the Qualification of a member
-     * 
-     */
-    public function saveQualifications ()
+    public function delete ()
     {
         $member_id = $this->getMember_id(true);
         $qualification_id = $this->getQualification_id(true);
-        return $this->getMapper()->saveQualifications($member_id, 
-        $qualification_id);
-    }
-    public function deleteQualification ()
-    {
-        $member_id = $this->getMember_id(true);
-        $qualification_id = $this->getQualification_id(true);
-        return $this->getMapper()->deleteQualification($member_id, 
-        $qualification_id);
+        return $this->getMapper()->delete($member_id, $qualification_id);
     }
 }
