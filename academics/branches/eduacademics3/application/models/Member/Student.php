@@ -740,7 +740,8 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     {
         $qualification_obj = new Acad_Model_Member_Qualification();
         $member_id = $this->getMember_id();
-        $qualification_ids = $this->fetchQualificationsIds();
+        $qualification_obj->setMember_id($member_id);
+        $qualification_ids = $qualification_obj->fetchQualificationIds();
         $qualifications_id_check = array_search($qualification_id, 
         $qualification_ids);
         if ($qualifications_id_check == false) {
