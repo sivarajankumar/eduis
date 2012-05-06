@@ -562,8 +562,8 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     /**
      * Fetched DmcInfoIds of a member(
      * Form of array returned :array(dmc_info_id=>dmc_id)
-     * @param bool $class_specific  
-     * @param bool $result_type_specific
+     * @param int $class_specific  
+     * @param int $result_type_specific
      * @param bool $all
      * @param bool $considered_only
      * @param bool $ordered_by_date
@@ -573,23 +573,25 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     $ordered_by_date = null)
     {
         $member_id = $this->getMember_id(true);
-        //
         $class_id = null;
         $result_type_id = null;
         $is_considered = null;
-        //
         $dmc_info_ids = array();
-        if ($class_specific == true) {
-            $class_id = $this->getClass_id(true);
-        }
-        if ($result_type_specific == true) {
-            $result_type_id = $this->getResult_type_id(true);
-        }
-        if ($considered_only == true) {
-            $is_considered = $this->getIs_considered(true);
-        }
+        $member_id = $this->getMember_id(true);
         $dmc_info_object = new Acad_Model_Course_DmcInfo();
         $dmc_info_object->setMember_id($member_id);
+        if ($class_specific == true) {
+            $dmc_info_object->setClass_id($class_specific);
+            $class_id = true;
+        }
+        if ($result_type_specific == true) {
+            $dmc_info_object->setResult_type_id($result_type_specific);
+            $result_type_id = true;
+        }
+        if ($considered_only == true) {
+            $dmc_info_object->setIs_considered($considered_only);
+            $is_considered = $considered_only;
+        }
         return $dmc_info_object->fetchMemberDmcInfoIds($class_id, 
         $result_type_id, $all, $is_considered, $ordered_by_date);
     }
@@ -745,7 +747,8 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $qualifications_id_check = array_search($qualification_id, 
         $qualification_ids);
         if ($qualifications_id_check == false) {
-            $data = array('member_id'=>$member_id,'qualification_id'=> $qualification_id);
+            $data = array('member_id' => $member_id, 
+            'qualification_id' => $qualification_id);
             return $qualification_obj->getMapper()->save($data);
         }
     }
