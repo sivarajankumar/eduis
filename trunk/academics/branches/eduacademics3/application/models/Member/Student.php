@@ -745,7 +745,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $qualifications_id_check = array_search($qualification_id, 
         $qualification_ids);
         if ($qualifications_id_check == false) {
-            $data = array($member_id, $qualification_id);
+            $data = array('member_id'=>$member_id,'qualification_id'=> $qualification_id);
             return $qualification_obj->getMapper()->save($data);
         }
     }
