@@ -1377,7 +1377,6 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $dmc_data_array = $params['dmc_data'];
-        
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         foreach ($dmc_data_array as $dmc_data) {
