@@ -1,13 +1,13 @@
-<form id="dmc_info_form" class="uniForm" action="javascript:submit()">
+<form id="dmc_info_form" class="uniForm" action="javascript:submit_dmc_info()">
 <h3>DMC Details</h3>
 <fieldset id="dmc_info">
 
-<h4>Please fill this form and click on next to fill the subject wise details of DMC.</h4>
+<h5>Please fill this form and click on next to fill the subject wise details of DMC.</h5>
 	
 	<div class="ctrlHolder">
 		<label for="dmc_id"><em>*</em>Serial Number</label>
 		<input name="dmc_id" id="dmc_id" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateAlphaNum"/>
-		<p class="formHint">Roll No. of Candidate</p>
+		<p class="formHint">Serial Number on the top of DMC</p>
 	</div>
 					
 	<div class="ctrlHolder">
@@ -50,7 +50,7 @@
 	<div class="ctrlHolder">
 		<label for=""><em>*</em>Percentage</label>
 		<input name="percentage" id="percentage" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
-		<p class="formHint">Percentage obtained by <span class="cName" >Candidate</span> in Physics, Chemistry, Math/Biology</p>
+		<p class="formHint">Percentage obtained by Candidate</p>
 	</div>
 	
 	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
@@ -61,7 +61,7 @@
 </fieldset>
 </form>
 
-<form id="dmc_form" class="uniForm" action="javascript:submit()">
+<form id="dmc_form" class="uniForm" action="javascript:submit_subjectinfo()">
 <h3>DMC Details</h3>
 
 <?php
@@ -71,7 +71,7 @@
 
 <h4><?php echo $subject_info['name']?></h4>
 
-<fieldset id="<?php echo $subject_info?>">
+<fieldset id="<?php echo str_replace(' ', '_', $subject_info['name'])?>" class="subjects">
     				
 	<div class="ctrlHolder">
 		<label for="internal"><em>*</em>Internal Marks</label>
@@ -85,14 +85,14 @@
 		<p class="formHint">External Marks of the subject</p>
 	</div>
 	
-	<div class="ctrlHolder">
+	<!-- <div class="ctrlHolder">
 		<p class="label">Pass</p>
 		<ul class="blockLabels alternate">
            	<li><label for="yes"><input name="yes" type="radio" value="1"  title="Yes">Yes</label></li>
            	<li><label for="no"><input  name="no" type="radio" value="0" title="No">No</label></li>
 		</ul>
 		<p class="formHint">Pass in Subject or not</p>
-	</div>
+	</div> -->
 	
 	<div class="ctrlHolder">
 		<label for=""><em>*</em>Percentage</label>
@@ -113,26 +113,31 @@
 </form>
 
 <script>
-    <?php 
-        foreach ($this->response['dmc_info_data'][1] as $key => $value){
-            $divname = $key;
-            echo '$("#'.$key.'").val("'.$value.'");';   
+    <?php
+        if(array_values($this->response['dmc_info_data']) != null){
+            foreach ($this->response['dmc_info_data'][1] as $key => $value){
+                $divname = $key;
+                echo '$("#'.$key.'").val("'.$value.'");';   
+            }
         }
     ?>
     <?php 
         foreach ($this->response['dmc_data'] as $subject_id => $subject_info){
             foreach ($subject_info as $key => $value){
-                $a="'".$subject_info."'";
-                $divname = '$("fieldset#'.$subject_id.' :input[name='.$a.']").val("'.$subject_info.'");';
+                $fieldset_name = str_replace(' ', '_', $this->response['subject_data'][$subject_id]['name']);
+                $input_name="'".$key."'";
+                $jquery_command = '$("fieldset#'.$fieldset_name.' :input[name='.$input_name.']").val("'.$value.'");';
+                echo $jquery_command;
             }   
         }
     ?>
-	//alert($("fieldset#dmc_info :input[name='marks_obtained']").val());
-	var urlSaveRegistrationInfo = "<?php echo $this->url(array('controller' => 'authenticate', 'action' => 'saveregistrationinfo'))?>";
+	
+	var urlSaveRegistrationInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmcinfo'))?>";
 	$(function(){
 	    $('form#dmc_info_form').uniform({
     	  prevent_submit : true
 	    });
+	    $('#dmc_form').hide();
 	  });
 
 	$("#dispatch_date").datepicker({
@@ -145,10 +150,7 @@
 			}
 	});
 
-    function submit(){
-    	$('form#dmc_form').uniform({
-    	      prevent_submit : true
-    	});
+    function submit_dmc_info(){
     	var data = {};
     	var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmcinfo'))?>";
     	$('fieldset#dmc_info :input')
@@ -156,13 +158,15 @@
     	.each(function(){ 
     		data[this.name] = this.value;
     	});
+    	show_subject_div();
     	$.ajax({
     		url : urlSaveDmcInfo,
     		data : {myarray:data},
     		success: function(jStatus){
-        		if(jStatus){
-        			abc();
-        		}
+        		//if(jStatus){
+            		$('#dmc_info_div').hide();
+        			show_subject_div();
+        		//}
             },
             error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
@@ -170,8 +174,41 @@
     		}
     	});
     }
-    function abc(){
-    	
+    function show_subject_div(){
+    	$('#dmc_form').show();
+    	$('form#dmc_form').uniform({
+        	  prevent_submit : true
+    	 });
+    }
+    function submit_subjectinfo(){
+        var data = {};
+        var sub_data = {};
+        var i = 1;
+        var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmc'))?>";
+		$('fieldset.subjects').each(function(){
+			var div_id = $(this).attr('id');
+			$('fieldset#'+div_id+' :input').each(function(){
+				sub_data[this.name] = this.value;
+			})
+			data[i]=sub_data;
+			i++;
+		});
+		$.ajax({
+    		url : urlSaveDmcInfo,
+    		data : {myarray:data},
+    		success: function(jStatus){
+        		if(jStatus){
+            		//$('#dmc_info_div').hide();
+        			//show_subject_div();
+        			alert('Your data has been saved sucessfully');
+        			window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
+        		}
+            },
+            error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+    	});
     }
 </script>
 
@@ -201,6 +238,11 @@
 		width:57%;
 		font-size:17px;
 		font-weight:100;
+	}
+	h5{
+		font-size: 14px;
+		font-weight:400;
+		margin: 0 0 15px 0;
 	}
 </style>
 <?php
