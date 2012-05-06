@@ -57,8 +57,7 @@
         .each(function(){ 
         	qualificationData[this.name] = this.value;
         });
-        data['qualification_name'] = 'GATE';
-        data['qualification_data'] = qualificationData;
+        data['exam_data'] = qualificationData;
         $.ajax({
         	url : urlSaveGateInfo,
         	data : {myarray:data},

@@ -57,8 +57,7 @@
 		.each(function(){ 
 			qualificationData[this.name] = this.value;
 		});
-		data['qualification_name'] = 'LEET';
-		data['qualification_data'] = qualificationData;
+		data['exam_data'] = qualificationData;
 		$.ajax({
 			url : urlSaveLeetInfo,
 			data : {myarray:data},
