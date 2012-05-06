@@ -1,0 +1,180 @@
+<form id="dmc_info_form" class="uniForm" action="javascript:submit()">
+<fieldset id="dmc_info">
+<h3>DMC Details</h3>
+	
+	<div class="ctrlHolder">
+		<label for="dmc_id"><em>*</em>Serial Number</label>
+		<input name="dmc_id" id="dmc_id" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateAlphaNum"/>
+		<p class="formHint">Roll No. of Candidate</p>
+	</div>
+					
+	<div class="ctrlHolder">
+		<label for="dispatch_date"><em>*</em>Date of Dispatch</label>
+		<input name="dispatch_date" id="dispatch_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+	</div>
+	
+	<div class="ctrlHolder">
+            <label for="result_type_id"><em>*</em>Result Type</label>
+             <select id="result_type_id" name="result_type_id" class="selectInput required">
+          		<option value="regular_pass">Regular Pass</option>
+          		<option value="regular_fail">Regular Fail</option>
+          		<option value="re_evaluation_pass">Re-evaluation Pass</option>
+          		<option value="re_evaluation_fail">Re-evaluation Fail</option>
+          		<option value="re_appear_pass">Re-appear Pass</option>
+          		<option value="re_appear_fail">Re-appear Fail</option>
+          	 </select>
+            <p class="formHint">Select the type of result</p>
+          </div>
+    				
+	<div class="ctrlHolder">
+		<label for="marks_obtained"><em>*</em>Marks Obtained</label>
+		<input name="marks_obtained" id="marks_obtained" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Marks Obtained</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="total_marks"><em>*</em>Total Marks</label>
+		<input name="total_marks" id="total_marks" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Total Marks</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="scaled_marks"><em>*</em>Scaled Marks</label>
+		<input name="scaled_marks" id="scaled_marks" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Scaled Marks</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Percentage</label>
+		<input name="percentage" id="percentage" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
+		<p class="formHint">Percentage obtained by <span class="cName" >Candidate</span> in Physics, Chemistry, Math/Biology</p>
+	</div>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</fieldset>
+</form>
+
+<form id="dmc_form" class="uniForm" action="javascript:submit()">
+<fieldset id="dmc">
+<h3>DMC Details</h3>
+    				
+	<div class="ctrlHolder">
+		<label for="internal"><em>*</em>Internal Marks</label>
+		<input name="internal" id="internal" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Internal Marks of the Subject</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="external"><em>*</em>External Marks</label>
+		<input name="external" id="external" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">External Marks of the subject</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<p class="label">Pass</p>
+		<ul class="blockLabels alternate">
+           	<li><label for="yes"><input name="yes" type="radio" value="1"  title="Yes">Yes</label></li>
+           	<li><label for="no"><input  name="no" type="radio" value="0" title="No">No</label></li>
+		</ul>
+		<p class="formHint">Pass in Subject or not</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>Percentage</label>
+		<input name="percentage" id="percentage" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
+		<p class="formHint">Percentage obtained by Student</p>
+	</div>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</fieldset>
+</form>
+
+<script>
+    <?php 
+        foreach ($this->response['dmc_info_data'][1] as $key => $value){
+            $divname = $key;
+            echo '$("#'.$key.'").val("'.$value.'");';   
+        }
+    ?>
+
+	var urlSaveRegistrationInfo = "<?php echo $this->url(array('controller' => 'authenticate', 'action' => 'saveregistrationinfo'))?>";
+	$(function(){
+	    $('form#dmc_info_form').uniform({
+    	  prevent_submit : true
+	    });
+	  });
+
+	$("#dispatch_date").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '-25:-15',
+		onClose : function(dateText, inst) {
+			this.focus();
+			}
+	});
+
+    function submit(){
+    	$('form#dmc_form').uniform({
+    	      prevent_submit : true
+    	});
+    	var data = {};
+    	var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmcinfo'))?>";
+    	$('fieldset#dmc_info :input')
+    	.not('button,:input[value^="e.g."]')
+    	.each(function(){ 
+    		data[this.name] = this.value;
+    	});
+    	$.ajax({
+    		url : urlSaveDmcInfo,
+    		data : {myarray:data},
+    		success: function(jStatus){
+    			abc();
+            },
+            error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+    	});
+    }
+    function abc(){
+    	
+    }
+</script>
+
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:57%;
+		font-size:17px;
+		font-weight:100;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
