@@ -1,0 +1,88 @@
+<?php 
+    $subData = $this->response['subject_data'];
+    $dmcData = $this->response['dmc_data'];
+    $dmcInfoData = $this->response['dmc_info_data'];
+?>
+<div class="ui-widget-content ui-corner-all"><center><h3>Degree Details</h3></center></div>
+
+<div id="dmc_info" class="ui-widget-content ui-corner-all">
+<h3><center>DMC Information</center></h3>
+<hr>
+<?php
+    foreach ($dmcInfoData as $key => $value){
+        foreach ($value as $dmc_property => $val){
+            $dmc_property_modified = ucfirst(str_replace('_',' ',$dmc_property));
+            echo '<span class="dmc_info_index">'.$dmc_property_modified.'</span> <span class="dmc_info_value">'.$val.'</span><br>';
+        }
+    }
+?>
+</div>
+
+<div id="dmc_subject_info" class="ui-widget-content ui-corner-all">
+<h3><center>Subjectwise Details</center></h3>
+<hr>
+<table cellpadding="5" cellspacing="10">
+<?php 
+    $i = 1;
+    $j = 1;
+    echo '<tr>';
+    foreach ($subData as $subject_id => $subject_data){
+        foreach ($subject_data as $subject_property => $value){
+            if($i == 1){
+                echo '<th>'.ucfirst($subject_property).'</th>';
+            }
+        }
+        $i = 0;
+        foreach ($dmcData[$subject_id] as $subject_property_name => $val){
+            if($j == 1){
+                echo '<th>'.ucfirst($subject_property_name).'</th>';
+            }
+        }
+        $j = 0;
+    }
+    echo '</tr>';
+?>
+<?php
+    foreach ($subData as $subject_id => $subject_data){
+        echo '<tr>';
+        foreach ($subject_data as $subject_property => $value){
+            echo '<td>'.$value.'</td>';
+        }
+        foreach ($dmcData[$subject_id] as $subject_property_name => $val){
+            echo '<td>'.$val.'</td>';
+        }
+        echo '</tr>';
+    }
+?>
+</table>
+</div>
+
+<style>
+	#dmc_info{
+		margin:20px 0 0 0;
+		width:20%;
+		padding:5px 10px 5px 10px;
+		background: none;
+		float:left;
+	}
+	#dmc_info h3{
+		margin: 10px 0 10px 0;
+	}
+	.dmc_info_index{
+		font-size: 14px;
+		color:red;
+	}
+	.dmc_info_value{
+		font-size: 14px;
+		float:right;
+	}
+	#dmc_subject_info{
+		margin:20px 0 0 0;
+		width:76%;
+		float:right;
+		clear:none;
+	}
+	table{
+		margin:-5px 0 0 0;
+	}
+</style>
