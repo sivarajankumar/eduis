@@ -51,7 +51,8 @@ class Acad_Model_Mapper_StudentCompetitiveExam
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $stu_comp_table = $db_table->info('name');
-        $required_cols = array('member_id', 'exam_id');
+        $required_cols = array('member_id', 'exam_id', 'roll_no', 'date', 
+        'total_score', 'all_india_rank');
         $select = $adapter->select()
             ->from($stu_comp_table, $required_cols)
             ->where('member_id = ?', $member_id)
