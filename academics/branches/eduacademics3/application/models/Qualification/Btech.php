@@ -87,7 +87,7 @@ class Acad_Model_Qualification_Btech extends Acad_Model_Generic
     /**
      * @return the $_institution
      */
-    public function getIstitution ()
+    public function getInstitution ()
     {
         return $this->_institution;
     }
@@ -164,7 +164,7 @@ class Acad_Model_Qualification_Btech extends Acad_Model_Generic
     /**
      * @param field_type $_institution
      */
-    public function setIstitution ($_institution)
+    public function setInstitution ($_institution)
     {
         $this->_institution = $_institution;
     }
