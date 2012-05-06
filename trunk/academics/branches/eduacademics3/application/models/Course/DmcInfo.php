@@ -7,7 +7,6 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     protected $_result_type_id;
     protected $_class_id;
     protected $_member_id;
-    protected $_roll_no;
     protected $_examination;
     protected $_custody_date;
     protected $_is_granted;
@@ -110,13 +109,6 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
         } else {
             return $member_id;
         }
-    }
-    /**
-     * @return the $_roll_no
-     */
-    public function getRoll_no ()
-    {
-        return $this->_roll_no;
     }
     /**
      * @return the $_examination
@@ -229,13 +221,6 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     public function setMember_id ($_member_id)
     {
         $this->_member_id = $_member_id;
-    }
-    /**
-     * @param field_type $_roll_no
-     */
-    public function setRoll_no ($_roll_no)
-    {
-        $this->_roll_no = $_roll_no;
     }
     /**
      * @param field_type $_examination
@@ -398,10 +383,11 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
      * Form of array returned :array(dmc_info_id=>dmc_id))
      * @param bool $all
      */
-    public function fetchDmcInfoIdsByDate ($all=null)
+    public function fetchDmcInfoIdsByDate ($all = null)
     {
         $member_id = $this->getMember_id(true);
-        $dmc_info_ids = $this->getMapper()->fetchDmcInfoIdsByDate($member_id,$all);
+        $dmc_info_ids = $this->getMapper()->fetchDmcInfoIdsByDate($member_id, 
+        $all);
         if (empty($dmc_info_ids)) {
             return false;
         } else {
