@@ -1,0 +1,92 @@
+<?php
+class Tnp_Model_Core_Training extends Tnp_Model_Generic
+{
+    protected $_training_id;
+    protected $_technical_field_id;
+    protected $_training_technology;
+    protected $_mapper;
+    /**
+     * @return the $_training_id
+     */
+    public function getTraining_id ($throw_exception = null)
+    {
+        $training_id = $this->_training_id;
+        if (empty($training_id) and $throw_exception == true) {
+            $message = '_training_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $training_id;
+        }
+    }
+    /**
+     * @return the $_technical_field_id
+     */
+    public function getTechnical_field_id ($throw_exception = null)
+    {
+        $technical_field_id = $this->_technical_field_id;
+        if (empty($technical_field_id) and $throw_exception == true) {
+            $message = '_technical_field_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $technical_field_id;
+        }
+    }
+    /**
+     * @return the $_training_technology
+     */
+    public function getTraining_technology ($throw_exception = null)
+    {
+        $training_technology = $this->_training_technology;
+        if (empty($training_technology) and $throw_exception == true) {
+            $message = '_training_technology is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $training_technology;
+        }
+    }
+    /**
+     * @param field_type $_training_id
+     */
+    public function setTraining_id ($_training_id)
+    {
+        $this->_training_id = $_training_id;
+    }
+    /**
+     * @param field_type $_technical_field_id
+     */
+    public function setTechnical_field_id ($_technical_field_id)
+    {
+        $this->_technical_field_id = $_technical_field_id;
+    }
+    /**
+     * @param field_type $_training_technology
+     */
+    public function setTraining_technology ($_training_technology)
+    {
+        $this->_training_technology = $_training_technology;
+    }
+    /**
+     * Sets Mapper
+     * @param Tnp_Model_Mapper_Core_Training $mapper
+     * @return Tnp_Model_Core_Training
+     */
+    public function setMapper ($mapper)
+    {
+        $this->_mapper = $mapper;
+        return $this;
+    }
+    /**
+     * gets the mapper from the object class
+     * @return Tnp_Model_Mapper_Core_Training
+     */
+    public function getMapper ()
+    {
+        if (null === $this->_mapper) {
+            $this->setMapper(new Tnp_Model_Mapper_Core_Training());
+        }
+        return $this->_mapper;
+    }
+}
