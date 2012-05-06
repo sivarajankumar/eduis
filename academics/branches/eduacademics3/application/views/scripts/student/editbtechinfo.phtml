@@ -1,3 +1,4 @@
+<h2>Academic Information:<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
 <form id="btech_form" class="uniForm" action="javascript:submit_btech_info()">
 <fieldset id="btech">
 <h3>Btech</h3>
@@ -56,14 +57,14 @@
 	</div>
 		        			
 	<div class="ctrlHolder">
-		<label for="city_name"><em>*</em>City</label>
-		<input name="city_name" id="city_name" value="" data-default-value="e.g. Ambala" size="35" maxlength="50" type="text" class="textInput required"/>
+		<label for="institution_city"><em>*</em>City</label>
+		<input name="institution_city" id="institution_city" value="" data-default-value="e.g. Ambala" size="35" maxlength="50" type="text" class="textInput required"/>
 		<p class="formHint">City of Institution</p>
 	</div>
           
 	<div class="ctrlHolder">
-		<label for="state_name"><em>*</em>State</label>
-		<input name="state_name" id="state_name" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required"/>
+		<label for="institution_state"><em>*</em>State</label>
+		<input name="institution_state" id="institution_state" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required"/>
 		<p class="formHint">State of Institution</p>
 	</div>
 	
@@ -75,9 +76,19 @@
 </fieldset>
 </form>
 <script type="text/javascript">
-    $('form.uniForm').uniform({
-        prevent_submit : true
- 	});
+<?php
+    if(isset($this->qualification_data)){
+        foreach ($this->qualification_data as $key => $value){
+            $divname = $key;
+            echo '$("#'.$key.'").val("'.$value.'");';
+        }
+    }
+?>
+	$(function(){
+    	$('form.uniForm').uniform({
+			prevent_submit : true
+		});
+	});
 
     function submit_btech_info(){
     	var data = {};
@@ -107,3 +118,36 @@
     }
         	
 </script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:57%;
+		font-size:17px;
+		font-weight:100;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
