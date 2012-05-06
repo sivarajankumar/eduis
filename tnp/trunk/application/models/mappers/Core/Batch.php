@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_Batch
+class Tnp_Model_Mapper_Core_Batch
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_Batch
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_Batch
+     * @return Tnp_Model_Mapper_Core_Batch
      */
     public function setDbTable ($dbTable)
     {

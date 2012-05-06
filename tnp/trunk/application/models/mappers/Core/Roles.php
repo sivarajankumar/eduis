@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_StudentSkills
+class Tnp_Model_Mapper_Core_Roles
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_StudentSkills
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_StudentSkills
+     * @return Tnp_Model_Mapper_Core_Roles
      */
     public function setDbTable ($dbTable)
     {
@@ -29,53 +29,51 @@ class Tnp_Model_Mapper_StudentSkills
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Tnp_Model_DbTable_StudentSkills');
+            $this->setDbTable('Tnp_Model_DbTable_Roles');
         }
         return $this->_dbTable;
     }
     /**
      * 
-     * @param integer $skill_id
+     * @param integer $industry_id
      */
-    public function fetchInfo ($member_id)
+    public function fetchInfo ($role_id)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
-        $student_skills_table = $db_table->info('name');
-        $required_cols = array('member_id', 'skill_id', 'proficiency');
+        $role_table = $db_table->info('name');
+        $required_cols = array('role_id', 'role_name');
         $select = $adapter->select()
-            ->from($student_skills_table, $required_cols)
-            ->where('member_id = ?', $member_id);
-        $skill_info = array();
-        $skill_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $skill_info[$member_id];
+            ->from($role_table, $required_cols)
+            ->where('role_id = ?', $role_id);
+        $role_info = array();
+        $role_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $role_info[$role_id];
     }
-    public function fetchMemberIds ($skill_id = null, $proficiency = null)
+    public function fetchRoles ()
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
-        $student_skills_table = $db_table->info('name');
-        $required_cols = array('member_id');
-        $select = $adapter->select()->from($student_skills_table, 
-        $required_cols);
-        if (! empty($skill_id)) {
-            $select->where('skill_id = ?', $skill_id);
+        $role_table = $db_table->info('name');
+        $required_cols = array('role_id', 'role_name');
+        $select = $adapter->select()->from($role_table, $required_cols);
+        $roles = array();
+        $result = array();
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        foreach ($result as $role_id => $role_info_array) {
+            $roles[$role_id] = $role_info_array['role_name'];
         }
-        if (! empty($proficiency)) {
-            $select->where('proficiency = ?', $proficiency);
-        }
-        $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $member_ids;
+        return $roles;
     }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
-    public function update ($prepared_data, $member_id)
+    public function update ($prepared_data, $role_id)
     {
         $dbtable = $this->getDbTable();
-        $where = 'member_id = ' . $member_id;
+        $where = 'role_id = ' . $role_id;
         return $dbtable->update($prepared_data, $where);
     }
 }
