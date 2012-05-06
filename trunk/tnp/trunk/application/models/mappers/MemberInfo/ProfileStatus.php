@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_MemberCoCurricular
+class Tnp_Model_Mapper_MemberInfo_ProfileStatus
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_MemberCoCurricular
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_MemberCoCurricular
+     * @return Tnp_Model_Mapper_MemberInfo_ProfileStatus
      */
     public function setDbTable ($dbTable)
     {
@@ -29,7 +29,7 @@ class Tnp_Model_Mapper_MemberCoCurricular
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Tnp_Model_DbTable_CoCurricular');
+            $this->setDbTable('Tnp_Model_DbTable_ProfileStatus');
         }
         return $this->_dbTable;
     }
@@ -39,35 +39,35 @@ class Tnp_Model_Mapper_MemberCoCurricular
      */
     public function fetchInfo ($member_id)
     {
-        $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $stu_cc_table = $db_table->info('name');
-        $required_cols = array('member_id', 'achievements', 'activities', 
-        'hobbies');
+        $adapter = $db_table->getAdapter();
+        $profile_status_table = $db_table->info('name');
+        $required_cols = array('member_id', 'exists', 'is_locked', 
+        'last_updated_on');
         $select = $adapter->select()
-            ->from($stu_cc_table, $required_cols)
+            ->from($profile_status_table, $required_cols)
             ->where('member_id = ?', $member_id);
-        $co_curricular_info = array();
-        $co_curricular_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $co_curricular_info[$member_id];
+        $member_profile_info = array();
+        $member_profile_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $member_profile_info[$member_id];
     }
-    public function fetchMemberIds ($achievements = null, $activities = null, 
-    $hobbies = null)
+    public function fetchMemberIds ($exists = null, $is_locked = null, 
+    $last_updated_on = null)
     {
-        $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $stu_cc_table = $db_table->info('name');
+        $adapter = $db_table->getAdapter();
+        $profile_status_table = $db_table->info('name');
         $required_cols = array('member_id');
-        $select = $adapter->select()->from($stu_cc_table, 
+        $select = $adapter->select()->from($profile_status_table, 
         $required_cols);
-        if (! empty($achievements)) {
-            $select->where('achievements = ?', $achievements);
+        if (! empty($exists)) {
+            $select->where('exists = ?', $exists);
         }
-        if (! empty($activities)) {
-            $select->where('activities = ?', $activities);
+        if (! empty($is_locked)) {
+            $select->where('is_locked = ?', $is_locked);
         }
-        if (! empty($$hobbies)) {
-            $select->where('hobbies = ?', $hobbies);
+        if (! empty($$last_updated_on)) {
+            $select->where('last_updated_on = ?', $last_updated_on);
         }
         $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $member_ids;

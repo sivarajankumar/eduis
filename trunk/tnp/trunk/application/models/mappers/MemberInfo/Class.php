@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_StudentClass
+class Tnp_Model_Mapper_MemberInfo_Class
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_StudentClass
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_StudentClass
+     * @return Tnp_Model_Mapper_MemberInfo_Class
      */
     public function setDbTable ($dbTable)
     {
@@ -40,8 +40,8 @@ class Tnp_Model_Mapper_StudentClass
      */
     public function fetchInfo ($member_id, $class_id)
     {
+        $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $adapter = $db_table->getAdapter();
         $stu_class_table = $db_table->info('name');
         $required_cols = array('member_id', 'class_id', 'group_id', 'roll_no', 
         'start_date', 'completion_date', 'is_initial_batch_identifier');
@@ -60,8 +60,8 @@ class Tnp_Model_Mapper_StudentClass
      */
     public function fetchClassIds ($member_id)
     {
+        $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $adapter = $db_table->getAdapter();
         $stu_class_table = $db_table->info('name');
         $required_cols = array('class_id');
         $select = $adapter->select()
@@ -77,8 +77,8 @@ class Tnp_Model_Mapper_StudentClass
      */
     public function fetchBatchIdentifierClassId ($member_id)
     {
+        $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $adapter = $db_table->getAdapter();
         $stu_class_table = $db_table->info('name');
         $required_cols = array('class_id');
         $select = $adapter->select()

@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_StudentClass
+class Tnp_Model_Mapper_MemberInfo_JobPreferred
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_StudentClass
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_StudentClass
+     * @return Tnp_Model_Mapper_MemberInfo_JobPreferred
      */
     public function setDbTable ($dbTable)
     {
@@ -29,76 +29,68 @@ class Tnp_Model_Mapper_StudentClass
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Tnp_Model_DbTable_StudentClass');
+            $this->setDbTable('Tnp_Model_DbTable_JobPreferred');
         }
         return $this->_dbTable;
     }
     /**
-     * Fetches Class details of a student
      * 
      * @param integer $member_id
      */
-    public function fetchInfo ($member_id, $class_id)
+    public function fetchInfo ($member_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $stu_class_table = $db_table->info('name');
-        $required_cols = array('member_id', 'class_id', 'group_id', 'roll_no', 
-        'start_date', 'completion_date', 'is_initial_batch_identifier');
-        $select = $adapter->select()
-            ->from($stu_class_table, $required_cols)
-            ->where('member_id = ?', $member_id)
-            ->where('class_id = ?', $class_id);
-        $student_info = array();
-        $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $student_info[$member_id];
-    }
-    /**
-     * Fetches all Classes in which a student has/had enrolled
-     * 
-     * @param integer $member_id
-     */
-    public function fetchClassIds ($member_id)
-    {
-        $adapter = $this->getDbTable()->getAdapter();
-        $db_table = $this->getDbTable();
-        $stu_class_table = $db_table->info('name');
-        $required_cols = array('class_id');
+        $required_cols = array('job_area');
         $select = $adapter->select()
             ->from($stu_class_table, $required_cols)
             ->where('member_id = ?', $member_id);
-        $class_ids = array();
-        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        $job_area_preferred = array();
+        $job_area_preferred = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $job_area_preferred;
     }
     /**
-     * Fetches all Classes in which a student has/had enrolled
      * 
      * @param integer $member_id
      */
-    public function fetchBatchIdentifierClassId ($member_id)
+    public function fetchMemberIds ($job_area_preferred)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $stu_class_table = $db_table->info('name');
-        $required_cols = array('class_id');
+        $required_cols = array('member_id');
         $select = $adapter->select()
             ->from($stu_class_table, $required_cols)
-            ->where('is_initial_batch_identifier = ?', 1);
-        $class_id = array();
-        $class_id = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $class_id[0];
+            ->where('job_area = ?', $job_area_preferred);
+        $class_ids = array();
+        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+    }
+    public function fetchAll ()
+    {
+        $db_table = $this->getDbTable();
+        $adapter = $db_table->getAdapter();
+        $language_table = $db_table->info('name');
+        $required_cols = array('member_id', 'job_area');
+        $select = $adapter->select()->from($language_table, $required_cols);
+        $member_job_preferred = array();
+        $result = array();
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        foreach ($result as $member_id => $job_preferred_array) {
+            $member_job_preferred[$member_id] = $job_preferred_array['job_area'];
+        }
+        return $member_job_preferred;
     }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
-    public function update ($prepared_data, $member_id, $class_id)
+    public function update ($prepared_data, $member_id)
     {
         $dbtable = $this->getDbTable();
-        $where1 = 'member_id = ' . $member_id;
-        $where2 = 'class_id = ' . $class_id;
-        return $dbtable->update($prepared_data, array($where1, $where2));
+        $where = 'member_id = ' . $member_id;
+        return $dbtable->update($prepared_data, $where);
     }
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_Language
+class Tnp_Model_Mapper_Core_Language
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_Language
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_Language
+     * @return Tnp_Model_Mapper_Core_Language
      */
     public function setDbTable ($dbTable)
     {

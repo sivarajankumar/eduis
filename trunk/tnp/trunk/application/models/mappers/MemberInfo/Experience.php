@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_StudentClass
+class Tnp_Model_Mapper_MemberInfo_Experience
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_StudentClass
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_StudentClass
+     * @return Tnp_Model_Mapper_MemberInfo_Experience
      */
     public function setDbTable ($dbTable)
     {
@@ -29,7 +29,7 @@ class Tnp_Model_Mapper_StudentClass
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Tnp_Model_DbTable_StudentClass');
+            $this->setDbTable('Tnp_Model_DbTable_StudentExperience');
         }
         return $this->_dbTable;
     }

@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_Industries
+class Tnp_Model_Mapper_Core_Industries
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_Industries
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_Industries
+     * @return Tnp_Model_Mapper_Core_Industries
      */
     public function setDbTable ($dbTable)
     {

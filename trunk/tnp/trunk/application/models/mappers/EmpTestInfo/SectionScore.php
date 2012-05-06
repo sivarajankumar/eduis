@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_EmployabilityTestSectionScore
+class Tnp_Model_Mapper_EmpTestInfo_SectionScore
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_EmployabilityTestSectionScore
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_EmployabilityTestSectionScore
+     * @return Tnp_Model_Mapper_EmpTestInfo_SectionScore
      */
     public function setDbTable ($dbTable)
     {
