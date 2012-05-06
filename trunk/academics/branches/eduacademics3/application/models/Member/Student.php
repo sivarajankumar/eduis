@@ -550,13 +550,14 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     /**
      * Fetches DmcInfoIds in Descending order(
      * Form of array returned :array(dmc_info_id=>dispatch_date))
+     * @param bool
      */
-    public function fetchDmcInfoIdsByDate ()
+    public function fetchDmcInfoIdsByDate ($all = null)
     {
         $member_id = $this->getMember_id(true);
         $dmc_info_object = new Acad_Model_Course_DmcInfo();
         $dmc_info_object->setMember_id($member_id);
-        return $dmc_info_object->fetchDmcInfoIdsByDate();
+        return $dmc_info_object->fetchDmcInfoIdsByDate($all);
     }
     /**
      * Fetched DmcInfoIds of a member(
