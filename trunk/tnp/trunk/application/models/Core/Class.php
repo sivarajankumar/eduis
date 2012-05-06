@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Class extends Tnp_Model_Generic
+class Tnp_Model_Core_Class extends Tnp_Model_Generic
 {
     protected $_class_id;
     protected $_batch_id;
@@ -174,8 +174,8 @@ class Tnp_Model_Class extends Tnp_Model_Generic
     }
     /**
      * Sets Mapper
-     * @param Tnp_Model_Mapper_Class $mapper
-     * @return Tnp_Model_Class
+     * @param Tnp_Model_Mapper_Core_Class $mapper
+     * @return Tnp_Model_Core_Class
      */
     public function setMapper ($mapper)
     {
@@ -184,12 +184,12 @@ class Tnp_Model_Class extends Tnp_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_Class
+     * @return Tnp_Model_Mapper_Core_Class
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_Class());
+            $this->setMapper(new Tnp_Model_Mapper_Core_Class());
         }
         return $this->_mapper;
     }
@@ -246,6 +246,8 @@ class Tnp_Model_Class extends Tnp_Model_Generic
         }
     }
     /**
+     * Fetches Subjects of a class
+     **
      * 
      * fetches the Class Ids of a batch
      * @param bool $batch_specific optional

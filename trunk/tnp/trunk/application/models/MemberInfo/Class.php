@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_StudentClass extends Tnp_Model_Generic
+class Tnp_Model_MemberInfo_Class extends Tnp_Model_Generic
 {
     protected $_member_id;
     protected $_class_id;
@@ -139,8 +139,8 @@ class Tnp_Model_StudentClass extends Tnp_Model_Generic
     }
     /**
      * Sets Mapper
-     * @param Tnp_Model_Mapper_StudentClass $mapper
-     * @return Tnp_Model_StudentClass
+     * @param Tnp_Model_Mapper_MemberInfo_Class $mapper
+     * @return Tnp_Model_MemberInfo_Class
      */
     public function setMapper ($mapper)
     {
@@ -149,12 +149,12 @@ class Tnp_Model_StudentClass extends Tnp_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_StudentClass
+     * @return Tnp_Model_Mapper_MemberInfo_Class
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_StudentClass());
+            $this->setMapper(new Tnp_Model_Mapper_MemberInfo_Class());
         }
         return $this->_mapper;
     }
