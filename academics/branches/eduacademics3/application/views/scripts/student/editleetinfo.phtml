@@ -1,3 +1,4 @@
+<h2>Academic Information:<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
 <form id="leet_form" class="uniForm" action="javascript:submit_leet_info()">
 <fieldset id="leet">
 <h3>LEET</h3>
@@ -34,9 +35,19 @@
 </fieldset>
 </form>
 <script type="text/javascript">
-    $('form.uniForm').uniform({
-        prevent_submit : true
- 	});
+<?php
+    if(isset($this->qualification_data)){
+        foreach ($this->qualification_data as $key => $value){
+            $divname = $key;
+            echo '$("#'.$key.'").val("'.$value.'");';
+        }
+    }
+?>
+    $(function(){
+    	$('form.uniForm').uniform({
+    		prevent_submit : true
+    	});
+    });
  	
     $("#doc").datepicker({
     	dateFormat: 'yy-mm-dd',
@@ -75,3 +86,36 @@
 	}
         	
 </script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:57%;
+		font-size:17px;
+		font-weight:100;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
