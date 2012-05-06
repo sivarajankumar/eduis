@@ -549,7 +549,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     }
     /**
      * Fetches DmcInfoIds in Descending order(
-     * Form of array returned :array(dmc_info_id=>dmc_id))
+     * Form of array returned :array(dmc_info_id=>dispatch_date))
      */
     public function fetchDmcInfoIdsByDate ()
     {
