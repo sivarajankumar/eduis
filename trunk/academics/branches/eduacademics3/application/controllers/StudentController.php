@@ -367,27 +367,42 @@ class StudentController extends Zend_Controller_Action
             $filled_qualifications = array_intersect_key($qualifications, 
             $qualification_ids);
         }
-        $class_ids = $student_model->fetchAllClassIds();
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
         $degree_data = array();
+        $info = array();
+        $class_ids = array();
+        $class_semester = array();
+        $class_dmc_info_ids = array();
+        $dmc_dispatch_dates = array();
+        $student = new Acad_Model_Member_Student();
+        $student->setMember_id($this->getMember_id());
+        $class_ids = $student->fetchAllClassIds();
+        $class = new Acad_Model_Class();
         foreach ($class_ids as $class_id) {
-            $class_model = new Acad_Model_Class();
-            $class_model->setClass_id($class_id);
-            $class_model->fetchInfo();
-            $semester_id = $class_model->getSemester_id();
-            $dmc_info_ids = $student_model->fetchDmcInfoIds($class_id, null, 
-            null);
-            if (is_array($dmc_info_ids)) {
-                foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
-                    $degree_data[$semester_id][$dmc_info_id]['class_id'] = $class_id;
-                    $degree_data[$semester_id][$dmc_info_id]['dmc_id'] = $dmc_id;
-                }
-                $dmc_info_bydate = $student_model->fetchDmcInfoIdsByDate(true);
-                foreach ($dmc_info_bydate as $dmc_date_id => $date) {
-                    if ($dmc_date_id == $dmc_info_id)
-                        $degree_data[$semester_id][$dmc_date_id]['dispatch_date'] = $date;
-                }
+            //for unsetting object properties
+            //$class->initsave();
+            $class->setClass_id($class_id);
+            $class->fetchInfo();
+            $semester_id = $class->getSemester_id();
+            $class_semester[$class_id] = $semester_id;
+        }
+        foreach ($class_semester as $class_idA => $sem) {
+            $dmc_info_ids = array();
+            $dmc_info_ids = $student->fetchDmcInfoIds($class_idA);
+            $class_dmc_info_ids[$class_idA] = $dmc_info_ids;
+        }
+        $dmc_dispatch_dates = $student->fetchDmcInfoIdsByDate(true);
+        foreach ($class_dmc_info_ids as $class_idB => $dmc_info_id_array) {
+            $semester_idA = $class_semester[$class_idB];
+            $degree_data[$semester_idA] = array();
+            foreach ($dmc_info_id_array as $dmc_info_id => $dmc_id) {
+                $degree_data[$semester_idA][$dmc_info_id]['class_id'] = $class_idB;
+                $degree_data[$semester_idA][$dmc_info_id]['dmc_id'] = $dmc_id;
+                $degree_data[$semester_idA][$dmc_info_id]['dispatch_date'] = $dmc_dispatch_dates[$dmc_info_id];
             }
         }
+        Zend_Registry::get('logger')->debug($degree_data);
         $exam_model = new Acad_Model_CompetitiveExam();
         $exams = $exam_model->fetchExams();
         $present_exam_ids_array = $student_model->fetchCompetitveExamIds();
@@ -406,6 +421,7 @@ class StudentController extends Zend_Controller_Action
                 $this->view->assign('filled_qualifications', 
                 $filled_qualifications);
                 $this->view->assign('degree_data', $degree_data);
+                $this->view->assign('$class_semester', $class_semester);
                 $this->view->assign('qualifications', $qualifications);
                 $this->view->assign('exams', $exams);
                 $this->view->assign('filled_exams', $filled_exams);
@@ -1361,6 +1377,7 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $dmc_data_array = $params['dmc_data'];
+        
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         foreach ($dmc_data_array as $dmc_data) {
@@ -1435,17 +1452,16 @@ class StudentController extends Zend_Controller_Action
             $semester_id = $class->getSemester_id();
             $class_semester[$class_id] = $semester_id;
         }
-        Zend_Registry::get('logger')->debug($class_semester);
-        foreach ($class_semester as $class_idA) {
+        foreach ($class_semester as $class_idA => $sem) {
             $dmc_info_ids = array();
             $dmc_info_ids = $student->fetchDmcInfoIds($class_idA);
-            Zend_Registry::get('logger')->debug($dmc_info_ids);
             $class_dmc_info_ids[$class_idA] = $dmc_info_ids;
         }
-        Zend_Registry::get('logger')->debug($class_dmc_info_ids);
+        $dmc_dispatch_dates = $student->fetchDmcInfoIdsByDate(true);
         foreach ($class_dmc_info_ids as $class_idB => $dmc_info_id_array) {
+            $semester_idA = $class_semester[$class_idB];
+            $inner_array[$semester_idA] = '';
             foreach ($dmc_info_id_array as $dmc_info_id => $dmc_id) {
-                $semester_idA = $class_semester[$class_id];
                 $inner_array[$semester_idA][$dmc_info_id]['class_id'] = $class_idB;
                 $inner_array[$semester_idA][$dmc_info_id]['dmc_id'] = $dmc_id;
                 $inner_array[$semester_idA][$dmc_info_id]['dispatch_date'] = $dmc_dispatch_dates[$dmc_info_id];
