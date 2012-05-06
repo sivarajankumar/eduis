@@ -79,6 +79,7 @@ class StudentController extends Zend_Controller_Action
         $student_model->setMember_id($this->getMember_id());
         $qualification_model = $student_model->fetchQualifiactionInfo(
         $qualification_id);
+        $btech_data = array();
         if ($qualification_model instanceof Acad_Model_Qualification_Btech) {
             $btech_data['university'] = $qualification_model->getUniversity();
             $btech_data['city_name'] = $qualification_model->getCity_name();
@@ -326,7 +327,8 @@ class StudentController extends Zend_Controller_Action
                 $dmc_info_keys = array_keys($dmc_info_array);
                 $dmc_info_id = array_pop($dmc_info_keys);
                 if ($dmc_info_id) {
-                    $dmc_data = self::fetchsubjectDmc($dmc_info_id, $subject_ids);
+                    $dmc_data = self::fetchsubjectDmc($dmc_info_id, 
+                    $subject_ids);
                 }
                 break;
             case 'single':
@@ -388,10 +390,13 @@ class StudentController extends Zend_Controller_Action
         $filled_qualifications = array();
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
+        Zend_Registry::get('logger')->debug($qualifications);
         $qualfication_id_array = $student_model->fetchQualificationsIds();
-        $qualification_ids = array_flip($qualfication_id_array);
-        $filled_qualifications = array_intersect_key($qualifications, 
-        $qualification_ids);
+        if (is_array($qualfication_id_array)) {
+            $qualification_ids = array_flip($qualfication_id_array);
+            $filled_qualifications = array_intersect_key($qualifications, 
+            $qualification_ids);
+        }
         $class_ids = $student_model->fetchAllClassIds();
         $model_member_id = $student_model->getMember_id();
         $degree_data = array();
@@ -417,20 +422,16 @@ class StudentController extends Zend_Controller_Action
         $filled_exams = array_intersect_key($exams, $present_exam_ids);
         switch ($format) {
             case 'html':
-                $this->_helper->viewRenderer->setNoRender(false);
-                $this->_helper->layout()->enableLayout();
-                if (! empty($filled_qualifications)) {
-                    $this->view->assign('filled_qualifications', 
-                    $filled_qualifications);
-                    $this->view->assign('degree_data', $degree_data);
-                    $this->view->assign('qualifications', $qualifications);
-                    $this->view->assign('exams', $exams);
-                    $this->view->assign('filled_exams', $filled_exams);
-                    Zend_Registry::get('logger')->debug($qualifications);
-                    Zend_Registry::get('logger')->debug($filled_qualifications);
-                    Zend_Registry::get('logger')->debug($degree_data);
-                    Zend_Registry::get('logger')->debug($filled_exams);
-                }
+                $this->view->assign('filled_qualifications', 
+                $filled_qualifications);
+                $this->view->assign('degree_data', $degree_data);
+                $this->view->assign('qualifications', $qualifications);
+                $this->view->assign('exams', $exams);
+                $this->view->assign('filled_exams', $filled_exams);
+                Zend_Registry::get('logger')->debug($qualifications);
+                Zend_Registry::get('logger')->debug($filled_qualifications);
+                Zend_Registry::get('logger')->debug($degree_data);
+                Zend_Registry::get('logger')->debug($filled_exams);
                 break;
             case 'jsonp':
                 $callback = $this->getRequest()->getParam('callback');
@@ -616,6 +617,7 @@ class StudentController extends Zend_Controller_Action
         $exam_name = 'LEET';
         $exam_model = new Acad_Model_CompetitiveExam();
         $exams = $exam_model->fetchExams();
+        Zend_Registry::get('logger')->debug($exams);
         $exam_id = array_search($exam_name, $exams);
         $exam_data = self::fetchleetData($exam_id);
         switch ($format) {
@@ -1017,7 +1019,10 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $qualification_id = $params['qualification_id'];
+        $qualification_name = 'MATRIC';
+        $qualification_model = new Acad_Model_Qualification();
+        $qualifications = $qualification_model->fetchQualifications();
+        $qualification_id = array_search($qualification_name, $qualifications);
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
             $qualification_data = self::fetchMatricData($qualification_id);
@@ -1054,7 +1059,10 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $qualification_id = $params['qualification_id'];
+        $qualification_name = 'TWELFTH';
+        $qualification_model = new Acad_Model_Qualification();
+        $qualifications = $qualification_model->fetchQualifications();
+        $qualification_id = array_search($qualification_name, $qualifications);
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
             $qualification_data = self::fetchTwelfthData($qualification_id);
@@ -1091,7 +1099,13 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $qualification_id = $params['qualification_id'];
+        $student_model = new Acad_Model_Member_Student();
+        $student_model->setMember_id($this->getMember_id());
+        $qualification_name = 'BTECH';
+        $qualification_model = new Acad_Model_Qualification();
+        $qualifications = $student_model->fetchQualificationsIds();
+        $qualification_id = array_search($qualification_name, $qualifications);
+        Zend_Registry::get('logger')->debug($qualification_id);
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
             $qualification_data = self::fetchBtechData($qualification_id);
@@ -1128,7 +1142,10 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $qualification_id = $params['qualification_id'];
+        $qualification_name = 'DIPLOMA';
+        $qualification_model = new Acad_Model_Qualification();
+        $qualifications = $qualification_model->fetchQualifications();
+        $qualification_id = array_search($qualification_name, $qualifications);
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
             $qualification_data = self::fetchDiplomaData($qualification_id);
@@ -1165,7 +1182,10 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $exam_id = $params['exam_id'];
+         $exam_name = 'AIEEE';
+        $exam_model = new Acad_Model_CompetitiveExam();
+        $exams = $exam_model->fetchExams();
+        $exam_id = array_search($exam_name, $exams);
         if ($exam_id) {
             $student_model = new Acad_Model_Member_Student();
             $qualification_data = self::fetchaieeeData($exam_id);
@@ -1202,7 +1222,10 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $exam_id = $params['exam_id'];
+        $exam_name = 'AIEEE';
+        $exam_model = new Acad_Model_CompetitiveExam();
+        $exams = $exam_model->fetchExams();
+        $exam_id = array_search($exam_name, $exams);
         if ($exam_id) {
             $student_model = new Acad_Model_Member_Student();
             $qualification_data = self::fetchleetData($exam_id);
@@ -1239,7 +1262,10 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $exam_id = $params['exam_id'];
+        $exam_name = 'AIEEE';
+        $exam_model = new Acad_Model_CompetitiveExam();
+        $exams = $exam_model->fetchExams();
+        $exam_id = array_search($exam_name, $exams);
         if ($exam_id) {
             $student_model = new Acad_Model_Member_Student();
             $qualification_data = self::fetchgateData($exam_id);
