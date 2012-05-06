@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_MemberCoCurricular
+class Tnp_Model_Mapper_Member_Skills
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_MemberCoCurricular
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_MemberCoCurricular
+     * @return Tnp_Model_Mapper_Member_Skills
      */
     public function setDbTable ($dbTable)
     {
@@ -29,45 +29,40 @@ class Tnp_Model_Mapper_MemberCoCurricular
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Tnp_Model_DbTable_CoCurricular');
+            $this->setDbTable('Tnp_Model_DbTable_StudentSkills');
         }
         return $this->_dbTable;
     }
     /**
      * 
-     * @param integer $member_id
+     * @param integer $skill_id
      */
     public function fetchInfo ($member_id)
     {
-        $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $stu_cc_table = $db_table->info('name');
-        $required_cols = array('member_id', 'achievements', 'activities', 
-        'hobbies');
+        $adapter = $db_table->getAdapter();
+        $student_skills_table = $db_table->info('name');
+        $required_cols = array('member_id', 'skill_id', 'proficiency');
         $select = $adapter->select()
-            ->from($stu_cc_table, $required_cols)
+            ->from($student_skills_table, $required_cols)
             ->where('member_id = ?', $member_id);
-        $co_curricular_info = array();
-        $co_curricular_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $co_curricular_info[$member_id];
+        $skill_info = array();
+        $skill_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $skill_info[$member_id];
     }
-    public function fetchMemberIds ($achievements = null, $activities = null, 
-    $hobbies = null)
+    public function fetchMemberIds ($skill_id = null, $proficiency = null)
     {
-        $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $stu_cc_table = $db_table->info('name');
+        $adapter = $db_table->getAdapter();
+        $student_skills_table = $db_table->info('name');
         $required_cols = array('member_id');
-        $select = $adapter->select()->from($stu_cc_table, 
+        $select = $adapter->select()->from($student_skills_table, 
         $required_cols);
-        if (! empty($achievements)) {
-            $select->where('achievements = ?', $achievements);
+        if (! empty($skill_id)) {
+            $select->where('skill_id = ?', $skill_id);
         }
-        if (! empty($activities)) {
-            $select->where('activities = ?', $activities);
-        }
-        if (! empty($$hobbies)) {
-            $select->where('hobbies = ?', $hobbies);
+        if (! empty($proficiency)) {
+            $select->where('proficiency = ?', $proficiency);
         }
         $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $member_ids;

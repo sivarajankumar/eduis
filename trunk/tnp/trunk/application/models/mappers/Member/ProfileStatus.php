@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_StudentSkills
+class Tnp_Model_Mapper_Member_ProfileStatus
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_StudentSkills
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_StudentSkills
+     * @return Tnp_Model_Mapper_Member_ProfileStatus
      */
     public function setDbTable ($dbTable)
     {
@@ -29,40 +29,45 @@ class Tnp_Model_Mapper_StudentSkills
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Tnp_Model_DbTable_StudentSkills');
+            $this->setDbTable('Tnp_Model_DbTable_ProfileStatus');
         }
         return $this->_dbTable;
     }
     /**
      * 
-     * @param integer $skill_id
+     * @param integer $member_id
      */
     public function fetchInfo ($member_id)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
-        $student_skills_table = $db_table->info('name');
-        $required_cols = array('member_id', 'skill_id', 'proficiency');
+        $profile_status_table = $db_table->info('name');
+        $required_cols = array('member_id', 'exists', 'is_locked', 
+        'last_updated_on');
         $select = $adapter->select()
-            ->from($student_skills_table, $required_cols)
+            ->from($profile_status_table, $required_cols)
             ->where('member_id = ?', $member_id);
-        $skill_info = array();
-        $skill_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $skill_info[$member_id];
+        $member_profile_info = array();
+        $member_profile_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $member_profile_info[$member_id];
     }
-    public function fetchMemberIds ($skill_id = null, $proficiency = null)
+    public function fetchMemberIds ($exists = null, $is_locked = null, 
+    $last_updated_on = null)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
-        $student_skills_table = $db_table->info('name');
+        $profile_status_table = $db_table->info('name');
         $required_cols = array('member_id');
-        $select = $adapter->select()->from($student_skills_table, 
+        $select = $adapter->select()->from($profile_status_table, 
         $required_cols);
-        if (! empty($skill_id)) {
-            $select->where('skill_id = ?', $skill_id);
+        if (! empty($exists)) {
+            $select->where('exists = ?', $exists);
         }
-        if (! empty($proficiency)) {
-            $select->where('proficiency = ?', $proficiency);
+        if (! empty($is_locked)) {
+            $select->where('is_locked = ?', $is_locked);
+        }
+        if (! empty($$last_updated_on)) {
+            $select->where('last_updated_on = ?', $last_updated_on);
         }
         $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $member_ids;
