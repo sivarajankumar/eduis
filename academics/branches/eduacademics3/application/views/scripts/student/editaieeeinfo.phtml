@@ -5,7 +5,7 @@
 	<div class="ctrlHolder">
 		<label for=""><em>*</em>Roll Number</label>
 		<input name="roll_no" id="roll_no" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-		<p class="formHint">All India Roll No. of <span class="cName" >Candidate</span></p>
+		<p class="formHint">All India Roll No. of Candidate</p>
 	</div>
 					
 	<div class="ctrlHolder">
@@ -18,7 +18,7 @@
 	<div class="ctrlHolder">
 		<label for=""><em>*</em>All India Rank (AIR)</label>
 		<input name="all_india_rank" id="all_india_rank" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-		<p class="formHint">All India Rank of <span class="cName" >Candidate</span></p>
+		<p class="formHint">All India Rank of Candidate</p>
 	</div>
 					
 	<div class="ctrlHolder">
@@ -74,8 +74,10 @@ $this->headLink()->prependStylesheet(
     		url : urlSaveAieeeInfo,
     		data : {myarray:data},
     		success: function(jStatus){
-    			alert('Your information has been sucessfully submitted...');
-    			window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
+        		if(jStatus){
+        			alert('Your information has been sucessfully submitted...');
+        			window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
+        		}
             },
             error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();

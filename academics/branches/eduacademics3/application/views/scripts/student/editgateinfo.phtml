@@ -3,9 +3,9 @@
 	<h3>GATE</h3>
 	
 	<div class="ctrlHolder">
-		<label for=""><em>*</em>Roll Number</label>
+		<label for="roll_no"><em>*</em>Roll Number</label>
 		<input name="roll_no" id="roll_no" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-		<p class="formHint">All India Roll No. of <span class="cName" >Candidate</span></p>
+		<p class="formHint">All India Roll No.</p>
 	</div>
 					
 	<div class="ctrlHolder">
@@ -15,13 +15,13 @@
 	</div>
         				
 	<div class="ctrlHolder">
-		<label for=""><em>*</em>All India Rank (AIR)</label>
+		<label for="all_india_rank"><em>*</em>All India Rank (AIR)</label>
 		<input name="all_india_rank" id="all_india_rank" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-		<p class="formHint">All India Rank of <span class="cName" >Candidate</span></p>
+		<p class="formHint">All India Rank</p>
 	</div>
 					
 	<div class="ctrlHolder">
-		<label for=""><em>*</em>Gate Score</label>
+		<label for="total_score"><em>*</em>Gate Score</label>
 		<input name="total_score" id="total_score" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
 		<p class="formHint">Marks of gate Form</p>
 	</div>
@@ -63,8 +63,10 @@
         	url : urlSaveGateInfo,
         	data : {myarray:data},
         	success: function(jStatus){
-        		alert('Your information has been sucessfully submitted...');
-        		window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
+        		if(jStatus){
+            		alert('Your information has been sucessfully submitted...');
+            		window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
+        		}
             },
             error: function(response) {
         		$('#errorBox').text(response.responseText).parent().show();
