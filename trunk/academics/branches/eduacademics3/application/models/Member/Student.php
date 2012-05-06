@@ -495,9 +495,9 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
      * Fetches Qualification Details of a member
      * 
      * @param int $qualification_id
-     * @return Qualifiaction|false object of Acad_Model_Qualification_Matric|Acad_Model_Qualification_Twelfth|Acad_Model_Qualification_Diploma|Acad_Model_Qualification_Btech|Acad_Model_Qualification_Mtech
+     * @return Qualification|false object of Acad_Model_Qualification_Matric|Acad_Model_Qualification_Twelfth|Acad_Model_Qualification_Diploma|Acad_Model_Qualification_Btech|Acad_Model_Qualification_Mtech
      */
-    public function fetchQualifiactionInfo ($qualification_id)
+    public function fetchQualificationInfo ($qualification_id)
     {
         $member_id = $this->getMember_id(true);
         $qualification_object = new Acad_Model_Qualification();
@@ -685,36 +685,35 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     /**
      * 
      * Saves Students Qualification Information to Database
-     * @param int $qualifiaction_id
+     * @param int $qualification_id
      * @param array $data_array
-     * @throws Exception if Invalid Qualifiaction_name provided
+     * @throws Exception if Invalid Qualification_name provided
      */
-    public function saveQualificationInfo ($qualifiaction_id, $data)
+    public function saveQualificationInfo ($qualification_id, $data)
     {
-        $qualification_id = $data['qualification_id'];
         $qualifiaction_obj = new Acad_Model_Qualification();
         $qualifiactions = $qualifiaction_obj->fetchQualifications();
-        $qualifiaction_name = $qualifiactions[$qualifiaction_id]['qualifiaction_name'];
+        $qualifiaction_name = $qualifiactions[$qualification_id];
         switch ($qualifiaction_name) {
             case 'MATRIC':
                 $object = new Acad_Model_Qualification_Matric();
-                $info = $this->fetchQualifiactionInfo($qualification_id);
+                $info = $this->fetchQualificationInfo($qualification_id);
                 break;
             case 'TWELFTH':
                 $object = new Acad_Model_Qualification_Twelfth();
-                $info = $this->fetchQualifiactionInfo($qualification_id);
+                $info = $this->fetchQualificationInfo($qualification_id);
                 break;
             case 'DIPLOMA':
                 $object = new Acad_Model_Qualification_Diploma();
-                $info = $this->fetchQualifiactionInfo($qualification_id);
+                $info = $this->fetchQualificationInfo($qualification_id);
                 break;
             case 'BTECH':
                 $object = new Acad_Model_Qualification_Btech();
-                $info = $this->fetchQualifiactionInfo($qualification_id);
+                $info = $this->fetchQualificationInfo($qualification_id);
                 break;
             case 'MTECH':
                 $object = new Acad_Model_Qualification_Mtech();
-                $info = $this->fetchQualifiactionInfo($qualification_id);
+                $info = $this->fetchQualificationInfo($qualification_id);
                 break;
             default:
                 throw new Exception(
@@ -724,8 +723,9 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         }
         $member_id = $this->getMember_id();
         $data['member_id'] = $member_id;
+        $data['qualification_id'] = $qualification_id;
         if ($info == false) {
-            $this->saveQualification($qualifiaction_id);
+            $this->saveQualification($qualification_id);
             $object->initSave();
             $preparedData = $object->prepareDataForSaveProcess($data);
             return $object->getMapper()->save($preparedData);
@@ -736,15 +736,15 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             return $object->getMapper()->update($prepared_data, $member_id);
         }
     }
-    protected function saveQualification ($qualifiaction_id)
+    protected function saveQualification ($qualification_id)
     {
         $qualification_obj = new Acad_Model_Member_Qualification();
         $member_id = $this->getMember_id();
-        $qualifiaction_ids = $this->fetchQualificationsIds();
-        $qualifications_id_check = array_search($qualifiaction_id, 
-        $qualifiaction_ids);
+        $qualification_ids = $this->fetchQualificationsIds();
+        $qualifications_id_check = array_search($qualification_id, 
+        $qualification_ids);
         if ($qualifications_id_check == false) {
-            $data = array($member_id, $qualifiaction_id);
+            $data = array($member_id, $qualification_id);
             return $qualification_obj->getMapper()->save($data);
         }
     }
