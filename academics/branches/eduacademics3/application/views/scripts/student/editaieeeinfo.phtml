@@ -68,8 +68,7 @@ $this->headLink()->prependStylesheet(
     	.each(function(){ 
     		qualificationData[this.name] = this.value;
     	});
-    	data['qualification_name'] = 'AIEEE';
-    	data['qualification_data'] = qualificationData;
+    	data['exam_data'] = qualificationData;
     	$.ajax({
     		url : urlSaveAieeeInfo,
     		data : {myarray:data},
