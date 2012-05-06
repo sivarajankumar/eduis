@@ -725,6 +725,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $member_id = $this->getMember_id();
         $data['member_id'] = $member_id;
         if ($info == false) {
+            $this->saveQualification($qualifiaction_id);
             $object->initSave();
             $preparedData = $object->prepareDataForSaveProcess($data);
             return $object->getMapper()->save($preparedData);
@@ -733,6 +734,18 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             $prepared_data = $object->prepareDataForSaveProcess($data);
             $data['member_id'] = null;
             return $object->getMapper()->update($prepared_data, $member_id);
+        }
+    }
+    protected function saveQualification ($qualifiaction_id)
+    {
+        $qualification_obj = new Acad_Model_Member_Qualification();
+        $member_id = $this->getMember_id();
+        $qualifiaction_ids = $this->fetchQualificationsIds();
+        $qualifications_id_check = array_search($qualifiaction_id, 
+        $qualifiaction_ids);
+        if ($qualifications_id_check == false) {
+            $data = array($member_id, $qualifiaction_id);
+            return $qualification_obj->getMapper()->save($data);
         }
     }
     public function saveClassInfo ($data_array)
