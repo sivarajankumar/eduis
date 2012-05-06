@@ -82,4 +82,36 @@ class Tnp_Model_Core_TechnicalFields extends Tnp_Model_Generic
         }
         return $this->_mapper;
     }
+    /**
+     * Provides correct db column names corresponding to model properties
+     * @todo add correct names where required
+     * @param string $key
+     */
+    protected function correctDbKeys ($key)
+    {
+        switch ($key) {
+            /*case 'nationalit':
+                return 'nationality';
+                break;*/
+            default:
+                return $key;
+                break;
+        }
+    }
+    /**
+     * Provides correct model property names corresponding to db column names
+     * @todo add correct names where required
+     * @param string $key
+     */
+    protected function correctModelKeys ($key)
+    {
+        switch ($key) {
+            /*case 'nationality':
+                return 'nationalit';
+                break;*/
+            default:
+                return $key;
+                break;
+        }
+    }
 }
