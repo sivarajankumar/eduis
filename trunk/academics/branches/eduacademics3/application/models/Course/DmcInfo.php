@@ -394,11 +394,28 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
         }
     }
     /**
+     * Fetches DmcInfoIds in Descending order(
+     * Form of array returned :array(dmc_info_id=>dmc_id))
+     */
+    public function fetchDmcInfoIdsByDate ()
+    {
+        $member_id = $this->getMember_id(true);
+        $dmc_info_ids = $this->getMapper()->fetchDmcInfoIdsByDate($member_id);
+        if (empty($dmc_info_ids)) {
+            return false;
+        } else {
+            return $dmc_info_ids;
+        }
+    }
+    /**
      * 
      * Enter description here ...
-     * @param boolean $class_specific
-     * @param boolean $all
-     * @param boolean $result_type_specific
+     * @param int $member_id
+     * @param int $class_specific 
+     * @param int $result_type_specific
+     * @param bool $all     
+     * @param bool $considered_only
+     * @param bool $ordered_by_date
      */
     public function fetchMemberDmcInfoIds ($class_specific = null, 
     $result_type_specific = null, $all = null, $considered_only = null, 

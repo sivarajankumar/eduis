@@ -63,6 +63,16 @@ class Acad_Model_Mapper_Course_DmcInfo
             return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         }
     }
+    /**
+     * 
+     * Enter description here ...
+     * @param int $member_id
+     * @param int $class_id 
+     * @param int $result_type_id
+     * @param bool $all     
+     * @param bool $is_considered
+     * @param bool $ordered_by_date
+     */
     public function fetchDmcInfoIds ($member_id, $class_id = null, 
     $result_type_id = null, $all = null, $is_considered = null, $ordered_by_date = null)
     {
@@ -70,7 +80,7 @@ class Acad_Model_Mapper_Course_DmcInfo
         $db_table = $this->getDbTable();
         $dmc_info_table = $db_table->info('name');
         $dmc_info_ids = array();
-        $required_cols = array('dmc_info_id');
+        $required_cols = array('dmc_info_id', 'dmc_id');
         $select = $adapter->select()
             ->from($dmc_info_table, $required_cols)
             ->where('member_id = ?', $member_id);
@@ -84,13 +94,37 @@ class Acad_Model_Mapper_Course_DmcInfo
             $select->where('is_considered = ?', $is_considered);
         }
         if (isset($ordered_by_date)) {
-            $required_cols[] = 'dispatch_date';
-            $select->order('dispatch_date desc');
-            $dmc_info_ids = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            return $dmc_info_ids;
+            $select->order('dispatch_date DESC');
         }
-        $dmc_info_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $dmc_info_ids;
+        $dmc_info = array();
+        $info = array();
+        $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        foreach ($dmc_info as $dmc_info_id => $dmc_id_array) {
+            $info[$dmc_info_id] = $dmc_id_array['dmc_id'];
+        }
+        return $info;
+    }
+    /**
+     * 
+     * Order = DESC
+     * @param int $member_id
+     */
+    public function fetchDmcInfoIdsByDate ($member_id)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $dmc_info_table = $db_table->info('name');
+        $required_cols = array('dmc_info_id', 'dispatch_date');
+        $select = $adapter->select()
+            ->from($dmc_info_table, $required_cols)
+            ->where('member_id = ?', $member_id);
+        $info = array();
+        $dmc_info = array();
+        $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        foreach ($dmc_info as $dmc_info_id => $dispatch_date_array) {
+            $info[$dmc_info_id] = $dispatch_date_array['dispatch_date'];
+        }
+        return $info;
     }
     public function fetchResultTypes ()
     {
