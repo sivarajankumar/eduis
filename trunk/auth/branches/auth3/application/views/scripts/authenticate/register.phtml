@@ -60,7 +60,7 @@ $(function(){
 function submit() {
     $.ajax({
         url : urlSaveRegistrationInfo,
-        data : getValues(),
+        data : {registration_data:getValues()},
         success: function(jStatus){
             
         },
@@ -82,7 +82,6 @@ function getValues(){
  </script>
  <?php
 $this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
-    
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
 $this->headLink()->prependStylesheet(
