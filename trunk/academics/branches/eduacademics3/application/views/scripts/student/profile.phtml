@@ -11,7 +11,6 @@
         {
             echo '<span class="name_span">'.$value.' Information : </span>';
             if($this->filled_qualifications[$key] != null){
-                //$view_fxn_name = 'show_'.strtolower($value).'_div()';
                 $action_name = 'view'.strtolower($value).'info';
                 echo '<span class="view_span"><a href="'.$this->url(array('controller' => 'student', 'action' => $action_name)).'">View Information</a></span><br><br>';
             }
@@ -26,7 +25,6 @@
         {
             echo '<span class="name_span">'.$value.' Information : </span>';
             if($this->filled_exams[$key] != null){
-                //$view_fxn_name = 'show_'.strtolower($value).'_div()';
                 $action_name = 'view'.strtolower($value).'info';
                 echo '<span class="view_span"><a href="'.$this->url(array('controller' => 'student', 'action' => $action_name)).'">View Information</a></span><br><br>';
             }
@@ -43,14 +41,14 @@
         foreach ($this->degree_data as $sem_no => $data){
             echo 'Sem No.'.$sem_no.' ';
             foreach ($data as $dmc_no => $dmc_data){
-                echo '<a href="/student/viewdmc?dmc_info_id='.$dmc_no.'&class_id='.$dmc_data[class_id].'&dmc_view_type=single">DMC No.'.$dmc_no.' </a>';
+                echo '<a href="/student/viewdmc?dmc_info_id='.$dmc_no.'&class_id='.$dmc_data['class_id'].'&dmc_view_type=single">DMC No.'.$dmc_no.' </a>';
                 //foreach ($dmc_data as $key => $value){
-                    echo $dmc_data[dispatch_date].' ';
+                    echo $dmc_data['dispatch_date'].' ';
                 //}
                 echo '<br>';
                 echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             }
-            echo '<a href="/student/editdmc?class_id='.$dmc_data[class_id].'&dmc_view_type=latest">+ Add More</a>';
+            echo '<a href="/student/editdmc?class_id='.$dmc_data['class_id'].'&dmc_view_type=latest">+ Add More</a>';
             echo '<br>';
         }
     ?>
