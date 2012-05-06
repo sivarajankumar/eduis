@@ -191,14 +191,14 @@ class StudentController extends Zend_Controller_Action
         }
         return $exam_data;
     }
-    private function fetchDmcInfo ($single_dmc_info_id = null, 
+    private function fetchDmcInfo ($specific_dmc_info_id = null, 
     $class_specific = null, $result_type_specific = null, $all = null, 
     $considered_only = null, $ordered_by_date = null)
     {
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
-        if ($single_dmc_info_id) {
-            $dmc_info = self::setDmcInfoData($single_dmc_info_id);
+        if ($specific_dmc_info_id) {
+            $dmc_info = self::setDmcInfoData($specific_dmc_info_id);
             return $dmc_info;
         }
         if ($class_specific) {
@@ -236,12 +236,12 @@ class StudentController extends Zend_Controller_Action
     {
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
-        if (is_array($dmc_info_ids) and !empty($dmc_info_ids)) {
+        if (is_array($dmc_info_ids) and ! empty($dmc_info_ids)) {
             $dmc_info_data = array();
-            foreach ($dmc_info_ids as $dmc_info_id) {
+            foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
                 $dmc_info_model = $student_model->fetchDmcInfo($dmc_info_id);
                 if ($dmc_info_model instanceof Acad_Model_Course_DmcInfo) {
-                    $dmc_info_data[$dmc_info_id]['dmc_info_id'] = $dmc_info_model->getDmc_info_id();
+                    $dmc_info_data[$dmc_info_id]['dmc_id'] = $dmc_id;
                     $dmc_info_data[$dmc_info_id]['dispatch_date'] = $dmc_info_model->getDispatch_date();
                     $dmc_info_data[$dmc_info_id]['marks_obtained'] = $dmc_info_model->getMarks_obtained();
                     $dmc_info_data[$dmc_info_id]['percentage'] = $dmc_info_model->getPercentage();
@@ -253,7 +253,7 @@ class StudentController extends Zend_Controller_Action
         } else {
             $dmc_info_model = $student_model->fetchDmcInfo($dmc_info_ids);
             if ($dmc_info_model instanceof Acad_Model_Course_DmcInfo) {
-                $dmc_info_data[$dmc_info_ids]['dmc_info_id'] = $dmc_info_model->getDmc_info_id();
+                $dmc_info_data[$dmc_info_ids]['dmc_id'] = $dmc_info_model->getDmc_id();
                 $dmc_info_data[$dmc_info_ids]['dispatch_date'] = $dmc_info_model->getDispatch_date();
                 $dmc_info_data[$dmc_info_ids]['marks_obtained'] = $dmc_info_model->getMarks_obtained();
                 $dmc_info_data[$dmc_info_ids]['percentage'] = $dmc_info_model->getPercentage();
@@ -291,24 +291,55 @@ class StudentController extends Zend_Controller_Action
         }
         return $dmc_data;
     }
-    private  function fetchClassSubjects ($class_id)
+    private function fetchClassSubjects ($class_id)
     {
         $class_object = new Acad_Model_Class();
         $class_object->setClass_id($class_id);
         $subject_ids = $class_object->fetchSubjects();
-          
         $subject_data = array();
         foreach ($subject_ids as $subject_id) {
-          
             $subject_object = new Acad_Model_Subject();
             $subject_object->setSubject_id($subject_id);
             $subject_object->fetchInfo();
             $subject_data[$subject_id]['name'] = $subject_object->getSubject_name();
-            $subject_data[$subject_id]['code'] = $subject_object->getSubject_name();
-            
+            $subject_data[$subject_id]['code'] = $subject_object->getSubject_code();
         }
-         Zend_Registry::get('logger')->debug($subject_data);
         return $subject_data;
+    }
+    private function fetchclassdmc ($class_id, $dmc_view_type, 
+    $dmc_info_id = null)
+    {
+        $student_model = new Acad_Model_Member_Student();
+        $student_model->setMember_id($this->getMember_id());
+        $class_object = new Acad_Model_Class();
+        $class_object->setClass_id($class_id);
+        $subject_ids = $class_object->fetchSubjects();
+        $subject_data = array();
+        $dmc_data = array();
+        $dmc_info_data = array();
+        switch ($dmc_view_type) {
+            case 'latest':
+                $subject_data = self::fetchClassSubjects($class_id);
+                $dmc_info_data = self::fetchDmcInfo(null, null, null, null, 
+                null, true);
+                $dmc_info_array = $student_model->fetchDmcInfoIdsByDate();
+                $dmc_info_keys = array_keys($dmc_info_array);
+                $dmc_info_id = array_pop($dmc_info_keys);
+                if ($dmc_info_id) {
+                    $dmc_data = self::fetchsubjectDmc($dmc_info_id, $subject_ids);
+                }
+                break;
+            case 'single':
+                $subject_data = self::fetchClassSubjects($class_id);
+                $dmc_info_data = self::fetchDmcInfo($dmc_info_id, null, null, 
+                null, null, null);
+                $dmc_data = self::fetchsubjectDmc($dmc_info_id, $subject_ids);
+                break;
+        }
+        $response = array('dmc_info_data' => $dmc_info_data, 
+        'dmc_data' => $dmc_data, 'subject_data' => $subject_data);
+        Zend_Registry::get('logger')->debug($response);
+        return $response;
     }
     public function registerAction ()
     {
@@ -370,12 +401,13 @@ class StudentController extends Zend_Controller_Action
             $class_model->fetchInfo();
             $semester_id = $class_model->getSemester_id();
             $dmc_info_ids = $student_model->fetchDmcInfoIds(null, null, true);
-            foreach ($dmc_info_ids as $dmc_info_id) {
-                $dmc_object = $student_model->fetchDmcInfo($dmc_info_id);
-                if ($dmc_object instanceof Acad_Model_Course_DmcInfo) {
-                    $degree_data[$semester_id][$dmc_info_id]['class_id'] = $class_id;
-                    $degree_data[$semester_id][$dmc_info_id]['dispatch_date'] = $dmc_object->getDispatch_date();
-                }
+            foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
+                $degree_data[$semester_id][$dmc_info_id]['class_id'] = $class_id;
+                $degree_data[$semester_id][$dmc_info_id]['dmc_id'] = $dmc_id;
+            }
+            $dmc_info_bydate = $student_model->fetchDmcInfoIdsByDate(true);
+            foreach ($dmc_info_bydate as $dmc_info_id => $date) {
+                $degree_data[$semester_id][$dmc_info_id]['dispatch_date'] = $date;
             }
         }
         $exam_model = new Acad_Model_CompetitiveExam();
@@ -1246,38 +1278,6 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
     }
-    private function fetchclassdmc ($class_id, $dmc_view_type, 
-    $dmc_info_id = null)
-    {
-        $class_object = new Acad_Model_Class();
-        $class_object->setClass_id($class_id);
-        $subject_ids = $class_object->fetchSubjects();
-        $subject_data = array();
-        $dmc_data = array();
-        $dmc_info_data = array();
-        switch ($dmc_view_type) {
-            case 'latest':
-                $subject_data = self::fetchClassSubjects($class_id);
-                $dmc_info_data = self::fetchDmcInfo(null, null, null, null, 
-                null, true);
-                $dmc_info_id = $dmc_info_data[0][0];
-                if (! empty($dmc_info_id)) {
-                    $dmc_data = self::fetchsubjectDmc($dmc_info_id, 
-                    $subject_ids);
-                }
-                break;
-            case 'single':
-                 $subject_data = self::fetchClassSubjects($class_id);
-                 
-                $dmc_info_data = self::fetchDmcInfo($dmc_info_id, null, null, 
-                null, null, null);
-                $dmc_data = self::fetchsubjectDmc($dmc_info_id, $subject_ids);
-                break;
-        }
-        $response = array('subject_data' => $subject_data, 
-        'dmc_data' => $dmc_data, 'dmc_info_data' => $dmc_info_data);
-        return $response;
-    }
     public function viewdmcAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -1295,7 +1295,7 @@ class StudentController extends Zend_Controller_Action
         switch ($format) {
             case 'html':
                 if (! empty($response)) {
-                    $this->view->assign('qualification_data', $response);
+                    $this->view->assign('response', $response);
                     Zend_Registry::get('logger')->debug($response);
                 }
                 break;
@@ -1329,7 +1329,7 @@ class StudentController extends Zend_Controller_Action
         switch ($format) {
             case 'html':
                 if (! empty($response)) {
-                    $this->view->assign('qualification_data', $response);
+                    $this->view->assign('response', $response);
                     Zend_Registry::get('logger')->debug($response);
                 }
                 break;
@@ -1380,7 +1380,7 @@ class StudentController extends Zend_Controller_Action
         switch ($format) {
             case 'html':
                 if (! empty($dmc_data)) {
-                    $this->view->assign('qualification_data', $dmc_data);
+                    $this->view->assign('response', $dmc_data);
                 }
                 break;
             case 'jsonp':
