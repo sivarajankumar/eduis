@@ -108,8 +108,9 @@ class Acad_Model_Mapper_Course_DmcInfo
      * 
      * Order = DESC
      * @param int $member_id
+     * @param bool $all
      */
-    public function fetchDmcInfoIdsByDate ($member_id)
+    public function fetchDmcInfoIdsByDate ($member_id, $all = null)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
@@ -120,11 +121,23 @@ class Acad_Model_Mapper_Course_DmcInfo
             ->where('member_id = ?', $member_id);
         $info = array();
         $dmc_info = array();
-        $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        foreach ($dmc_info as $dmc_info_id => $dispatch_date_array) {
-            $info[$dmc_info_id] = $dispatch_date_array['dispatch_date'];
+        /**
+         * $all = false
+         */
+        if (! $all) {
+            $select->limit(1);
+            $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            foreach ($dmc_info as $dmc_info_id => $dispatch_date_array) {
+                $info[$dmc_info_id] = $dispatch_date_array['dispatch_date'];
+            }
+            return $info;
+        } else {
+            $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+            foreach ($dmc_info as $dmc_info_id => $dispatch_date_array) {
+                $info[$dmc_info_id] = $dispatch_date_array['dispatch_date'];
+            }
+            return $info;
         }
-        return $info;
     }
     public function fetchResultTypes ()
     {
