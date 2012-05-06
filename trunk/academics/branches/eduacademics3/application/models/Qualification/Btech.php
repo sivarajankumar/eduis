@@ -8,7 +8,7 @@ class Acad_Model_Qualification_Btech extends Acad_Model_Generic
     protected $_total_marks;
     protected $_percentage;
     protected $_passing_year;
-    protected $_istitution;
+    protected $_institution;
     protected $_university;
     protected $_city_name;
     protected $_state_name;
@@ -85,11 +85,11 @@ class Acad_Model_Qualification_Btech extends Acad_Model_Generic
         return $this->_passing_year;
     }
     /**
-     * @return the $_istitution
+     * @return the $_institution
      */
     public function getIstitution ()
     {
-        return $this->_istitution;
+        return $this->_institution;
     }
     /**
      * @return the $_university
@@ -162,11 +162,11 @@ class Acad_Model_Qualification_Btech extends Acad_Model_Generic
         $this->_passing_year = $_passing_year;
     }
     /**
-     * @param field_type $_istitution
+     * @param field_type $_institution
      */
-    public function setIstitution ($_istitution)
+    public function setIstitution ($_institution)
     {
-        $this->_istitution = $_istitution;
+        $this->_institution = $_institution;
     }
     /**
      * @param field_type $_university
