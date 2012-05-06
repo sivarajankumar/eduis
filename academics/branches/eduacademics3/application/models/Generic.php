@@ -151,32 +151,30 @@ abstract class Acad_Model_Generic
     public function prepareDataForSaveProcess ($data)
     {
         $init_save_status = $this->getInit_save();
-        switch ($init_save_status) {
-            case true:
-                $all_allowed_props = $this->getAllowedProperties();
-                $recieved_props = array_keys($data);
-                $valid_props = array_intersect($recieved_props, 
-                $all_allowed_props);
-                foreach ($valid_props as $value) {
-                    $data_to_validate[$value] = $data[$value];
+        if ($init_save_status) {
+            $all_allowed_props = $this->getAllowedProperties();
+            $recieved_props = array_keys($data);
+            $valid_props = array_intersect($recieved_props, $all_allowed_props);
+            foreach ($valid_props as $value) {
+                $data_to_validate[$value] = $data[$value];
+            }
+            if (! empty($data_to_validate)) {
+                //now, preparing validated database operations
+                $validated_data = $this->validateData(
+                $data_to_validate);
+                $preparedDataForSaveProcess = array();
+                foreach ($validated_data as $valid_key => $valid_value) {
+                    $db_column_name = $this->correctDbKeys($valid_key);
+                    $preparedDataForSaveProcess[$db_column_name] = $valid_value;
                 }
-                if (! empty($data_to_validate)) {
-                    $validated_data = $this->validateData($data_to_validate);
-                    $preparedDataForSaveProcess = array();
-                    foreach ($validated_data as $valid_key => $valid_value) {
-                        $db_column_name = $this->correctDbKeys($valid_key);
-                        $preparedDataForSaveProcess[$db_column_name] = $valid_value;
-                    }
-                    return $preparedDataForSaveProcess;
-                } else {
-                    throw new Exception(
-                    'No Valid Data was supplied for save process');
-                }
-                break;
-            default:
+                return $preparedDataForSaveProcess;
+            } else {
                 throw new Exception(
-                'Please initialise the save process prior to saving data');
-                break;
+                'No Valid Data was supplied for save process');
+            }
+        } else {
+            throw new Exception(
+            'Please initialise the save process prior to saving data');
         }
     }
     /**
