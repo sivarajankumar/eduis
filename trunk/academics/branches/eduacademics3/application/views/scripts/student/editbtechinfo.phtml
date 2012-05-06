@@ -3,9 +3,14 @@
 <h3>Btech</h3>
 			
 	<div class="ctrlHolder">
-		<label for="discipline_id"><em>*</em>Branch</label>
-		<input name="discipline_id" id="discipline_id" value=""  data-default-value="e.g. Computer Science" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-		<p class="formHint">Branch of Candidate(in short form only)</p>
+		<label for="discipline_id"><em>*</em>Discipline</label>
+		<select id="discipline_id" name="discipline_id" class="selectInput required">
+			<option value="CSE">Computer Science</option>
+			<option value="ECE">Electronics And Communication</option>
+			<option value="MECH">Mechanical</option>
+			<option value="BT">Biotechnology</option>
+		</select>
+		<p class="formHint">Select the discipline of study</p>
 	</div>
 			
 	<div class="ctrlHolder">

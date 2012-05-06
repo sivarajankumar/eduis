@@ -1,6 +1,8 @@
 <form id="dmc_info_form" class="uniForm" action="javascript:submit()">
-<fieldset id="dmc_info">
 <h3>DMC Details</h3>
+<fieldset id="dmc_info">
+
+<h4>Please fill this form and click on next to fill the subject wise details of DMC.</h4>
 	
 	<div class="ctrlHolder">
 		<label for="dmc_id"><em>*</em>Serial Number</label>
@@ -15,17 +17,17 @@
 	</div>
 	
 	<div class="ctrlHolder">
-            <label for="result_type_id"><em>*</em>Result Type</label>
-             <select id="result_type_id" name="result_type_id" class="selectInput required">
-          		<option value="regular_pass">Regular Pass</option>
-          		<option value="regular_fail">Regular Fail</option>
-          		<option value="re_evaluation_pass">Re-evaluation Pass</option>
-          		<option value="re_evaluation_fail">Re-evaluation Fail</option>
-          		<option value="re_appear_pass">Re-appear Pass</option>
-          		<option value="re_appear_fail">Re-appear Fail</option>
-          	 </select>
-            <p class="formHint">Select the type of result</p>
-          </div>
+		<label for="result_type_id"><em>*</em>Result Type</label>
+		<select id="result_type_id" name="result_type_id" class="selectInput required">
+			<option value="regular_pass">Regular Pass</option>
+			<option value="regular_fail">Regular Fail</option>
+			<option value="re_evaluation_pass">Re-evaluation Pass</option>
+			<option value="re_evaluation_fail">Re-evaluation Fail</option>
+			<option value="re_appear_pass">Re-appear Pass</option>
+			<option value="re_appear_fail">Re-appear Fail</option>
+		</select>
+		<p class="formHint">Select the type of result</p>
+	</div>
     				
 	<div class="ctrlHolder">
 		<label for="marks_obtained"><em>*</em>Marks Obtained</label>
@@ -60,8 +62,16 @@
 </form>
 
 <form id="dmc_form" class="uniForm" action="javascript:submit()">
-<fieldset id="dmc">
 <h3>DMC Details</h3>
+
+<?php
+   foreach ($this->response['subject_data'] as $subject_id => $subject_info)
+   {
+?>
+
+<h4><?php echo $subject_info['name']?></h4>
+
+<fieldset id="<?php echo $subject_info?>">
     				
 	<div class="ctrlHolder">
 		<label for="internal"><em>*</em>Internal Marks</label>
@@ -87,15 +97,19 @@
 	<div class="ctrlHolder">
 		<label for=""><em>*</em>Percentage</label>
 		<input name="percentage" id="percentage" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
-		<p class="formHint">Percentage obtained by Student</p>
+		<p class="formHint">Percentage obtained by Student in the subject</p>
 	</div>
-	
+</fieldset>
+
+<?php 
+   }
+?>
+
 	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
 	<div class="buttonHolder">
 		<button type="reset" class="secondaryAction">Reset</button>
 		<button type="submit" class="primaryAction">Next</button>
 	</div>
-</fieldset>
 </form>
 
 <script>
@@ -105,7 +119,15 @@
             echo '$("#'.$key.'").val("'.$value.'");';   
         }
     ?>
-
+    <?php 
+        foreach ($this->response['dmc_data'] as $subject_id => $subject_info){
+            foreach ($subject_info as $key => $value){
+                $a="'".$subject_info."'";
+                $divname = '$("fieldset#'.$subject_id.' :input[name='.$a.']").val("'.$subject_info.'");';
+            }   
+        }
+    ?>
+	//alert($("fieldset#dmc_info :input[name='marks_obtained']").val());
 	var urlSaveRegistrationInfo = "<?php echo $this->url(array('controller' => 'authenticate', 'action' => 'saveregistrationinfo'))?>";
 	$(function(){
 	    $('form#dmc_info_form').uniform({
@@ -138,7 +160,9 @@
     		url : urlSaveDmcInfo,
     		data : {myarray:data},
     		success: function(jStatus){
-    			abc();
+        		if(jStatus){
+        			abc();
+        		}
             },
             error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
@@ -159,7 +183,18 @@
 		margin:-5px 0 40px 0;
 		box-shadow:#e4e4e4 0px 0px 1px 1px; 
 	}
-	h2,h3{
+	h3{
+    	color: #343434;
+    	line-height: 1;
+    	margin: 1.5em -28px;
+    	padding: 14px 28px;
+		background-color: #ECEFF4;
+    	border: 1px solid #B4C1DA;
+    	font-size: 17px;
+    	font-weight: 100;
+    	width: 57%;
+	}
+	h4{
 		padding:3px 3px 3px 10px;
 		background-color:#eceff4;
 		border:1px solid #b4c1da;
