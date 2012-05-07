@@ -86,6 +86,9 @@
 <div id="edit_btn" class="ui-widget-content ui-corner-all">
 	<h3><center><a href="/student/editdmc?class_id=<?php echo $_GET['class_id']?>&dmc_view_type=single&dmc_info_id=<?php echo $dmc_info_id[0];?>">Edit</a></center></h3>
 </div>
+<div id="goback_btn" class="ui-widget-content ui-corner-all">
+	<h3><center><a href="/student/profile">Go Back</a></center></h3>
+</div>
 
 <style>
 	#dmc_info{
@@ -116,7 +119,14 @@
 		margin:-5px 0 0 0;
 	}
 	#edit_btn {
+		width:48%;
+		float:left;
 		clear:both;
 		margin-top:20px;
+	}
+	#goback_btn { 
+		width:48%;
+		float:right;
+		margin-top:20px;	
 	}
 </style>
