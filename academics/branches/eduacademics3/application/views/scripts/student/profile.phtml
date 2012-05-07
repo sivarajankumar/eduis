@@ -12,7 +12,7 @@
         {
             echo '<span class="name_span">'.$value.' Information : </span>';
             if(isset($this->qualifications)){
-                if($this->filled_qualifications[$key] != null){
+                if(isset($this->filled_qualifications[$key])){
                     $action_name = 'view'.strtolower($value).'info';
                     echo '<span class="view_span"><a href="'.$this->url(array('controller' => 'student', 'action' => $action_name)).'">View Information</a></span><br><br>';
                 }
@@ -27,32 +27,35 @@
         foreach ($this->exams as $key => $value)
         {
             echo '<span class="name_span">'.$value.' Information : </span>';
-            if($this->filled_exams[$key] != null){
-                $action_name = 'view'.strtolower($value).'info';
-                echo '<span class="view_span"><a href="'.$this->url(array('controller' => 'student', 'action' => $action_name)).'">View Information</a></span><br><br>';
-            }
-            else {
-                $action_name = 'edit'.strtolower($value).'info';
-                echo '<span class="create_span"><a href="'.$this->url(array('controller' => 'student', 'action' => $action_name)).'">Fill Information</a></span><br><br>';
+            if(isset($this->exams)){
+                if(isset($this->filled_exams[$key])){
+                    $action_name = 'view'.strtolower($value).'info';
+                    echo '<span class="view_span"><a href="'.$this->url(array('controller' => 'student', 'action' => $action_name)).'">View Information</a></span><br><br>';
+                }
+                else {
+                    $action_name = 'edit'.strtolower($value).'info';
+                    echo '<span class="create_span"><a href="'.$this->url(array('controller' => 'student', 'action' => $action_name)).'">Fill Information</a></span><br><br>';
+                }
             }
         }
     ?>
     <br>
     <hr>
     <br>
+    <h3>Degree Details</h3>
     <?php 
         foreach ($this->class_semester as $class_id => $sem_no){
-            echo 'Sem No. '.$sem_no.' ';
+            echo '<span class="name_span">Sem No.:'.$sem_no.' </span>';
             foreach ($this->degree_data[$sem_no] as $dmc_info_id => $dmc_data){
                 if($dmc_data != null){
-                    echo '<a href="/student/viewdmc?dmc_info_id='.$dmc_info_id.'&class_id='.$dmc_data['class_id'].'&dmc_view_type=single">DMC No.'.$dmc_info_id.' </a>';
-                    echo $dmc_data['dispatch_date'].'  ';
-                    echo '<br>';
-                    echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+                    echo '<a href="/student/viewdmc?dmc_info_id='.$dmc_info_id.'&class_id='.$dmc_data['class_id'].'&dmc_view_type=single"><span class="serial_no">DMC Serial No.'.$dmc_data['dmc_id'].'</span></a>';
+                    echo '<span class="serial_no"> '.$dmc_data['dispatch_date'].'</span>';
+                    //echo '<br>';
+                    echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
                 }
             }
             echo '<a href="/student/editdmc?class_id='.$class_id.'&dmc_view_type=latest">+ Add More</a>';
-            echo '<br>';
+            echo '<br><br>';
         }
     ?>
 </div>
@@ -106,6 +109,10 @@
 	.create_span:hover{
 		box-shadow:#aca162 0px 0px 1px 1px;
 		cursor: pointer;
+	}
+	.serial_no{
+		font-size: 16px;
+		text-decoration: none;
 	}
 	
 </style>
