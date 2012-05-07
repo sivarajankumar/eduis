@@ -1,3 +1,7 @@
+<?php 
+    $dmc_indo_id = 0;
+?>
+
 <form id="dmc_info_form" class="uniForm" action="javascript:submit_dmc_info()">
 <h3>DMC Details</h3>
 <fieldset id="dmc_info">
@@ -71,7 +75,7 @@
 
 <h4><?php echo $subject_info['name']?></h4>
 
-<fieldset id="<?php echo str_replace(' ', '_', $subject_info['name'])?>" class="subjects">
+<fieldset id="<?php echo str_replace(' ', '_', $subject_info['name'])?>" class="subjects" title="<?php echo $subject_id?>" >
     				
 	<div class="ctrlHolder">
 		<label for="internal"><em>*</em>Internal Marks</label>
@@ -115,9 +119,12 @@
 <script>
     <?php
         if(array_values($this->response['dmc_info_data']) != null){
-            foreach ($this->response['dmc_info_data'][1] as $key => $value){
-                $divname = $key;
-                echo '$("#'.$key.'").val("'.$value.'");';   
+            foreach ($this->response['dmc_info_data'] as $dmc_info_id => $dmc_data){
+                $dmc_indo_id = $dmc_info_id;
+                foreach ($dmc_data as $key => $value){
+                    $divname = $key;
+                    echo '$("#'.$key.'").val("'.$value.'");';
+                }   
             }
         }
     ?>
@@ -184,15 +191,16 @@
     function submit_subjectinfo(){
         var data = {};
         var sub_data = {};
-        var i = 1;
         var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmc'))?>";
 		$('fieldset.subjects').each(function(){
 			var div_id = $(this).attr('id');
+			var div_title = $(this).attr('title');
+			var dmc_info_id = <?php echo $dmc_indo_id;?>;
 			$('fieldset#'+div_id+' :input').each(function(){
 				sub_data[this.name] = this.value;
 			})
-			data[i]=sub_data;
-			i++;
+			sub_data['dmc_info_id'] = dmc_info_id;
+			data[div_title]=sub_data;
 		});
 		$.ajax({
     		url : urlSaveDmcInfo,
