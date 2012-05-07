@@ -60,9 +60,11 @@
             }
         }
         $i = 0;
-        foreach ($dmcData[$subject_id] as $subject_property_name => $val){
-            if($j == 1){
-                echo '<th>'.ucfirst($subject_property_name).'</th>';
+        if(isset($dmcData[$subject_id])){
+            foreach ($dmcData[$subject_id] as $subject_property_name => $val){
+                if($j == 1){
+                    echo '<th>'.ucfirst($subject_property_name).'</th>';
+                }
             }
         }
         $j = 0;
@@ -75,10 +77,12 @@
         foreach ($subject_data as $subject_property => $value){
             echo '<td>'.$value.'</td>';
         }
-        foreach ($dmcData[$subject_id] as $subject_property_name => $val){
-            echo '<td>'.$val.'</td>';
+        if(isset($dmcData[$subject_id])){
+            foreach ($dmcData[$subject_id] as $subject_property_name => $val){
+                echo '<td>'.$val.'</td>';
+            }
+            echo '</tr>';
         }
-        echo '</tr>';
     }
 ?>
 </table>
@@ -86,6 +90,7 @@
 <div id="edit_btn" class="ui-widget-content ui-corner-all">
 	<h3><center><a href="/student/editdmc?class_id=<?php echo $_GET['class_id']?>&dmc_view_type=single&dmc_info_id=<?php echo $dmc_info_id[0];?>">Edit</a></center></h3>
 </div>
+
 <div id="goback_btn" class="ui-widget-content ui-corner-all">
 	<h3><center><a href="/student/profile">Go Back</a></center></h3>
 </div>

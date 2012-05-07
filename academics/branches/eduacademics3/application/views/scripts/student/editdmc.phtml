@@ -2,7 +2,7 @@
     $dmc_indo_id = 0;
 ?>
 
-<form id="dmc_info_form" class="uniForm" action="javascript:submit_dmc_info()">
+<form id="dmc_info_form" class="uniForm" action="javascript:get_dmc_info()">
 <h3>DMC Details</h3>
 <fieldset id="dmc_info">
 
@@ -65,7 +65,7 @@
 </fieldset>
 </form>
 
-<form id="dmc_form" class="uniForm" action="javascript:submit_subjectinfo()">
+<form id="dmc_form" class="uniForm" action="javascript:submit_dmc_info()">
 <h3>DMC Details</h3>
 
 <?php
@@ -138,7 +138,7 @@
             }   
         }
     ?>
-	
+    var dmc_data = {};
 	var urlSaveRegistrationInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmcinfo'))?>";
 	$(function(){
 	    $('form#dmc_info_form').uniform({
@@ -157,23 +157,26 @@
 			}
 	});
 
-    function submit_dmc_info(){
-    	var data = {};
-    	var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmcinfo'))?>";
-    	data['class_id'] = <?php echo $_GET['class_id'];?>;
+    function get_dmc_info(){
+    	dmc_data['class_id'] = <?php echo $_GET['class_id'];?>;
     	$('fieldset#dmc_info :input')
     	.not('button,:input[value^="e.g."]')
     	.each(function(){ 
-    		data[this.name] = this.value;
+    		dmc_data[this.name] = this.value;
     	});
     	show_subject_div();
+    }
+
+    function submit_dmc_info(){
+    	var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmcinfo'))?>";
     	$.ajax({
     		url : urlSaveDmcInfo,
-    		data : {myarray:data},
+    		data : {myarray:dmc_data},
     		success: function(jStatus){
         		//if(jStatus){
             		$('#dmc_info_div').hide();
         			show_subject_div();
+        			submit_subjectinfo();
         		//}
             },
             error: function(response) {
