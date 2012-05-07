@@ -15,9 +15,16 @@ class Acad_Model_Subject extends Acad_Model_Generic
     /**
      * @return the $_subject_id
      */
-    public function getSubject_id ()
+    public function getSubject_id ($throw_exception = null)
     {
-        return $this->_subject_id;
+        $subject_id = $this->_subject_id;
+        if (empty($subject_id) and $throw_exception == true) {
+            $message = '_subject_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $subject_id;
+        }
     }
     /**
      * @return the $_subject_code
