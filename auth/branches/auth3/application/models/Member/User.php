@@ -290,9 +290,13 @@ class Auth_Model_Member_User extends Auth_Model_Generic
         $this->setLogin_id($login_id);
         $member_id = $this->fetchMemberId($login_id);
         if (empty($member_id)) {
+        	try {
             $this->initSave();
             $preparedData = $this->prepareDataForSaveProcess($data_array);
             return $this->getMapper()->save($preparedData);
+        	} catch (Exception $e){
+        		throw new Exception("The user registration failed because ".$e->getMessage(), Zend_Log::ERR, $e);
+        	}
         } else {
             $this->initSave();
             $preparedData = $this->prepareDataForSaveProcess($data_array);
