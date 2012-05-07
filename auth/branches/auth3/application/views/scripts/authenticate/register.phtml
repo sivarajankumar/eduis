@@ -1,4 +1,4 @@
-<form action="javascript:submit();" class="uniForm">
+<form action="<?php echo $this->url(array('controller' => 'authenticate', 'action' => 'saveregistrationinfo'))?>" class="uniForm">
 <h2>Sign Up  </h2>
         
         <fieldset>
@@ -69,7 +69,7 @@ function submit() {
 				console.log(response);
 			}
 		});
-  }
+   }
 function getValues(){
 	var formData = {};
 	$('fieldset :input')
