@@ -37,18 +37,33 @@ class Tnp_Model_Mapper_MemberInfo_Skills
      * 
      * @param integer $skill_id
      */
-    public function fetchInfo ($member_id)
+    public function fetchInfo ($skill_id)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $student_skills_table = $db_table->info('name');
-        $required_cols = array('member_id', 'skill_id', 'proficiency');
+        $required_cols = array('skill_id', 'skill_name', 'skill_field');
         $select = $adapter->select()
             ->from($student_skills_table, $required_cols)
-            ->where('member_id = ?', $member_id);
+            ->where('skill_id = ?', $skill_id);
         $skill_info = array();
         $skill_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $skill_info[$member_id];
+        return $skill_info[$skill_id];
+    }
+    public function fetchSkills ()
+    {
+        $db_table = $this->getDbTable();
+        $adapter = $db_table->getAdapter();
+        $skills_table = $db_table->info('name');
+        $required_cols = array('skill_id', 'skill_name');
+        $select = $adapter->select()->from($skills_table, $required_cols);
+        $skills = array();
+        $result = array();
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        foreach ($result as $skill_id => $skills_info_array) {
+            $skills[$skill_id] = $skills_info_array['skill_name'];
+        }
+        return $skills;
     }
     public function fetchMemberIds ($skill_id = null, $proficiency = null)
     {

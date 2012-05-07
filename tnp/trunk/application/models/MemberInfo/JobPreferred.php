@@ -93,4 +93,29 @@ class Tnp_Model_MemberInfo_JobPreferred extends Tnp_Model_Generic
                 break;
         }
     }
+    /**
+     * Fetches all member ids for given preffered functional area
+     * Enter description here ...
+     */
+    public function fetchMemberIds ()
+    {
+        $job_area_preferred = $this->getJob_area(true);
+        $member_ids = $this->getMapper()->fetchMemberIds($job_area_preferred);
+        if (empty($member_ids)) {
+            return false;
+        } else {
+            return $member_ids;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $emp_test_id = $this->getEmployability_test_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($emp_test_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

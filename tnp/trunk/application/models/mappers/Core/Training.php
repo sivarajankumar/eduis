@@ -47,6 +47,21 @@ class Tnp_Model_Mapper_Core_Training
         $training_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $training_info[$training_id];
     }
+    public function fetchTechnologies ()
+    {
+        $db_table = $this->getDbTable();
+        $adapter = $db_table->getAdapter();
+        $training_table = $db_table->info('name');
+        $required_cols = array('technical_field_id', 'training_technology');
+        $select = $adapter->select()->from($training_table, $required_cols);
+        $training_info = array();
+        $training_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        $technologies = array();
+        foreach ($training_info as $tech_field_id => $training_technology_array) {
+            $technologies[$tech_field_id] = $training_technology_array['training_technology'];
+        }
+        return $technologies;
+    }
     public function fetchTrainingIds ($training_technology = null, 
     $technical_field_id = null)
     {

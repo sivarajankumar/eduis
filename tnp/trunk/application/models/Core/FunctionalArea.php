@@ -99,4 +99,29 @@ class Tnp_Model_Core_FunctionalArea extends Tnp_Model_Generic
                 break;
         }
     }
+    /**
+     * 
+     * @return array ,Format = array($functional_area_id=>$functional_area_name)
+     */
+    public function fetchFunctionalAreas ()
+    {
+        $functional_areas = array();
+        $functional_areas = $this->getMapper()->fetchFunctionalAreas();
+        if (empty($functional_areas)) {
+            return false;
+        } else {
+            return $functional_areas;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $functional_area_id = $this->getFunctional_area_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($functional_area_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

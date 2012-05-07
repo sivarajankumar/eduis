@@ -48,6 +48,19 @@ class Tnp_Model_Mapper_MemberInfo_Certification
         $certification_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $certification_info[$member_id];
     }
+    public function fetchCertificationIds ($member_id)
+    {
+        $db_table = $this->getDbTable();
+        $adapter = $db_table->getAdapter();
+        $certification_table = $db_table->info('name');
+        $required_cols = array('certification_id');
+        $select = $adapter->select()
+            ->from($certification_table, $required_cols)
+            ->where('member_id = ?', $member_id);
+        $member_ids = array();
+        $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $member_ids;
+    }
     public function fetchMemberIds ($certification_id = null, $start_date = null, 
     $complete_date = null)
     {

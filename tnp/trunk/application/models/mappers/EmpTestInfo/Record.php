@@ -42,8 +42,9 @@ class Tnp_Model_Mapper_EmpTestInfo_Record
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $emp_test_record_table = $db_table->info('name');
-        $required_cols = array('test_record_id', 'employability_test_id', 
-        'test_section_name');
+        $required_cols = array('test_record_id', 'member_id', 
+        'employability_test_id', 'test_regn_no', 'test_total_score', 
+        'test_percentile');
         $select = $adapter->select()
             ->from($emp_test_record_table, $required_cols)
             ->where('test_record_id = ?', $test_record_id);
@@ -52,18 +53,30 @@ class Tnp_Model_Mapper_EmpTestInfo_Record
         Zend_Db::FETCH_UNIQUE);
         return $emp_test_record_info[$test_record_id];
     }
-    public function fetchTestIRecordIds ($member_id, 
-    $employability_test_id = null)
+    public function fetchTestRecordIds ($member_id = null, 
+    $employability_test_id = null, $test_regn_no = null, $test_total_score = null, 
+    $test_percentile = null)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $emp_test_section_record_table = $db_table->info('name');
-        $required_cols = array('employability_test_id', 'test_section_id');
-        $select = $adapter->select()
-            ->from($emp_test_section_record_table, $required_cols)
-            ->where('member_id=?', $member_id);
+        $required_cols = array('employability_test_id');
+        $select = $adapter->select()->from($emp_test_section_record_table, 
+        $required_cols);
+        if (! empty($member_id)) {
+            $select->where('member_id = ?', $member_id);
+        }
         if (! empty($employability_test_id)) {
             $select->where('employability_test_id=?', $employability_test_id);
+        }
+        if (! empty($test_regn_no)) {
+            $select->where('test_regn_no=?', $test_regn_no);
+        }
+        if (! empty($test_total_score)) {
+            $select->where('test_total_score=?', $test_total_score);
+        }
+        if (! empty($test_percentile)) {
+            $select->where('test_percentile=?', $test_percentile);
         }
         $record_ids = array();
         $record_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);

@@ -55,7 +55,7 @@ class Tnp_Model_Mapper_Core_Skills
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $skills_table = $db_table->info('name');
-        $required_cols = array('member_id');
+        $required_cols = array('skill_id');
         $select = $adapter->select()->from($skills_table, $required_cols);
         if (! empty($skill_name)) {
             $select->where('skill_name = ?', $skill_name);
@@ -66,15 +66,34 @@ class Tnp_Model_Mapper_Core_Skills
         $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $member_ids;
     }
+    /**
+     * 
+     *@return array ,Format =array($role_id=>$role_name)
+     */
+    public function fetchSkills ()
+    {
+        $db_table = $this->getDbTable();
+        $adapter = $db_table->getAdapter();
+        $skills_table = $db_table->info('name');
+        $required_cols = array('skill_id', 'skill_name');
+        $select = $adapter->select()->from($skills_table, $required_cols);
+        $skills = array();
+        $result = array();
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        foreach ($result as $skill_id => $skill_name_array) {
+            $skills[$skill_id] = $skill_name_array['skill_name'];
+        }
+        return $skills;
+    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
-    public function update ($prepared_data, $language_id)
+    public function update ($prepared_data, $skill_id)
     {
         $dbtable = $this->getDbTable();
-        $where = 'language_id = ' . $language_id;
+        $where = 'skill_id = ' . $skill_id;
         return $dbtable->update($prepared_data, $where);
     }
 }

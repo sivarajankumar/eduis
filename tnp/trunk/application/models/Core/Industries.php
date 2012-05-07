@@ -92,4 +92,29 @@ class Tnp_Model_Core_Industries extends Tnp_Model_Generic
                 break;
         }
     }
+    /**
+     * 
+     * @return array ,Format = array($industry_id=>$industry_names)
+     */
+    public function fetchIndustries ()
+    {
+        $industries = array();
+        $industries = $this->getMapper()->fetchIndustries();
+        if (empty($industries)) {
+            return false;
+        } else {
+            return $industries;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $industry_id = $this->getIndustry_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($industry_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

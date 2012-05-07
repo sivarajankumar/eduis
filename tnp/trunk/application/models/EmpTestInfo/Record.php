@@ -174,4 +174,39 @@ class Tnp_Model_EmpTestInfo_Record extends Tnp_Model_Generic
                 break;
         }
     }
+    public function fetchTestRecordIds ($member_specific = null, 
+    $employability_test_specific = null, $test_regn_no_specific = null)
+    {
+        $member_id = null;
+        $employability_test_id = null;
+        $test_regn_no = null;
+        if ($member_specific) {
+            $member_id = $this->getMember_id(true);
+        }
+        if ($employability_test_specific) {
+            $employability_test_id = $this->getEmployability_test_id(true);
+        }
+        if ($test_regn_no_specific) {
+            $test_regn_no = $this->getTest_regn_no(true);
+        }
+        $record_ids = array();
+        $record_ids = $this->getMapper()->fetchTestRecordIds($member_id, 
+        $employability_test_specific, $test_regn_no);
+        if (empty($record_ids)) {
+            return false;
+        } else {
+            return $record_ids;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $record_id = $this->getTest_record_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($record_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

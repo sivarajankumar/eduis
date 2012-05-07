@@ -115,4 +115,40 @@ class Tnp_Model_MemberInfo_CoCurricular extends Tnp_Model_Generic
                 break;
         }
     }
+    /**
+     * 
+     * Enter description here ...
+     * @param bool $achievement_specific
+     * @param bool $activitie_specific
+     * @param bool $hobby_specific
+     */
+    public function fetchMemberIds ($achievement_specific = null, 
+    $activitie_specific = null, $hobby_specific = null)
+    {
+        $achievements = null;
+        $activities = null;
+        $hobbies = null;
+        if ($achievement_specific == true) {
+            $achievement = $this->getAchievements();
+        }
+        if ($activitie_specific == true) {
+            $activities = $this->getActivities();
+        }
+        if ($hobby_specific == true) {
+            $hobbies = $this->getHobbies();
+        }
+        $member_ids = $this->getMapper()->fetchMemberIds();
+        return $member_ids;
+    }
+    public function fetchInfo ()
+    {
+        $member_id = $this->getMember_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($member_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

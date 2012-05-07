@@ -121,4 +121,25 @@ class Tnp_Model_Core_Training extends Tnp_Model_Generic
                 break;
         }
     }
+    public function fetchTechnologies ()
+    {
+        $technologies = array();
+        $technologies = $this->getMapper()->fetchTechnologies();
+        if (empty($technologies)) {
+            return false;
+        } else {
+            return $technologies;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $training_id = $this->getTraining_id();
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($training_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

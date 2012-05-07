@@ -174,4 +174,46 @@ class Tnp_Model_EmpTestInfo_SectionScore extends Tnp_Model_Generic
                 break;
         }
     }
+    /**
+     * 
+     * Enter description here ...
+     * @param bool $member_specific
+     * @param bool $test_section_id_specific
+     * @param bool $employability_test_specific
+     */
+    public function fetchSectionScoreIds ($member_specific = null, 
+    $test_section_id_specific = null, $employability_test_specific = null)
+    {
+        $member_id = null;
+        $test_section_id = null;
+        $employability_test_id = null;
+        if ($member_specific) {
+            $member_id = $this->getMember_id(true);
+        }
+        if ($test_section_id_specific) {
+            $test_section_id = $this->getTest_section_id(true);
+        }
+        if ($employability_test_specific) {
+            $employability_test_id = $this->getEmployability_test_id(true);
+        }
+        $section_score_ids = array();
+        $section_score_ids = $this->getMapper()->fetchSectionScoreIds(
+        $member_id, $test_section_id, $employability_test_id);
+        if (empty($section_score_ids)) {
+            return false;
+        } else {
+            return $section_score_ids;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $section_score_id = $this->getSection_score_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($section_score_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

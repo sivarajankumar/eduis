@@ -42,7 +42,7 @@ class Tnp_Model_Mapper_EmpTestInfo_Test
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $emp_test_table = $db_table->info('name');
-        $required_cols = array('test_name');
+        $required_cols = array('test_name', 'date_of_conduct');
         $select = $adapter->select()
             ->from($emp_test_table, $required_cols)
             ->where('employability_test_id = ?', $employability_test_id);
@@ -65,17 +65,27 @@ class Tnp_Model_Mapper_EmpTestInfo_Test
         }
         return $emp_tests;
     }
-    /*
-     * @todo
+    /**
+     * 
+     * Enter description here ...
+     * @param int $test_name
+     * @param date $date_of_conduct format must be yyyy.MM.dd (dot as separator)
      */
-    public function fetchIds ()
+    public function fetchTestsIds ($test_name = null, $date_of_conduct = null)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $emp_test_table = $db_table->info('name');
         $required_cols = array('employability_test_id');
         $select = $adapter->select()->from($emp_test_table, $required_cols);
-        //$select->where('functional_area_id = ?', $functional_area_id);
+        if ($test_name == true) {
+            $select->where('test_name = ?', $test_name);
+        }
+        if ($date_of_conduct == true) {
+            $date_of_conduct = Zend_Locale_Format::getDate($date_of_conduct, 
+            array('date_format' => 'yyyyMMdd', 'fix_date' => true));
+            $select->where('date_of_conduct = ?', $date_of_conduct);
+        }
         $emp_test_ids = array();
         $emp_test_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $emp_test_ids;
