@@ -2,6 +2,7 @@
     $subData = $this->response['subject_data'];
     $dmcData = $this->response['dmc_data'];
     $dmcInfoData = $this->response['dmc_info_data'];
+    $dmc_info_id =array_keys($dmcInfoData);
 ?>
 <div class="ui-widget-content ui-corner-all"><center><h3>Degree Details</h3></center></div>
 
@@ -11,8 +12,34 @@
 <?php
     foreach ($dmcInfoData as $key => $value){
         foreach ($value as $dmc_property => $val){
-            $dmc_property_modified = ucfirst(str_replace('_',' ',$dmc_property));
-            echo '<span class="dmc_info_index">'.$dmc_property_modified.'</span> <span class="dmc_info_value">'.$val.'</span><br>';
+            if($dmc_property != 'result_type_id'){
+                $dmc_property_modified = ucfirst(str_replace('_',' ',$dmc_property));
+                echo '<span class="dmc_info_index">'.$dmc_property_modified.'</span> <span class="dmc_info_value">'.$val.'</span><br>';
+            }
+            else {
+                switch ($val){
+                    case '1':
+                        echo '<span class="dmc_info_index">Result Type</span> <span class="dmc_info_value">Regular Pass</span><br>';
+                        break;
+                    case '2':
+                        echo '<span class="dmc_info_index">Result Type</span> <span class="dmc_info_value">Regular Fail</span><br>';
+                        break;
+                    case '3':
+                        echo '<span class="dmc_info_index">Result Type</span> <span class="dmc_info_value">Re-evaluation Pass</span><br>';
+                        break;
+                    case '4':
+                        echo '<span class="dmc_info_index">Result Type</span> <span class="dmc_info_value">Re-evaluation Fail</span><br>';
+                        break;
+                    case '5':
+                        echo '<span class="dmc_info_index">Result Type</span> <span class="dmc_info_value">Re-appear Pass</span><br>';
+                        break;
+                    case '6':
+                        echo '<span class="dmc_info_index">Result Type</span> <span class="dmc_info_value">Re-appear Fail</span><br>';
+                        break;
+                    default:
+                        echo '<span class="dmc_info_index">Result Type</span> <span class="dmc_info_value">Regular Pass</span><br>';
+                }
+            }
         }
     }
 ?>
@@ -57,7 +84,7 @@
 </table>
 </div>
 <div id="edit_btn" class="ui-widget-content ui-corner-all">
-	<h3><center><a href="/student/editdmc">Edit</a></center></h3>
+	<h3><center><a href="/student/editdmc?class_id=<?php echo $_GET['class_id']?>&dmc_view_type=single&dmc_info_id=<?php echo $dmc_info_id[0];?>">Edit</a></center></h3>
 </div>
 
 <style>
