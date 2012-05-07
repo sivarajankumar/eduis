@@ -285,16 +285,16 @@ class StudentController extends Zend_Controller_Action
         $student_subject->setMember_id($this->getMember_id());
         $student_subject->setClass_id($class_id);
         $subject_ids = $student_subject->fetchSubjects();
-         Zend_Registry::get('logger')->debug($subject_ids);
+        Zend_Registry::get('logger')->debug($subject_ids);
         $subject_data = array();
         $dmc_data = array();
         $dmc_info_data = array();
         switch ($dmc_view_type) {
             case 'latest':
                 $subject_data = self::fetchStudentSubjects($class_id);
-                $class_dmc_info_id_array = $student_model->fetchDmcInfoIds($class_id, 
-                null, null, null, true);
-               $dmc_info_id_array = array_keys($class_dmc_info_id_array);
+                $class_dmc_info_id_array = $student_model->fetchDmcInfoIds(
+                $class_id, null, null, null, true);
+                $dmc_info_id_array = array_keys($class_dmc_info_id_array);
                 $dmc_info_id = $dmc_info_id_array[0];
                 if ($dmc_info_id) {
                     $dmc_info_data = self::fetchDmcInfo($dmc_info_id);
@@ -860,7 +860,6 @@ class StudentController extends Zend_Controller_Action
             $success = true;
             switch ($format) {
                 case 'html':
-              
                     if (! empty($success)) {
                         $this->view->assign('is_successfull', $success);
                     }
@@ -1362,14 +1361,12 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        if($params['dmc_info_id'])
-        {
-        $response = self::fetchclassdmc($params['class_id'], 
-        $this->_getParam('dmc_view_type','latest'),$params['dmc_info_id']);
-        }
-        else {
-             $response = self::fetchclassdmc($params['class_id'], 
-        $params['dmc_view_type']);
+        if ($params['dmc_info_id']) {
+            $response = self::fetchclassdmc($params['class_id'], 
+            $this->_getParam('dmc_view_type', 'latest'), $params['dmc_info_id']);
+        } else {
+            $response = self::fetchclassdmc($params['class_id'], 
+            $params['dmc_view_type']);
         }
         switch ($format) {
             case 'html':
@@ -1396,13 +1393,40 @@ class StudentController extends Zend_Controller_Action
     }
     public function savedmcAction ()
     {
+        $dmc_data_array = array();
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $dmc_data_array = $params['myarray'];
-        $dmc_data_array['subject_ids'] = array_keys($input)
+        $dmc_data_value = array_values($dmc_data_array);
+        $dmc_info_id = $dmc_data_value[0]['dmc_info_id'];
+        $subject_ids = array_keys($dmc_data_array);
+        $dmc_info_model = new Acad_Model_Course_DmcInfo();
+        $dmc_info_model->setDmc_info_id($dmc_info_id);
+        $dmc_info_model->fetchInfo();
+        $class_id = $dmc_info_model->getClass_id();
+        $student_subject_model = new Acad_Model_StudentSubject();
+        $student_subject_model->setMember_id($this->getMember_id());
+        $student_subject_model->setClass_id($class_id);
+        Zend_Registry::get('logger')->debug($dmc_data_array);
+        /*   foreach ($subject_ids as $subject_id) {
+            $student_subject_model->setSubject_id($subject_id);
+            $student_subject_id = array();
+            $student_subject_id = $student_subject_model->fetchStudentSubjectId();
+            Zend_Registry::get('logger')->debug($student_subject_id);
+            $dmc_data_array[$subject_id]['student_subject_id'] = $student_subject_id['student_subject_id'];
+            Zend_Registry::get('logger')->debug($dmc_data_array);
+        }*/
+        foreach ($dmc_data_array as $subject_id => $data_array) {
+            $student_subject_model->setSubject_id($subject_id);
+            $student_subject_id = array();
+            $student_subject_id = $student_subject_model->fetchStudentSubjectId();
+            $data_array['student_subject_id'] = $student_subject_id['student_subject_id'];
+            $dmc_data_array[$subject_id]=$data_array;
+        }
+        Zend_Registry::get('logger')->debug($dmc_data_array);
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         foreach ($dmc_data_array as $dmc_data) {
@@ -1420,7 +1444,7 @@ class StudentController extends Zend_Controller_Action
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         $dmc_info_id = $student_model->saveDmcInfo($dmc_info);
-         Zend_Registry::get('logger')->debug($dmc_info_id);
+        Zend_Registry::get('logger')->debug($dmc_info_id);
         switch ($format) {
             case 'html':
                 if (! empty($dmc_info_id)) {
