@@ -4,6 +4,7 @@ class Acad_Model_Qualification_Btech extends Acad_Model_Generic
     protected $_member_id;
     protected $_qualification_id;
     protected $_discipline_id;
+    protected $_roll_no;
     protected $_marks_obtained;
     protected $_total_marks;
     protected $_percentage;
@@ -55,6 +56,13 @@ class Acad_Model_Qualification_Btech extends Acad_Model_Generic
         } else {
             return $discipline_id;
         }
+    }
+    /**
+     * @return the $_roll_no
+     */
+    public function getRoll_no ()
+    {
+        return $this->_roll_no;
     }
     /**
      * @return the $_marks_obtained
@@ -132,6 +140,13 @@ class Acad_Model_Qualification_Btech extends Acad_Model_Generic
     public function setDiscipline_id ($_discipline_id)
     {
         $this->_discipline_id = $_discipline_id;
+    }
+    /**
+     * @param field_type $_roll_no
+     */
+    public function setRoll_no ($_roll_no)
+    {
+        $this->_roll_no = $_roll_no;
     }
     /**
      * @param field_type $_marks_obtained
