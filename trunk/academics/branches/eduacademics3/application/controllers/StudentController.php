@@ -242,9 +242,7 @@ class StudentController extends Zend_Controller_Action
             foreach ($subject_ids as $key => $subject_id) {
                 $dmc_object = $student_model->fetchDmc($dmc_info_id, 
                 $subject_id);
-                 Zend_Registry::get('logger')->debug($dmc_info_id);
                 if ($dmc_object instanceof Acad_Model_Course_DmcMarks) {
-                    Zend_Registry::get('logger')->debug('i am here');
                     $dmc_data[$subject_id]['date'] = $dmc_object->getDate();
                     $dmc_data[$subject_id]['external'] = $dmc_object->getExternal();
                     $dmc_data[$subject_id]['internal'] = $dmc_object->getInternal();
@@ -1330,9 +1328,6 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $params['class_id'] = 1;
-        $params['dmc_view_type'] = 'single';
-        $params['dmc_info_id'] = 1;
         $format = $this->_getParam('format', 'html');
         $response = self::fetchclassdmc($params['class_id'], 
         $params['dmc_view_type'], $params['dmc_info_id']);
