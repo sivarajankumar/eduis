@@ -802,7 +802,10 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $dmc_marks_object = new Acad_Model_Course_DmcMarks();
         $dmc_info_id = $data_array['dmc_info_id'];
         $student_subject_id = $data_array['student_subject_id'];
-        $dmc_marks = $this->fetchDmcInfo($dmc_info_id, $student_subject_id);
+        $dmc_marks_object->setDmc_info_id($dmc_info_id);
+        $dmc_marks_object->setStudent_subject_id($student_subject_id);
+        $dmc_marks = $dmc_marks_object->fetchInfo($dmc_info_id, 
+        $student_subject_id);
         if ($dmc_marks == false) {
             $dmc_marks_object->initSave();
             $preparedData = $dmc_marks_object->prepareDataForSaveProcess(
