@@ -51,24 +51,16 @@ class Tnp_Model_Mapper_MemberInfo_Language
         $stu_lan_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $stu_lan_info[$member_id];
     }
-    public function fetchAll ($member_id = null, $language_id = null)
+    public function fetchLanguagesKnown ($member_id)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $stu_lan_table = $db_table->info('name');
-        $required_cols = array('member_id', 'language_id', 'proficiency');
+        $required_cols = array('language_id');
         $select = $adapter->select()->from($stu_lan_table, $required_cols);
         $stu_lans = array();
-        if ($member_id) {
-            $select->where('member_id = ?', $member_id);
-            $stu_lans = $select->query()->fetchAll(Zend_Db::FETCH_GROUP);
-            return $stu_lans[$member_id];
-        }
-        if ($language_id) {
-            $select->where('language_id = ?', $language_id);
-            $stu_lans = $select->query()->fetchAll(Zend_Db::FETCH_GROUP);
-            return $stu_lans[$language_id];
-        }
+        $select->where('member_id = ?', $member_id);
+        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
     }
     public function save ($prepared_data)
     {

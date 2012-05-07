@@ -99,4 +99,29 @@ class Tnp_Model_Core_Language extends Tnp_Model_Generic
                 break;
         }
     }
+    /**
+     * 
+     *@return array ,Format =array($language_id=>$language_name)
+     */
+    public function fetchLanguages ()
+    {
+        $languages = array();
+        $languages = $this->getMapper()->fetchLanguages();
+        if (empty($languages)) {
+            return false;
+        } else {
+            return $languages;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $language_id = $this->getLanguage_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($language_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

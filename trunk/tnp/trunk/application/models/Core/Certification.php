@@ -121,4 +121,41 @@ class Tnp_Model_Core_Certification extends Tnp_Model_Generic
                 break;
         }
     }
+    /**
+     * 
+     * Enter description here ...
+     * @param bool $certification_name_specific
+     * @param bool $technical_field_id_specific
+     */
+    public function fetchCertificationIds ($certification_name_specific = null, 
+    $technical_field_id_specific = null)
+    {
+        $certification_name = null;
+        $technical_field_id = null;
+        if ($certification_name_specific == true) {
+            $certification_name = $this->getCertification_name(true);
+        }
+        if ($technical_field_id_specific == true) {
+            $technical_field_id = $this->getCertification_name(true);
+        }
+        $certification_ids = array();
+        $certification_ids = $this->getMapper()->fetchCertificationIds(
+        $certification_name, $technical_field_id);
+        if (empty($certification_ids)) {
+            return false;
+        } else {
+            return $certification_ids;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $certification_id = $this->getCertification_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($certification_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

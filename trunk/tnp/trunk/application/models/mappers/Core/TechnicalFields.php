@@ -52,13 +52,31 @@ class Tnp_Model_Mapper_Core_TechnicalFields
         Zend_Db::FETCH_UNIQUE);
         return $technical_field_info[$technical_field_id];
     }
-    public function fetchIds ($technical_field_name = null, $technical_sector = null)
+    public function fetchTechnicalFields ()
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $technical_field_table = $db_table->info('name');
+        $required_cols = array('technical_field_id', 'technical_field_name');
+        $select = $adapter->select()->from($technical_field_table, 
+        $required_cols);
+        $technical_fields = array();
+        $result = array();
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        foreach ($result as $tech_field_id => $tech_field_name_array) {
+            $technical_fields[$tech_field_id] = $tech_field_name_array['technical_field_name'];
+        }
+        return $technical_fields;
+    }
+    public function fetchTechnicalFieldIds ($technical_field_name = null, 
+    $technical_sector = null)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $technical_field_table = $db_table->info('name');
         $required_cols = array('member_id');
-        $select = $adapter->select()->from($technical_field_table, $required_cols);
+        $select = $adapter->select()->from($technical_field_table, 
+        $required_cols);
         if (! empty($technical_field_name)) {
             $select->where('technical_field_name = ?', $technical_field_name);
         }

@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_MemberInfo_Skills extends Tnp_Model_Generic
+class Tnp_Model_Core_Skills extends Tnp_Model_Generic
 {
     protected $_skill_id;
     protected $_skill_name;
@@ -70,8 +70,8 @@ class Tnp_Model_MemberInfo_Skills extends Tnp_Model_Generic
     }
     /**
      * Sets Mapper
-     * @param Tnp_Model_Mapper_MemberInfo_Skills $mapper
-     * @return Tnp_Model_Core_Training
+     * @param Tnp_Model_Mapper_Core_Skills $mapper
+     * @return Tnp_Model_Core_Skills
      */
     public function setMapper ($mapper)
     {
@@ -80,12 +80,12 @@ class Tnp_Model_MemberInfo_Skills extends Tnp_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_MemberInfo_Skills
+     * @return Tnp_Model_Mapper_Core_Skills
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_MemberInfo_Skills());
+            $this->setMapper(new Tnp_Model_Mapper_Core_Skills());
         }
         return $this->_mapper;
     }
@@ -119,6 +119,31 @@ class Tnp_Model_MemberInfo_Skills extends Tnp_Model_Generic
             default:
                 return $key;
                 break;
+        }
+    }
+    /**
+     * 
+     *@return array ,Format =array($language_id=>$language_name)
+     */
+    public function fetchSkills ()
+    {
+        $skills = array();
+        $skills = $this->getMapper()->fetchSkills();
+        if (empty($skills)) {
+            return false;
+        } else {
+            return $skills;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $skill_id = $this->getSkill_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($skill_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
         }
     }
 }

@@ -99,4 +99,29 @@ class Tnp_Model_Core_Roles extends Tnp_Model_Generic
                 break;
         }
     }
+    /**
+     * 
+     *@return array ,Format =array($role_id=>$role_name)
+     */
+    public function fetchRoles ()
+    {
+        $roles = array();
+        $roles = $this->getMapper()->fetchRoles();
+        if (empty($roles)) {
+            return false;
+        } else {
+            return $roles;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $role_id = $this->getRole_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($role_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

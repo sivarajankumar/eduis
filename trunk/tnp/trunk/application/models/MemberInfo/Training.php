@@ -153,4 +153,48 @@ class Tnp_Model_MemberInfo_Training extends Tnp_Model_Generic
                 break;
         }
     }
+    public function fetchMemberIds ($training_id_specific = null, 
+    $training_institute_specific = null, $start_date_specific = null, 
+    $completion_date_specific = null, $training_semester_specific = null)
+    {
+        $training_id = null;
+        $training_institute = null;
+        $start_date = null;
+        $completion_date = null;
+        $training_semester = null;
+        if ($training_id_specific == true) {
+            $training_id = $this->getTraining_id(true);
+        }
+        if ($training_institute_specific == true) {
+            $training_institute = $this->getTraining_institute(true);
+        }
+        if ($start_date_specific == true) {
+            $start_date = $this->getStart_date(true);
+        }
+        if ($completion_date_specific == true) {
+            $completion_date = $this->getCompletion_date(true);
+        }
+        if ($training_semester_specific == true) {
+            $training_semester = $this->getTraining_semester(true);
+        }
+        $member_ids = array();
+        $member_ids = $this->getMapper()->fetchMemberIds($training_id, 
+        $training_institute, $start_date, $completion_date, $training_semester);
+        if (empty($member_ids)) {
+            return false;
+        } else {
+            return $member_ids;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $emp_test_id = $this->getEmployability_test_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($emp_test_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

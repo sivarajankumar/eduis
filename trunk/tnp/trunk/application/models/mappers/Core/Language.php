@@ -51,7 +51,7 @@ class Tnp_Model_Mapper_Core_Language
         //in model return 1st index
         return $language_info;
     }
-    public function fetchAll ()
+    public function fetchLanguages ()
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();

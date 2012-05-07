@@ -51,6 +51,13 @@ class Tnp_Model_Mapper_MemberInfo_ProfileStatus
         $member_profile_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $member_profile_info[$member_id];
     }
+    /**
+     * 
+     * Enter description here ...
+     * @param bool $exists
+     * @param bool $is_locked
+     * @param date $last_updated_on ( date_format must be set in the object in the form yyyy.MM.dd  with dot separater
+     */
     public function fetchMemberIds ($exists = null, $is_locked = null, 
     $last_updated_on = null)
     {

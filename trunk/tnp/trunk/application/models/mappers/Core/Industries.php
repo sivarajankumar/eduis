@@ -50,18 +50,18 @@ class Tnp_Model_Mapper_Core_Industries
         $industry_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $industry_info[$industry_id];
     }
-    public function fetchIndustryIds ()
+    public function fetchIndustries ()
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $industry_table = $db_table->info('name');
-        $required_cols = array('industry_id');
+        $required_cols = array('industry_id','industry_name');
         $select = $adapter->select()->from($industry_table, $required_cols);
         $industries = array();
         $result = array();
         $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         foreach ($result as $industry_id => $industry_names) {
-            $industries[$industry_id] = $industry_names['language_name'];
+            $industries[$industry_id] = $industry_names['industry_name'];
         }
         return $industries;
     }

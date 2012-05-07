@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_MemberInfo_EmpTestRecord extends Tnp_Model_Generic
+class Tnp_Model_MemberInfo_Record extends Tnp_Model_Generic
 {
     protected $_test_record_id;
     protected $_member_id;
@@ -11,9 +11,16 @@ class Tnp_Model_MemberInfo_EmpTestRecord extends Tnp_Model_Generic
     /**
      * @return the $_test_record_id
      */
-    public function getTest_record_id ()
+    public function getTest_record_id ($throw_exception = null)
     {
-        return $this->_test_record_id;
+        $test_record_id = $this->_test_record_id;
+        if (empty($test_record_id) and $throw_exception == true) {
+            $message = '_test_record_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $test_record_id;
+        }
     }
     /**
      * @param bool $throw_exception optional
@@ -33,16 +40,30 @@ class Tnp_Model_MemberInfo_EmpTestRecord extends Tnp_Model_Generic
     /**
      * @return the $_employability_test_id
      */
-    public function getEmployability_test_id ()
+    public function getEmployability_test_id ($throw_exception = null)
     {
-        return $this->_employability_test_id;
+        $employability_test_id = $this->_employability_test_id;
+        if (empty($employability_test_id) and $throw_exception == true) {
+            $message = '_employability_test_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $employability_test_id;
+        }
     }
     /**
      * @return the $_test_regn_no
      */
-    public function getTest_regn_no ()
+    public function getTest_regn_no ($throw_exception = null)
     {
-        return $this->_test_regn_no;
+        $test_regn_no = $this->_test_regn_no;
+        if (empty($test_regn_no) and $throw_exception == true) {
+            $message = '_test_regn_no is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $test_regn_no;
+        }
     }
     /**
      * @return the $_test_total_score
@@ -103,7 +124,7 @@ class Tnp_Model_MemberInfo_EmpTestRecord extends Tnp_Model_Generic
     /**
      * Sets Mapper
      * @param Tnp_Model_Mapper_EmpTestInfo_Record $mapper
-     * @return Tnp_Model_MemberInfo_EmpTestRecord
+     * @return Tnp_Model_MemberInfo_Record
      */
     public function setMapper ($mapper)
     {
@@ -151,6 +172,41 @@ class Tnp_Model_MemberInfo_EmpTestRecord extends Tnp_Model_Generic
             default:
                 return $key;
                 break;
+        }
+    }
+    public function fetchTestRecordIds ($member_specific = null, 
+    $employability_test_specific = null, $test_regn_no_specific = null)
+    {
+        $member_id = null;
+        $employability_test_id = null;
+        $test_regn_no = null;
+        if ($member_specific) {
+            $member_id = $this->getMember_id(true);
+        }
+        if ($employability_test_specific) {
+            $employability_test_id = $this->getEmployability_test_id(true);
+        }
+        if ($test_regn_no_specific) {
+            $test_regn_no = $this->getTest_regn_no(true);
+        }
+        $record_ids = array();
+        $record_ids = $this->getMapper()->fetchTestRecordIds($member_id, 
+        $employability_test_specific, $test_regn_no);
+        if (empty($record_ids)) {
+            return false;
+        } else {
+            return $record_ids;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $record_id = $this->getTest_record_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($record_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
         }
     }
 }

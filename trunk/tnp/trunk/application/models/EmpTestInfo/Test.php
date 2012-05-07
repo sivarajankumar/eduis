@@ -114,4 +114,42 @@ class Tnp_Model_EmpTestInfo_Test extends Tnp_Model_Generic
                 break;
         }
     }
+    /**
+     * the date format must be yyyy.MM.dd (dot as separator)
+     * Enter description here ...
+     * @param bool $test_name
+     * @param bool $date_of_conduct
+     */
+    public function fetchTestsIds ($test_name_specific = null, 
+    $date_of_conduct_secific = null)
+    {
+        $test_name = null;
+        $date_of_conduct = null;
+        $db_table = $this->getDbTable();
+        if ($test_name_specific == true) {
+            $test_name = $this->getTest_name(true);
+        }
+        if ($date_of_conduct_secific == true) {
+            $date_of_conduct = $this->getDate_of_conduct(true);
+        }
+        $emp_test_ids = array();
+        $emp_test_ids = $this->getMapper()->fetchTestsIds($test_name, 
+        $date_of_conduct);
+        if (empty($emp_test_ids)) {
+            return false;
+        } else {
+            return $emp_test_ids;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $emp_test_id = $this->getEmployability_test_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($emp_test_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

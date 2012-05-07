@@ -381,7 +381,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
         $student_active_class_ids = array();
         $student_class_ids = $this->fetchAllClassIds();
         $member_id = $this->getMember_id(true);
-        $class_obj = new Tnp_Model_Class();
+        $class_obj = new Tnp_Model_Core_Class();
         $class_obj->setIs_active(true);
         $active_class_ids = $class_obj->fetchClassIds(null, null, true);
         if (! empty($student_class_ids) and ! empty($active_class_ids)) {
@@ -398,7 +398,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     public function fetchAllClassIds ()
     {
         $member_id = $this->getMember_id(true);
-        $student_class_obj = new Tnp_Model_StudentClass();
+        $student_class_obj = new Tnp_Model_MemberInfo_Class();
         $student_class_obj->setMember_id($member_id);
         return $student_class_obj->fetchClassIds();
     }
@@ -411,7 +411,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
      */
     public function fetchSemesterClassId ($batch_id, $semester_id)
     {
-        $class_object = new Tnp_Model_Class();
+        $class_object = new Tnp_Model_Core_Class();
         $class_object->setBatch_id($batch_id);
         $class_object->setSemester_id($semester_id);
         return $class_object->fetchClassIds(true, true);
@@ -419,12 +419,12 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     /**
      * Fetches information regarding CLASS of a Student,
      * Member_id must be set before calling this function 
-     * @return StudentClass|false object of Tnp_Model_StudentClass
+     * @return StudentClass|false object of Tnp_Model_MemberInfo_Class
      */
     public function fetchClassInfo ($class_id)
     {
         $member_id = $this->getMember_id(true);
-        $student_class_object = new Tnp_Model_StudentClass();
+        $student_class_object = new Tnp_Model_MemberInfo_Class();
         $student_class_object->setMember_id($member_id);
         $student_class_object->setClass_id($class_id);
         return $student_class_object->fetchInfo();
@@ -437,10 +437,10 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     public function fetchBatchId ()
     {
         $member_id = $this->getMember_id(true);
-        $student_class_object = new Tnp_Model_StudentClass();
+        $student_class_object = new Tnp_Model_MemberInfo_Class();
         $student_class_object->setMember_id($member_id);
         $batch_identifier_class_id = $student_class_object->fetchBatchIdentifierClassId();
-        $class_object = new Tnp_Model_Class();
+        $class_object = new Tnp_Model_Core_Class();
         $class_object->setClass_id($batch_identifier_class_id);
         $class_object->fetchInfo();
         $batch_id = $class_object->getBatch_id();
@@ -469,13 +469,13 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
         $info = $this->fetchClassInfo($class_id);
         $data_array['member_id'] = $member_id;
         if ($info == false) {
-            $student_class_object = new Tnp_Model_StudentClass();
+            $student_class_object = new Tnp_Model_MemberInfo_Class();
             $student_class_object->initSave();
             $preparedData = $student_class_object->prepareDataForSaveProcess(
             $data_array);
             return $student_class_object->getMapper()->save($preparedData);
         } else {
-            $student_class_object = new Tnp_Model_StudentClass();
+            $student_class_object = new Tnp_Model_MemberInfo_Class();
             $student_class_object->initSave();
             $prepared_data = $student_class_object->prepareDataForSaveProcess(
             $data_array);

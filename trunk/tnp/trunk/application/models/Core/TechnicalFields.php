@@ -114,4 +114,29 @@ class Tnp_Model_Core_TechnicalFields extends Tnp_Model_Generic
                 break;
         }
     }
+    /**
+     * 
+     *@return array ,Format =array($tech_field_id=>$tech_field_name)
+     */
+    public function fetchTechnicalFields ()
+    {
+        $tech_fields = array();
+        $tech_fields = $this->getMapper()->fetchTechnicalFields();
+        if (empty($tech_fields)) {
+            return false;
+        } else {
+            return $tech_fields;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $tech_field_id = $this->getTechnical_field_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($tech_field_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

@@ -56,7 +56,7 @@ class Tnp_Model_Mapper_EmpTestInfo_SectionScore
     /*
      * @todo
      */
-    public function fetchIds ($member_id = null, $test_section_id = null, 
+    public function fetchSectionScoreIds ($member_id = null, $test_section_id = null, 
     $employability_test_id = null, $section_marks = null, $section_percentile = null)
     {
         $db_table = $this->getDbTable();

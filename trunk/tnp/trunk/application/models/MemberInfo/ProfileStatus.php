@@ -24,23 +24,44 @@ class Tnp_Model_MemberInfo_ProfileStatus extends Tnp_Model_Generic
     /**
      * @return the $_exists
      */
-    public function getExists ()
+    public function getExists ($throw_exception = null)
     {
-        return $this->_exists;
+        $exists = $this->_exists;
+        if (empty($exists) and $throw_exception == true) {
+            $message = '_exists is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $exists;
+        }
     }
     /**
      * @return the $_is_locked
      */
-    public function getIs_locked ()
+    public function getIs_locked ($throw_exception = null)
     {
-        return $this->_is_locked;
+        $is_locked = $this->_is_locked;
+        if (empty($is_locked) and $throw_exception == true) {
+            $message = '_is_locked is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $is_locked;
+        }
     }
     /**
      * @return the $_last_updated_on
      */
-    public function getLast_updated_on ()
+    public function getLast_updated_on ($throw_exception = null)
     {
-        return $this->_last_updated_on;
+        $last_updated_on = $this->_last_updated_on;
+        if (empty($last_updated_on) and $throw_exception == true) {
+            $message = '_last_updated_on is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $last_updated_on;
+        }
     }
     /**
      * @param field_type $_member_id
@@ -122,5 +143,47 @@ class Tnp_Model_MemberInfo_ProfileStatus extends Tnp_Model_Generic
                 return $key;
                 break;
         }
+    }
+    public function fetchInfo ()
+    {
+        $member_id = $this->getMember_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($member_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
+    /**
+     * 
+     * Enter description here ...
+     * @param bool $exists
+     * @param bool $is_locked
+     * @param bool $last_updated_on ( date_format must be set in the object in the form yyyy.MM.dd  with dot separater
+     */
+    public function fetchMemberIds ($profile_exists = null, $locked = null, 
+    $updated_on = null)
+    {
+        $exists = null;
+        $is_locked = null;
+        $last_updated_on = null;
+        if ($profile_exists == true) {
+            $exists = $this->getExists(true);
+        }
+        if ($locked == true) {
+            $exists = $this->getExists(true);
+        }
+        if ($locked == true) {
+            $is_locked = $this->getIs_locked(true);
+        }
+        if ($updated_on == true) {
+            $last_updated_on = $this->getLast_updated_on(true);
+            $last_updated_on = Zend_Locale_Format::getDate($last_updated_on, 
+            array('date_format' => 'yyyyMMdd', 'fix_date' => true));
+        }
+        $member_ids = $this->getMapper()->fetchMemberIds($exists, $is_locked, 
+        $last_updated_on);
+        return $member_ids;
     }
 }

@@ -123,4 +123,26 @@ class Tnp_Model_MemberInfo_Certification extends Tnp_Model_Generic
                 break;
         }
     }
+    public function fetchCertificationIds ()
+    {
+        $member_id = $this->getMember_id(true);
+        $certifications_ids = $this->getMapper()->fetchCertificationIds();
+        if (empty($certifications_ids)) {
+            return false;
+        } else {
+            return $certifications_ids;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $member_id = $this->getMember_id(true);
+        $certification_id = $this->getCertification_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($member_id, $certification_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

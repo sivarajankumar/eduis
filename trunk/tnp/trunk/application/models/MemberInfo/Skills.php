@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Core_Skills extends Tnp_Model_Generic
+class Tnp_Model_MemberInfo_Skills extends Tnp_Model_Generic
 {
     protected $_member_id;
     protected $_skill_id;
@@ -57,8 +57,8 @@ class Tnp_Model_Core_Skills extends Tnp_Model_Generic
     }
     /**
      * Sets Mapper
-     * @param Tnp_Model_Mapper_Core_Skills $mapper
-     * @return Tnp_Model_Core_Skills
+     * @param Tnp_Model_Mapper_MemberInfo_Skills $mapper
+     * @return Tnp_Model_MemberInfo_Skills
      */
     public function setMapper ($mapper)
     {
@@ -67,12 +67,12 @@ class Tnp_Model_Core_Skills extends Tnp_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_Core_Skills
+     * @return Tnp_Model_Mapper_MemberInfo_Skills
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_Core_Skills());
+            $this->setMapper(new Tnp_Model_Mapper_MemberInfo_Skills());
         }
         return $this->_mapper;
     }
@@ -107,5 +107,47 @@ class Tnp_Model_Core_Skills extends Tnp_Model_Generic
                 return $key;
                 break;
         }
+    }
+    public function fetchSkills ()
+    {
+        $info = array();
+        $info = $this->getMapper()->fetchSkills();
+        if (empty($info)) {
+            return false;
+        } else {
+            return $info;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $member_id = $this->getMember_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($member_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
+    /**
+     * 
+     * Enter description here ...
+     * @param bool $skill_specific
+     * @param bool $proficiency_specific
+     */
+    public function fetchMemberIds ($skill_specific = null, 
+    $proficiency_specific = null)
+    {
+        $skill_id = null;
+        $proficiency = null;
+        if ($skill_specific == true) {
+            $skill_id = $this->getSkill_id(true);
+        }
+        if ($proficiency_specific == true) {
+            $proficiency = $this->getProficiency(true);
+        }
+        $member_ids = $this->getMapper()->fetchMemberIds($skill_id, 
+        $proficiency);
+        return $member_ids;
     }
 }

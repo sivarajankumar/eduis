@@ -243,4 +243,25 @@ class Tnp_Model_MemberInfo_Experience extends Tnp_Model_Generic
                 break;
         }
     }
+    public function fetchStudentExperienceIds ()
+    {
+        $member_id = $this->getMember_id(true);
+        $experience_ids = $this->getMapper()->fetchStudentExperienceIds();
+        if (empty($experience_ids)) {
+            return false;
+        } else {
+            return $experience_ids;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $stu_exp_id = $this->getStudent_experience_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($stu_exp_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }

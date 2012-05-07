@@ -52,26 +52,8 @@ class Tnp_Model_Mapper_EmpTestInfo_Section
         Zend_Db::FETCH_UNIQUE);
         return $emp_test_section_info[$test_section_id];
     }
-    public function fetchTestSections ()
-    {
-        $db_table = $this->getDbTable();
-        $adapter = $db_table->getAdapter();
-        $emp_test_section_table = $db_table->info('name');
-        $required_cols = array('employability_test_id', 'test_section_id');
-        $select = $adapter->select()->from($emp_test_section_table, 
-        $required_cols);
-        $emp_test_sections = array();
-        $test_section_info = array();
-        $test_section_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        foreach ($test_section_info as $employability_test_id => $test_section_id_array) {
-            $emp_test_sections[$employability_test_id] = $test_section_id_array['test_section_id'];
-        }
-        return $emp_test_sections;
-    }
-    /*
-     * @todo
-     */
-    public function fetchIds ()
+    public function fetchTestSectionIds ($employability_test_id = null, 
+    $test_section_name = null)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
@@ -79,10 +61,15 @@ class Tnp_Model_Mapper_EmpTestInfo_Section
         $required_cols = array('test_section_id');
         $select = $adapter->select()->from($emp_test_section_table, 
         $required_cols);
-        //$select->where('functional_area_id = ?', $functional_area_id);
-        $test_section_ids = array();
-        $test_section_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $test_section_ids;
+        if ($employability_test_id == true) {
+            $select->where('employability_test_id = ?', $employability_test_id);
+        }
+        if ($test_section_name == true) {
+            $select->where('test_section_name = ?', $test_section_name);
+        }
+        $emp_test_sections = array();
+        $emp_test_sections = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $emp_test_sections;
     }
     public function save ($prepared_data)
     {

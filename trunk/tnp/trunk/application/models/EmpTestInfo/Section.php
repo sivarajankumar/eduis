@@ -122,4 +122,41 @@ class Tnp_Model_EmpTestInfo_Section extends Tnp_Model_Generic
                 break;
         }
     }
+    /**
+     * 
+     * Enter description here ...
+     * @param bool $test_specific
+     * @param bool $section_name_specific
+     */
+    public function fetchTestSectionIds ($test_specific = null, 
+    $section_name_specific = null)
+    {
+        $employability_test_id = null;
+        $test_section_name = null;
+        if ($test_specific) {
+            $employability_test_id = $this->getEmployability_test_id(true);
+        }
+        if ($section_name_specific) {
+            $test_section_name = $this->getTest_section_name(true);
+        }
+        $section_ids = array();
+        $section_ids = $this->getMapper()->fetchTestSectionIds(
+        $employability_test_id = null, $test_section_name = null);
+        if (empty($section_ids)) {
+            return false;
+        } else {
+            return $section_ids;
+        }
+    }
+    public function fetchInfo ()
+    {
+        $section_id = $this->getTest_section_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchInfo($section_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
+    }
 }
