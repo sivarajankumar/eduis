@@ -46,6 +46,21 @@ class Acad_Model_Mapper_ClassSubject
         $class_subjects = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $class_subjects;
     }
+    public function fetchInfo ($class_id, $subject_id)
+    {
+        $db_table = $this->getDbTable();
+        $adapter = $db_table->getAdapter();
+        $table_name = $db_table->info('name');
+        $required_cols = array('class_id', 'subject_id', 'internal_max_marks', 
+        'external_max_marks', 'internal_pass_marks', 'external_pass_marks');
+        $select = $adapter->select()
+            ->from($table_name, $required_cols)
+            ->where('class_id= ?', $class_id)
+            ->where('subject_id= ?', $subject_id);
+        $info = array();
+        $info = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $info;
+    }
     public function fetchSubjectClass ($subject_id)
     {
         $db_table = $this->gclass_idetDbTable();
