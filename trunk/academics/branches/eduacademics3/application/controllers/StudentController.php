@@ -860,8 +860,7 @@ class StudentController extends Zend_Controller_Action
             $success = true;
             switch ($format) {
                 case 'html':
-                    $this->_helper->viewRenderer->setNoRender(false);
-                    $this->_helper->layout()->enableLayout();
+              
                     if (! empty($success)) {
                         $this->view->assign('is_successfull', $success);
                     }
@@ -1363,8 +1362,15 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        if($params['dmc_info_id'])
+        {
         $response = self::fetchclassdmc($params['class_id'], 
+        $this->_getParam('dmc_view_type','latest'),$params['dmc_info_id']);
+        }
+        else {
+             $response = self::fetchclassdmc($params['class_id'], 
         $params['dmc_view_type']);
+        }
         switch ($format) {
             case 'html':
                 if (! empty($response)) {
@@ -1395,7 +1401,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $dmc_data_array = $params['dmc_data'];
+        $dmc_data_array = $params['myarray'];
+        $dmc_data_array['subject_ids'] = array_keys($input)
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         foreach ($dmc_data_array as $dmc_data) {
@@ -1409,10 +1416,11 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $dmc_info = $params['dmc_info'];
+        $dmc_info = $params['myarray'];
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         $dmc_info_id = $student_model->saveDmcInfo($dmc_info);
+         Zend_Registry::get('logger')->debug($dmc_info_id);
         switch ($format) {
             case 'html':
                 if (! empty($dmc_info_id)) {
