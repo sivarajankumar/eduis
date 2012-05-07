@@ -45,13 +45,13 @@ class Acad_Model_Mapper_StudentSubject
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $stu_subject_table = $db_table->info('name');
-        $required_cols = array('student_subject_id', 'subject_id');
+        $required_cols = array('student_subject_id');
         $select = $adapter->select()
             ->from($stu_subject_table, $required_cols)
             ->where('member_id = ?', $member_id)
             ->where('class_id = ?', $class_id);
         $student_subjects = array();
-        $student_subjects = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        $student_subjects = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $student_subjects;
     }
     /**
