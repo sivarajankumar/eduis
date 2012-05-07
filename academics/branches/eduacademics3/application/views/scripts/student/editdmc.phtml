@@ -19,12 +19,12 @@
 	<div class="ctrlHolder">
 		<label for="result_type_id"><em>*</em>Result Type</label>
 		<select id="result_type_id" name="result_type_id" class="selectInput required">
-			<option value="regular_pass">Regular Pass</option>
-			<option value="regular_fail">Regular Fail</option>
-			<option value="re_evaluation_pass">Re-evaluation Pass</option>
-			<option value="re_evaluation_fail">Re-evaluation Fail</option>
-			<option value="re_appear_pass">Re-appear Pass</option>
-			<option value="re_appear_fail">Re-appear Fail</option>
+			<option value="1">Regular Pass</option>
+			<option value="2">Regular Fail</option>
+			<option value="3">Re-evaluation Pass</option>
+			<option value="4">Re-evaluation Fail</option>
+			<option value="5">Re-appear Pass</option>
+			<option value="6">Re-appear Fail</option>
 		</select>
 		<p class="formHint">Select the type of result</p>
 	</div>
@@ -153,6 +153,7 @@
     function submit_dmc_info(){
     	var data = {};
     	var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmcinfo'))?>";
+    	data['class_id'] = <?php echo $_GET['class_id'];?>;
     	$('fieldset#dmc_info :input')
     	.not('button,:input[value^="e.g."]')
     	.each(function(){ 
