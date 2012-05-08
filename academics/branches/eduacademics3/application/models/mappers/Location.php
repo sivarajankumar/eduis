@@ -1,4 +1,10 @@
 <?php
+/**
+ * 
+ * @todo adapt according to current datatbase
+ * @author 
+ *
+ */
 class Acad_Model_Mapper_Location
 {
     /**
