@@ -1,0 +1,262 @@
+<h3 align="center">ISBN Information</h3>
+<div class="gridstyle">
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+	style="color: red"></span></div>
+<div id="formDiv"></div>
+<script type="text/javascript">
+
+$(function(){
+
+	var cache = {},
+		lastXhr;
+	var urlBookInfo = "<?php echo $this->url ( array ('module' => $this->module,
+												'controller' => $this->controller,
+												'action' => 'bookinfo' ))?>";
+	var urlPublisherInfo = "<?php echo $this->url ( array ('controller' => 'publisher',
+															'action' => 'getpublisher' ))?>";
+    var urlIsbnFind = "<?php echo $this->url ( array ('controller' => 'isbn', 'action' => 'getisbnlist'  ))?>";
+    var urlISBNInfo = "http://xisbn.worldcat.org/webservices/xid/isbn/";
+	var gridTable = "#tblgrid";
+    var gridPager = "#gridpager";
+    var urlFillGrid = "<?php echo $this->url ( array ('action' => 'fillgrid' ))?>";
+    var urlCRUD = "<?php echo $this->url ( array ('action' => 'crud' ))?>";
+    $(gridTable).jqGrid(
+            {
+            url : urlFillGrid,
+            colNames:['ISBN','Title','Long Title','Edition','Volume','Year','Author(s)',
+                      'Publisher','Cost','Currency' ,'DDC','LCC','Language','Physical desc','Remarks'], 
+            colModel:[  {name:'isbn_id',
+                            index:'isbn_id',
+                            editable:true,
+                            editrules:{required:true},
+                            editoptions: {
+                                dataInit : function (elem) {
+                                    $(elem).autocomplete({
+                                			minLength: 3,
+                                			source: function( request, response ) {
+                                				var term = request.term;
+                                				if ( term in cache ) {
+                                					response( cache[ term ] );
+                                					return;
+                                				}
+
+                                				lastXhr = $.getJSON( urlIsbnFind,
+                                        							request,
+                                        							function( data, status, xhr ) {
+                                                    					cache[ term ] = data;
+                                                    					if ( xhr === lastXhr ) {
+                                                    						response( data );
+                                                    					}
+                                									});
+                                			}
+                                    });
+                                },
+                                dataEvents: [{
+                                    type: 'change',
+                                    fn: function(e) {
+                                    	$(this).attr('disabled', 'disabled');
+                                        var isbn = $(this).val();
+                                    	urlISBNInfo = urlISBNInfo+$.trim(isbn);
+                                        $.ajax({
+                                            url : urlISBNInfo,
+                                            ifModified : true,
+                                            dataType : "jsonp",
+                                            data : {method:'getMetadata',
+                                                	format:'jsonp',
+                                                	fl:'*' },
+                                            success : function(response){
+                                                if ('ok' == response.stat.toLowerCase()) {
+                                                    var data = response.list[0];
+                                                	$('#title').prop('value','').val(data.title);
+                                                	$('#author').val(data.author);
+                                                	$('#edition').val(data.ed);
+                                                	$('#year').val(data.year);
+                                                	$('#place_publisher').val(data.publisher);
+    											}
+    
+                                                $('#isbn_id').prop('disabled', '');
+                                            },
+                                            error: function(xhr, text){
+                                            	$('#isbn_id').prop('disabled', '');
+                                                alert(xhr.responseText);
+                                            }
+                                        });
+                                     }
+                                }]
+                            }
+                 
+                        },
+                        {name:'title',
+                            index:'title',
+                            editable:true,
+                            editrules:{required:true} 
+                        },
+                        {name:'long_title',
+                            index:'long_title',
+                            editoptions:{
+                                edithidden:true},
+                            hidden : true,
+                            editable:true
+                        },
+                        {name:'edition',
+                            index:'edition',
+                            editable:true
+                        },
+                        {name:'volume',
+                            index:'volume',
+                            editable:true
+                        },
+                        {name:'year',
+                            index:'year',
+                            editable:true
+                        },
+                        {name:'author',
+                            index:'author',
+                            editable:true,
+                            editrules:{required:true} 
+                        },
+                        {name:'place_publisher',
+                            index:'place_publisher',
+                            editable:true,
+                            editoptions: {
+                                dataInit : function (elem) {
+                                    $(elem).autocomplete({
+                                			minLength: 3,
+                                			source: function( request, response ) {
+                                				var term = request.term;
+                                				if ( term in cache ) {
+                                					response( cache[ term ] );
+                                					return;
+                                				}
+
+                                				lastXhr = $.getJSON( urlPublisherInfo,
+                                        							request,
+                                        							function( data, status, xhr ) {
+                                                    					cache[ term ] = data;
+                                                    					if ( xhr === lastXhr ) {
+                                                    						response( data );
+                                                    					}
+                                                    				});
+                                			}
+                                    });
+                                }
+                            },
+                            editrules:{required:true} 
+                        },
+                        {name:'cost',
+                            index:'cost',
+                            editrules:{required:true},
+                            editable:true
+                        },
+                        {name:'currency_id',
+                            index:'currency_id',
+                            editable:true,
+                            edittype: 'select', 
+                            editoptions:{
+                                value : {'INR':'INR','USD':'USD','EURO':'EURO','PND':'POUND'}                   
+                            }
+                        },
+                        {name:'ddc',
+                            index:'ddc',
+                            editoptions:{
+                                edithidden:true},
+                            hidden : true,
+                            editable:true
+                        },
+                        {name:'lcc',
+                            index:'lcc',
+                            editoptions:{
+                                edithidden:true},
+                            hidden : true,
+                            editable:true
+                        },
+                        {name:'language_id',
+                            index:'language_id',
+                            editable:true,
+                            edittype: 'select',   
+                            editoptions:{
+                                value : {'ENG':'English','HIN':'Hindi','FRE':'French','JAP':'Japani :)'},
+                                edithidden:true},
+                            editrules:{required:true}
+                        },
+                        {name:'physical_desc',
+                            index:'physical_desc',
+                            editoptions:{
+                                edithidden:true},
+                            hidden : true,
+                            editable:true
+                        },
+                        {name:'remarks',
+                            index:'remarks',
+                            editoptions:{
+                                edithidden:true},
+                            hidden : true,
+                            editable:true
+                        }
+                    ],
+            caption: 'ISBN',
+            sortname: 'isbn_id',
+            pager: gridPager, 
+            editurl:urlCRUD
+    });
+    $(gridTable).jqGrid('navGrid', gridPager, {
+        add : true,
+        del : false,
+        edit : true,
+        view : false,
+        search : false,
+        refresh : false
+    }, // options
+            {
+        width : 400,
+        //savekey : [ true, 13 ],
+        navkeys : [ true, 38, 40 ],
+        jqModal : false,
+        closeOnEscape : true,
+        errorTextFormat:function(response){
+            return response.responseText;
+        }
+    }, // edit options
+    {
+        width : 400,
+        //savekey : [ true, 13 ],
+        navkeys : [ true, 38, 40 ],
+        jqModal : false,
+        closeOnEscape : true,
+        errorTextFormat:function(response){
+            return response.responseText;
+        }
+    }, // add options
+    {
+                reloadAfterSubmit : false,
+                jqModal : false,
+                closeOnEscape : true
+            } // del options
+         );
+
+    addPager(gridTable, gridPager); 
+});
+</script>
+<?php 
+$protocol = 'http://';
+$cdnServer = $protocol.CDN_SERVER;
+/*
+ * Adding JqGrid as grid.
+ */
+$this->headLink()
+    ->appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.jqgrid.css')
+    ->//Select multiple columns from column chooser
+appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.multiselect.css');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/ui.multiselect.js');
+// This is compressed version of jqGrid 3.6, It has all plugins in one file only
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/i18n/grid.locale-en.js');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/jquery.jqGrid.min.js');
+// Gloabal Settings for JqGrid
+$this->headScript()->appendFile($cdnServer . '/plugins/jqgrid/jqGrid.global.js');
+?>

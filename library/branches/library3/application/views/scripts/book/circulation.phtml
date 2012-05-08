@@ -1,0 +1,137 @@
+<style>
+#bookCirculation {
+	font-size:0.9em;
+	font-family: serif;
+}
+.acc_no:hover,.member_id:hover{
+	color: black;	
+}
+.acc_no {
+	font-family: cursive;	
+	color: #333;
+	display: table-cell;
+}
+
+.member_id {
+	font-family: cursive;
+	color: #333;
+	text-align: right;
+	padding-left : 0.4em;
+	display: table-cell;
+}
+.transaction {
+	padding : 0.1em 0.1em 0.1em 0;	
+	margin: 0.1em 0 0.4em 0.2em;
+	color: #aaa;
+	float: left;
+	border-bottom: 1px solid #dadada;
+}
+.transaction:hover {
+	background-color: #eee;
+	color: #111;
+}
+<!--
+@MEDIA print{
+	.noprint {
+		display: none;
+	}
+    #bookCirculation {
+    	font-size: 0.75em;
+    }
+
+    #bookCirculation ol {
+    	max-width: 130px;
+    }    
+}
+-->
+</style>
+<div style="padding :0.5em 0 0.5em 0; text-align: center; " >
+<form class="noprint"><label><select name="process" class="ui-widget-content ui-corner-all">
+<option value="issue" <?php echo (strtolower($this->process)=='issue')?'selected="selected"':'' ?> >Issued</option>
+<option value="return" <?php echo (strtolower($this->process)=='return')?'selected="selected"':'' ?> >Returned</option>
+</select></label>
+	<label> : <input type="text" id="date" name="date" readonly="readonly" value="<?php 
+                echo $this->date->get(Zend_Date::DATE_MEDIUM);?>" size="10"  class="ui-widget-content ui-corner-all" style="text-align: center" ></label>
+	<button type="submit" class="ui-corner-all" style="font-size: 0.7em;">Show</button>
+</form>
+<h2><?php echo isset($this->process)?ucfirst(strtolower($this->process)):'Book'?> Circulation</h2>
+    <?php if (isset($this->date)) {
+	    echo '<h4>'.$this->date->toString('dd-MM-YYYY').'</h4>';
+    }?>
+<?php 
+$this->headTitle('Book Circulation');
+?>
+</div>
+<hr/>
+
+<script type="text/javascript">
+<!--
+$(function(){
+//jQueryfy buttons
+	$("button").button();
+    serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+    $("#date").datepicker({
+    	maxDate : serverDateObj,
+    	dateFormat: 'dd-mm-yy',
+    	currentText: 'Now'
+    });
+});
+//-->
+</script>
+<?php 
+if (isset($this->transSet)) {
+if (empty($this->transSet)) {
+    echo("Nothing yet!!");
+    return true;
+}?>
+<div id="bookCirculation">
+<ol id="transactionSet">
+<?php
+    foreach ($this->transSet as $key => $trans) {
+        echo '<li class="transaction" ><span class="acc_no">'.$trans['acc_no'].'</span><span class="member_id">'.$trans['member_id'].'</span></li>';
+    } ?>
+    
+</ol>
+</div>
+<script type="text/javascript">
+<!--
+var accNoWidth = 2;
+var memberIdWidth = 2;
+var transactionWidth = 2;
+
+$('.transaction').each(function(){
+	var accNo = $(this).children('.acc_no');
+	var memberId = $(this).children('.member_id');
+	var thisAccNoWidth = accNo.width();
+	var thisMemberIdWidth = memberId.width();
+    if (thisAccNoWidth > accNoWidth){
+    	accNoWidth = thisAccNoWidth;
+    }
+    if (thisMemberIdWidth > memberIdWidth){
+    	memberIdWidth = thisMemberIdWidth;
+    }
+    thistransactionWidth = thisAccNoWidth + thisMemberIdWidth;
+    if (thistransactionWidth > transactionWidth){
+    	transactionWidth = thistransactionWidth;
+    }
+});
+$('.acc_no').css('width', accNoWidth + 'px');
+$('.member_id').css('width', memberIdWidth + 'px');
+$('.transaction').css('max-width', (transactionWidth+30) + 'px');
+
+$(function(){
+	$('#transactionSet').makeacolumnlists({cols:4,colWidth:(transactionWidth+30)});
+
+	$('#bookCirculation ol').each(function(){
+		$(this).prepend('<li value="0" style="display:block;"><span class="acc_no" style="display:inline;">Acc. no.</span><span style="display:inline;padding-left:1.8em;" class="member_id">Member</span></li>');
+	}); 
+});
+//-->
+</script>
+    <?php
+}
+$protocol = 'http://';
+$cdnServer = $protocol.CDN_SERVER;
+// Auto columns
+$this->headScript()->appendFile($cdnServer . '/js/plugins/columnizer.js');
+?>

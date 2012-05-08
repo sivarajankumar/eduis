@@ -1,0 +1,290 @@
+<?php $this->headTitle('Book Return',true); ?>
+<h3 align="center">Book Return</h3>
+<div id="main_div">
+<form style="text-align: center;" method="GET"
+	action="javascript:fetchBookInfo();"><label for="txtacc_no"
+	accesskey="A" id="lbl_accno" style="padding: 0.4em; float: none;"
+	class="ui-widget-content  ui-corner-all">Acc No : <input type="text"
+	id="txtacc_no" size="8" maxlength="6" /><button type="submit"
+	value="Submit">Submit</button></label></form>
+<table border="0" style="width: 100%;margin-top: 1em;">
+	<tr valign="top" >
+		<td style="width: 50%">
+		<div id="bookArea" style="display: none;">
+        <fieldset class="ui-corner-all"><legend
+        	class="ui-widget-header ui-corner-all">Document Info</legend>
+        <div id="bookInfo">&nbsp;</div>
+        <div style="clear: both">
+        <div style="clear: both"><a id="moreInfo" tabindex="4" href="#">more...</a></div>
+        <div id="moreBookInfo" style="display: none;">processing...</div>
+        <div style="clear: both"><a id="lessInfo" tabindex="5" href="#"
+        	style="display: none;">less...</a></div>
+        </div>
+        
+        </fieldset>
+        </div>
+		</td>
+
+		<td  style="width: 50%">
+		<div id="member-area" style="width: 100%;display: none;">
+        <fieldset class="ui-corner-all"><legend
+        	class="ui-widget-header ui-corner-all">Member Info</legend>
+        	<table style="width: 100%;">
+        		<tr>
+        			<td><div id="memberInfoBasic" class="ui-helper-reset"></div></td>
+        			<td style="width: 3.5cm;"><div id="memberInfoImage" class="ui-helper-reset">:IMAGE:</div></td>
+        		</tr>
+        	</table>
+        <!--<div id="memberInfo" style="clear: both;">&nbsp;</div>-->
+        </fieldset>
+        </div>
+		</td>
+	</tr>
+
+</table>
+<form id="btndiv" method="GET" action="javascript:returnBook();"
+	style="clear: both; text-align: center; padding-top: 1em; padding-bottom: 1em; display: none;">
+<button type="submit" id="btnreturn" value="Return document" tabindex="1"
+	class="ui-corner-all" >Return document</button> <button type="reset" id="btnreset" >Reset</button></form>
+</div>
+
+
+<script type="text/javascript">
+
+//jQueryfy buttons
+$("button").button();
+var urlBookDetail  =  '<?=$this->url ( array ('controller' => 'book', 'action' => 'getbookdetails' ) );?>';
+var urlBookImage = '<?=$this->url ( array ('controller' => 'isbn', 'action' => 'getbookimage' ) );?>';
+var urlMemberInfo  = '<?=$this->url ( array ('controller' => 'member', 'action' => 'getmemberinfo' ) );?>';
+var urlBookReturn = '<?=$this->url ( array ('action' => 'returnbook' ) );?>';
+var acc_no;
+var book_title;
+var book_authors;
+var isbn_id;
+var issue_date;
+var return_date;
+var member_id,member_type_id;
+var status ;
+var day_late;
+$(function(){
+	$("#txtacc_no").focus().select();
+	
+	$('input').keyup(function(event) {
+        var value = $(this).val();
+        value = $.trim(value);
+        $(this).val(value);
+	});
+	$("#main_div span").parent().attr("class", "ui-state-highlight ui-corner-all");
+	$("#btnreset").click(function(){
+		resetAll();	 
+	});
+
+
+    /*
+      Show-Hide things...
+    */
+    $('a#moreInfo').click(function() {
+        toggleBookInfo();
+        return false;
+      });
+
+    $('a#lessInfo').click(function() {
+        toggleBookInfo();
+        return false;
+     });
+
+
+    /*
+     * Toggle books info div
+     */
+    var toggleBookInfo = function(){
+    	$('#moreBookInfo').slideToggle();
+    	$('a#moreInfo').toggle();
+    	$('a#lessInfo').slideToggle("slow");
+    };
+    	
+});
+
+/*
+ * Fetch book information on basis of accession number.
+ * 
+ */
+var fetchBookInfo = function(){
+		acc_no = $("#txtacc_no").val();
+		if (acc_no) {
+	        $.ajax({
+	            url : urlBookDetail,
+	            type : 'GET',
+	            dataType : "json",
+				async : false,
+	            data : {'acc_no' : acc_no },
+	            success: function(bookDetail){
+
+					status = bookDetail.bookInfo.status;
+					
+	                if(bookDetail.long_title || bookDetail.title){
+	                    objBookInfo = {"Title":bookDetail.title,
+	                            "Long Title":bookDetail.long_title,
+	                            "Author":bookDetail.author,
+	                            "Edition":bookDetail.edition,
+	                            "Volume":bookDetail.volume,
+	                            "Place_Pub.":bookDetail.place_publisher,
+	                            "Remarks":bookDetail.remarks,
+	                           "Issued on":bookDetail.issue_date,
+	                           "Return date":bookDetail.exp_return_date,
+	                           "Late":bookDetail.day_late
+	                           };
+	                    
+		                $('#bookInfo').html('');
+		                traverse(objBookInfo,'#bookInfo');
+		                $("#bookArea").slideDown("slow");
+		                
+		            	objBookMoreInfo = bookDetail.bookInfo;
+		                if(objBookMoreInfo.isbn_id){
+		                    $('#moreBookInfo').html('');
+		                    parsedBookInfo = {"ISBN": objBookMoreInfo.isbn_id,
+		                            "Year":bookDetail.year,
+		                            "Document Type": objBookMoreInfo.document_type_id,
+		                            "Cost": (bookDetail.currency_id+' '+bookDetail.cost),
+		                            "Status": objBookMoreInfo.status,
+		                            "Remarks": objBookMoreInfo.remarks,
+		                            "Physical":bookDetail.physical_desc
+		                           };
+		                    
+		                    traverse(parsedBookInfo,'#moreBookInfo');
+		                }else{
+		                    alert('Recieved book information is partially incompatible!!');
+		                }
+
+
+						switch(status.toUpperCase()){
+							case 'AVAILABLE':
+								$("#bookArea").show();
+								$("#btndiv").hide();
+								$("#member-area").hide();
+								alert('Book Acc No "' +  acc_no + '" is not issued');
+								$("#txtacc_no").focus().select();
+							break;
+							case 'ISSUED':
+								$("#bookArea").slideDown();
+								member_id = bookDetail.member_id;
+								fetchMemberInfo(member_id);
+
+								$("#btndiv").show();
+								$("#btnreturn").focus();
+							break;
+							default :
+								alert('Book status is unknown. i.e. '+status.toUpperCase());
+						}
+						/*	
+						$.getJSON(urlBookImage,
+									{isbn_id : isbn_id},
+									function(bookDetail){
+										$('#image_div').html(bookDetail);	
+						});
+						*/
+	                } else {
+	                    alert("Book Details are incompatible");
+	                }
+	                
+	             },
+	             error: function(xhr, text){
+	                 alert(xhr.responseText);
+	                 $("#bookArea").fadeOut('slow');
+	          		$("#divIssue").slideUp();
+	             }
+	         });
+		}
+};
+
+function returnBook() {
+	if(status.toUpperCase() == 'ISSUED'){
+				$.ajax({url : urlBookReturn,
+				   dataType : "json",
+				   data : { acc_no : acc_no } ,
+				   success : function(response){
+					   alert(response.responseText);
+					}, 
+				   error : function(transport){ alert(transport.responseText);}
+					  
+				});
+	}else{
+		alert("Can Not Return Book");
+	}
+	   resetAll();
+};
+
+/*
+ * Fetch Member Information
+ */
+var fetchMemberInfo = function(member_id){
+        $.ajax({
+            url : urlMemberInfo,
+            ifModified : true,
+            dataType : "json",
+            data : {'member_id' : member_id },
+            success : function(member){
+        		var memberInfoBasic = {};
+                if(member.member_type_id){
+                    switch(member.member_type_id.toUpperCase()){
+                    	case 'STUDENT' : 
+                            memberInfoBasic.name = member.info.first_name;
+                            memberInfoBasic.deptt = member.info.department_id;
+                            memberInfoBasic.degree = member.info.degree_id;
+                            memberInfoBasic.semester = member.info.semester_id;
+                    	break;
+                    	case 'STAFF' : 
+                            memberInfoBasic.name = member.info.initial+' '+member.info.first_name+' '+member.info.last_name;
+                            memberInfoBasic.deptt = member.info.department_id;
+                    	break;
+                    	case 'BOOKBANK' :
+                            memberInfoBasic.name = member.info.first_name;
+                            memberInfoBasic.membership = member.membership_type_id;
+                    	break;
+                    	default: var alertText = 'Oops, "'+member.member_type_id.toUpperCase()+'" is unknown member type!!';
+                    			alert(alertText);
+                    }
+                    memberInfoBasic.type = member.member_type_id;
+                    objMemberInfo = member;
+                    $('#memberInfoBasic').html('');
+                    traverse(memberInfoBasic,'#memberInfoBasic');
+					$("#member-area").slideDown();
+                }else{
+                    $('#member_id').val('');
+                    resetMemberSection();
+                    alert('Recieved member information is incompatible!!');
+                }
+            },
+            error: function(xhr, text){
+                alert(xhr.responseText);
+                resetMemberSection();
+            }
+        });
+};
+function resetAll(){
+	 $("#bookArea :text").val('');
+	 $("#bookArea").hide();
+	 $("#member-area").hide();
+	 $("#member-area :text").val('');
+	 $("#btndiv").hide();
+	 $("#txtacc_no").focus().select();
+};
+
+/*
+ * Paste json object data into a div.
+ */
+var traverse = function(jsonObj, targetDiv, clean){
+	//if (typeof clean === 'undefined') clean = false;
+	$.each(jsonObj, function (key, value) {
+		if( value && typeof value == "object" ) {
+			prepareSelectOption(value, targetDiv);
+		} else if( value && (typeof value == "string" || typeof value == "number" ) ) {
+			if(clean){
+				key = key.replace('_', ' ');
+				key = key.replace('id', '');
+			}
+			$(targetDiv).append('<div class="infoDiv" ><span class="infoHeader" >'+key+' : </span><span class="infoContent ui-state-highlight ui-corner-all">'+value+'</span></div>');
+		}
+	});
+};
+</script>
