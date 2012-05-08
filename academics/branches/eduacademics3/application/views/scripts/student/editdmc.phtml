@@ -1,6 +1,3 @@
-<?php 
-    $dmc_indo_id = 0;
-?>
 
 <form id="dmc_info_form" class="uniForm" action="javascript:get_dmc_info()">
 <h3>DMC Details</h3>
@@ -168,7 +165,7 @@
     }
 
     function submit_dmc_info(){
-    	var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmcinfo'))?>";
+    	var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmc'))?>";
     	$.ajax({
     		url : urlSaveDmcInfo,
     		data : {myarray:dmc_data},
