@@ -215,21 +215,13 @@ class Core_Model_Batch extends Core_Model_Generic
         $department_id = null;
         $programme_id = null;
         $batch_ids = array();
-        if ($batch_start_year_specific == true) {
-            $batch_start = $this->getBatch_start(true);
-        }
-        if ($department_specific == true) {
-            $department_id = $this->getDepartment_id(true);
-        }
-        if ($programme_specific == true) {
-            $programme_id = $this->getProgramme_id(true);
-        }
+        $batch_start_year_specific &&
+         ($batch_start = $this->getBatch_start(true));
+        $department_id && ($department_id = $this->getDepartment_id(true));
+        $programme_specific && ($programme_id = $this->getProgramme_id(true));
         $batch_ids = $this->getMapper()->fetchBatchIds($batch_start, 
         $department_id, $programme_id);
-        if (empty($batch_ids)) {
-            return false;
-        } else {
-            return $batch_ids;
-        }
+        (empty($batch_ids)) && ($batch_ids = false);
+        return $batch_ids;
     }
 }
