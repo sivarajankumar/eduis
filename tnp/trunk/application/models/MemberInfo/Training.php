@@ -188,13 +188,25 @@ class Tnp_Model_MemberInfo_Training extends Tnp_Model_Generic
     }
     public function fetchInfo ()
     {
-        $emp_test_id = $this->getEmployability_test_id(true);
+        $member_id = $this->getMember_id(true);
+        $training_id = $this->getTraining_id(true);
         $info = array();
-        $info = $this->getMapper()->fetchInfo($emp_test_id);
+        $info = $this->getMapper()->fetchInfo($member_id, $training_id);
         if (empty($info)) {
             return false;
         } else {
             return $this->setOptions($info);
+        }
+    }
+    public function fetchTrainingIds ()
+    {
+        $member_id = $this->getMember_id(true);
+        $training_ids = array();
+        $training_ids = $this->getMapper()->fetchTrainingIds($member_id);
+        if (empty($training_ids)) {
+            return false;
+        } else {
+            return $training_ids;
         }
     }
 }

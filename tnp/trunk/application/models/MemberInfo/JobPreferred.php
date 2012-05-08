@@ -107,15 +107,16 @@ class Tnp_Model_MemberInfo_JobPreferred extends Tnp_Model_Generic
             return $member_ids;
         }
     }
-    public function fetchInfo ()
+    public function fetchJobAreasPreferred ()
     {
-        $emp_test_id = $this->getEmployability_test_id(true);
-        $info = array();
-        $info = $this->getMapper()->fetchInfo($emp_test_id);
-        if (empty($info)) {
+        $member_id = $this->getMember_id(true);
+        $areas_preferred = array();
+        $areas_preferred = $this->getMapper()->fetchJobAreasPreferred(
+        $member_id);
+        if (empty($areas_preferred)) {
             return false;
         } else {
-            return $this->setOptions($info);
+            return $areas_preferred;
         }
     }
 }

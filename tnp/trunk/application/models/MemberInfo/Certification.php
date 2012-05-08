@@ -126,7 +126,7 @@ class Tnp_Model_MemberInfo_Certification extends Tnp_Model_Generic
     public function fetchCertificationIds ()
     {
         $member_id = $this->getMember_id(true);
-        $certifications_ids = $this->getMapper()->fetchCertificationIds();
+        $certifications_ids = $this->getMapper()->fetchCertificationIds($member_id);
         if (empty($certifications_ids)) {
             return false;
         } else {

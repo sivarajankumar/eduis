@@ -110,6 +110,17 @@ class Tnp_Model_MemberInfo_Skills extends Tnp_Model_Generic
     }
     public function fetchSkills ()
     {
+        $member_id = $this->getMember_id(true);
+        $info = array();
+        $info = $this->getMapper()->fetchSkills($member_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $info;
+        }
+    }
+    public function fetchAllMembersAllSkills ()
+    {
         $info = array();
         $info = $this->getMapper()->fetchSkills();
         if (empty($info)) {

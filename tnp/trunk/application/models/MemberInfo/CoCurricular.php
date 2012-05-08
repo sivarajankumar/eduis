@@ -1,17 +1,17 @@
 <?php
 class Tnp_Model_MemberInfo_CoCurricular extends Tnp_Model_Generic
 {
-    protected $_hmember_id;
+    protected $_member_id;
     protected $_achievements;
     protected $_activities;
     protected $_hobbies;
     protected $_mapper;
     /**
-     * @return the $_hmember_id
+     * @return the $_member_id
      */
-    public function getHmember_id ()
+    public function getMember_id ()
     {
-        return $this->_hmember_id;
+        return $this->_member_id;
     }
     /**
      * @return the $_achievements
@@ -35,11 +35,11 @@ class Tnp_Model_MemberInfo_CoCurricular extends Tnp_Model_Generic
         return $this->_hobbies;
     }
     /**
-     * @param field_type $_hmember_id
+     * @param field_type $_member_id
      */
-    public function setHmember_id ($_hmember_id)
+    public function setMember_id ($_member_id)
     {
-        $this->_hmember_id = $_hmember_id;
+        $this->_member_id = $_member_id;
     }
     /**
      * @param field_type $_achievements
