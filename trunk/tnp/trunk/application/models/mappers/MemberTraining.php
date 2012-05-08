@@ -49,6 +49,20 @@ class Tnp_Model_Mapper_MemberTraining
         Zend_Db::FETCH_UNIQUE);
         return $student_training_table_info[$member_id];
     }
+    public function fetchTrainingIds ($member_id)
+    {
+        $db_table = $this->getDbTable();
+        $adapter = $db_table->getAdapter();
+        $student_training_table = $db_table->info('name');
+        $required_cols = array('training_id');
+        $select = $adapter->select()
+            ->from($student_training_table, $required_cols)
+            ->where('member_id = ?', $member_id);
+        $student_training_table_info = array();
+        $student_training_table_info = $select->query()->fetchAll(
+        Zend_Db::FETCH_COLUMN);
+        return $student_training_table_info;
+    }
     public function fetchMemberIds ($training_id = null, $training_institute = null, 
     $start_date = null, $completion_date = null, $training_semester = null)
     {

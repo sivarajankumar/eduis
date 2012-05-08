@@ -48,7 +48,7 @@ class Tnp_Model_Mapper_MemberExperience
         'experience_years', 'organisation', 'start_date', 'end_date', 
         'is_parttime', 'description');
         $select = $adapter->select()
-            ->from($student_experience_table, $student_experience_id)
+            ->from($student_experience_table, $required_cols)
             ->where('student_experience_id = ?', $student_experience_id);
         $student_experience_info = array();
         $student_experience_info = $select->query()->fetchAll(

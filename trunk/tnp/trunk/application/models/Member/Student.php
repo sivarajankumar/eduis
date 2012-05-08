@@ -381,7 +381,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
         $student_active_class_ids = array();
         $student_class_ids = $this->fetchAllClassIds();
         $member_id = $this->getMember_id(true);
-        $class_obj = new Tnp_Model_Core_Class();
+        $class_obj = new Tnp_Model_Class();
         $class_obj->setIs_active(true);
         $active_class_ids = $class_obj->fetchClassIds(null, null, true);
         if (! empty($student_class_ids) and ! empty($active_class_ids)) {
@@ -411,7 +411,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
      */
     public function fetchSemesterClassId ($batch_id, $semester_id)
     {
-        $class_object = new Tnp_Model_Core_Class();
+        $class_object = new Tnp_Model_Class();
         $class_object->setBatch_id($batch_id);
         $class_object->setSemester_id($semester_id);
         return $class_object->fetchClassIds(true, true);
@@ -440,7 +440,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
         $student_class_object = new Tnp_Model_MemberInfo_Class();
         $student_class_object->setMember_id($member_id);
         $batch_identifier_class_id = $student_class_object->fetchBatchIdentifierClassId();
-        $class_object = new Tnp_Model_Core_Class();
+        $class_object = new Tnp_Model_Class();
         $class_object->setClass_id($batch_identifier_class_id);
         $class_object->fetchInfo();
         $batch_id = $class_object->getBatch_id();
@@ -484,7 +484,166 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
             $member_id, $class_id);
         }
     }
-/**
- * Functions specific to Career
- */
+    /**
+     * Operating Condition : Member Id is set
+     * @return false|array
+     */
+    public function fetchCertificationIds ()
+    {
+        $member_id = $this->getMember_id(true);
+        $member_certification = new Tnp_Model_MemberInfo_Certification();
+        $member_certification->setMember_id($member_id);
+        return $member_certification->fetchCertificationIds();
+    }
+    /**
+     * 
+     * Operating Condition : Member Id is set
+     * @param int $certiffication_id
+     * @return object |false Object of Tnp_Model_MemberInfo_Certification
+     */
+    public function fetchCertificationInfo ($certiffication_id)
+    {
+        $member_id = $this->getMember_id(true);
+        $member_certification = new Tnp_Model_MemberInfo_Certification();
+        $member_certification->setMember_id($member_id);
+        $member_certification->setCertification_id($certiffication_id);
+        return $member_certification->fetchInfo();
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return object|false  Object of Tnp_Model_MemberInfo_CoCurricular
+     */
+    public function fetchCoCurricularInfo ()
+    {
+        $member_id = $this->getMember_id(true);
+        $member_co_corricular = new Tnp_Model_MemberInfo_CoCurricular();
+        $member_co_corricular->setMember_id($member_id);
+        return $member_co_corricular->fetchInfo();
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return false|array
+     */
+    public function fetchEmpTestRecordIds ()
+    {
+        $member_id = $this->getMember_id(true);
+        $emp_test_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
+        $emp_test_record->setMember_id($member_id);
+        return $emp_test_record->fetchTestRecordIds($member_id);
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @param int $test_record_id
+     * @return object|false  Object of Tnp_Model_MemberInfo_EmployabilityTestRecord
+     */
+    public function fetchEmpTestInfo ($test_record_id)
+    {
+        $member_id = $this->getMember_id(true);
+        $emp_test_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
+        $emp_test_record->setTest_record_id($test_record_id);
+        $emp_test_record->setMember_id($member_id);
+        return $emp_test_record->fetchInfo();
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return object|array
+     */
+    public function fetchExperienceIds ()
+    {
+        $member_id = $this->getMember_id(true);
+        $member_exp = new Tnp_Model_MemberInfo_Experience();
+        $member_exp->setMember_id($member_id);
+        return $member_exp->fetchStudentExperienceIds();
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @param int $student_experience_id
+     * @return object|false  Object of Tnp_Model_MemberInfo_Experience
+     */
+    public function fetchExperienceInfo ($student_experience_id)
+    {
+        $member_id = $this->getMember_id(true);
+        $member_exp = new Tnp_Model_MemberInfo_Experience();
+        $member_exp->setStudent_experience_id($student_experience_id);
+        return $member_exp->fetchInfo();
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return false|array
+     */
+    public function fetchJobPreferred ()
+    {
+        $member_id = $this->getMember_id(true);
+        $member_exp = new Tnp_Model_MemberInfo_JobPreferred();
+        $member_exp->setMember_id($member_id);
+        return $member_exp->fetchJobAreasPreferred();
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return false|array
+     */
+    public function fetchLanguagesKnown ()
+    {
+        $member_id = $this->getMember_id(true);
+        $member_language = new Tnp_Model_MemberInfo_Language();
+        $member_language->setMember_id($member_id);
+        return $member_language->fetchLanguagesKnown();
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return object|false  Object of Tnp_Model_MemberInfo_ProfileStatus
+     */
+    public function fetchProfileInfo ()
+    {
+        $member_id = $this->getMember_id(true);
+        $member_profile = new Tnp_Model_MemberInfo_ProfileStatus();
+        $member_profile->setMember_id($member_id);
+        return $member_profile->fetchInfo();
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return false|array
+     */
+    public function fetchSkills ()
+    {
+        $member_id = $this->getMember_id(true);
+        $member_skills = new Tnp_Model_MemberInfo_Skills();
+        $member_skills->setMember_id($member_id);
+        return $member_skills->fetchSkills();
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return object|false  Object of Tnp_Model_MemberInfo_Skills
+     */
+    public function fetchSkillInfo ()
+    {
+        $member_id = $this->getMember_id(true);
+        $member_skills = new Tnp_Model_MemberInfo_Skills();
+        $member_skills->setMember_id($member_id);
+        return $member_skills->fetchInfo();
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return false|array
+     */
+    public function fetchTrainingIds ()
+    {
+        $member_id = $this->getMember_id(true);
+        $member_training = new Tnp_Model_MemberInfo_Training();
+        $member_training->setMember_id($member_id);
+        return $member_training->fetchTrainingIds();
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @param $training_id
+     * @return object|false  Object of Tnp_Model_MemberInfo_Skills
+     */
+    public function fetchTrainingInfo ($training_id)
+    {
+        $member_id = $this->getMember_id(true);
+        $member_training = new Tnp_Model_MemberInfo_Training();
+        $member_training->setMember_id($member_id);
+        $member_training->setTraining_id($training_id);
+        return $member_training->fetchInfo();
+    }
 }

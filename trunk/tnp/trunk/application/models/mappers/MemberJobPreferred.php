@@ -37,7 +37,7 @@ class Tnp_Model_Mapper_MemberJobPreferred
      * 
      * @param integer $member_id
      */
-    public function fetchInfo ($member_id)
+    public function fetchJobAreasPreferred ($member_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
