@@ -1,49 +1,55 @@
 <?php
-class Tnp_Model_MemberInfo_JobPreferred extends Tnp_Model_Generic
+class Tnp_Model_Role extends Tnp_Model_Generic
 {
-    protected $_member_id;
-    protected $_job_area;
+    protected $_role_id;
+    protected $_role_name;
     protected $_mapper;
     /**
-     * @param bool $throw_exception optional
-     * @return the $_member_id
+     * @return the $_role_id
      */
-    public function getMember_id ($throw_exception = null)
+    public function getRole_id ($throw_exception = null)
     {
-        $member_id = $this->_member_id;
-        if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set';
+        $role_id = $this->_role_id;
+        if (empty($role_id) and $throw_exception == true) {
+            $message = '_role_id is not set';
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
-            return $member_id;
+            return $role_id;
         }
     }
     /**
-     * @return the $_job_area
+     * @return the $_role_name
      */
-    public function getJob_area ()
+    public function getRole_name ($throw_exception = null)
     {
-        return $this->_job_area;
+        $role_name = $this->_role_name;
+        if (empty($role_name) and $throw_exception == true) {
+            $message = '_role_name is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $role_name;
+        }
     }
     /**
-     * @param field_type $_member_id
+     * @param field_type $_role_id
      */
-    public function setMember_id ($_member_id)
+    public function setRole_id ($_role_id)
     {
-        $this->_member_id = $_member_id;
+        $this->_role_id = $_role_id;
     }
     /**
-     * @param field_type $_job_area
+     * @param field_type $_role_name
      */
-    public function setJob_area ($_job_area)
+    public function setRole_name ($_role_name)
     {
-        $this->_job_area = $_job_area;
+        $this->_role_name = $_role_name;
     }
     /**
      * Sets Mapper
-     * @param Tnp_Model_Mapper_MemberJobPreferred $mapper
-     * @return Tnp_Model_MemberInfo_JobPreferred
+     * @param Tnp_Model_Mapper_Role $mapper
+     * @return Tnp_Model_Role
      */
     public function setMapper ($mapper)
     {
@@ -52,12 +58,12 @@ class Tnp_Model_MemberInfo_JobPreferred extends Tnp_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_MemberJobPreferred
+     * @return Tnp_Model_Mapper_Role
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_MemberJobPreferred());
+            $this->setMapper(new Tnp_Model_Mapper_Role());
         }
         return $this->_mapper;
     }
@@ -94,24 +100,24 @@ class Tnp_Model_MemberInfo_JobPreferred extends Tnp_Model_Generic
         }
     }
     /**
-     * Fetches all member ids for given preffered functional area
-     * Enter description here ...
+     * 
+     *@return array ,Format =array($role_id=>$role_name)
      */
-    public function fetchMemberIds ()
+    public function fetchRoles ()
     {
-        $job_area_preferred = $this->getJob_area(true);
-        $member_ids = $this->getMapper()->fetchMemberIds($job_area_preferred);
-        if (empty($member_ids)) {
+        $roles = array();
+        $roles = $this->getMapper()->fetchRoles();
+        if (empty($roles)) {
             return false;
         } else {
-            return $member_ids;
+            return $roles;
         }
     }
     public function fetchInfo ()
     {
-        $emp_test_id = $this->getEmployability_test_id(true);
+        $role_id = $this->getRole_id(true);
         $info = array();
-        $info = $this->getMapper()->fetchInfo($emp_test_id);
+        $info = $this->getMapper()->fetchInfo($role_id);
         if (empty($info)) {
             return false;
         } else {

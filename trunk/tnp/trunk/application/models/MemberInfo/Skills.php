@@ -57,7 +57,7 @@ class Tnp_Model_MemberInfo_Skills extends Tnp_Model_Generic
     }
     /**
      * Sets Mapper
-     * @param Tnp_Model_Mapper_MemberInfo_Skills $mapper
+     * @param Tnp_Model_Mapper_MemberSkills $mapper
      * @return Tnp_Model_MemberInfo_Skills
      */
     public function setMapper ($mapper)
@@ -67,12 +67,12 @@ class Tnp_Model_MemberInfo_Skills extends Tnp_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_MemberInfo_Skills
+     * @return Tnp_Model_Mapper_MemberSkills
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_MemberInfo_Skills());
+            $this->setMapper(new Tnp_Model_Mapper_MemberSkills());
         }
         return $this->_mapper;
     }
