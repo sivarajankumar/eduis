@@ -1,49 +1,48 @@
 <?php
-class Tnp_Model_MemberInfo_JobPreferred extends Tnp_Model_Generic
+class Tnp_Model_Industry extends Tnp_Model_Generic
 {
-    protected $_member_id;
-    protected $_job_area;
+    protected $_industry_id;
+    protected $_industry_name;
     protected $_mapper;
     /**
-     * @param bool $throw_exception optional
-     * @return the $_member_id
+     * @return the $_industry_id
      */
-    public function getMember_id ($throw_exception = null)
+    public function getIndustry_id ($throw_exception = null)
     {
-        $member_id = $this->_member_id;
-        if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set';
+        $industry_id = $this->_industry_id;
+        if (empty($industry_id) and $throw_exception == true) {
+            $message = '_industry_id is not set';
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
-            return $member_id;
+            return $industry_id;
         }
     }
     /**
-     * @return the $_job_area
+     * @return the $_industry_name
      */
-    public function getJob_area ()
+    public function getIndustry_name ()
     {
-        return $this->_job_area;
+        return $this->_industry_name;
     }
     /**
-     * @param field_type $_member_id
+     * @param field_type $_industry_id
      */
-    public function setMember_id ($_member_id)
+    public function setIndustry_id ($_industry_id)
     {
-        $this->_member_id = $_member_id;
+        $this->_industry_id = $_industry_id;
     }
     /**
-     * @param field_type $_job_area
+     * @param field_type $_industry_name
      */
-    public function setJob_area ($_job_area)
+    public function setIndustry_name ($_industry_name)
     {
-        $this->_job_area = $_job_area;
+        $this->_industry_name = $_industry_name;
     }
     /**
      * Sets Mapper
-     * @param Tnp_Model_Mapper_MemberJobPreferred $mapper
-     * @return Tnp_Model_MemberInfo_JobPreferred
+     * @param Tnp_Model_Mapper_Industry $mapper
+     * @return Tnp_Model_Industry
      */
     public function setMapper ($mapper)
     {
@@ -52,12 +51,12 @@ class Tnp_Model_MemberInfo_JobPreferred extends Tnp_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_MemberJobPreferred
+     * @return Tnp_Model_Mapper_Industry
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_MemberJobPreferred());
+            $this->setMapper(new Tnp_Model_Mapper_Industry());
         }
         return $this->_mapper;
     }
@@ -94,24 +93,24 @@ class Tnp_Model_MemberInfo_JobPreferred extends Tnp_Model_Generic
         }
     }
     /**
-     * Fetches all member ids for given preffered functional area
-     * Enter description here ...
+     * 
+     * @return array ,Format = array($industry_id=>$industry_names)
      */
-    public function fetchMemberIds ()
+    public function fetchIndustries ()
     {
-        $job_area_preferred = $this->getJob_area(true);
-        $member_ids = $this->getMapper()->fetchMemberIds($job_area_preferred);
-        if (empty($member_ids)) {
+        $industries = array();
+        $industries = $this->getMapper()->fetchIndustries();
+        if (empty($industries)) {
             return false;
         } else {
-            return $member_ids;
+            return $industries;
         }
     }
     public function fetchInfo ()
     {
-        $emp_test_id = $this->getEmployability_test_id(true);
+        $industry_id = $this->getIndustry_id(true);
         $info = array();
-        $info = $this->getMapper()->fetchInfo($emp_test_id);
+        $info = $this->getMapper()->fetchInfo($industry_id);
         if (empty($info)) {
             return false;
         } else {

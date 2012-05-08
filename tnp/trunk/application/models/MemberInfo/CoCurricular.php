@@ -64,8 +64,8 @@ class Tnp_Model_MemberInfo_CoCurricular extends Tnp_Model_Generic
     }
     /**
      * Sets Mapper
-     * @param Tnp_Model_Mapper_MemberInfo_CoCurricular $mapper
-     * @return Tnp_Model_Core_Training
+     * @param Tnp_Model_Mapper_MemberCoCurricular $mapper
+     * @return Tnp_Model_MemberInfo_CoCurricular
      */
     public function setMapper ($mapper)
     {
@@ -74,12 +74,12 @@ class Tnp_Model_MemberInfo_CoCurricular extends Tnp_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_MemberInfo_CoCurricular
+     * @return Tnp_Model_Mapper_MemberCoCurricular
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_MemberInfo_CoCurricular());
+            $this->setMapper(new Tnp_Model_Mapper_MemberCoCurricular());
         }
         return $this->_mapper;
     }

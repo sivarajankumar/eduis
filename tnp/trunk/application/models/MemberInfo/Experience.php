@@ -192,7 +192,7 @@ class Tnp_Model_MemberInfo_Experience extends Tnp_Model_Generic
     }
     /**
      * Sets Mapper
-     * @param Tnp_Model_Mapper_MemberInfo_Experience $mapper
+     * @param Tnp_Model_Mapper_MemberExperience $mapper
      * @return Tnp_Model_MemberInfo_Experience
      */
     public function setMapper ($mapper)
@@ -202,12 +202,12 @@ class Tnp_Model_MemberInfo_Experience extends Tnp_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_MemberInfo_Experience
+     * @return Tnp_Model_Mapper_MemberExperience
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_MemberInfo_Experience());
+            $this->setMapper(new Tnp_Model_Mapper_MemberExperience());
         }
         return $this->_mapper;
     }
