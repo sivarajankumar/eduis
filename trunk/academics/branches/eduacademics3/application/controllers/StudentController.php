@@ -1391,7 +1391,8 @@ class StudentController extends Zend_Controller_Action
                 break;
         }
     }
-    public function savedmcAction ()
+
+    public function savedmcinfoAction ()
     {
         $dmc_data_array = array();
         $this->_helper->viewRenderer->setNoRender(true);
@@ -1399,9 +1400,12 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $dmc_data_array = $params['myarray'];
+        $dmc_info = $params['myarray']['dmc_info'];
+        $dmc_data_array = $params['myarray']['dmc_data'];
+        $student_model = new Acad_Model_Member_Student();
+        $student_model->setMember_id($this->getMember_id());
+        $dmc_info_id = $student_model->saveDmcInfo($dmc_info);
         $dmc_data_value = array_values($dmc_data_array);
-        $dmc_info_id = $dmc_data_value[0]['dmc_info_id'];
         $subject_ids = array_keys($dmc_data_array);
         $dmc_info_model = new Acad_Model_Course_DmcInfo();
         $dmc_info_model->setDmc_info_id($dmc_info_id);
@@ -1410,61 +1414,19 @@ class StudentController extends Zend_Controller_Action
         $student_subject_model = new Acad_Model_StudentSubject();
         $student_subject_model->setMember_id($this->getMember_id());
         $student_subject_model->setClass_id($class_id);
-        Zend_Registry::get('logger')->debug($dmc_data_array);
-        /*   foreach ($subject_ids as $subject_id) {
-            $student_subject_model->setSubject_id($subject_id);
-            $student_subject_id = array();
-            $student_subject_id = $student_subject_model->fetchStudentSubjectId();
-            Zend_Registry::get('logger')->debug($student_subject_id);
-            $dmc_data_array[$subject_id]['student_subject_id'] = $student_subject_id['student_subject_id'];
-            Zend_Registry::get('logger')->debug($dmc_data_array);
-        }*/
         foreach ($dmc_data_array as $subject_id => $data_array) {
             $student_subject_model->setSubject_id($subject_id);
             $student_subject_id = array();
             $student_subject_id = $student_subject_model->fetchStudentSubjectId();
             $data_array['student_subject_id'] = $student_subject_id['student_subject_id'];
-            $dmc_data_array[$subject_id]=$data_array;
+            $data_array['student_subject_id'] = $student_subject_id['dmc_info_id'];
+            $dmc_data_array[$subject_id] = $data_array;
         }
         Zend_Registry::get('logger')->debug($dmc_data_array);
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         foreach ($dmc_data_array as $dmc_data) {
             $student_model->saveDmcMarks($dmc_data);
-        }
-    }
-    public function savedmcinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $format = $this->_getParam('format', 'html');
-        $dmc_info = $params['myarray'];
-        $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
-        $dmc_info_id = $student_model->saveDmcInfo($dmc_info);
-        Zend_Registry::get('logger')->debug($dmc_info_id);
-        switch ($format) {
-            case 'html':
-                if (! empty($dmc_info_id)) {
-                    $this->view->assign('dmc_info_id', $dmc_info_id);
-                }
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($dmc_info_id, false) .
-                 ')';
-                break;
-            case 'json':
-                $this->_helper->json($dmc_info_id);
-                break;
-            case 'test':
-                Zend_Registry::get('logger')->debug($dmc_info_id);
-                break;
-            default:
-                ;
-                break;
         }
     }
     public function fetchsubjectdmcAction ()
