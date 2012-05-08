@@ -45,13 +45,13 @@
     <h3>Degree Details</h3>
     <?php 
         foreach ($this->class_semester as $class_id => $sem_no){
-            echo '<span class="name_span">Sem No.:'.$sem_no.' </span>';
+            echo '<span class="name_span">Sem No.:'.$sem_no.'</span>';
             foreach ($this->degree_data[$sem_no] as $dmc_info_id => $dmc_data){
                 if($dmc_data != null){
                     echo '<a href="/student/viewdmc?dmc_info_id='.$dmc_info_id.'&class_id='.$dmc_data['class_id'].'&dmc_view_type=single"><span class="serial_no">DMC Serial No.'.$dmc_data['dmc_id'].'</span></a>';
                     echo '<span class="serial_no"> '.$dmc_data['dispatch_date'].'</span>';
                     //echo '<br>';
-                    echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+                    echo '&nbsp;&nbsp;&nbsp;&nbsp;';
                 }
             }
             echo '<a href="/student/editdmc?class_id='.$class_id.'&dmc_view_type=latest">+ Add More</a>';
@@ -72,19 +72,19 @@
 		background-color:#eceff4;
 		border:1px solid #b4c1da;
 		width:57%;
-		font-size:17px;
+		font-size:1.4em;
 		font-weight:100;
 	}
 	.name_span{
 		padding:3px 3px 3px 10px;
-		font-size:17px;
+		font-size:1.4em;
 		margin:0 10px 10px 0;
 	}
 	.view_span{
 		padding:3px 3px 3px 10px;
 		background-color:#fef8f6;
 		border:1px solid #cd0a0a;
-		font-size:17px;
+		font-size:1.3em;
 		float:right;
 	}
 	.view_span a{
@@ -99,7 +99,7 @@
 		padding:3px 3px 3px 10px;
 		background-color:#fcfaf1;
 		border:1px solid #fcefa1;
-		font-size:17px;
+		font-size:1.3em;
 		float:right;
 	}
 	.create_span a{
@@ -111,7 +111,7 @@
 		cursor: pointer;
 	}
 	.serial_no{
-		font-size: 16px;
+		font-size: 1.2em;
 		text-decoration: none;
 	}
 	
