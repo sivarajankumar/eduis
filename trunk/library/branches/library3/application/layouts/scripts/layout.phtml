@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Language" content="en-GB" />
+<?php 
+$baseTheme = 'humanity';
+// Various Servers and Addresses
+$baseUrl = $this->baseUrl ();
+// Content Delievery Server i.e. static Files, e.g. CSS, JS, Themes and related images etc
+//CDN_SERVER = 'http://site.cdn.aceambala.com';
+// Images of users, events etc
+$imageServer = $baseUrl;
+$protocol = 'http://';
+// Add most common CSS files
+$this->headLink()->prependStylesheet($protocol.CDN_SERVER . '/css/layouts/library/default.css');
+//Jquery UI Theme
+$this->jQuery ()->addStylesheet ( $protocol.CDN_SERVER . '/css/themes/jqueryui/'.$baseTheme.'/jquery-ui.css' );
+
+// Add most common Script files
+$this->headLink()
+    ->appendStylesheet($protocol.CDN_SERVER . '/css/menu/stylesheet.css');
+
+// Jquery
+$this->jQuery ()->setLocalPath ( $protocol.CDN_SERVER . '/js/jquery-1.7.min.js' );
+// Jquery UI
+$this->jQuery ()->setUiLocalPath ( $protocol.CDN_SERVER . '/js/jquery-ui-1.8.16.custom.min.js' );
+
+
+echo $this->headMeta();
+echo $this->headTitle (); 
+echo $this->headLink ();
+echo $this->jQuery ()->uiEnable ();
+
+/*
+ * set body color by -> style="background-image: url('<?php CDN_SERVER; ?>/css/themes/jqueryui/<?php echo $baseTheme;?>/images/ui-bg_glass_100_fdf5ce_1x400.png');"
+ */
+?>
+</head>
+
+<body>
+<div id="topContent"  class="noprint" >
+<span id="topRightInfo">
+<span style="float: left;" class="ui-state-default ui-corner-bottom">Today&rsquo;s date: <span id="datetext"><?php $date = new Zend_Date(); echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span>
+<?php if (Zend_Auth::getInstance()->hasIdentity()) {
+    $authContent = Zend_Auth::getInstance()->getStorage ()->read ();
+    if ($authContent['identity'] != Libz_Resource_Acl_Guest::GUEST_ID) { ?>
+	<span style="float: left;" class="ui-state-default ui-corner-bottom">Hi! <span id="userName"><?php echo $authContent['identity'];?></span></span>
+	<span style="width: 4.8em; float: left; " class="ui-state-default ui-corner-bottom">
+	<a style="float: left; text-decoration: none;"  id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'logout' ), 'default' )?>">
+	<span style="float: left;">Logout</span><span class="ui-icon ui-icon-closethick ui-corner-br" style="float: left; margin:0 -0.2em 0 0;"></span></a>
+	</span> 
+	<?php }?>
+<?php }?>
+
+</span>
+
+<div id="header"  class="noprint" >
+<img alt="Ambala College of Engineering and Applied Research" src="<?php echo $protocol.CDN_SERVER . '/images/logos/mainLogo_cupertino.png'; ?>">
+
+<div id="divTopNav">
+<div id="nav"><?php 
+$this->navigation()->setAcl($authContent['acl'])->setRole($authContent['identity']);
+echo $this->navigation()->menu();?>
+</div>
+</div>
+</div>
+</div>
+
+<div class="ui-widget container ui-corner-all">
+<hr/>
+<div id="content">
+    <?php echo $this->layout ()->content; ?>
+    </div>
+<div id="lastDiv"></div>
+<?php
+echo $this->headScript ();
+?>
+</div>
+</body>
+</html>

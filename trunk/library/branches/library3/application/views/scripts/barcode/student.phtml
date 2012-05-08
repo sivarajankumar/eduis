@@ -1,0 +1,66 @@
+<html><head><title>Batch <?php echo $this->batch ?> Barcodes</title>
+<style type="text/css">
+<!--
+h2 {
+    text-align: center;
+}
+.barcode {
+	padding-bottom :0.8em;
+}
+@MEDIA print{
+	.noprint {
+		display: none;
+	}
+}
+-->
+</style> </head>
+<body>
+
+<div style="padding :0.5em 0 0.5em 0; text-align: center; " >
+<h2>Students Barcode </h2>
+<form class="noprint">
+<label >
+<select name="department_id" id="department_id" class="ui-widget-content ui-corner-all">
+	<option value="-1">Select Department</option>
+	<option value="CSE">CSE</option>
+	<option value="ECE">ECE</option>
+	<option value="ME">ME</option>
+	<option value="BT">BT</option>
+</select>
+</label>
+<label >
+<select id="degree_id" name="degree_id" class="ui-widget-content ui-corner-all">
+	<option value="-1">Select Programme</option>
+	<option value="BTECH">BTECH</option>
+	<option value="MTECH">MTECH</option>
+</select> 
+</label> 
+<label >
+<select id="batch" name="batch" class="ui-widget-content ui-corner-all">
+	<option value="-1">Select Batch Start Year</option>
+	<option value="2011">2011</option>
+	<option value="2010">2010</option>
+	<option value="2009">2009</option>
+	<option value="2008">2008</option>
+</select>
+</label> 
+<button type="submit">Generate</button>
+</form>
+</div>
+<?php
+$url = $this->baseUrl('barcode');
+if (isset ( $this->students )) {
+    echo 'Batch: <b>'. $this->batch.'</b> | Deptt: <b>'.strtoupper($this->department).'</b> | Degree: <b>'.strtoupper( $this->degree).'</b><br/><br/>';
+    
+	foreach ( $this->students as $index => $student ) {
+		echo '<img class="barcode" src="'.$url.'/generatecode?text=' . $student ['student_roll_no'] . '"/>&nbsp;';
+	}
+} else{
+    ?>
+    <p>Inputs are required!!</p>
+    <?php
+    
+}
+?>
+</body>
+</html> 

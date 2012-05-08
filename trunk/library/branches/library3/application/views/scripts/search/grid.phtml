@@ -1,0 +1,206 @@
+﻿<?php
+/**
+ *
+ * @category   EduIS
+ * @package    Library
+ * @subpackage Search
+ * @since	   0.1
+ */
+/*
+ * View for Batch.
+ */
+?>
+
+<h3 align="center">Grid Search</h3>
+<div class="gridstyle">
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+	style="color: red"></span></div>
+	
+<script type="text/javascript">
+var urlBookDetail = "<?php echo $this->url ( array ('controller' => 'book', 'action' => 'getbookdetails' ), 'default', true )?>";
+
+$(function(){
+    var gridTable = "#tblgrid";
+    var gridPager = "#gridpager";
+    var urlFillGrid = "<? echo $this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid'), 'default', true)?>";
+    var urlCRUD = "<? echo $this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud'), 'default', true)?>";
+    $(gridTable).jqGrid({
+        url : urlFillGrid,
+        colNames:['ISBN','Acc_no','Title','Author', 'Edition','Publisher', 'Status','Document Type','Year','Cost', 'Rack', 'Shelf'],
+        colModel:[{name:'isbn_id',
+            index:'isbn_id',
+            width:90
+            },
+            {name:'acc_no', 
+                index:'acc_no',
+                width:40},
+            {name:'title',
+                index:'title'
+            },
+            {name:'author', 
+                index:'author',
+                width:80},
+            {name:'edition',
+                index:'edition',
+                width:22},
+            {name:'place_publisher', 
+                index:'place_publisher',
+                width:100},
+            {name:'status', 
+                index:'status',
+                width:60,
+                search:true,
+                stype:'select',
+                editoptions:{value:{'':'Status Filter',AVAILABLE:'AVAILABLE',ISSUED:'ISSUED'}} ,
+                searchoptions:{attr:{title:'Book Status'}}},
+            {name:'document_type_id', 
+                index:'document_type_id',
+                width:60,
+                search:true,
+                hidden: true,
+                stype:'select',
+                editoptions:{value:{'':'Documents',REG:'REGULAR',REF:'REFERENCE'}} ,
+                searchoptions:{attr:{title:'Document Type'}}},
+            {name:'year', 
+                index:'year',
+                width:30,
+                hidden: true},
+            {name:'cost', 
+                index:'cost',
+                width:30,
+                hidden: true},
+            {name:'rack_id', 
+                index:'rack_id',
+                width:30,
+                hidden: true},
+            {name:'shelf',
+                index:'shelf',
+                width:30,
+                hidden: true}
+            ],
+            caption: "Grid Search" ,
+            rowNum:25,
+            rowList:[15,25,35,50],
+            sortname: "isbn_id",
+            pager: gridPager,
+            onSelectRow: function(id){
+            	$('#'+id).bt({
+        			contentSelector:  "fetchBookDetail("+id+");",
+        			  showTip: function(box){
+        				    $(box).fadeIn(500);
+        			  },
+        			  hideTip: function(box, callback){
+        			    $(box).animate({opacity: 0}, 500);
+        			  },
+        			shrinkToFit: true,
+        			closeWhenOthersOpen: true,
+        			fill: '#FFF',
+        		    cornerRadius: 10,
+        		    strokeWidth: 0,
+        		    shadow: true,
+        		    shadowOffsetX: 3,
+        		    shadowOffsetY: 3,
+        		    shadowBlur: 8,
+        		    shadowColor: 'rgba(0,0,0,.9)',
+        		    shadowOverlap: false,
+        		    noShadowOpts: {strokeStyle: '#999', strokeWidth: 2},
+        		    positions: ['left', 'top'],
+        		    cssStyles: {
+            		    "z-index":'99999',
+        		        fontFamily: '"lucida grande",tahoma,verdana,arial,sans-serif', 
+        		        fontSize: '0.91em'
+        		      }
+        		  	}).btOn();
+             },
+            editurl:urlCRUD
+        });
+
+    $(gridTable).jqGrid('navGrid', gridPager, {
+        add : false,
+        del : false,
+        edit : false,
+        view : false,
+        search : false,
+        refresh : false
+    }, // options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true
+            }, // edit options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true,
+                clearAfterAdd : true //Default is true, make false if needed
+            }, // add options
+            {
+                reloadAfterSubmit : false,
+                jqModal : false,
+                closeOnEscape : true
+            } // del options
+         );
+    
+    addPager(gridTable, gridPager); 
+    
+});
+
+
+function fetchBookDetail(acc_no) {
+	var tip = 'Book detail...';
+	$.ajax({
+        url : urlBookDetail,
+        async : false,
+        dataType : "json",
+        data : {'acc_no' : acc_no },
+        success : function(jBook){
+            var bookStr = '<div>ISBN: <b>'+jBook.isbn_id+'</b></div>';
+            bookStr += '<div>Title: <b>'+jBook.title+'</b></div>';
+            bookStr += jBook.author ? '<div>Author: <b>'+jBook.author+'</b></div>':"";
+            bookStr += jBook.edition ? '<div>Edition: <b>'+jBook.edition+'</b></div>':"";
+            bookStr += jBook.volume ? '<div>Volume: <b>'+jBook.volume+'</b></div>':"";
+            bookStr += jBook.year ? '<div>Year: <b>'+jBook.year+'</b></div>':"";
+            tip = bookStr;
+        },
+        error: function(xhr, text){
+        	$('#bookDetail').text('ERROR: xhr.responseText');
+           // alert(xhr.responseText);
+        }
+    });
+    return tip;
+}
+</script>
+
+
+<?php 
+$protocol = 'http://';
+$cdnServer = $protocol.CDN_SERVER;
+/*
+ * Adding JqGrid as grid.
+ */
+$this->headLink()
+    ->appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.jqgrid.css')
+    ->//Select multiple columns from column chooser
+appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.multiselect.css');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/ui.multiselect.js');
+// This is compressed version of jqGrid 3.6, It has all plugins in one file only
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/i18n/grid.locale-en.js');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/jquery.jqGrid.min.js');
+// Gloabal Settings for JqGrid
+$this->headScript()->appendFile($cdnServer . '/plugins/jqgrid/jqGrid.global.js');
+$this->headLink()->appendStylesheet(
+'http://' . CDN_SERVER . '/plugins/baloon/bt/jquery.bt.css');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/baloon/bt/jquery.bt.min.js');
+?>

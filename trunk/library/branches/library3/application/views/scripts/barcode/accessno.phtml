@@ -1,0 +1,101 @@
+<html>
+<head>
+<title>Barcode for Book acc.no.</title>
+<style type="text/css">
+<!--
+body {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+h2 {
+	text-align: center;
+}
+.page {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+.barcodeBox {
+	border: 0;	
+	padding: 0;
+	margin-left : 1.6mm;
+	width : 38mm;
+	height : 21.2mm;
+	float: left;
+	position: relative;
+	overflow: hidden;
+	vertical-align : middle;
+}
+
+.barCodeImg {
+	border: 0;	
+	margin: 1mm;
+	padding-bottom: 0;
+	padding-top : 1.5mm;
+	padding-left : 1.6mm;
+	padding-right : 0;
+	float: left;
+	position: relative;
+	vertical-align : middle;
+}
+
+.loading {
+  background: url(http://<?php echo CDN_SERVER?>/images/activity/loading/spinner.gif) no-repeat center center;
+}
+@media print {
+	#myform {
+		display: none;
+	}
+}
+-->
+</style>
+</head>
+<body>
+
+<div id="myform" ><h2>Barcode for book Acc. no.</h2>
+<form name="formAcc" id="formAcc" action="javascript: getBarCode();">
+Range:<br/>
+<label>From : <input type="text" id="accFrom" name="accFrom"  size="6"></label>&nbsp;
+<label>Upto : <input type="text" id="accUpto" name="accUpto"  size="6"></label> <button type="submit" >Generate</button> </form>
+<hr />
+</div>
+<?php
+$url = $this->baseUrl('barcode/generatecode');
+?>
+
+<script type="text/javascript" src="http://<?php echo CDN_SERVER?>/js/jquery-1.6.2.min.js"></script>
+<script type="text/javascript">
+function getBarCode() {
+	var accFrom = parseInt($('#accFrom').val());
+	var accUpto = parseInt($('#accUpto').val());
+	if (accUpto && (accUpto > accFrom)) {
+		  for ( var accNo = accFrom; accNo <= accUpto; accNo++) {
+			  document.title = 'Barcodes :'+accFrom+' - '+accUpto;
+			addMore(accNo);
+		}
+		} else if (accFrom) {
+			addMore(accFrom);
+		} else {
+			alert ('Input valid values');
+		}
+}
+function addMore(accNo){
+	var img = new Image();
+	$('#page').append('<label class="barcodeBox loading"></label>');
+	$(img)
+		.hide()
+		.load(function () {
+		      $(this).fadeIn().removeAttr('style');
+		      $(this).parent().removeClass('loading');
+		 })
+		.attr('src', "<?php echo $url?>?text="+ accNo)
+		.attr('alt', accNo)
+		.attr('class', "barCodeImg")
+		.appendTo('body label:last-child');
+    
+}
+</script>
+<div class="page" id="page" ></div>
+</body>
+</html>
