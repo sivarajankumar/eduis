@@ -1,4 +1,3 @@
-
 <form id="dmc_info_form" class="uniForm" action="javascript:get_dmc_info()">
 <h3>DMC Details</h3>
 <fieldset id="dmc_info">
@@ -196,7 +195,7 @@
 		$('fieldset.subjects').each(function(){
 			var div_id = $(this).attr('id');
 			var div_title = $(this).attr('title');
-			var dmc_info_id = <?php echo $dmc_indo_id;?>;
+			//var dmc_info_id = 0;
 			$('fieldset#'+div_id+' :input').each(function(){
 				sub_data[this.name] = this.value;
 			})
