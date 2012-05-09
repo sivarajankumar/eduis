@@ -1,0 +1,126 @@
+<h2>Professional Certification<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
+<form action="javascript:submit();" class="uniForm">
+
+      
+        <fieldset>
+      
+          <div class="ctrlHolder">
+            <label for="technical_field_name">Technical Feild</label>
+            <select id="technical_field_name" name="technical_field_name" class="selectInput required">
+          		<option value="Networking">Networking</option>
+          		
+      	  </select>
+            <p class="formHint">Technical feild in which certification is done </p>
+          </div>
+          <div class="ctrlHolder">
+            <label for="">Certification Name</label>
+            <select id="technical_sector" name="technical_sector" class="selectInput required">
+          		<option value="CCNA">CCNA</option>
+          		<option value="OCP">OCP</option>
+          		<option value="RHCE">RHCE</option>
+      	  </select>
+      	  <p class="formHint">Select name of Professional certification </p>
+           
+          </div>
+          <div class="ctrlHolder">
+                        <label for="start_date">Start Date</label>
+                        <input name="start_date" id="date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+                        <p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+        			</div>
+        <div class="ctrlHolder">
+                        <label for="complete_date">Complete Date</label>
+                        <input name="complete_date" id="date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+                        <p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+        </div>
+          
+          
+          
+          </fieldset>
+      <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+        
+        <div class="buttonHolder">
+        	<button type="submit" class="secondaryAction">Cancel and go back</button>
+        	<button type="submit" class="primaryAction">Next</button>
+    	</div>
+    	<br>
+      </form>
+<script>
+
+$(function(){
+  $('form.uniForm').uniform({
+    prevent_submit : true
+  });
+
+  serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+  $("#date").datepicker({
+  	dateFormat: 'yy-mm-dd',
+  	changeMonth: true,
+		changeYear: true,
+		yearRange: '-25:-15',
+		onClose : function(dateText, inst) {
+			this.focus();
+		}
+  });
+});       
+ 
+  
+
+function submit() {
+    $.ajax({
+        url : urlBasicInfo,
+        data : getValues(),
+        success: function(jStatus){
+            
+        },
+            error: function(response) {
+          	  $('#errorBox').text(response.responseText).parent().show();
+                console.log(response);
+                }
+            });
+}
+
+  function getValues() {
+      var formData = {}; 
+      $('form.uniForm :input')
+      		.not('button,#e_mail_confirm,:input[value^="e.g."]')
+      		.each(function(){ 
+      			formData[this.name] = this.value; 
+          });
+  
+	return formData;
+}
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:57%;
+		font-size:17px;
+		font-weight:100;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
+ 
