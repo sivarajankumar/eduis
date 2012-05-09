@@ -139,4 +139,22 @@ class Tnp_Model_TechnicalField extends Tnp_Model_Generic
             return $this->setOptions($info);
         }
     }
+    public function saveInfo ($data_array)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->save($prepared_data);
+    }
+    public function updateInfo ($data_array)
+    {
+        $tech_field_id = $this->getTechnical_field_id(true);
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->update($prepared_data, $tech_field_id);
+    }
+    public function deleteTechnicalField ()
+    {
+        $tech_field_id = $this->getTechnical_field_id(true);
+        return $this->getMapper()->delete($tech_field_id);
+    }
 }

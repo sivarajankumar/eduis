@@ -554,9 +554,9 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     public function fetchJobPreferred ()
     {
         $member_id = $this->getMember_id(true);
-        $member_exp = new Tnp_Model_MemberInfo_JobPreferred();
-        $member_exp->setMember_id($member_id);
-        return $member_exp->fetchJobAreasPreferred();
+        $job_preferred = new Tnp_Model_MemberInfo_JobPreferred();
+        $job_preferred->setMember_id($member_id);
+        return $job_preferred->fetchJobAreasPreferred();
     }
     /**
      * Operating Condition : Member Id is set
@@ -593,13 +593,15 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     }
     /**
      * Operating Condition : Member Id is set
+     * @param int $skill_id
      * @return object|false  Object of Tnp_Model_MemberInfo_Skills
      */
-    public function fetchSkillInfo ()
+    public function fetchSkillInfo ($skill_id)
     {
         $member_id = $this->getMember_id(true);
         $member_skills = new Tnp_Model_MemberInfo_Skills();
         $member_skills->setMember_id($member_id);
+        $member_skills->setSkill_id($skill_id);
         return $member_skills->fetchInfo();
     }
     /**
@@ -615,7 +617,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     }
     /**
      * Operating Condition : Member Id is set
-     * @param $training_id
+     * @param int $training_id
      * @return object|false  Object of Tnp_Model_MemberInfo_Skills
      */
     public function fetchTrainingInfo ($training_id)
@@ -807,14 +809,89 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
                 $member_exp->initSave();
                 $prepared_data = $member_exp->prepareDataForSaveProcess(
                 $data_array);
-                Zend_Registry::get('logger')->debug($student_experience_id);
-                Zend_Registry::get('logger')->debug($data_array);
                 return $member_exp->getMapper()->update($prepared_data, 
                 $student_experience_id);
                 break;
             default:
                 ;
                 break;
+        }
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @param string 'IT'|'DEFENCE'|'CORE'|'GOVERNMENT'
+     */
+    public function saveJobAreaPreferred ($job_area_preferred)
+    {
+        $member_id = $this->getMember_id(true);
+        if (! empty($job_area_preferred)) {
+            $data_array = array($member_id, $job_area_preferred);
+            $job_preferred = new Tnp_Model_MemberInfo_JobPreferred();
+            $job_preferred->initSave();
+            $preparedData = $job_preferred->prepareDataForSaveProcess(
+            $data_array);
+            return $job_preferred->getMapper()->save($preparedData);
+        }
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @param array $data_array
+     */
+    public function saveSkillInfo ($data_array)
+    {
+        $member_id = $this->getMember_id(true);
+        $skill_id = $data_array['skill_id'];
+        $info = $this->fetchSkillInfo($skill_id);
+        $data_array['member_id'] = $member_id;
+        if ($info == false) {
+            $member_skills = new Tnp_Model_MemberInfo_Skills();
+            $member_skills->initSave();
+            $preparedData = $member_skills->prepareDataForSaveProcess(
+            $data_array);
+            return $member_skills->getMapper()->save($preparedData);
+        } else {
+            $member_skills = new Tnp_Model_MemberInfo_CoCurricular();
+            $member_skills->initSave();
+            $prepared_data = $member_skills->prepareDataForSaveProcess(
+            $data_array);
+            $data_array['member_id'] = null;
+            return $member_skills->getMapper()->update($prepared_data, 
+            $member_id);
+        }
+    }
+    public function saveTrainingInfo ($data_array)
+    {
+        $member_id = $this->getMember_id(true);
+        $training_id = $data_array['training_id'];
+        $info = $this->fetchTrainingInfo($training_id);
+        $data_array['member_id'] = $member_id;
+        if ($info == false) {
+            $member_training = new Tnp_Model_MemberInfo_Training();
+            $member_training->initSave();
+            $preparedData = $member_training->prepareDataForSaveProcess(
+            $data_array);
+            return $member_training->getMapper()->save($preparedData);
+        } else {
+            $member_training = new Tnp_Model_MemberInfo_CoCurricular();
+            $member_training->initSave();
+            $prepared_data = $member_training->prepareDataForSaveProcess(
+            $data_array);
+            $data_array['member_id'] = null;
+            return $member_training->getMapper()->update($prepared_data, 
+            $member_id, $training_id);
+        }
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @param string 'IT'|'DEFENCE'|'CORE'|'GOVERNMENT'
+     */
+    public function deleteJobAreaPreferred ($job_area_preferred)
+    {
+        $member_id = $this->getMember_id(true);
+        if (! empty($job_area_preferred)) {
+            $job_preferred = new Tnp_Model_MemberInfo_JobPreferred();
+            return $job_preferred->getMapper()->delete($member_id, 
+            $job_area_preferred);
         }
     }
 }

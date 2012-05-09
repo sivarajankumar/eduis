@@ -82,4 +82,9 @@ class Tnp_Model_Mapper_EmployabilityTestSection
         $where = 'test_section_id = ' . $test_section_id;
         return $dbtable->update($prepared_data, $where);
     }
+    public function delete ($test_section_id)
+    {
+        $where = 'test_section_id = ' . $test_section_id;
+        return $this->getDbTable()->delete($where);
+    }
 }

@@ -76,5 +76,10 @@ class Tnp_Model_Mapper_Role
         $where = 'role_id = ' . $role_id;
         return $dbtable->update($prepared_data, $where);
     }
+    public function delete ($role_id)
+    {
+        $where = 'role_id = ' . $role_id;
+        return $this->getDbTable()->delete($where);
+    }
 }
 ?>

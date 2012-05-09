@@ -98,5 +98,10 @@ class Tnp_Model_Mapper_TechnicalField
         $where = 'technical_field_id = ' . $technical_field_id;
         return $dbtable->update($prepared_data, $where);
     }
+    public function delete ($technical_field_id)
+    {
+        $where = 'technical_field_id = ' . $technical_field_id;
+        return $this->getDbTable()->delete($where);
+    }
 }
 ?>

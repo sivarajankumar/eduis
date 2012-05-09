@@ -96,5 +96,10 @@ class Tnp_Model_Mapper_Skill
         $where = 'skill_id = ' . $skill_id;
         return $dbtable->update($prepared_data, $where);
     }
+    public function delete ($skill_id)
+    {
+        $where = 'skill_id = ' . $skill_id;
+        return $this->getDbTable()->delete($where);
+    }
 }
 ?>

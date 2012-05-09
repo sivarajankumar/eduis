@@ -86,11 +86,12 @@ class Tnp_Model_Mapper_MemberJobPreferred
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
-    public function update ($prepared_data, $member_id)
+    public function delete ($member_id, $job_area)
     {
         $dbtable = $this->getDbTable();
-        $where = 'member_id = ' . $member_id;
-        return $dbtable->update($prepared_data, $where);
+        $where1 = 'member_id = ' . $member_id;
+        $where2 = 'job_area = ' . $job_area;
+        return $dbtable->delete(array($where1, $where2));
     }
 }
 ?>

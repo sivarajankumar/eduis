@@ -67,6 +67,7 @@ class Tnp_Model_Mapper_Certification
     }
     public function save ($prepared_data)
     {
+        $prepared_data['certification_id'];
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
@@ -75,5 +76,10 @@ class Tnp_Model_Mapper_Certification
         $dbtable = $this->getDbTable();
         $where = 'certification_id = ' . $certification_id;
         return $dbtable->update($prepared_data, $where);
+    }
+    public function delete ($certification_id)
+    {
+        $where = 'certification_id = ' . $certification_id;
+        return $this->getDbTable()->delete($where);
     }
 }

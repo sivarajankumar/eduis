@@ -124,4 +124,22 @@ class Tnp_Model_Language extends Tnp_Model_Generic
             return $this->setOptions($info);
         }
     }
+    public function saveInfo ($data_array)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->save($prepared_data);
+    }
+    public function updateInfo ($data_array)
+    {
+        $language_id = $this->getLanguage_id(true);
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->update($prepared_data, $language_id);
+    }
+    public function deleteLanguage ()
+    {
+        $language_id = $this->getLanguage_id(true);
+        return $this->getMapper()->delete($language_id);
+    }
 }

@@ -23,9 +23,16 @@ class Tnp_Model_MemberInfo_Skills extends Tnp_Model_Generic
     /**
      * @return the $_skill_id
      */
-    public function getSkill_id ()
+    public function getSkill_id ($throw_exception = null)
     {
-        return $this->_skill_id;
+        $skill_id = $this->_skill_id;
+        if (empty($skill_id) and $throw_exception == true) {
+            $message = '_skill_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $skill_id;
+        }
     }
     /**
      * @return the $_proficiency
@@ -132,8 +139,9 @@ class Tnp_Model_MemberInfo_Skills extends Tnp_Model_Generic
     public function fetchInfo ()
     {
         $member_id = $this->getMember_id(true);
+        $skill_id = $this->getSkill_id(true);
         $info = array();
-        $info = $this->getMapper()->fetchInfo($member_id);
+        $info = $this->getMapper()->fetchInfo($member_id,$skill_id);
         if (empty($info)) {
             return false;
         } else {

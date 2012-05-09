@@ -159,4 +159,22 @@ class Tnp_Model_EmpTestInfo_Section extends Tnp_Model_Generic
             return $this->setOptions($info);
         }
     }
+    public function saveInfo ($data_array)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->save($prepared_data);
+    }
+    public function updateInfo ($data_array)
+    {
+        $section_id = $this->getTest_section_id(true);
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->update($prepared_data, $section_id);
+    }
+    public function deleteSection ()
+    {
+        $section_id = $this->getTest_section_id(true);
+        return $this->getMapper()->delete($section_id);
+    }
 }

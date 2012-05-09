@@ -55,7 +55,7 @@ class Tnp_Model_Mapper_Industry
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $industry_table = $db_table->info('name');
-        $required_cols = array('industry_id','industry_name');
+        $required_cols = array('industry_id', 'industry_name');
         $select = $adapter->select()->from($industry_table, $required_cols);
         $industries = array();
         $result = array();
@@ -75,6 +75,11 @@ class Tnp_Model_Mapper_Industry
         $dbtable = $this->getDbTable();
         $where = 'industry_id = ' . $industry_id;
         return $dbtable->update($prepared_data, $where);
+    }
+    public function delete ($industry_id)
+    {
+        $where = 'industry_id = ' . $industry_id;
+        return $this->getDbTable()->delete($where);
     }
 }
 ?>
