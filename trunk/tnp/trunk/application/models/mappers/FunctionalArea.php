@@ -42,7 +42,7 @@ class Tnp_Model_Mapper_FunctionalArea
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $functional_area_table = $db_table->info('name');
-        $required_cols = array('functional_area_name');
+        $required_cols = array('functional_area_id','functional_area_name');
         $select = $adapter->select()
             ->from($functional_area_table, $required_cols)
             ->where('functional_area_id = ?', $functional_area_id);
