@@ -91,4 +91,9 @@ class Tnp_Model_Mapper_Training
         $where = 'training_id = ' . $training_id;
         return $dbtable->update($prepared_data, $where);
     }
+    public function delete ($training_id)
+    {
+        $where = 'training_id = ' . $training_id;
+        return $this->getDbTable()->delete($where);
+    }
 }

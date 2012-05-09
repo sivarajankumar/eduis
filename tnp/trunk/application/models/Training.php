@@ -142,4 +142,22 @@ class Tnp_Model_Training extends Tnp_Model_Generic
             return $this->setOptions($info);
         }
     }
+    public function saveInfo ($data_array)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->save($prepared_data);
+    }
+    public function updateInfo ($data_array)
+    {
+        $training_id = $this->getTraining_id(true);
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->update($prepared_data, $training_id);
+    }
+    public function deleteTraining ()
+    {
+        $training_id = $this->getTraining_id(true);
+        return $this->getMapper()->delete($training_id);
+    }
 }

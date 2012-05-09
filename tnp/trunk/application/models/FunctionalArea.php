@@ -124,4 +124,22 @@ class Tnp_Model_FunctionalArea extends Tnp_Model_Generic
             return $this->setOptions($info);
         }
     }
+    public function saveInfo ($data_array)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->save($prepared_data);
+    }
+    public function updateInfo ($data_array)
+    {
+        $functional_area_id = $this->getFunctional_area_id(true);
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->update($prepared_data, $functional_area_id);
+    }
+    public function deleteFunctionalArea ()
+    {
+        $functional_area_id = $this->getFunctional_area_id(true);
+        return $this->getMapper()->delete($functional_area_id);
+    }
 }

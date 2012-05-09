@@ -124,4 +124,22 @@ class Tnp_Model_Role extends Tnp_Model_Generic
             return $this->setOptions($info);
         }
     }
+    public function saveInfo ($data_array)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->save($prepared_data);
+    }
+    public function updateInfo ($data_array)
+    {
+        $role_id = $this->getRole_id(true);
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->update($prepared_data, $role_id);
+    }
+    public function deleteRole ()
+    {
+        $role_id = $this->getRole_id(true);
+        return $this->getMapper()->delete($role_id);
+    }
 }

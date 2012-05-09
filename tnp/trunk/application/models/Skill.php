@@ -146,4 +146,22 @@ class Tnp_Model_Skill extends Tnp_Model_Generic
             return $this->setOptions($info);
         }
     }
+    public function saveInfo ($data_array)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->save($prepared_data);
+    }
+    public function updateInfo ($data_array)
+    {
+        $skill_id = $this->getSkill_id(true);
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->update($prepared_data, $skill_id);
+    }
+    public function deleteSkills ()
+    {
+        $skill_id = $this->getSkill_id(true);
+        return $this->getMapper()->delete($skill_id);
+    }
 }

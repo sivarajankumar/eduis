@@ -42,7 +42,8 @@ class Tnp_Model_Mapper_EmployabilityTest
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $emp_test_table = $db_table->info('name');
-        $required_cols = array('employability_test_id','test_name', 'date_of_conduct');
+        $required_cols = array('employability_test_id', 'test_name', 
+        'date_of_conduct');
         $select = $adapter->select()
             ->from($emp_test_table, $required_cols)
             ->where('employability_test_id = ?', $employability_test_id);
@@ -100,5 +101,10 @@ class Tnp_Model_Mapper_EmployabilityTest
         $dbtable = $this->getDbTable();
         $where = 'employability_test_id = ' . $employability_test_id;
         return $dbtable->update($prepared_data, $where);
+    }
+    public function delete ($employability_test_id)
+    {
+        $where = 'employability_test_id = ' . $employability_test_id;
+        return $this->getDbTable()->delete($where);
     }
 }

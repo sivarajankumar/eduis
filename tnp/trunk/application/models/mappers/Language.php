@@ -77,5 +77,10 @@ class Tnp_Model_Mapper_Language
         $where = 'language_id = ' . $language_id;
         return $dbtable->update($prepared_data, $where);
     }
+    public function delete ($language_id)
+    {
+        $where = 'language_id = ' . $language_id;
+        return $this->getDbTable()->delete($where);
+    }
 }
 ?>

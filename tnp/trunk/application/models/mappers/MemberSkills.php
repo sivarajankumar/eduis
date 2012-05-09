@@ -37,15 +37,16 @@ class Tnp_Model_Mapper_MemberSkills
      * 
      * @param integer $skill_id
      */
-    public function fetchInfo ($member_id)
+    public function fetchInfo ($member_id, $skill_id)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $student_skills_table = $db_table->info('name');
-        $required_cols = array('member_id', 'skill_id', 'proficiency');
+        $required_cols = array('member_id', 'proficiency');
         $select = $adapter->select()
             ->from($student_skills_table, $required_cols)
-            ->where('member_id = ?', $member_id);
+            ->where('member_id = ?', $member_id)
+            ->where('skill_id = ?', $member_id);
         $skill_info = array();
         $skill_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $skill_info[$member_id];

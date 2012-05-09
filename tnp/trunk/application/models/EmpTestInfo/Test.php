@@ -151,4 +151,22 @@ class Tnp_Model_EmpTestInfo_Test extends Tnp_Model_Generic
             return $this->setOptions($info);
         }
     }
+    public function saveInfo ($data_array)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->save($prepared_data);
+    }
+    public function updateInfo ($data_array)
+    {
+        $test_id = $this->getEmployability_test_id(true);
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->update($prepared_data, $test_id);
+    }
+    public function deleteTest ()
+    {
+        $test_id = $this->getEmployability_test_id(true);
+        return $this->getMapper()->delete($test_id);
+    }
 }
