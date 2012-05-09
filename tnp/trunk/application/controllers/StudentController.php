@@ -75,53 +75,52 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $this->_helper->viewRenderer->setNoRender(false);
         $student_model = new Tnp_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         $student_emp_test = array();
         $student_test_ids = $student_model->fetchEmpTestRecordIds();
         $emp_model = new Tnp_Model_EmpTestInfo_Test();
-        if(! empty($student_test_ids))
-        {
-        foreach ($student_test_ids as $key => $test_id) {
-            $emp_model->setEmployability_test_id($test_id);
-            $emp_model->fetchInfo();
-            $student_emp_test[$test_id]['test_name'] = $emp_model->getTest_name();
-            $student_emp_test[$test_id]['date'] = $emp_model->getDate_of_conduct();
-        }}
+        if (! empty($student_test_ids)) {
+            foreach ($student_test_ids as $key => $test_id) {
+                $emp_model->setEmployability_test_id($test_id);
+                $emp_model->fetchInfo();
+                $student_emp_test[$test_id]['test_name'] = $emp_model->getTest_name();
+                $student_emp_test[$test_id]['date'] = $emp_model->getDate_of_conduct();
+            }
+        }
         $student_certifications = array();
         $student_certification_ids = $student_model->fetchCertificationIds();
         $certification_model = new Tnp_Model_Certification();
-         if(! empty($student_certification_ids))
-        {
-        foreach ($student_certification_ids as $key => $certification_id) {
-            $certification_model->setCertification_id($certification_id);
-            $certification_model->fetchInfo();
-            $student_certifications[$certification_id]['name'] = $certification_model->getCertification_name();
-        }}
+        if (! empty($student_certification_ids)) {
+            foreach ($student_certification_ids as $key => $certification_id) {
+                $certification_model->setCertification_id($certification_id);
+                $certification_model->fetchInfo();
+                $student_certifications[$certification_id]['name'] = $certification_model->getCertification_name();
+            }
+        }
         $student_training = array();
         $student_training_ids = $student_model->fetchTrainingIds();
         $training_model = new Tnp_Model_MemberInfo_Training();
         $training_model->setMember_id($this->getMember_id());
-        if(! empty($student_training_ids))
-        {
-        foreach ($student_training_ids as $key => $training_id) {
-            $training_model->setTraining_id($training_id);
-           
-            $training_model->fetchInfo();
-            $student_training[$training_id]['semester'] = $training_model->getTraining_semester();
-            $student_training[$training_id]['institute'] = $training_model->getTraining_institute();
-        }}
+        if (! empty($student_training_ids)) {
+            foreach ($student_training_ids as $key => $training_id) {
+                $training_model->setTraining_id($training_id);
+                $training_model->fetchInfo();
+                $student_training[$training_id]['semester'] = $training_model->getTraining_semester();
+                $student_training[$training_id]['institute'] = $training_model->getTraining_institute();
+            }
+        }
         $student_experience = array();
         $student_experience_ids = $student_model->fetchExperienceIds();
         $experience_model = new Tnp_Model_MemberInfo_Experience();
-        if(! empty($student_experience_ids))
-        {
-        foreach ($student_experience_ids as $key => $student_experience_id) {
-            $experience_model->setStudent_experience_id($student_experience_id);
-            $experience_model->fetchInfo();
-            $student_experience[$student_experience_id]['organisation'] = $experience_model->getOrganisation();
-        }}
+        if (! empty($student_experience_ids)) {
+            foreach ($student_experience_ids as $key => $student_experience_id) {
+                $experience_model->setStudent_experience_id(
+                $student_experience_id);
+                $experience_model->fetchInfo();
+                $student_experience[$student_experience_id]['organisation'] = $experience_model->getOrganisation();
+            }
+        }
         $student_languages = $student_model->fetchLanguagesKnown();
         if (! empty($student_languages)) {
             $response['languages_known'] = true;
@@ -178,34 +177,72 @@ class StudentController extends Zend_Controller_Action
                 break;
         }
     }
-    
-    public function fetchtestnamesAction()
+    public function fetchtestnamesAction ()
     {
-    	$response = array();
-    	$this->_helper->viewRenderer->setNoRender(true);
+        $response = array();
+        $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $test_model = new Tnp_Model_EmpTestInfo_Test();
-      $test_ids =  $test_model->fetchTestsIds();
-      foreach ($test_model as $key => $test_id) {
-      	$test_model->setEmployability_test_id($test_id);
-      	$test_model->fetchInfo();
-      	$response[$test_id] = $test_model->getTest_name();
-      	
-      }
-     $response_refined = array_unique($response);
+        $test_ids = $test_model->fetchTestsIds();
+        foreach ($test_ids as $key => $test_id) {
+            $test_model->setEmployability_test_id($test_id);
+            $test_model->fetchInfo();
+            $test_name = $test_model->getTest_name();
+            $response[$test_id] = $test_name;
+        }
+        $response_refined = array_unique($response);
+        $this->view->assign('response', $response_refined);
         Zend_Registry::get('logger')->debug($response_refined);
-          $this->view->assign('response', $response_refined);
     }
-    public function fetchtestsectionsAction()
+    public function fetchtestsectionsAction ()
     {
-    	$response = array();
-    	$this->_helper->viewRenderer->setNoRender(true);
+        $response = array();
+        $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $test_section_model = new Tnp_Model_EmpTestInfo_Section();
-        $test_section_model->fetchTestSectionIds();
-        
+        $test_section_ids = $test_section_model->fetchTestSectionIds();
+        foreach ($test_section_ids as $key => $test_section_id) {
+            $test_section_model->setTest_section_id($test_section_id);
+            $test_section_model->fetchInfo();
+            $test_section_name = $test_section_model->getTest_section_name();
+            $response[$test_section_id] = $test_section_name;
+        }
+        $response_refined = array_unique($response);
+        $this->view->assign('response', $response_refined);
+        Zend_Registry::get('logger')->debug($response_refined);
     }
-    
+    public function saveemployabilitytestAction ()
+    {
+        $response = array();
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $test_info = $params['myarray']['test_info'];
+        $test_score = $params['myarray']['test_marks'];
+        $section_info = $params['myarray']['section_info'];
+        $section_marks = $params['myarray']['section_marks'];
+        
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($this->getMember_id());
+        
+        $test_model = new Tnp_Model_EmpTestInfo_Test();
+      
+        
+        
+        $employability_test_id = $test_model->save($test_info);
+        
+        $test_score['employability_test_id'] = $employability_test_id;
+        $test_score['member_id'] = $this->getMember_id();
+        
+        
+        $test_model->save($test_score);
+        
+        
+        $test_section_model = new Tnp_Model_EmpTestInfo_Section();
+        $section_info['employability_test_id'] = $employability_test_id;
+        $test_section_model->save();
+    }
 }
 ?>
     
