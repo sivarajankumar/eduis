@@ -29,6 +29,7 @@ class Authz_Resource_Acl_Guest implements Zend_Auth_Adapter_Interface
         	 $this->setIdentity(strtolower($identity));
         }
     }
+    
 
 
     /**
@@ -43,13 +44,6 @@ class Authz_Resource_Acl_Guest implements Zend_Auth_Adapter_Interface
         return $this;
     }
 
-    /**
-	 * @return the $_identity
-	 */
-	public function getIdentity() {
-		return $this->_identity;
-	}
-	
     /**
      * authenticate() - defined by Zend_Auth_Adapter_Interface.  This method is called to
      * attempt an authentication.  Previous to this call, this adapter would have already

@@ -145,15 +145,15 @@ class AuthenticateController extends Zend_Controller_Action
     }
     public function saveregistrationinfoAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $register_model = new Auth_Model_Member_User();
-        $member_id = $register_model->saveAuthInfo($params['registration_data']);
+        $member_id = $register_model->saveAuthInfo($params);
         Zend_Registry::get('logger')->debug($params);
         if ($member_id) {
-        	self::login($params['registration_data']['login_id'], $params['registration_data']['sec_passwd']);
+        	self::login($params['login_id'], $params['sec_passwd']);
         }
     }
 }

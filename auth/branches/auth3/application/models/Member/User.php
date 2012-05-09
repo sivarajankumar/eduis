@@ -43,7 +43,7 @@ class Auth_Model_Member_User extends Auth_Model_Generic
     /**
      * @return the $_sec_passwd
      */
-    public function getSec_passwd ($throw_exception)
+    public function getSec_passwd ($throw_exception = null)
     {
         $sec_passwd = $this->_sec_passwd;
         if (empty($sec_passwd) and $throw_exception == true) {
@@ -286,21 +286,37 @@ class Auth_Model_Member_User extends Auth_Model_Generic
     }
     public function saveAuthInfo ($data_array)
     {
-        $login_id = $data_array['login_id'];
-        $this->setLogin_id($login_id);
-        $member_id = $this->fetchMemberId($login_id);
+        $member_id = isset($data_array['member_id'])?$data_array['member_id']:NULL;
+        //$this->setLogin_id($login_id);
+        //$member_id = $this->fetchMemberId($login_id);
         if (empty($member_id)) {
         	try {
+        	Zend_Db_Table::getDefaultAdapter()->beginTransaction();
             $this->initSave();
             $preparedData = $this->prepareDataForSaveProcess($data_array);
-            return $this->getMapper()->save($preparedData);
+            $member_id = $this->getMapper()->save($preparedData);
+            //@TODO Orphan code needs a right place.
+            $userRole = new Auth_Model_DbTable_UserRole();
+            switch (strtolower($data_array['user_type_id'])) {
+            	case 'stu':
+            		$userRoleData = array('member_id'=>$member_id,'role_id'=>'student');
+            	break;
+            	case 'staff':
+            		$userRoleData = array('member_id'=>$member_id,'role_id'=>'faculty');
+            	break;
+            }
+            $userRole->insert($userRoleData);
+        	Zend_Db_Table::getDefaultAdapter()->commit();
+        	return $member_id;
         	} catch (Exception $e){
+        		Zend_Db_Table::getDefaultAdapter()->rollBack();
         		throw new Exception("The user registration failed because ".$e->getMessage(), Zend_Log::ERR, $e);
         	}
         } else {
             $this->initSave();
             $preparedData = $this->prepareDataForSaveProcess($data_array);
-            return $this->getMapper()->update($preparedData, $member_id);
+            $rowsUpdated = $this->getMapper()->update($preparedData, $member_id);
+            return $rowsUpdated;
         }
     }
 }
