@@ -123,7 +123,7 @@ class Tnp_Model_EmpTestInfo_SectionScore extends Tnp_Model_Generic
     }
     /**
      * Sets Mapper
-     * @param Tnp_Model_Mapper_EmpTestInfo_SectionScore $mapper
+     * @param Tnp_Model_Mapper_EmployabilityTestSectionScore $mapper
      * @return Tnp_Model_Core_Training
      */
     public function setMapper ($mapper)
@@ -133,12 +133,12 @@ class Tnp_Model_EmpTestInfo_SectionScore extends Tnp_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_EmpTestInfo_SectionScore
+     * @return Tnp_Model_Mapper_EmployabilityTestSectionScore
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_EmpTestInfo_SectionScore());
+            $this->setMapper(new Tnp_Model_Mapper_EmployabilityTestSectionScore());
         }
         return $this->_mapper;
     }

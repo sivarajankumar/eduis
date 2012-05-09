@@ -123,7 +123,7 @@ class Tnp_Model_EmpTestInfo_Record extends Tnp_Model_Generic
     }
     /**
      * Sets Mapper
-     * @param Tnp_Model_Mapper_EmpTestInfo_Record $mapper
+     * @param Tnp_Model_Mapper_EmployabilityTestRecord $mapper
      * @return Tnp_Model_EmpTestInfo_Record
      */
     public function setMapper ($mapper)
@@ -133,12 +133,12 @@ class Tnp_Model_EmpTestInfo_Record extends Tnp_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_EmpTestInfo_Record
+     * @return Tnp_Model_Mapper_EmployabilityTestRecord
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_EmpTestInfo_Record());
+            $this->setMapper(new Tnp_Model_Mapper_EmployabilityTestRecord());
         }
         return $this->_mapper;
     }
