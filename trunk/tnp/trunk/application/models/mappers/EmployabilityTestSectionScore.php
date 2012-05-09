@@ -56,8 +56,9 @@ class Tnp_Model_Mapper_EmployabilityTestSectionScore
     /*
      * @todo
      */
-    public function fetchSectionScoreIds ($member_id = null, $test_section_id = null, 
-    $employability_test_id = null, $section_marks = null, $section_percentile = null)
+    public function fetchSectionScoreIds ($member_id = null, 
+    $employability_test_id = null, $test_section_id = null, $section_marks = null, 
+    $section_percentile = null)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();

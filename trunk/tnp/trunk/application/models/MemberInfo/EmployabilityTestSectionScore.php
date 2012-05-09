@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_EmpTestInfo_SectionScore extends Tnp_Model_Generic
+class Tnp_Model_MemberInfo_EmployabilityTestSectionScore extends Tnp_Model_Generic
 {
     protected $_section_score_id;
     protected $_member_id;
@@ -123,8 +123,8 @@ class Tnp_Model_EmpTestInfo_SectionScore extends Tnp_Model_Generic
     }
     /**
      * Sets Mapper
-     * @param Tnp_Model_Mapper_EmpTestInfo_SectionScore $mapper
-     * @return Tnp_Model_Core_Training
+     * @param Tnp_Model_Mapper_EmployabilityTestSectionScore $mapper
+     * @return Tnp_Model_MemberInfo_EmployabilityTestSectionScore
      */
     public function setMapper ($mapper)
     {
@@ -133,12 +133,13 @@ class Tnp_Model_EmpTestInfo_SectionScore extends Tnp_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_EmpTestInfo_SectionScore
+     * @return Tnp_Model_Mapper_EmployabilityTestSectionScore
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_EmployabilityTestSectionScore());
+            $this->setMapper(
+            new Tnp_Model_Mapper_EmployabilityTestSectionScore());
         }
         return $this->_mapper;
     }
@@ -182,7 +183,7 @@ class Tnp_Model_EmpTestInfo_SectionScore extends Tnp_Model_Generic
      * @param bool $employability_test_specific
      */
     public function fetchSectionScoreIds ($member_specific = null, 
-    $test_section_id_specific = null, $employability_test_specific = null)
+    $employability_test_specific = null, $test_section_id_specific = null)
     {
         $member_id = null;
         $test_section_id = null;
@@ -198,7 +199,7 @@ class Tnp_Model_EmpTestInfo_SectionScore extends Tnp_Model_Generic
         }
         $section_score_ids = array();
         $section_score_ids = $this->getMapper()->fetchSectionScoreIds(
-        $member_id, $test_section_id, $employability_test_id);
+        $member_id, $employability_test_id, $test_section_id);
         if (empty($section_score_ids)) {
             return false;
         } else {

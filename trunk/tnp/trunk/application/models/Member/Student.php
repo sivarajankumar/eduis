@@ -446,44 +446,6 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
         $batch_id = $class_object->getBatch_id();
         return $batch_id;
     }
-    public function saveCriticalInfo ($data_array)
-    {
-        $member_id = $this->getMember_id(true);
-        $data_array['member_id'] = $member_id;
-        $info = $this->fetchCriticalInfo();
-        if ($info == false) {
-            $this->initSave();
-            $preparedData = $this->prepareDataForSaveProcess($data_array);
-            return $this->getMapper()->save($preparedData);
-        } else {
-            $this->initSave();
-            $preparedData = $this->prepareDataForSaveProcess($data_array);
-            $data_array['member_id'] = null;
-            return $this->getMapper()->update($preparedData, $member_id);
-        }
-    }
-    public function saveClassInfo ($data_array)
-    {
-        $member_id = $this->getMember_id(true);
-        $class_id = $data_array['class_id'];
-        $info = $this->fetchClassInfo($class_id);
-        $data_array['member_id'] = $member_id;
-        if ($info == false) {
-            $student_class_object = new Tnp_Model_MemberInfo_Class();
-            $student_class_object->initSave();
-            $preparedData = $student_class_object->prepareDataForSaveProcess(
-            $data_array);
-            return $student_class_object->getMapper()->save($preparedData);
-        } else {
-            $student_class_object = new Tnp_Model_MemberInfo_Class();
-            $student_class_object->initSave();
-            $prepared_data = $student_class_object->prepareDataForSaveProcess(
-            $data_array);
-            $data_array['member_id'] = null;
-            return $student_class_object->getMapper()->update($prepared_data, 
-            $member_id, $class_id);
-        }
-    }
     /**
      * Operating Condition : Member Id is set
      * @return false|array
@@ -529,14 +491,32 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
         $member_id = $this->getMember_id(true);
         $emp_test_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
         $emp_test_record->setMember_id($member_id);
-        return $emp_test_record->fetchTestRecordIds($member_id);
+        return $emp_test_record->fetchTestRecordIds(true);
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * 
+     * @param int $employability_test_id
+     * @param int $test_section_id
+     * @param bool $all to get
+     * @return false|array
+     */
+    public function fetchEmpTestSectionScoreIds ($employability_test_id, 
+    $test_section_id)
+    {
+        $member_id = $this->getMember_id(true);
+        $emp_test_sec_score = new Tnp_Model_MemberInfo_EmployabilityTestSectionScore();
+        $emp_test_sec_score->setMember_id($member_id);
+        $emp_test_sec_score->setEmployability_test_id($employability_test_id);
+        $emp_test_sec_score->setTest_section_id($test_section_id);
+        return $emp_test_sec_score->fetchSectionScoreIds(true, true, true);
     }
     /**
      * Operating Condition : Member Id is set
      * @param int $test_record_id
      * @return object|false  Object of Tnp_Model_MemberInfo_EmployabilityTestRecord
      */
-    public function fetchEmpTestInfo ($test_record_id)
+    public function fetchEmpTestRecordInfo ($test_record_id)
     {
         $member_id = $this->getMember_id(true);
         $emp_test_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
@@ -645,5 +625,196 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
         $member_training->setMember_id($member_id);
         $member_training->setTraining_id($training_id);
         return $member_training->fetchInfo();
+    }
+    public function saveCriticalInfo ($data_array)
+    {
+        $member_id = $this->getMember_id(true);
+        $data_array['member_id'] = $member_id;
+        $info = $this->fetchCriticalInfo();
+        if ($info == false) {
+            $this->initSave();
+            $preparedData = $this->prepareDataForSaveProcess($data_array);
+            return $this->getMapper()->save($preparedData);
+        } else {
+            $this->initSave();
+            $preparedData = $this->prepareDataForSaveProcess($data_array);
+            $data_array['member_id'] = null;
+            return $this->getMapper()->update($preparedData, $member_id);
+        }
+    }
+    public function saveClassInfo ($data_array)
+    {
+        $member_id = $this->getMember_id(true);
+        $class_id = $data_array['class_id'];
+        $info = $this->fetchClassInfo($class_id);
+        $data_array['member_id'] = $member_id;
+        if ($info == false) {
+            $student_class_object = new Tnp_Model_MemberInfo_Class();
+            $student_class_object->initSave();
+            $preparedData = $student_class_object->prepareDataForSaveProcess(
+            $data_array);
+            return $student_class_object->getMapper()->save($preparedData);
+        } else {
+            $student_class_object = new Tnp_Model_MemberInfo_Class();
+            $student_class_object->initSave();
+            $prepared_data = $student_class_object->prepareDataForSaveProcess(
+            $data_array);
+            $data_array['member_id'] = null;
+            return $student_class_object->getMapper()->update($prepared_data, 
+            $member_id, $class_id);
+        }
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return false|array
+     */
+    public function saveCertificationInfo ($data_array)
+    {
+        $member_id = $this->getMember_id(true);
+        $certification_id = $data_array['certification_id'];
+        $info = $this->fetchCertificationInfo($certification_id);
+        $data_array['member_id'] = $member_id;
+        if ($info == false) {
+            $member_certification = new Tnp_Model_MemberInfo_Certification();
+            $member_certification->initSave();
+            $preparedData = $member_certification->prepareDataForSaveProcess(
+            $data_array);
+            return $member_certification->getMapper()->save($preparedData);
+        } else {
+            $member_certification = new Tnp_Model_MemberInfo_Certification();
+            $member_certification->initSave();
+            $prepared_data = $member_certification->prepareDataForSaveProcess(
+            $data_array);
+            $data_array['member_id'] = null;
+            return $member_certification->getMapper()->update($prepared_data, 
+            $member_id, $certification_id);
+        }
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return false|array
+     */
+    public function saveCoCurricularInfo ($data_array)
+    {
+        $member_id = $this->getMember_id(true);
+        $info = $this->fetchCoCurricularInfo();
+        $data_array['member_id'] = $member_id;
+        if ($info == false) {
+            $member_co_corricular = new Tnp_Model_MemberInfo_CoCurricular();
+            $member_co_corricular->initSave();
+            $preparedData = $member_co_corricular->prepareDataForSaveProcess(
+            $data_array);
+            return $member_co_corricular->getMapper()->save($preparedData);
+        } else {
+            $member_co_corricular = new Tnp_Model_MemberInfo_CoCurricular();
+            $member_co_corricular->initSave();
+            $prepared_data = $member_co_corricular->prepareDataForSaveProcess(
+            $data_array);
+            $data_array['member_id'] = null;
+            return $member_co_corricular->getMapper()->update($prepared_data, 
+            $member_id);
+        }
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return false|array
+     */
+    public function saveEmpTestRecord ($data_array)
+    {
+        $member_id = $this->getMember_id(true);
+        $test_record_id = $data_array['test_record_id'];
+        $case = '';
+        (empty($test_record_id)) && ($case = 'save');
+        (! empty($test_record_id)) && ($case = 'update');
+        $data_array['member_id'] = $member_id;
+        switch ($case) {
+            case 'save':
+                $emp_test_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
+                $emp_test_record->initSave();
+                $preparedData = $emp_test_record->prepareDataForSaveProcess(
+                $data_array);
+                return $emp_test_record->getMapper()->save($preparedData);
+                break;
+            case 'update':
+                $emp_test_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
+                $emp_test_record->initSave();
+                $prepared_data = $emp_test_record->prepareDataForSaveProcess(
+                $data_array);
+                return $emp_test_record->getMapper()->update($prepared_data, 
+                $test_record_id);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return false|array
+     */
+    public function saveEmpTestSectionScore ($data_array)
+    {
+        $member_id = $this->getMember_id(true);
+        $test_section_score_id = $data_array['section_score_id'];
+        $case = '';
+        (empty($test_section_score_id)) && ($case = 'save');
+        (! empty($test_section_score_id)) && ($case = 'update');
+        $data_array['member_id'] = $member_id;
+        switch ($case) {
+            case 'save':
+                $emp_test_sec_score = new Tnp_Model_MemberInfo_EmployabilityTestSectionScore();
+                $emp_test_sec_score->initSave();
+                $preparedData = $emp_test_sec_score->prepareDataForSaveProcess(
+                $data_array);
+                return $emp_test_sec_score->getMapper()->save($preparedData);
+                break;
+            case 'update':
+                $emp_test_sec_score = new Tnp_Model_MemberInfo_EmployabilityTestSectionScore();
+                $emp_test_sec_score->initSave();
+                $prepared_data = $emp_test_sec_score->prepareDataForSaveProcess(
+                $data_array);
+                return $emp_test_sec_score->getMapper()->update($prepared_data, 
+                $test_section_score_id);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * @return false|array
+     */
+    public function saveExperienceInfo ($data_array)
+    {
+        $member_id = $this->getMember_id(true);
+        $student_experience_id = $data_array['student_experience_id'];
+        $case = '';
+        (empty($student_experience_id)) && ($case = 'save');
+        (! empty($student_experience_id)) && ($case = 'update');
+        $data_array['member_id'] = $member_id;
+        switch ($case) {
+            case 'save':
+                $member_exp = new Tnp_Model_MemberInfo_Experience();
+                $member_exp->initSave();
+                $preparedData = $member_exp->prepareDataForSaveProcess(
+                $data_array);
+                return $member_exp->getMapper()->save($preparedData);
+                break;
+            case 'update':
+                $student_experience_id = $data_array['student_experience_id'];
+                $member_exp = new Tnp_Model_MemberInfo_Experience();
+                $member_exp->initSave();
+                $prepared_data = $member_exp->prepareDataForSaveProcess(
+                $data_array);
+                Zend_Registry::get('logger')->debug($student_experience_id);
+                Zend_Registry::get('logger')->debug($data_array);
+                return $member_exp->getMapper()->update($prepared_data, 
+                $student_experience_id);
+                break;
+            default:
+                ;
+                break;
+        }
     }
 }
