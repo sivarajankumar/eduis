@@ -246,7 +246,7 @@ class Tnp_Model_MemberInfo_Experience extends Tnp_Model_Generic
     public function fetchStudentExperienceIds ()
     {
         $member_id = $this->getMember_id(true);
-        $experience_ids = $this->getMapper()->fetchStudentExperienceIds();
+        $experience_ids = $this->getMapper()->fetchStudentExperienceIds($member_id);
         if (empty($experience_ids)) {
             return false;
         } else {
