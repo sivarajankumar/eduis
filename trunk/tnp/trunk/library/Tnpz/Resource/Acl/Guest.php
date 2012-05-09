@@ -13,31 +13,37 @@ class Tnpz_Resource_Acl_Guest implements Zend_Auth_Adapter_Interface
      * @var string
      */
     protected $_identity = null;
-    /**
+    const GUEST_ID = 'anon';
+
+	/**
      * __construct() - Sets user as guest if no identity provided.
      *
      * @param  string                   $identity
      * @return void
      */
-    public function __construct ($identity = null)
+    public function __construct($identity = null)
     {
         if (null == $identity) {
-            $this->setIdentity('anon');
+            $this->setIdentity(self::GUEST_ID);
         } else {
-            $this->setIdentity(strtolower($identity));
+        	 $this->setIdentity(strtolower($identity));
         }
     }
+    
+
+
     /**
      * setIdentity() - set the value to be used as the identity (in lowercase).
      *
      * @param  string $value
      * @return Zend_Auth_Adapter_DbTable Provides a fluent interface
      */
-    public function setIdentity ($value)
+    public function setIdentity($value)
     {
         $this->_identity = strtolower($value);
         return $this;
     }
+
     /**
      * authenticate() - defined by Zend_Auth_Adapter_Interface.  This method is called to
      * attempt an authentication.  Previous to this call, this adapter would have already
@@ -46,8 +52,8 @@ class Tnpz_Resource_Acl_Guest implements Zend_Auth_Adapter_Interface
      *
      * @return Zend_Auth_Result
      */
-    public function authenticate ()
+    public function authenticate()
     {
-        return new Zend_Auth_Result(Zend_Auth_Result::SUCCESS, $this->_identity);
+    	return new Zend_Auth_Result(Zend_Auth_Result::SUCCESS, $this->_identity);
     }
 }

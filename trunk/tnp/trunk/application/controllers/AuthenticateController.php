@@ -39,7 +39,7 @@ class AuthenticateController extends Zend_Controller_Action {
           
                 }
             } else {
-                    $guestAdapter = new Libz_Resource_Acl_Guest();
+                    $guestAdapter = new Tnpz_Resource_Acl_Guest();
                     $auth->authenticate($guestAdapter);
 					$userInfo['identity'] = $guestAdapter::GUEST_ID;
 					$userInfo['roles'][] = 'guest';
