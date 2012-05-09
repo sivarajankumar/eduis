@@ -1,0 +1,147 @@
+<h2>Employability Test<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
+<form action="javascript:submit();" class="uniForm">
+      
+ <fieldset>
+
+			<div class="ctrlHolder">
+				<label for="">Name of Test</label>
+				<input name="test_name" id="test_name" value="" data-default-value="e.g. AMCAT" size="35" maxlength="50" type="text" class="textInput "/>
+				<p class="formHint">Enter name of the test undertaken</p>
+			</div>
+			
+          	<div class="ctrlHolder">
+					<label for="">Registration Number</label>
+					<input name="test_regn_no" id="test_regn_no" value="" data-default-value="e.g. 6687897987987" size="35" maxlength="50" type="text" class="textInput "/>
+					<p class="formHint">Enter registration number of test appeared</p>
+				</div>
+				
+           <div class="ctrlHolder">
+                        <label for="date_of_conduct">Date Of Conduct</label>
+                        <input name="date_of_conduct" id="date_of_conduct" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+                        <p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+        	</div>
+        	
+			<div class="ctrlHolder">
+				<label for="">Percentile</label>
+				<input name="test_percentile" id="test_percentile" value="" data-default-value="e.g.Software Development" size="35" maxlength="50" type="text" class="textInput "/>
+				<p class="formHint">Percentile in test</p>
+			</div>
+				 
+			<div class="ctrlHolder">
+				<label for="">Total Score</label>
+				<input name="test_total_score" id="test_total_score" value="" data-default-value="e.g.200" size="35" maxlength="50" type="text" class="textInput "/>
+				<p class="formHint"></p>
+			</div>
+			<div class="ctrlHolder">
+					<label for="">Experience </label>
+					<input name="experience_years" id="experience_years" value="" data-default-value="e.g. 2 " size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+					<p class="formHint">Exeprience in number of years</p>
+			</div>	 
+            <div class="ctrlHolder">
+					<label for="">Section Name </label>
+					<input name="test_section_name" id="test_section_name" value="" data-default-value="e.g. Quantitative Apptitude" size="35" maxlength="50" type="text" class="textInput "/>
+					<p class="formHint"></p>
+			</div>	 
+         	<div class="ctrlHolder">
+					<label for="">Section Marks </label>
+					<input name="section_marks" id="section_marks" value="" data-default-value="e.g. 29 " size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+					<p class="formHint">Marks obtained in above mentioned section</p>
+			</div>	
+			<div class="ctrlHolder">
+					<label for="">Section percentile </label>
+					<input name="section_percentile" id="section_percentile" value="" data-default-value="e.g. 30" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+					<p class="formHint">Percentile obtained in above mentioned section</p>
+			</div>
+        
+          
+          </fieldset> 
+           
+        <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+        
+        <div class="buttonHolder">
+        	<button type="submit" class="secondaryAction">Cancel and go back</button>
+        	<button type="submit" class="primaryAction">Next</button>
+    	</div>
+    	<br>
+             
+      </form>
+      
+<script>
+
+$(function(){
+  $('form.uniForm').uniform({
+    prevent_submit : true
+  });
+
+  serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+  $("#date").datepicker({
+  	dateFormat: 'yy-mm-dd',
+  	changeMonth: true,
+		changeYear: true,
+		yearRange: '-25:-15',
+		onClose : function(dateText, inst) {
+			this.focus();
+		}
+  });
+});       
+ 
+  
+
+function submit() {
+    $.ajax({
+        url : urlBasicInfo,
+        data : getValues(),
+        success: function(jStatus){
+            
+        },
+            error: function(response) {
+          	  $('#errorBox').text(response.responseText).parent().show();
+                console.log(response);
+                }
+            });
+}
+
+  function getValues() {
+      var formData = {}; 
+      $('form.uniForm :input')
+      		.not('button,#e_mail_confirm,:input[value^="e.g."]')
+      		.each(function(){ 
+      			formData[this.name] = this.value; 
+          });
+  
+	return formData;
+}
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:57%;
+		font-size:17px;
+		font-weight:100;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
