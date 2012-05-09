@@ -38,7 +38,7 @@ class Tnp_Model_Mapper_Certification
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $certification_table = $db_table->info('name');
-        $required_cols = array('training_id', 'training_technology', 
+        $required_cols = array('certification_id', 'certification_name', 
         'technical_field_id');
         $select = $adapter->select()
             ->from($certification_table, $required_cols)
