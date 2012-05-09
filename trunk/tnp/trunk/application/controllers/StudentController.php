@@ -102,10 +102,12 @@ class StudentController extends Zend_Controller_Action
         $student_training = array();
         $student_training_ids = $student_model->fetchTrainingIds();
         $training_model = new Tnp_Model_MemberInfo_Training();
+        $training_model->setMember_id($this->getMember_id());
         if(! empty($student_training_ids))
         {
         foreach ($student_training_ids as $key => $training_id) {
             $training_model->setTraining_id($training_id);
+           
             $training_model->fetchInfo();
             $student_training[$training_id]['semester'] = $training_model->getTraining_semester();
             $student_training[$training_id]['institute'] = $training_model->getTraining_institute();
@@ -139,7 +141,7 @@ class StudentController extends Zend_Controller_Action
         $co_curr_array['achievements'] = $student_co_curr->getAchievements();
         $co_curr_array['activities'] = $student_co_curr->getActivities();
         $co_curr_array['hobbies'] = $student_co_curr->getHobbies();
-        if (! isset($co_curr_array)) {
+        if (isset($co_curr_array)) {
             $response['co_curricular'] = true;
         } else {
             $response['co_curricular'] = false;
@@ -176,6 +178,34 @@ class StudentController extends Zend_Controller_Action
                 break;
         }
     }
+    
+    public function fetchtestnamesAction()
+    {
+    	$response = array();
+    	$this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $test_model = new Tnp_Model_EmpTestInfo_Test();
+      $test_ids =  $test_model->fetchTestsIds();
+      foreach ($test_model as $key => $test_id) {
+      	$test_model->setEmployability_test_id($test_id);
+      	$test_model->fetchInfo();
+      	$response[$test_id] = $test_model->getTest_name();
+      	
+      }
+     $response_refined = array_unique($response);
+        Zend_Registry::get('logger')->debug($response_refined);
+          $this->view->assign('response', $response_refined);
+    }
+    public function fetchtestsectionsAction()
+    {
+    	$response = array();
+    	$this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $test_section_model = new Tnp_Model_EmpTestInfo_Section();
+        $test_section_model->fetchTestSectionIds();
+        
+    }
+    
 }
 ?>
     
