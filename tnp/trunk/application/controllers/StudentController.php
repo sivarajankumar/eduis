@@ -7,7 +7,7 @@
  */
 class StudentController extends Zend_Controller_Action
 {
-    protected $_member_id;
+    protected $_member_id = 1;
     /**
      * The default action - show the home page
      */
@@ -37,189 +37,145 @@ class StudentController extends Zend_Controller_Action
     {
         //action body
     }
-    public function viewprofileAction ()
+    function registerAction ()
     {
-        /* $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $request = $this->getRequest();
-        $rollno = $request->getparam('rollno');
-        
-        $model = new Tnp_Model_Profile_Member_Student();
-        $model->setStudent_roll_no($rollno);*/
+        $student_model = new Tnp_Model_Member_Student();
+        $student_model->setMember_id($this->getMember_id());
+        $critcal_info = $student_model->fetchCriticalInfo();
+        Zend_Registry::get('logger')->debug($critcal_info);
+        if ($critcal_info == false) {
+            $PROTOCOL = 'http://';
+            $URL_STU_CRITICAL_INFO = $PROTOCOL . CORE_SERVER .
+             '/student/fetchcriticalinfo';
+            $client = new Zend_Http_Client($URL_STU_CRITICAL_INFO);
+            $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+            $response = $client->request();
+            if ($response->isError()) {
+                $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
+                 $response->getMessage();
+                throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+            }
+            $critical_data = Zend_Json::decode($response->getBody());
+            if ($critical_data) {
+                $student_model->saveCriticalInfo($critical_data);
+            } else {
+                $msg = 'PLEASE REGISTER IN CORE MODULE....GOTO core.aceambala.com';
+                throw new Exception('$msg');
+            }
+        }
+        $this->_redirect('student/profile');
     }
-    public function getprofileAction ()
+    public function profileAction ()
     {
         $response = array();
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $this->setMember_id(1);
-        $memberId = $this->getMember_id();
-        /**
-         * CERTIFICATION DETAILS
-         */
-        $certification = new Tnp_Model_Profile_Components_Certification();
-        $certification->setMember_id($memberId);
-        $certification_ids = $certification->getMemberCertificationIds();
-        $certification_result = array();
-        foreach ($certification_ids as $id) {
-            $certification->setCertification_id($id);
-            $certification->initMemberCertificationInfo();
-            //as far member_certification details are concerned ,it includes only period details
-            // certication name etc are all certification details... same goes for technical_field details 
-            $certification_start_date = $certification->getStart_date();
-            $certification_complete_date = $certification->getComplete_date();
-            $certification->initCertificationInfo();
-            $certification->initTechnicalFieldInfo();
-            $certification_name = $certification->getCertification_name();
-            $technical_field_name = $certification->getTechnical_field_name();
-            $technical_sector = $certification->getTechnical_sector();
-            $certification_result[$id] = array(
-            'certification_name' => $certification_name, 
-            'certification_start_date' => $certification_start_date, 
-            'certification_complete_date' => $certification_complete_date, 
-            'technical_field_name' => $technical_field_name, 
-            'technical_sector' => $technical_sector);
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $this->_getParam('format', 'html');
+        $this->_helper->viewRenderer->setNoRender(false);
+        $student_model = new Tnp_Model_Member_Student();
+        $student_model->setMember_id($this->getMember_id());
+        $student_emp_test = array();
+        $student_test_ids = $student_model->fetchEmpTestRecordIds();
+        $emp_model = new Tnp_Model_EmpTestInfo_Test();
+        if(! empty($student_test_ids))
+        {
+        foreach ($student_test_ids as $key => $test_id) {
+            $emp_model->setEmployability_test_id($test_id);
+            $emp_model->fetchInfo();
+            $student_emp_test[$test_id]['test_name'] = $emp_model->getTest_name();
+            $student_emp_test[$test_id]['date'] = $emp_model->getDate_of_conduct();
+        }}
+        $student_certifications = array();
+        $student_certification_ids = $student_model->fetchCertificationIds();
+        $certification_model = new Tnp_Model_Certification();
+         if(! empty($student_certification_ids))
+        {
+        foreach ($student_certification_ids as $key => $certification_id) {
+            $certification_model->setCertification_id($certification_id);
+            $certification_model->fetchInfo();
+            $student_certifications[$certification_id]['name'] = $certification_model->getCertification_name();
+        }}
+        $student_training = array();
+        $student_training_ids = $student_model->fetchTrainingIds();
+        $training_model = new Tnp_Model_MemberInfo_Training();
+        if(! empty($student_training_ids))
+        {
+        foreach ($student_training_ids as $key => $training_id) {
+            $training_model->setTraining_id($training_id);
+            $training_model->fetchInfo();
+            $student_training[$training_id]['semester'] = $training_model->getTraining_semester();
+            $student_training[$training_id]['institute'] = $training_model->getTraining_institute();
+        }}
+        $student_experience = array();
+        $student_experience_ids = $student_model->fetchExperienceIds();
+        $experience_model = new Tnp_Model_MemberInfo_Experience();
+        if(! empty($student_experience_ids))
+        {
+        foreach ($student_experience_ids as $key => $student_experience_id) {
+            $experience_model->setStudent_experience_id($student_experience_id);
+            $experience_model->fetchInfo();
+            $student_experience[$student_experience_id]['organisation'] = $experience_model->getOrganisation();
+        }}
+        $student_languages = $student_model->fetchLanguagesKnown();
+        if (! empty($student_languages)) {
+            $response['languages_known'] = true;
+        } else {
+            $response['languages_known'] = false;
         }
-        $response['certifications'] = $certification_result;
-        /**
-         * EXPERIENCE DETAILS
-         */
-        $experience = new Tnp_Model_Profile_Components_Experience();
-        $experience_result = array();
-        $experience->setMember_id($memberId);
-        $experience_ids = $experience->getMemberExperienceIds();
-        foreach ($experience_ids as $id) {
-            $experience->setStudent_experience_id($id);
-            $experience->initMemberExperienceDetails();
-            $experience->initIndustryInfo();
-            $experience->initFunctionalAreaInfo();
-            $experience->initRoleInfo();
-            $experience_months = $experience->getExperience_months();
-            $experience_years = $experience->getExperience_years();
-            $organisation = $experience->getOrganisation();
-            $start_date = $experience->getStart_date();
-            $end_date = $experience->getEnd_date();
-            $was_part_time = $experience->getIs_parttime();
-            $industry_name = $experience->getIndustry_name();
-            $functional_area_name = $experience->getFunctional_area_name();
-            $role_name = $experience->getRole_name();
-            $experience_result[$id] = array('industry_name' => $industry_name, 
-            'functional_area' => $functional_area_name, 'role' => $role_name, 
-            'experience_months' => $experience_months, 
-            'experience_years' => $experience_years, 
-            'experience_organisation' => $organisation, 
-            'start_date' => $start_date, 'end_date' => $end_date, 
-            'was_part_time' => $was_part_time);
+        $student_job_preferred = $student_model->fetchJobPreferred();
+        if (! empty($student_job_preferred)) {
+            $response['job_preferred'] = true;
+        } else {
+            $response['job_preferred'] = false;
         }
-        $response['experience'] = $experience_result;
-        /**
-         *TRAINING DETAILS 
-         *
-         */
-        $training = new Tnp_Model_Profile_Components_Training();
-        $training_result = array();
-        $training->setMember_id($memberId);
-        $training_ids = $training->getMemberTrainingIds();
-        foreach ($training_ids as $id) {
-            $training->setTraining_id($id);
-            $training->initMemberTrainingInfo();
-            $training->initTrainingInfo();
-            $training->initTechnicalFieldInfo();
-            $training_technology = $training->getTraining_technology();
-            $training_field = $training->getTechnical_field_name();
-            $training_sector = $training->getTechnical_sector();
-            $training_inst = $training->getTraining_institute();
-            $training_start = $training->getStart_date();
-            $training_end = $training->getCompletion_date();
-            $training_sem = $training->getTraining_semester();
-            $training_result[$id] = array('training_field' => $training_field, 
-            'training_sector' => $training_sector, 
-            'training_sector' => $training_sector, 
-            'training_technology' => $training_technology, 
-            'training_inst' => $training_inst, 
-            'training_start' => $training_start, 'training_end' => $training_end, 
-            'training_sem' => $training_sem);
+        $co_curr_array = array();
+        $student_co_curr = new Tnp_Model_MemberInfo_CoCurricular();
+        $student_co_curr->setMember_id($this->getMember_id());
+        $student_co_curr->fetchInfo();
+        $co_curr_array['achievements'] = $student_co_curr->getAchievements();
+        $co_curr_array['activities'] = $student_co_curr->getActivities();
+        $co_curr_array['hobbies'] = $student_co_curr->getHobbies();
+        if (! isset($co_curr_array)) {
+            $response['co_curricular'] = true;
+        } else {
+            $response['co_curricular'] = false;
         }
-        $response['training'] = $training_result;
-        /**
-         * EMPLOYIBILITY TEST
-         */
-        $test_result = array();
-        $section_result = array();
-        $test = new Tnp_Model_Test_Employability();
-        $test->setMember_id($memberId);
-        $test_ids = array();
-        $test_ids = $test->getMemberTestIds();
-        foreach ($test_ids as $test_id) {
-            $test->setEmployability_test_id($test_id);
-            $test->initMemberTestRecord();
-            $test->initTestInfo();
-            $test_name = $test->getTest_name();
-            $test_marks = $test->getTest_total_score();
-            $test_percentile = $test->getTest_percentile();
-            $test_reg_no = $test->getTest_regn_no();
-            $section_ids = array();
-            $section_ids = $test->getMemberTestSectionIds();
-            foreach ($section_ids as $section_id) {
-                $test->setTest_section_id($section_id);
-                $test->initMemberSectionRecord();
-                $section_marks = $test->getSection_marks();
-                $section_percentile = $test->getSection_percentile();
-                $test->initTestSectionInfo();
-                $section_name = $test->getTest_section_name();
-                $section_result[$section_id] = array(
-                'section_name' => $section_name, 
-                'section_marks' => $section_marks, 
-                'section_percentile' => $section_percentile);
-            }
-            $test_result[$test_id] = array('test_name' => $test_name, 
-            'test_marks' => $test_marks, 'test_percentile' => $test_percentile, 
-            'test_reg_no' => $test_reg_no, 'sections_info' => $section_result);
+        $skills_array = array();
+        $student_skills = $student_model->fetchSkills();
+        if (! empty($student_skills)) {
+            $response['skills'] = true;
+        } else {
+            $response['skills'] = false;
         }
-        $response['test'] = $test_result;
-        /*
-         * LANGUAGE KNOWN DETAILS
-         */
-        $student = new Tnp_Model_Profile_Member_Student();
-        $student->setMember_id($memberId);
-        $language_result = array();
-        $langIds = array();
-        $langIds = $student->getMemberLanguageKnownIds();
-        foreach ($langIds as $id) {
-            $student->setLanguage_id($id);
-            $student->initMemberLanguageInfo();
-            $language_prof = $student->getLanguage_proficiency();
-            $student->initLanguageInfo();
-            $language_name = $student->getLanguage_name();
-            $language_result[$id] = array('lang_name' => $language_name, 
-            'lang_prof' => $language_prof);
-        }
-        $response['language'] = $language_result;
-        /*
-         * SKILL DETAILS
-         */
-        $skill_result = array();
-        $skill_ids = $student->getMemberSkillIds();
-        foreach ($skill_ids as $id) {
-            $student->setSkill_id($id);
-            $student->initMemberSkillInfo();
-            $student->initSkillInfo();
-            $skill_name = $student->getSkill_name();
-            $skill_prof = $student->getSkill_proficiency();
-            $skill_field = $student->getSkill_field();
-            $skill_result[$id] = array('skill_name' => $skill_name, 
-            'skill_prof' => $skill_prof, 'skill_field' => $skill_field);
-        }
-        $response['skillset'] = $skill_result;
+        $response['employability_test'] = $student_emp_test;
+        $response['certifications'] = $student_certifications;
+        $response['training'] = $student_training;
+        $response['experience'] = $student_experience;
         Zend_Registry::get('logger')->debug($response);
-        $callback = $this->getRequest()->getParam('callback');
-        echo $callback . '(' . $this->_helper->json($response, false) . ')';
-    }
-    public function searchAction ()
-    {}
-    
-    public function saveprofileAction()
-    {
-    	
+        switch ($format) {
+            case 'html':
+                $this->view->assign('response', $response);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($response, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($response);
+                break;
+            case 'test':
+                Zend_Registry::get('logger')->debug($response);
+                break;
+            default:
+                ;
+                break;
+        }
     }
 }
+?>
+    
