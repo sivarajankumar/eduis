@@ -1,252 +1,197 @@
-<style type="text/css">
-#MyProfileDiv label {
-	padding: 0.1em;
-}
-
-span {
-	color: #444444;
-	font-weight: normal;
-}
-</style>
-<!-- <div id="MyProfileDiv" class="ui-state-default ui-corner-all"
-	style="padding: 1em 0 0 0; text-align: center;">My Profile <br>
-<br>
-<table id="corner" cellspacing="10" cellpadding="10" align="center">
-	<tr>
-		<th class="ui-widget-content ui-corner-all" style="text-align: center">
-		<a class="personal_detail_link" href="#">Personal Details</a></th>
-		<th class="ui-widget-content ui-corner-all" style="text-align: center">
-		<a class="academic_detail_link" href="#"> Academic Details </a></th>
-		<th class="ui-widget-content ui-corner-all" style="text-align: center">
-		<a class="career_detail_link" href="#">Career Details</a></th>
-	</tr>
-</table>
-</div>
-
-
-<div class="" id="myProfileDiv"></div>-->
-<br>
-<script>
-	$(function() {
-		$( "#tabs" ).tabs();
-	});
-	</script>
-
-
-
-<div class="demo"><center><h2>My Profile</h2></center>
-
-<div id="tabs">
-	<ul>
-		<li><a href="#tabs-1">Personal Details</a></li>
-		<li><a class="academic_detail_link" href="#tabs-2">Academic Details</a></li>
-		<li><a class="career_detail_link" href="#tabs-3">Career Details</a></li>
-	</ul>
-	<div id="tabs-1">
-	</div>
-	<div id="tabs-2">
-	</div>
-	<div id="tabs-3">
-		
-	</div>
-</div>
-
-</div>
-
-<script type="text/javascript">
-var urlfetchdpersonaldetail = "<?php
-echo 'http://' . CORE_SERVER . '/student/getprofile'?>";
-var urlfetchacademicdetail = "<?php
-echo 'http://' . ACADEMIC_SERVER . '/student/getprofile'?>";
-var urlfetchcareerdetail = "<?php
-echo 'http://' . TNP_SERVER . '/student/getprofile'?>";
-var getSchedule = "<?php echo $this->url(array('controller' => 'student', 
-    'action' => 'getprofile'))?>";
-$(function(){
-	
-	$.ajax({
-    	url : urlfetchdpersonaldetail,
-        dataType : 'jsonp',
-        data : {format:'jsonp'},
-        success: function(personal_detail){
-            table_string = '<table  width="100%" cellspacing="0" cellpadding="3" border="0">';
-            var memberInfoBasic = {};
-            memberInfoBasic.name = personal_detail.first_name;
-            //memberInfoBasic.deptt = personal_detail.last_name;
-            memberInfoBasic.regn_no = personal_detail.regn_no;
-            memberInfoBasic.gender = personal_detail.gender;
-            memberInfoBasic.phone_no =personal_detail.phone_no;
-            memberInfoBasic.dob = personal_detail.dob;
-            memberInfoBasic.email = personal_detail.email;
-            //memberInfoBasic.type = member.member_type_id;
-
-            /*$.each(personal_detail,function(index,value){
-                if(value==null)
-                {
-                	table_string += '';
-                }             
-                else
-                {
-            		table_string += '<tr><td>'+index.toUpperCase()+'</td>';
-                	table_string += '<td>'+value+'</td></tr>';
-                }
-            });*/
-            $('#memberInfoBasic').html('');
-            traverse(memberInfoBasic,'#memberInfoBasic');
-    
-            $('#tabs-1').html('');
-            traverse(memberInfoBasic,'#tabs-1');
-            
-          },
-       error: function(event) {
-            alert(event.responseText);
-       }
-    });//End ajax call.
-
-	
-});
-
-
-$(".personal_detail_link").click(function(){
-	location.reload(true);
-});
-
-$(".academic_detail_link").click(function(){
-	//$('#myProfileDiv').html("academic_detail_link");
-	
-	$.ajax({
-    	url : urlfetchacademicdetail,
-        dataType : 'jsonp',
-        data : {format:'jsonp'},
-        success: function(academic_detail){
-        	var degree = academic_detail['degree'];
-        	var twelfth = academic_detail['twelfth'];
-        	var tenth = academic_detail['tenth'];
-
-        	table_string = '<table  width="100%" cellspacing="0" cellpadding="3" border="0">';
-        	 
-        	$.each(academic_detail,function(index,programme){
-        		table_string += '<tr><h1><td>'+index.toUpperCase()+'</td></h1></tr>';
-        		if(index=='degree')
+<div id="ctrlHolder">
+	  <H3>Basic Skills</H3></div>
+	  <div>
+    	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+			<tr>
+				<th>Name</th>
+				<th>Proficiency</th>
+				<th>Field</th>
+			</tr>
+            <?php 
+        	foreach ($this->skills as $skillId => $value)
         		{
-            		$.each(programme,function(index,semester){
-                		$.each(semester,function(index,value){
-                			if(value==null)
-                            {
-                  	         table_string += '';
-                            } 
-          		        else
-                           {
-              		         table_string += '<tr><td>'+index.toUpperCase()+'</td>';
-                  	         table_string += '<td>'+value+'</td></tr>';
-							}
-                    });});
-        		}
-        		else{
-           			$.each(programme,function(index,value){
-                 		if(value==null)
-                          {
-                	         table_string += '';
-                          } 
-        		        else
-                         {
-            		         table_string += '<tr><td>'+index.toUpperCase()+'</td>';
-                	         table_string += '<td>'+value+'</td></tr>';
-                         }
-                   });
-                   }
-     	});
-       	 $('#tabs-2').html(table_string);
-        },
-        error: function(event) {
-             alert(event.responseText);
-        }
-     });
-});
+        			echo '<tr>';
+        	        echo '<td>'.ucfirst($value['skill_name']).'</td>';
+        	        echo '<td>'.ucfirst($value['skill_prof']).'</td>';
+        	        echo '<td>'.ucfirst($value['skill_field']).'</td>';
+        	        echo '</tr>'; 
+        		}  
+            ?>
+        	
+    	</table>
+	</div>
+    
+    <div id="ctrlHolder"><H3>Certification Details</H3></div>
+    <div>
+    	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+			<tr>
+				<th>Name</th>
+				<th>Technical Field</th>
+				<th>Technical Sector</th>
+				<th>From</th>
+				<th>To</th>
+			</tr>
+            <?php 
+        	foreach ($this->certification as $id => $value) 
+        		{
+        			echo '<tr>';
+        	        echo '<td>'.ucfirst($value['certification_name']).'</td>';
+        	        echo '<td>'.ucfirst($value['technical_field_name']).'</td>';
+        	        echo '<td>'.ucfirst($value['technical_sector']).'</td>';
+        	        echo '<td>'.ucfirst($value['certification_start_date']).'</td>';
+        	        echo '<td>'.ucfirst($value['certification_complete_date']).'</td>';
+        	        echo '</tr>'; 
+        			 
+        		}  
+            ?>
+        	
+    	</table>
+	</div>
+    
+    <div id="ctrlHolder"><H3>Training/Internship</H3></div>
+    <div>
+    	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+			<tr>
+				<th>Technology</th>
+				<th>Technical Field</th>
+				<th>Technical Sector</th>
+				<th>Institution</th>
+				<th>Semester</th>
+				<th>From</th>
+				<th>To</th>
+			</tr>
+            <?php 
+        	foreach ($this->training as $id => $value) 
+        		{
+        			echo '<tr>';
+        	        echo '<td>'.ucfirst($value['training_technology']).'</td>';
+        	        echo '<td>'.ucfirst($value['training_field']).'</td>';
+        	        echo '<td>'.ucfirst($value['training_sector']).'</td>';
+        	        echo '<td>'.ucfirst($value['training_inst']).'</td>';
+        	        echo '<td>'.ucfirst($value['training_sem']).'</td>';
+        	        echo '<td>'.ucfirst($value['training_start']).'</td>';
+        	        echo '<td>'.ucfirst($value['training_end']).'</td>';
+        	        echo '</tr>'; 
+        			 
+        		}  
+            ?>
+    	</table>
+    </div>
+    
+ <div id="ctrlHolder"> <H3>Work Experience</H3></div>
+ <div>
+    	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+			<tr>
+				<th>Industry</th>
+				<th>Functional Area</th>
+				<th>Role</th>
+				<th>Experience(in months)</th>
+				<th>Organisation</th>
+				<th>From</th>
+				<th>To</th>
+				<th>To</th>
+				<th>Part-time</th>
+			</tr>
+            <?php 
+        	foreach ($this->experience as $id => $value) 
+        		{
+        			echo '<tr>';
+        	        echo '<td>'.ucfirst($value['industry_name']).'</td>';
+        	        echo '<td>'.ucfirst($value['functional_area']).'</td>';
+        	        echo '<td>'.ucfirst($value['role']).'</td>';
+        	        echo '<td>'.ucfirst($value['experience_months']).'</td>';
+        	        echo '<td>'.ucfirst($value['experience_organisation']).'</td>';
+        	        echo '<td>'.ucfirst($value['start_date']).'</td>';
+        	        echo '<td>'.ucfirst($value['end_date']).'</td>';
+        	        echo '<td>'.ucfirst($value['was_part_time']).'</td>';
+        	        echo '</tr>'; 
+        			 
+        		}  
+            ?>
+    	</table>
+    	</div>
+    	<div id="ctrlHolder"><H3>Languages Known</H3></div>
+    	<div>
+    	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+			<tr>
+				<th>Name</th>
+				<th>Proficiency</th>
+			</tr>
+            <?php 
+        	foreach ($this->language as $skillId => $value) 
+        		{
+        			echo '<tr>';
+        	        echo '<td>'.ucfirst($value['lang_name']).'</td>';
+        	        echo '<td>'.ucfirst($value['lang_prof']).'</td>';
+        	        
+        	        echo '</tr>'; 
+        			 
+        		}  
+            ?>
+        	
+    	</table>
+	</div>
+	<!--<div id="ctrlHolder">
+	<H3>Emplaoyability Test</H3>
+	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+			<tr>
+				<th>Registration Number</th>
+				<th>Test Name</th>
+				<th>Total Marks</th>
+				<th>Percentile</th>
+			</tr>
+            <?php 
+        	foreach ($this->test as $test => $array) 
+        		{
+        			
+        				echo '<tr>';
+        				echo '<td>'.ucfirst($array['test_reg_no']).'</td>';
+        	      		echo '<td>'.ucfirst($array['test_name']).'</td>';
+        	        	echo '<td>'.ucfirst($array['test_marks']).'</td>';
+        	        	echo '<td>'.ucfirst($array['test_percentile']).'</td>';
+        	            echo '</tr>';
+        			
+        		}  
+            ?>
+            
+       	</table>
+    	</div>
+    
+</div>
+-->
+<style type="text/css">
+	#personal_details label {
+		padding: 0.1em;
+	}
 
-$(".career_detail_link").click(function(){	
-	$.ajax({
-    	url : getSchedule,
-        dataType : 'jsonp',
-        data : {format:'jsonp'},
-        success: function(career_detail){
-        	table_string = '<table  width="100%" cellspacing="0" cellpadding="3" border="0">';
-        	var certification_obj = career_detail.certifications;
-        	var experience_obj = career_detail.experience;
-        	var training_obj = career_detail.training;
-        	var languages_obj = career_detail.languages;
-        	var skillset_obj = career_detail.skillset;
-			if(certification_obj!=null)
-			{
-				table_string +='<th><b>Certification</b></th><tr></tr>';
-        		$.each(certification_obj,function(certification_number,certification_detail){
-        			$.each(certification_detail,function(index,value){
-        				table_string += '<td>'+index.toUpperCase()+'</td>';
-        	        	table_string += '<td>'+value+'</td></tr>';
-        			});
-        		});
-			}
-			if(experience_obj!=null)
-			{
-        		table_string +='<th><b>Experience</b></th><tr></tr>';
-        		$.each(experience_obj,function(experience_number,experience_detail){
-        			$.each(experience_detail,function(index,value){
-        				table_string += '<tr><td>'+index.toUpperCase()+'</td>';
-        	    	    table_string += '<td>'+value+'</td></tr>';
-        			});
-        		});
-			}
-			if(training_obj!=null)
-			{
-				table_string +='<th><b>Training</b></th><tr></tr>';
-        		$.each(training_obj,function(training_number,training_detail){
-        			$.each(training_detail,function(index,value){
-        				table_string += '<td>'+index.toUpperCase()+'</td>';
-        	        	table_string += '<td>'+value+'</td></tr>';
-        			});
-        		});
-			}
-			if(languages_obj!=null)
-			{
-				table_string +='<th><b>Languages</b></th><tr></tr>';
-        		$.each(languages_obj,function(languages_number,languages_detail){
-        			$.each(languages_detail,function(index,value){
-        				table_string += '<td>'+index.toUpperCase()+'</td>';
-        	        	table_string += '<td>'+value+'</td></tr>';
-        			});
-        		});
-			}
-			if(skillset_obj!=null)
-			{
-				table_string +='<th><b>Skillset</b></th><tr></tr>';
-        		$.each(skillset_obj,function(skillset_number,skillset_detail){
-        			$.each(skillset_detail,function(index,value){
-        				table_string += '<td>'+index.toUpperCase()+'</td>';
-        	        	table_string += '<td>'+value+'</td></tr>';
-        			});
-        		});
-			}
-        
-       	 $('#tabs-3').html(table_string);
-        },
-        error: function(event) {
-             alert(event.responseText);
-        }
-     });
-});
+	span {
+		color: #444444;
+		font-weight: normal;
+	}
+	 #ctrlHolder{
+		padding: 1em; 
+		border-bottom: 1px solid #efefef;
+		background: #efefef;
+		height: 20px;
+		padding-top: .6em;
+		border-radius:         4px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius:    4px;
+        -o-border-radius:      4px;
+        -khtml-border-radius:  4px; 
+      }
+      
+      table {
+      	border-color: #c20f2e;
+}
+#corner
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	margin: 15px;
+	width: 1000px;
+	text-align: left;
+	border-collapse: collapse;
+}
 
-var traverse = function(jsonObj, targetDiv, clean){
-	//if (typeof clean === 'undefined') clean = false;
-	$.each(jsonObj, function (key, value) {
-		if( value && typeof value == "object" ) {
-			prepareSelectOption(value, targetDiv);
-		} else if( value && typeof value == "string" ) {
-			if(clean){
-				key = key.replace('_', ' ');
-				key = key.replace('id', '');
-			}
-			$(targetDiv).append('<div class="infoDiv" ><span class="infoHeader" >'+key+' : </span><span class="infoContent  ui-corner-all">'+value+'</span></div>');
-		}
-	});
-};
-</script>
+</style>
