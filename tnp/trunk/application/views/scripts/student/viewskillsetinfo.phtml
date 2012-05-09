@@ -1,0 +1,43 @@
+<div class="ui-widget-content ui-corner-all"><center><H3>Basic Skills</H3></center></div>
+<div id="skill_details">
+	  
+	  
+    	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+			<tr>
+				<th>Name</th>
+				<th>Proficiency</th>
+				<th>Field</th>
+			</tr>
+            <?php 
+        	foreach ($this->skills as $skillId => $value)
+        		{
+        			echo '<tr>';
+        	        echo '<td>'.ucfirst($value['skill_name']).'</td>';
+        	        echo '<td>'.ucfirst($value['skill_prof']).'</td>';
+        	        echo '<td>'.ucfirst($value['skill_field']).'</td>';
+        	        echo '</tr>'; 
+        		}  
+            ?>
+        	
+    	</table>
+	</div>
+	<div id="edit_skills" class="ui-widget-content ui-corner-all">
+	<h3><center><a href="/student/editskillsetinfo">Edit</a></center></h3>
+</div>
+<style type="text/css">
+	table {
+      	border-color: #c20f2e;
+		width:97%;
+	}
+	tr{
+		border-bottom:1px dashed #999;
+	}
+	#corner
+	{
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+		font-size: 14px;
+		margin: 15px;
+		text-align: left;
+		border-collapse: collapse;
+	}
+</style>
