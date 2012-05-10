@@ -177,41 +177,36 @@ class StudentController extends Zend_Controller_Action
                 break;
         }
     }
-    public function fetchtestnamesAction ()
+    public function edittestinfoAction ()
     {
-        $response = array();
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $response_names = array();
+        $response_sections = array();
         $test_model = new Tnp_Model_EmpTestInfo_Test();
         $test_ids = $test_model->fetchTestsIds();
         foreach ($test_ids as $key => $test_id) {
             $test_model->setEmployability_test_id($test_id);
             $test_model->fetchInfo();
             $test_name = $test_model->getTest_name();
-            $response[$test_id] = $test_name;
+            $response_names[$test_id] = $test_name;
         }
-        $response_refined = array_unique($response);
-        $this->view->assign('response', $response_refined);
-        Zend_Registry::get('logger')->debug($response_refined);
-    }
-    public function fetchtestsectionsAction ()
-    {
-        $response = array();
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
+        $test_names = array_unique($response_names);
         $test_section_model = new Tnp_Model_EmpTestInfo_Section();
         $test_section_ids = $test_section_model->fetchTestSectionIds();
         foreach ($test_section_ids as $key => $test_section_id) {
             $test_section_model->setTest_section_id($test_section_id);
             $test_section_model->fetchInfo();
             $test_section_name = $test_section_model->getTest_section_name();
-            $response[$test_section_id] = $test_section_name;
+            $response_sections[$test_section_id] = $test_section_name;
         }
-        $response_refined = array_unique($response);
-        $this->view->assign('response', $response_refined);
-        Zend_Registry::get('logger')->debug($response_refined);
+        $test_sections = array_unique($response_sections);
+         Zend_Registry::get('logger')->debug($test_names);
+          Zend_Registry::get('logger')->debug($test_sections);
+        $this->view->assign('test_names', $test_names);
+        $this->view->assign('test_sections', $test_sections);
     }
-    public function saveemployabilitytestAction ()
+    public function saveemployabilitytest ()
     {
         $response = array();
         $this->_helper->viewRenderer->setNoRender(false);
@@ -222,23 +217,14 @@ class StudentController extends Zend_Controller_Action
         $test_score = $params['myarray']['test_marks'];
         $section_info = $params['myarray']['section_info'];
         $section_marks = $params['myarray']['section_marks'];
-        
         $student = new Tnp_Model_Member_Student();
+        $student->saveEmpTestRecord($data_array);
         $student->setMember_id($this->getMember_id());
-        
         $test_model = new Tnp_Model_EmpTestInfo_Test();
-      
-        
-        
-        $employability_test_id = $test_model->save($test_info);
-        
+        $employability_test_id = $test_model->saveInfo($test_info);
         $test_score['employability_test_id'] = $employability_test_id;
         $test_score['member_id'] = $this->getMember_id();
-        
-        
         $test_model->save($test_score);
-        
-        
         $test_section_model = new Tnp_Model_EmpTestInfo_Section();
         $section_info['employability_test_id'] = $employability_test_id;
         $test_section_model->save();
