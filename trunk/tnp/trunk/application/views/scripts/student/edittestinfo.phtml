@@ -1,80 +1,99 @@
+<?php 
+	$tests = $this->test_names;
+	$test_sections = $this->test_sections;
+?>
+
 <h2>Employability Test<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
 <form action="javascript:submit();" class="uniForm">
       
- <fieldset>
+ <fieldset id="test_info">
+	<div class="ctrlHolder">
+		<label for="test_name"><em>*</em>Test Name</label>
+		<select id="test_name" name="test_name" class="selectInput required">
+		<?php 
+			foreach ($tests as $key => $value)
+			{
+				echo '<option value="'.$value.'">'.$value.'</option>';
+			}
+		?>
+		</select>
+		<p class="formHint">Select the name of the test</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="test_name">Test Name</label>
+		<input name="test_name" id="test_name" value="" data-default-value="" size="35" maxlength="50" type="text" class="textInput"/>
+		<p class="formHint">Select the name of the test</p>
+	</div>
 
-			<div class="ctrlHolder">
-				<label for="">Name of Test</label>
-				<input name="test_name" id="test_name" value="" data-default-value="e.g. AMCAT" size="35" maxlength="50" type="text" class="textInput "/>
-				<p class="formHint">Enter name of the test undertaken</p>
-			</div>
-			
-          	<div class="ctrlHolder">
-					<label for="">Registration Number</label>
-					<input name="test_regn_no" id="test_regn_no" value="" data-default-value="e.g. 6687897987987" size="35" maxlength="50" type="text" class="textInput "/>
-					<p class="formHint">Enter registration number of test appeared</p>
-				</div>
-				
-           <div class="ctrlHolder">
-                        <label for="date_of_conduct">Date Of Conduct</label>
-                        <input name="date_of_conduct" id="date_of_conduct" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
-                        <p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
-        	</div>
-        	
-			<div class="ctrlHolder">
-				<label for="">Percentile</label>
-				<input name="test_percentile" id="test_percentile" value="" data-default-value="e.g.Software Development" size="35" maxlength="50" type="text" class="textInput "/>
-				<p class="formHint">Percentile in test</p>
-			</div>
-				 
-			<div class="ctrlHolder">
-				<label for="">Total Score</label>
-				<input name="test_total_score" id="test_total_score" value="" data-default-value="e.g.200" size="35" maxlength="50" type="text" class="textInput "/>
-				<p class="formHint"></p>
-			</div>
-			<div class="ctrlHolder">
-					<label for="">Experience </label>
-					<input name="experience_years" id="experience_years" value="" data-default-value="e.g. 2 " size="35" maxlength="50" type="text" class="textInput validateInteger"/>
-					<p class="formHint">Exeprience in number of years</p>
-			</div>	 
-            <div class="ctrlHolder">
-					<label for="">Section Name </label>
-					<input name="test_section_name" id="test_section_name" value="" data-default-value="e.g. Quantitative Apptitude" size="35" maxlength="50" type="text" class="textInput "/>
-					<p class="formHint"></p>
-			</div>	 
-         	<div class="ctrlHolder">
-					<label for="">Section Marks </label>
-					<input name="section_marks" id="section_marks" value="" data-default-value="e.g. 29 " size="35" maxlength="50" type="text" class="textInput validateInteger"/>
-					<p class="formHint">Marks obtained in above mentioned section</p>
-			</div>	
-			<div class="ctrlHolder">
-					<label for="">Section percentile </label>
-					<input name="section_percentile" id="section_percentile" value="" data-default-value="e.g. 30" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
-					<p class="formHint">Percentile obtained in above mentioned section</p>
-			</div>
-        
-          
-          </fieldset> 
+    <div class="ctrlHolder">
+		<label for="date_of_conduct">Date Of Conduct</label>
+		<input name="date_of_conduct" id="date_of_conduct" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+	</div>
+ </fieldset>
+ 
+ <fieldset id="test_score">
+	<div class="ctrlHolder">
+		<label for="">Registration Number</label>
+		<input name="test_regn_no" id="test_regn_no" value="" data-default-value="e.g. 6687897987987" size="35" maxlength="50" type="text" class="textInput "/>
+		<p class="formHint">Enter registration number of test appeared</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="">Percentile</label>
+		<input name="test_percentile" id="test_percentile" value="" data-default-value="e.g.Software Development" size="35" maxlength="50" type="text" class="textInput "/>
+		<p class="formHint">Percentile in test</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="">Total Score</label>
+		<input name="test_total_score" id="test_total_score" value="" data-default-value="e.g.200" size="35" maxlength="50" type="text" class="textInput "/>
+		<p class="formHint"></p>
+	</div>    
+</fieldset>
+<?php 
+	foreach ($test_sections as $key => $value)
+	{
+?>
+	<fieldset id="<?php echo $value;?>" class="section">
+		<br>
+		<h2><?php echo $value;?></h2>
+		<div class="ctrlHolder">
+			<label for="">Section Marks </label>
+			<input name="section_marks" id="section_marks" value="" data-default-value="e.g. 29 " size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+			<p class="formHint">Marks obtained in above mentioned section</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="">Section percentile </label>
+			<input name="section_percentile" id="section_percentile" value="" data-default-value="e.g. 30" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
+			<p class="formHint">Percentile obtained in above mentioned section</p>
+		</div>
+	</fieldset>
+<?php 
+	}
+?>
            
-        <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
-        
-        <div class="buttonHolder">
-        	<button type="submit" class="secondaryAction">Cancel and go back</button>
-        	<button type="submit" class="primaryAction">Next</button>
-    	</div>
-    	<br>
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+	
+	<br>
              
-      </form>
+</form>
       
 <script>
-
+var urlBasicInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'abc'))?>';
 $(function(){
-  $('form.uniForm').uniform({
-    prevent_submit : true
-  });
+	$('form.uniForm').uniform({
+		prevent_submit : true
+	});
 
-  serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
-  $("#date").datepicker({
+	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	$("#date_of_conduct").datepicker({
   	dateFormat: 'yy-mm-dd',
   	changeMonth: true,
 		changeYear: true,
@@ -82,34 +101,45 @@ $(function(){
 		onClose : function(dateText, inst) {
 			this.focus();
 		}
-  });
-});       
- 
-  
+	});
+});      
+
+
 
 function submit() {
     $.ajax({
         url : urlBasicInfo,
         data : getValues(),
         success: function(jStatus){
-            
+			
         },
-            error: function(response) {
-          	  $('#errorBox').text(response.responseText).parent().show();
-                console.log(response);
-                }
-            });
+		error: function(response) {
+			$('#errorBox').text(response.responseText).parent().show();
+			console.log(response);
+		}
+	});
 }
 
-  function getValues() {
-      var formData = {}; 
-      $('form.uniForm :input')
-      		.not('button,#e_mail_confirm,:input[value^="e.g."]')
-      		.each(function(){ 
-      			formData[this.name] = this.value; 
-          });
-  
-	return formData;
+function getValues() {
+	var data = {};
+	var test_info = {};
+	var test_section_info = {};
+	var sub_data = {}; 
+	$('fieldset#test_info :input')
+	.not('button,#e_mail_confirm,:input[value^="e.g."]')
+	.each(function(){ 
+		test_info[this.name] = this.value; 
+	});
+	data['test_info'] = test_info;
+	$('fieldset.section').each(function(){
+		var div_id = $(this).attr('id');
+		$('fieldset#'+div_id+' :input').each(function(){
+			sub_data[this.name] = this.value;
+		})
+		test_section_info[div_id] = sub_data; 
+	});
+	data['test_section_info'] = test_section_info;
+	return data;
 }
 </script>
 <style>
