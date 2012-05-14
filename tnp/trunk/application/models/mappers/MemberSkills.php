@@ -57,22 +57,22 @@ class Tnp_Model_Mapper_MemberSkills
      * @param bool $member_id
      * @param bool $all_member
      */
-    public function fetchSkills ($member_id = null)
+    public function fetchSkillsIds ($member_id = null)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $skills_table = $db_table->info('name');
-        $required_cols = array('member_id', 'skill_id');
+        $required_cols = array('skill_id');
         $select = $adapter->select()->from($skills_table, $required_cols);
         if (! empty($member_id)) {
             $select->where('member_id = ?', $member_id);
         }
         $member_skills = array();
         $result = array();
-        $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        foreach ($result as $member_id => $skills_id_array) {
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        /*foreach ($result as $member_id => $skills_id_array) {
             $member_skills[$member_id] = $skills_id_array['skill_id'];
-        }
+        }*/
         return $member_skills;
     }
     public function fetchMemberIds ($skill_id = null, $proficiency = null)

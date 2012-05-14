@@ -584,12 +584,12 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
      * Operating Condition : Member Id is set
      * @return false|array
      */
-    public function fetchSkills ()
+    public function fetchSkillsIds ()
     {
         $member_id = $this->getMember_id(true);
         $member_skills = new Tnp_Model_MemberInfo_Skills();
         $member_skills->setMember_id($member_id);
-        return $member_skills->fetchSkills();
+        return $member_skills->fetchSkillsIds();
     }
     /**
      * Operating Condition : Member Id is set
