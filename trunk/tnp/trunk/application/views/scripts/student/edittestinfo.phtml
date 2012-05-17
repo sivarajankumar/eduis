@@ -5,54 +5,51 @@
 
 <h2>Employability Test<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
 <form action="javascript:submit();" id="test_info_form" class="uniForm">
- <fieldset id="test_info">
-	<div class="ctrlHolder">
-		<label for="test_name"><em>*</em>Test Name</label>
-		<select id="test_name" name="test_name" class="selectInput required">
-		<?php 
-			foreach ($tests as $key => $value)
-			{
-				echo '<option value="'.$value.'">'.$value.'</option>';
-			}
-		?>
-		<option value="other">Other</option>
-		</select>
-		<p class="formHint">Select the name of the test</p>
-	</div>
+	<fieldset id="test_info">
+		<div class="ctrlHolder">
+			<label for="test_name"><em>*</em>Test Name</label>
+			<select id="test_name" name="test_name" class="selectInput required">
+			<?php 
+				foreach ($tests as $key => $value)
+				{
+					echo '<option value="'.$value.'">'.$value.'</option>';
+				}
+			?>
+			<option value="other">Other</option>
+			</select>
+			<p class="formHint">Select the name of the test</p>
+		</div>
 
-    <div class="ctrlHolder">
-		<label for="date_of_conduct">Date Of Conduct</label>
-		<input name="date_of_conduct" id="date_of_conduct" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
-		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of test</p>
-	</div>
-
- </fieldset>
+		<div class="ctrlHolder">
+			<label for="date_of_conduct">Date Of Conduct</label>
+			<input name="date_of_conduct" id="date_of_conduct" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of test</p>
+		</div>
+	</fieldset>
  
- <fieldset id="test_score">
-	<div class="ctrlHolder">
-		<label for="test_regn_no">Registration Number</label>
-		<input name="test_regn_no" id="test_regn_no" value="" data-default-value="e.g. 6687897987987" size="35" maxlength="50" type="text" class="textInput "/>
-		<p class="formHint">Enter registration number of test appeared</p>
-	</div>
+ 	<fieldset id="test_score">
+		<div class="ctrlHolder">
+			<label for="test_regn_no">Registration Number</label>
+			<input name="test_regn_no" id="test_regn_no" value="" data-default-value="e.g. 6687897987987" size="35" maxlength="50" type="text" class="textInput "/>
+			<p class="formHint">Enter registration number of test appeared</p>
+		</div>
 
-	<div class="ctrlHolder">
-		<label for="test_percentile">Percentile</label>
-		<input name="test_percentile" id="test_percentile" value="" data-default-value="e.g.Software Development" size="35" maxlength="50" type="text" class="textInput "/>
-		<p class="formHint">Percentile in test</p>
-	</div>
+		<div class="ctrlHolder">
+			<label for="test_percentile">Percentile</label>
+			<input name="test_percentile" id="test_percentile" value="" data-default-value="e.g.Software Development" size="35" maxlength="50" type="text" class="textInput "/>
+			<p class="formHint">Percentile in test</p>
+		</div>
 
-	<div class="ctrlHolder">
-		<label for="test_total_score">Total Score</label>
-		<input name="test_total_score" id="test_total_score" value="" data-default-value="e.g.200" size="35" maxlength="50" type="text" class="textInput "/>
-		<p class="formHint"></p>
-	</div>
-	<!-- <div class="buttonHolder">
-		<button type="submit" class="primaryAction">Next</button>
-	</div> -->    
-</fieldset>
+		<div class="ctrlHolder">
+			<label for="test_total_score">Total Score</label>
+			<input name="test_total_score" id="test_total_score" value="" data-default-value="e.g.200" size="35" maxlength="50" type="text" class="textInput "/>
+			<p class="formHint"></p>
+		</div> 
+	</fieldset>
 </form>
 
 <div id="select_sections">
+<h3>Please click on the sections whose score you want to fill..</h3>
 	<?php
 		foreach ($test_sections as $key => $value)
 		{

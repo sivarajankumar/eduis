@@ -1,0 +1,216 @@
+<?php
+	$test_names = $this->test_names;
+	$technologies = $this->technologies;
+?>
+
+<h2>Training<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
+<form action="javascript:submit();" class="uniForm">
+
+	<fieldset id="technical_info">
+		<div class="ctrlHolder">
+			<label for="technical_field_name">Technical Feild</label>
+			<select id="technical_field_name" name="technical_field_name" class="selectInput ">
+				<?php 
+					foreach ($test_names as $key => $value)
+            		{
+            			echo '<option value="'.$key.'">'.$value.'</option>';
+            		}
+          		?>
+          		<option value="other">Other</option>
+			</select>
+			<p class="formHint">Technical feild in which training is done </p>
+		</div>
+	</fieldset>
+	
+	<fieldset id="training_info">
+		<div class="ctrlHolder">
+			<label for="training_technology">Training Technology</label>
+			<select id="training_technology" name="training_technology" class="selectInput ">
+				<?php
+					foreach ($technologies as $key => $value)
+            		{
+            			echo '<option value="'.$key.'">'.$value.'</option>';
+            		}
+          		?>
+          		<option value="other">Other</option>
+			</select>
+			<p class="formHint">Technology in which training is done </p>
+		</div>
+     </fieldset>  
+      
+	<fieldset id="training_detail">
+		<div class="ctrlHolder">
+			<label for="start_date">Start Date</label>
+			<input name="start_date" id="start_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+		</div>
+		
+        <div class="ctrlHolder">
+			<label for="complete_date">Complete Date</label>
+			<input name="complete_date" id="complete_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+		</div>
+		
+        <div class="ctrlHolder">
+			<label for="">Training Institute</label>
+			<input name="training_institute" id="training_institute" value="" data-default-value="e.g. Allsoft Solutions" size="35" maxlength="50" type="text" class="textInput required"/>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="">Training Semester</label>
+			<input name="training_semester" id="training_semester" value="" data-default-value="e.g. 3" size="35" maxlength="50" type="text" class="textInput required validateMax val-8"/>
+			<p class="formHint">Semester after which training is taken</p>
+		</div>
+	</fieldset>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+	
+</form>
+      
+<script>
+
+$(function(){
+	$('form.uniForm').uniform({
+		prevent_submit : true
+	});
+
+	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	$("#start_date").datepicker({
+	dateFormat: 'yy-mm-dd',
+	changeMonth: true,
+		changeYear: true,
+		yearRange: '-25:-15',
+		onClose : function(dateText, inst) {
+			this.focus();
+		}
+	});
+	$("#complete_date").datepicker({
+	  	dateFormat: 'yy-mm-dd',
+	  	changeMonth: true,
+			changeYear: true,
+			yearRange: '-25:-15',
+			onClose : function(dateText, inst) {
+				this.focus();
+			}
+	  });
+});       
+
+var field_html = '<div class="ctrlHolder" id="technical_field_div">'+
+				'<label for="new_technical_field_name"><em class="red">*</em>Techical Field Name</label>'+
+				'<input name="new_technical_field_name" id="new_technical_field_name" value="" data-default-value="" size="35" maxlength="50" type="text" class="required textInput"/>'+
+				'<p class="formHint">Enter the name of the field</p>'+
+				'</div>'+
+				'<div class="ctrlHolder" id="technical_sector_div">'+
+				'<label for="new_technical_sector"><em class="red">*</em>Sector Name</label>'+
+				'<input name="new_technical_sector" id="new_technical_sector" value="" data-default-value="Technical Sector" size="35" maxlength="50" type="text" class="required textInput"/>'+
+				'<p class="formHint">Enter of the certification</p>'+
+				'</div>';
+$('#technical_field_name').change(function(){
+	if($('#technical_field_name').val() == 'other'){
+		$('fieldset#technical_info').append(field_html);
+	}
+	else {
+		$('div#other_field').remove();
+		$('div#other_sector').remove();
+	}
+});
+
+var technology_html = '<div class="ctrlHolder" id="technology_div">'+
+					'<label for="new_training_technology"><em class="red">*</em>Training Technology</label>'+
+					'<input name="new_training_technology" id="new_training_technology" value="" data-default-value="" size="35" maxlength="50" type="text" class="required textInput"/>'+
+					'<p class="formHint">Enter the name of the training Technology</p>'+
+					'</div>';
+$('#training_technology').change(function(){
+	if($('#training_technology').val() == 'other'){
+		$('fieldset#training_info').append(technology_html);
+	}
+	else {
+		$('div#technology_div').remove();
+	}
+});
+
+  
+
+function submit() {
+	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savetraining'))?>';
+    $.ajax({
+        url : urlSaveInfo,
+        data : {myarray:getValues()},
+        success: function(jStatus){
+            
+        },
+		error: function(response) {
+			$('#errorBox').text(response.responseText).parent().show();
+			console.log(response);
+		}
+	});
+}
+
+function getValues() {
+	var formData = {};
+	var technical_info = {};
+	var training_info = {};
+	var training_detail = {};
+
+	if($('#technical_field_name').val() == 'other') {
+		technical_info['technical_field_name'] = $('#new_technical_field_name').val();
+		technical_info['technical_sector_name'] = $('#new_technical_sector').val();
+	}
+	else {
+		technical_info['technical_field'] = $('#technical_field_name').val();
+	}
+	
+	if($('#training_technology').val() == 'other') {
+		training_info['training_technology_name'] = $('#new_training_technology').val();
+	}
+	else {
+		training_info['training_technology'] = $('#training_technology').val();
+	}
+	
+	$('fieldset#training_detail :input')
+		.each(function(){
+			training_detail[this.name] = this.value; 
+	});
+	formData['technical_info'] = technical_info;
+	formData['training_info'] = training_info;
+	formData['training_detail'] = training_detail; 
+	return formData;
+}
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:57%;
+		font-size:17px;
+		font-weight:100;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
