@@ -5,7 +5,7 @@
 <h2>Professional Certification<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
 <form action="javascript:submit();" class="uniForm">
 	
-	<fieldset id="technical_field_info">
+	<fieldset id="technical_info">
 		<div class="ctrlHolder">
 			<label for="technical_field_name">Technical Feild</label>
 			<select id="technical_field_name" name="technical_field_name" class="selectInput required">
@@ -21,13 +21,15 @@
 		</div>
 	</fieldset>
 	    
-	<fieldset id="">
+	<fieldset id="certification_info">
 		<div class="ctrlHolder">
 			<label for="certification_name"><em class="red">*</em>Certification Name</label>
 			<input name="certification_name" id="certification_name" value="" data-default-value="e.g. OCJP" size="35" maxlength="50" type="text" class="textInput "/>
 			<p class="formHint">Name of the Certification.</p>
 		</div>
-	      
+	 </fieldset>
+	 
+	 <fieldset id="certification_detail">   
 		<div class="ctrlHolder">
 			<label for="start_date">Start Date</label>
 			<input name="start_date" id="start_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
@@ -39,7 +41,6 @@
 			<input name="complete_date" id="complete_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
 			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
 		</div>  
-          
 	</fieldset>
     
 	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
@@ -54,36 +55,48 @@
 <script>
 
 $(function(){
-  $('form.uniForm').uniform({
-    prevent_submit : true
-  });
+	$('form.uniForm').uniform({
+		prevent_submit : true
+	});
 
-  serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
-  $("#date").datepicker({
-  	dateFormat: 'yy-mm-dd',
-  	changeMonth: true,
+	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	$("#start_date").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
 		changeYear: true,
 		yearRange: '-25:-15',
 		onClose : function(dateText, inst) {
 			this.focus();
 		}
-  });
+	});
+	$("#complete_date").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '-25:-15',
+		onClose : function(dateText, inst) {
+			this.focus();
+		}
+	});
 });       
 
-var div_html = '<div class="ctrlHolder" id="other"><label for="test_name">Test Name</label><input name="test_name" id="test_name" value="" data-default-value="Section Name" size="35" maxlength="50" type="text" class="required textInput"/><p class="formHint">Select the name of the test</p></div>';
+var div_html = '<div class="ctrlHolder" id="other_field"><label for="other_technical_field_name"><em class="red">*</em>Techical Field Name</label><input name="other_technical_field_name" id="other_technical_field_name" value="" data-default-value="" size="35" maxlength="50" type="text" class="required textInput"/><p class="formHint">Select the name of the field</p></div>'+
+				'<div class="ctrlHolder" id="other_sector"><label for="technical_sector"><em class="red">*</em>Sector Name</label><input name="technical_sector" id="technical_sector" value="" data-default-value="Technical Sector" size="35" maxlength="50" type="text" class="required textInput"/><p class="formHint">Sector of the certification</p></div>';
 $('#technical_field_name').change(function(){
 	if($('#technical_field_name').val() == 'other'){
-		$('fieldset#technical_field_info').append(div_html);
+		$('fieldset#technical_info').append(div_html);
 	}
 	else {
-		$('div#other').remove();
+		$('div#other_field').remove();
+		$('div#other_sector').remove();
 	}
 });
 
 function submit() {
+	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savecertification'))?>';
     $.ajax({
-        url : urlBasicInfo,
-        data : getValues(),
+        url : urlSaveInfo,
+        data : {myarray:getValues()},
         success: function(jStatus){
             
         },
@@ -95,13 +108,33 @@ function submit() {
 }
 
   function getValues() {
-      var formData = {}; 
-      $('form.uniForm :input')
-      		.not('button,#e_mail_confirm,:input[value^="e.g."]')
+	  var technical_info = {};
+	  var certification_info = {};
+	  var certification_detail = {};
+      var formData = {};
+
+      if($('#technical_field_name').val() == 'other') {
+			technical_info['technical_field_name'] =  $('#other_technical_field_name').val();
+			technical_info['technical_sector'] =  $('#technical_sector').val();
+      }
+      else {
+      	$('fieldset#technical_info :input')
       		.each(function(){ 
-      			formData[this.name] = this.value; 
-          });
-  
+				technical_info[this.name] = this.value; 
+			});
+      }
+      $('fieldset#certification_info :input')
+  		.each(function(){ 
+  			certification_info[this.name] = this.value; 
+		});
+      $('fieldset#certification_detail :input')
+  		.each(function(){ 
+  			certification_detail[this.name] = this.value; 
+		});
+
+		formData['technical_info'] = technical_info;
+		formData['certification_info'] = certification_info;
+		formData['certification_detail'] = certification_detail;
 	return formData;
 }
 </script>
