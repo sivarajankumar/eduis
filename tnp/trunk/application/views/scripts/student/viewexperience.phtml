@@ -1,0 +1,52 @@
+<div class="ui-widget-content ui-corner-all"><center><H3>Work Experience</H3></center></div>
+<div id="exp_details"> 
+    	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+			<tr>
+				<th>Industry</th>
+				<th>Functional Area</th>
+				<th>Role</th>
+				<th>Experience(in months)</th>
+				<th>Organisation</th>
+				<th>From</th>
+				<th>To</th>
+				<th>To</th>
+				<th>Part-time</th>
+			</tr>
+            <?php 
+        	foreach ($this->experience as $id => $value) 
+        		{
+        			echo '<tr>';
+        	        echo '<td>'.ucfirst($value['industry_name']).'</td>';
+        	        echo '<td>'.ucfirst($value['functional_area']).'</td>';
+        	        echo '<td>'.ucfirst($value['role']).'</td>';
+        	        echo '<td>'.ucfirst($value['experience_months']).'</td>';
+        	        echo '<td>'.ucfirst($value['experience_organisation']).'</td>';
+        	        echo '<td>'.ucfirst($value['start_date']).'</td>';
+        	        echo '<td>'.ucfirst($value['end_date']).'</td>';
+        	        echo '<td>'.ucfirst($value['was_part_time']).'</td>';
+        	        echo '</tr>'; 
+        			 
+        		}  
+            ?>
+    	</table>
+    	</div>
+    	<div id="edit_exp" class="ui-widget-content ui-corner-all">
+	<h3><center><a href="/student/editexperienceinfo">Edit</a></center></h3>
+</div>
+<style type="text/css">
+	table {
+      	border-color: #c20f2e;
+		width:97%;
+	}
+	tr{
+		border-bottom:1px dashed #999;
+	}
+	#corner
+	{
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+		font-size: 14px;
+		margin: 15px;
+		text-align: left;
+		border-collapse: collapse;
+	}
+</style>
