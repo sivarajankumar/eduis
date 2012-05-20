@@ -456,7 +456,7 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $certification_id = 1;//$params['certification_id'];
+        $certification_id = $params['certification_id'];
         $student_certification = new Tnp_Model_MemberInfo_Certification();
         $student_certification->setMember_id($this->getMember_id());
         $student_certification->setCertification_id($certification_id);
@@ -479,6 +479,51 @@ class StudentController extends Zend_Controller_Action
         'technical_field_sector' => $technical_field_sector);
         $this->view->assign('certification', $certification);
         Zend_Registry::get('logger')->debug($certification);
+    }
+    public function viewexperienceAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $student_experience_id = $params['student_experience_id'];
+        $student_experience = new Tnp_Model_MemberInfo_Experience();
+        $student_experience->setMember_id($this->getMember_id());
+        $student_experience->setStudent_experience_id($student_experience_id);
+        $student_experience->fetchInfo();
+        $industry_id = $student_experience->getIndustry_id();
+        $role_id = $student_experience->getRole_id();
+        $functional_area_id = $student_experience->getFunctional_area_id();
+        $industry = new Tnp_Model_Industry();
+        $industry->setIndustry_id($industry_id);
+        $industry->fetchInfo();
+        $industry_name = $industry->getIndustry_name();
+        $role = new Tnp_Model_Role();
+        $role->setRole_id($role_id);
+        $role->fetchInfo();
+        $role_name = $role->getRole_name();
+        $func_area = new Tnp_Model_FunctionalArea();
+        $func_area->setFunctional_area_id($functional_area_id);
+        $func_area->fetchInfo();
+        $func_area_name = $func_area->getFunctional_area_name();
+        $organisation = $student_experience->getOrganisation();
+        $start_date = $student_experience->getStart_date();
+        $end_date = $student_experience->getEnd_date();
+        $months = $student_experience->getExperience_months();
+        $years = $student_experience->getExperience_years();
+        $description = $student_experience->getDescription();
+        $experience = array('organisation' => $organisation,
+       'start_date' => $start_date,
+       'end_date' => $end_date,
+       'experience_months' => $months,
+       'experience_years' => $years,
+       'description' => $description,
+       'functional_area_name' => $func_area_name,
+       'role_name' => $role_name,
+        'industry_name' => $industry_name,
+      );
+         $this->view->assign('experience', $experience);
+        Zend_Registry::get('logger')->debug($experience);
     }
 }
 ?>
