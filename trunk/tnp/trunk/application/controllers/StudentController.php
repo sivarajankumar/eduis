@@ -399,7 +399,9 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $employability_test_id = 1; //$params['employability_test_id'];
+        $employability_test_id = $params['employability_test_id'];
+        $test_name = $params['test_name'];
+        $date_of_conduct = $params['date_of_conduct'];
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($this->getMember_id());
         $test_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
@@ -413,6 +415,8 @@ class StudentController extends Zend_Controller_Action
             $response['test_percentile'] = $test_record->getTest_percentile();
             $response['test_regn_no'] = $test_record->getTest_regn_no();
             $response['test_total_score'] = $test_record->getTest_total_score();
+            $response['test_name'] = $test_name;
+            $response['date_of_conduct'] = $date_of_conduct;
         }
           $this->view->assign('test_info', $response);
         Zend_Registry::get('logger')->debug($response);
