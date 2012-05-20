@@ -433,7 +433,7 @@ class StudentController extends Zend_Controller_Action
         $section_score->setMember_id($this->getMember_id());
         $section_score_ids = $section_score->fetchSectionScoreIds(true, true);
         $test = new Tnp_Model_EmpTestInfo_Section();
-		$response = array();
+        $response = array();
         foreach ($section_score_ids as $key => $section_score_id) {
             $section_score->setSection_score_id($section_score_id);
             $section_score->fetchInfo();
@@ -447,8 +447,38 @@ class StudentController extends Zend_Controller_Action
             $response[$section_score_id]['section_marks'] = $section_marks;
             $response[$section_score_id]['section_percentile'] = $section_percentile;
         }
-         $this->view->assign('section_score', $response);
+        $this->view->assign('section_score', $response);
         Zend_Registry::get('logger')->debug($response);
+    }
+    public function viewcertificationAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $certification_id = 1;//$params['certification_id'];
+        $student_certification = new Tnp_Model_MemberInfo_Certification();
+        $student_certification->setMember_id($this->getMember_id());
+        $student_certification->setCertification_id($certification_id);
+        $student_certification->fetchInfo();
+        $start_date = $student_certification->getStart_date();
+        $complete_date = $student_certification->getComplete_date();
+        $certification = new Tnp_Model_Certification();
+        $certification->setCertification_id($certification_id);
+        $certification->fetchInfo();
+        $name = $certification->getCertification_name();
+        $technical_field_id = $certification->getTechnical_field_id();
+        $technical = new Tnp_Model_TechnicalField();
+        $technical->setTechnical_field_id($technical_field_id);
+        $technical->fetchInfo();
+        $technical_field_name = $technical->getTechnical_field_name();
+        $technical_field_sector = $technical->getTechnical_sector();
+        $certification = array('certification_name' => $name, 
+        'start_date' => $start_date, 'complete_date' => $complete_date, 
+        'technical_field_name' => $technical_field_name, 
+        'technical_field_sector' => $technical_field_sector);
+        $this->view->assign('certification', $certification);
+        Zend_Registry::get('logger')->debug($certification);
     }
 }
 ?>
