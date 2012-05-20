@@ -25,7 +25,7 @@
 			}*/
 			foreach ($emptestinfo as $test_id => $test_info)
 			{
-				echo '<a href="#">';
+				echo '<a href="viewtestinfo?employability_test_id='.$test_id.'&test_name='.$test_info['test_name'].'&date_of_conduct='.$test_info['date'].'">';
 					echo '<li>Test Name<span class="red">'.$test_info['test_name'].'</span>';
 					echo 'Date<span class="red">'.$test_info['date'].'</span></li>';
 				echo '</a>';
