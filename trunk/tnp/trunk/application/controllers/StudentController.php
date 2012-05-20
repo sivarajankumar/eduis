@@ -37,6 +37,12 @@ class StudentController extends Zend_Controller_Action
     {
         //action body
     }
+    private function fetchTechnicalFields ()
+    {
+        $technical_field = new Tnp_Model_TechnicalField();
+        $technical_fields = $technical_field->fetchTechnicalFields();
+        return $technical_fields;
+    }
     function registerAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -146,7 +152,7 @@ class StudentController extends Zend_Controller_Action
             $response['co_curricular'] = false;
         }
         $skills_array = array();
-        $student_skills = $student_model->fetchSkills();
+        $student_skills = $student_model->fetchSkillsIds();
         if (! empty($student_skills)) {
             $response['skills'] = true;
         } else {
@@ -201,8 +207,8 @@ class StudentController extends Zend_Controller_Action
             $response_sections[$test_section_id] = $test_section_name;
         }
         $test_sections = array_unique($response_sections);
-         Zend_Registry::get('logger')->debug($test_names);
-          Zend_Registry::get('logger')->debug($test_sections);
+        Zend_Registry::get('logger')->debug($test_names);
+        Zend_Registry::get('logger')->debug($test_sections);
         $this->view->assign('test_names', $test_names);
         $this->view->assign('test_sections', $test_sections);
     }
@@ -214,20 +220,202 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $test_info = $params['myarray']['test_info'];
-        $test_score = $params['myarray']['test_marks'];
-        $section_info = $params['myarray']['section_info'];
-        $section_marks = $params['myarray']['section_marks'];
+        $test_score = $params['myarray']['test_score'];
+        $section_info = $params['myarray']['section_score'];
         $student = new Tnp_Model_Member_Student();
-        $student->saveEmpTestRecord($data_array);
         $student->setMember_id($this->getMember_id());
         $test_model = new Tnp_Model_EmpTestInfo_Test();
         $employability_test_id = $test_model->saveInfo($test_info);
         $test_score['employability_test_id'] = $employability_test_id;
-        $test_score['member_id'] = $this->getMember_id();
-        $test_model->save($test_score);
+        $student->saveEmpTestRecord($test_score);
         $test_section_model = new Tnp_Model_EmpTestInfo_Section();
-        $section_info['employability_test_id'] = $employability_test_id;
-        $test_section_model->save();
+        foreach ($section_info as $name => $section_score) {
+            $section_array = array();
+            $section_array['test_section_name'] = $name;
+            $section_array['employability_test_id'] = $employability_test_id;
+            $test_section_id = $test_section_model->saveInfo($section_array);
+            $section_score['test_section_id'] = $test_section_id;
+            $section_score['employability_test_id'] = $employability_test_id;
+            $student->saveEmpTestSectionScore($section_score);
+        }
+    }
+    public function savecertificationAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $certification = $params['myarray']['certification_info'];
+        $technical_info = $params['myarray']['technical_field_info'];
+        $student_certification = $params['myarray']['certification_details'];
+        $certification_model = new Tnp_Model_Certification();
+        $technical_field_id = $technical_info['technical_field_id'];
+        if ($technical_field_id) {
+            $certification['technical_field_id'] = $technical_field_id;
+        } else {
+            $technical_field = new Tnp_Model_TechnicalField();
+            $technical_field_id = $technical_field->saveInfo($technical_info);
+            $certification['technical_field_id'] = $technical_field_id;
+        }
+        $certification_id = $certification_model->saveInfo($certification);
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($this->getMember_id());
+        $student->saveCertificationInfo($student_certification);
+    }
+    public function editcertificationAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $technical_fields = self::fetchTechnicalFields();
+        Zend_Registry::get('logger')->debug($technical_fields);
+        $this->view->assign('test_names', $technical_fields);
+    }
+    public function edittrainingAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $technical_fields = self::fetchTechnicalFields();
+        $this->view->assign('test_names', $technical_fields);
+        $training_model = new Tnp_Model_Training();
+        Zend_Registry::get('logger')->debug($technical_fields);
+        $technologies = $training_model->fetchTechnologies();
+        $this->view->assign('technologies', $technologies);
+        Zend_Registry::get('logger')->debug($technologies);
+    }
+    public function savetrainingAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $training_info = $params['myarray']['training_info'];
+        $training_details = $params['myarray']['training_details'];
+        $technical_info = $params['myarray']['technical_info'];
+        $technical_field_id = $training_info['technical_field_id'];
+        $training_id = $training_info['training_id'];
+        if (! $technical_field_id) {
+            $technical_field = new Tnp_Model_TechnicalField();
+            $technical_field_id = $technical_field->saveInfo($technical_info);
+            $training_info['technical_field_id'] = $technical_field_id;
+        }
+        if (! $training_id) {
+            $training = new Tnp_Model_Training();
+            $training_id = $training->saveInfo($training_info);
+            $training_details['training_id'] = $training_id;
+        }
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($this->getMember_id());
+        $student->saveTrainingInfo($training_details);
+    }
+    public function editexperienceAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $industry_model = new Tnp_Model_Industry();
+        $role_model = new Tnp_Model_Role();
+        $functional_model = new Tnp_Model_FunctionalArea();
+        $industries = $industry_model->fetchIndustries();
+        $roles = $role_model->fetchRoles();
+        $functional_areas = $functional_model->fetchFunctionalAreas();
+        $this->view->assign('industries', $industries);
+        $this->view->assign('roles', $roles);
+        $this->view->assign('functional_areas', $functional_areas);
+        Zend_Registry::get('logger')->debug($industries);
+        Zend_Registry::get('logger')->debug($roles);
+        Zend_Registry::get('logger')->debug($functional_areas);
+    }
+    public function saveexperienceAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $experience_info = $params['experience_info'];
+        $student_experience = $params['student_experience'];
+        $role_name = $experience_info['role_name'];
+        $industry_name = $experience_info['industry_name'];
+        $functional_area_name = $experience_info['functional_area_name'];
+        if ($role_name) {
+            $role_model = new Tnp_Model_Role();
+            $role_array = array($role_name);
+            $role_id = $role_model->saveInfo($role_array);
+            $student_experience['role_id'] = $role_id;
+        }
+        if ($industry_name) {
+            $industry_model = new Tnp_Model_Industry();
+            $industry_array = array($industry_name);
+            $industry_id = $industry_model->saveInfo($industry_array);
+            $student_experience['industry_id'] = $industry_id;
+        }
+        if ($functional_area_name) {
+            $functional_model = new Tnp_Model_FunctionalArea();
+            $functional_array = array($functional_area_name);
+            $functional_area_id = $functional_model->saveInfo($role_array);
+            $student_experience['functional_area_id'] = $functional_area_id;
+        }
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($this->getMember_id());
+        $student->saveExperienceInfo($student_experience);
+    }
+    public function viewskillsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($this->getMember_id());
+        $skills = $student->fetchSkillsIds();
+        Zend_Registry::get('logger')->debug($skills);
+    }
+    public function viewjobpreferredAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($this->getMember_id());
+        $job_preferred = $student->fetchJobPreferred();
+        $this->view->assign('job_preferred', $job_preferred);
+        Zend_Registry::get('logger')->debug($job_preferred);
+    }
+    public function viewcocurricularAction ()
+    {
+        $cocurricular = array();
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($this->getMember_id());
+        $cocurricular_model = $student->fetchCoCurricularInfo();
+        if ($cocurricular_model instanceof Tnp_Model_MemberInfo_CoCurricular) {
+            $cocurricular_model->fetchInfo();
+            $cocurricular['achievements'] = $cocurricular_model->getAchievements();
+            $cocurricular['activities'] = $cocurricular_model->getActivities();
+            $cocurricular['hobbies'] = $cocurricular_model->getHobbies();
+        }
+        $this->view->assign('cocurricular', $cocurricular);
+        Zend_Registry::get('logger')->debug($cocurricular);
+    }
+    public function viewtestinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $employability_test_id = 1; //$params['employability_test_id'];
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($this->getMember_id());
+        $test_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
+        $test_record->setEmployability_test_id($employability_test_id);
+        $test_record->setMember_id($this->getMember_id());
+        $record_ids = $test_record->fetchTestRecordIds(true, true);
+        $response = array();
+        foreach ($record_ids as $key => $record_id) {
+            $test_record->setTest_record_id($record_id);
+            $test_record->fetchInfo();
+            $response['test_percentile'] = $test_record->getTest_percentile();
+            $response['test_regn_no'] = $test_record->getTest_regn_no();
+            $response['test_total_score'] = $test_record->getTest_total_score();
+        }
+          $this->view->assign('test_info', $response);
+        Zend_Registry::get('logger')->debug($response);
     }
 }
 ?>
