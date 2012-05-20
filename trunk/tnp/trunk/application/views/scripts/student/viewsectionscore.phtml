@@ -1,0 +1,72 @@
+<?php 
+	//print_r($section_score);
+?>
+<div class="ui-widget-content ui-corner-all"><center><H3>Employability Test</H3></center></div>
+<div id="test_details">
+
+<table id="test_info" cellspacing="10" cellpadding="10">
+	<?php 
+    	echo '<tr><td>Test Name: '.$_GET['test_name'].'</td></tr>';
+    	echo '<tr><td>Date of Conduct: '.$_GET['date_of_conduct'].'</td></tr>';
+	?>
+</table>
+
+<table style="width: 65%" id="corner" cellspacing="10" cellpadding="10">
+	<?php
+		if(isset($this->section_score)){
+			$section_score = $this->section_score;
+			if($section_score!=null){
+       			foreach ($section_score as $section_id => $section_details) 
+    			{
+    				foreach ($section_details as $key => $value){   			
+        				echo '<tr>';
+        					echo '<td><span id="heading">'.ucfirst(str_replace('_',' ',$key)).'</span>';
+        					echo '<span id="content">'.$value.'</span></td>';
+        				echo '</tr>';
+    				}
+				}
+			}
+		}  
+	?>
+</table>
+</div>
+    
+<!-- <div id="edit_test" class="ui-widget-content ui-corner-all">
+	<h3><center><a href="/student/viewsectionscore?employability_test_id=<?php echo $_GET['employability_test_id']?>&testname=<?php echo $test_info['test_name']?>&date_of_conduct=<?php echo $test_info['date_of_conduct']?>">View Sectional Score</a></center></h3>
+</div> -->
+<div id="goback" class="ui-widget-content ui-corner-all">
+	<h3><center><a href="/student/profile">Go Back</a></center></h3>
+</div>
+
+<style type="text/css">
+	#test_info{
+		border:1px solid black;
+		width: 30%;
+		float:left;
+		margin:0 50px 0 0;
+	}
+	tr{
+		border-bottom:1px dashed #999;
+	}
+	#corner
+	{
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+		font-size: 14px;
+		margin: 15px;
+		text-align: left;
+		border-collapse: collapse;
+	}
+	td span#heading{
+		color:red;
+	}
+	td span#content{
+		float:right;
+	}
+	#edit_test {
+		width:50%;
+		float:left
+	}
+	#goback {
+		clear:both;
+	}
+</style>
