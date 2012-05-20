@@ -7,7 +7,7 @@
 	
 	<fieldset id="technical_info">
 		<div class="ctrlHolder">
-			<label for="technical_field_name">Technical Feild</label>
+			<label for="technical_field_name">Technical Field</label>
 			<select id="technical_field_name" name="technical_field_name" class="selectInput required">
             	<?php 
             		foreach ($test_names as $key => $value)
@@ -107,34 +107,31 @@ function submit() {
             });
 }
 
-  function getValues() {
-	  var technical_info = {};
-	  var certification_info = {};
-	  var certification_detail = {};
-      var formData = {};
+function getValues() {
+	var technical_info = {};
+	var certification_info = {};
+	var certification_detail = {};
+	var formData = {};
 
-      if($('#technical_field_name').val() == 'other') {
-			technical_info['technical_field_name'] =  $('#other_technical_field_name').val();
-			technical_info['technical_sector'] =  $('#technical_sector').val();
-      }
-      else {
-      	$('fieldset#technical_info :input')
-      		.each(function(){ 
-				technical_info[this.name] = this.value; 
-			});
-      }
-      $('fieldset#certification_info :input')
-  		.each(function(){ 
-  			certification_info[this.name] = this.value; 
-		});
-      $('fieldset#certification_detail :input')
-  		.each(function(){ 
-  			certification_detail[this.name] = this.value; 
-		});
+	if($('#technical_field_name').val() == 'other') {
+		technical_info['technical_field_name'] =  $('#other_technical_field_name').val();
+		technical_info['technical_sector'] =  $('#technical_sector').val();
+	}
+	else {
+		technical_info['technical_field_id'] =  $('#technical_field_name').val();
+	}
+	$('fieldset#certification_info :input')
+		.each(function(){ 
+		certification_info[this.name] = this.value; 
+	});
+	$('fieldset#certification_detail :input')
+		.each(function(){ 
+		certification_detail[this.name] = this.value; 
+	});
 
-		formData['technical_info'] = technical_info;
-		formData['certification_info'] = certification_info;
-		formData['certification_detail'] = certification_detail;
+	formData['technical_info'] = technical_info;
+	formData['certification_info'] = certification_info;
+	formData['certification_detail'] = certification_detail;
 	return formData;
 }
 </script>
