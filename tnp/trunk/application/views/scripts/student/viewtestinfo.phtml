@@ -10,8 +10,8 @@
        	foreach ($test_info as $key => $value) 
     	{   			
         	echo '<tr>';
-        		//$abc = ;
-        		echo '<td><span id="heading">'.ucfirst(str_replace('_',' ',$key)).'</span><span id="content">'.$value.'</span></td>';
+        		echo '<td><span id="heading">'.ucfirst(str_replace('_',' ',$key)).'</span>';
+        		echo '<span id="content">'.$value.'</span></td>';
         	echo '</tr>';
 		}  
 	?>
@@ -19,7 +19,7 @@
 </div>
     
 <div id="edit_test" class="ui-widget-content ui-corner-all">
-	<h3><center><a href="/student/viewsectionscore?employability_test_id=<?php echo $_GET['employability_test_id']?>&testname=<?php echo $test_info['test_name']?>&date_of_conduct=<?php echo $test_info['date_of_conduct']?>">View Sectional Score</a></center></h3>
+	<h3><center><a href="/student/viewsectionscore?employability_test_id=<?php echo $_GET['employability_test_id']?>&test_name=<?php echo $test_info['test_name']?>&date_of_conduct=<?php echo $test_info['date_of_conduct']?>">View Sectional Score</a></center></h3>
 </div>
 <div id="goback" class="ui-widget-content ui-corner-all">
 	<h3><center><a href="/student/profile">Go Back</a></center></h3>
