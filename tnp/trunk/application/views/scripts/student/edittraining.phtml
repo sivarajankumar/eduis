@@ -161,11 +161,11 @@ function getValues() {
 		technical_info['technical_sector_name'] = $('#new_technical_sector').val();
 	}
 	else {
-		technical_info['technical_field'] = $('#technical_field_name').val();
+		technical_info['technical_field_id'] = $('#technical_field_name').val();
 	}
 	
 	if($('#training_technology').val() == 'other') {
-		training_info['training_technology_name'] = $('#new_training_technology').val();
+		training_info['training_technology'] = $('#new_training_technology').val();
 	}
 	else {
 		training_info['training_technology'] = $('#training_technology').val();
