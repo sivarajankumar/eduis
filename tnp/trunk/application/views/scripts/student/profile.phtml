@@ -49,13 +49,13 @@
 			}*/
 			foreach ($certifications as $certification_id => $certification_info)
 			{
-				echo '<a href="#">';
+				echo '<a href="viewcertification?certification_id='.$certification_id.'">';
 					echo '<li>Name<span class="red">'.$certification_info['name'].'</span></li>';
 				echo '</a>';
 			}
 		?>
 		</ul>
-		<span class="add_new"><a href="#">Add New</a></span>
+		<span class="add_new"><a href="/student/editcertification">Add New</a></span>
 	</div>
 	<div id="experience_div" class="category_div">
 		<h2>Experience</h2>
@@ -72,13 +72,13 @@
 			}*/
 			foreach ($experience as $experience_id => $experience_info)
 			{
-				echo '<a href="#">';
+				echo '<a href="viewexperience?experience_id='.$experience_id.'">';
 					echo '<li>Organisation<span class="red">'.$experience_info['organisation'].'</span></li>';
 				echo '</a>';
 			}
 		?>
 		</ul>
-		<span class="add_new"><a href="#">Add New</a></span>
+		<span class="add_new"><a href="/student/editexperience">Add New</a></span>
 	</div>
 	<div id="certification_div" class="category_div">
 		<h2>Trainings</h2>
@@ -86,14 +86,14 @@
 		<?php 
 			foreach ($training as $training_id => $training_info)
 			{
-				echo '<a href="#">';
+				echo '<a href="viewtraining?training_id='.$training_id.'">';
 					echo '<li>Institute Name<span class="red">'.$training_info['institute'].'</span>';
 					echo 'Semester<span class="red">'.$training_info['semester'].'</span></li>';
 				echo '</a>';
 			}
 		?>
 		</ul>
-		<span class="add_new"><a href="#">Add New</a></span>
+		<span class="add_new"><a href="/student/edittraining">Add New</a></span>
 	</div>
 	<div id="miscallaneous_div" class="category_div">
 		<h2>Miscallaneous</h2>
