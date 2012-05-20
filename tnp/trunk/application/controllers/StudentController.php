@@ -402,8 +402,6 @@ class StudentController extends Zend_Controller_Action
         $employability_test_id = $params['employability_test_id'];
         $test_name = $params['test_name'];
         $date_of_conduct = $params['date_of_conduct'];
-        $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
         $test_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
         $test_record->setEmployability_test_id($employability_test_id);
         $test_record->setMember_id($this->getMember_id());
@@ -418,7 +416,38 @@ class StudentController extends Zend_Controller_Action
             $response['test_name'] = $test_name;
             $response['date_of_conduct'] = $date_of_conduct;
         }
-          $this->view->assign('test_info', $response);
+        $this->view->assign('test_info', $response);
+        Zend_Registry::get('logger')->debug($response);
+    }
+    public function viewsectionscoreAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $employability_test_id = $params['employability_test_id'];
+        $test_name = $params['test_name'];
+        $date_of_conduct = $params['date_of_conduct'];
+        $section_score = new Tnp_Model_MemberInfo_EmployabilityTestSectionScore();
+        $section_score->setEmployability_test_id($employability_test_id);
+        $section_score->setMember_id($this->getMember_id());
+        $section_score_ids = $section_score->fetchSectionScoreIds(true, true);
+        $test = new Tnp_Model_EmpTestInfo_Section();
+		$response = array();
+        foreach ($section_score_ids as $key => $section_score_id) {
+            $section_score->setSection_score_id($section_score_id);
+            $section_score->fetchInfo();
+            $section_marks = $section_score->getSection_marks();
+            $section_percentile = $section_score->getSection_percentile();
+            $test_section_id = $section_score->getTest_section_id();
+            $test->setTest_section_id($test_section_id);
+            $test->fetchInfo();
+            $section_name = $test->getTest_section_name();
+            $response[$section_score_id]['section_name'] = $section_name;
+            $response[$section_score_id]['section_marks'] = $section_marks;
+            $response[$section_score_id]['section_percentile'] = $section_percentile;
+        }
+         $this->view->assign('section_score', $response);
         Zend_Registry::get('logger')->debug($response);
     }
 }
