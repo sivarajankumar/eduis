@@ -486,7 +486,7 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $student_experience_id = $params['student_experience_id'];
+        $student_experience_id = $params['experience_id'];
         $student_experience = new Tnp_Model_MemberInfo_Experience();
         $student_experience->setMember_id($this->getMember_id());
         $student_experience->setStudent_experience_id($student_experience_id);
@@ -512,18 +512,50 @@ class StudentController extends Zend_Controller_Action
         $months = $student_experience->getExperience_months();
         $years = $student_experience->getExperience_years();
         $description = $student_experience->getDescription();
-        $experience = array('organisation' => $organisation,
-       'start_date' => $start_date,
-       'end_date' => $end_date,
-       'experience_months' => $months,
-       'experience_years' => $years,
-       'description' => $description,
-       'functional_area_name' => $func_area_name,
-       'role_name' => $role_name,
-        'industry_name' => $industry_name,
-      );
-         $this->view->assign('experience', $experience);
+        $experience = array('organisation' => $organisation, 
+        'start_date' => $start_date, 'end_date' => $end_date, 
+        'experience_months' => $months, 'experience_years' => $years, 
+        'description' => $description, 'functional_area_name' => $func_area_name, 
+        'role_name' => $role_name, 'industry_name' => $industry_name);
+        $this->view->assign('experience', $experience);
         Zend_Registry::get('logger')->debug($experience);
+    }
+    public function viewtrainingAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $training_id = 1;//$params['training_id'];
+        $student_trainng = new Tnp_Model_MemberInfo_Training();
+        $student_trainng->setMember_id($this->getMember_id());
+        $student_trainng->setTraining_id($training_id);
+        $student_trainng->fetchInfo();
+        $training = new Tnp_Model_Training();
+        $training->setTraining_id($training_id);
+        $training->fetchInfo();
+        $technical_field_id = $training->getTechnical_field_id();
+        $training_technology = $training->getTraining_technology();
+        $training_institute = $student_trainng->getTraining_institute();
+        $start_date = $student_trainng->getStart_date();
+        $complete_date = $student_trainng->getCompletion_date();
+        $semester = $student_trainng->getTraining_semester();
+        $technical = new Tnp_Model_TechnicalField();
+        $technical->setTechnical_field_id($technical_field_id);
+        $technical->fetchInfo();
+        $technical_field_name = $technical->getTechnical_field_name();
+        $technical_field_sector = $technical->getTechnical_sector();
+        $training_info = array('training_institute' =>$training_institute,
+        'training_technology' =>$training_technology,
+        'start_date' =>$start_date,
+        'complete_date' =>$complete_date,
+        'semester' =>$semester,
+        'technical_field_name' =>$technical_field_name,
+        'technical_field_sector' =>$technical_field_sector,
+        );
+         $this->view->assign('training_info', $training_info);
+        Zend_Registry::get('logger')->debug($training_info);
+      
     }
 }
 ?>
