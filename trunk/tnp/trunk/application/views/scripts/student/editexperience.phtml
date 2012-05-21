@@ -10,7 +10,7 @@
 <fieldset id="experience_info">
 	<div class="ctrlHolder" id="industry_div">
 		<label for="industry_name">Industry</label>
-		<select id="industry_name" name="industry_name" class="selectInput ">
+		<select id="industry_name" name="industry_name" class="selectInput" onchange="javascript:show_industry_div()">
 				<?php 
 					foreach ($industries as $key => $value)
             		{
@@ -24,7 +24,7 @@
 	
 	<div class="ctrlHolder" id="functional_area_div">
 		<label for="functional_area_name">Functional Area</label>
-		<select id="functional_area_name" name="functional_area_name" class="selectInput ">
+		<select id="functional_area_name" name="functional_area_name" class="selectInput" onchange="javascript:show_fa_div()">
 				<option value="av">Oer</option>
 				<?php 
 					foreach ($functional_areas as $key => $value)
@@ -39,7 +39,7 @@
 	
 	<div class="ctrlHolder" id="role_name_div">
 		<label for="role_name">Role</label>
-		<select id="role_name" name="role_name" class="selectInput ">
+		<select id="role_name" name="role_name" class="selectInput" onchange="javascript:show_role_div()">
 				<option value="av">Oer</option>
 				<?php 
 					foreach ($roles as $key => $value)
@@ -119,49 +119,58 @@ $(function(){
 				this.focus();
 			}
 	  });
+  show_industry_div();
+  show_fa_div();
+  show_role_div();
 });       
 
+function show_industry_div(){
 var industry_div_html = '<div class="ctrlHolder" id="new_industry_div">'+
 				'<label for="new_industry_name"><em class="red">*</em>Industry Name</label>'+
 				'<input name="new_industry_name" id="new_industry_name" value="" data-default-value="" size="35" maxlength="50" type="text" class="required textInput"/>'+
 				'<p class="formHint">Enter the name of the industry</p>'+
 				'</div>';
-$('#industry_name').change(function(){
+//$('#industry_name').change(function(){
 	if($('#industry_name').val() == 'other'){
 		$('#industry_div').after(industry_div_html);
 	}
 	else {
 		$('div#new_industry_div').remove();
 	}
-});
+//});
+}
 
+function show_fa_div(){
 var fa_div_html = '<div class="ctrlHolder" id="new_functional_area_div">'+
 				'<label for="new_functional_area_name"><em class="red">*</em>Functional Area Name</label>'+
 				'<input name="new_functional_area_name" id="new_functional_area_name" value="" data-default-value="" size="35" maxlength="50" type="text" class="required textInput"/>'+
 				'<p class="formHint">Enter the name of the functional area</p>'+
 				'</div>';
-$('#functional_area_name').change(function(){
+//$('#functional_area_name').change(function(){
 	if($('#functional_area_name').val() == 'other'){
 		$('#functional_area_div').after(fa_div_html);
 	}
 	else {
 		$('div#new_functional_area_div').remove();
 	}
-});
+//});
+}
 
+function show_role_div(){
 var role_div_html = '<div class="ctrlHolder" id="new_role_div">'+
 			'<label for="new_role_name"><em class="red">*</em>Role Name</label>'+
 			'<input name="new_role_name" id="new_role_name" value="" data-default-value="" size="35" maxlength="50" type="text" class="required textInput"/>'+
 			'<p class="formHint">Enter your role</p>'+
 		'</div>';
-$('#role_name').change(function(){
+//$('#role_name').change(function(){
 	if($('#role_name').val() == 'other'){
 		$('#role_name_div').after(role_div_html);
 	}
 	else {
 		$('div#new_role_div').remove();
 	}
-});
+//});
+}
 
 function submit() {
 	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'saveexperience'))?>';
