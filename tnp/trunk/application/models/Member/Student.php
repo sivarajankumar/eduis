@@ -571,6 +571,19 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     }
     /**
      * Operating Condition : Member Id is set
+     * @param int $language_id
+     * @return false|string
+     */
+    public function fetchLanguageProficiency ($language_id)
+    {
+        $member_id = $this->getMember_id(true);
+        $member_language = new Tnp_Model_MemberInfo_Language();
+        $member_language->setMember_id($member_id);
+        $member_language->setLanguage_id($language_id);
+        return $member_language->fetchProficiency();
+    }
+    /**
+     * Operating Condition : Member Id is set
      * @return object|false  Object of Tnp_Model_MemberInfo_ProfileStatus
      */
     public function fetchProfileInfo ()
@@ -879,6 +892,26 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
             $data_array['member_id'] = null;
             return $member_training->getMapper()->update($prepared_data, 
             $member_id, $training_id);
+        }
+    }
+    public function saveLanguageInfo ($data_array)
+    {
+        $member_id = $this->getMember_id(true);
+        $language_id = $data_array['language_id'];
+        $info = $this->fetchLanguageProficiency($language_id);
+        if ($info == false) {
+            $member_lang = new Tnp_Model_MemberInfo_Language();
+            $member_lang->initSave();
+            $preparedData = $member_lang->prepareDataForSaveProcess($data_array);
+            return $member_lang->getMapper()->save($preparedData);
+        } else {
+            $member_lang = new Tnp_Model_MemberInfo_Language();
+            $member_lang->initSave();
+            $prepared_data = $member_lang->prepareDataForSaveProcess(
+            $data_array);
+            $data_array['member_id'] = null;
+            return $member_lang->getMapper()->update($prepared_data, $member_id, 
+            $language_id);
         }
     }
     /**
