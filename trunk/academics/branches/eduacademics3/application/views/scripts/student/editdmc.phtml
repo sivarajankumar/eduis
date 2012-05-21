@@ -190,9 +190,9 @@
     function submit(){
         var data = {};
         var dmc_info_data = {};
-        var sub_data = {};
         var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmc'))?>";
 		$('fieldset.subjects').each(function(){
+	        var sub_data = {};
 			var div_id = $(this).attr('id');
 			var div_title = $(this).attr('title');
 			//var dmc_info_id = 0;
