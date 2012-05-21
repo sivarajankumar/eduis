@@ -187,21 +187,21 @@ function getValues() {
 		experience_info['industry_name'] =  $('#new_industry_name').val();
 	}
 	else {
-		experience_info['industry_id'] =  $('#industry_name').val();
+		student_experience['industry_id'] =  $('#industry_name').val();
 	}
 	
 	if($('#functional_area_name').val() == 'other') {
 		experience_info['functional_area_name'] =  $('#new_functional_area_name').val();
 	}
 	else {
-		experience_info['functional_area_id'] =  $('#functional_area_name').val();
+		student_experience['functional_area_id'] =  $('#functional_area_name').val();
 	}
 	
 	if($('#role_name').val() == 'other') {
 		experience_info['role_name'] =  $('#new_role_name').val();
 	}
 	else {
-		experience_info['role_id'] =  $('#role_name').val();
+		student_experience['role_id'] =  $('#role_name').val();
 	}
 
 	$('fieldset#student_experience :input')
