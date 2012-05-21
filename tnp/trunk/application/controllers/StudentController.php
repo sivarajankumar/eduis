@@ -526,7 +526,7 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $training_id = 1;//$params['training_id'];
+        $training_id = $params['training_id'];
         $student_trainng = new Tnp_Model_MemberInfo_Training();
         $student_trainng->setMember_id($this->getMember_id());
         $student_trainng->setTraining_id($training_id);
@@ -545,17 +545,65 @@ class StudentController extends Zend_Controller_Action
         $technical->fetchInfo();
         $technical_field_name = $technical->getTechnical_field_name();
         $technical_field_sector = $technical->getTechnical_sector();
-        $training_info = array('training_institute' =>$training_institute,
-        'training_technology' =>$training_technology,
-        'start_date' =>$start_date,
-        'complete_date' =>$complete_date,
-        'semester' =>$semester,
-        'technical_field_name' =>$technical_field_name,
-        'technical_field_sector' =>$technical_field_sector,
-        );
-         $this->view->assign('training_info', $training_info);
+        $training_info = array('training_institute' => $training_institute, 
+        'training_technology' => $training_technology, 
+        'start_date' => $start_date, 'complete_date' => $complete_date, 
+        'semester' => $semester, 'technical_field_name' => $technical_field_name, 
+        'technical_field_sector' => $technical_field_sector);
+        $this->view->assign('training_info', $training_info);
         Zend_Registry::get('logger')->debug($training_info);
-      
+    }
+    public function viewlanguagesknownAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($this->getMember_id());
+        $language_ids = $student->fetchLanguagesKnown();
+        $language = new Tnp_Model_Language();
+        foreach ($language_ids as $key => $language_id) {
+            $language->setLanguage_id($language_id);
+            $language->fetchInfo();
+            $languages[$language_id] = $language->getLanguage_name();
+        }
+        $this->view->assign('languages', $languages);
+        Zend_Registry::get('logger')->debug($languages);
+    }
+    public function editlanguagesknownAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($this->getMember_id());
+        $student_language_ids = $student->fetchLanguagesKnown();
+        $language = new Tnp_Model_Language();
+        $all_languages = $language->fetchLanguages();
+        foreach ($student_language_ids as $key => $language_id) {
+            $language->setLanguage_id($language_id);
+            $language->fetchInfo();
+            $language_name = $language->getLanguage_name();
+            $languages[$language_id] = $language_name;
+        }
+        $this->view->assign('all_languages', $all_languages);
+        Zend_Registry::get('logger')->debug($all_languages);
+        $this->view->assign('languages', $languages);
+        Zend_Registry::get('logger')->debug($languages);
+    }
+    public function savelanguagesknown ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $language_info = $params['myarray']['language_info'];
+        $student_languages = $params['myarray']['student_languages'];
+        if (isset($language_info['language_names'])) {
+            $language = new Tnp_Model_Language();
+            foreach ($language_info['language_names'] as $key => $language_name) {
+                $data_array = array($language_name);
+                $language_id = $language->saveInfo($data_array);
+            }
+        }
     }
 }
 ?>
