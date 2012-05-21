@@ -33,34 +33,22 @@ class Tnp_Model_Mapper_MemberLanguage
         }
         return $this->_dbTable;
     }
-    /**
-     * 
-     * @param integer $member_id
-     */
-    public function fetchProficiency ($member_id, $language_id)
+    public function fetchLanguagesInfo ($member_id)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $stu_lan_table = $db_table->info('name');
-        $required_cols = array('member_id', 'language_id', 'proficiency');
-        $select = $adapter->select()
-            ->from($stu_lan_table, $required_cols)
-            ->where('member_id = ?', $member_id)
-            ->where('language_id = ?', language_id);
-        $stu_lan_info = array();
-        $stu_lan_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $stu_lan_info[$member_id];
-    }
-    public function fetchLanguagesKnown ($member_id)
-    {
-        $db_table = $this->getDbTable();
-        $adapter = $db_table->getAdapter();
-        $stu_lan_table = $db_table->info('name');
-        $required_cols = array('language_id');
+        $required_cols = array('language_id', 'proficiency');
         $select = $adapter->select()->from($stu_lan_table, $required_cols);
         $stu_lans = array();
         $select->where('member_id = ?', $member_id);
-        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        $result = array();
+        $language_info = array();
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        foreach ($result as $language_id => $proficiency_array) {
+            $language_info[$language_id] = $proficiency_array['proficiency'];
+        }
+        return $language_info;
     }
     public function save ($prepared_data)
     {

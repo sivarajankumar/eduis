@@ -42,14 +42,13 @@ class Tnp_Model_Mapper_Language
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $language_table = $db_table->info('name');
-        $required_cols = array('language_name');
+        $required_cols = array('language_id', 'language_name');
         $select = $adapter->select()
             ->from($language_table, $required_cols)
             ->where('language_id = ?', $language_id);
         $language_info = array();
-        $language_info = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        //in model return 1st index
-        return $language_info;
+        $language_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        return $language_info[$language_id];
     }
     public function fetchLanguages ()
     {
