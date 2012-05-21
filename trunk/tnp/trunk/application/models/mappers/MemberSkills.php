@@ -73,7 +73,7 @@ class Tnp_Model_Mapper_MemberSkills
         /*foreach ($result as $member_id => $skills_id_array) {
             $member_skills[$member_id] = $skills_id_array['skill_id'];
         }*/
-        return $member_skills;
+        return $result;
     }
     public function fetchMemberIds ($skill_id = null, $proficiency = null)
     {
