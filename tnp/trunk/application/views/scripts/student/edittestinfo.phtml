@@ -146,7 +146,7 @@ function add_section()
 function submit() {
     $.ajax({
         url : urlBasicInfo,
-        data : getValues(),
+        data : {myarray:getValues()},
         success: function(jStatus){
 			
         },
