@@ -369,7 +369,12 @@ class Core_Model_Member_Student extends Core_Model_Generic
     public function fetchCriticalInfo ()
     {
         $member_id = $this->getMember_id(true);
-        return $this->getMapper()->fetchCriticalInfo($member_id);
+        $info = $this->getMapper()->fetchCriticalInfo($member_id);
+        if (empty($info)) {
+            return false;
+        } else {
+            return $this->setOptions($info);
+        }
     }
     /**
      * Fetches Admission information of a Student,
