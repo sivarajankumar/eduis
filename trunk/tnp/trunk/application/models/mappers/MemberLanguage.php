@@ -33,6 +33,17 @@ class Tnp_Model_Mapper_MemberLanguage
         }
         return $this->_dbTable;
     }
+    public function fetchProficiency ($member_id, $language_id)
+    {
+        $db_table = $this->getDbTable();
+        $adapter = $db_table->getAdapter();
+        $select = $adapter->select()->from($db_table->info('name'), 
+        array('proficiency'));
+        $proficiency = array();
+        $select->where('member_id = ?', $member_id);
+        $proficiency = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $proficiency;
+    }
     public function fetchLanguagesInfo ($member_id)
     {
         $db_table = $this->getDbTable();
