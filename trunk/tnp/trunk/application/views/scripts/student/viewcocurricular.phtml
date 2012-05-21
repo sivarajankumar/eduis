@@ -1,31 +1,25 @@
-<div class="ui-widget-content ui-corner-all"><center><H3>Co-Curricular Activities</H3></center></div>
-<div id="cci_details">
-	
+<?php 
+	$cocurricular = $this->cocurricular;
+	//print_r($experience);
+?>
+
+<div class="ui-widget-content ui-corner-all"><center><H3>Certification Details</H3></center></div>
+<div id="certification_details">
 	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
-			<tr>
-				<th>Achievements</th>
-				<th>Activities</th>
-				<th>Hobbies</th>
-							</tr>
-            <?php 
-        	foreach ($this->test as $test => $array) 
-        		{
-        			
-        				echo '<tr>';
-        				echo '<td>'.ucfirst($array['achievements']).'</td>';
-        	      		echo '<td>'.ucfirst($array['activities']).'</td>';
-        	        	echo '<td>'.ucfirst($array['hobbies']).'</td>';
-        	        	
-        	            echo '</tr>';
-        			
-        		}  
-            ?>
-            
-       	</table>
-    	</div>
-    
-<div id="edit_cci" class="ui-widget-content ui-corner-all">
-	<h3><center><a href="/student/editcocurricularinfo">Edit</a></center></h3>
+	<?php
+		foreach ($cocurricular as $key => $value) 
+		{
+        	echo '<tr>';
+        		echo '<td><span id="heading">'.ucfirst(str_replace('_',' ',$key)).'</span>';
+        		echo '<span id="content">'.$value.'</span></td>';
+        	echo '</tr>';
+		}
+	?>
+	</table>
+</div>
+
+<div id="edit_certification" class="ui-widget-content ui-corner-all">
+	<h3><center><a href="/student/profile">Go Back</a></center></h3>
 </div>
 <style type="text/css">
 	table {
@@ -42,5 +36,13 @@
 		margin: 15px;
 		text-align: left;
 		border-collapse: collapse;
+	}
+	td span#heading{
+		color:red;
+		font-size:16px;
+	}
+	td span#content{
+		float:right;
+		font-size:16px;
 	}
 </style>
