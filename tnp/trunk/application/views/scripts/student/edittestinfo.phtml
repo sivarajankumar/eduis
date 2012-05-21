@@ -8,7 +8,7 @@
 	<fieldset id="test_info">
 		<div class="ctrlHolder">
 			<label for="test_name"><em>*</em>Test Name</label>
-			<select id="test_name" name="test_name" class="selectInput required">
+			<select id="test_name" name="test_name" class="selectInput required" onchange="javascript:show_text_box()">
 			<?php 
 				foreach ($tests as $key => $value)
 				{
@@ -89,17 +89,21 @@ $(function(){
 			this.focus();
 		}
 	});
+
+	show_text_box();
 });
 
+function show_text_box(){
 var div_html = '<div class="ctrlHolder" id="other"><label for="test_name">Test Name</label><input name="test_name" id="test_name" value="" data-default-value="Section Name" size="35" maxlength="50" type="text" class="required textInput"/><p class="formHint">Select the name of the test</p></div>';
-$('select#test_name').change(function(){
+//$('#test_name :option').select(function(){
 	if($('select#test_name').val() == 'other'){
 		$('fieldset#test_info').append(div_html);
 	}
 	else {
 		$('div#other').remove();
 	}
-});
+//});
+}
 
 function show_section_fields(fieldset_name){
 	var html = 
