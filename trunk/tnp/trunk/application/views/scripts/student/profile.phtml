@@ -99,48 +99,35 @@
 		<h2>Miscallaneous</h2>
 		<ul>
 		<?php
-			echo '<a href="#"><li> Languages Known';
-				if($languages_known){
-					echo '<span class="red">View</span>';
-				}
-				else {
-					echo '<span class="red">Create</span>';
-				}
-			echo '</li><a/>';
+			if($languages_known){
+				echo '<a href="/student/viewlaunguagesknown"><li> Languages Known<span class="red">View</span></li><a/>';
+			}
+			else {
+				echo '<a href="/student/editlaunguagesknown"><li> Languages Known<span class="red">Create</span></li><a/>';
+			}
 			
-			echo '<a href="#"><li> Job Preferred';
-				if($job_preferred){
-					echo '<span class="red">View</span>';
-				}
-				else {
-					echo '<span class="red">Create</span>';
-				}
-			echo '</li><a/>';
-			echo '<a href="#"><li> Co-Curricular';
-				if($co_curricular){
-					echo '<span class="red">View</span>';
-				}
-				else {
-					echo '<span class="red">Create</span>';
-				}
-			echo '</li><a/>';
-			echo '<a href="#"><li> Skills';
-				if($skills){
-					echo '<span class="red">View</span>';
-				}
-				else {
-					echo '<span class="red">Create</span>';
-				}
-			echo '</li><a/>';
-			/*if($languages_known){
-				echo '<a href="#">';
-					echo '<li>Languages Known<span class="red">'.$test_info['test_name'].'</span>';
-					echo 'Date<span class="red">'.$test_info['date'].'</span></li>';
-				echo '</a>';
-			}*/
+			if($job_preferred){
+				echo '<a href="/student/viewjobpreferred"><li> Job Preferred<span class="red">View</span></li><a/>';
+			}
+			else {
+				echo '<a href="/student/editjobpreferred"><li> Job Preferred<span class="red">Create</span></li><a/>';
+			}
+			
+			if($co_curricular){
+				echo '<a href="/student/viewcocurricular"><li> Co-Curricular<span class="red">View</span></li><a/>';
+			}
+			else {
+				echo '<a href="/student/editcocurricular"><li> Co-Curricular<span class="red">Create</span></li><a/>';
+			}
+			
+			if($skills){
+				echo '<a href="/student/viewskills"><li> Skills<span class="red">View</span></li><a/>';
+			}
+			else {
+				echo '<a href="/student/editskills"><li> Skills<span class="red">Create</span></li><a/>';
+			}
 		?>
 		</ul>
-		<span class="add_new"><a href="#">Add New</a></span>
 	</div>
 </div>
 
