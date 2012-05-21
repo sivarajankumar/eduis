@@ -560,14 +560,14 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     }
     /**
      * Operating Condition : Member Id is set
-     * @return false|array
+     * @return false|array array($language_id=>$proficiency)
      */
-    public function fetchLanguagesKnown ()
+    public function fetchLanguagesInfo ()
     {
         $member_id = $this->getMember_id(true);
         $member_language = new Tnp_Model_MemberInfo_Language();
         $member_language->setMember_id($member_id);
-        return $member_language->fetchLanguagesKnown();
+        return $member_language->fetchLanguagesInfo();
     }
     /**
      * Operating Condition : Member Id is set
