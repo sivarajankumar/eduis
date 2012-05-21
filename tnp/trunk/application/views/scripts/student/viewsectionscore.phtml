@@ -1,6 +1,3 @@
-<?php 
-	//print_r($section_score);
-?>
 <div class="ui-widget-content ui-corner-all"><center><H3>Employability Test</H3></center></div>
 <div id="test_details">
 
@@ -16,14 +13,23 @@
 		if(isset($this->section_score)){
 			$section_score = $this->section_score;
 			if($section_score!=null){
+				foreach ($section_score as $section_id => $section_details)
+				{
+					foreach ($section_details as $key => $value)
+					{
+						echo '<th>'.ucfirst(str_replace('_',' ',$key)).'</th>';
+					}
+					break;
+				}
+				
        			foreach ($section_score as $section_id => $section_details) 
     			{
-    				foreach ($section_details as $key => $value){   			
-        				echo '<tr>';
-        					echo '<td><span id="heading">'.ucfirst(str_replace('_',' ',$key)).'</span>';
-        					echo '<span id="content">'.$value.'</span></td>';
-        				echo '</tr>';
+    				echo '<tr>';
+    				foreach ($section_details as $key => $value)
+    				{
+        				echo '<td><span id="content1">'.$value.'</span></td>';
     				}
+    				echo '</tr>';
 				}
 			}
 		}  
@@ -31,9 +37,7 @@
 </table>
 </div>
     
-<!-- <div id="edit_test" class="ui-widget-content ui-corner-all">
-	<h3><center><a href="/student/viewsectionscore?employability_test_id=<?php echo $_GET['employability_test_id']?>&testname=<?php echo $test_info['test_name']?>&date_of_conduct=<?php echo $test_info['date_of_conduct']?>">View Sectional Score</a></center></h3>
-</div> -->
+
 <div id="goback" class="ui-widget-content ui-corner-all">
 	<h3><center><a href="/student/profile">Go Back</a></center></h3>
 </div>
