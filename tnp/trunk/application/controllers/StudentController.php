@@ -127,7 +127,7 @@ class StudentController extends Zend_Controller_Action
                 $student_experience[$student_experience_id]['organisation'] = $experience_model->getOrganisation();
             }
         }
-        $student_languages = $student_model->fetchLanguagesKnown();
+        $student_languages = $student_model->fetchLanguagesInfo();
         if (! empty($student_languages)) {
             $response['languages_known'] = true;
         } else {
@@ -212,7 +212,7 @@ class StudentController extends Zend_Controller_Action
         $this->view->assign('test_names', $test_names);
         $this->view->assign('test_sections', $test_sections);
     }
-    public function saveemployabilitytest ()
+    public function saveemployabilitytestAction ()
     {
         $response = array();
         $this->_helper->viewRenderer->setNoRender(false);
@@ -221,14 +221,16 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $test_info = $params['myarray']['test_info'];
         $test_score = $params['myarray']['test_score'];
-        $section_info = $params['myarray']['section_score'];
+        $section_info = $params['myarray']['test_section_info'];
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($this->getMember_id());
         $test_model = new Tnp_Model_EmpTestInfo_Test();
+        Zend_Registry::get('logger')->debug($test_info);
         $employability_test_id = $test_model->saveInfo($test_info);
         $test_score['employability_test_id'] = $employability_test_id;
         $student->saveEmpTestRecord($test_score);
         $test_section_model = new Tnp_Model_EmpTestInfo_Section();
+        Zend_Registry::get('logger')->debug($section_info);
         foreach ($section_info as $name => $section_score) {
             $section_array = array();
             $section_array['test_section_name'] = $name;
@@ -241,13 +243,13 @@ class StudentController extends Zend_Controller_Action
     }
     public function savecertificationAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $certification = $params['myarray']['certification_info'];
-        $technical_info = $params['myarray']['technical_field_info'];
-        $student_certification = $params['myarray']['certification_details'];
+        $technical_info = $params['myarray']['technical_info'];
+        $student_certification = $params['myarray']['certification_detail'];
         $certification_model = new Tnp_Model_Certification();
         $technical_field_id = $technical_info['technical_field_id'];
         if ($technical_field_id) {
@@ -260,6 +262,8 @@ class StudentController extends Zend_Controller_Action
         $certification_id = $certification_model->saveInfo($certification);
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($this->getMember_id());
+        $student_certification['certification_id'] = $certification_id;
+        Zend_Registry::get('logger')->debug($student_certification);
         $student->saveCertificationInfo($student_certification);
     }
     public function editcertificationAction ()
@@ -289,14 +293,17 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $training_info = $params['myarray']['training_info'];
-        $training_details = $params['myarray']['training_details'];
+        $training_details = $params['myarray']['training_detail'];
         $technical_info = $params['myarray']['technical_info'];
-        $technical_field_id = $training_info['technical_field_id'];
+        $technical_field_id = $technical_info['technical_field_id'];
         $training_id = $training_info['training_id'];
         if (! $technical_field_id) {
             $technical_field = new Tnp_Model_TechnicalField();
             $technical_field_id = $technical_field->saveInfo($technical_info);
             $training_info['technical_field_id'] = $technical_field_id;
+        }
+        else {
+        	$training_info['technical_field_id'] = $technical_field_id;
         }
         if (! $training_id) {
             $training = new Tnp_Model_Training();
@@ -330,27 +337,31 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $experience_info = $params['experience_info'];
-        $student_experience = $params['student_experience'];
+        Zend_Registry::get('logger')->debug($params);
+        $experience_info = $params['myarray']['experience_info'];
+        $student_experience = $params['myarray']['student_experience'];
         $role_name = $experience_info['role_name'];
         $industry_name = $experience_info['industry_name'];
         $functional_area_name = $experience_info['functional_area_name'];
         if ($role_name) {
             $role_model = new Tnp_Model_Role();
-            $role_array = array($role_name);
+            $role_array = array('role_name' => $role_name);
+            Zend_Registry::get('logger')->debug($role_array);
             $role_id = $role_model->saveInfo($role_array);
             $student_experience['role_id'] = $role_id;
         }
         if ($industry_name) {
             $industry_model = new Tnp_Model_Industry();
-            $industry_array = array($industry_name);
+            $industry_array = array('industry_name' => $industry_name);
+            Zend_Registry::get('logger')->debug($industry_array);
             $industry_id = $industry_model->saveInfo($industry_array);
             $student_experience['industry_id'] = $industry_id;
         }
         if ($functional_area_name) {
             $functional_model = new Tnp_Model_FunctionalArea();
-            $functional_array = array($functional_area_name);
-            $functional_area_id = $functional_model->saveInfo($role_array);
+            $functional_array = array(
+            'functional_area_name' => $functional_area_name);
+            $functional_area_id = $functional_model->saveInfo($functional_array);
             $student_experience['functional_area_id'] = $functional_area_id;
         }
         $student = new Tnp_Model_Member_Student();
@@ -557,14 +568,16 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
-        $language_ids = $student->fetchLanguagesKnown();
+        $student_lang = new Tnp_Model_MemberInfo_Language();
+        $student_lang->setMember_id($this->getMember_id());
+        $language_ids = $student_lang->fetchLanguagesKnown();
         $language = new Tnp_Model_Language();
+        $languages = array();
         foreach ($language_ids as $key => $language_id) {
             $language->setLanguage_id($language_id);
             $language->fetchInfo();
-            $languages[$language_id] = $language->getLanguage_name();
+            $languages[$language_id]['name'] = $language->getLanguage_name();
+            $languages[$language_id]['proficiency'] = $student_lang->getProficiency();
         }
         $this->view->assign('languages', $languages);
         Zend_Registry::get('logger')->debug($languages);
@@ -573,36 +586,42 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
-        $student_language_ids = $student->fetchLanguagesKnown();
+        $student_lang = new Tnp_Model_MemberInfo_Language();
+        $student_lang->setMember_id($this->getMember_id());
+        $language_ids = $student_lang->fetchLanguagesKnown();
         $language = new Tnp_Model_Language();
-        $all_languages = $language->fetchLanguages();
-        foreach ($student_language_ids as $key => $language_id) {
+        $languages = array();
+        foreach ($language_ids as $language_id) {
+            Zend_Registry::get('logger')->debug($language_id);
             $language->setLanguage_id($language_id);
             $language->fetchInfo();
-            $language_name = $language->getLanguage_name();
-            $languages[$language_id] = $language_name;
+            $languages[$language_id]['name'] = $language->getLanguage_name();
+            $student_lang->setLanguage_id($language_id);
+            $student_lang->fetchInfo();
+            $languages[$language_id]['proficiency'] = $student_lang->getProficiency();
         }
+        $all_languages = $language->fetchLanguages();
         $this->view->assign('all_languages', $all_languages);
         Zend_Registry::get('logger')->debug($all_languages);
         $this->view->assign('languages', $languages);
         Zend_Registry::get('logger')->debug($languages);
     }
-    public function savelanguagesknown ()
+    public function savelanguagesknownAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $language_info = $params['myarray']['language_info'];
-        $student_languages = $params['myarray']['student_languages'];
-        if (isset($language_info['language_names'])) {
-            $language = new Tnp_Model_Language();
-            foreach ($language_info['language_names'] as $key => $language_name) {
-                $data_array = array($language_name);
-                $language_id = $language->saveInfo($data_array);
-            }
+        $new_languages = $params['myarray']['new_languages'];
+        $present_languages = $params['myarray']['present_languages'];
+        $langugae = new Tnp_Model_Language();
+        $student_language = new Tnp_Model_MemberInfo_Language();
+        foreach ($new_languages as $key => $new_language) {
+            $language_data = array($new_language['language_name']);
+            $language_id = $langugae->saveInfo($language_data);
+            $save_array = array('language_id' => $language_id, 
+            'proficiency' => $new_language['proficiency']);
+            $student_language->save($save_array);
         }
     }
 }
