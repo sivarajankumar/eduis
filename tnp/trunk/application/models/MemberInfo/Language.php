@@ -108,27 +108,15 @@ class Tnp_Model_MemberInfo_Language extends Tnp_Model_Generic
                 break;
         }
     }
-    public function fetchLanguagesKnown ()
+    public function fetchLanguagesInfo ()
     {
         $member_id = $this->getMember_id(true);
-        $languages_known = array();
-        $languages_known = $this->getMapper()->fetchLanguagesKnown($member_id);
-        if (empty($languages_known)) {
+        $language_info = array();
+        $language_info = $this->getMapper()->fetchLanguagesInfo($member_id);
+        if (empty($language_info)) {
             return false;
         } else {
-            return $languages_known;
-        }
-    }
-    public function fetchInfo ()
-    {
-        $member_id = $this->getMember_id(true);
-        $language_id = $this->getLanguage_id(true);
-        $info = array();
-        $info = $this->getMapper()->fetchProficiency($member_id, $language_id);
-        if (empty($info)) {
-            return false;
-        } else {
-            return $this->setOptions($info);
+            return $language_info;
         }
     }
 }
