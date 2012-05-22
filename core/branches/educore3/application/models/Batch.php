@@ -217,7 +217,7 @@ class Core_Model_Batch extends Core_Model_Generic
         $batch_ids = array();
         $batch_start_year_specific &&
          ($batch_start = $this->getBatch_start(true));
-        $department_id && ($department_id = $this->getDepartment_id(true));
+        $department_specific && ($department_id = $this->getDepartment_id(true));
         $programme_specific && ($programme_id = $this->getProgramme_id(true));
         $batch_ids = $this->getMapper()->fetchBatchIds($batch_start, 
         $department_id, $programme_id);
