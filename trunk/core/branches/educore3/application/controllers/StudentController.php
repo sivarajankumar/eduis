@@ -6,7 +6,7 @@ class StudentController extends Zend_Controller_Action
      * pick from auth
      * @var unknown_type
      */
-    protected $_member_id = 156;
+    protected $_member_id;
     /**
      * @return the $_member_id
      */
@@ -23,13 +23,13 @@ class StudentController extends Zend_Controller_Action
     }
     public function init ()
     {
-        /*   if (Zend_Auth::getInstance()->hasIdentity()) {
+        if (Zend_Auth::getInstance()->hasIdentity()) {
             $authInfo = Zend_Auth::getInstance()->getStorage()->read();
             $this->department_id = $authInfo['department_id'];
             $this->identity = $authInfo['identity'];
             $this->setMember_id($authInfo['member_id']);
              //$staff_id = $authInfo['member_id'];
-        }*/
+        }
     }
     public function indexAction ()
     {}
@@ -105,7 +105,7 @@ class StudentController extends Zend_Controller_Action
          * @todo view --remove email from critical and add in contacts
          */
         $member_id = $this->getMember_id();
-        Zend_Registry::get('logger')->debug($params['myarray']);
+        Zend_Registry::get('logger')->debug($member_id);
         $student_model = new Core_Model_Member_Student();
         foreach ($params['myarray'] as $category => $value_array) {
             switch ($category) {
@@ -178,7 +178,7 @@ class StudentController extends Zend_Controller_Action
                     }
                     break;
                 case 'address_data':
-                    Zend_Registry::get('logger')->debug($value_array);
+                    Zend_Registry::get('logger')->debug($params);
                     foreach ($value_array as $address_type => $address_fields) {
                         $address_fields['member_id'] = $member_id;
                         $student_model->initSave();
