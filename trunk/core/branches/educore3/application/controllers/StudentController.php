@@ -104,73 +104,94 @@ class StudentController extends Zend_Controller_Action
          * @todo view --add contacts 
          * @todo view --remove email from critical and add in contacts
          */
-        if (Zend_Auth::getInstance()->hasIdentity()) {
-            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-            $student_model = new Core_Model_Member_Student();
-            foreach ($params['myarray'] as $category => $value_array) {
-                switch ($category) {
-                    case 'critical_data':
-                        /**
-                         * 
-                         * static for student
-                         * @var int
-                         */
-                        $member_type_id = 1;
+        $student_model = new Core_Model_Member_Student();
+        foreach ($params['myarray'] as $category => $value_array) {
+            switch ($category) {
+                case 'critical_data':
+                    /**
+                     * 
+                     * static for student
+                     * @var int
+                     */
+                    $value_array['member_type_id'] = 1;
+                    $student_model->initSave();
+                    $this->_member_id = $student_model->saveCriticalInfo(
+                    $value_array);
+                    $member_id = $student_model->getMember_id();
+                    $this->setMember_id($member_id);
+                    /**
+                     * @todo define dynamically member_id
+                     * Batch Information specific data
+                     */
+                    $department_id = $value_array['department_id'];
+                    $programme_id = $value_array['programme_id'];
+                    $batch_start = $value_array['batch_start'];
+                    $batch = new Core_Model_Batch();
+                    $batch->setDepartment_id($department_id);
+                    $batch->setProgramme_id($programme_id);
+                    $batch->setBatch_start($batch_start);
+                    $batch_id_array = $batch->fetchBatchIds(true, true, true);
+                    $member_batch_id = $batch_id_array[0];
+                    /**
+                     * Class Information Specific data
+                     */
+                    $semester_id = $value_array['semester_id'];
+                    $class = new Core_Model_Class();
+                    $class->setBatch_id($member_batch_id);
+                    $class->setSemester_id($semester_id);
+                    $class_id_array = $class->fetchClassIds(true, true);
+                    $member_class_id = $class_id_array[0];
+                    $class->setClass_id($member_class_id);
+                    $class_info = $class->fetchInfo();
+                    if ($class_info instanceof Core_Model_Class) {
+                        $class_start_date = $class_info->getStart_date();
+                        $member_class_start = $class_start_date;
+                    }
+                    /*
+                    * registration data
+                    */
+                    $registration_id = $value_array['registration_id'];
+                    $registration_array = array(
+                    'member_id' => $this->getMember_id(), 
+                    'registration_id' => $registration_id);
+                    $admission = array('member_id' => $this->getMember_id(), 
+                    'alloted_branch' => $department_id);
+                    $student_model->initSave();
+                    $student_model->saveAdmissionInfo($admission);
+                    $student_model->initSave();
+                    $student_model->saveRegistrationInfo($registration_array);
+                    $student_model->setMember_id($this->getMember_id());
+                    $class_id = $student_model->fetchClassId($semester_id);
+                    $class_array = array('member_id' => $this->getMember_id(), 
+                    'class_id' => $class_id, 
+                    'group_id' => $value_array['group_id'], 
+                    'roll_no' => $value_array['roll_no'], 
+                    'start_date' => $member_class_start);
+                    $student_model->saveClassInfo($class_array);
+                    break;
+                case 'relative_data':
+                    foreach ($value_array as $relative_id => $relative_info) {
+                        $relative_info['member_id'] = $this->getMember_id();
                         $student_model->initSave();
-                        $student_model->setMember_id($this->getMember_id());
-                        $value_array['member_type_id'] = $member_type_id;
-                        $student_model->saveCriticalInfo($value_array);
-                        $registration_array = array(
-                        'member_id' => $this->getMember_id(), 
-                        'registration_id' => $value_array['registration_id']);
-                        $admission = array('member_id' => $this->getMember_id(), 
-                        'alloted_branch' => $value_array['department_id']);
+                        $student_model->saveRelativesInfo($relative_info);
+                    }
+                    break;
+                case 'address':
+                    foreach ($value_array as $address_type => $address_fields) {
+                        $address_fields['member_id'] = $this->getMember_id();
                         $student_model->initSave();
-                        $student_model->setMember_id($this->getMember_id());
-                        $student_model->saveAdmissionInfo($admission);
+                        $student_model->saveAddressInfo($address_fields);
+                    }
+                    break;
+                case 'contact':
+                    foreach ($value_array as $contact_type => $contact_data) {
+                        $contact_data['member_id'] = $this->getMember_id();
                         $student_model->initSave();
-                        $student_model->setMember_id($this->getMember_id());
-                        $student_model->saveRegistrationInfo(
-                        $registration_array);
-                        if ($value_array['semester_id'] == 1) {
-                            $batch_identifier = 1;
-                        } else {
-                            $batch_identifier = 0;
-                        }
-                        $student_model->setMember_id($this->getMember_id());
-                        $batch_id = $student_model->fetchBatchId();
-                        $class_ids = $student_model->fetchSemesterClassId(
-                        $batch_id, $value_array['semester_id']);
-                        foreach ($class_ids as $class_id) {
-                            $class_array = array('class_id' => $class_id, 
-                            'group_id' => $value_array['group_id'], 
-                            'roll_no' => $value_array['roll_no'], 
-                            'is_initial_batch_identifier' => $batch_identifier);
-                            $student_model->saveClassInfo($class_array);
-                        }
-                        break;
-                    case 'relative_data':
-                        foreach ($value_array as $relative_id => $relative_info) {
-                            $student_model->initSave();
-                             $student_model->setMember_id($this->getMember_id());
-                            $student_model->saveRelativesInfo($relative_info);
-                        }
-                        break;
-                    case 'address':
-                        foreach ($value_array as $address_type => $address_fields) {
-                            $student_model->initSave();
-                            $student_model->saveAddressInfo($address_fields);
-                        }
-                        break;
-                    case 'contact':
-                        foreach ($value_array as $contact_type => $contact_data) {
-                            $student_model->initSave();
-                            $student_model->saveContactsInfo($contact_data);
-                        }
-                        break;
-                    default:
-                        echo $category;
-                }
+                        $student_model->saveContactsInfo($contact_data);
+                    }
+                    break;
+                default:
+                    echo $category;
             }
         }
     }
@@ -324,7 +345,7 @@ class StudentController extends Zend_Controller_Action
     {
         $student = new Core_Model_Member_Student();
         $student->setMember_id($this->getMember_id());
-         Zend_Registry::get('logger')->debug($this->getMember_id());
+        Zend_Registry::get('logger')->debug($this->getMember_id());
         $student_model = $student->fetchCriticalInfo();
         if ($student_model instanceof Core_Model_Member_Student) {
             $critical_data['member_id'] = $this->getMember_id();
