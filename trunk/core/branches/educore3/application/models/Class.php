@@ -251,7 +251,7 @@ class Core_Model_Class extends Core_Model_Generic
      * @param bool $batch_specific optional
      * @param bool $semester_specific optional 
      * @param bool $active optional
-     * @return array|int|false
+     * @return array|false
      */
     public function fetchClassIds ($batch_specific = null, $semester_specific = null, 
     $active = null)
