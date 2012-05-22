@@ -499,7 +499,7 @@
 			case 'address':
 			{ 
 				var ca = {};
-				ca['address_type'] = 'MAILING/POSTAL/CORRESPONDENCE';
+				ca['address_type'] = 'MAILING';
 				$('fieldset#ca :input')
 				.not('button,:input[value^="e.g."]')
 				.each(function(){ 
@@ -528,7 +528,7 @@
 				$('fieldset#email_info :input')
 				.not('button,:input[name="e_mail_confirm"]')
 				.each(function(){ 
-					email_info['contact_detail'] = this.value;
+					email_info['contact_details'] = this.value;
 					email_info['contact_type_id'] = 3;
                 });
 				contactData.push(email_info);
@@ -537,7 +537,7 @@
 				$('fieldset#mobile_info :input')
 				.not('button,:input[value^="e.g."]')
 				.each(function(){ 
-					mobile_info['contact_detail'] = this.value;
+					mobile_info['contact_details'] = this.value;
 					mobile_info['contact_type_id'] = 1;
                 });
 				contactData.push(mobile_info);
@@ -546,7 +546,7 @@
 				$('fieldset#landline_info :input')
 				.not('button,:input[value^="e.g."]')
 				.each(function(){ 
-					landline_info['contact_detail'] = this.value;
+					landline_info['contact_details'] = this.value;
 					landline_info['contact_type_id'] = 2;
                 });
 				contactData.push(landline_info);
