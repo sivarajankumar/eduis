@@ -105,6 +105,7 @@ class StudentController extends Zend_Controller_Action
          * @todo view --remove email from critical and add in contacts
          */
         $member_id = $this->getMember_id();
+        Zend_Registry::get('logger')->debug($params['myarray']);
         $student_model = new Core_Model_Member_Student();
         foreach ($params['myarray'] as $category => $value_array) {
             switch ($category) {
@@ -176,7 +177,8 @@ class StudentController extends Zend_Controller_Action
                         $student_model->saveRelativesInfo($relative_info);
                     }
                     break;
-                case 'address':
+                case 'address_data':
+                    Zend_Registry::get('logger')->debug($value_array);
                     foreach ($value_array as $address_type => $address_fields) {
                         $address_fields['member_id'] = $member_id;
                         $student_model->initSave();
@@ -184,7 +186,7 @@ class StudentController extends Zend_Controller_Action
                         $student_model->saveAddressInfo($address_fields);
                     }
                     break;
-                case 'contact':
+                case 'contact_data':
                     foreach ($value_array as $contact_type => $contact_data) {
                         $contact_data['member_id'] = $member_id;
                         $student_model->initSave();
