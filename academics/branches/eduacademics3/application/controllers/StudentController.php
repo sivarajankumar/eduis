@@ -11,13 +11,18 @@ class StudentController extends Zend_Controller_Action
      * 
      *@todo remove static value
      */
-    protected $_member_id = 1;
+    protected $_member_id;
     /**
      * The default action - show the home page
      */
     public function init ()
     {
-        /* Initialize action controller here */
+        if (Zend_Auth::getInstance()->hasIdentity()) {
+            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+            $this->department_id = $authInfo['department_id'];
+            $this->identity = $authInfo['identity'];
+            $this->setMember_id($authInfo['member_id']);
+        }
     }
     /**
      * @todo Consider :if you dont want any other class to call this function
@@ -323,19 +328,22 @@ class StudentController extends Zend_Controller_Action
     }
     public function registerAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
+          Zend_Registry::get('logger')->debug($this->getMember_id());
         $critcal_info = $student_model->fetchCriticalInfo();
         Zend_Registry::get('logger')->debug($critcal_info);
         if ($critcal_info == false) {
+              
             $PROTOCOL = 'http://';
             $URL_STU_CRITICAL_INFO = $PROTOCOL . CORE_SERVER .
              '/student/fetchcriticalinfo';
             $client = new Zend_Http_Client($URL_STU_CRITICAL_INFO);
             $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
             $response = $client->request();
+              Zend_Registry::get('logger')->debug($response);
             if ($response->isError()) {
                 $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
                  $response->getMessage();
@@ -349,7 +357,7 @@ class StudentController extends Zend_Controller_Action
                 throw new Exception('$msg');
             }
         }
-        $this->_redirect('student/profile');
+       // $this->_redirect('student/profile');
     }
     /**
      * @todo check status of profile in auth that it is filled or not
