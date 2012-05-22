@@ -79,9 +79,8 @@ class Core_Model_Mapper_MemberAddress
     public function update ($prepared_data, $member_id, $address_type)
     {
         $dbtable = $this->getDbTable();
-        $where1 = 'member_id = ' . $member_id;
-        $where2 = 'address_type = ' . $address_type;
-        return $dbtable->update($prepared_data, array($where1, $where2));
+        $where1 = 'member_id = ' . $member_id. ' AND address_type =" ' . $address_type.'"';
+        return $dbtable->update($prepared_data, array($where1));
     }
 }
 ?>

@@ -439,8 +439,8 @@ class Core_Model_Member_Student extends Core_Model_Generic
         return $relative_object->fetchInfo();
     }
     /**
-     * Fetches the Active class_ids of a Student
-     * Member_id must be set before calling this function 
+     * Fetches the Active class_ids of a Student(
+     * Member_id must be set before calling this function) 
      * @return false|array an array containing all class ids in which member is active
      */
     public function fetchActiveClassIds ()
