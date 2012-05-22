@@ -14,5 +14,17 @@
 			<label>Library</label>
 			<uri>http://library.aceambala.com/</uri>
 		</library_home>
+		<core_home>
+			<label>Core</label>
+			<uri>http://core.aceambala.com/</uri>
+		</core_home>
+		<academic_home>
+			<label>Academic</label>
+			<uri>http://academic.aceambala.com/</uri>
+		</academic_home>
+		<tnp_home>
+			<label>TnP</label>
+			<uri>http://tnp.aceambala.com/</uri>
+		</tnp_home>
 	</nav>
 </config>
