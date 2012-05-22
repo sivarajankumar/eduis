@@ -131,7 +131,6 @@ class StudentController extends Zend_Controller_Action
                     $batch->setBatch_start($batch_start);
                     $batch_id_array = $batch->fetchBatchIds(true, true, true);
                     $member_batch_id = $batch_id_array[0];
-                    Zend_Registry::get('logger')->debug($member_batch_id);
                     /**
                      * Class Information Specific data
                      */
@@ -145,7 +144,6 @@ class StudentController extends Zend_Controller_Action
                     $class_info = $class->fetchInfo();
                     if ($class_info instanceof Core_Model_Class) {
                         $class_start_date = $class_info->getStart_date();
-                        Zend_Registry::get('logger')->debug($class_start_date);
                         $member_class_start = $class_start_date;
                     }
                     /*
@@ -210,7 +208,6 @@ class StudentController extends Zend_Controller_Action
         $critical_data = array();
         //critical info
         $raw_critical_data = self::fetchcriticalinfo();
-        Zend_Registry::get('logger')->debug($raw_critical_data);
         $name['first_name'] = $raw_critical_data['first_name'];
         $name['middle_name'] = $raw_critical_data['middle_name'];
         $name['last_name'] = $raw_critical_data['last_name'];
@@ -312,7 +309,6 @@ class StudentController extends Zend_Controller_Action
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
                 $this->_helper->layout()->enableLayout();
-                Zend_Registry::get('logger')->debug($response);
                 if (! empty($critical_data)) {
                     $this->view->assign('critical_data', $critical_data);
                 }
@@ -338,7 +334,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($response);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($response);
                 break;
             default:
                 ;
@@ -349,7 +344,6 @@ class StudentController extends Zend_Controller_Action
     {
         $student = new Core_Model_Member_Student();
         $student->setMember_id($this->getMember_id());
-        Zend_Registry::get('logger')->debug($this->getMember_id());
         $student_model = $student->fetchCriticalInfo();
         if ($student_model instanceof Core_Model_Member_Student) {
             $critical_data['member_id'] = $this->getMember_id();
@@ -366,7 +360,6 @@ class StudentController extends Zend_Controller_Action
             $critical_data['religion_id'] = $student_model->getReligion_id();
             $critical_data['nationality_id'] = $student_model->getNationality_id();
             $critical_data['cast_id'] = $student_model->getCast_id();
-            Zend_Registry::get('logger')->debug($critical_data);
             return $critical_data;
         }
     }
