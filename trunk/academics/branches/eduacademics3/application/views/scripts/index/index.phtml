@@ -1,76 +1,13 @@
-<div id="selection-div"class="ui-widget-content ui-corner-all" style="float:inherit; width:1264px; height:250px; padding:4px" >
-<h3>
-<label for="degree_select" accesskey="S" id="lbl_degree_id" style="padding: 0.4em; ">
-Personal information
-</label>
-</h3><p><span style="float:left; ">Name:<?php echo $this->name;?></span>
-<span style="float:right;  ">Degree:<?php echo $this->degree;?>
-<br><br>Department:<?php echo $this->deptt;?><br><br>
-Semester:<?php echo $this->sem;?></span>
-<br><br><br><span style="float:left; ">Roll Number:<?php echo $this->rollno;?></span>
-<br><br><br>
-<center><h3>ACADEMIC DETAILS</h3></center>
-<br><br><div id="stuMenu" >
-<ul> 
-    <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/studentattendance' ?>">Attendance</a></li> 
-    <li>Datesheet
-      <br><ul> 
-        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/schedule/sessional' ?>">Sessional</a></li> 
-        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/schedule/assignment' ?>">Assignments</a></li> 
-      </ul> 
-    </li> 
-    <li>Marks
-      <br><ul> 
-        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/marks/sessional' ?>">Sessional</a></li> 
-        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/marks/assignment' ?>">Assignments</a></li> 
-        </ul>
-    <li>Library
-    	<ul>
-    	<li><a href="<?php echo 'http://'.LIBRARY_SERVER.'/member' ?>">Library Account</a></li>
-    	<li><a href="<?php echo 'http://'.LIBRARY_SERVER.'/search' ?>">Search Book</a></li> 
-    	</ul>
-    </li>	
-  </ul>
-  </div>
-</p>
-
-</div>
-
-  <style type="text/css">
-
-#stuMenu  ul {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  }
-  
-  #stuMenu  li {
-  float: left;
-  position: relative;
-  width: 10em;
-  }
-   #stuMenu li ul {
-  display: none;
-  position: ; 
-  top: 1em;
-  left: 0;
-  }
-#stuMenu  a{
-	
-	text-decoration: none;
-	background: #fff;
-	color: #777;
-}
- #stuMenu ul li  {
-	
-	text-decoration: none;
-	color: #777;
-	background: #fff;
-	padding: 5px;
-	
-	}
- #stuMenu  li:hover ul, li.over ul{ display: block; }
-  
-  
-	
-</style>
+<?php
+$image_url = 'http://'.CDN_SERVER. '/images/activity/arrow.png';
+?>
+<h2>Welcome User!</h2>
+<h3>Click any option..</h3>
+<div id="container_div" style="background-color: #E0E7E7; padding: 2px;">
+	<div id="content" style="background-color: #E0E7E7;  border: 2px solid #FFFFFF; margin: 0px;">
+		<ul style="list-style-image: url('<?php echo $image_url;?>'); font-size: 15px; list-style-position: inside; line-height: 25px;">
+			<li><a href="/student/profile">Your profile</a></li>
+			
+			
+		</ul>
+	</div></div>
