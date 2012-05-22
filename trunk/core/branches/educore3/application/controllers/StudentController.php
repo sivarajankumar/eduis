@@ -6,7 +6,7 @@ class StudentController extends Zend_Controller_Action
      * pick from auth
      * @var unknown_type
      */
-    protected $_member_id;
+    protected $_member_id = 156;
     /**
      * @return the $_member_id
      */
@@ -23,13 +23,13 @@ class StudentController extends Zend_Controller_Action
     }
     public function init ()
     {
-        if (Zend_Auth::getInstance()->hasIdentity()) {
+        /*   if (Zend_Auth::getInstance()->hasIdentity()) {
             $authInfo = Zend_Auth::getInstance()->getStorage()->read();
             $this->department_id = $authInfo['department_id'];
             $this->identity = $authInfo['identity'];
             $this->setMember_id($authInfo['member_id']);
              //$staff_id = $authInfo['member_id'];
-        }
+        }*/
     }
     public function indexAction ()
     {}
@@ -104,6 +104,7 @@ class StudentController extends Zend_Controller_Action
          * @todo view --add contacts 
          * @todo view --remove email from critical and add in contacts
          */
+        $member_id = $this->getMember_id();
         $student_model = new Core_Model_Member_Student();
         foreach ($params['myarray'] as $category => $value_array) {
             switch ($category) {
@@ -115,12 +116,10 @@ class StudentController extends Zend_Controller_Action
                      */
                     $value_array['member_type_id'] = 1;
                     $student_model->initSave();
-                    $this->_member_id = $student_model->saveCriticalInfo(
-                    $value_array);
-                    $member_id = $student_model->getMember_id();
-                    $this->setMember_id($member_id);
+                    $student_model->setMember_id($member_id);
+                    $student_model->saveCriticalInfo($value_array);
                     /**
-                     * @todo define dynamically member_id
+                     *
                      * Batch Information specific data
                      */
                     $department_id = $value_array['department_id'];
@@ -132,6 +131,7 @@ class StudentController extends Zend_Controller_Action
                     $batch->setBatch_start($batch_start);
                     $batch_id_array = $batch->fetchBatchIds(true, true, true);
                     $member_batch_id = $batch_id_array[0];
+                    Zend_Registry::get('logger')->debug($member_batch_id);
                     /**
                      * Class Information Specific data
                      */
@@ -145,25 +145,26 @@ class StudentController extends Zend_Controller_Action
                     $class_info = $class->fetchInfo();
                     if ($class_info instanceof Core_Model_Class) {
                         $class_start_date = $class_info->getStart_date();
+                        Zend_Registry::get('logger')->debug($class_start_date);
                         $member_class_start = $class_start_date;
                     }
                     /*
                     * registration data
                     */
                     $registration_id = $value_array['registration_id'];
-                    $registration_array = array(
-                    'member_id' => $this->getMember_id(), 
+                    $registration_array = array('member_id' => $member_id, 
                     'registration_id' => $registration_id);
-                    $admission = array('member_id' => $this->getMember_id(), 
+                    $admission = array('member_id' => $member_id, 
                     'alloted_branch' => $department_id);
                     $student_model->initSave();
+                    $student_model->setMember_id($member_id);
                     $student_model->saveAdmissionInfo($admission);
                     $student_model->initSave();
+                    $student_model->setMember_id($member_id);
                     $student_model->saveRegistrationInfo($registration_array);
-                    $student_model->setMember_id($this->getMember_id());
-                    $class_id = $student_model->fetchClassId($semester_id);
-                    $class_array = array('member_id' => $this->getMember_id(), 
-                    'class_id' => $class_id, 
+                    $student_model->setMember_id($member_id);
+                    $class_array = array('member_id' => $member_id, 
+                    'class_id' => $member_class_id, 
                     'group_id' => $value_array['group_id'], 
                     'roll_no' => $value_array['roll_no'], 
                     'start_date' => $member_class_start);
@@ -171,22 +172,25 @@ class StudentController extends Zend_Controller_Action
                     break;
                 case 'relative_data':
                     foreach ($value_array as $relative_id => $relative_info) {
-                        $relative_info['member_id'] = $this->getMember_id();
+                        $relative_info['member_id'] = $member_id;
                         $student_model->initSave();
+                        $student_model->setMember_id($member_id);
                         $student_model->saveRelativesInfo($relative_info);
                     }
                     break;
                 case 'address':
                     foreach ($value_array as $address_type => $address_fields) {
-                        $address_fields['member_id'] = $this->getMember_id();
+                        $address_fields['member_id'] = $member_id;
                         $student_model->initSave();
+                        $student_model->setMember_id($member_id);
                         $student_model->saveAddressInfo($address_fields);
                     }
                     break;
                 case 'contact':
                     foreach ($value_array as $contact_type => $contact_data) {
-                        $contact_data['member_id'] = $this->getMember_id();
+                        $contact_data['member_id'] = $member_id;
                         $student_model->initSave();
+                        $student_model->setMember_id($member_id);
                         $student_model->saveContactsInfo($contact_data);
                     }
                     break;
