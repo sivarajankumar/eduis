@@ -45,7 +45,7 @@ class Core_Model_Mapper_Religion
         $religion_table = $db_table->info('name');
         $required_cols = array('religion_id', 'religion_name');
         $select = $adapter->select()
-            ->from($required_cols, $required_cols)
+            ->from($religion_table, $required_cols)
             ->where('religion_id = ?', $religion_id);
         $religion_info = array();
         $religion_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
@@ -57,7 +57,7 @@ class Core_Model_Mapper_Religion
         $db_table = $this->getDbTable();
         $religion_table = $db_table->info('name');
         $required_cols = array('religion_id', 'religion_name');
-        $select = $adapter->select()->from($required_cols, $required_cols);
+        $select = $adapter->select()->from($religion_table, $required_cols);
         $all_religions = array();
         $result = array();
         $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);

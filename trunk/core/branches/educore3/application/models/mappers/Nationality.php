@@ -45,7 +45,7 @@ class Core_Model_Mapper_Nationality
         $nationality_table = $db_table->info('name');
         $required_cols = array('nationality_id', 'nationality_name');
         $select = $adapter->select()
-            ->from($required_cols, $required_cols)
+            ->from($nationality_table, $required_cols)
             ->where('nationality_id = ?', $nationality_id);
         $nationality_info = array();
         $nationality_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
@@ -57,7 +57,7 @@ class Core_Model_Mapper_Nationality
         $db_table = $this->getDbTable();
         $nationality_table = $db_table->info('name');
         $required_cols = array('nationality_id', 'nationality_name');
-        $select = $adapter->select()->from($required_cols, $required_cols);
+        $select = $adapter->select()->from($nationality_table, $required_cols);
         $all_nationalitys = array();
         $result = array();
         $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
