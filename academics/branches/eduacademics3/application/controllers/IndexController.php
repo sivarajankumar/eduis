@@ -12,6 +12,8 @@ class IndexController extends Acadz_Base_BaseController
      */
     public function indexAction ()
     {
+        $this->_helper->viewRenderer->setNoRender(false);
+        //$this->_helper->layout()->enableLayout();
         $this->_helper->layout()->enableLayout();
         $department_id = 'CSE';
         $degree_id = 'BTECH';
