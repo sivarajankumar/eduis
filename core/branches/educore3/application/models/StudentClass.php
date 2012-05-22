@@ -214,8 +214,8 @@ class Core_Model_StudentClass extends Core_Model_Generic
     public function fetchBatchIdentifierClassId ()
     {
         $member_id = $this->getMember_id(true);
-        $batch_id = $this->getMapper()->fetchBatchIdentifierClassId($member_id);
-        return $batch_id;
+        $class_id = $this->getMapper()->fetchBatchIdentifierClassId($member_id);
+        return $class_id;
     }
     public function fetchClassIds ()
     {
