@@ -45,7 +45,7 @@ class Core_Model_Mapper_Cast
         $cast_table = $db_table->info('name');
         $required_cols = array('cast_id', 'cast_name');
         $select = $adapter->select()
-            ->from($required_cols, $required_cols)
+            ->from($cast_table, $required_cols)
             ->where('cast_id = ?', $cast_id);
         $cast_info = array();
         $cast_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
@@ -57,7 +57,7 @@ class Core_Model_Mapper_Cast
         $db_table = $this->getDbTable();
         $cast_table = $db_table->info('name');
         $required_cols = array('cast_id', 'cast_name');
-        $select = $adapter->select()->from($required_cols, $required_cols);
+        $select = $adapter->select()->from($cast_table, $required_cols);
         $all_casts = array();
         $result = array();
         $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
