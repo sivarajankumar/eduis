@@ -44,7 +44,7 @@ class Core_Model_Mapper_StudentClass
         $db_table = $this->getDbTable();
         $stu_class_table = $db_table->info('name');
         $required_cols = array('member_id', 'class_id', 'group_id', 'roll_no', 
-        'start_date', 'completion_date', 'is_initial_batch_identifier');
+        'start_date', 'completion_date');
         $select = $adapter->select()
             ->from($stu_class_table, $required_cols)
             ->where('member_id = ?', $member_id)
@@ -83,7 +83,8 @@ class Core_Model_Mapper_StudentClass
         $required_cols = array('class_id');
         $select = $adapter->select()
             ->from($stu_class_table, $required_cols)
-            ->where('is_initial_batch_identifier = ?', 1);
+            ->order('start_date ASC')
+            ->limit(1);
         $class_id = array();
         $class_id = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $class_id[0];
