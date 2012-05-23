@@ -1,0 +1,92 @@
+<?php
+/**
+ *
+ * @category   EduIS
+ * @package    Core
+ * @subpackage Dept
+ * @since	   0.1
+ */
+/*
+ * View for Dept.
+ */
+$cdnServer = 'http://site.cdn.aceambala.com';
+$this->headLink()
+    ->appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.jqgrid.css')
+    ->//Select multiple columns from column chooser
+appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.multiselect.css');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/ui.multiselect.js');
+// This is compressed version of jqGrid 3.6, It has all plugins in one file only
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/i18n/grid.locale-en.js');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/jquery.jqGrid.min.js');
+// Gloabal Settings for JqGrid
+$this->headScript()->appendFile($cdnServer . '/plugins/jqgrid/jqGrid.global.js');
+?>
+<div class="gridstyle">
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+<div id="errorBox"><b>Error:</b><span id="rsperror" style="color: red"></span></div>
+<script type="text/javascript">
+
+$(function(){
+    var gridTable = "#tblgrid";
+    var gridPager = "#gridpager";
+    var urlFillGrid = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid'), 'default', true)?>";
+    var urlCRUD = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud'), 'default', true)?>";
+    $(gridTable).jqGrid(
+			{
+				url : urlFillGrid,
+				colNames:['Department ID','Department Name'], 
+				colModel:[ 	{name:'department_id',
+								index:'department_id',
+								editable:true,
+								editoptions:{size:10},
+								editrules:{required:true} 
+							},
+							{name:'department_name',
+								index:'department_name',
+								editable:true,
+								editoptions:{size:10}
+							}
+						], 
+				caption: 'Departments',
+				sortname: 'department_id',
+				pager: gridPager, 
+				editurl:urlCRUD
+		});
+
+    $(gridTable).jqGrid('navGrid', gridPager, {
+        add : true,
+        edit : true,
+        view : false,
+        search : false,
+        refresh : false
+    }, // options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true
+            }, // edit options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true
+            }, // add options
+            {
+                reloadAfterSubmit : false,
+                jqModal : false,
+                closeOnEscape : true
+            } // del options
+         );
+
+    addPager(gridTable, gridPager); 
+});
+
+</script>

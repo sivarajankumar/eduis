@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Language" content="en-GB" />
+<?php
+$baseTheme = 'pepper-grinder';
+// Various Servers and Addresses
+$baseUrl = $this->baseUrl();
+// Content Delievery Server i.e. static Files, e.g. CSS, JS, Themes and related images etc
+
+$protocol = 'http://';
+$cdnServer = $protocol.CDN_SERVER;
+// Images of users, events etc
+$imageServer = $baseUrl;
+// Add most common CSS files
+$this->headLink()->prependStylesheet(
+$cdnServer . '/css/layouts/library/default.css');
+//Jquery UI Theme
+$this->jQuery()->addStylesheet(
+$cdnServer . '/css/themes/jqueryui/' . $baseTheme . '/jquery-ui.css');
+// Add most common Script files
+$this->headScript()->prependFile(
+$cdnServer . '/js/plugins/jquery.hoverIntent.minified.js');
+// Jquery
+$this->jQuery()->setLocalPath($cdnServer . '/js/jquery-1.6.2.min.js');
+// Jquery UI
+$this->jQuery()->setUiLocalPath(
+$cdnServer . '/js/jquery-ui-1.8.16.custom.min.js');
+
+$this->headLink()
+    ->appendStylesheet($protocol.CDN_SERVER . '/css/menu/stylesheet.css');
+
+/*
+ * Adding JqGrid as default grid.
+ */
+$this->headLink()
+    ->appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.jqgrid.css')
+    ->//Select multiple columns from column chooser
+appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.multiselect.css');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/ui.multiselect.js');
+// This is compressed version of jqGrid 3.6, It has all plugins in one file only
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/i18n/grid.locale-en.js');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/jquery.jqGrid.min.js');
+// Gloabal Settings for JqGrid
+$this->headScript()->appendFile($cdnServer . '/plugins/jqgrid/jqGrid.global.js');
+echo $this->headMeta();
+echo $this->headTitle();
+echo $this->headLink();
+echo $this->jQuery()->uiEnable();
+/*
+ * set body color by -> style="background-image: url('<?php $cdnServer; ?>/css/themes/jqueryui/<?php echo $baseTheme;?>/images/ui-bg_glass_100_fdf5ce_1x400.png');"
+ */
+?>
+</head>
+
+<body>
+<div id="topContent"><span id="topRightInfo"> <span
+	class="ui-state-default ui-corner-bottom">Today&rsquo;s date: <span
+	id="datetext"><?php
+$date = new Zend_Date();
+echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span>
+<?php
+if (Zend_Auth::getInstance()->hasIdentity()) {
+    ?>
+<span class="ui-state-default ui-corner-bottom">Hi! <span id="userName"><?php
+    $authContent = Zend_Auth::getInstance()->getStorage()->read();
+    echo $authContent['identity'];
+    ?></span></span>
+<?php
+    if ($authContent['identity'] != 'anon') {
+        ?>
+	<span class="ui-state-default ui-corner-bl"><a id="logout"
+	href="<?php
+        echo $this->url(
+        array('controller' => 'authenticate', 'action' => 'logout'), 'default')?>">
+Logout<span
+	class="ui-icon ui-icon ui-icon-closethick ui-state-default ui-corner-br"
+	style="float: right; padding-left: 1px; margin-left: -1px;"> </span></a></span>
+	<?php
+    }
+    ?>
+<?php
+}
+?>
+</span>
+
+<div id="header"><img
+	alt="Ambala College of Engineering and Applied Research"
+	src="<?php
+echo $cdnServer . '/images/logos/mainLogo_' . $baseTheme . '.png';
+?>">
+
+<div id="divTopNav">
+<div id="nav"> 
+<ul>
+	<li><a href="http://auth.aceambala.com" class="main">Home</a></li>
+	<li><a href="/" class="main">Core</a></li>
+	<li><a href="http://library.aceambala.com" class="main">Library</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<div class="ui-widget container ui-corner-all">
+<div id="content">
+    <?php
+    echo $this->layout()->content;
+    ?>
+    </div>
+<div id="lastDiv"></div>
+<?php
+echo $this->headScript()?>
+</div>
+</body>
+</html>
