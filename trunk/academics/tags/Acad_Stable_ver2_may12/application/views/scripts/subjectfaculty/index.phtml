@@ -1,0 +1,326 @@
+<h3 align="center">Subject-Faculty</h3>
+<div class="gridstyle">
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+	style="color: red"></span></div>
+<script type="text/javascript">
+var urlDepartmentFac="<?php echo 'http://'.CORE_SERVER.$this->url(array( 'controller' => 'staff', 'action' => 'getdepartmentstaff'), 'default', true)?>";
+function mode_element( value, options )
+{
+   var ctl =  document.createElement('span');
+   ctl.id = "subject_mode";
+   return ctl;
+}
+function faculty_element(value,options)
+{
+	var faculty_div = document.createElement('span');
+	faculty_div.innerHTML = 'Dept <select id="department_id" onChange = "getDepartmentFaculty();"></select>Name <select id="fac_name"></select>';
+	return faculty_div;
+}
+function getDepartmentFaculty()
+{
+	
+	 $.ajax({url :urlDepartmentFac,
+         dataType : 'jsonp',
+			data : {department_id : $('#department_id').val(), 'format' : 'jsonp' },
+			success :function(response){
+				var data  = '<option value="">Select One </option>' ;
+				for(var cnt=0;cnt < response.length; cnt++)
+				{
+					data += '<option value=' + response[cnt].staff_id + '>' + response[cnt].staff_name + '</option>';
+				}
+				$('#fac_name').html(data);
+				
+			},
+			error :  function(error)
+			{
+					alert(error.responseText);
+			}
+			});
+}
+$(function(){
+    var gridTable = "#tblgrid";
+    var gridPager = "#gridpager";
+    var urlFillGrid = "<?php echo $this->url(array('controller' => $this->controller, 'action' => 'fillgrid'), 'default', true)?>";
+    var urlCRUD = "<?php echo $this->url(array('controller' => $this->controller, 'action' => 'crud'), 'default', true)?>";
+    var urlDegreeCombo = "<?php echo 'http://'.CORE_SERVER.$this->url( array('controller' => 'semesterdegree', 'action' => 'getslavedegree'), 'default', true)?>";
+    var urlSemesterCombo = "<?php echo 'http://'.CORE_SERVER.$this->url(array('controller' => 'semesterdegree', 'action' => 'getsessionsemester'), 'default', true)?>";
+    var urlSemesterSubjectCombo = "<?php echo $this->url(array('controller' => 'subjectdepartment', 'action' => 'getsemsubject'), 'default', true)?>";
+    var urlSubjectModeCombo = "<?php echo $this->url(array('controller' => 'subjectmode', 'action' => 'getsubjectmode'), 'default', true)?>";
+    var urlDeptCombo = "<?php echo 'http://'.CORE_SERVER.$this->url(array('controller' => 'degreedepartment', 'action' => 'getdepartment'), 'default', true)?>";
+
+    var semSubjects = {};
+    var department_id = '<?php echo $this->department_id?>';
+    var subject_mode='';
+    
+    $(gridTable).jqGrid(
+            {
+            url : urlFillGrid,
+            colNames:['Subject','Subject Mode','Faculty','Degree','Department','Semester'] ,
+            colModel:[ {name:'subject_code',
+                index:'subject_code',
+                editable:true,
+                edittype: 'select',
+                editoptions:{
+            			style: "width: 350px",
+           				 value : {'':'Select one'},
+			  			 dataEvents: [{
+                		type: 'change',
+                			fn: function(e) {
+			  				 //Update Subject Mode
+                              $.ajax({
+                                  url : urlSubjectModeCombo,
+                                  dataType : 'json',
+                                  data : { subject_code: this.value},
+                                  success: function(jModes){
+											var selectOptionString = '';
+	                                    	$.each(jModes, function (index, mode) {
+    	                                    	subject_mode = jModes;
+	                	        				selectOptionString += '<input type="checkbox" id="' + mode.subject_mode_id + '" checked="true"> ' + mode.subject_mode_id +'</input>   ';
+	                	        				
+	                	        			});
+	                               // $('#subject_mode').parent().child(':input');
+	                                selectOptionString = selectOptionString ;            		
+                                    $('#subject_mode').html(selectOptionString);
+                                    
+                                      },
+                                      error: function(event) {
+                                          alert(event.responseText);
+                                          }
+                                      });
+				  							
+                    						}
+			  				}]
+
+                	},
+                	formoptions:{ rowpos:3}
+            },
+            
+            {name:'subject_mode',
+                index:'subject_mode',
+                editable: true,
+                edittype: 'custom', 
+                editoptions:{
+            	custom_element:mode_element 
+               },
+               formoptions:{ rowpos:4}
+            
+            },
+
+            {name:'staff_id',
+                index:'staff_id',
+                editable: true,
+                edittype: 'custom', 
+                editoptions:{
+            	custom_element: faculty_element
+               },
+               formoptions:{ rowpos:5}
+            },
+                    	{
+                    	  name: 'department_id',
+							index: 'department_id',
+							editable: false
+                      },
+                      {
+							name: 'degree_id',
+							index: 'degree_id',
+							editable: true,
+							edittype: 'select',
+							editoptions:{
+			                    value : {'':'Select one'},
+                                dataInit : function (e){
+	                                
+		                            //Update Degree in Selected Department
+		                            $.ajax({
+		                                url : urlDegreeCombo,
+	                                    dataType : 'jsonp',
+		                                data : {'masterDepartment': department_id,'slaveDepartment' : department_id, 'format' : 'jsonp' },
+	                                    success: function(jDegree){
+		                                	var selectOptionString = '<option value ="">Select one</option>';
+	                	        			$.each(jDegree, function (index, degree) {
+	                	        				selectOptionString += '<option value ="'+degree.degree_id+'">'+degree.degree_id+'</option>';
+	                	        			});
+	                                        $('#degree_id').html(selectOptionString);
+		                                    },
+		                                    error: function(event) {
+		                                        alert(event.responseText);
+		                                        }
+		                                    });
+                                    
+                                },
+                                dataEvents: [{
+									type: 'change',
+									fn: function(e) {
+									if(e.target.value){
+									//Update Semester in Selected Degree
+									$.ajax({
+										url : urlSemesterCombo,
+	                                    dataType : 'jsonp',
+										data : {department_id: department_id,
+												degree_id : this.value, 'format' : 'jsonp' },
+										success: function(jSemesters){
+	    											var selectOptionString = '<option value ="">Select one</option>';
+	    	                                    	$.each(jSemesters, function (index, semester) {
+	    	                	        				selectOptionString += '<option value ="'+semester.semester_id+'">'+semester.semester_id+'</option>';
+	    	                	        			});
+	    	                                    	$('#semester_id').html(selectOptionString).attr('disabled', '');
+	                                        },
+	                                        error: function(event) {
+	                                            alert(event.responseText);
+	                                            }
+	                                        });
+									} else {
+										
+				                    }
+	                               }
+				                    
+	                            }]    
+                      },
+                      formoptions:{ rowpos:1,label: "Degree"}
+							
+                      },
+                      
+                        {name:'semester_id',
+                         index:'semester_id',
+                         editable:true,
+                         edittype: 'select',
+                         editoptions:{
+							  value : {'':'Select one'},
+							  dataEvents: [{
+                                  type: 'change',
+                                  fn: function(e) {
+
+                                      //Update Subject Code
+                                      $.ajax({
+                                          url : urlSemesterSubjectCombo,
+                                          dataType : 'json',
+                                          data : {department_id: department_id,
+                                                  degree_id : $('#degree_id').val(),
+                                                  semester_id: e.target.value},
+                                          success: function(jSemSubjects){
+                                              semSubjects = jSemSubjects;
+    											var selectOptionString = '<option value ="">Select one</option>';
+    	                                    	$.each(jSemSubjects, function (subjectCode, subjectInfo) {
+    	                	        				selectOptionString += '<option value ="'+subjectCode+'">'+subjectInfo[0].subject_name+' | '+subjectCode+'</option>';
+    	                	        			});
+                                              $('#subject_code').html(selectOptionString);
+                                              },
+                                              error: function(event) {
+                                                  alert(event.responseText);
+                                                  }
+                                              });
+                                 	}
+                              }]    
+					  
+					          },
+					          formoptions:{ rowpos:2}
+                        }
+                    ],
+            caption: "Subject Faculty" ,
+            sortname: 'subject_code',
+            multiselect: false,
+            pager: gridPager, 
+            editurl: urlCRUD,
+            rowNum : 10
+        });
+
+    $(gridTable).jqGrid('navGrid', gridPager, {
+        add : true,
+        edit : true,
+        del : false,
+        search : false,
+        refresh : false
+    }, // options
+    	
+            {
+                width : 400,
+                savekey : [ true, 113 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true
+               
+            }, // edit options
+            {
+                width : 600,
+                savekey : [ true, 113 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true,
+                clearAfterAdd : false,
+                reloadAfterSubmit : false,
+                onclickSubmit : function(params, posdata) {
+                		var subject_mode_str = '';
+                		$.each(subject_mode, function (index, mode) {
+                    		
+                    		if($("#"+ mode.subject_mode_id).attr("checked") == true)
+                    		{
+                        	subject_mode_str = subject_mode_str + mode.subject_mode_id + ',';
+                    		}
+	        				
+	        			});
+            			return {department_id : department_id,subject_mode_id :  subject_mode_str , staff_id : $('#fac_name').val()};
+            }, 
+            beforeShowForm : function(formId) {
+            	$("#subject_code option[value='']").attr('selected', 'selected');
+            	$("#department_id option[value='']").attr('selected', 'selected');
+            	$("#fac_name option[value='']").attr('selected', 'selected');   
+            	$("#subject_mode").html('');
+            },
+            afterShowForm : function(formId) {
+                
+            	$.ajax({
+                    url : urlDeptCombo,
+                    dataType : 'jsonp',
+                    data : {'format' : 'jsonp' },
+                    success: function(jDept){
+                    	var selectOptionString = '<option value ="">Select one</option>';
+	        			$.each(jDept, function (index, dept) {
+	        				selectOptionString += '<option value ="'+dept.department_id+'">'+dept.department_id+'</option>';
+	        			});
+                        $('#department_id').html(selectOptionString);
+                        $("#department_id option[value=" + department_id + "]").attr('selected', 'selected');
+                        getDepartmentFaculty();
+                        },
+                        error: function(event) {
+                            alert(event.responseText);
+                            }
+                        });
+            		},
+           		 afterSubmit : function(response, postdata) {
+                        var success = false;
+                        if(200 == response.status){
+                        	$("#subject_code option[value='']").attr('selected', 'selected');
+                        	//$("#department_id option[value='']").attr('selected', 'selected');
+                        	$("#fac_name option[value='']").attr('selected', 'selected');
+                        	$('#subject_mode').html('');
+                        	alert('Submit done');
+                        	success = true;
+                        }
+                        
+                        return [success,'Inserted...',response.responseText];
+                    },
+                    errorTextFormat : function(xhr) {
+                    	return xhr.responseText;
+                    },
+                   
+                    jqModal : false,
+                    closeOnEscape : true
+    		
+
+            }, // add options
+            {
+                reloadAfterSubmit : false,
+                jqModal : false,
+                closeOnEscape : true
+               }
+             // del options
+            
+           
+         );
+
+     addPager(gridTable, gridPager); 
+     
+});
+</script>

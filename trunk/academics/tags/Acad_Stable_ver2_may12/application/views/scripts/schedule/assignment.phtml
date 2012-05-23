@@ -1,0 +1,148 @@
+<div id="selection-div"class="ui-widget-content ui-corner-all" style="float:inherit; width:1264px; height:125px; padding:4px" >
+<h3>
+<label for="degree_select" accesskey="S" id="lbl_degree_id" style="padding: 0.4em; ">
+Personal information
+</label>
+</h3><p><span style="float:left; ">Name:<?php echo $this->name;?></span>
+<span style="float:right;  ">Degree:<?php echo $this->degree;?>
+<br><br>Department:<?php echo $this->deptt;?><br><br>
+Semester:<?php echo $this->sem;?></span>
+<br><br><br><span style="float:left; ">Roll Number:<?php echo $this->rollno;?></span>
+<br>
+<br>
+</p>
+</div>
+<div id="stuMenu" >
+<ul> 
+    <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/studentattendance' ?>">Attendance</a></li> 
+    <li>Datesheet
+      <br><ul> 
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/schedule/sessional' ?>">Sessional</a></li> 
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/schedule/assignment' ?>">Assignments</a></li> 
+      </ul> 
+    </li> 
+    <li>Marks
+      <br><ul> 
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/marks/sessional' ?>">Sessional</a></li> 
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/marks/assignment' ?>">Assignments</a></li> 
+        </ul>
+    <li>Library
+    	<ul>
+    	<li><a href="<?php echo 'http://'.LIBRARY_SERVER.'/member' ?>">Library Account</a></li>
+    	<li><a href="<?php echo 'http://'.LIBRARY_SERVER.'/search' ?>">Search Book</a></li> 
+    	</ul>
+    </li>	
+  </ul>
+  </div><br><br>
+  <br><br><br><br>
+ 
+<center><table id="corner" cellspacing="10" cellpadding="10">
+<tr>
+		<th>Assignment Number</th>
+		<th>Subject Name</th>
+		<th> Subject Code</th>
+		<th>Date</th>
+		<th>Time</th>
+		<th>Max Marks</th>
+		<th>Pass Marks</th>
+		<th>Remarks</th>
+		</tr>
+<?php
+		foreach ($this->schedule as $key=>$value)
+		{
+		    echo '<tr id='.$value["test_info_id"].'>';
+		    
+		    echo '<td>'.$value['test_id'].'</td>';
+		    echo '<td>'.$value['subject_name'].'</td>';
+		    echo '<td>'.$value['subject_code'].'</td>';
+		    echo '<td>'.$value['date_of_conduct'].'</td>';
+		    echo '<td>'.$value['time'].'</td>';
+		    echo '<td>'.$value['max_marks'].'</td>';
+		    echo '<td>'.$value['pass_marks'].'</td>';
+		    echo '<td>'.$value['remarks'].'</td>';
+		    echo '</tr>';
+		}
+	?>
+</table></center>
+  <style type="text/css">
+
+#stuMenu  ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  }
+  
+  #stuMenu  li {
+  float: left;
+  position: relative;
+  width: 10em;
+  }
+   #stuMenu li ul {
+  display: none;
+  position: ; 
+  top: 1em;
+  left: 0;
+  }
+#stuMenu  a{
+	
+	text-decoration: none;
+	background: #fff;
+	color: #777;
+}
+ #stuMenu ul li  {
+	
+	text-decoration: none;
+	color: #777;
+	background: #fff;
+	padding: 5px;
+	
+	}
+ #stuMenu  li:hover ul, li.over ul{ display: block; }
+  
+  #corner
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	margin: 45px;
+	width: 1000px;
+	text-align: left;
+	border-collapse: collapse;
+}
+#corner thead th.rounded-company
+{
+	background: #b9c9fe url('table-images/left.png') left -1px no-repeat;
+}
+#corner thead th.rounded-q4
+{
+	background: #b9c9fe url('table-images/right.png') right -1px no-repeat;
+}
+#corner th
+{
+	padding: 8px;
+	font-weight: normal;
+	font-size: 13px;
+	color: #039;
+	background: #b9c9fe;
+}
+#corner td
+{
+	padding: 8px;
+	background: #e8edff;
+	border-top: 1px solid #fff;
+	color: #669;
+}
+#corner tfoot td.rounded-foot-left
+{
+	background: #e8edff url('table-images/botleft.png') left bottom no-repeat;
+}
+#corner tfoot td.rounded-foot-right
+{
+	background: #e8edff url('table-images/botright.png') right bottom no-repeat;
+}
+#corner tbody tr:hover td
+{
+	background: #d0dafd;
+}
+  
+	
+</style>

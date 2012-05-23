@@ -1,0 +1,103 @@
+<script type="text/javascript">
+<!--
+function resizeIframe(dynheight, iframe)
+{
+	$(iframe).height(parseInt(dynheight)+10);
+}
+//-->
+</script>
+<style>
+<!--
+iframe {
+	border:0;
+	overflow:hidden;
+	seamless:seamless;
+}
+h3{
+	padding: .5em;	
+	margin-bottom: 0;
+	cursor: pointer;
+	width: 40em;
+}
+iframe {
+	min-width: 60em;
+}
+.clear{
+	clear:both;
+	display: none;
+	padding: 2px;
+}
+
+-->
+</style>
+
+<?php if ($this->subjects) {
+    $extraHttpParams = array();
+    if ($this->date_from) {
+        $extraHttpParams['date_from'] = $this->date_from;
+    }
+    if ($this->date_upto) {
+        $extraHttpParams['date_upto'] = $this->date_upto;
+    }
+    ?>
+    <p>Brief report of subjects taught by <b><?php echo $this->faculty->getName();?></b> :</p>
+    <?php foreach ($this->subjects as $subjectCode => $subjectInfo) {
+        foreach ($subjectInfo as $key => $subj) {
+            ?>
+            <div class="subj" >
+            <h3  title="<?php echo $subjectCode;?>" class="ui-widget ui-widget-header ui-corner-tl">
+            <?php echo $subj['subject_name'].' ('.$subj["subject_mode_id"].')';
+            unset($subj['subject_name']);
+            $frameParams = "?subject_code=$subjectCode&".http_build_query($subj)."&".http_build_query($extraHttpParams)?>
+            <a title="click for detailed information of '<?php echo $subjectCode?>'"
+            	href="<?php echo $this->baseUrl($this->urlSubjetDetail.$frameParams);?>" 
+            	style="float: right;">
+            			<span class="ui-icon ui-icon-extlink" ></span>
+        	</a>
+            </h3>
+            <span  class="ui-widget ui-widget-content ui-corner-bottom">
+                <span><?php echo $subj['department_id'];?> &ge; </span>
+                <span><?php echo $subj['programme_id'];?> &ge; </span>
+                <span> Semester <?php echo $subj['semester_id'];?></span>
+            </span>
+            <iframe id="iframe_<?php echo $subjectCode;?>" 
+            	params="<?php echo $frameParams?>"
+            	width="100%" height="1px" ></iframe>
+            <div class="clear">&nbsp;</div>
+            </div>
+            <?php
+        }
+    }
+} else {
+?>
+<p>No attendance data found for <b><?php echo $this->faculty->getName();?></b></p>
+<?php 
+}?>
+<script type="text/javascript">
+<!--
+$(document).ready(function() {
+	$('.subj > h3').click(function(){
+		var target = $(this).parent().find('iframe');
+		//var src = target.prop('src');
+		var frame = target[0];
+		if ( frame.contentWindow.location.host) {
+			target.slideToggle("slow");
+		} else {
+			var params = target.attr('params');
+			var urlSubjectInfo = '<?php echo $this->urlSubjetDetail;?>'+params;
+			var frame = target[0];  
+			frame.contentWindow.location.replace(urlSubjectInfo);
+			/* I could have done above like this...
+			-->target.attr('src',urlSubjectInfo);
+			but it saves the IFRAME urls in history which is undesired.
+			*/
+			target.next().show();
+		}
+	});
+
+  $('#toggleReport').click(function() {
+	  $('a.more').trigger('click');
+   });
+});
+//-->
+</script>

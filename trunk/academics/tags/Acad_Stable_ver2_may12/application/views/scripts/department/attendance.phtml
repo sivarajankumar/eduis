@@ -1,0 +1,340 @@
+<style>
+<!--
+.sectionDiv H3 {
+	margin-top: 1em;
+	border-bottom: 4px double #eee;
+	text-align: center;
+	clear: both;
+}
+
+.tableSemester {
+	margin-top: 1.5em;
+}
+
+.tableSemester tr td {
+	padding-left: 0.4em;
+	padding-right: 0.4em;
+}
+.rowSubjectMode { 
+	margin : 2em;
+	padding: 2em;
+}
+.rowSubjectMode td {
+ 	border-bottom: 1px solid #ddd;
+	vertical-align: middle;
+}
+.subjectMode{
+	color: #333;	
+	background-color : #eee;
+	font-size:1.1em;
+	vertical-align: top;
+}
+.modeHeadline td {
+	color: #555; 
+	background-color : #eee;
+	font-weight: bold;
+	font-size:0.9em;
+	text-align: center;
+	vertical-align: bottom;
+}
+.dataCellBordered {
+	border-top: 1px solid #aaa;
+	text-align: center;
+}
+.dataCellLightBordered {
+	border-top: 1px solid #ddd;
+	text-align: center;
+}
+.dataCell {
+	
+}
+.dataRow,table a  {
+	font-size:1em;
+	font-family: serif;	
+	color: #444;
+}
+.sectionDiv_clt {
+	float:right;
+	text-align: right;
+	position: relative;
+	right: 1em;
+	top:-1em;
+	display: none;
+}
+.reportNav {
+	float:right;
+	text-align: right;
+	position: relative;
+	right: 1em;
+}
+table a {
+	text-decoration: none;
+	padding: 0.2em 0.5em;
+}
+table a:hover {
+	background-color: #eeeeee;
+	color: blue;
+}
+table a:visited {
+	color: maroon;
+}
+@MEDIA print{
+	table tr {		
+		page-break-inside: avoid;
+	}
+    table a:visited {
+		color: #444;
+    }
+	.noprint {
+		display: none;
+	}
+	.sectionDiv H3 {
+    	page-break-after: avoid;
+	}
+}
+
+-->
+</style>
+<div style="padding :0.5em 0 0.5em 0; text-align: center; " >
+<form class="noprint" id="departmentWise">
+<?php if ($this->aboveDepartment) { ?>
+    <label>Department: <select id="department_id" name="department_id" 
+	class="ui-widget-content  ui-corner-all" style="text-align: center" >
+	<option value="BT" <?php echo (strtolower($this->department_id)=='bt')?'selected="selected"':'' ?> >Biotech</option>
+	<option value="CSE" <?php echo (strtolower($this->department_id)=='cse')?'selected="selected"':'' ?> >Computer Science</option>
+	<option value="ECE" <?php echo (strtolower($this->department_id)=='ece')?'selected="selected"':'' ?> >Electronics</option>
+	<option value="ME" <?php echo (strtolower($this->department_id)=='me')?'selected="selected"':'' ?> >Mechanical</option>
+	</select></label>
+<?php }?>
+
+	<label>Programme: <select id="programme_id" name="programme_id"
+	class="ui-widget-content  ui-corner-all" style="text-align: center" 
+	>
+	<option value="BTECH">BTECH</option>
+	</select></label>
+	<br/><label>Date from:<input type="text" id="date_from" name="date_from" readonly="readonly" value="<?php 
+$dateFrom = new Zend_Date();
+if ($this->date_from) {
+    $dateFrom->setDate($this->date_from);
+} else{
+    $dateFrom->setDate($this->session_startdate);
+}
+echo $dateFrom->get(Zend_Date::DATE_MEDIUM); ?>" class="ui-widget-content ui-corner-all" style="text-align: center"></input></label>
+<br/><label>Date upto:<input type="text" id="date_upto" name="date_upto" readonly="readonly" value="<?php
+$dateUpto = new Zend_Date();
+if ($this->date_upto) {
+    $dateUpto->setDate($this->date_upto);
+}
+echo $dateUpto->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-all" style="text-align: center"></input></label>
+<br/>	
+	<button type="submit" class="ui-corner-all" style="font-size: 0.7em;">Show</button>
+</form>
+<?php 
+if (isset($this->department_id) and isset($this->programme_id)) { ?>
+    <h1>DEPARTMENT REPORT</h1>
+	<h2><?php  echo $this->department_id?> - <?php  echo $this->programme_id?></h2>
+<?php 
+$this->headTitle('Attendance Report for '.$this->department_id.'-'.$this->programme_id);
+} else {
+    $this->headTitle('Attendance Report for Department');
+}
+?>
+</div>
+<hr/>
+<?php 
+if (isset($this->attendance)) {
+    if (empty($this->attendance)) {
+        ?>
+        <p>The output is empty.</p>
+        <?php
+        goto labeled;
+    }
+    $semesters = array_keys($this->attendance);
+    echo '<div class="reportNav noprint">';
+    foreach ($semesters as $key => $semester) {
+        echo '<a href="#semester'.$semester.'">Semester '.$semester.'</a>&nbsp;';
+    }
+    echo '</div>';
+    foreach ($this->attendance as $semester_id => $subject_modes) {
+        $subjectModes = array_keys($subject_modes);
+        ?>
+        <div class="sectionDiv" id="semester<?php echo $semester_id?>" >
+        	<h3>Semester <?php echo $semester_id?></h3>
+        <form class="sectionDiv_clt" action="void(0);">
+        <?php foreach ($subjectModes as $key => $subMode) {
+            ?>
+            <label><?php echo $subMode?><input type="checkbox" checked="checked" value="semester<?php echo $semester_id.'_'.$subMode?>"></label>&nbsp;
+            <?php
+        } ?>
+        </form>
+<?php foreach ($subject_modes as $subject_mode_id => $subject_codes) {?>
+		<table class="tableSemester" cellspacing="0" border="0" id="semester<?php  echo $semester_id.'_'.$subject_mode_id?>">
+		<tbody>
+        <tr class="<?php echo $semester_id.'_'.$subject_mode_id?>_row rowSubjectMode">
+			<td class="subjectMode"><?php echo $subject_mode_id ?></td><td colspan="7" ><br/></td>
+			</tr>
+			<tr class="<?php echo $semester_id.'_'.$subject_mode_id?>_row modeHeadline">
+	<td>Subject Name</td>
+	<td style="border-left: 1px solid #ddd;">Subject Code</td>
+	<td style="border-left: 1px solid #ddd;">Faculty</td>
+	<td style="border-left: 1px solid #ddd;">Group</td>
+	<td style="border-left: 1px solid #ddd;">Delivered</td>
+	<td style="border-left: 1px solid #ddd;">Duration</td>
+	<td style="border-left: 1px solid #ddd;">Last Period Date</td>
+	<td style="border-left: 1px solid #ddd;">Last Updated</td>
+</tr>
+        <?php
+        foreach ($subject_codes as $subject_code => $groups) {
+                $prevFaculty  = null;
+                $prevSubjectName = null;
+                $prevSubjectCode = NULL;
+                $greyLine = NULL;
+                
+            foreach ($groups as $group_id => $records) {
+                foreach ($records as $key => $record) {
+                    ?>
+                <tr  class="<?php echo $semester_id.'_'.$subject_mode_id?>_row dataRow" >
+             <?php
+			$subjectParams = array('department_id'=>$this->department_id,
+                            'subject_code'=>$subject_code,
+                            'subject_mode_id'=>$subject_mode_id);
+			if ($this->date_from) {
+			    $subjectParams['date_from'] = $this->date_from;
+			}
+			if ($this->date_upto) {
+			    $subjectParams['date_upto'] = $this->date_upto;
+			}
+			
+			if($record['subject_name']==$prevSubjectName){
+			    echo '<td></td>';
+			} else {
+			    $subjectURL = $this->url(array('controller'=>'subject',
+			    							'action'=>'attendance')).'?'.http_build_query($subjectParams);
+			    echo '<td class="dataCellBordered"  style="text-align:left" >
+			    	<a href='. $subjectURL.' >'. 
+			                ucwords(strtolower($record['subject_name'])) .'</a></td>';
+			    $prevSubjectName=$record['subject_name'];
+			}
+                
+			if($subject_code==$prevSubjectCode){
+			    echo '<td></td>';
+			} else {
+			    $subjectURL = $this->url(array('controller'=>'subject',
+			    							'action'=>'attendance')).'?'.http_build_query($subjectParams);
+			    echo '<td class="dataCellBordered"  style="text-align:left">
+			    		<a href='. $subjectURL.' >'
+			                    .$subject_code.'</a></td>';
+			    $prevSubjectCode=$subject_code;
+			}
+                
+             if($record['faculty_id']==$prevFaculty){
+			    echo '<td></td>';
+			} else {
+			    $faculty = new Acad_Model_Member_Faculty();
+			    $facultyName = $faculty->setFacultyId($record['faculty_id'])->getName();
+			    
+    			$facultyParams = array('department_id'=>$this->department_id,
+    							/*'programme_id'=>$this->programme_id,
+    							'semester_id'=>$semester_id,*/
+                                'faculty_id'=>$record['faculty_id']);
+			
+    			if ($this->date_from) {
+    			    $facultyParams['date_from'] = $this->date_from;
+    			}
+    			if ($this->date_upto) {
+    			    $facultyParams['date_upto'] = $this->date_upto;
+    			}
+			    $facultyURL = $this->url(array('controller'=>'faculty',
+			    							'action'=>'attendance')).'?'.http_build_query($facultyParams);
+			    echo '<td class="dataCellBordered" style="text-align:left">'.
+			    				'<a href='.$facultyURL.'>'.$facultyName.'</td>';
+			    $prevFaculty=$record['faculty_id'];
+			}
+			
+			if (is_null($greyLine)) {
+			    $greyLine = true;
+			    ?>
+			    <td class="dataCellBordered"><?php echo (strtoupper($group_id) == 'ALL')?'-':$group_id?></td>
+			<td class="dataCellBordered"><?php echo $record['delivered']?></td>
+			<td class="dataCellBordered"><?php echo $record['total_duration']?></td>
+			<td class="dataCellBordered">
+			<?php $date = date_create_from_format('Y-m-d', $record['last_period_date']);
+			                                echo date_format($date, 'd/M'); ?></td>
+			<td class="dataCellBordered">
+			<?php $date = date_create_from_format('Y-m-d H:i:s', $record['last_updated']);
+			                                echo date_format($date, 'd/M h:i a');?></td>
+			<?php } else {
+			    ?>
+			<td class="dataCellLightBordered"><?php echo (strtoupper($group_id) == 'ALL')?'-':$group_id?></td>
+			<td class="dataCellLightBordered"><?php echo $record['delivered']?></td>
+			<td class="dataCellLightBordered"><?php echo $record['total_duration']?></td>
+			<td class="dataCellLightBordered">
+			<?php $date = date_create_from_format('Y-m-d', $record['last_period_date']);
+			                                echo date_format($date, 'd/M'); ?></td>
+			<td class="dataCellLightBordered">
+			<?php $date = date_create_from_format('Y-m-d H:i:s', $record['last_updated']);
+			                                echo date_format($date, 'd/M h:i a');?></td>
+			<?php }?>
+			
+		</tr>
+                <?php 
+                
+                }
+                
+            }
+        }
+        ?>
+        
+        <tr class="<?php echo $semester_id.'_'.$subject_mode_id?>_row">
+			<td colspan="8" ><br/></td>
+			</tr>
+			</tbody>
+</table>
+        <?php
+        }
+        ?> 
+    
+    
+
+</div>
+<?php
+    }
+    
+} else {
+    ?>
+    <p>Department and corrosponding Degree are required!!</p>
+<?php }
+labeled: ?>
+<script>
+//jQueryfy buttons
+$("button").button();
+var session_startdate = '<?php echo $this->session_startdate->get(Zend_Date::DATE_MEDIUM);?>';
+var dateFormat = 'dd-mm-yy';
+var serverDateObj = $.datepicker.parseDate(dateFormat, $('#datetext').text());
+var sessionStartdateObj= $.datepicker.parseDate(dateFormat, session_startdate);
+var dateOptions = {
+		defaultDate : sessionStartdateObj,
+		minDate : sessionStartdateObj,
+		maxDate : serverDateObj,
+		dateFormat: dateFormat,
+		hideIfNoPrevNext: true,
+		autoSize: true
+	};
+$("#date_from").datepicker(dateOptions);
+dateOptions.defaultDate = serverDateObj;
+$("#date_upto").datepicker(dateOptions);
+$(document).ready(function() {
+	$('.sectionDiv').hover(function() {
+		$(this).find('.sectionDiv_clt').fadeIn('slow');
+	},
+	function() {
+		$(this).find('.sectionDiv_clt').fadeOut('slow');
+	});
+
+	$('.sectionDiv_clt :input').click(function() {
+		var elem = $(this).val();
+		$('#'+elem).fadeToggle();
+	});
+});
+
+</script>

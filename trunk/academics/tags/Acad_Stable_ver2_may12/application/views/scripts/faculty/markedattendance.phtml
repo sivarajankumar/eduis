@@ -1,0 +1,95 @@
+<br />
+<h3>Marked Attendance*</h3>
+<br />
+<div class="reporterDiv gridstyle">
+<table id="lastMarked" class="scroll"  width="100%" border="2" cellpadding="4">
+	<caption>Last Marked Attendance</caption>
+	<thead>
+  <tr>
+    <th scope="col">AttendanceID</th>
+    <th scope="col">PeriodDate</th>
+    <th scope="col">Department</th>
+    <th scope="col">Programme</th>
+    <th scope="col">Semester</th>
+    <th scope="col">Group</th>
+    <th scope="col">Subject</th>
+    <th scope="col">Mode</th>
+    <th scope="col">Duration</th>
+    <th scope="col">Weekday</th>
+    <th scope="col">PeriodNumber</th>
+    <th scope="col">PeriodType</th>
+    <th scope="col">MarkedDate</th>
+    <th scope="col">StudentsAbsent</th>
+  </tr>
+	</thead>
+	<tbody> 
+  <?php 
+  foreach ($this->marked as $periodAttendance) {
+      $string =  '<tr>';
+      $string .= '<td style="text-align: center;" >'.$periodAttendance['attendance_id'].'</td>';
+      $string .= '<td>'.$periodAttendance['period_date'].'</td>';
+      $string .= '<td>'.$periodAttendance['department_id'].'</td>';
+      $string .= '<td>'.$periodAttendance['programme_id'].'</td>';
+      $string .= '<td>'.$periodAttendance['semester_id'].'</td>';
+      $string .= '<td>'.$periodAttendance['group_id'].'</td>';
+      $string .= '<td>'.$periodAttendance['subject_code'].'</td>';
+      $string .= '<td>'.$periodAttendance['subject_mode_id'].'</td>';
+      $string .= '<td>'.$periodAttendance['duration'].'</td>';
+      $string .= '<td>'.$periodAttendance['weekday_number'].'</td>';
+      $string .= '<td>'.$periodAttendance['period_number'].'</td>';
+      $string .= '<td>'.$periodAttendance['period_type'].'</td>';
+      $string .= '<td>'.$periodAttendance['marked_date'].'</td>';
+      $string .= '<td>'.$periodAttendance['absent'].'</td>';
+      $string .= '</tr>';
+      
+      echo $string;
+  }
+  ?>
+	</tbody>
+</table>
+</div>
+<p>* Displays last 25 marked attendance.</p>
+
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+    
+<script type="text/javascript" defer="defer" >
+$(function(){
+tableToGrid("#lastMarked",{
+	colNames: ['Att. ID',
+		       	'Period Date',
+		       	'Department',
+		       	'Programme',
+		       	'Semester',
+		       	'Group',
+		       	'Subject',
+		       	'Mode',
+		       	'Duration',
+		       	'Weekday',
+		       	'Period',
+		       	'Period Type',
+		       	'Marked Date',
+		       	'Absent'
+		       	],
+    colModel: [
+        { name: 'AttendanceID', width: 30 },
+        { name: 'PeriodDate', width: 55},
+        { name: 'Department', width: 50, align: 'center' },
+        { name: 'Programme', width: 50 },
+        { name: 'Semester', width: 40, align: 'center' },
+        { name: 'Group', width: 30, align: 'center' },
+        { name: 'Subject', width: 50},
+        { name: 'Mode', width: 25},
+        { name: 'Duration', width: 40, align: 'center', formatter:'int'  },
+        { name: 'Weekday', width: 40,  align: 'center', formatter:'select',editoptions:{value:"1:MON;2:TUE;3:WED;4:THU;5:FRI;6:SAT"} },
+        { name: 'PeriodNumber', width: 30, align: 'center', formatter:'int'  },
+        { name: 'PeriodType', width: 50 },
+        { name: 'MarkedDate', width: 50 },
+        { name: 'StudentsAbsent', width: 50, align: 'center'}
+                ],
+    height: 'auto',
+    pager: '#gridpager',
+    rowList: [5,15,25]
+});
+
+}); 
+</script>
