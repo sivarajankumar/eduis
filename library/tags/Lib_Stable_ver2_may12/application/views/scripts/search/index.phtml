@@ -1,0 +1,146 @@
+<style type="text/css">
+#result_lst{
+	list-style: none outside none;
+}
+.rsltField {
+	margin-left: 0.5em;
+	color: #999;
+}
+.rsltData {
+	margin-left: 0.2em;
+}
+.rsltTitle {
+	font-family: arial,sans-serif;
+	font-weight:normal;
+	margin-bottom: 0.2em;
+}
+.rsltAuthor{
+	color: #009933;
+}
+.rsltP{
+	margin-top:0.2em;
+}
+.alignCenter
+{
+		width: 70%;margin-left:auto;margin-right:auto;
+}
+#pager a{
+		margin-right:20px; 
+	 	
+}
+.curPage
+{
+	color:gray;
+	background-color:#ddd;
+}
+.status {
+	cursor: pointer;
+}
+.tooltip {
+	display:none;
+	font-size:12px;
+	height:70px;
+	width:160px;
+	padding:25px;
+	color:#fff;	
+}
+</style>
+
+<h3 align="center">Search Book</h3>
+<div id="search_div" class="alignCenter" style="text-align:center">
+	<form  id="search_form" method="GET">
+	<input  type="text" size="80" name="q" value ="<?php echo $this->q; ?>" / >
+	<input type="submit" value="Search"/>
+	<div id="option_div">
+				<input type="radio" <?php echo (($this->checked) ? '' : 'checked="checked"' )?> id="all_books" name="filter" value="0"/>All Books
+				<input type="radio" <?php echo (($this->checked == 'AVAILABLE') ? 'checked="checked"' : '' )?> id="available_books" name="filter" value="AVAILABLE"/>Available Books
+				<input type="radio" <?php echo (($this->checked == 'ISSUED')  ? 'checked="checked"' : '' )?> id="issued_books" name="filter" value="ISSUED"/>Issued Books
+	</div>
+	
+	</form>
+</div>
+<div id="search_result">
+	<ol id="result_lst">
+			<?php if(isset($this->search_result))
+				foreach($this->search_result as $isbn_id => $result)
+				{?>
+				<li>
+					<h3 class="rsltTitle" ><a href="javascript:"><?php echo $result['info']['title'] ?></a></h3>
+					<span class="rsltAuthor" ><?php echo $result['info']['author']?></span>
+					<div class="rsltInfo" >
+					<span class="rsltField" >ISBN</span>:<span class="rsltData isbn_id"><?php echo $isbn_id?></span>
+					<?php unset($result['info']['title']);
+					unset($result['info']['author']);
+					
+					foreach($result['info'] as $t_key => $t_value)
+					{ ?>
+						<span class="rsltField" ><?php echo ucfirst($t_key);?></span>:<span class="rsltData"><?php echo $t_value;?></span>
+					<?php }
+					$strArray = array();
+					foreach ($result['status'] as $statusName => $statusCount) {
+					    $strArray[] = '<span class="rsltField status">'.ucfirst(strtolower($statusName)).'</span>:<span class="rsltData">'. $statusCount . '</span>';
+					}
+					echo '<p class="rsltP" >'.implode(', ', $strArray).'</p>';
+					?>
+					</div>
+				</li>
+					<?php 
+				}
+			?>
+	</ol>
+</div>
+<div id="pager" class="alignCenter" style="text-align:center;">
+	<?php
+		if(!is_null($this->paging))
+		{ 
+			foreach($this->paging as $key => $value)
+			{
+			echo $value;
+			}
+		}
+	?>
+		
+		
+			
+		
+</div>
+<script type="text/javascript">
+var urlISBNBOOKS = "<?php echo $this->url( array ('action' => 'getisbnbooks' ) )?>";
+var isTitle = null;
+$(function(){
+	<?php if(isset($this->cur_page)){?>
+		var cur_page = "<?php echo $this->cur_page?>";
+
+		if(cur_page)
+		{
+		$("#pager a[name=" + cur_page +"]").addClass('curPage');
+		}
+		<?php }?>
+	//document.write(cur_page);
+
+		
+		$('.status').hover(function(){
+			isTitle = $(this).prop('title');
+			if (!isTitle.length) {
+			    var status = $(this).text().toLowerCase();
+			    var isbn_id = $(this).parent().parent().find('.isbn_id').text();
+			    var elem = $(this);
+		        $.ajax({
+		            url : urlISBNBOOKS,
+		            ifModified : true,
+		            context : elem,
+		            //dataType : "json",
+		            data : {isbn_id:isbn_id,status:status },
+		            success : function(acc_no){
+			            var target = $(this).parent();
+		            	$(this).attr('title',acc_no);
+		            },
+		            error: function(xhr, text){
+		                alert(xhr.responseText);
+		                resetMemberSection();
+		            }
+		        });
+			}
+		});
+});
+</script>

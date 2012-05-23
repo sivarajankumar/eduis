@@ -1,0 +1,60 @@
+<?php
+echo $this->doctype ()?>
+<html><head>
+<title><?php if (isset($this->isbn)) {
+	echo 'ISBN : '.$this->isbn;
+} else echo 'Barcode for ISBN'?></title>
+<style type="text/css">
+<!--
+h3 {
+    text-align: center;
+}
+.barcodeBox {
+	margin: 1mm; 
+}
+
+.barCodeImg {
+	margin-bottom: 3mm;	
+}
+@media print
+  {
+  div {display:none;}
+  }
+-->
+</style> </head>
+<body>
+
+<div id="divISBN" >
+<h3><?php if (isset($this->isbn)) {
+	echo 'ISBN : '.$this->isbn;
+} else echo 'Barcode for ISBN'?></h3>
+<form name="formISBN" id="formISBN" >
+<label>ISBN : <input type="text" name="isbn" value="<?php echo $this->isbn?>" > </label> <button type="submit">Generate</button> </form>
+<form name="formAdd" id="formAdd" action="javascript: addMore();">
+Add <input id="counts" value="1" maxlength="2" size="2" /> times more. 
+<input type="submit" value="Add" /></form>
+
+<br/>
+<hr/>
+<br/>
+</div>
+<div id="divImage" ></div>
+<?php
+$url = $this->baseUrl('barcode');
+if (isset ( $this->isbn )) {
+		echo '<label class="barcodeBox"><img class="barCodeImg" src="'.$url.'/generatecode?text=' . $this->isbn . '"/><label/>';
+}
+?>
+<script type="text/javascript" src="http://<?php echo CDN_SERVER?>/js/jquery-1.6.2.min.js"></script>
+<script type="text/javascript">
+function addMore(){
+	var cache = $('.barcodeBox:first').clone();
+	var counts = $('#counts').val();
+	for( i = 0;i<parseInt(counts); i++){
+		var cache = $('.barcodeBox:first').clone();
+		$('body').append(cache);
+	}
+}
+</script>
+</body>
+</html> 
