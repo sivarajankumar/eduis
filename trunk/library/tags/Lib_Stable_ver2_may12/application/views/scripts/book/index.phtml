@@ -1,0 +1,199 @@
+<h3 align="center">Manage Books</h3>
+
+<div class="gridstyle">
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+	style="color: red"></span></div>
+<script type="text/javascript">
+$(function(){
+
+	var cache = {},
+		lastXhr;
+    var urlDocType = "<?php echo $this->url ( array ('module' => $this->module, 'controller' => 'documenttype', 'action' => 'getdoctype' ))?>";
+    var urlBookStatus  = "<?php echo $this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'getstatusval'  ))?>";
+    var urlIsbnFind = "<?php echo $this->url ( array ('controller' => 'isbn', 'action' => 'getisbnlist'  ))?>";
+	var gridTable = "#tblgrid";
+    var gridPager = "#gridpager";
+	var urlFillGrid = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid' ), 'default', true )?>";
+	var urlCRUD = "<?=$this->url ( array ('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud' ), 'default', true )?>";
+	$(gridTable).jqGrid(
+			{
+			url : urlFillGrid,
+			colNames:['Accession No','Isbn No','Document Type','Copy No', 'Rack' , 'Shelf','Status','Invoice', 'Remarks'], 
+			colModel:[ {name:'acc_no',
+							index:'acc_no',
+							editable: true,
+							editrules:{required:true}
+						},
+						{name:'isbn_id',
+							index:'isbn_id',
+							editable:true,
+                            editoptions: {
+                                dataInit : function (elem) {
+                                    $(elem).autocomplete({
+                                			minLength: 3,
+                                			source: function( request, response ) {
+                                				var term = request.term;
+                                				if ( term in cache ) {
+                                					response( cache[ term ] );
+                                					return;
+                                				}
+
+                                				lastXhr = $.getJSON( urlIsbnFind, request, function( data, status, xhr ) {
+                                					cache[ term ] = data;
+                                					if ( xhr === lastXhr ) {
+                                						response( data );
+                                					}
+                                				});
+                                			}
+                                    });
+                                }
+                            },
+							editrules:{required:true}
+						},
+						{name:'document_type_id',
+							index:'document_type_id',
+							editable: true,
+							edittype: 'select',
+							editoptions: {
+				                dataUrl: urlDocType,
+				                defaultValue:'Regular',
+				                buildSelect : function(jDocType){
+				                	var jDocType = $.parseJSON(jDocType);
+				                	var selectString = '<select><option value ="">Select one</option>';
+				                	$.each(jDocType, function (index, docType) {
+				                    	selectString += '<option value ="'+docType.document_type_id+'">'+docType.document_type_name+'</option>';
+				                    });
+				                    selectString += '</select>';
+				                    return selectString;
+				                    }
+						   	}
+						},
+
+						{name:'copy_no',
+                            hidden: true,
+							index:'copy_no',
+							editable: true
+						},
+						{name:'rack_id',
+                            hidden: true,
+							index:'rack_id',
+							editable: true,
+                            editoptions: {value : 1},
+							editrules:{
+                          	   edithidden: true,
+                               required:true}
+						},
+						{name:'shelf',
+							index:'shelf',
+                            hidden: true,
+							editable: true,
+                            editoptions: {value : 1},
+							editrules:{
+                          	   edithidden: true,
+                               required:true}
+						},
+						{name:'status',
+							index:'status',
+							editable: true,
+							edittype: 'select',
+							editoptions: { 
+				                dataUrl: urlBookStatus,
+				                defaultValue:'AVAILABLE',
+				                buildSelect : function(jBookStatus){
+				                	var jBookStatus = $.parseJSON(jBookStatus);
+				                	var selectString = '<select><option value ="">Select one</option>';
+				                	$.each(jBookStatus, function (index, bookStatus) {
+				                    	selectString += '<option value ="'+bookStatus+'">'+bookStatus+'</option>';
+				                    });
+				                    selectString += '</select>';
+				                    return selectString;
+				                    }
+			   				}
+						},
+                        {name:'invoice_id',
+                            hidden: true,
+                            index:'invoice_id',
+                            editable: true,
+                            editoptions: { 
+		                    	value : 1
+    						},
+							editrules:{
+                          	   edithidden: true,
+                               required:true}
+                        },
+                        {name:'remarks',
+                            index:'remarks',
+                            editable: true
+                        }
+						
+					],
+			caption: "Books" ,
+			sortname: 'acc_no',
+			pager: gridPager, 
+			editurl: urlCRUD
+		});
+
+    $(gridTable).jqGrid('navGrid', gridPager, {
+        add : true,
+        edit : true,
+        view : false,
+        search : false,
+        refresh : false
+    }, // options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true,
+                errorTextFormat:function(response){
+                    return response.responseText;
+                }
+            }, // edit options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true,
+                errorTextFormat:function(response){
+                    return response.responseText;
+                }
+            }, // add options
+            {
+                reloadAfterSubmit : false,
+                jqModal : false,
+                closeOnEscape : true
+            } // del options
+         );
+
+	 addPager(gridTable, gridPager); 
+});
+</script>
+<?php 
+$protocol = 'http://';
+$cdnServer = $protocol.CDN_SERVER;
+/*
+ * Adding JqGrid as grid.
+ */
+$this->headLink()
+    ->appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.jqgrid.css')
+    ->//Select multiple columns from column chooser
+appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.multiselect.css');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/ui.multiselect.js');
+// This is compressed version of jqGrid 3.6, It has all plugins in one file only
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/i18n/grid.locale-en.js');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/jquery.jqGrid.min.js');
+// Gloabal Settings for JqGrid
+$this->headScript()->appendFile($cdnServer . '/plugins/jqgrid/jqGrid.global.js');
+$this->headLink()->appendStylesheet(
+'http://' . CDN_SERVER . '/plugins/baloon/bt/jquery.bt.css');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/baloon/bt/jquery.bt.min.js');
+?>
