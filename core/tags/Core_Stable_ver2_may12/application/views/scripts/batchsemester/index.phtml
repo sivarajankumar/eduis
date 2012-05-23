@@ -1,0 +1,211 @@
+<?php
+$baseUrl = $this->baseUrl();
+$this->headLink()
+    ->appendStylesheet($baseUrl . '/plugins/jqgrid/css/ui.jqgrid.css') //Select multiple columns from column chooser
+    ->appendStylesheet(
+$baseUrl . '/plugins/jqgrid/css/ui.multiselect.css');
+//Select multiple columns from column chooser
+$this->headScript()->appendFile(
+$baseUrl . '/plugins/jqgrid/js/ui.multiselect.js');
+// This is compressed version of jqGrid 3.6, It has all plugins in one file only
+$this->headScript()->appendFile(
+$baseUrl . '/plugins/jqgrid/js/i18n/grid.locale-en.js');
+$this->headScript()->appendFile(
+$baseUrl . '/plugins/jqgrid/jquery.jqGrid.min.js');
+// Gloabal Settings for JqGrid
+$this->headScript()->appendFile($baseUrl . '/plugins/jqgrid/jqGrid.global.js');
+?><h3 align="center">Batch in Semester</h3>
+<div class="gridstyle">
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+	style="color: red"></span></div>
+<script type="text/javascript">
+var urlDeptCombo = "<?=$this->url(array('controller' => 'degreedepartment', 'action' => 'getdepartment'), 'default', true)?>";
+var urlDegreeCombo = "<?=$this->url(array('controller' => 'degreedepartment', 'action' => 'getdegree'), 'default', true)?>";
+var urlBatchCombo = "<?=$this->url(array('controller' => 'batch', 'action' => 'getactivebatches'), 'default', true)?>";
+var urlSessionSemCombo = "<?=$this->url(array('controller' => 'semesterdegree', 'action' => 'getsemester'), 'default', true)?>";
+var gridTable = "#tblgrid";
+var gridPager = "#gridpager";
+var urlFillGrid = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid'), 'default', true)?>";
+var urlCRUD = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud'), 'default', true)?>";
+var deptDegree = {};
+$(function(){
+   $(gridTable).jqGrid({
+            url : urlFillGrid,
+            colNames:['Department of Batch','Degree of Batch','Year of Batch','Current Semester'], 
+            colModel:[ {name:'department_id',
+                index:'department_id',
+                editable:true,
+                edittype: 'select',
+                editoptions: {
+                size: 1,
+                dataUrl:urlDeptCombo,
+                buildSelect : function(jDept){
+                	var jDept = $.parseJSON(jDept);
+                	var selectString = '<select><option value ="">Select one</option>';
+                	$.each(jDept, function (index, deptt) {
+                    	selectString += '<option value ="'+deptt.department_id+'">'+deptt.department_name+'</option>';
+                    });
+                    selectString += '</select>';
+                    return selectString;
+                    },
+                    dataEvents: [{
+                        type: 'change',
+                        fn: function(e) {
+                        	if(deptDegree[this.value]){
+                            	var selectOptionString = '<option value ="">Select one</option>';
+                        		$.each(deptDegree[this.value], function (index, degree) {
+                        			selectOptionString += '<option value ="'+degree.degree_id+'">'+degree.degree_name+'</option>';
+                        		});
+                        		$('#degree_id').html(selectOptionString);
+                             } else{
+                            	 $.ajax({
+                	            	url : urlDegreeCombo,
+                                    type : 'GET',
+                                    dataType : 'json',
+                                    data : {department_id : this.value},
+                                    success: function(jDegree){
+                                    	deptDegree[e.target.value] = jDegree;
+                	                    var selectOptionString = '<option value ="">Select one</option>';
+                	        			$.each(jDegree, function (index, degree) {
+                	        				selectOptionString += '<option value ="'+degree.degree_id+'">'+degree.degree_name+'</option>';
+                	        			});
+                                        $('#degree_id').html(selectOptionString);
+                                        },
+                                        error: function(data){
+	            							alert(data.responseText);
+                                            }
+                                        });
+                             }
+                         }
+                    }]			// end of dataEvents
+                }				// end of editoptions
+            },
+            {name:'degree_id',
+                index:'degree_id',
+                editable:true,
+                edittype: 'select',
+                editoptions:{value : {'':'Select one'},
+                dataEvents: [{type: 'change',
+                    fn: function(e) {
+                    	var department_id = $('#department_id').val();
+	                	if(deptDegree[department_id][this.value]){
+		                	if(deptDegree[department_id][this.value]['batch']){
+	                    	var selectOptionString = '<option value ="">Select one</option>';
+	                		$.each(deptDegree[department_id][this.value]['batch'], function (index, batch) {
+    	        				selectOptionString += '<option value ="'+batch.batch_start+'">'+batch.batch_start+'</option>';
+    	        			});
+                        	$('#batch_start').html(selectOptionString);
+		                	}
+
+
+		                	if(deptDegree[department_id][this.value]['semester']){
+	                    	var selectOptionString = '<option value ="">Select one</option>';
+	                		$.each(deptDegree[department_id][this.value]['semester'], function (index, semester) {
+    	        				selectOptionString += '<option value ="'+semester.semester_id+'">'+semester.semester_id+'</option>';
+    	        			});
+                        	$('#semester_id').html(selectOptionString);
+		                	}
+	                     } else {
+	                    	 if(deptDegree[department_id][this.value]){}
+	                    	 else {deptDegree[department_id][this.value] = {};}
+	                    	 
+		                    // Fetch active batches.
+		                    	$.ajax({url : urlBatchCombo,
+		                        	type : 'GET',
+		                            dataType : 'json',
+		                        	data : {degree_id : this.value,
+		                        			department_id : department_id},
+		                        	success: function(jBatches){
+		                        				deptDegree[department_id][e.target.value]['batch'] = jBatches;
+		                                    	var selectOptionString = '<option value ="">Select one</option>';
+		                                    	$.each(jBatches, function (index, batch) {
+		                	        				selectOptionString += '<option value ="'+batch.batch_start+'">'+batch.batch_start+'</option>';
+		                	        			});
+		                                    	$('#batch_start').html(selectOptionString);
+		                                    },
+									error: function(data){
+		            							alert(data.responseText);
+		            						}
+		            			});
+
+
+		                        // Fetch active Semesters.
+								$.ajax({url : urlSessionSemCombo,
+									type : 'GET',
+									dataType : 'json',
+									data : {degree_id : this.value,
+											department_id : department_id},
+									success: function(jSemesters){
+											deptDegree[department_id][e.target.value]['semester'] = jSemesters;
+											var selectOptionString = '<option value ="">Select one</option>';
+	                                    	$.each(jSemesters, function (index, semester) {
+	                	        				selectOptionString += '<option value ="'+semester.semester_id+'">'+semester.semester_id+'</option>';
+	                	        			});
+	                                    	$('#semester_id').html(selectOptionString);
+										},
+									error: function(data){
+	            							alert(data.responseText);
+										}
+								});
+	                     }
+                                     }
+                                }]
+                           }},
+                       {name:'batch_start',
+                            index:'batch_start',
+                            editable:true,
+                            edittype: 'select', 
+                            editoptions:{
+                                value : {'':'Select one'}                   
+                            }
+                        },
+                        {name:'semester_id',
+                            index:'semester_id',
+                            editable:true,
+                            edittype: 'select', 
+                            editoptions:{
+                                value : {'':'Select one'}
+                            }
+                        }
+                    ],
+            caption: "Batch" ,
+            sortname: "batch_start",
+            pager: gridPager,
+            editurl:urlCRUD
+        });
+
+    $(gridTable).jqGrid('navGrid', gridPager, {
+        add : true,
+        edit : true,
+        view : false,
+        search : false,
+        refresh : false
+    }, // options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true
+            }, // edit options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true
+            }, // add options
+            {
+                reloadAfterSubmit : false,
+                jqModal : false,
+                closeOnEscape : true
+            } // del options
+         );
+
+    addPager(gridTable, gridPager); 
+    
+});
+</script>

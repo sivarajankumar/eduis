@@ -1,0 +1,76 @@
+﻿<?php
+/**
+ *
+ * @category   Aceis
+ * @package    Default
+ * @subpackage Block
+ * @since	   0.1
+ */
+/*
+ * View for Batch.
+ */
+?>
+<h3 align="center">Blocks in College</h3>
+<div class="gridstyle">
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+	style="color: red"></span></div>
+<script type="text/javascript">
+
+$(function(){
+    var gridTable = "#tblgrid";
+    var gridPager = "#gridpager";
+    var urlFillGrid = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'fillgrid'), 'default', true)?>";
+    var urlCRUD = "<?=$this->url(array('module' => $this->module, 'controller' => $this->controller, 'action' => 'crud'), 'default', true)?>";
+    $(gridTable).jqGrid({
+        url : urlFillGrid,
+        colNames:['Block Id','Block Name'],
+        colModel:[{name:'block_id',
+            index:'block_id',
+            editable: true
+            },
+            {name:'block_name',
+                index:'block_name',
+            editable: true
+            }],
+            caption: "Block and Buildings" ,
+            sortname: "block_id",
+            pager: gridPager,
+            editurl:urlCRUD
+        });
+
+    $(gridTable).jqGrid('navGrid', gridPager, {
+        add : true,
+        edit : true,
+        view : false,
+        search : false,
+        refresh : false
+    }, // options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true
+            }, // edit options
+            {
+                width : 400,
+                savekey : [ true, 13 ],
+                navkeys : [ true, 38, 40 ],
+                jqModal : false,
+                closeOnEscape : true,
+                clearAfterAdd : true //Default is true, make false if needed
+            }, // add options
+            {
+                reloadAfterSubmit : false,
+                jqModal : false,
+                closeOnEscape : true
+            } // del options
+         );
+
+    addPager(gridTable, gridPager); 
+    
+});
+</script>

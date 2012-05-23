@@ -1,0 +1,34 @@
+<h3 align="center">Add Semester</h3>
+<div class="gridstyle">
+<table id="tblgrid" class="scroll"></table>
+<div id="gridpager" class="scroll" style="text-align: center;"></div>
+</div>
+<div id="errorBox"><b>ErrorResponse:</b><span id="rsperror"
+	style="color: red"></span></div>
+
+<script type="text/javascript">
+$('#errorBox').hide();
+
+$(function(){
+	baseurl = "<?=$this->url(array('controller' => 'semester', 'action' => 'fillgrid'), 'default', true)?>";
+	$("#tblgrid").jqGrid({
+			url : baseurl,
+			datatype: "json",
+			colNames:['Semester ID','Description'], 
+			colModel:[ {name:'semester_id',index:'semester_id', sorttype:"text"},
+					   {name:'description',index:'description'}
+			   		],
+			caption: "Semester",
+			sortname: 'semester_id',
+			sortorder: 'asc',
+			pager: '#gridpager', 
+			height: '100%',
+			autowidth: true,
+			editurl:"<?=$this->url(array('controller' => 'semester', 'action' => 'crud'), 'default', true)?>",
+			loadError : function(xhr,st,err) { 
+				$('#errorBox').show();
+				jQuery("#rsperror").html("Type: "+st+"; Response: "+ xhr.status + " "+xhr.statusText); 
+			}
+	});
+});
+</script>
