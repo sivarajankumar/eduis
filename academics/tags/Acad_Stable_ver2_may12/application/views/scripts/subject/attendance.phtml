@@ -1,0 +1,741 @@
+<?php 
+$fail  = $this->lowerThreshold;
+$pass = $this->upperThreshold;
+const PASS = 'pass';
+const AVERAGE = 'average';
+const FAIL = 'fail';
+?>
+<style>
+<!--
+.sectionDiv H3 {
+	margin-top: 1em;
+	border-bottom: 4px double #eee;
+	text-align: center;
+	clear: both;
+}
+.sectionDiv H4 {
+	padding-left:1em;
+	width:70%;
+	background-color:  #eee
+}
+.sectionDiv H5 {
+	margin: 0.7em 0;
+	width:40%;
+	border-bottom: 1px inset #aaa;
+}
+.facts {
+	border: 1px dashed gainsboro;	
+	color: #444;
+	width: 40em;
+	padding: 0.5em 1em;
+	float: left;
+}
+.reportNav {
+	float:right;
+	text-align: right;
+	position: relative;
+	right: 1em;
+}
+.field {
+	font-family: cursive;
+	display: table-cell;
+}
+
+.value {
+	font-family: cursive;
+	text-align: right;
+	padding-left : 0.4em;
+	display: table-cell;
+	font-weight: bold;
+}
+.cell {
+	padding : 0.3em 0.4em;
+	color: #aaa;
+	float: left;
+	border-bottom: 1px solid #dadada;
+}
+.attendanceCounts{
+	display: none;
+}
+.cell:hover {
+	border: 1px outset;
+	cursor: pointer;
+}
+.li_container{
+	display: none;
+}
+.<?php echo PASS;?> {
+	color: #339900;
+	
+}
+.<?php echo AVERAGE;?> {
+	color: #FF9966;	
+}
+.<?php echo FAIL;?>{
+	color: #CC0000;	
+}
+.arrow-right {
+        width: 30;
+        height: 100;
+        border-top: 100px solid transparent;
+        border-bottom: 100px solid transparent;
+        border-left:30px solid #eee;
+		clear: none;
+}
+
+.arrow-left {
+        width: 0;
+        height: 0;
+        border-top: 100px solid transparent;
+        border-bottom: 100px solid transparent; 
+        border-right:30px solid #eee;
+		clear: none;
+}
+
+div.smallPie{
+	float:right;
+    width: 18em;
+    height: 140px;
+    clear: none;
+}
+
+div.factWords{
+	float: left;
+	width: 20em;
+}
+#ranges{
+	float: left;
+}
+#ranges div {
+		width: 25em;	}
+
+@MEDIA print{
+	.noprint {
+		display: none;
+	}
+    #reportDiv {
+    	font-size: 0.75em;
+    }
+
+    .cell{
+		background-color: none;
+    }
+	.sectionDiv H3 {
+    	page-break-after: avoid;
+	}    
+    ol {
+    	max-width: 130px;
+    }
+    /* #placeholder  {
+		-moz-transform:rotate(90deg);
+    	display: block;
+    	margin: 20em 20em 0em 0em;
+    	page-break-after: always;
+    	page-break-before: always;
+    }*/
+}
+-->
+</style>
+<div  class="noprint"  style="padding :2em 0 2em 0; text-align: center; " >
+<form id="subjectInfo">
+	<label>Department: <select id="department_id" name="department_id" >
+	<option value="BT" <?php echo (strtolower($this->department_id)=='bt')?'selected="selected"':'' ?> >Biotech</option>
+	<option value="CSE" <?php echo (strtolower($this->department_id)=='cse')?'selected="selected"':'' ?> >Computer Science</option>
+	<option value="ECE" <?php echo (strtolower($this->department_id)=='ece')?'selected="selected"':'' ?> >Electronics</option>
+	<option value="ME" <?php echo (strtolower($this->department_id)=='me')?'selected="selected"':'' ?> >Mechanical</option>
+	</select></label>
+	<label>Subject Code: <input id="subject_code" name="subject_code" type="text"
+	class="ui-corner-all" style="text-align: center" value="<?php echo $this->subject_code?>" ></input></label>
+	<label>Subject Mode: <input id="subject_mode_id" name="subject_mode_id" type="text"
+			class="ui-corner-all" style="text-align: center" value="<?php echo $this->subject_mode_id?>" ></input></label>
+	<br/><br/>
+<div id="ranges">
+	<span>Highlight range 
+			from <input  id="highlight_lower" name="lower" readonly="readonly" value="<?php echo $this->lowerThreshold?>" style="border:0;" size="2" /> 
+			to <input id="highlight_upper" name="upper" readonly="readonly" value="<?php echo $this->upperThreshold?>"  style="border:0;" size="2"  /></span>
+	<div id="highlight" upper="<?php echo $this->upperThreshold?>"><?php echo $this->lowerThreshold?></div>
+	<span>Filter students range 
+			from <input id="filter_lower" name="filter_below" readonly="readonly" value="<?php echo $this->filterBelow?$this->filterBelow:0 ?>"  style="border:0;" size="2"   /> 
+			to <input id="filter_upper" name="filter_above" readonly="readonly" value="<?php echo $this->filterAbove?$this->filterAbove:100?>"  style="border:0;" size="2"   > </span>
+	<div id="filter" upper="<?php echo $this->filterAbove?$this->filterAbove:100?>"><?php echo $this->filterBelow?$this->filterBelow:0 ?></div>
+</div>
+<label>Date from:<input type="text" id="date_from" name="date_from" readonly="readonly" value="<?php 
+$dateFrom = new Zend_Date();
+if ($this->date_from) {
+    $dateFrom->setDate($this->date_from);
+} else{
+    $dateFrom->setDate($this->session_startdate);
+}
+echo $dateFrom->get(Zend_Date::DATE_MEDIUM); ?>" class="ui-widget-content ui-corner-all" style="text-align: center"></input></label>
+<label>Date upto:<input type="text" id="date_upto" name="date_upto" readonly="readonly" value="<?php
+$dateUpto = new Zend_Date();
+if ($this->date_upto) {
+    $dateUpto->setDate($this->date_upto);
+}
+echo $dateUpto->get(Zend_Date::DATE_MEDIUM)?>" class="ui-widget-content ui-corner-all" style="text-align: center"></input></label>
+
+	<button type="submit" class="ui-corner-all" style="font-size: 0.7em;">Show</button>
+</form>
+
+<a id="toggleReport" class="noprint" style="text-decoration: none; float: right; " href="javascript:">Toggle Report</a>
+</div>
+<div id="subjectInfoHead"   style="padding :1em 0 0 0; text-align: center; " >
+<?php 
+if (isset($this->department_id) and isset($this->subject_code)) { ?>
+    <h1>SUBJECT REPORT</h1>
+	<h2><?php echo $this->subject_name?> / <?php echo $this->subject_code?> </h2>
+	<h3>(<?php echo $this->department_id?> Department)</h3>
+<?php 
+$this->headTitle('Subject Report '.$this->subject_name.'('.$this->subject_code.')', true);
+} else {
+    $this->headTitle('Subject Report',true);
+}
+?>
+<hr/>
+</div>
+<div class="reportDiv" >
+<a id="panLeft" class="noprint" style="text-decoration: none; display:none;" href="javascript: panLeft();"><span class="arrow-left"></span></a>
+<div id="placeholder" class="noprint" ></div>
+<a id="panRight" class="noprint" style="text-decoration: none; display:none;" href="javascript: panRight();"><span class="arrow-right"></span></a>
+<div id="overview"
+	style="margin-left: 3em; margin-top: 2em; width: 600px; height: 8em"></div>
+</div>
+<?php 
+if (isset($this->attendanceSet)) {
+    if (empty($this->attendanceSet)) {
+        ?>
+        <p>The output is empty.</p>
+        <?php
+        return;
+    }
+    
+    $subjectModes = $this->subjectModes;
+    $summary  = $this->summary;
+    $stuModeWiseAtt = $this->stuModeWiseAtt;
+    /*echo '<div class="reportNav noprint">';
+    foreach ($subjectModes as $key => $subjectMode) {
+        echo '<a href="#subjectMode'.$subjectMode.'">'.$subjectMode.'</a>&nbsp;';
+    }
+    echo '</div>';*/
+    foreach ($this->attendanceSet as $subjectMode => $groups) {
+        ?>
+        <div class="sectionDiv" id="subjectMode<?php echo $subjectMode?>" >
+        	<h3><?php echo $subjectMode?></h3>
+        <?php 
+        foreach ($groups as $group_id => $students) {?>
+        
+                <h4>Group: <?php echo $group_id; ?></h4>
+                <a class="more noprint" href="javascript:">Expand</a>
+                <ol class="cellSet">
+                <?php
+                    $totalDelievered = (int)$this->summary[$subjectMode][$group_id]['total_delievered'];
+                    $totalStudents = 0;
+                    foreach ($students as $rollNo => $student) {
+                            $present =  $totalDelievered - $student['ABSENT'];
+                            $attendance = $stuModeWiseAtt[$rollNo][$subjectMode];
+                            
+                            $division = ceil($attendance);
+                            switch ($division) {
+                                case 0:
+                                case ($division < $fail):
+                                    $status = FAIL;
+                                break;
+                                case ($division < $pass):
+                                    $status = AVERAGE;
+                                break;
+                                default:
+                                    $status = PASS;
+                                break;
+                            }
+                            ?>
+                        <li class="cell <?php echo $status?>"><span class="field"><?php echo $rollNo ?></span>
+                    		<span class="value" title="<?php echo $present?>">
+                    			<span class="percent" >
+                    				<span class="digit"><?php echo $attendance?></span>%
+                				</span>
+            				</span>
+        				</li>
+                   <?php $totalStudents++;
+                    } ?>
+                    
+                </ol>
+                <a class="less noprint" href="javascript:" style="display: none;">collapse</a>
+            <h5>Summary :</h5>
+            <div class="facts">
+            <div class="factWords">
+            <b>Total Delievered</b>: <?php echo $totalDelievered;?><br/>
+        	<b>Total Duration</b>: <?php echo $summary[$subjectMode][$group_id]['total_duration'];?><br/>
+        	<b>Students</b>: <?php echo $totalStudents;?><br/>
+        	<b>Avg. Attendance</b>: <?php echo $summary[$subjectMode][$group_id]['average_attedance']?>%<br/>
+        	<span class="stucount"></span>
+            </div>
+        	<div id="<?php echo $subjectMode.$group_id?>_pie" class="smallPie" ></div>
+        	
+        	<!-- <span style="float: left" class="hover"></span> -->
+        	<script type="text/javascript">
+        	$(function(){
+            var <?php echo $subjectMode.$group_id?>pieData = [
+                          { label: "above <?php echo $pass?>", data: <?php echo $summary[$subjectMode][$group_id][PASS]?>},
+                           { label: "<?php echo $fail?> to <?php echo $pass?>", data: <?php echo $summary[$subjectMode][$group_id][AVERAGE]?>},
+                           { label: "below <?php echo $fail?>", data: <?php echo $summary[$subjectMode][$group_id][FAIL]?>}
+                       ];
+
+            var pie = $("#<?php echo $subjectMode.$group_id?>_pie");
+            $.plot(pie, <?php echo $subjectMode.$group_id?>pieData,
+          	      {
+    	        // the color theme used for graphs
+    	        colors: ["#4da74d","#edc240", "#cb4b4b","#afd8f8", "#9440ed"],
+    	        series: {
+    	            pie: {
+    	                show: true,
+    	                tilt: 0.5,
+    	                label: {
+    	                    show: true,
+    	                    radius: 2/3,
+                            threshold: 0.1,
+    	                    formatter: function(label, series){
+    	                        return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+    	                    },
+    	                    background: { opacity: 0.8 }
+    	                }
+    	            }
+    	        },
+    	        legend: {
+    	            show: false
+    	        },
+				grid: {
+              	      hoverable: true,
+              	      clickable: true
+      	        }
+            		});
+        	});
+        	</script>
+    		</div>
+    		<h5>Faculty Member(s)</h5>
+        	<?php 
+        	foreach ($summary[$subjectMode][$group_id]['faculty'] as $facultyId => $info) {
+            	        echo '<div>'.$info['name'].' ( '.$info['date_from'] .' : '.$info['date_upto'].' ) </div>';
+        	}
+        }
+    }
+
+        if (count($subjectModes) > 1) { ?>
+        			<h3>NUTSHELL</h3>
+                    <a class="more noprint" href="javascript:">Expand</a>
+                    <ol class="cellSet"><?php
+                    $totalStudents = 0;
+                    foreach ($stuModeWiseAtt as $rollNo => $modesAttendance) {
+                            $attendance = round($stuModeWiseAtt[$rollNo]['average']);
+                            
+                            $division = ceil($attendance);
+                            switch ($division) {
+                                case 0:
+                                case ($division < $fail):
+                                    $status = FAIL;
+                                break;
+                                case ($division < $pass):
+                                    $status = AVERAGE;
+                                break;
+                                default:
+                                    $status = PASS;
+                                break;
+                            }
+                            ?>
+                        <li class="cell <?php echo $status?>"><span class="field"><?php echo $rollNo ?></span>
+                    		<span class="value">
+                    			<span class="percent" >
+                    				<span class="digit"><?php echo $attendance?></span>%
+                				</span>
+            				</span>
+        				</li>
+    		<?php $totalStudents++;
+                    } ?>
+    		
+                </ol>
+                <a class="less noprint" href="javascript:"
+	style="display: none;">collapse</a>
+                <h5>Combined Summary :</h5>
+            <div  style="width: 20em"  class="facts">
+            <div class="factWords">
+        	<b>Students</b>: <?php echo $totalStudents;?><br/>
+            </div>
+        	<div id="combined_pie" class="smallPie" ></div>
+        	
+        	<div  style="float: left;" class="stucount"></div>
+        	<div class="hover"></div>
+        	<script type="text/javascript">
+        	$(function(){
+            var combinedpieData = [
+                          { label: "above <?php echo $pass?>", data: <?php echo $summary['combined'][PASS]?>},
+                           { label: "<?php echo $fail?> to <?php echo $pass?>", data: <?php echo $summary['combined'][AVERAGE]?>},
+                           { label: "below <?php echo $fail?>", data: <?php echo $summary['combined'][FAIL]?>}
+                       ];
+
+            var pie = $("#combined_pie");
+            $.plot(pie, combinedpieData,
+          	      {
+    	        // the color theme used for graphs
+    	        colors: ["#4da74d","#edc240", "#cb4b4b","#afd8f8", "#9440ed"],
+    	        series: {
+    	            pie: {
+    	                show: true,
+    	                tilt: 0.5,
+    	                label: {
+    	                    show: true,
+    	                    radius: 2/3,
+                            threshold: 0.1,
+    	                    formatter: function(label, series){
+    	                        return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+    	                    },
+    	                    background: { opacity: 0.8 }
+    	                }
+    	            }
+    	        },
+    	        legend: {
+    	            show: false
+    	        },
+				grid: {
+              	      hoverable: true,
+              	      clickable: true
+      	        }
+            		});
+        	});
+        	</script>
+        	</div>
+        	<?php
+        }
+} else {
+    ?>
+    <p>Subject Code and Department are required!!</p>
+<?php }?>
+</div>
+<script>
+//jQueryfy buttons
+$("button").button();
+
+$( "#ranges > div" ).each(function() {
+	// read initial values from markup and remove that
+	var lValue = parseInt( $( this ).text(), 10 );
+	var uValue = parseInt( $( this ).attr('upper'), 10 );
+	$( this ).empty().slider({
+		animate: true,
+		range: true,
+		values: [lValue,uValue],
+		slide: function( event, ui ) {
+			var rangeName = $( this ).attr('id');
+			var infoSet = $( this ).prev();
+			$( '#'+rangeName+'_lower' ).val( ui.values[ 0 ] );
+			$( '#'+rangeName+'_upper' ).val( ui.values[ 1 ] );
+		}
+	});
+});
+
+
+
+
+var fieldWidth = 2;
+var valueWidth = 2;
+var cellWidth = 2;
+$('.cell').each(function(){
+	var field = $(this).children('.field');
+	var value = $(this).children('.value');
+	var thisFieldWidth = field.width();
+	var thisValueWidth = value.width();
+    if (thisFieldWidth > fieldWidth){
+    	fieldWidth = thisFieldWidth;
+    }
+    if (thisValueWidth > valueWidth){
+    	valueWidth = thisValueWidth;
+    }
+    thisCellWidth = thisFieldWidth + thisValueWidth;
+    if (thisCellWidth > cellWidth){
+    	cellWidth = thisCellWidth;
+    }
+});
+$('.field').css('width', fieldWidth + 'px');
+$('.value').css('width', valueWidth + 'px');
+$('.cell').css('max-width', (cellWidth+30) + 'px');
+
+var plot;
+var lastSel;
+var placeholder = $("#placeholder");
+var overviewholder = $("#overview");
+
+$(function(){
+
+	var testSets = {};
+	var statData = [];
+	var students = [];
+	var session_startdate = '<?php echo $this->session_startdate->get(Zend_Date::DATE_MEDIUM);?>';
+	var dateFormat = 'dd-mm-yy';
+	var serverDateObj = $.datepicker.parseDate(dateFormat, $('#datetext').text());
+	var sessionStartdateObj= $.datepicker.parseDate(dateFormat, session_startdate);
+	
+	var subjectMode = '';
+	var subjectModes = <?php echo Zend_Json::encode($subjectModes);?>;
+	var attendanceData = <?php
+		    
+		    $attendanceData = array();
+		    foreach ($stuModeWiseAtt as $rollNo => $attModes) {
+		        $attendanceData[] = array('roll_no'=>$rollNo,
+		                                    'attendance'=>$attModes);
+		    }
+		    echo Zend_Json::encode($attendanceData); ?>;
+
+	var maxPossibleMarks = 100;
+	var maxPossibleStu = <?php echo count($attendanceData);?>;
+	
+	$('.cellSet').makeacolumnlists({cols:4,colWidth:(cellWidth+30)});
+	var pHolderWidth = (placeholder.parent().width()*parseInt(95))/100;
+	placeholder.width(pHolderWidth).height(400);
+
+	var options = {
+	        // the color theme used for graphs
+	        colors: ["#edc240", "#4da74d", "#9440ed", "#afd8f8", "#cb4b4b"],
+	        legend: {
+	            backgroundOpacity: 0.65 // set to 0 to avoid background
+	        },
+	        xaxis: {autoscaleMargin: 0.0001, // margin in % to add if auto-setting min/max
+	            min:-1,
+	            tickDecimals: 0, // no. of decimals, null means auto 
+	            tickFormatter: tickFormatter, // fn: number -> string
+	            //zoomRange: [0, 10],
+	            panRange: [-1, maxPossibleStu] 
+	        	},
+	        yaxis: {autoscaleMargin: 0, // margin in % to add if auto-setting min/max
+		        min:0,
+            	tickDecimals: 0, // no. of decimals, null means auto 
+                tickSize: 5,  // number or [number, "unit"]
+                //zoomRange: [0, 10],
+                panRange: [0, maxPossibleMarks]
+            	},
+	        //zoom: {interactive: true},
+	        //pan: {interactive: true},
+			multiplebars: true,
+		    series: {
+	    	    bars: { show: true, 
+	        	    	barWidth: 0.2, 
+	        	    	align:'center' }
+				//threshold: {below:{limit: 10,color: "rgb(20, 20, 30)"}}
+	        	    	
+			},
+	        selection: { mode: "x" },
+	        grid: { //markings: markings,
+	                //clickable: true,
+	                hoverable: true }
+	    };
+
+	var overviewOptions = {
+	        // the color theme used for graphs
+	        colors: ["#edc240", "#4da74d", "#9440ed", "#afd8f8", "#cb4b4b"],
+	        xaxis: {autoscaleMargin: 0, // margin in % to add if auto-setting min/max
+		        min:0,
+	            tickFormatter: tickFormatter // fn: number -> string
+	    	},
+	        yaxis: {autoscaleMargin: 0, // margin in % to add if auto-setting min/max
+		        min:0,
+		        	tickSize:20
+	    	},
+	        series: {
+	            lines: { show: true, lineWidth: 1 },
+	            shadowSize: 0
+	        },
+	        legend: {
+	            show: false
+	        },
+	        selection: { mode: "x" }
+	    };
+	
+	function graphData(subjectMode){
+		var data = [];
+		var label = '<b><?php echo $this->subject_code?></b>'+' ('+subjectMode+')';
+		$.each(attendanceData, function (index, stuAttendance) {
+			var present = 100;
+			if ( "undefined" != typeof stuAttendance.attendance[subjectMode]) {
+				present = stuAttendance.attendance[subjectMode];
+			}
+			data.push([index,present]);
+		});
+
+		passMarks = <?php echo $fail;?>;
+		
+		return {label: label,
+			data: data,
+			threshold: {below:{
+				limit: passMarks,
+				color: "rgb(200, 20, 30)"}
+			}
+		};
+	}
+	
+	$.each(subjectModes,function(count,subjectMode) {
+		statData[count] = graphData(subjectMode);
+	});
+
+	
+	function tickFormatter(index){
+	    roll = (attendanceData[index])? attendanceData[index]['roll_no']: ''; 
+	    return roll;
+	}
+	function markings(axes) {
+	    var markings = [];
+	    $.each(attendanceData, function (index, student) {
+	        markings.push({ xaxis: { from: student.roll_no, to: student.roll_no } });
+		});
+	    
+	    return markings;
+	}
+	
+	
+	/////////////////////////////////////////////////
+	// plot!
+    plot = $.plot(placeholder, statData, options);
+
+    overview = $.plot(overviewholder, statData, overviewOptions );
+
+    ////// Now, connect the two /////////////////
+    
+    placeholder.bind("plotselected", function (event, ranges) {
+    	var maxElements = 12;
+    	if (ranges.xaxis.to > maxPossibleStu)
+            ranges.xaxis.to = maxPossibleStu;
+    	// clamp the zooming to prevent eternal zoom
+        if (ranges.xaxis.to - ranges.xaxis.from < maxElements)
+            ranges.xaxis.to = ranges.xaxis.from + maxElements;
+        if (ranges.yaxis.to - ranges.yaxis.from < maxElements)
+            ranges.yaxis.to = ranges.yaxis.from + maxElements;
+        
+        // do the zooming
+        plot = $.plot(placeholder, statData,
+                      $.extend(true, {}, options, {
+                          xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to }
+                      }));
+
+        //don't fire event on the overview to prevent eternal loop
+        overview.setSelection(ranges, true);
+    });
+    
+    overviewholder.bind("plotselected", function (event, ranges) {
+        plot.setSelection(ranges);
+    });
+    /*overviewholder.bind('plotclick',function(event, ranges){
+    	ranges.xaxis.from = 0;
+    	ranges.xaxis.to = 100;
+    	plot.setSelection(ranges,true);
+    	//plot.clearSelection();
+    });*/
+
+
+    $("#panLeft").show().position({
+      	 my: "right",
+      	 at: "left",
+      	 of: placeholder, // or $("#otherdiv)
+      	 collision: "fit"
+      	});
+      $("#panRight").show().position({
+      	 my: "left",
+      	 at: "right",
+      	 of: placeholder, // or $("#otherdiv)
+      	 collision: "fit"
+      	});
+
+      
+      // INTERACTIVE
+      var pieSet = $(".smallPie");
+      //pieSet.bind("plothover", pieHover);
+      pieSet.bind("plotclick", pieClick);
+
+      /*
+        Show-Hide things...
+      */
+      $('a.less').click(function() {
+          $(this).toggle();
+          var targetDiv = $(this).prev();
+          targetDiv.slideToggle("slow");
+          targetDiv.prev().slideToggle();
+        });
+
+      $('a.more').click(function() {
+          $(this).toggle();
+          var targetDiv = $(this).next();
+          targetDiv.slideToggle("slow");
+          targetDiv.next().slideToggle();
+       });
+
+      $('#toggleReport').click(function() {
+    	  $('a.more').trigger('click');
+       });
+
+      var dateOptions = {
+      		minDate : sessionStartdateObj,
+      		maxDate : serverDateObj,
+      		dateFormat: dateFormat,
+      		hideIfNoPrevNext: true,
+      		autoSize: true
+      	};
+      dateOptions.defaultDate = sessionStartdateObj;
+      $("#date_from").datepicker(dateOptions);
+      dateOptions.defaultDate = serverDateObj;
+      $("#date_upto").datepicker(dateOptions);
+
+    	var isInIFrame = (window.location != window.parent.location) ? true : false;
+    	if (isInIFrame) {
+    		$('.noprint,#subjectInfoHead').hide();
+    		$('#content').css('margin',0);
+    		// get the  Body height of the iframe  page
+       		 var height = document.body.scrollHeight;
+       		//  send a request to parent  to reset the height of the height
+       		 parent.resizeIframe(height,window.frameElement);
+    	}
+});
+
+function pieHover(event, pos, obj){
+    if (!obj)
+        return;
+    
+    percent = parseFloat(obj.series.percent).toFixed(2);
+    
+    $(event.currentTarget).next('.hover').html('<span style="font-weight: bold; color: '+obj.series.color+'">'+Math.round(percent)+'% students have attendance '+obj.series.label+'</span>');
+}
+
+function pieClick(event, pos, obj){
+    if (!obj)
+        return;
+
+    var percent = parseFloat(obj.series.percent).toFixed(2);
+    var count = obj.datapoint[1][0][1];
+    //alert(count+' students');
+    $(event.currentTarget).parent().find('.stucount').html('<span style="font-weight: bold; color: '+obj.series.color+'">'+count+' students('+Math.round(percent)+'%) have attendance '+obj.series.label+'</span>');
+}
+
+
+function panLeft() {
+	var axes = plot.pan({ left: -20 });
+	if(axes){
+		console.log(axes);
+	}
+}
+function panRight() {
+	plot.pan({ left: 20 });
+}
+</script>
+<?php
+$protocol = 'http://';
+$cdnServer = $protocol.CDN_SERVER;
+// Auto columns
+$this->headScript()->appendFile($cdnServer . '/js/plugins/columnizer.js');
+
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/js/plugins/flot/jquery.flot.js');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/js/plugins/flot/jquery.flot.multi.js');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/js/plugins/flot/jquery.flot.selection.js');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/js/plugins/flot/jquery.flot.threshold.js');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/js/plugins/flot/jquery.flot.pie.min.js');
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/js/plugins/flot/jquery.flot.navigate.min.js');
+?>
+

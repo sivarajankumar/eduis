@@ -1,0 +1,138 @@
+<?php
+echo $this->doctype()?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Language" content="en-GB" />
+<?php
+$baseTheme = 'cupertino';
+$module = 'academics';
+// Various Servers and Addresses
+$baseUrl = $this->baseUrl();
+// Content Delievery Server i.e. static Files, e.g. CSS, JS, Themes and related images etc
+$cdnServer = 'http://'.CDN_SERVER;
+// Images of users, events etc
+$imageServer = $baseUrl;
+$this->headScript()->setAllowArbitraryAttributes(true);
+// Add most common CSS files
+$this->headLink()->prependStylesheet(
+$cdnServer . '/css/layouts/'.$module.'/default.css');
+//Jquery UI Theme
+$this->jQuery()->addStylesheet(
+$cdnServer . '/css/themes/jqueryui/' . $baseTheme . '/jquery-ui.css');
+// Add most common Script files
+$this->headScript()->prependFile(
+$cdnServer . '/js/plugins/jquery.hoverIntent.minified.js', null,array('async'=>'true', 'defer'=>'defer'));
+// Jquery
+$this->jQuery()->setLocalPath($cdnServer . '/js/jquery-1.7.min.js', null,array('async'=>'true', 'defer'=>'defer'));
+// Jquery UI
+$this->jQuery()->setUiLocalPath(
+$cdnServer . '/js/jquery-ui-1.8.16.custom.min.js', null,array('async'=>'true', 'defer'=>'defer'));
+/*
+ * Adding JqGrid as default grid.
+ */
+$this->headLink()
+    ->appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.jqgrid.css')
+    ->//Select multiple columns from column chooser
+appendStylesheet($cdnServer . '/plugins/jqgrid/css/ui.multiselect.css');
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/ui.multiselect.js', null,array('async'=>'true', 'defer'=>'defer'));
+// This is compressed version of jqGrid 3.6, It has all plugins in one file only
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/js/i18n/grid.locale-en.js', null,array('async'=>'true', 'defer'=>'defer'));
+$this->headScript()->appendFile(
+$cdnServer . '/plugins/jqgrid/jquery.jqGrid.min.js', null,array('async'=>'true', 'defer'=>'defer'));
+// Gloabal Settings for JqGrid
+$this->headScript()->appendFile($cdnServer . '/plugins/jqgrid/jqGrid.global.js', null,array('async'=>'true', 'defer'=>'defer'));
+echo $this->headMeta();
+echo $this->headTitle();
+echo $this->headLink();
+echo $this->jQuery()->uiEnable();
+/*
+ * set body color by -> style="background-image: url('<?php $cdnServer; ?>/css/themes/jqueryui/<?php echo $baseTheme;?>/images/ui-bg_glass_100_fdf5ce_1x400.png');"
+ */
+?>
+</head> 
+
+<body>
+<div id="topContent" class="noprint" ><span id="topRightInfo"> <span
+	class="ui-state-default ui-corner-bottom noprint">Today&rsquo;s date: <span
+	id="datetext"><?php
+$date = new Zend_Date();
+echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span>
+<?php
+if (Zend_Auth::getInstance()->hasIdentity()) {
+    ?>
+<span class="ui-state-default ui-corner-bottom noprint"><span  class="noprint" >Hi!</span> <span id="userName"><?php
+    $authContent = Zend_Auth::getInstance()->getStorage()->read();
+    echo $authContent['identity'];
+    ?></span></span>
+<?php
+    if ($authContent['identity'] != 'anon') {
+        ?>
+	<span class="ui-state-default ui-corner-bl noprint"><a id="logout"
+	href="<?php
+        echo $this->url(
+        array('controller' => 'authenticate', 'action' => 'logout'), 'default')?>">
+Logout<span
+	class="ui-icon ui-icon ui-icon-closethick ui-state-default ui-corner-br"
+	style="float: right; padding-left: 1px; margin-left: -1px;"> </span></a></span>
+	<?php
+    }
+    ?>
+<?php
+}
+?>
+</span>
+
+<div id="header"><img
+	alt="Ambala College of Engineering and Applied Research"
+	src="<?php
+echo $cdnServer . '/images/logos/mainLogo_' . $baseTheme . '.png';
+?>">
+
+<div id="divTopNav"  class="noprint" >
+<ul id="topnav" class="ui-widget">
+	<li><a href="http://<?php echo AUTH_SERVER?>" class="main">Home</a></li>
+	<li><!--<a href="#" class="main">Department</a>-->
+	<div style="opacity: 0; display: none;" class="sub">
+	<ul>
+	</ul>
+	</div>
+	</li>
+	<li><a href="http://<?php echo LIBRARY_SERVER?>" class="main">Library</a>
+	<div id="library" style="opacity: 0; display: none;" class="sub">
+	<div class="row">
+	<ul>
+	</ul>
+	</div>
+	</div>
+	</li>
+	<!--
+	<li><a href="#" class="main">Transport</a></li>
+	<li><a href="#" class="main">Hostel</a></li>
+-->
+</ul>
+</div>
+</div>
+</div>
+
+
+
+
+<div class="ui-widget container ui-corner-all"><!--<div id="moduleRibbon"></div>-->
+<div id="content">
+    <?php
+    echo $this->layout()->content;
+    ?>
+    </div>
+<div id="lastDiv"></div>
+<?php
+echo $this->headScript()?>
+</div>
+</body>
+<?php
+        //$this->navigation()->setAcl($authContent['acl'])->setRole($authContent['identity']);
+        
+		//echo $this->navigation()->menu();?>
+</html>

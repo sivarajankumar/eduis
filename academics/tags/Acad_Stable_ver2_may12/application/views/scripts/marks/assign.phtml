@@ -1,0 +1,202 @@
+<form id="selection-div">
+	<label for="facultySubject" accesskey="f" id="lbl_facultySubject">
+		Subject: <select id="facultySubject" name="facultySubject" tabindex="1" >
+	</select><span style="color: gray; " >(Select your subject)</span></label>
+	<br/><br/><label for="subjectTest" accesskey="s" id="lbl_subjectTest">
+		Test: <select id="subjectTest" name="subjectTest" tabindex="2"  disabled="disabled" >
+		<option>Select one</option>
+	</select></label><span style="color: gray; " >(Select pending test)</span>
+</form>
+<input type="checkbox" id="lockMarks"  /><label id="lbl_lockMarks" style="display:none;" for="lockMarks">Lock Marks</label>
+
+		<table id="tblgrid" class="scroll"></table>
+		<div id="gridpager" class="scroll" style="text-align: center;"></div>
+		
+		
+<script type="text/javascript" language="javascript">
+$( "#lockMarks" ).button({
+    icons: {
+        primary: "ui-icon-locked"
+    }
+});
+var facultySubject;
+var slaveDepartment;
+var test_info;
+var lastSel;
+var gridTable = "#tblgrid";
+var gridPager = "#gridpager"; 
+
+var urlCRUD = "<? echo $this->url(array('controller' => 'marks', 
+										'action' => 'imod'))?>";
+										
+var urlFacultySubject = "<? echo $this->url(array('controller' => 'faculty', 
+                                            	'action' => 'getsubject'))?>";
+var subjectTest;
+var urlSubjectTest = "<? echo $this->url(array('controller' => 'subject', 
+												'action' => 'gettest'))?>";
+var candidates;
+var urlCandidates = "<? echo $this->url(array('controller' => 'test', 
+												'action' => 'getstudents'))?>";
+var urlLock = "<? echo $this->url(array('controller' => 'marks', 
+												'action' => 'lock'))?>";
+$.ajax({
+    url : urlFacultySubject,
+    dataType : 'json',
+    success: function(jFacultySubject){
+    	var selectOptionString = '<option value ="">Select one</option>';
+		$.each(jFacultySubject, function (subjectCode, subjectInfo) {
+			$.each(subjectInfo, function (index, subject) {
+				selectOptionString += '<option value ="'+subjectCode+'">'+subject.subject_name+'</option>';
+			});
+		});
+        $('#facultySubject').html(selectOptionString);
+   },
+   error: function(event) {
+        alert(event.responseText);
+   }
+});//End ajax call.
+
+$(function(){
+$('#facultySubject').change(function(){
+	
+	facultySubject = $("#facultySubject").val();
+	
+	$.ajax({
+        url : urlSubjectTest,
+        data : {'subject_code' : facultySubject ,'department_id' : slaveDepartment}, 
+        success: function(jSubjectTest){
+        	var selectOptionString = '<option value ="">Select one</option>';
+			$.each(jSubjectTest, function (index, test) {
+				selectOptionString += '<option  value ="'+test.test_info_id+'" >'+test.test_type_name+' '+test.test_id+'</option>';
+			});
+            $('#subjectTest').html(selectOptionString);
+            $('#subjectTest').attr('disabled',null);
+        },
+        error: function(event) {
+            alert(event.responseText);
+        }
+    });//End ajax call.
+    
+});//End #facultySubject change.
+
+
+$('#subjectTest').change(function(){
+	
+	subjectTest = $("#subjectTest").val();
+	
+	$.ajax({
+        url : urlCandidates,
+        data : {'test_info_id' : subjectTest, format:'grid'}, 
+        success: function(jStudents){
+        	var thegrid = jQuery(gridTable)[0];
+        	test_info =  jStudents.test_info;
+        	delete jStudents.test_info;
+            thegrid.addJSONData(jStudents);
+            $( "#lbl_lockMarks" ).show('slow');
+            if (test_info.is_locked == 1) {
+            	$( "#lockMarks" ).attr('checked','checked').button( "option", "label", "Marks Locked" ).button( "disable" );
+            	$( "#lbl_lockMarks" ).attr('aria-pressed','true');
+			} else if($( "#lockMarks" ).button( "option", "disabled" )){
+				$( "#lockMarks" ).attr('checked','').button( "option", "label", "Lock Marks" ).button( "enable" );
+            	$( "#lbl_lockMarks" ).attr('aria-pressed','false');
+			} //
+        },
+        error: function(event) {
+            alert(event.responseText);
+        }
+    });//End ajax call.
+    
+});//End #subjectTest change.
+
+
+$(gridTable).jqGrid({
+	colNames:['Roll number','Marks Scored','Status'],
+	colModel:[
+        {
+			name:'student_roll_no',
+    	    index:'student_roll_no'
+        },
+        {
+            name:'marks_scored',
+            index:'marks_scored',
+            width: 40,
+            align : "center",
+			formatter:'integer', 
+			formatoptions:{decimalPlaces: 0},
+			editrules:{
+                required:true,
+                integer: true,
+                custom: true,
+                custom_func : checkMarks},
+            editable: true
+        },
+        {
+            name:'status', 
+            index:'status',
+            width: 40,
+            align : "center",
+            edittype: "select",
+            editoptions: { value: "P:Present;A:Absent;E:Excused" } ,
+            editable: true
+        },            
+        ],
+    caption: "Fill Students Marks" ,
+    onSelectRow: function(id){
+        if (test_info.is_locked == 0) {
+        	if(id && id!==lastSel){ 
+            	$(this).jqGrid('saveRow',lastSel);
+               lastSel=id; 
+            }
+
+        	jQuery(this).editRow(id, true,
+                    function(id){ //oneditfunc
+                			$("#"+id+" :input[type=text]").focus().select();
+            		},
+            		null,
+            		null,
+            		{'test_info_id' : subjectTest}); 
+        	
+		}
+        
+      },
+    editurl:urlCRUD,
+    rowNum: 80,
+    //width: 100,
+    rownumbers : true,
+    altRows: true,
+    loadonce : true,
+    shrinkToFit : true,
+    forceFit : true,
+    hoverrows : false,
+    prmNames: {page: null, rows: null, sort: null, order: null, search: null}
+	}).jqGrid('gridResize');
+
+$( "#lockMarks" ).click(function(){
+
+	$.ajax({
+        url : urlLock,
+        data : {'test_info_id' : subjectTest}, 
+        success: function(jStudents){
+        	$( "#lockMarks" ).attr('checked','checked').button( "option", "label", "Marks Locked" ).button( "disable" );
+        	$( "#lbl_lockMarks" ).attr('aria-pressed','true');
+        	test_info.is_locked = parseInt("1");
+        },
+        error: function(event) {
+            alert(event.responseText);
+        }
+    });//End ajax call.
+    
+});
+});
+
+function checkMarks(value, colname) {
+	value  = parseInt(value);
+	var maxMarks = parseInt(test_info.max_marks);
+	if (value < 0 || value > maxMarks) {
+	   return [false," : Please enter marks between 0 and "+maxMarks];
+	}
+	else {
+	   return [true,""];
+	}
+}
+</script>
