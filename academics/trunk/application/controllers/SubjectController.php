@@ -152,9 +152,11 @@ class SubjectController extends Acadz_Base_BaseController
             $summary = $subject->attendanceSummary($lowerThreshold, $upperThreshold);
             $stuModeWiseAtt = $subject->attendanceStuModeWise();
             $subject_name = $subject->getSubject_name();
-        } else {
-            throw new Exception('<b>Department Id</b>(department_id) as well as <b>Subject code</b>(subject_code) are <b>required</b>.', Zend_Log::INFO);
         }
+     /* ELSE part is mentioned in view section.
+      * else {
+            throw new Exception('<b>Department Id</b>(department_id) as well as <b>Subject code</b>(subject_code) are <b>required</b>.', Zend_Log::INFO);
+        }*/
         
         switch (strtolower($format)) {
             case 'test':

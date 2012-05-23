@@ -95,8 +95,7 @@ class StudentattendanceController extends Acadz_Base_BaseController
     public function markabsentAction ()
     {
         $request = $this->getRequest();
-        $period_dateobj = new Zend_Date($request->getParam('period_date'), 
-        'dd/MMM/yyyy');
+        $period_dateobj = new Zend_Date($request->getParam('period_date'));
         $period_date = $period_dateobj->get(Zend_Date::ISO_8601);
         $student_list = $request->getParam("studentlst");
         if ($student_list) {
@@ -207,7 +206,7 @@ class StudentattendanceController extends Acadz_Base_BaseController
         $this->_helper->layout()->enableLayout();
         $class = new Acad_Model_Class();
         $class->setDepartment('cse')
-            ->setDegree('btech')
+            ->setProgramme_id('btech')
             ->setSemester('8');
         //$this->_helper->logger($class->getAttendance('CSE-202E',null,'2011-03-08','2011-03-10'));
         $this->_helper->logger($class->getSubjects());
@@ -321,7 +320,7 @@ class StudentattendanceController extends Acadz_Base_BaseController
     {
         $class = new Acad_Model_Class();
         $class->setDepartment('CSE')
-            ->setDegree('BTECH')
+            ->$programme_id('BTECH')
             ->setSemester('8');
         $result = $class->getSubjectAttendanceDetail('CSE-302');
         $this->_helper->logger($result);
@@ -365,11 +364,11 @@ class StudentattendanceController extends Acadz_Base_BaseController
     {
         $request = $this->getRequest();
         $department = $request->getParam('department_id');
-        $degree = $request->getParam('degree_id');
+        $programme_id = $request->getParam('degree_id');
         $semester = $request->getParam('semester_id');
         $class = new Acad_Model_Class();
         $class->setDepartment($department)
-            ->setDegree($degree)
+            ->setProgramme_id($programme_id)
             ->setSemester($semester);
         $result = $class->getUnmarkedAttendance();
         $response = new stdClass();

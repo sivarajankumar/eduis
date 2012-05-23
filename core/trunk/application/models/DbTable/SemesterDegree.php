@@ -26,7 +26,7 @@ class Core_Model_DbTable_SemesterDegree extends Corez_Base_Model
             ->distinct()
             ->from(self::TABLE_NAME, 'semester_id')
             ->where('degree_id = ?', $degree)
-            ->where('handled_by_dept = ?', $department);
+            ->where('department_id = ?', $department);
         if ($currentSession) {
             $sessionType = Core_Model_DbTable_AcademicSession::currentSessionType();
             $sql->where('`semester_type_id` = ?', $sessionType);

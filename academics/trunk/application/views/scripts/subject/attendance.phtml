@@ -469,7 +469,6 @@ $(function(){
 	var session_startdate = '<?php echo $this->session_startdate->get(Zend_Date::DATE_MEDIUM);?>';
 	var dateFormat = 'dd-mm-yy';
 	var serverDateObj = $.datepicker.parseDate(dateFormat, $('#datetext').text());
-	// @FIXME session_startdate is in different format because its date from db server.
 	var sessionStartdateObj= $.datepicker.parseDate(dateFormat, session_startdate);
 	
 	var subjectMode = '';

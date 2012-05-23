@@ -67,7 +67,7 @@ $(function(){
     	    	                                    	$.each(jSemesters, function (index, semester) {
     	    	                	        				selectOptionString += '<option value ="'+semester.semester_id+'">'+semester.semester_id+'</option>';
     	    	                	        			});
-    	    	                                    	$('#semester_id').html(selectOptionString).attr('disabled', '');
+    	    	                                    	$('#semester_id').html(selectOptionString).prop('disabled', '');
     	                                        },
     	                                        error: function(event) {
     	                                            alert(event.responseText);

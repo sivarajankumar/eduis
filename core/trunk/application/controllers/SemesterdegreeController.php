@@ -106,15 +106,15 @@ class SemesterdegreeController extends Corez_Base_BaseController
                     $callback = $request->getParam('callback');
                     echo $callback.'('.$this->_helper->json($result, false).')';
                     return;
-                    case 'select':
-                        echo '<select>';
-                        echo '<option value="">Select one</option>';
-                        foreach ($result as $key => $option) {
-                            echo '<option value="' . $option['semester_id'] .
-                             '">' . $option['semester_id'] . '</option>';
-                        }
-                        echo '</select>';
-                        return;
+                case 'select':
+                    echo '<select>';
+                    echo '<option value="">Select one</option>';
+                    foreach ($result as $key => $option) {
+                        echo '<option value="' . $option['semester_id'] .
+                         '">' . $option['semester_id'] . '</option>';
+                    }
+                    echo '</select>';
+                    return;
                 }
             } else {
                 header("HTTP/1.1 400 Bad Request");
