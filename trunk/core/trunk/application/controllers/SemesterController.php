@@ -84,6 +84,9 @@ class SemesterController extends Corez_Base_BaseController
                     }
                     echo '</select>';
                     return;
+                case 'test':
+                    print_r($result);
+                    return;
                 default:
                     $this->getResponse()
                         ->setException('Unsupported format request')

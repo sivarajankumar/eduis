@@ -517,9 +517,9 @@ class Acad_Model_Course_Subject extends Acadz_Base_Model
              * I am doing it this way due to following reasons:
              * -> WE have only absent students records
              * -> If a student attendance is 100% the raw data dont have its record right now
-             * and attendance of a student may be 100% in LEC and less in TUT....
+             * and attendance of a student may be 100% in LEC and less in TUT...
              * So, I set 100% attendance by default, if a student entry is missing then
-             * There are two cases, either its attendance not marked or 100%attendance,
+             * There are two cases, either its attendance not marked or 100% attendance,
              * Here, it is assumed that attendance is 100%
              */
             foreach ($basicModes as $subjectMode => $value) {
