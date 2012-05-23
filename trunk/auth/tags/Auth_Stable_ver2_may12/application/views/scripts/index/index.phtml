@@ -1,0 +1,115 @@
+<?php
+$InfoTwoWords = 'Home';
+$InfoOneLine = 'Home Page of EduIS';
+$this->headTitle()->prepend ($InfoTwoWords); ?>
+<style>
+<!--
+/* number style */
+#commentlist {
+margin: 1em 0 8em;
+padding: 0;
+color: #666;
+}
+#commentlist a {
+	text-decoration: none;
+	color: teal;
+	padding: 0.1em 0.5em;
+}
+#commentlist a:hover {
+	background-color: #eee;
+}
+#commentlist li {
+padding: 1.5em 0 1.5em;
+list-style: none;
+border-top: solid 1px #ccc;
+position: relative;
+}
+#commentlist cite {
+font: bold 140%/110% Arial, Helvetica, sans-serif;
+color: #666;
+}
+#commentlist .time {
+color: #ccc;
+margin: 0 0 1em;
+}
+#commentlist .commentnumber {
+position: absolute;
+right: 0;
+top: 0.4em;
+font: normal 200%/100% Georgia, "Times New Roman", Times, serif;
+color: #ccc;
+} 
+
+#moduleList {
+  font: italic 1em Georgia, Times, serif;
+  color: #999999;
+}
+#moduleList p {	
+  font: normal .8em Arial, Helvetica, sans-serif;
+  color: #000000;
+}
+
+.leftPane {
+	float: left;
+  width: 40em;
+}
+.rightPane {
+	float: right;
+  width: 40em;
+}
+-->
+</style>
+<h2 style="color: #777; text-align: center;">HOME</h2>
+<div class="leftPane">
+<h3 style="color: #aaa;" >Notices :-</h3>
+<ul id="commentlist">
+        <li>You need to login first from <a href="/authenticate"><?php echo 'http://'.AUTH_SERVER ?>/authenticate</a></li>
+        <li>Know latest about project <a href="http://code.google.com/p/eduis">here</a></li>
+        <li>Contribute your suggestions, feature request, issues etc. <a href="http://code.google.com/p/eduis/issues/list">here</a></li>
+        <li>Login to mail account at <a href="http://mail.aceambala.com">mail.aceambala.com</a> for notices and latest updates.</li>
+        <li>26/AUG/2011: Attendance system is functional now, previous attendance can also be marked. In case of any mistake(like wrong entries etc), kindly note down the attendance ID.</li>
+        <li>05/SEPT/2011: <b>The attendance feature is thoroughly tested in "Firefox 3.6" and "Firefox 5"</b>. Keep your browser updated.</li>
+        <li>06/SEPT/2011: <blink>IMPORTANT*</blink> Attendance can be marked in BLOCK A (Biotech Building). If not accessible in BLOCK A, contact Mr. Aman (in CSE Lab).</li>
+</ul>
+</div>
+<div class="rightPane">
+<h3 style="color: #aaa;" >Links :-</h3>
+<ol id="moduleList" >
+  <li>Faculty
+    <p><ul>
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/studentattendance/mark' ?>">Student Attendance</a></li>
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/faculty/markedattendance' ?>">Recently Marked Periods</a></li>
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/faculty/attendance' ?>">Faculty's Subject wise Attendance</a></li>
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/subject/attendance' ?>">Subject Report</a></li>
+        <!-- <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/timetable/mytimetable' ?>">Faculty&acute;s Timetable</a></li>
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/studentattendance/getlastmarked' ?>">Recently Marked Periods</a></li>
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/studentattendance/getunmarked' ?>">Unmarked Periods</a></li> -->
+      </ul>
+  </li>
+  <li>Timetable Incharge :
+    <p><ul>
+        <!-- <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/timetable' ?>">Timetable</a></li> -->
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/subject' ?>">Subject</a></li>
+        <li><a href="<?php  echo 'http://'.ACADEMIC_SERVER.'/subjectdepartment' ?>">Subject Department</a></li>
+        <!-- <li><a href="<?php  echo 'http://'.ACADEMIC_SERVER.'/subjectfaculty' ?>">Subject Faculty</a></li> -->
+      </ul>
+  </li>
+  <li>HOD :
+    <p><ul>
+        <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/department/attendance' ?>">Department wise attendance</a></li>
+        <!-- <li><a href="<?php echo 'http://'.ACADEMIC_SERVER.'/studentattendance/getclassunmarked' ?>">Class wise attendance overview</a></li>
+		
+        <li><a href="<?php echo 'http://'.AUTH_SERVER.'/analysis.html' ?>">Department wise attendance overview</a></li> -->
+        
+      </ul>
+  </li>
+</ol>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#commentlist li").each(function (i) {
+        i = i+1;
+        $(this).prepend('<span class="commentnumber"> #'+i+'</span>');
+    });
+});
+</script>
