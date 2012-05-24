@@ -30,6 +30,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     protected function _initViewBase ()
     {
         $this->bootstrap('View');
+        /* @var $view Zend_View_Abstract */
         $view = $this->getResource('View');
         $view->addHelperPath('ZendX/JQuery/View/Helper/', 
         'ZendX_JQuery_View_Helper');
@@ -95,7 +96,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 break;
             case 'development':
                 $profiler = new Zend_Db_Profiler_Firebug(
-                'DB Queries : '.ucfirst(strtolower(APPLICATION_ENV)));
+                'DB Queries : ' . ucfirst(strtolower(APPLICATION_ENV)));
                 $profiler->setEnabled(true);
                 $db = $this->bootstrapDb()->getResource('db');
                 $db->setProfiler($profiler);
