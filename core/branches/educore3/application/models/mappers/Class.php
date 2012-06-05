@@ -71,12 +71,12 @@ class Core_Model_Mapper_Class
         $class_cols = array('class_id');
         $select = $adapter->select()->from($class_table, $class_cols);
         if (isset($department_id)) {
-            $select->where('department_id = ?', $is_active);
+            $select->where('department_id = ?', $department_id);
         }
         if (isset($programme_id)) {
-            $select->where('programme_id = ?', $is_active);
+            $select->where('programme_id = ?', $programme_id);
         }
-        if (isset($programme_id)) {
+        if (isset($semester_id)) {
             $select->where('semester_id = ?', $semester_id);
         }
         if (isset($batch_id)) {
