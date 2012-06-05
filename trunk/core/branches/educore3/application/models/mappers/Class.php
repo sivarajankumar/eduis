@@ -77,7 +77,7 @@ class Core_Model_Mapper_Class
             $select->where('programme_id = ?', $is_active);
         }
         if (isset($programme_id)) {
-            $select->where('semester_id = ?', $is_active);
+            $select->where('semester_id = ?', $semester_id);
         }
         if (isset($batch_id)) {
             $select->where('batch_id = ?', $batch_id);
