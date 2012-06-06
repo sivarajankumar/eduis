@@ -45,7 +45,6 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
          'error' == strtolower($controllerName)) {
             return;
         }
-    
         if (! Zend_Session::isDestroyed()) {
             self::initUserAcl();
             self::check();
@@ -73,41 +72,47 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
         return Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource(
         'db');
     }
-
     /**
      * getLogger() - Fetch logger from registry.
      *
      * @return Zend_Log
      */
-    public static function getLogger () {
+    public static function getLogger ()
+    {
         return Zend_Registry::get('logger');
     }
-    
     protected function initUserAcl ()
     {
         $authContent = Zend_Auth::getInstance()->getStorage()->read();
         if (! is_array($authContent)) {
             self::getLogger()->debug('Fresh visitor');
-			$guestID = Authz_Resource_Acl_Guest::GUEST_ID;
             $authAcl = new Zend_Session_Namespace('authAcl');
+            if(isset($authAcl->message)){
+            	Zend_Registry::get('logger')->debug($authAcl->message);
+            }
             if (! isset($authAcl->authId)) {
-                $authAcl->redirectedFrom = array_intersect_key($this->getRequest()->getParams(),
-                                                        $this->getRequest()->getUserParams());
-                                                        
-                 $authAcl->redirectedParams = array_diff_key($this->getRequest()->getParams(),
-                                                        $this->getRequest()->getUserParams());
-                self::getLogger()->debug('Redirecting to "'.self::AUTH_URL.'", redirecting from');
+                $authAcl->redirectedFrom = array_intersect_key(
+                $this->getRequest()->getParams(), 
+                $this->getRequest()->getUserParams());
+                $authAcl->redirectedParams = array_diff_key(
+                $this->getRequest()->getParams(), 
+                $this->getRequest()->getUserParams());
+                self::getLogger()->debug(
+                'Redirecting to "' . self::AUTH_URL . '", redirecting from');
                 self::getLogger()->debug($authAcl->redirectedFrom);
-                $this->getResponse()->setRedirect(self::AUTH_URL.'/welcomeguest', 303);
+                $this->getResponse()->setRedirect(
+                self::AUTH_URL . '/welcomeguest', 303);
                 return;
             } else {
-                Zend_Registry::get('logger')->debug('User has logged in auth module');
+                Zend_Registry::get('logger')->debug(
+                'User has logged into auth module with identity :'.$authAcl->authId);
             }
             self::updateACL($authAcl->authId);
         }
     }
-    protected function updateACL($authId) {
-    	$commonAcl = self::getCache()->load('commonAcl');
+    protected function updateACL ($authId)
+    {
+        $commonAcl = self::getCache()->load('commonAcl');
         if ($commonAcl === false) {
             $commonAcl = self::initAcl();
         } else {
@@ -119,15 +124,14 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
          */
         $commonAcl->addRole($authId, $userInfo['roles']);
         $userInfo['acl'] = $commonAcl;
-        
         $lastLogin = new Zend_Session_Namespace('last');
         $userInfo['last'] = $lastLogin->lastLogin;
         Zend_Auth::getInstance()->getStorage()->write($userInfo);
-        
         //Setting userID in cookie so that apache can get it in log files.
         preg_match('/[^.]+\.[^.]+$/', $_SERVER['SERVER_NAME'], $domain);
         setcookie('identity', $authId, null, null, ".$domain[0]", null, true);
-        Zend_Registry::get('logger')->debug('Specific ACL saved in session.');;
+        Zend_Registry::get('logger')->debug('Specific ACL saved in session.');
+        ;
     }
     /**
      * initAcl() - Initialize common ACL and save to cache.
@@ -179,8 +183,9 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
         $db = self::getDb();
         $objSelect = new Zend_Db_Select($db);
         $dbInfo = $objSelect->from('user_role', 'role_id')
-            ->join('auth_user', '`user_role`.`member_id` = `auth_user`.`member_id`', 
-        array('member_id','department_id', 'user_type_id'))
+            ->join('auth_user', 
+        '`user_role`.`member_id` = `auth_user`.`member_id`', 
+        array('member_id', 'department_id', 'user_type_id'))
             ->where("`login_id` = ?", $login_id)
             ->query()
             ->fetchAll();
@@ -215,9 +220,10 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
                     } else {
                         if ('development' != strtolower(APPLICATION_ENV)) {
                             throw new Exception(
-                            'ACL denied "' . str_ireplace('_', '/', 
-                            $reqResource) . '" to ' . $authContent['identity'] .
-                             ' at ' . $_SERVER['REMOTE_ADDR'], Zend_Log::ALERT);
+                            'ACL denied "' .
+                             str_ireplace('_', '/', $reqResource) . '" to ' .
+                             $authContent['identity'] . ' at ' .
+                             $_SERVER['REMOTE_ADDR'], Zend_Log::ALERT);
                         }
                         Zend_Registry::get('logger')->notice(
                         'ACL ERROR: BLOCKED BY ACL. BUT FUNCTIONAL DUE TO DEVELOPMENT ENV.');
