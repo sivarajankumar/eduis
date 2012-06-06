@@ -38,7 +38,6 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
         $authId = $auth->getStorage()->read();
         $request = self::getRequest();
         $actionName = strtolower($request->getActionName());
-        $actionName = strtolower($request->getActionName());
         $controllerName = strtolower($request->getControllerName());
         if (substr($actionName, 0, 4) == 'fill' or
          substr($actionName, 0, 3) == 'get' or
