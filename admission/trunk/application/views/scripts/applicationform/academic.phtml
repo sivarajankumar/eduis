@@ -100,11 +100,57 @@ echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$step
             <p class="formHint">City of Institution</p>
           </div>
           
-          <div class="ctrlHolder">
+          <!-- <div class="ctrlHolder">
             <label for=""><em>*</em>State</label>
             <input name="institution_state" id="institution_state" value="<?php echo $this->applicant->institution_state ?>" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required"/>
             <p class="formHint">State of Institution</p>
-          </div>
+          </div> -->
+          
+		 <div class="ctrlHolder">
+			<label for="institution_state"><em class="red">*</em>State</label>
+			<select id="institution_state" class="selectInput required" name="institution_state">
+				<option value="">Please Select</option>
+				<optgroup label="Union Territory"></optgroup>
+				<option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+				<option value="Chandigarh">Chandigarh</option>
+				<option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+				<option value="Daman and Diu">Daman and Diu</option>
+				<option value="Lakshadweep">Lakshadweep</option>
+				<option value="Pondicherry">Pondicherry</option>
+				<option value="New Delhi">New Delhi</option>
+				<optgroup label="States"></optgroup>
+				<option value="Andhra Pradesh">Andhra Pradesh</option>
+				<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+				<option value="Assam">Assam</option>
+				<option value="Bihar">Bihar</option>
+				<option value="Chhattisgarh">Chhattisgarh</option>
+				<option value="Goa">Goa</option>
+				<option value="Gujarat">Gujarat</option>
+				<option value="Haryana">Haryana</option>
+				<option value="Himachal Pradesh">Himachal Pradesh</option>
+				<option value="Jammu/Kashmir">Jammu and Kashmir</option>
+				<option value="Jharkhand">Jharkhand</option>
+				<option value="Karnataka">Karnataka</option>
+				<option value="Kerala">Kerala</option>
+				<option value="Madhya Pradesh">Madhya Pradesh</option>
+				<option value="Maharashtra">Maharashtra</option>
+				<option value="Manipur">Manipur</option>
+				<option value="Meghalaya">Meghalaya</option>
+				<option value="Mizoram">Mizoram</option>
+				<option value="Nagaland">Nagaland</option>
+				<option value="Orissa">Orissa</option>
+				<option value="Punjab">Punjab</option>
+				<option value="Rajasthan">Rajasthan</option>
+				<option value="Sikkim">Sikkim</option>
+				<option value="Tamil Nadu">Tamil Nadu</option>
+				<option value="Tripura">Tripura</option>
+				<option value="Uttaranchal">Uttaranchal</option>
+				<option value="Uttar Pradesh">Uttar Pradesh</option>
+				<option value="West Bengal">West Bengal</option>
+				</select>
+			<p class="formHint">State in which located.</p>
+		  </div>
+          
           <div class="ctrlHolder">
             <label for=""><em>*</em>Board</label>
             <input name="board" id="board" value="<?php echo $this->applicant->board ?>" data-default-value="e.g. CBSE" size="35" maxlength="50" type="text" class="textInput required"/>
@@ -228,11 +274,56 @@ echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$step
             <p class="formHint">City of Institution</p>
           </div>
           
-          <div class="ctrlHolder">
+          <!-- <div class="ctrlHolder">
             <label for=""><em>*</em>State</label>
             <input name="matric_state" id="matric_state" value="<?php echo $this->applicant->matric_state ?>" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required"/>
             <p class="formHint">State of Institution</p>
-          </div>
+          </div> -->
+          
+          <div class="ctrlHolder">
+			<label for="matric_state"><em class="red">*</em>State</label>
+			<select id="matric_state" class="selectInput required" name="matric_state" >
+				<option value="">Please Select</option>
+				<optgroup label="Union Territory"></optgroup>
+				<option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+				<option value="Chandigarh">Chandigarh</option>
+				<option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+				<option value="Daman and Diu">Daman and Diu</option>
+				<option value="Lakshadweep">Lakshadweep</option>
+				<option value="Pondicherry">Pondicherry</option>
+				<option value="New Delhi">New Delhi</option>
+				<optgroup label="States"></optgroup>
+				<option value="Andhra Pradesh">Andhra Pradesh</option>
+				<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+				<option value="Assam">Assam</option>
+				<option value="Bihar">Bihar</option>
+				<option value="Chhattisgarh">Chhattisgarh</option>
+				<option value="Goa">Goa</option>
+				<option value="Gujarat">Gujarat</option>
+				<option value="Haryana">Haryana</option>
+				<option value="Himachal Pradesh">Himachal Pradesh</option>
+				<option value="Jammu/Kashmir">Jammu and Kashmir</option>
+				<option value="Jharkhand">Jharkhand</option>
+				<option value="Karnataka">Karnataka</option>
+				<option value="Kerala">Kerala</option>
+				<option value="Madhya Pradesh">Madhya Pradesh</option>
+				<option value="Maharashtra">Maharashtra</option>
+				<option value="Manipur">Manipur</option>
+				<option value="Meghalaya">Meghalaya</option>
+				<option value="Mizoram">Mizoram</option>
+				<option value="Nagaland">Nagaland</option>
+				<option value="Orissa">Orissa</option>
+				<option value="Punjab">Punjab</option>
+				<option value="Rajasthan">Rajasthan</option>
+				<option value="Sikkim">Sikkim</option>
+				<option value="Tamil Nadu">Tamil Nadu</option>
+				<option value="Tripura">Tripura</option>
+				<option value="Uttaranchal">Uttaranchal</option>
+				<option value="Uttar Pradesh">Uttar Pradesh</option>
+				<option value="West Bengal">West Bengal</option>
+				</select>
+			<p class="formHint">State in which located.</p>
+		  </div>
           
         <div class="ctrlHolder">
           <label for=""><em>*</em> Board</label>
@@ -252,11 +343,56 @@ echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$step
         </fieldset>
         <fieldset>
         <h3>Misc</h3>
-        <div class="ctrlHolder">
+        <!-- <div class="ctrlHolder">
           <label for=""><em>*</em>State of Domicile</label>
           <input name="state_of_domicile" id="state_of_domicile" value="<?php echo $this->applicant->state_of_domicile ?>" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
           <p class="formHint">State of Domicile.</p>
-        </div>
+        </div> -->
+        
+        <div class="ctrlHolder">
+			<label for="state_of_domicile"><em class="red">*</em>State of Domicile</label>
+			<select id="state_of_domicile" class="selectInput required" name="state_of_domicile">
+				<option value="">Please Select</option>
+				<optgroup label="Union Territory"></optgroup>
+				<option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+				<option value="Chandigarh">Chandigarh</option>
+				<option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+				<option value="Daman and Diu">Daman and Diu</option>
+				<option value="Lakshadweep">Lakshadweep</option>
+				<option value="Pondicherry">Pondicherry</option>
+				<option value="New Delhi">New Delhi</option>
+				<optgroup label="States"></optgroup>
+				<option value="Andhra Pradesh">Andhra Pradesh</option>
+				<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+				<option value="Assam">Assam</option>
+				<option value="Bihar">Bihar</option>
+				<option value="Chhattisgarh">Chhattisgarh</option>
+				<option value="Goa">Goa</option>
+				<option value="Gujarat">Gujarat</option>
+				<option value="Haryana">Haryana</option>
+				<option value="Himachal Pradesh">Himachal Pradesh</option>
+				<option value="Jammu/Kashmir">Jammu and Kashmir</option>
+				<option value="Jharkhand">Jharkhand</option>
+				<option value="Karnataka">Karnataka</option>
+				<option value="Kerala">Kerala</option>
+				<option value="Madhya Pradesh">Madhya Pradesh</option>
+				<option value="Maharashtra">Maharashtra</option>
+				<option value="Manipur">Manipur</option>
+				<option value="Meghalaya">Meghalaya</option>
+				<option value="Mizoram">Mizoram</option>
+				<option value="Nagaland">Nagaland</option>
+				<option value="Orissa">Orissa</option>
+				<option value="Punjab">Punjab</option>
+				<option value="Rajasthan">Rajasthan</option>
+				<option value="Sikkim">Sikkim</option>
+				<option value="Tamil Nadu">Tamil Nadu</option>
+				<option value="Tripura">Tripura</option>
+				<option value="Uttaranchal">Uttaranchal</option>
+				<option value="Uttar Pradesh">Uttar Pradesh</option>
+				<option value="West Bengal">West Bengal</option>
+				</select>
+			<p class="formHint">State in which located.</p>
+		  </div>
         
         <div class="ctrlHolder">
           <p class="label">Compartment(s)</p>
