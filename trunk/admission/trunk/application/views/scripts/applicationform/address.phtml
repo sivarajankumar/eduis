@@ -40,11 +40,57 @@
           <p class="formHint">Pincode of communication address.</p>
         </div>
         
-        <div class="ctrlHolder">
+        <!-- <div class="ctrlHolder">
           <label for="c_state"><em>*</em>State/Provience</label>
           <input name="c_state" id="c_state" value="<?php echo $this->applicant->c_state ?>" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
           <p class="formHint">State/Territory of communication address.</p>
-        </div>
+        </div> -->
+        
+        <div class="ctrlHolder">
+			<label for="c_state"><em class="red">*</em>State/Provience</label>
+			<select id="c_state" class="selectInput required" name="c_state">
+				<option value="">Please Select</option>
+				<optgroup label="Union Territory"></optgroup>
+				<option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+				<option value="Chandigarh">Chandigarh</option>
+				<option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+				<option value="Daman and Diu">Daman and Diu</option>
+				<option value="Lakshadweep">Lakshadweep</option>
+				<option value="Pondicherry">Pondicherry</option>
+				<option value="New Delhi">New Delhi</option>
+				<optgroup label="States"></optgroup>
+				<option value="Andhra Pradesh">Andhra Pradesh</option>
+				<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+				<option value="Assam">Assam</option>
+				<option value="Bihar">Bihar</option>
+				<option value="Chhattisgarh">Chhattisgarh</option>
+				<option value="Goa">Goa</option>
+				<option value="Gujarat">Gujarat</option>
+				<option value="Haryana">Haryana</option>
+				<option value="Himachal Pradesh">Himachal Pradesh</option>
+				<option value="Jammu/Kashmir">Jammu and Kashmir</option>
+				<option value="Jharkhand">Jharkhand</option>
+				<option value="Karnataka">Karnataka</option>
+				<option value="Kerala">Kerala</option>
+				<option value="Madhya Pradesh">Madhya Pradesh</option>
+				<option value="Maharashtra">Maharashtra</option>
+				<option value="Manipur">Manipur</option>
+				<option value="Meghalaya">Meghalaya</option>
+				<option value="Mizoram">Mizoram</option>
+				<option value="Nagaland">Nagaland</option>
+				<option value="Orissa">Orissa</option>
+				<option value="Punjab">Punjab</option>
+				<option value="Rajasthan">Rajasthan</option>
+				<option value="Sikkim">Sikkim</option>
+				<option value="Tamil Nadu">Tamil Nadu</option>
+				<option value="Tripura">Tripura</option>
+				<option value="Uttaranchal">Uttaranchal</option>
+				<option value="Uttar Pradesh">Uttar Pradesh</option>
+				<option value="West Bengal">West Bengal</option>
+				</select>
+			<p class="formHint">State in which located.</p>
+		  </div>
+        
         <div class="ctrlHolder">
           <label for=""><em>*</em>District</label>
           <input name="c_district" id="c_district" value="<?php echo $this->applicant->c_district ?>" data-default-value="e.g. Mohindergarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
@@ -73,11 +119,57 @@
           <p class="formHint">Pincode of permanent address.</p>
         </div>
         
-        <div class="ctrlHolder">
+        <!-- <div class="ctrlHolder">
           <label for="p_state"><em>*</em>State/Territory</label>
           <input name="p_state" id="p_state" value="<?php echo $this->applicant->p_state ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
           <p class="formHint">State/Territory of permanent address.</p>
-        </div>
+        </div> -->
+        
+        <div class="ctrlHolder">
+			<label for="p_state"><em class="red">*</em>State/Territory</label>
+			<select id="p_state" class="selectInput required" name="p_state">
+				<option value="">Please Select</option>
+				<optgroup label="Union Territory"></optgroup>
+				<option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+				<option value="Chandigarh">Chandigarh</option>
+				<option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+				<option value="Daman and Diu">Daman and Diu</option>
+				<option value="Lakshadweep">Lakshadweep</option>
+				<option value="Pondicherry">Pondicherry</option>
+				<option value="New Delhi">New Delhi</option>
+				<optgroup label="States"></optgroup>
+				<option value="Andhra Pradesh">Andhra Pradesh</option>
+				<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+				<option value="Assam">Assam</option>
+				<option value="Bihar">Bihar</option>
+				<option value="Chhattisgarh">Chhattisgarh</option>
+				<option value="Goa">Goa</option>
+				<option value="Gujarat">Gujarat</option>
+				<option value="Haryana">Haryana</option>
+				<option value="Himachal Pradesh">Himachal Pradesh</option>
+				<option value="Jammu/Kashmir">Jammu and Kashmir</option>
+				<option value="Jharkhand">Jharkhand</option>
+				<option value="Karnataka">Karnataka</option>
+				<option value="Kerala">Kerala</option>
+				<option value="Madhya Pradesh">Madhya Pradesh</option>
+				<option value="Maharashtra">Maharashtra</option>
+				<option value="Manipur">Manipur</option>
+				<option value="Meghalaya">Meghalaya</option>
+				<option value="Mizoram">Mizoram</option>
+				<option value="Nagaland">Nagaland</option>
+				<option value="Orissa">Orissa</option>
+				<option value="Punjab">Punjab</option>
+				<option value="Rajasthan">Rajasthan</option>
+				<option value="Sikkim">Sikkim</option>
+				<option value="Tamil Nadu">Tamil Nadu</option>
+				<option value="Tripura">Tripura</option>
+				<option value="Uttaranchal">Uttaranchal</option>
+				<option value="Uttar Pradesh">Uttar Pradesh</option>
+				<option value="West Bengal">West Bengal</option>
+				</select>
+			<p class="formHint">State in which located.</p>
+		  </div>
+        
         <div class="ctrlHolder">
           <label for="p_district"><em>*</em>District</label>
           <input name="p_district" id="p_district" value="<?php echo $this->applicant->p_district ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
@@ -104,11 +196,57 @@
           <input name="g_pin" id="g_pin" value="<?php echo $this->applicant->g_pin ?>" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
           <p class="formHint">Pincode of permanent address.</p>
         </div>
-        <div class="ctrlHolder">
+        <!-- <div class="ctrlHolder">
           <label for="g_state">State/Territory</label>
           <input name="g_state" id="g_state" value="<?php echo $this->applicant->g_state ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
           <p class="formHint">State/Territory of permanent address.</p>
-        </div>
+        </div> -->
+        
+        <div class="ctrlHolder">
+			<label for="g_state">State/Territory</label>
+			<select id="g_state" class="selectInput" name="g_state">
+				<option value="">Please Select</option>
+				<optgroup label="Union Territory"></optgroup>
+				<option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+				<option value="Chandigarh">Chandigarh</option>
+				<option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+				<option value="Daman and Diu">Daman and Diu</option>
+				<option value="Lakshadweep">Lakshadweep</option>
+				<option value="Pondicherry">Pondicherry</option>
+				<option value="New Delhi">New Delhi</option>
+				<optgroup label="States"></optgroup>
+				<option value="Andhra Pradesh">Andhra Pradesh</option>
+				<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+				<option value="Assam">Assam</option>
+				<option value="Bihar">Bihar</option>
+				<option value="Chhattisgarh">Chhattisgarh</option>
+				<option value="Goa">Goa</option>
+				<option value="Gujarat">Gujarat</option>
+				<option value="Haryana">Haryana</option>
+				<option value="Himachal Pradesh">Himachal Pradesh</option>
+				<option value="Jammu/Kashmir">Jammu and Kashmir</option>
+				<option value="Jharkhand">Jharkhand</option>
+				<option value="Karnataka">Karnataka</option>
+				<option value="Kerala">Kerala</option>
+				<option value="Madhya Pradesh">Madhya Pradesh</option>
+				<option value="Maharashtra">Maharashtra</option>
+				<option value="Manipur">Manipur</option>
+				<option value="Meghalaya">Meghalaya</option>
+				<option value="Mizoram">Mizoram</option>
+				<option value="Nagaland">Nagaland</option>
+				<option value="Orissa">Orissa</option>
+				<option value="Punjab">Punjab</option>
+				<option value="Rajasthan">Rajasthan</option>
+				<option value="Sikkim">Sikkim</option>
+				<option value="Tamil Nadu">Tamil Nadu</option>
+				<option value="Tripura">Tripura</option>
+				<option value="Uttaranchal">Uttaranchal</option>
+				<option value="Uttar Pradesh">Uttar Pradesh</option>
+				<option value="West Bengal">West Bengal</option>
+				</select>
+			<p class="formHint">State in which located.</p>
+		  </div>
+        
         <div class="ctrlHolder">
           <label for="g_district">District</label>
           <input name="g_district" id="g_district" value="<?php echo $this->applicant->g_district ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
@@ -190,8 +328,10 @@
           var formData = {}; 
           $('form.uniForm :input')
           		.not('button,:input[value^="e.g."]')
-          		.each(function(){ 
-          			formData[this.name] = this.value; 
+          		.each(function(){
+              		if(this.value != ''){
+          				formData[this.name] = this.value;
+              		} 
               });
 
 
