@@ -1,8 +1,17 @@
-Roll number : <?php echo $this->applicant->roll_no ?><br/>
-Appplication Basis : <?php echo strtoupper($this->applicant->application_basis) ?>
+<?php
+	$image_url = 'http://'.CDN_SERVER. '/images/activity/arrow.png';
+?>
+<br><br>
+<b>Roll number :</b> <?php echo $this->applicant->roll_no ?><br/>
+<b>Appplication Basis :</b> <?php echo strtoupper($this->applicant->application_basis) ?>
 <p>Following steps are required to submit application:</p>
-<ol>
-<?php foreach ($this->steps as $step) {
-    echo '<li><a href="'.$this->baseUrl("/applicationform/$step").'" >'.ucfirst($step).'</a></li>';
-} ?>
-</ol>
+
+<div id="container_div" style="background-color: #E0E7E7; padding: 2px;">
+	<div id="content" style="background-color: #E0E7E7;  border: 2px solid #FFFFFF; margin: 0px;">
+		<ul style="list-style-image: url('<?php echo $image_url;?>'); font-size: 15px; list-style-position: inside; line-height: 25px;">
+			<?php foreach ($this->steps as $step) {
+    			echo '<li><a href="'.$this->baseUrl("/applicationform/$step").'" >'.ucfirst($step).'</a></li>';
+			} ?>
+		</ul>
+	</div>
+</div>
