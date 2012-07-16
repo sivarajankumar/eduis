@@ -100,29 +100,28 @@
         <fieldset>
         <h3>Guardian Address:</h3>
         <div class="ctrlHolder">
-          <label for="g_pin"><em>*</em>Pin Code</label>
-          <input name="g_pin" id="g_pin" value="<?php echo $this->applicant->g_pin ?>" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput required validateInteger"/>
+          <label for="g_pin">Pin Code</label>
+          <input name="g_pin" id="g_pin" value="<?php echo $this->applicant->g_pin ?>" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
           <p class="formHint">Pincode of permanent address.</p>
         </div>
-        
         <div class="ctrlHolder">
-          <label for="g_state"><em>*</em>State/Territory</label>
-          <input name="g_state" id="g_state" value="<?php echo $this->applicant->g_state ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+          <label for="g_state">State/Territory</label>
+          <input name="g_state" id="g_state" value="<?php echo $this->applicant->g_state ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
           <p class="formHint">State/Territory of permanent address.</p>
         </div>
         <div class="ctrlHolder">
-          <label for="g_district"><em>*</em>District</label>
-          <input name="g_district" id="g_district" value="<?php echo $this->applicant->g_district ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+          <label for="g_district">District</label>
+          <input name="g_district" id="g_district" value="<?php echo $this->applicant->g_district ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
           <p class="formHint">District of permanent address.<br/>(It should be same as above if Union Territory)</p>
         </div>
         <div class="ctrlHolder">
-          <label for="g_city"><em>*</em>City/Town/Village</label>
-          <input name="g_city" id="g_city" value="<?php echo $this->applicant->g_city ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+          <label for="g_city">City/Town/Village</label>
+          <input name="g_city" id="g_city" value="<?php echo $this->applicant->g_city ?>" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput validatePhrase"/>
           <p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
         </div>
         
         <div class="ctrlHolder">
-          <label for="g_add"><em>*</em>Address</label>
+          <label for="g_add">Address</label>
           <textarea name="g_add" id="g_add" data-default-value="e.g. H.no. 2135, Sector 9C"   rows="25" cols="25"><?php echo $this->applicant->g_add ?></textarea>
           <p class="formHint">House number and Area etc.</p>
         </div>
