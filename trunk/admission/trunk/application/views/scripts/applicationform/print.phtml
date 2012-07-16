@@ -67,6 +67,10 @@ hr {
 	font-size:1.1em;
     text-transform: capitalize;
 }
+#image{
+	float:right;
+	border:1px solid black;
+}
 </style>
 <style type="text/css" media="print" >
 .noprint {
@@ -125,7 +129,7 @@ echo 'Step '.($stepNo+1).'/'.count($this->steps).': PRINT THIS PAGE';?>:</h2>
 </div>
 <hr />
 <div>
-<ol class="formData">
+<ol class="formData" style="width:50%; float:left;">
 <?php 
 //some variables:
 $religion = array(1=>'Hindu','Muslim','Sikh','Christian');
@@ -275,6 +279,10 @@ indirectly. </p>
 
 </li>
 	</ol>
+
+<div id="image">
+<img src="http://site.cdn.aceambala.com/plugins/photobooth/uploads/original/<?php echo $_GET['image_name']?>.jpg" width="250" height="180"/>
+</div>
 
 </div>
 <script>
