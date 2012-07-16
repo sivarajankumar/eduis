@@ -479,8 +479,10 @@ echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$step
           var formData = {}; 
           $('form.uniForm :input')
           		.not('button,:input[value^="e.g."]')
-          		.each(function(){ 
-          			formData[this.name] = this.value; 
+          		.each(function(){
+          			if(this.value != ''){
+          				formData[this.name] = this.value;
+              		}
               });
 
           var compartments = $('input:radio[name=compartments]:checked').val();
