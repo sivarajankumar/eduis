@@ -16,7 +16,7 @@ class ApplicationFormController extends Admsnz_Base_BaseController
     {
         $this->applicant = new Zend_Session_Namespace('applicant');
         $this->view->assign('applicant',$this->applicant);
-        $this->view->assign('steps',array('personal','academic','address','facilities','councelling','print'));
+        $this->view->assign('steps',array('personal','academic','address','facilities','councelling','photograph','print'));
     }
     /**
      * The default action - show the home page
@@ -147,6 +147,29 @@ class ApplicationFormController extends Admsnz_Base_BaseController
         }
     }
     
+    
+	public function photographAction ()
+    {
+        $this->view->assign('stepNo',5);
+    }
+    
+    public function setphotographAction ()
+    {
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $this->_helper->viewRenderer->setNoRender(TRUE);
+        $this->_helper->layout()->disableLayout();
+        foreach ($params as $colName => $value) {
+            $value = is_array($value)?$value:htmlentities(trim($value));
+            $this->applicant->$colName = $value;
+        }
+        echo 'Following information recieved:<br/>';
+        foreach ($params as $colName => $value) {
+            
+            $value = is_array($value)?var_export($value,true):htmlentities(trim($value));
+            echo '<b>'.ucwords(str_ireplace('_', ' ', $colName)).'</b> : '.$value.'<br/>';
+        }
+    }
 
     public function printAction ()
     {
@@ -155,6 +178,7 @@ class ApplicationFormController extends Admsnz_Base_BaseController
             $this->applicant->saved = $applicant->save();
         }
         $this->_helper->layout()->disableLayout();
-        $this->view->assign('stepNo',5);
+        $this->view->assign('stepNo',6);
     }
+    
 }
