@@ -20,31 +20,31 @@ echo 'Step '.($stepNo+1).'/'.count($this->steps).': '.ucfirst($this->steps[$step
           <fieldset>
             <h3>AIEEE</h3>
             <div class="ctrlHolder">
-            <label for=""><em>*</em>All India Rank (AIR)</label>
+            <label for=""><em>*</em>Overall All India Rank</label>
             <input name="ai_rank" id="ai_rank" value="<?php echo $this->applicant->ai_rank ?>" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
             <p class="formHint">All India Rank of <span class="cName" >Candidate</span></p>
           </div>
           
           <div class="ctrlHolder">
-            <label for=""><em>*</em>All India Category Rank</label>
-            <input name="ai_cat_rank" id="ai_cat_rank" value="<?php echo $this->applicant->ai_cat_rank ?>" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+            <label for="">All India Category Rank</label>
+            <input name="ai_cat_rank" id="ai_cat_rank" value="<?php echo $this->applicant->ai_cat_rank ?>" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
             <p class="formHint">All India Category Rank of <span class="cName" >Candidate</span></p>
           </div>
           
           <div class="ctrlHolder">
-            <label for=""><em>*</em>State Rank</label>
-            <input name="state_rank" id="state_rank" value="<?php echo $this->applicant->state_rank ?>" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+            <label for="">State Rank</label>
+            <input name="state_rank" id="state_rank" value="<?php echo $this->applicant->state_rank ?>" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
             <p class="formHint">State Rank of <span class="cName" >Candidate</span></p>
           </div>
           
           <div class="ctrlHolder">
-            <label for=""><em>*</em>State Category Rank</label>
-            <input name="state_cat_rank" id="state_cat_rank" value="<?php echo $this->applicant->state_cat_rank ?>" data-default-value="e.g. 2000" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+            <label for="">State Category Rank</label>
+            <input name="state_cat_rank" id="state_cat_rank" value="<?php echo $this->applicant->state_cat_rank ?>" data-default-value="e.g. 2000" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
             <p class="formHint">State Category Rank of <span class="cName" >Candidate</span></p>
           </div>
             
           <div class="ctrlHolder">
-            <label for=""><em>*</em>Application Number</label>
+            <label for="">Application Number</label>
             <input name="application_no" id="application_no" value="<?php echo $this->applicant->application_no ?>" data-default-value="e.g. A234834" size="35" maxlength="50" type="text" class="textInput validateAlphaNum"/>
             <p class="formHint">Application Number of AIEEE Form</p>
           </div>
