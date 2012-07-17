@@ -53,8 +53,13 @@
               data : {roll_no: rollNo,
                   	  application_basis:basis},
               success: function(jStatus){
-            	  if (confirm("Application not submitted.\nClick 'OK' to continue.")){
-            		  window.location = "/applicationform";
+                  if(!jStatus){
+                	  if (confirm("Application not submitted.\nClick 'OK' to continue.")){
+                		  window.location = "/applicationform";
+                	  }
+                  }
+                  else {
+                      alert("Application of "+rollNo+" is already submitted !");
             	  }
               },
                   error: function(response) {
