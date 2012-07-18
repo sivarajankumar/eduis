@@ -73,6 +73,7 @@ td{
 #image{
 	float:right;
 	border:1px solid black;
+	padding:0;
 }
 </style>
 <style type="text/css" media="print" >
@@ -152,7 +153,8 @@ $basis = strtolower($this->applicant->application_basis);
 <li><span class="infoHeader">Nationality</span>:<span class="infoContent "><?php echo ('1' == $this->applicant->nationality_id)?'Indian':'NRI';?></span> </li>
 <li><span class="infoHeader">Blood Group</span>:<span class="infoContent "><?php echo $this->applicant->blood_group_id;?></span> </li>
 <li><span class="infoHeader">Religion</span>:<span class="infoContent "><?php echo $religion[$this->applicant->religion_id];?></span> </li>
-<li><span class="infoHeader">Category</span>:<span class="infoContent "><?php echo $this->applicant->allotted_category;?></span> </li>
+<li><span class="infoHeader">Candidate Category</span>:<span class="infoContent "><?php echo $this->applicant->cast;?></span> </li>
+<li><span class="infoHeader">Alloted Category</span>:<span class="infoContent "><?php echo $this->applicant->allotted_category;?></span> </li>
 <li><span class="infoHeader">Father's name</span>:<span class="infoContent "><?php echo $this->applicant->father_name;?></span>
 <ol style="list-style: lower-roman; font-size: small;" >
 	<li><span class="infoHeader">Contact number</span>:<span class="infoContent"><?php echo $this->applicant->father_contact;?></span></li>
