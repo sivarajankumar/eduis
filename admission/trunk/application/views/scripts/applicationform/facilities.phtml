@@ -23,7 +23,6 @@
         <div id="hostelDiv" <?php if (isset($this->applicant->hostel)) {
                 echo (($this->applicant->hostel)?'':'style="display:none;"');
             } else {echo 'style="display:none;"';} ?> class="ctrlHolder">
-        Terms and condition...........
         </div>
         
         <div class="ctrlHolder noLabel">
@@ -47,6 +46,13 @@
             <li><label><input name="boarding_station" type="radio" value="shabd" <?php echo ('shabd' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Shahabad"> Shahabad</label></li>
             <li><label><input name="boarding_station" type="radio" value="saha" <?php echo ('saha' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Saha/Mithapur"> Saha/Mithapur</label></li>
             <li><label><input name="boarding_station" type="radio" value="kkr" <?php echo ('kkr' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Kurukshetra"> Kurukshetra</label></li>
+            <li><label><input name="boarding_station" type="radio" value="ymngr" <?php echo ('ymngr' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Yamuna Nagar"> Yamuna Nagar</label></li>
+            <li><label><input name="boarding_station" type="radio" value="jgdri" <?php echo ('jgdri' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Jagadhari"> Jagadhari</label></li>
+            <li><label><input name="boarding_station" type="radio" value="thnac" <?php echo ('thnac' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Thana Chappar"> Thana Chappar</label></li>
+            <li><label><input name="boarding_station" type="radio" value="dsrka" <?php echo ('dsrka' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Dosarka"> Dosarka</label></li>
+            <li><label><input name="boarding_station" type="radio" value="mllna" <?php echo ('mllna' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Mullana"> Mullana</label></li>
+            <li><label><input name="boarding_station" type="radio" value="kalpi" <?php echo ('kalpi' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Kalpi"> Kalpi</label></li>
+            <li><label><input name="boarding_station" type="radio" value="saha" <?php echo ('saha' == strtolower($this->applicant->boarding_station)?'checked="checked"':'');?> title="Saha"> Saha</label></li>
           </ul>
           <p class="formHint">Bus Facility</p>
         </div>
@@ -75,10 +81,10 @@
         $("#hostel").click(function(){
             if ($(this).is(':checked')) {
             	$(this).val(true);
-                $( "#hostelDiv").slideDown();
+                //$( "#hostelDiv").slideDown();
 			} else {
 				$(this).val(false);
-                $( "#hostelDiv" ).slideUp('slow');
+                //$( "#hostelDiv" ).slideUp('slow');
 			}
 		});
 
