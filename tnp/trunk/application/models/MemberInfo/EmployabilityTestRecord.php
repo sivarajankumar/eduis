@@ -190,8 +190,9 @@ class Tnp_Model_MemberInfo_EmployabilityTestRecord extends Tnp_Model_Generic
             $test_regn_no = $this->getTest_regn_no(true);
         }
         $record_ids = array();
+        
         $record_ids = $this->getMapper()->fetchTestRecordIds($member_id, 
-        $employability_test_specific, $test_regn_no);
+        $employability_test_id, $test_regn_no);
         if (empty($record_ids)) {
             return false;
         } else {
