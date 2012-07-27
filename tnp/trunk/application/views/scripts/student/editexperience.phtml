@@ -25,7 +25,6 @@
 	<div class="ctrlHolder" id="functional_area_div">
 		<label for="functional_area_name">Functional Area</label>
 		<select id="functional_area_name" name="functional_area_name" class="selectInput" onchange="javascript:show_fa_div()">
-				<option value="av">Oer</option>
 				<?php 
 					foreach ($functional_areas as $key => $value)
             		{
@@ -34,13 +33,12 @@
           		?>
           		<option value="other">Other</option>
 		</select>
-		<p class="formHint">Name of the industry</p>
+		<p class="formHint">Name of the Functional Area</p>
 	</div>
 	
 	<div class="ctrlHolder" id="role_name_div">
 		<label for="role_name">Role</label>
 		<select id="role_name" name="role_name" class="selectInput" onchange="javascript:show_role_div()">
-				<option value="av">Oer</option>
 				<?php 
 					foreach ($roles as $key => $value)
             		{
@@ -49,7 +47,7 @@
           		?>
           		<option value="other">Other</option>
 		</select>
-		<p class="formHint">Name of the industry</p>
+		<p class="formHint">Your role in Organization</p>
 	</div>
 </fieldset>
 
@@ -57,18 +55,19 @@
 	<div class="ctrlHolder">
 		<label for="start_date">Start Date</label>
 		<input name="start_date" id="start_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
-		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of start</p>
 	</div>
 		
     <div class="ctrlHolder">
 		<label for="end_date">End Date</label>
 		<input name="end_date" id="end_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
-		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click end date</p>
 	</div>
 		
 	<div class="ctrlHolder">
 		<label for="organisation">Organisation Name</label>
 		<input name="organisation" id="organisation" value="" data-default-value="e.g. Infosys India Limited" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">Name of the Organization</p>
 	</div>
 	
 	<div class="ctrlHolder">
@@ -104,7 +103,7 @@ $(function(){
   	dateFormat: 'yy-mm-dd',
   	changeMonth: true,
 		changeYear: true,
-		yearRange: '-25:-15',
+		yearRange: '-5:+5',
 		onClose : function(dateText, inst) {
 			this.focus();
 		}
@@ -114,7 +113,7 @@ $(function(){
 	  	dateFormat: 'yy-mm-dd',
 	  	changeMonth: true,
 			changeYear: true,
-			yearRange: '-25:-15',
+			yearRange: '-5:+5',
 			onClose : function(dateText, inst) {
 				this.focus();
 			}
@@ -178,7 +177,8 @@ function submit() {
         url : urlSaveInfo,
         data : {myarray:getValues()},
         success: function(jStatus){
-            
+        	alert("Your information has been submitted successfully");
+            window.location.replace("/student/profile");
         },
         error: function(response) {
           $('#errorBox').text(response.responseText).parent().show();
