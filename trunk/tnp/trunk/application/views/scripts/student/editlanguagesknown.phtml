@@ -61,7 +61,7 @@ $("#language_id").change(function(){
 	{
 		var html = '<div class="ctrlHolder" id="language_name">'+
 					'<label for="language_name"><em>*</em>Language_name</label>'+
-					'<input name="language_name" id="language_name" value="" data-default-value="e.g. Allsoft Solutions" size="35" maxlength="50" type="text" class="textInput required"/>'+
+					'<input name="language_name" id="language_name" value="" data-default-value="e.g. Bengali" size="35" maxlength="50" type="text" class="textInput required"/>'+
 					'<p class="formHint">Name of the Language</p>'+
 					'</div>';
 		$(this).parent().after(html);
@@ -76,7 +76,7 @@ function submit() {
 	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savelanguagesknown'))?>';
     $.ajax({
         url : urlSaveInfo,
-        data : getValues(),
+        data : {myarray : getValues()},
         success: function(jStatus){
 			alert('Your information has been submitted sucessfully');
 			window.location.replace("/student/profile");
@@ -89,30 +89,35 @@ function submit() {
 }
 
   function getValues() {
-      var formData = {}; 
+      var formData = {};
+      var proficiency_data = {}; 
+      formData['add_new_language'] = false;
       
+      $('input[name="proficiency"]').each(function(){
+          
+       	  if($(this).is(':checked'))
+          {
+			  proficiency_data[$(this).val()] = true;
+          }
+       	  else
+       	  {
+			  proficiency_data[$(this).val()] = false;
+       	  }
+      });
+
       if($('#language_id').val() == -999)
       {
-    	  var language_name = $('input[name="language_name"]').val();
-    	  formData['language_name'] = language_name;
+    	 var language_name = $('input[name="language_name"]').val();
+      	 formData[language_name] = proficiency_data;
+      	 formData['add_new_language'] = true;
       }
       else
       {
           var language_id = $('#language_id').val();
-          formData['language_id'] = language_id;
+          formData[language_id] = proficiency_data;
       }
       
-      $('input[name="proficiency"]').each(function(){
-       	  if($(this).is(':checked'))
-          {
-      		  formData[$(this).val()] = true;
-          }
-       	  else
-       	  {
-			  formData[$(this).val()] = false;
-       	  }
-       });
-	return formData;
+  return formData;
 }
 </script>
 <style>
