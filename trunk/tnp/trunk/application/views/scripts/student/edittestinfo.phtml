@@ -84,7 +84,7 @@ $(function(){
   	dateFormat: 'yy-mm-dd',
   	changeMonth: true,
 		changeYear: true,
-		yearRange: '-25:-15',
+		yearRange: '-5:+5',
 		onClose : function(dateText, inst) {
 			this.focus();
 		}
@@ -152,7 +152,8 @@ function submit() {
         url : urlBasicInfo,
         data : {myarray:getValues()},
         success: function(jStatus){
-			
+        	alert("Your information has been submitted successfully");
+            window.location.replace("/student/profile");
         },
 		error: function(response) {
 			$('#errorBox').text(response.responseText).parent().show();

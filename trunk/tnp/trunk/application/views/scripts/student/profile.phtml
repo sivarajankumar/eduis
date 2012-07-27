@@ -3,7 +3,7 @@
 	$certifications = $this->response['certifications'];
 	$training = $this->response['training'];
 	$experience = $this->response['experience'];
-	$languages_known = $this->response['languages_known'];
+	$languages_known = $this->response['language'];
 	$job_preferred = $this->response['job_preferred'];
 	$co_curricular = $this->response['co_curricular'];
 	$skills = $this->response['skills'];
@@ -14,72 +14,49 @@
 		<h2>Employability Test</h2>
 		<ul>
 		<?php 
-			/*foreach ($emptestinfo as $test_id => $test_info)
-			{
-				echo '<a href="#"><li>';
-				foreach ($test_info as $key => $value)
-				{
-					echo '<span class="red">'.$value.'</span>';
-				}
-				echo '</li></a>';
-			}*/
 			foreach ($emptestinfo as $test_id => $test_info)
 			{
 				echo '<a href="viewtestinfo?employability_test_id='.$test_id.'&test_name='.$test_info['test_name'].'&date_of_conduct='.$test_info['date'].'">';
-					echo '<li>Test Name<span class="red">'.$test_info['test_name'].'</span>';
-					echo 'Date<span class="red">'.$test_info['date'].'</span></li>';
+					echo '<li><span class="black">'.$test_info['test_name'].'</span>';
+					echo '<span class="red">  ('.$test_info['date'].')</span></li>';
 				echo '</a>';
 			}
 		?>
 		</ul>
 		<span class="add_new"><a href="/student/edittestinfo">Add New</a></span>
+		<br/>
 	</div>
+	
 	<div id="training_div" class="category_div">
 		<h2>Certifications</h2>
 		<ul>
 		<?php 
-			/*foreach ($certifications as $certification_id => $certification_info)
-			{
-				echo '<a href="#"><li>';
-				foreach ($certification_info as $key => $value)
-				{
-					echo '<span class="red">'.$value.'</span>';
-				}
-				echo '</li></a>';
-			}*/
 			foreach ($certifications as $certification_id => $certification_info)
 			{
 				echo '<a href="viewcertification?certification_id='.$certification_id.'">';
-					echo '<li>Name<span class="red">'.$certification_info['name'].'</span></li>';
+					echo '<li><span class="red">'.$certification_info['name'].'</span></li>';
 				echo '</a>';
 			}
 		?>
 		</ul>
 		<span class="add_new"><a href="/student/editcertification">Add New</a></span>
 	</div>
+	
 	<div id="experience_div" class="category_div">
 		<h2>Experience</h2>
 		<ul>
-		<?php 
-			/*foreach ($experience as $experience_id => $experience_info)
-			{
-				echo '<a href="#"><li>';
-				foreach ($experience_info as $key => $value)
-				{
-					echo '<span class="red">'.$value.'</span>';
-				}
-				echo '</li></a>';
-			}*/
+		<?php
 			foreach ($experience as $experience_id => $experience_info)
 			{
 				echo '<a href="viewexperience?experience_id='.$experience_id.'">';
-					echo '<li>Organisation<span class="red">'.$experience_info['organisation'].'</span></li>';
+					echo '<li><span class="red">'.$experience_info['organisation'].'</span></li>';
 				echo '</a>';
 			}
 		?>
 		</ul>
 		<span class="add_new"><a href="/student/editexperience">Add New</a></span>
 	</div>
+	
 	<div id="certification_div" class="category_div">
 		<h2>Trainings</h2>
 		<ul>
@@ -87,45 +64,49 @@
 			foreach ($training as $training_id => $training_info)
 			{
 				echo '<a href="viewtraining?training_id='.$training_id.'">';
-					echo '<li>Institute Name<span class="red">'.$training_info['institute'].'</span>';
-					echo 'Semester<span class="red">'.$training_info['semester'].'</span></li>';
+					echo '<li><span class="black">'.$training_info['institute'].' </span>';
+					echo '<span class="red">'.$training_info['semester'].'th semester</span></li>';
 				echo '</a>';
 			}
 		?>
 		</ul>
 		<span class="add_new"><a href="/student/edittraining">Add New</a></span>
 	</div>
+	
+	<div id="language_div" class="category_div">
+		<h2>Languages Known</h2>
+		<ul>
+		<?php 
+			foreach ($languages_known as $name => $proficiency)
+			{
+				//echo '<a href="viewtestinfo?employability_test_id='.$test_id.'&test_name='.$test_info['test_name'].'&date_of_conduct='.$test_info['date'].'">';
+				echo '<li><span class="black">'.$name.'</span>';
+				echo '<span class="red">  '.$proficiency.'</span></li>';
+				//echo '</a>';
+			}
+		?>
+		</ul>
+		<span class="add_new"><a href="/student/editlanguagesknown">Add New</a></span>
+		<br/>
+	</div>
+	
 	<div id="miscallaneous_div" class="category_div">
 		<h2>Miscallaneous</h2>
 		<ul>
 		<?php
-			/*if($languages_known){
-				echo '<a href="/student/viewlanguagesknown"><li> Languages Known<span class="red">View</span></li><a/>';
-			}
-			else {
-				echo '<a href="/student/editlanguagesknown"><li> Languages Known<span class="red">Create</span></li><a/>';
-			}*/
-			
 			if($job_preferred){
-				echo '<a href="/student/viewjobpreferred"><li> Job Preferred<span class="red">View</span></li><a/>';
+				echo '<a href="/student/viewjobpreferred"><li><span class="black">Job Preferred </span><span class="red">View</span></li><a/>';
 			}
 			else {
-				echo '<a href="/student/editjobpreferred"><li> Job Preferred<span class="red">Create</span></li><a/>';
+				echo '<a href="/student/editjobpreferred"><li><span class="black">Job Preferred </span><span class="red">Create</span></li><a/>';
 			}
 			
 			if($co_curricular){
-				echo '<a href="/student/viewcocurricular"><li> Co-Curricular<span class="red">View</span></li><a/>';
+				echo '<a href="/student/viewcocurricular"><li><span class="black">Co-Curricular </span><span class="red">View</span></li><a/>';
 			}
 			else {
-				echo '<a href="/student/editcocurricular"><li> Co-Curricular<span class="red">Create</span></li><a/>';
+				echo '<a href="/student/editcocurricular"><li><span class="black">Co-Curricular </span><span class="red">Create</span></li><a/>';
 			}
-			
-			/*if($skills){
-				echo '<a href="/student/viewskills"><li> Skills<span class="red">View</span></li><a/>';
-			}
-			else {
-				echo '<a href="/student/editskills"><li> Skills<span class="red">Create</span></li><a/>';
-			}*/
 		?>
 		</ul>
 	</div>
@@ -139,24 +120,22 @@
 		margin:-5px 0 40px 0;
 		box-shadow:#e4e4e4 0px 0px 1px 1px;
 		border-radius:8px;
-		width:50%;
+		width:40%;
 	}
 	.category_div{
 		padding: 5px;
 		background-color:white;
-		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		/*box-shadow:#e4e4e4 0px 0px 1px 1px;*/
 	}
 	.category_div li{
 		padding: 2px 2px 2px 8px;
-		border-bottom:1px dotted #999;
-		border-top:1px dotted #999;	
 		list-style-position: inside;
 		margin-top:-1px;
 		width:auto;
 	}
 	a{
 		text-decoration: none;
-		color:black;	
+		color:black;
 	}
 	.category_div li:hover{
 		background-color:#eaeaeb;
@@ -176,8 +155,20 @@
 	.red{
 		color:red;
 		font-size:1.2em;
-		margin:30px;
+	}
+	.black{
+		color:black;
+		font-size:1.2em;
 	}
 	.add_new{
+		padding:3px;
+		border:0.1em solid #85bcb2;
+		background-color:#daf2ee;
+		margin:0 0 0 60px;
+	}
+	.add_new:hover{
+		padding:3px;
+		border:0.1em solid #3e8074;
+		background-color:#e7f8f5;
 	}
 </style>

@@ -42,18 +42,19 @@
 		<div class="ctrlHolder">
 			<label for="start_date">Start Date</label>
 			<input name="start_date" id="start_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
-			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of start</p>
 		</div>
 		
         <div class="ctrlHolder">
 			<label for="complete_date">Complete Date</label>
 			<input name="complete_date" id="complete_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
-			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click end date</p>
 		</div>
 		
         <div class="ctrlHolder">
 			<label for="">Training Institute</label>
 			<input name="training_institute" id="training_institute" value="" data-default-value="e.g. Allsoft Solutions" size="35" maxlength="50" type="text" class="textInput required"/>
+			<p class="formHint">Name of the Training Institute</p>
 		</div>
 		
 		<div class="ctrlHolder">
@@ -83,7 +84,7 @@ $(function(){
 	dateFormat: 'yy-mm-dd',
 	changeMonth: true,
 		changeYear: true,
-		yearRange: '-25:-15',
+		yearRange: '-5:+5',
 		onClose : function(dateText, inst) {
 			this.focus();
 		}
@@ -92,7 +93,7 @@ $(function(){
 	  	dateFormat: 'yy-mm-dd',
 	  	changeMonth: true,
 			changeYear: true,
-			yearRange: '-25:-15',
+			yearRange: '-5:+5',
 			onClose : function(dateText, inst) {
 				this.focus();
 			}
@@ -141,7 +142,8 @@ function submit() {
         url : urlSaveInfo,
         data : {myarray:getValues()},
         success: function(jStatus){
-            
+            alert("Your information has been submitted successfully");
+            window.location.replace("/student/profile");
         },
 		error: function(response) {
 			$('#errorBox').text(response.responseText).parent().show();
