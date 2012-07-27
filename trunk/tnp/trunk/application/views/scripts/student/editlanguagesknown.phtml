@@ -1,0 +1,151 @@
+<?php 
+	$languages = $this->languages;
+?>
+<h2>Languages Known:<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
+<form action="javascript:submit();" class="uniForm">
+
+	<fieldset>
+		<div class="ctrlHolder">
+			<label for="language_id"><em>*</em>Languages Known</label>
+			<select id="language_id" name="language_id" class="selectInput required">
+				<option value="">Please select Language</option>
+				<?php
+					foreach ($languages as $key => $language_name)
+					echo '<option value="'.$key.'">'.$language_name.'</option>';
+				?>
+				<option value="-999">Other</option>
+			</select>
+			<p class="formHint">Languages Known by Candidate </p>
+		</div>
+          
+		<div class="ctrlHolder">
+			<label for="proficiency">Proficiency</label>
+			READ: <input type="checkbox" name="proficiency" value="READ" ><br>
+			WRITE: <input type="checkbox" name="proficiency" value="WRITE" ><br>
+			SPEAK: <input type="checkbox" name="proficiency" value="SPEAK">
+			<p class="formHint">Select proficiency</p>
+		</div>
+		
+	</fieldset>
+             
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+        
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+	<br>
+	</form>
+      
+ <script>
+
+$(function(){
+	$('form.uniForm').uniform({
+		prevent_submit : true
+	});
+
+	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	$("#date").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '-5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+		}
+	});
+});     
+
+$("#language_id").change(function(){
+	if($(this).val() == -999)
+	{
+		var html = '<div class="ctrlHolder" id="language_name">'+
+					'<label for="language_name"><em>*</em>Language_name</label>'+
+					'<input name="language_name" id="language_name" value="" data-default-value="e.g. Allsoft Solutions" size="35" maxlength="50" type="text" class="textInput required"/>'+
+					'<p class="formHint">Name of the Language</p>'+
+					'</div>';
+		$(this).parent().after(html);
+	}
+	else
+	{
+		$('#language_name').remove();
+	}
+});
+
+function submit() {
+	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savelanguagesknown'))?>';
+    $.ajax({
+        url : urlSaveInfo,
+        data : getValues(),
+        success: function(jStatus){
+			alert('Your information has been submitted sucessfully');
+			window.location.replace("/student/profile");
+        },
+            error: function(response) {
+          	  $('#errorBox').text(response.responseText).parent().show();
+                console.log(response);
+                }
+            });
+}
+
+  function getValues() {
+      var formData = {}; 
+      
+      if($('#language_id').val() == -999)
+      {
+    	  var language_name = $('input[name="language_name"]').val();
+    	  formData['language_name'] = language_name;
+      }
+      else
+      {
+          var language_id = $('#language_id').val();
+          formData['language_id'] = language_id;
+      }
+      
+      $('input[name="proficiency"]').each(function(){
+       	  if($(this).is(':checked'))
+          {
+      		  formData[$(this).val()] = true;
+          }
+       	  else
+       	  {
+			  formData[$(this).val()] = false;
+       	  }
+       });
+	return formData;
+}
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:57%;
+		font-size:17px;
+		font-weight:100;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
+  
