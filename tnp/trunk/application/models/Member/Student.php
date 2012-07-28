@@ -653,7 +653,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
         } else {
             $this->initSave();
             $preparedData = $this->prepareDataForSaveProcess($data_array);
-            $data_array['member_id'] = null;
+            unset($data_array['member_id']);
             return $this->getMapper()->update($preparedData, $member_id);
         }
     }
@@ -674,7 +674,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
             $student_class_object->initSave();
             $prepared_data = $student_class_object->prepareDataForSaveProcess(
             $data_array);
-            $data_array['member_id'] = null;
+            unset($data_array['member_id']);
             return $student_class_object->getMapper()->update($prepared_data, 
             $member_id, $class_id);
         }
@@ -700,7 +700,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
             $member_certification->initSave();
             $prepared_data = $member_certification->prepareDataForSaveProcess(
             $data_array);
-            $data_array['member_id'] = null;
+            unset($data_array['member_id']);
             return $member_certification->getMapper()->update($prepared_data, 
             $member_id, $certification_id);
         }
@@ -725,7 +725,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
             $member_co_corricular->initSave();
             $prepared_data = $member_co_corricular->prepareDataForSaveProcess(
             $data_array);
-            $data_array['member_id'] = null;
+            unset($data_array['member_id']);
             return $member_co_corricular->getMapper()->update($prepared_data, 
             $member_id);
         }
@@ -867,7 +867,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
             $member_skills->initSave();
             $prepared_data = $member_skills->prepareDataForSaveProcess(
             $data_array);
-            $data_array['member_id'] = null;
+            unset($data_array['member_id']);
             return $member_skills->getMapper()->update($prepared_data, 
             $member_id);
         }
@@ -889,7 +889,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
             $member_training->initSave();
             $prepared_data = $member_training->prepareDataForSaveProcess(
             $data_array);
-            $data_array['member_id'] = null;
+            unset($data_array['member_id']);
             return $member_training->getMapper()->update($prepared_data, 
             $member_id, $training_id);
         }
@@ -898,18 +898,26 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     {
         $member_id = $this->getMember_id(true);
         $language_id = $data_array['language_id'];
+        Zend_Registry::get('logger')->debug('Language id = ' . $language_id);
         $info = $this->fetchLanguageProficiency($language_id);
+        Zend_Registry::get('logger')->debug('Info = '.$info);
         if ($info == false) {
             $member_lang = new Tnp_Model_MemberInfo_Language();
             $member_lang->initSave();
+            $data_array['member_id'] = $member_id;
             $preparedData = $member_lang->prepareDataForSaveProcess($data_array);
+            Zend_Registry::get('logger')->debug('Saving language');
+            Zend_Registry::get('logger')->debug($preparedData);
             return $member_lang->getMapper()->save($preparedData);
         } else {
             $member_lang = new Tnp_Model_MemberInfo_Language();
             $member_lang->initSave();
+            unset($data_array['member_id']);
+            unset($data_array['language_id']);
             $prepared_data = $member_lang->prepareDataForSaveProcess(
             $data_array);
-            $data_array['member_id'] = null;
+            Zend_Registry::get('logger')->debug('Updating language');
+            Zend_Registry::get('logger')->debug($prepared_data);
             return $member_lang->getMapper()->update($prepared_data, $member_id, 
             $language_id);
         }
