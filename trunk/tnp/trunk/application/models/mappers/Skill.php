@@ -63,8 +63,8 @@ class Tnp_Model_Mapper_Skill
         if (! empty($skill_field)) {
             $select->where('skill_field = ?', $skill_field);
         }
-        $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $member_ids;
+        $skill_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $skill_ids;
     }
     /**
      * 
