@@ -140,9 +140,7 @@ class StudentController extends Zend_Controller_Action
         } else {
             $response['languages_known'] = false;
         }*/
-        
-        
- 		$student_lang = new Tnp_Model_MemberInfo_Language();
+        $student_lang = new Tnp_Model_MemberInfo_Language();
         $student_lang->setMember_id($this->getMember_id());
         $stu_lang = $student_lang->fetchLanguagesInfo();
         $lang = new Tnp_Model_Language();
@@ -152,9 +150,6 @@ class StudentController extends Zend_Controller_Action
             $newarray[$languages[$key]] = $proficiency;
         }
         $response['language'] = $newarray;
-        
-        
-        
         $student_job_preferred = $student_model->fetchJobPreferred();
         if (! empty($student_job_preferred)) {
             $response['job_preferred'] = true;
@@ -398,6 +393,40 @@ class StudentController extends Zend_Controller_Action
         $skills = $student->fetchSkillsIds();
         Zend_Registry::get('logger')->debug($skills);
     }
+    public function editkillsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $is_new_skill = $params['myarray']['new_skill'];
+        $skill_info = $params['myarray']['skill_info'];
+        $member_proficiency = $params['myarray']['member_proficiency'];
+        /*
+         * skill id sent by user
+         */
+        if (! empty($skill_info['skill_id'])) {
+            $skill_id = $skill_info['skill_id'];
+        }
+        /*
+         * if skill does not exist in databse add it, otherwise update member's proficiency
+         */
+        if ($is_new_skill == 'true') {
+            $skill = new Tnp_Model_Skill();
+            $skill_data = array('skill_name' => $skill_info['skill_name'], 
+            'skill_field' => $skill_info['skill_field']);
+            /*
+             * skill id generated for new skill and $skill id updated
+             */
+            $skill_id = $skill->saveInfo($skill_data);
+        }
+        $member_id = $this->getMember_id();
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($member_id);
+        $mem_skill_info = array('skill_id' => $skill_id, 
+        'proficiency' => $member_proficiency);
+        $student->saveSkillInfo($mem_skill_info);
+    }
     public function viewjobpreferredAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -480,8 +509,8 @@ class StudentController extends Zend_Controller_Action
             $response[$section_score_id]['section_percentile'] = $section_percentile;
         }
         $this->_helper->json($response);
-        //$this->view->assign('section_score', $response);
-        //Zend_Registry::get('logger')->debug($response);
+         //$this->view->assign('section_score', $response);
+    //Zend_Registry::get('logger')->debug($response);
     }
     public function viewcertificationAction ()
     {
@@ -632,10 +661,11 @@ class StudentController extends Zend_Controller_Action
          */
         if ($is_new_language == 'true') {
             $language = new Tnp_Model_Language();
+            $lan_data = array('language_name' => $language_info[language_name]);
             /*
              * language id generated for new language and $language id updated
              */
-            $language_id = $language->saveInfo($language_info);
+            $language_id = $language->saveInfo($lan_data);
         }
         $member_id = $this->getMember_id();
         $student = new Tnp_Model_Member_Student();
