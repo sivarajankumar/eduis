@@ -40,7 +40,8 @@ class Tnp_Model_Mapper_MemberLanguage
         $select = $adapter->select()->from($db_table->info('name'), 
         array('proficiency'));
         $proficiency = array();
-        $select->where('member_id = ?', $member_id);
+        $select->where('member_id = ?', $member_id)->where('language_id = ?', 
+        $language_id);
         $proficiency = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $proficiency;
     }

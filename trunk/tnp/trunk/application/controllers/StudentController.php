@@ -595,25 +595,42 @@ class StudentController extends Zend_Controller_Action
         $language_object = new Tnp_Model_Language();
         $language_ids = $language_object->fetchLanguages();
         $this->view->assign('languages', $language_ids);
-        Zend_Registry::get('logger')->debug($languages);
     }
     public function savelanguagesknownAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $new_languages = $params['myarray']['new_languages'];
-        $present_languages = $params['myarray']['present_languages'];
-        $langugae = new Tnp_Model_Language();
-        $student_language = new Tnp_Model_MemberInfo_Language();
-        foreach ($new_languages as $key => $new_language) {
-            $language_data = array($new_language['language_name']);
-            $language_id = $langugae->saveInfo($language_data);
-            $save_array = array('language_id' => $language_id, 
-            'proficiency' => $new_language['proficiency']);
-            $student_language->save($save_array);
+        $is_new_language = $params['myarray']['new_language'];
+        $language_info = $params['myarray']['language_info'];
+        $member_proficiency = $params['myarray']['member_proficiency'];
+        /*
+         * language id sent by user
+         */
+        if (! empty($language_info['language_id'])) {
+            $language_id = $language_info['language_id'];
         }
+        /*
+         * if language does not exist in databse add it, otherwise update member's proficiency
+         */
+        if ($is_new_language == 'true') {
+            $language = new Tnp_Model_Language();
+            /*
+             * language id generated for new language and $language id updated
+             */
+            $language_id = $language->saveInfo($language_info);
+        }
+        $member_id = $this->getMember_id();
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($member_id);
+        $proficiency = array();
+        $can_speak = (($member_proficiency['SPEAK'] == 'true') ? ($proficiency[] = 'SPEAK') : null);
+        $can_read = (($member_proficiency['READ'] == 'true') ? ($proficiency[] = 'READ') : null);
+        $can_write = (($member_proficiency['WRITE'] == 'true') ? ($proficiency[] = 'WRITE') : null);
+        $mem_lang_info = array('language_id' => $language_id, 
+        'proficiency' => implode(',', $proficiency));
+        $student->saveLanguageInfo($mem_lang_info);
     }
     public function testAction ()
     {

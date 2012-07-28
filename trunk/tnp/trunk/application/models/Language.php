@@ -126,8 +126,10 @@ class Tnp_Model_Language extends Tnp_Model_Generic
     }
     public function saveInfo ($data_array)
     {
+        Zend_Registry::get('logger')->debug($data_array);
         $this->initSave();
         $prepared_data = $this->prepareDataForSaveProcess($data_array);
+        Zend_Registry::get('logger')->debug($prepared_data);
         return $this->getMapper()->save($prepared_data);
     }
     public function updateInfo ($data_array)
