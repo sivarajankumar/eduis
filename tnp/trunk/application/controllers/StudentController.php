@@ -7,13 +7,20 @@
  */
 class StudentController extends Zend_Controller_Action
 {
-    protected $_member_id = 1;
+    protected $_member_id;
     /**
      * The default action - show the home page
      */
     public function init ()
     {
         /* Initialize action controller here */
+        if (Zend_Auth::getInstance()->hasIdentity()) {
+            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+            $this->department_id = $authInfo['department_id'];
+            $this->identity = $authInfo['identity'];
+            $this->setMember_id($authInfo['member_id']);
+             //$staff_id = $authInfo['member_id'];
+        }
     }
     /**
      * @todo Consider :if you dont want any other class to call this function
@@ -585,24 +592,9 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $student_lang = new Tnp_Model_MemberInfo_Language();
-        $student_lang->setMember_id($this->getMember_id());
-        $language_ids = $student_lang->fetchLanguagesKnown();
-        $language = new Tnp_Model_Language();
-        $languages = array();
-        foreach ($language_ids as $language_id) {
-            Zend_Registry::get('logger')->debug($language_id);
-            $language->setLanguage_id($language_id);
-            $language->fetchInfo();
-            $languages[$language_id]['name'] = $language->getLanguage_name();
-            $student_lang->setLanguage_id($language_id);
-            $student_lang->fetchInfo();
-            $languages[$language_id]['proficiency'] = $student_lang->getProficiency();
-        }
-        $all_languages = $language->fetchLanguages();
-        $this->view->assign('all_languages', $all_languages);
-        Zend_Registry::get('logger')->debug($all_languages);
-        $this->view->assign('languages', $languages);
+        $language_object = new Tnp_Model_Language();
+        $language_ids = $language_object->fetchLanguages();
+        $this->view->assign('languages', $language_ids);
         Zend_Registry::get('logger')->debug($languages);
     }
     public function savelanguagesknownAction ()
@@ -623,17 +615,39 @@ class StudentController extends Zend_Controller_Action
             $student_language->save($save_array);
         }
     }
-    public function savelanguageknownAction ()
+    public function testAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug($params);
+        $member_id = $this->getMember_id();
         $is_new_language = $params['myarray']['new_language'];
+        Zend_Registry::get('logger')->debug($is_new_language);
         $language_info = $params['myarray']['language_info'];
+        Zend_Registry::get('logger')->debug($language_info);
         $member_proficiency = $params['myarray']['member_proficiency'];
-                if (is_bool($is_new_language)) {
-            if ($is_new_language == true) {} else {}
+        Zend_Registry::get('logger')->debug($member_proficiency);
+        /*
+             * if language does not exist in databse add it, otherwise update member's proficiency
+             */
+        if ($is_new_language == 'true') {
+            $language = new Tnp_Model_Language();
+            $language_id = $language->saveInfo($language_info);
+        } else {
+            $student = new Tnp_Model_Member_Student();
+            $student->setMember_id($member_id);
+            $language_id = $language_info['language_id'];
+            $proficiency = array();
+            $can_speak = (($member_proficiency['SPEAK'] == 'true') ? ($proficiency[] = 'SPEAK') : null);
+            $can_read = (($member_proficiency['READ'] == 'true') ? ($proficiency[] = 'READ') : null);
+            $can_write = (($member_proficiency['WRITE'] == 'true') ? ($proficiency[] = 'WRITE') : null);
+            $proficiency = array($can_read, $can_write, $can_speak);
+            $mem_lang_info = array('language_id' => $language_id, 
+            'proficiency' => implode(',', $proficiency));
+            Zend_Registry::get('logger')->debug($mem_lang_info);
+            $student->saveLanguageInfo($language_info);
         }
     }
 }
