@@ -134,12 +134,27 @@ class StudentController extends Zend_Controller_Action
                 $student_experience[$student_experience_id]['organisation'] = $experience_model->getOrganisation();
             }
         }
-        $student_languages = $student_model->fetchLanguagesInfo();
+        /*$student_languages = $student_model->fetchLanguagesInfo();
         if (! empty($student_languages)) {
             $response['languages_known'] = true;
         } else {
             $response['languages_known'] = false;
+        }*/
+        
+        
+ 		$student_lang = new Tnp_Model_MemberInfo_Language();
+        $student_lang->setMember_id($this->getMember_id());
+        $stu_lang = $student_lang->fetchLanguagesInfo();
+        $lang = new Tnp_Model_Language();
+        $languages = $lang->fetchLanguages();
+        $newarray = array();
+        foreach ($stu_lang as $key => $proficiency) {
+            $newarray[$languages[$key]] = $proficiency;
         }
+        $response['language'] = $newarray;
+        
+        
+        
         $student_job_preferred = $student_model->fetchJobPreferred();
         if (! empty($student_job_preferred)) {
             $response['job_preferred'] = true;
@@ -438,8 +453,8 @@ class StudentController extends Zend_Controller_Action
     }
     public function viewsectionscoreAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $employability_test_id = $params['employability_test_id'];
@@ -464,8 +479,9 @@ class StudentController extends Zend_Controller_Action
             $response[$section_score_id]['section_marks'] = $section_marks;
             $response[$section_score_id]['section_percentile'] = $section_percentile;
         }
-        $this->view->assign('section_score', $response);
-        Zend_Registry::get('logger')->debug($response);
+        $this->_helper->json($response);
+        //$this->view->assign('section_score', $response);
+        //Zend_Registry::get('logger')->debug($response);
     }
     public function viewcertificationAction ()
     {
