@@ -111,12 +111,12 @@ function submit() {
       {
     	 var language_name = $('input[name="language_name"]').val();
       	 language_info['language_name'] = language_name;
+		 formData['new_language'] = true;
       }
       else
       {
           var language_id = $('#language_id').val();
           language_info['language_id'] = language_id;
-		  formData['new_language'] = true;
       }
       formData['language_info'] = language_info;
       
