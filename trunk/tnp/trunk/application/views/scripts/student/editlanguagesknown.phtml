@@ -110,12 +110,12 @@ function submit() {
       if($('#language_id').val() == -999)
       {
     	 var language_name = $('input[name="language_name"]').val();
-      	 language_info['name'] = language_name;
+      	 language_info['language_name'] = language_name;
       }
       else
       {
           var language_id = $('#language_id').val();
-          language_info['id'] = language_id;
+          language_info['language_id'] = language_id;
 		  formData['new_language'] = true;
       }
       formData['language_info'] = language_info;
