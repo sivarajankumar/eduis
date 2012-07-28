@@ -301,9 +301,8 @@ class StudentController extends Zend_Controller_Action
             $technical_field = new Tnp_Model_TechnicalField();
             $technical_field_id = $technical_field->saveInfo($technical_info);
             $training_info['technical_field_id'] = $technical_field_id;
-        }
-        else {
-        	$training_info['technical_field_id'] = $technical_field_id;
+        } else {
+            $training_info['technical_field_id'] = $technical_field_id;
         }
         if (! $training_id) {
             $training = new Tnp_Model_Training();
@@ -622,6 +621,19 @@ class StudentController extends Zend_Controller_Action
             $save_array = array('language_id' => $language_id, 
             'proficiency' => $new_language['proficiency']);
             $student_language->save($save_array);
+        }
+    }
+    public function savelanguageknownAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $is_new_language = $params['myarray']['new_language'];
+        $language_info = $params['myarray']['language_info'];
+        $member_proficiency = $params['myarray']['member_proficiency'];
+                if (is_bool($is_new_language)) {
+            if ($is_new_language == true) {} else {}
         }
     }
 }
