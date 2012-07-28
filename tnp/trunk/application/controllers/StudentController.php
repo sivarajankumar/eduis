@@ -384,6 +384,25 @@ class StudentController extends Zend_Controller_Action
         $student->setMember_id($this->getMember_id());
         $student->saveExperienceInfo($student_experience);
     }
+    public function getallskillsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $skill = new Tnp_Model_Skill();
+        $skill_ids = $skill->fetchSkills();
+        if (is_array($skill_ids)) {
+            $all_skills = array();
+            foreach ($skill_ids as $skill_id) {
+                $skill->setSkill_id($skill_id);
+                $skill->fetchInfo();
+                $skill_name = $skill->getSkill_name();
+                $skill_field = $skill->getSkill_field();
+                $all_skills[$skill_id] = array('skill_name' => $skill_name, 
+                'skill_field' => $skill_field);
+            }
+        }
+        $this->_helper->json($all_skills);
+    }
     public function viewskillsAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);

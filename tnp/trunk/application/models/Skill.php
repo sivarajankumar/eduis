@@ -146,6 +146,16 @@ class Tnp_Model_Skill extends Tnp_Model_Generic
             return $this->setOptions($info);
         }
     }
+    public function fetchSkillIds ()
+    {
+        $skill_ids = array();
+        $skill_ids = $this->getMapper()->fetchSkillids();
+        if (empty($skill_ids)) {
+            return false;
+        } else {
+            return $skill_ids;
+        }
+    }
     public function saveInfo ($data_array)
     {
         $this->initSave();
