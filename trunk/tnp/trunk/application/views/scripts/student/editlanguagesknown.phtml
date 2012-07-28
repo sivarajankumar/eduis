@@ -90,8 +90,9 @@ function submit() {
 
   function getValues() {
       var formData = {};
+      var language_info = {};
       var proficiency_data = {}; 
-      formData['add_new_language'] = false;
+      formData['new_language'] = false;
       
       $('input[name="proficiency"]').each(function(){
           
@@ -104,18 +105,20 @@ function submit() {
 			  proficiency_data[$(this).val()] = false;
        	  }
       });
+      formData['member_proficiency'] = proficiency_data;
 
       if($('#language_id').val() == -999)
       {
     	 var language_name = $('input[name="language_name"]').val();
-      	 formData[language_name] = proficiency_data;
-      	 formData['add_new_language'] = true;
+      	 language_info['name'] = language_name;
       }
       else
       {
           var language_id = $('#language_id').val();
-          formData[language_id] = proficiency_data;
+          language_info['id'] = language_id;
+		  formData['new_language'] = true;
       }
+      formData['language_info'] = language_info;
       
   return formData;
 }
