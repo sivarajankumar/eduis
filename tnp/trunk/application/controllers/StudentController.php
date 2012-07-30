@@ -447,6 +447,13 @@ class StudentController extends Zend_Controller_Action
         'proficiency' => $member_proficiency);
         $student->saveSkillInfo($mem_skill_info);
     }
+    public function editjobpreferredAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $job_areas = array('CORE', 'DEFENCE', 'GOVERNMENT', 'IT');
+        $this->view->assign('job_areas', $job_areas);
+    }
     public function savejobpreferredAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
