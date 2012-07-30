@@ -386,10 +386,10 @@ class StudentController extends Zend_Controller_Action
     }
     public function editskillsetAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
         $skill = new Tnp_Model_Skill();
-        $skill_ids = $skill->fetchSkills();
+        $skill_ids = $skill->fetchSkillIds();
         if (is_array($skill_ids)) {
             $all_skills = array();
             foreach ($skill_ids as $skill_id) {
