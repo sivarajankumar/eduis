@@ -152,6 +152,8 @@ class StudentController extends Zend_Controller_Action
         $student_job_preferred = $student_model->fetchJobPreferred();
         if (! empty($student_job_preferred)) {
             $response['job_preferred'] = true;
+            $job_preferred = $student_model->fetchJobPreferred();
+            $this->view->assign('job_preferred', $job_preferred);
         } else {
             $response['job_preferred'] = false;
         }
@@ -445,7 +447,7 @@ class StudentController extends Zend_Controller_Action
         'proficiency' => $member_proficiency);
         $student->saveSkillInfo($mem_skill_info);
     }
-    public function viewjobpreferredAction ()
+    public function editjobpreferredAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
