@@ -838,7 +838,9 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     {
         $member_id = $this->getMember_id(true);
         if (! empty($job_area_preferred)) {
-            $data_array = array($member_id, $job_area_preferred);
+            $data_array = array('member_id' => $member_id, 
+            'job_area' => $job_area_preferred);
+            Zend_Registry::get('logger')->debug($data_array);
             $job_preferred = new Tnp_Model_MemberInfo_JobPreferred();
             $job_preferred->initSave();
             $preparedData = $job_preferred->prepareDataForSaveProcess(
@@ -900,7 +902,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
         $language_id = $data_array['language_id'];
         Zend_Registry::get('logger')->debug('Language id = ' . $language_id);
         $info = $this->fetchLanguageProficiency($language_id);
-        Zend_Registry::get('logger')->debug('Info = '.$info);
+        Zend_Registry::get('logger')->debug('Info = ' . $info);
         if ($info == false) {
             $member_lang = new Tnp_Model_MemberInfo_Language();
             $member_lang->initSave();
