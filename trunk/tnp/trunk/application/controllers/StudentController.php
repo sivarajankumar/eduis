@@ -483,15 +483,17 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $cocurricular_info = array();
         $cocurricular_info = $params['myarray']['cocurricular'];
-        $achievements = $cocurricular_info['achievements'];
-        $activities = $cocurricular_info['activities'];
-        $hobbies = $cocurricular_info['hobbies'];
-        $member_cocurricular_info['achievements'] = $achievements;
-        $member_cocurricular_info['activities'] = $activities;
-        $member_cocurricular_info['hobbies'] = $hobbies;
-        $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
-        $student->saveCoCurricularInfo($member_cocurricular_info);
+        if (! empty($cocurricular_info)) {
+            $achievements = $cocurricular_info['achievements'];
+            $activities = $cocurricular_info['activities'];
+            $hobbies = $cocurricular_info['hobbies'];
+            $member_cocurricular_info['achievements'] = $achievements;
+            $member_cocurricular_info['activities'] = $activities;
+            $member_cocurricular_info['hobbies'] = $hobbies;
+            $student = new Tnp_Model_Member_Student();
+            $student->setMember_id($this->getMember_id());
+            $student->saveCoCurricularInfo($member_cocurricular_info);
+        }
     }
     public function viewtestinfoAction ()
     {
