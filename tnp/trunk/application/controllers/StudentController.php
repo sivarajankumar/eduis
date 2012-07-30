@@ -168,10 +168,16 @@ class StudentController extends Zend_Controller_Action
         } else {
             $response['co_curricular'] = false;
         }
-        $skills_array = array();
-        $student_skills = $student_model->fetchSkillsIds();
-        if (! empty($student_skills)) {
-            $response['skills'] = true;
+        $skill_ids = $student_model->fetchSkillsIds();
+        if (! empty($skill_ids)) {
+            $skill_info = array();
+            $skill_object = new Tnp_Model_Skill();
+            foreach ($skill_ids as $skill_id) {
+                $skill_object->setSkill_id($skill_id);
+                $skill_object->fetchInfo();
+                $skill_info[$skill_object->getSkill_name()] = $skill_object->getSkill_field();
+            }
+            $response['skills'] = $skill_info;
         } else {
             $response['skills'] = false;
         }
@@ -384,7 +390,12 @@ class StudentController extends Zend_Controller_Action
         $student->setMember_id($this->getMember_id());
         $student->saveExperienceInfo($student_experience);
     }
-    public function editskillsetAction ()
+    /**
+     * Gets All skills from database
+     * 
+     * @throws Exception
+     */
+    public function getallskillsAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
@@ -405,16 +416,31 @@ class StudentController extends Zend_Controller_Action
         }
         $this->view->assign('all_skills', $all_skills);
     }
+    /**
+     * Enables user to view his skills
+     * 
+     */
     public function viewskillsAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($this->getMember_id());
-        $skills = $student->fetchSkillsIds();
-        Zend_Registry::get('logger')->debug($skills);
+        $skill_info = array();
+        $skill_ids = $student->fetchSkillsIds();
+        $skill_object = new Tnp_Model_Skill();
+        foreach ($skill_ids as $skill_id) {
+            $skill_object->setSkill_id($skill_id);
+            $skill_object->fetchInfo();
+            $skill_info[$skill_object->getSkill_name()] = $skill_object->getSkill_field();
+        }
+        Zend_Registry::get('logger')->debug($skill_ids);
     }
-    public function editkillsAction ()
+    /**
+     * Enables the user add edit existing skills or add new skills to database
+     * 
+     */
+    public function editskillsAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
