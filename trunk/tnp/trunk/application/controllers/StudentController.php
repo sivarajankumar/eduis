@@ -447,15 +447,16 @@ class StudentController extends Zend_Controller_Action
         'proficiency' => $member_proficiency);
         $student->saveSkillInfo($mem_skill_info);
     }
-    public function editjobpreferredAction ()
+    public function savejobpreferredAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $job_preference = $params['job_preferred'];
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($this->getMember_id());
-        $job_preferred = $student->fetchJobPreferred();
-        $this->view->assign('job_preferred', $job_preferred);
-        Zend_Registry::get('logger')->debug($job_preferred);
+        $student->saveJobAreaPreferred($job_preference);
     }
     public function viewcocurricularAction ()
     {
