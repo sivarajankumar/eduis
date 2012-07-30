@@ -460,9 +460,10 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $job_preference = $params['job_preferred'];
+        $job_preference = $params['myarray']['job_area_name'];
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($this->getMember_id());
+        Zend_Registry::get('logger')->debug($job_preference);
         $student->saveJobAreaPreferred($job_preference);
     }
     public function viewcocurricularAction ()
