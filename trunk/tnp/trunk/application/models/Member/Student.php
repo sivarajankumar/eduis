@@ -837,15 +837,19 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     public function saveJobAreaPreferred ($job_area_preferred)
     {
         $member_id = $this->getMember_id(true);
-        if (! empty($job_area_preferred)) {
-            $data_array = array('member_id' => $member_id, 
-            'job_area' => $job_area_preferred);
-            Zend_Registry::get('logger')->debug($data_array);
-            $job_preferred = new Tnp_Model_MemberInfo_JobPreferred();
-            $job_preferred->initSave();
-            $preparedData = $job_preferred->prepareDataForSaveProcess(
-            $data_array);
-            return $job_preferred->getMapper()->save($preparedData);
+        $data_array = array('member_id' => $member_id, 
+        'job_area' => $job_area_preferred);
+        $job_preferred = $this->fetchJobPreferred();
+        if ($job_preferred == false) {
+            $job = new Tnp_Model_MemberInfo_JobPreferred();
+            $job->initSave();
+            $preparedData = $job->prepareDataForSaveProcess($data_array);
+            return $job->getMapper()->save($preparedData);
+        } else {
+            $job = new Tnp_Model_MemberInfo_JobPreferred();
+            $job->initSave();
+            $preparedData = $job->prepareDataForSaveProcess($data_array);
+            return $job->getMapper()->update($member_id, $preparedData);
         }
     }
     /**

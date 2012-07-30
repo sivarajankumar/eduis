@@ -151,9 +151,8 @@ class StudentController extends Zend_Controller_Action
         $response['language'] = $newarray;
         $student_job_preferred = $student_model->fetchJobPreferred();
         if (! empty($student_job_preferred)) {
-            $response['job_preferred'] = true;
             $job_preferred = $student_model->fetchJobPreferred();
-            $this->view->assign('job_preferred', $job_preferred);
+            $response['job_preferred'] = $job_preferred;
         } else {
             $response['job_preferred'] = false;
         }
