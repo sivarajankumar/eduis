@@ -418,9 +418,10 @@ class StudentController extends Zend_Controller_Action
     }
     /**
      * Enables user to view his skills
-     * 
+     * @deprecated coded inline inside profile action
      */
-    public function viewskillsAction ()
+    
+    /*public function viewskillsAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
@@ -435,7 +436,7 @@ class StudentController extends Zend_Controller_Action
             $skill_info[$skill_object->getSkill_name()] = $skill_object->getSkill_field();
         }
         Zend_Registry::get('logger')->debug($skill_ids);
-    }
+    }*/
     /**
      * Enables the user add edit existing skills or add new skills to database
      * 
