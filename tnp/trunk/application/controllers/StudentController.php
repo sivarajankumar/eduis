@@ -384,7 +384,7 @@ class StudentController extends Zend_Controller_Action
         $student->setMember_id($this->getMember_id());
         $student->saveExperienceInfo($student_experience);
     }
-    public function getallskillsAction ()
+    public function editskillsetAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
@@ -400,8 +400,10 @@ class StudentController extends Zend_Controller_Action
                 $all_skills[$skill_id] = array('skill_name' => $skill_name, 
                 'skill_field' => $skill_field);
             }
+        } else {
+            throw new Exception('Skills table empty', Zend_Log::WARN);
         }
-        $this->_helper->json($all_skills);
+        $this->view->assign('all_skills', $all_skills);
     }
     public function viewskillsAction ()
     {
