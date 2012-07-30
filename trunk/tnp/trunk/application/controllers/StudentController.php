@@ -454,6 +454,16 @@ class StudentController extends Zend_Controller_Action
         $job_areas = array('CORE', 'DEFENCE', 'GOVERNMENT', 'IT');
         $this->view->assign('job_areas', $job_areas);
     }
+    public function viewjobpreferredAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($this->getMember_id());
+        $job_preferred = $student->fetchJobPreferred();
+        $this->view->assign('job_preferred', $job_preferred);
+        Zend_Registry::get('logger')->debug($job_preferred);
+    }
     public function savejobpreferredAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
