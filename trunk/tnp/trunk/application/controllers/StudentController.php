@@ -19,7 +19,6 @@ class StudentController extends Zend_Controller_Action
             $this->department_id = $authInfo['department_id'];
             $this->identity = $authInfo['identity'];
             $this->setMember_id($authInfo['member_id']);
-             //$staff_id = $authInfo['member_id'];
         }
     }
     /**
