@@ -169,18 +169,20 @@ class StudentController extends Zend_Controller_Action
             $response['co_curricular'] = false;
         }
         $skill_ids = $student_model->fetchSkillsIds();
+        $skill_info = array();
         if (! empty($skill_ids)) {
-            $skill_info = array();
             $skill_object = new Tnp_Model_Skill();
             foreach ($skill_ids as $skill_id) {
                 $skill_object->setSkill_id($skill_id);
+                $prof = $student_model->fetchSkillInfo($skill_id);
+                if ($prof instanceof Tnp_Model_MemberInfo_Skills) {
+                    $proficiency = $prof->getProficiency();
+                }
                 $skill_object->fetchInfo();
-                $skill_info[$skill_object->getSkill_name()] = $skill_object->getSkill_field();
+                $skill_info[$skill_object->getSkill_name()] = $proficiency;
             }
-            $response['skills'] = $skill_info;
-        } else {
-            $response['skills'] = false;
         }
+        $response['skills'] = $skill_info;
         $response['employability_test'] = $student_emp_test;
         $response['certifications'] = $student_certifications;
         $response['training'] = $student_training;
