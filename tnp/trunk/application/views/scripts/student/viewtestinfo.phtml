@@ -1,38 +1,110 @@
 <?php 
 	$test_info = $this->test_info;
-	print_r($test_info);
 ?>
-<div class="ui-widget-content ui-corner-all"><center><H3>Employability Test</H3></center></div>
-<div id="test_details">
-	
-<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
-	<?php 
-       	foreach ($test_info as $key => $value) 
-    	{   			
-        	echo '<tr>';
-        		echo '<td><span id="heading">'.ucfirst(str_replace('_',' ',$key)).'</span>';
-        		echo '<span id="content">'.$value.'</span></td>';
-        	echo '</tr>';
-		}  
-	?>
-</table>
-</div>
-    
-<div id="edit_test" class="ui-widget-content ui-corner-all">
-	<h3><center><a href="/student/viewsectionscore?employability_test_id=<?php echo $_GET['employability_test_id']?>&test_name=<?php echo $test_info['test_name']?>&date_of_conduct=<?php echo $test_info['date_of_conduct']?>">View Sectional Score</a></center></h3>
-</div>
-<div id="goback" class="ui-widget-content ui-corner-all">
-	<h3><center><a href="/student/profile">Go Back</a></center></h3>
+<div class="ui-state-hover"><center><H3>Employability Test</H3></center></div>
+
+<div id="test_details">	
+	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+		<?php
+       		foreach ($test_info as $key => $value) 
+    		{   			
+        		echo '<tr>';
+        			echo '<td><span id="heading">'.ucfirst(str_replace('_',' ',$key)).'</span>';
+        			echo '<span id="content">'.$value.'</span></td>';
+        		echo '</tr>';
+			}
+		?>
+	</table>
 </div>
 
+<h3 id="section_score_box" class="ui-state-default" onclick="getSectionScore();"><span id="sign">+ </span>View Sectional Score</h3>
+
+<div id="section_score" style="background-color:#f2f2f2;">
+	<table style="width: 65%" id="section_details" cellspacing="10" cellpadding="10">
+	</table>
+</div>
+
+<!--<div id="goback" class="ui-widget-content ui-corner-all">
+	<h3><center><a href="/student/profile">Go Back</a></center></h3>
+</div>
+-->
+<br>
+<input type="button" class="ui-button" value="Go Back" onclick="window.location.replace('/student/profile');">
+
+<script type="text/javascript">
+function getSectionScore(){
+	var urlSectionScore = '<?php echo $this->url(array('controller' => 'student', 'action' => 'viewsectionscore'))?>';
+	$.ajax({
+		url : urlSectionScore,
+        dataType : 'json',
+        data : {
+			employability_test_id : '<?php echo $_GET['employability_test_id'];?>',
+			test_name : '<?php echo $_GET['test_name'];?>',
+			date_of_conduct : '<?php echo $_GET['date_of_conduct'];?>',
+        },
+		success : function(jStatus){
+			
+			$.each(jStatus,function (index,section_info){
+				$.each(section_info,function (index,value){
+					
+					$('table#section_details').append('<th>'+index.toUpperCase().replace('_',' ')+'</th>');
+				});
+				return false;
+			});
+
+			$.each(jStatus,function (index,section_info){
+				$('table#section_details').append("<tbody><tr>");
+				$.each(section_info,function (index,value){
+					$('table#section_details').append('<td><span id="content1">'+value.toUpperCase()+'</span></td>');
+				});
+				$('table#section_details').append("</tr></tbody>");
+			});
+
+			$('h3#section_score_box').attr('onclick','');
+			$('span#sign').html('- ');
+			$('h3#section_score_box').bind('click',function(event) {
+				if($('span#sign').html() == '- ')
+				{
+					$('#section_score').hide();
+					$('span#sign').html('+ ');
+				}
+				else
+				{
+					$('#section_score').show();
+					$('span#sign').html('- ');
+				}
+			});
+		},
+		error: function(response){
+			alert(response.responseText);
+			$('#errorBox').text(response.responseText).parent().show();
+       	    console.log(response);
+		}
+	});
+}
+</script>
+
 <style type="text/css">
-	table {
-      	border-color: #c20f2e;
-		width:97%;
+	#test_info{
+		border:1px solid black;
+		width: 30%;
+		float:left;
+		margin:0 50px 0 0;
 	}
 	tr{
 		border-bottom:1px dashed #999;
 	}
+	.ui-state-default{
+		padding:4px 4px 4px 8px;
+		background-image: none;
+		background-color: white;
+		margin-bottom:0px;
+	}
+	.ui-state-default:hover{
+		background-color: #f2f2f2;
+		cursor: pointer;
+	}
+	
 	#corner
 	{
 		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
@@ -45,14 +117,6 @@
 		color:red;
 	}
 	td span#content{
-		float:right;
-	}
-	#edit_test {
-		width:50%;
-		float:left
-	}
-	#goback {
-		width:45%;
 		float:right;
 	}
 </style>

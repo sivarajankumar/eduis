@@ -1,6 +1,5 @@
 <?php 
 	$training_info = $this->training_info;
-	//print_r($certification);
 ?>
 
 <div class="ui-widget-content ui-corner-all"><center><H3>Certification Details</H3></center></div>
@@ -18,9 +17,13 @@
 	</table>
 </div>
 
-<div id="edit_certification" class="ui-widget-content ui-corner-all">
+<!--<div id="edit_certification" class="ui-widget-content ui-corner-all">
 	<h3><center><a href="/student/profile">Go Back</a></center></h3>
-</div>
+</div>-->
+
+<br>
+<input type="button" class="ui-button" value="Go Back" onclick="window.location.replace('/student/profile');">
+
 <style type="text/css">
 	table {
       	border-color: #c20f2e;

@@ -3,24 +3,24 @@
 
     <fieldset>
 		<div class="ctrlHolder">
-			<label for="">Achievements</label>
-			<textarea rows="2" cols="20" name="achievements" id="achievements" data-default-value="e.g." class="textInput "></textarea>
+			<label for="achievements">Achievements</label>
+			<textarea rows="2" cols="20" name="achievements" id="achievements" data-default-value="e.g. 1st prize in Paper Presentation at college level." class="textInput "></textarea>
 			<p class="formHint">Name of the industry</p>
 		</div>
-		
+
 		<div class="ctrlHolder">
-			<label for="">Activities </label>
+			<label for="activities">Activities </label>
 			<textarea rows="2" cols="20"  name="activities" id="activities" data-default-value="e.g. Sports" class="textInput "></textarea>
 			<p class="formHint">Semester after which training is taken</p>
 		</div>
-			 
+
 		<div class="ctrlHolder">
-			<label for="">Hobbies</label>
+			<label for="hobbies">Hobbies</label>
 			<textarea rows="2" cols="20" name="hobbies" id="hobbies" data-default-value="e.g. Reading" class="textInput "></textarea>
 			<p class="formHint">Semester after which training is taken</p>
 		</div>
 	</fieldset>
-             
+
 	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
 
 	<div class="buttonHolder">
@@ -41,7 +41,7 @@ $(function(){
   		dateFormat: 'yy-mm-dd',
   		changeMonth: true,
 		changeYear: true,
-		yearRange: '-25:-15',
+		yearRange: '-5:+5',
 		onClose : function(dateText, inst) {
 			this.focus();
 		}
@@ -51,11 +51,13 @@ $(function(){
   
 
 function submit() {
+	var saveCocurricular = '<?php echo $this->url(array('controller' => 'student', 'action' => 'updatecocurricular'))?>';
     $.ajax({
-        url : urlBasicInfo,
-        data : getValues(),
+        url : saveCocurricular,
+        data : {myarray : getValues()},
         success: function(jStatus){
-            
+            alert("Your information has been saved successfully");
+            window.location.replace("/student/profile");
         },
             error: function(response) {
           	  $('#errorBox').text(response.responseText).parent().show();
@@ -64,14 +66,15 @@ function submit() {
             });
 }
 
-  function getValues() {
-      var formData = {}; 
-      $('form.uniForm :input')
-      		.not('button,#e_mail_confirm,:input[value^="e.g."]')
-      		.each(function(){ 
-      			formData[this.name] = this.value; 
-          });
-  
+function getValues() {
+	var formData = {};
+	var cocurricular = {};
+		$('form.uniForm :input')
+			.not('button,#e_mail_confirm,:input[value^="e.g."]')
+			.each(function(){ 
+				cocurricular[this.name] = this.value; 
+		});
+	formData['cocurricular'] =  cocurricular;
 	return formData;
 }
 </script>
@@ -100,13 +103,11 @@ function submit() {
 </style>
 <?php
 $this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
-    
+
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
-?>
-  
-  
+?>  

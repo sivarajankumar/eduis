@@ -7,12 +7,13 @@
 	$job_preferred = $this->response['job_preferred'];
 	$co_curricular = $this->response['co_curricular'];
 	$skills = $this->response['skills'];
+	$job_preferred = $this->response['job_preferred'];
 ?>
 <h1>Training and Placement</h1>
 <div id="main_div">
 	<div id="employablitytest_div" class="category_div">
 		<h2>Employability Test</h2>
-		<ul>
+		<ul class="ui-tabs">
 		<?php 
 			foreach ($emptestinfo as $test_id => $test_info)
 			{
@@ -23,13 +24,13 @@
 			}
 		?>
 		</ul>
-		<span class="add_new"><a href="/student/edittestinfo">Add New</a></span>
+		<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/edittestinfo');">
 		<br/>
 	</div>
 	
 	<div id="training_div" class="category_div">
 		<h2>Certifications</h2>
-		<ul>
+		<ul class="ui-tabs">
 		<?php 
 			foreach ($certifications as $certification_id => $certification_info)
 			{
@@ -39,12 +40,13 @@
 			}
 		?>
 		</ul>
-		<span class="add_new"><a href="/student/editcertification">Add New</a></span>
+		
+	<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/editcertification');">
 	</div>
 	
 	<div id="experience_div" class="category_div">
 		<h2>Experience</h2>
-		<ul>
+		<ul class="ui-tabs">
 		<?php
 			foreach ($experience as $experience_id => $experience_info)
 			{
@@ -54,12 +56,13 @@
 			}
 		?>
 		</ul>
-		<span class="add_new"><a href="/student/editexperience">Add New</a></span>
+		
+	<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/editexperience');">
 	</div>
 	
 	<div id="certification_div" class="category_div">
 		<h2>Trainings</h2>
-		<ul>
+		<ul class="ui-tabs">
 		<?php 
 			foreach ($training as $training_id => $training_info)
 			{
@@ -70,12 +73,13 @@
 			}
 		?>
 		</ul>
-		<span class="add_new"><a href="/student/edittraining">Add New</a></span>
+		
+	<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/edittraining');">
 	</div>
 	
 	<div id="language_div" class="category_div">
 		<h2>Languages Known</h2>
-		<ul>
+		<ul class="ui-tabs">
 		<?php 
 			foreach ($languages_known as $name => $proficiency)
 			{
@@ -86,21 +90,31 @@
 			}
 		?>
 		</ul>
-		<span class="add_new"><a href="/student/editlanguagesknown">Add New</a></span>
+		
+		<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/editlanguagesknown');">
 		<br/>
 	</div>
 	
-	<div id="miscallaneous_div" class="category_div">
-		<h2>Miscallaneous</h2>
-		<ul>
+	<div id="skills_div" class="category_div">
+		<h2>Skills </h2>
+		<ul class="ui-tabs">
+		<?php 
+			foreach ($skills as $name => $proficiency)
+			{
+				echo '<li><span class="black">'.$name.'</span>';
+				echo '<span class="red">  '.$proficiency.'</span></li>';
+			}
+		?>
+		</ul>
+		
+		<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/editskills');">
+		<br/>
+	</div>
+	
+	<div id="cocurricular_div" class="category_div">
+		<h2>Co Curricular</h2>
+		<ul class="ui-tabs">
 		<?php
-			if($job_preferred){
-				echo '<a href="/student/viewjobpreferred"><li><span class="black">Job Preferred </span><span class="red">View</span></li><a/>';
-			}
-			else {
-				echo '<a href="/student/editjobpreferred"><li><span class="black">Job Preferred </span><span class="red">Create</span></li><a/>';
-			}
-			
 			if($co_curricular){
 				echo '<a href="/student/viewcocurricular"><li><span class="black">Co-Curricular </span><span class="red">View</span></li><a/>';
 			}
@@ -110,17 +124,28 @@
 		?>
 		</ul>
 	</div>
+	
+	<div id="job_div" class="category_div">
+		<h2>Job Preferred</h2>
+		<ul class="ui-tabs">
+		<?php
+			echo '<li><span class="black">'.$job_preferred[0].'</span>';
+		?>
+		</ul>
+		<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/editjobpreferred');">
+		<br/>
+	</div>
 </div>
 
 <style>
 	#main_div{
 		background-color:white;
-		padding:10px 10px 10px 10px;
+		padding:8px;
 		border:1px solid #b4c1da;
 		margin:-5px 0 40px 0;
-		box-shadow:#e4e4e4 0px 0px 1px 1px;
-		border-radius:8px;
-		width:40%;
+		box-shadow:#e7e7e7 0px 0px 1px 1px;
+		border-radius:4px;
+		width:27%;
 	}
 	.category_div{
 		padding: 5px;
@@ -132,6 +157,7 @@
 		list-style-position: inside;
 		margin-top:-1px;
 		width:auto;
+		list-style-image: url("http://site.cdn.aceambala.com/images/activity/arrow_green.png");
 	}
 	a{
 		text-decoration: none;
@@ -159,16 +185,5 @@
 	.black{
 		color:black;
 		font-size:1.2em;
-	}
-	.add_new{
-		padding:3px;
-		border:0.1em solid #85bcb2;
-		background-color:#daf2ee;
-		margin:0 0 0 60px;
-	}
-	.add_new:hover{
-		padding:3px;
-		border:0.1em solid #3e8074;
-		background-color:#e7f8f5;
 	}
 </style>
