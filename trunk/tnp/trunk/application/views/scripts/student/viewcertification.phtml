@@ -2,7 +2,7 @@
 	$certification = $this->certification;
 ?>
 
-<div class="ui-widget-content ui-corner-all"><center><H3>Certification Details</H3></center></div>
+<div class="ui-state-hover"><center><H3>Certification Details</H3></center></div>
 <div id="certification_details">
 	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
 	<?php
@@ -17,9 +17,13 @@
 	</table>
 </div>
 
-<div id="edit_certification" class="ui-widget-content ui-corner-all">
+<!--<div id="edit_certification" class="ui-widget-content ui-corner-all">
 	<h3><center><a href="/student/profile">Go Back</a></center></h3>
-</div>
+</div>-->
+
+<br>
+<input type="button" class="ui-button" value="Go Back" onclick="window.location.replace('/student/profile');">
+
 <style type="text/css">
 	table {
       	border-color: #c20f2e;
