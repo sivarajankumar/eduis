@@ -17,7 +17,7 @@
 		<p class="formHint">Name of the skill known by Candidate</p>
 	</div>
 
-	<div class="ctrlHolder"><label for="skill_field"><em>*</em>Skill Field</label>
+	<!-- <div class="ctrlHolder"><label for="skill_field"><em>*</em>Skill Field</label>
 		<select name="skill_field" id="skill_field" class="selectInput required">
 			<option value="">Select the Skill Field</option>
 			<?php
@@ -36,7 +36,7 @@
 		    <option value="-999">Other</option>
 		</select>
 		<p class="formHint">Field of the skill known by Candidate</p>
-	</div>
+	</div> -->
 
 	<div class="ctrlHolder"><label for="profiency"><em>*</em>Proficiency</label>
 		<select id="profiency" name="profiency" class="selectInput required">
@@ -57,7 +57,7 @@
 </div>
 </form>
 
-<script>
+<script><!--
 
 	$(function(){
   		$('form.uniForm').uniform({
@@ -92,7 +92,7 @@
 		}
 	});
 
-	$("#skill_field").change(function(){
+	/*$("#skill_field").change(function(){
 		if($(this).val() == -999)
 		{
 			var html = '<div class="ctrlHolder" id="new_skill_field">'+
@@ -106,7 +106,7 @@
 		{
 			$('#new_skill_field').remove();
 		}
-	});
+	});*/
 
 	function submit() {
 		var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'saveskills'))?>';
@@ -114,7 +114,8 @@
         	url : urlSaveInfo,
         	data : {myarray : getValues()},
         	success: function(jStatus){
-            
+        		alert("Your information has been submitted successfully");
+                window.location.replace("/student/profile");
         	},
             error: function(response) {
           	  $('#errorBox').text(response.responseText).parent().show();
@@ -140,7 +141,7 @@
 			skill_info['skill_id'] = skill_id;
 		}
 
-		if($('#skill_field').val() == -999)
+		/*if($('#skill_field').val() == -999)
 		{
 			var skill_field_name = $('input[name="new_skill_field"]').val();
 			skill_info['skill_field'] = skill_field_name;
@@ -149,13 +150,13 @@
 		{
 			var skill_field_name = $('#skill_field').val();
 			skill_info['skill_field'] = skill_field_name;
-		}
+		}*/
 	    formData['skill_info'] = skill_info;
 	    
 		formData['member_proficiency'] = $('#profiency').val();
 		return formData;
 	}
-</script>
+--></script>
 <style>
 .uniForm {
 	background-color: white;
