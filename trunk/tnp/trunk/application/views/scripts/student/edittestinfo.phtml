@@ -49,7 +49,7 @@
 </form>
 
 <div id="select_sections">
-<h3>Please click on the sections whose score you want to fill..</h3>
+<h3>Please check the sections whose score you want to fill..</h3>
 	<?php
 		foreach ($test_sections as $key => $value)
 		{
@@ -152,7 +152,7 @@ function submit() {
         url : urlBasicInfo,
         data : {myarray:getValues()},
         success: function(jStatus){
-        	alert("Your information has been submitted successfully");
+        	alert("Your information has been submitted successfully.");
             window.location.replace("/student/profile");
         },
 		error: function(response) {
