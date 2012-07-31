@@ -863,12 +863,14 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
         $info = $this->fetchSkillInfo($skill_id);
         $data_array['member_id'] = $member_id;
         if ($info == false) {
+            Zend_Registry::get('logger')->debug('Saving Skills...');
             $member_skills = new Tnp_Model_MemberInfo_Skills();
             $member_skills->initSave();
             $preparedData = $member_skills->prepareDataForSaveProcess(
             $data_array);
             return $member_skills->getMapper()->save($preparedData);
         } else {
+            Zend_Registry::get('logger')->debug('Updating Skills...');
             $member_skills = new Tnp_Model_MemberInfo_Skills();
             $member_skills->initSave();
             $prepared_data = $member_skills->prepareDataForSaveProcess(

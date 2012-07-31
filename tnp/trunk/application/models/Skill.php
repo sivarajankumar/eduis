@@ -3,7 +3,6 @@ class Tnp_Model_Skill extends Tnp_Model_Generic
 {
     protected $_skill_id;
     protected $_skill_name;
-    protected $_skill_field;
     protected $_mapper;
     /**
      * @return the $_skill_id
@@ -33,40 +32,13 @@ class Tnp_Model_Skill extends Tnp_Model_Generic
             return $skill_name;
         }
     }
-    /**
-     * @return the $_skill_field
-     */
-    public function getSkill_field ($throw_exception = null)
-    {
-        $skill_field = $this->_skill_field;
-        if (empty($skill_field) and $throw_exception == true) {
-            $message = '_skill_field is not set';
-            $code = Zend_Log::ERR;
-            throw new Exception($message, $code);
-        } else {
-            return $skill_field;
-        }
-    }
-    /**
-     * @param field_type $_skill_id
-     */
     public function setSkill_id ($_skill_id)
     {
         $this->_skill_id = $_skill_id;
     }
-    /**
-     * @param field_type $_skill_name
-     */
     public function setSkill_name ($_skill_name)
     {
         $this->_skill_name = $_skill_name;
-    }
-    /**
-     * @param field_type $_skill_field
-     */
-    public function setSkill_field ($_skill_field)
-    {
-        $this->_skill_field = $_skill_field;
     }
     /**
      * Sets Mapper

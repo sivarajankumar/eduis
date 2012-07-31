@@ -46,7 +46,7 @@ class Tnp_Model_Mapper_MemberSkills
         $select = $adapter->select()
             ->from($student_skills_table, $required_cols)
             ->where('member_id = ?', $member_id)
-            ->where('skill_id = ?', $member_id);
+            ->where('skill_id = ?', $skill_id);
         $skill_info = array();
         $skill_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $skill_info[$member_id];
