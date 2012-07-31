@@ -42,7 +42,7 @@ class Tnp_Model_Mapper_Skill
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $skills_table = $db_table->info('name');
-        $required_cols = array('skill_id', 'skill_name', 'skill_field');
+        $required_cols = array('skill_id', 'skill_name');
         $select = $adapter->select()
             ->from($skills_table, $required_cols)
             ->where('skill_id = ?', $skill_id);
@@ -50,7 +50,7 @@ class Tnp_Model_Mapper_Skill
         $skill_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $skill_info[$skill_id];
     }
-    public function fetchSkillids ($skill_name = null, $skill_field = null)
+    public function fetchSkillids ($skill_name = null)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
@@ -59,9 +59,6 @@ class Tnp_Model_Mapper_Skill
         $select = $adapter->select()->from($skills_table, $required_cols);
         if (! empty($skill_name)) {
             $select->where('skill_name = ?', $skill_name);
-        }
-        if (! empty($skill_field)) {
-            $select->where('skill_field = ?', $skill_field);
         }
         $skill_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $skill_ids;

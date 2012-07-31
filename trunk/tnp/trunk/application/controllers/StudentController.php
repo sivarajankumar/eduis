@@ -406,9 +406,7 @@ class StudentController extends Zend_Controller_Action
                 $skill->setSkill_id($skill_id);
                 $skill->fetchInfo();
                 $skill_name = $skill->getSkill_name();
-                $skill_field = $skill->getSkill_field();
-                $all_skills[$skill_id] = array('skill_name' => $skill_name, 
-                'skill_field' => $skill_field);
+                $all_skills[$skill_id] = array('skill_name' => $skill_name);
             }
         } else {
             throw new Exception('Skills table empty', Zend_Log::WARN);
@@ -435,8 +433,7 @@ class StudentController extends Zend_Controller_Action
          */
         if ($is_new_skill == 'true') {
             $skill = new Tnp_Model_Skill();
-            $skill_data = array('skill_name' => $skill_info['skill_name'], 
-            'skill_field' => $skill_info['skill_field']);
+            $skill_data = array('skill_name' => $skill_info['skill_name']);
             $skill_id = $skill->saveInfo($skill_data);
         }
         $member_id = $this->getMember_id();
