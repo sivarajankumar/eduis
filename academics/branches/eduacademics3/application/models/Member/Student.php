@@ -735,7 +735,8 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             $object->initSave();
             $prepared_data = $object->prepareDataForSaveProcess($data);
             $data['member_id'] = null;
-            return $object->getMapper()->update($prepared_data, $member_id);
+            return $object->getMapper()->update($prepared_data, $member_id, 
+            $qualification_id);
         }
     }
     protected function saveQualification ($qualification_id)

@@ -246,7 +246,7 @@ class Acad_Model_Qualification_Diploma extends Acad_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Acad_Model_Mapper_Qualification_Mtech
+     * @return Acad_Model_Mapper_Qualification_Diploma
      */
     public function getMapper ()
     {
