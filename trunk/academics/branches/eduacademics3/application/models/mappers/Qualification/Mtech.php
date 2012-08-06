@@ -62,4 +62,11 @@ class Acad_Model_Mapper_Qualification_Mtech
             throw $exception;
         }
     }
+    public function update ($prepared_data, $member_id, $qualification_id)
+    {
+        $dbtable = $this->getDbTable();
+        $where1 = 'member_id = ' . $member_id;
+        $where2 = 'qualification_id = ' . $qualification_id;
+        return $dbtable->update($prepared_data, array($where1, $where2));
+    }
 }

@@ -44,9 +44,9 @@ class Acad_Model_Mapper_Qualification_Diploma
         $adapter = $db_table->getAdapter();
         $diploma_table = $db_table->info('name');
         $required_cols = array('member_id', 'qualification_id', 'discipline_id', 
-        'board_roll_no', 'marks_obtained', 'total_marks', 
-        'percentage', 'passing_year', 'remarks', 'university', 'institution', 
-        'migration_date', 'city_name', 'state_name');
+        'board_roll_no', 'marks_obtained', 'total_marks', 'percentage', 
+        'passing_year', 'remarks', 'university', 'institution', 'migration_date', 
+        'city_name', 'state_name');
         $select = $adapter->select()
             ->from($diploma_table, $required_cols)
             ->where('member_id = ?', $member_id);
@@ -62,5 +62,12 @@ class Acad_Model_Mapper_Qualification_Diploma
         } catch (Exception $exception) {
             throw $exception;
         }
+    }
+    public function update ($prepared_data, $member_id, $qualification_id)
+    {
+        $dbtable = $this->getDbTable();
+        $where1 = 'member_id = ' . $member_id;
+        $where2 = 'qualification_id = ' . $qualification_id;
+        return $dbtable->update($prepared_data, array($where1, $where2));
     }
 }
