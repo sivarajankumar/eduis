@@ -93,7 +93,8 @@ class StudentController extends Zend_Controller_Action
             $btech_data['total_marks'] = $qualification_model->getTotal_marks();
             $btech_data['discipline_id'] = $qualification_model->getDiscipline_id();
             $btech_data['institution'] = $qualification_model->getDiscipline_id();
-           // $btech_data['unv_regn_no'] = $qualification_model->getUniversityRegisrtationNo();
+            $btech_data['roll_no'] = $qualification_model->getRoll_no();
+            // $btech_data['unv_regn_no'] = $qualification_model->getUniversityRegisrtationNo();
             ;
         }
         return $btech_data;
@@ -241,7 +242,6 @@ class StudentController extends Zend_Controller_Action
     }
     private function fetchsubjectDmc ($dmc_info_id, $subject_ids)
     {
-        
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         $dmc_data = array();
@@ -302,17 +302,14 @@ class StudentController extends Zend_Controller_Action
                 $subject_data = self::fetchStudentSubjects($class_id);
                 $class_dmc_info_id_array = $student_model->fetchDmcInfoIds(
                 $class_id, null, null, null, true);
-                if(!empty($class_dmc_info_id_array))
-                {
-                $dmc_info_id_array = array_keys($class_dmc_info_id_array);
-                $dmc_info_id = $dmc_info_id_array[0];
-                Zend_Registry::get('logger')->debug($class_dmc_info_id_array);
-               
-                      
+                if (! empty($class_dmc_info_id_array)) {
+                    $dmc_info_id_array = array_keys($class_dmc_info_id_array);
+                    $dmc_info_id = $dmc_info_id_array[0];
+                    Zend_Registry::get('logger')->debug(
+                    $class_dmc_info_id_array);
                     $dmc_info_data = self::fetchDmcInfo($dmc_info_id);
                     $dmc_data = self::fetchsubjectDmc($dmc_info_id, 
                     $subject_ids);
-                
                 }
                 break;
             case 'single':
@@ -332,18 +329,17 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
-          Zend_Registry::get('logger')->debug($this->getMember_id());
+        Zend_Registry::get('logger')->debug($this->getMember_id());
         $critcal_info = $student_model->fetchCriticalInfo();
         Zend_Registry::get('logger')->debug($critcal_info);
         if ($critcal_info == false) {
-              
             $PROTOCOL = 'http://';
             $URL_STU_CRITICAL_INFO = $PROTOCOL . CORE_SERVER .
              '/student/fetchcriticalinfo';
             $client = new Zend_Http_Client($URL_STU_CRITICAL_INFO);
             $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
             $response = $client->request();
-              Zend_Registry::get('logger')->debug($response);
+            Zend_Registry::get('logger')->debug($response);
             if ($response->isError()) {
                 $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
                  $response->getMessage();
@@ -357,7 +353,7 @@ class StudentController extends Zend_Controller_Action
                 throw new Exception('$msg');
             }
         }
-       // $this->_redirect('student/profile');
+         // $this->_redirect('student/profile');
     }
     /**
      * @todo check status of profile in auth that it is filled or not
@@ -619,7 +615,6 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-       
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
@@ -749,7 +744,6 @@ class StudentController extends Zend_Controller_Action
         $success = true;
         switch ($format) {
             case 'html':
-                
                 if (! empty($success)) {
                     $this->view->assign('is_successfull', $success);
                 }
@@ -828,7 +822,6 @@ class StudentController extends Zend_Controller_Action
         $success = true;
         switch ($format) {
             case 'html':
-             
                 if (! empty($success)) {
                     $this->view->assign('is_successfull', $success);
                 }
@@ -857,6 +850,7 @@ class StudentController extends Zend_Controller_Action
             $request = $this->getRequest();
             $params = array_diff($request->getParams(), 
             $request->getUserParams());
+            Zend_Registry::get('logger')->debug($params);
             $format = $this->_getParam('format', 'html');
             $qualification_name = $params['myarray']['qualification_name'];
             $qualification_model = new Acad_Model_Qualification();
@@ -867,6 +861,7 @@ class StudentController extends Zend_Controller_Action
             Zend_Registry::get('logger')->debug($save_data);
             $student_model = new Acad_Model_Member_Student();
             $student_model->setMember_id($this->getMember_id());
+            Zend_Registry::get('logger')->debug($save_data);
             $student_model->saveQualificationInfo($qualification_id, $save_data);
             $success = true;
             switch ($format) {
@@ -1202,7 +1197,7 @@ class StudentController extends Zend_Controller_Action
     }
     public function editaieeeinfoAction ()
     {
-       $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
@@ -1412,27 +1407,24 @@ class StudentController extends Zend_Controller_Action
         $format = $this->_getParam('format', 'html');
         $dmc_info = $params['myarray']['dmc_data'];
         $dmc_data_array = $params['myarray']['dmc_info_data'];
-         Zend_Registry::get('logger')->debug($dmc_info);
+        Zend_Registry::get('logger')->debug($dmc_info);
         $dmc_id = $dmc_info['dmc_id'];
         $class_id = $dmc_info['class_id'];
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         $dmc_info_id = $student_model->saveDmcInfo($dmc_info);
-         Zend_Registry::get('logger')->debug($dmc_info_id);
+        Zend_Registry::get('logger')->debug($dmc_info_id);
         $dmc_data_value = array_values($dmc_data_array);
         $subject_ids = array_keys($dmc_data_array);
-       
         $student_subject_model = new Acad_Model_StudentSubject();
         $student_subject_model->setMember_id($this->getMember_id());
         $student_subject_model->setClass_id($class_id);
         $student_subject_id = array();
         foreach ($dmc_data_array as $subject_id => $data_array) {
             $student_subject_model->setSubject_id($subject_id);
-            
             $student_subject_id = $student_subject_model->fetchStudentSubjectId();
             $data_array['student_subject_id'] = $student_subject_id['student_subject_id'];
             $data_array['dmc_info_id'] = $dmc_info_id;
-            
             $dmc_data_array[$subject_id] = $data_array;
         }
         Zend_Registry::get('logger')->debug($dmc_data_array);
