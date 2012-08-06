@@ -1,0 +1,159 @@
+<h2>Academic Information:<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
+<form id="mtech_form" class="uniForm" action="javascript:submit_btech_info()">
+<fieldset id="mtech">
+<h3>Mtech</h3>
+			
+	<div class="ctrlHolder">
+		<label for="discipline_id"><em>*</em>Discipline</label>
+		<select id="discipline_id" name="discipline_id" class="selectInput required">
+			<option value="CSE">Computer Science</option>
+			<option value="ECE">Electronics And Communication</option>
+			<option value="MECH">Mechanical</option>
+			<option value="BT">Biotechnology</option>
+		</select>
+		<p class="formHint">Select the discipline of study</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="unv_regn_no"><em>*</em> University Registration No.</label>
+		<input name="unv_regn_no" id="unv_regn_no" value="" data-default-value="e.g. 2310654" size="35" maxlength="20" type="text" class="textInput validateAlphaNum required"/>
+		<p class="formHint"> University registration number of Candidate </p>
+	</div>
+			
+	<div class="ctrlHolder">
+		<label for="board_roll_no"><em>*</em> Roll no.</label>
+		<input name="board_roll_no" id="board_roll_no" value="" data-default-value="e.g. 2310654" size="35" maxlength="20" type="text" class="textInput required"/>
+		<p class="formHint"> Mtech roll number of Candidate </p>
+	</div>
+				
+	<div class="ctrlHolder">
+		<label for="marks_obtained"><em>*</em>Marks Obtained</label>
+		<input name="marks_obtained" id="marks_obtained" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Marks Obtained by Candidate</p>
+	</div>
+			 	
+	<div class="ctrlHolder">
+		<label for="total_marks"><em>*</em>Total Marks</label>
+		<input name="total_marks" id="total_marks" value="" data-default-value="e.g. 500" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Total Marks</p>
+	</div>
+				
+	<div class="ctrlHolder">
+		<label for="percentage"><em>*</em>Percentage</label>
+		<input name="percentage" id="percentage" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
+		<p class="formHint">Percentage obtained by Candidate</p>
+	</div>
+				
+	<div class="ctrlHolder">
+		<label for="passing_year"><em>*</em>Year of Passing</label>
+		<input name="passing_year" id="passing_year" value="" data-default-value="e.g. 2007" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Year in which Candidate passed the Mtech</p>
+	</div>
+		        
+	<div class="ctrlHolder">
+		<label for="institution"><em>*</em>Institution</label>
+		<input name="institution" id="institution" value="" data-default-value="e.g. Govt. Polytechnic" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">Institution in Mtech</p>
+	</div>
+		        
+	<div class="ctrlHolder">
+		<label for="university"><em>*</em>University</label>
+		<input name="university" id="university" value="" data-default-value="e.g. Govt. Polytechnic" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">University in Mtech</p>
+	</div>
+		        			
+	<div class="ctrlHolder">
+		<label for="city_name"><em>*</em>City</label>
+		<input name="city_name" id="city_name" value="" data-default-value="e.g. Ambala" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">City of Institution</p>
+	</div>
+          
+	<div class="ctrlHolder">
+		<label for="state_name"><em>*</em>State</label>
+		<input name="state_name" id="state_name" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">State of Institution</p>
+	</div>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</fieldset>
+</form>
+<script type="text/javascript">
+<?php
+    if(isset($this->qualification_data)){
+        foreach ($this->qualification_data as $key => $value){
+            $divname = $key;
+            echo '$("#'.$key.'").val("'.$value.'");';
+        }
+    }
+?>
+	$(function(){
+    	$('form.uniForm').uniform({
+			prevent_submit : true
+		});
+	});
+
+    function submit_btech_info(){
+    	var data = {};
+        var urlSaveMtechInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savemtechinfo'))?>";
+    	var qualificationData = {};
+    	$('fieldset#btech :input')
+    	.not('button,:input[value^="e.g."]')
+    	.each(function(){ 
+    		qualificationData[this.name] = this.value;
+    	});
+    	data['qualification_name'] = 'MTECH';
+    	data['qualification_data'] = qualificationData;
+    	$.ajax({
+    		url : urlSaveMtechInfo,
+    		data : {myarray:data},
+    		success: function(jStatus){
+        		if(jStatus){
+    				alert('Your information has been sucessfully submitted...');
+					window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
+        		}
+            },
+            error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+    	});
+    }
+        	
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:57%;
+		font-size:17px;
+		font-weight:100;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
