@@ -84,15 +84,44 @@ class BatchController extends Zend_Controller_Action
             return $departments;
         }
     }
+    private function getProgrammeInfo ($programme_id)
+    {
+        $programme = new Core_Model_Programme();
+        $info = $programme->fetchInfo();
+        if ($info instanceof Core_Model_Programme) {
+            $prog_info['programme_name'] = $info->getProgramme_name();
+            $prog_info['total_semesters'] = $info->getTotal_semesters();
+            $prog_info['duration'] = $info->getDuration();
+            return $prog_info;
+        } else {
+            return false;
+        }
+    }
+    private function getProgrammes ()
+    {
+        $programme = new Core_Model_Programme();
+        $programmes = $programme->fetchProgrammes();
+        if (empty($programmes)) {
+            return false;
+        } else {
+            return $programmes;
+        }
+    }
     public function addbatchAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $departments = $this->getDepartments();
+        $programmes = $this->getProgrammes();
         if (empty($departments)) {
             $this->view->assign('departments', false);
         } else {
             $this->view->assign('departments', $departments);
+        }
+        if (empty($programmes)) {
+            $this->view->assign('programmes', false);
+        } else {
+            $this->view->assign('programmes', $programmes);
         }
     }
     public function savebatchAction ()
