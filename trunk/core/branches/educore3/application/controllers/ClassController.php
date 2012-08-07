@@ -110,7 +110,7 @@ class ClassController extends Zend_Controller_Action
             return $programmes;
         }
     }
-    public function addClassAction ()
+    public function addclassAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
@@ -127,7 +127,7 @@ class ClassController extends Zend_Controller_Action
             $this->view->assign('programmes', $programmes);
         }
     }
-    public function saveClassAction ()
+    public function saveclassAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
