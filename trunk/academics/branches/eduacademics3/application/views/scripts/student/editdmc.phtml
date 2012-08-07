@@ -2,8 +2,8 @@
 <h3>DMC Details</h3>
 <fieldset id="dmc_info">
 
-<h5>Please fill this form and click on next to fill the subject wise details of DMC.</h5>
-	
+	<h5>Please fill this form and click on next to fill the subject wise details of DMC.</h5>
+
 	<div class="ctrlHolder">
 		<label for="dmc_id"><em>*</em>Serial Number</label>
 		<input name="dmc_id" id="dmc_id" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateAlphaNum"/>
@@ -13,7 +13,27 @@
 	<div class="ctrlHolder">
 		<label for="dispatch_date"><em>*</em>Date of Dispatch</label>
 		<input name="dispatch_date" id="dispatch_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
-		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of Dispatch</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="custody_date"><em>*</em>Date of Custody</label>
+		<input name="custody_date" id="custody_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of Custody</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="receiving_date"><em>*</em>Date of Recieving</label>
+		<input name="receiving_date" id="receiving_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of Receiving</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="examination"><em>*</em>Examination</label>
+		<select id="examination" name="examination" class="selectInput required">
+			<option value="unv_exam">University Exam</option>
+		</select>
+		<p class="formHint">Select the type of result</p>
 	</div>
 	
 	<div class="ctrlHolder">
@@ -27,6 +47,24 @@
 			<option value="6">Re-appear Fail</option>
 		</select>
 		<p class="formHint">Select the type of result</p>
+	</div>
+    
+    <div class="ctrlHolder">
+		<label for="is_considered"><em>*</em>Is DMC Considered</label>
+		<input name="is_considered" id="is_considered" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		<p class="formHint">Click if this dmc is considered</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="is_granted"><em>*</em>Is DMC Granted</label>
+		<input name="is_granted" id="is_granted" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		<p class="formHint">Click if this dmc is granted</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="is_copied"><em>*</em>Is DMC Copied</label>
+		<input name="is_copied" id="is_copied" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		<p class="formHint">Click if this dmc is copied</p>
 	</div>
     				
 	<div class="ctrlHolder">
@@ -85,15 +123,6 @@
 		<p class="formHint">External Marks of the subject</p>
 	</div>
 	
-	<!-- <div class="ctrlHolder">
-		<p class="label">Pass</p>
-		<ul class="blockLabels alternate">
-           	<li><label for="yes"><input name="yes" type="radio" value="1"  title="Yes">Yes</label></li>
-           	<li><label for="no"><input  name="no" type="radio" value="0" title="No">No</label></li>
-		</ul>
-		<p class="formHint">Pass in Subject or not</p>
-	</div> -->
-	
 	<div class="ctrlHolder">
 		<label for=""><em>*</em>Percentage</label>
 		<input name="percentage" id="percentage" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
@@ -147,7 +176,27 @@
 		dateFormat: 'yy-mm-dd',
 		changeMonth: true,
 		changeYear: true,
-		yearRange: '-25:-15',
+		yearRange: '5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+			}
+	});
+
+	$("#custody_date").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+			}
+	});
+
+	$("#receiving_date").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '5:+5',
 		onClose : function(dateText, inst) {
 			this.focus();
 			}
@@ -155,12 +204,28 @@
 
     function get_dmc_info(){
     	dmc_data['class_id'] = <?php echo $_GET['class_id'];?>;
+    	dmc_data['is_considered'] = false;
+    	dmc_data['is_granted'] = false;
+    	dmc_data['is_copied'] = false;
     	$('fieldset#dmc_info :input')
     	.not('button,:input[value^="e.g."]')
+    	.not(':input[type="checkbox"]')
     	.each(function(){ 
     		dmc_data[this.name] = this.value;
     	});
     	show_subject_div();
+    	if($('#is_considered : checked'))
+    	{
+    		dmc_data['is_considered'] = true;
+    	}
+    	if($('#is_granted : checked'))
+    	{
+    		dmc_data['is_considered'] = true;
+    	}
+    	if($('#is_copied : checked'))
+    	{
+    		dmc_data['is_considered'] = true;
+    	}
     }
 
     function submit_dmc_info(){
