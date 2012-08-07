@@ -82,6 +82,15 @@ class Core_Model_Mapper_Batch
         $batch_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $batch_ids;
     }
+    public function batchExistCheck ($batch_id)
+    {
+        $batches = $this->getDbTable()->find($batch_id);
+        if (0 == count($batches)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();

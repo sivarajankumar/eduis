@@ -193,22 +193,6 @@ class StudentController extends Zend_Controller_Action
         $student_model->setMember_id($member_id);
         $student_model->saveRegistrationInfo($registration_array);
     }
-    public function testAction ()
-    {
-        $request = $this->getRequest();
-        ////
-        /*
-         * use this where request will be recieved
-         */
-        //$member_id_to_check = $request->getParam('member_id');
-        ////
-        $member_id = $this->getMember_id();
-        $client = new Zend_Http_Client();
-        $client->setMethod(Zend_Http_Client::POST);
-        $client->setUri('http://' . CORE_SERVER . '/getcriticalinfo');
-        $client->setParameterPost(array('member_id' => $member_id));
-        $response = $client->request();
-    }
     public function memberidcheckAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
