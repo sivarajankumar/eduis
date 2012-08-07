@@ -45,7 +45,7 @@ class Acad_Model_Mapper_Qualification_Mtech
         $mtech_table = $db_table->info('name');
         $required_cols = array('member_id', 'qualification_id', 'discipline_id', 
         'marks_obtained', 'total_marks', 'percentage', 'passing_year', 
-        'istitution', 'university', 'city_name', 'state_name');
+        'institution', 'university', 'city_name', 'state_name','roll_no');
         $select = $adapter->select()
             ->from($mtech_table, $required_cols)
             ->where('member_id = ?', $member_id);

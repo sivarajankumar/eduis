@@ -2,16 +2,18 @@
 class Acad_Model_Qualification_Mtech extends Acad_Model_Generic
 {
     protected $_member_id;
+    protected $_roll_no;
     protected $_qualification_id;
     protected $_discipline_id;
     protected $_marks_obtained;
     protected $_total_marks;
     protected $_percentage;
     protected $_passing_year;
-    protected $_istitution;
+    protected $_institution;
     protected $_university;
     protected $_city_name;
     protected $_state_name;
+    protected $_mapper;
     /**
      * @return the $_member_id
      */
@@ -25,6 +27,13 @@ class Acad_Model_Qualification_Mtech extends Acad_Model_Generic
         } else {
             return $member_id;
         }
+    }
+    /**
+     * @return the $_roll_no
+     */
+    public function getRoll_no ()
+    {
+        return $this->_roll_no;
     }
     /**
      * @return the $_qualification_id
@@ -83,11 +92,11 @@ class Acad_Model_Qualification_Mtech extends Acad_Model_Generic
         return $this->_passing_year;
     }
     /**
-     * @return the $_istitution
+     * @return the $_institution
      */
-    public function getIstitution ()
+    public function getInstitution ()
     {
-        return $this->_istitution;
+        return $this->_institution;
     }
     /**
      * @return the $_university
@@ -116,6 +125,13 @@ class Acad_Model_Qualification_Mtech extends Acad_Model_Generic
     public function setMember_id ($_member_id)
     {
         $this->_member_id = $_member_id;
+    }
+    /**
+     * @param field_type $_roll_no
+     */
+    public function setRoll_no ($_roll_no)
+    {
+        $this->_roll_no = $_roll_no;
     }
     /**
      * @param field_type $_qualification_id
@@ -160,11 +176,11 @@ class Acad_Model_Qualification_Mtech extends Acad_Model_Generic
         $this->_passing_year = $_passing_year;
     }
     /**
-     * @param field_type $_istitution
+     * @param field_type $_institution
      */
-    public function setIstitution ($_istitution)
+    public function setInstitution ($_institution)
     {
-        $this->_istitution = $_istitution;
+        $this->_institution = $_institution;
     }
     /**
      * @param field_type $_university

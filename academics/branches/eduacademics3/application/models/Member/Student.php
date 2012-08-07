@@ -372,6 +372,16 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         return $this->getMapper()->fetchCriticalInfo($member_id);
     }
     /**
+     * Checks if member is registered in the core,
+     * operating conditions : member_id must be set in the object
+     * @return true if member_id is registered, false otherwise
+     */
+    public function memberIdCheck ()
+    {
+        $member_id = $this->getMember_id(true);
+        return $this->getMapper()->memberIdCheck($member_id);
+    }
+    /**
      * Fetches the Active class_ids of a Student
      * Member_id must be set before calling this function 
      * @return false|array an array containing all class ids in which member is active
