@@ -1,0 +1,155 @@
+<?php
+    $department = $this->departments;
+    $programme = $this->programmes;
+?>
+<form id="batch" class="uniForm" action="javascript:submit()">
+<h3>Add New Batch</h3>
+<fieldset id="batch_info">
+	<h5>Please fill this form and click on next to add a new batch.</h5>
+	<div class="ctrlHolder">
+		<label for="department_id"><em>*</em>Department</label>
+		<select id="department_id" name="department_id" class="required">
+		<option value="">Select the programme</option>
+		<?php 
+		    foreach ($department as $key => $value)
+		    {
+                echo '<option value="'.$key.'">'.$value.'</option>';
+		    }
+		?>
+		</select>
+		<p class="formHint">Select Department</p>
+	</div>
+					
+	<div class="ctrlHolder">
+		<label for="programme_id"><em>*</em>Programme</label>
+		<select id="programme_id" name="programme_id" class="required">
+			<option value="">Select the programme</option>
+			<?php 
+		    foreach ($programme as $key => $value)
+		    {
+                echo '<option value="'.$key.'">'.$value.'</option>';
+		    }
+		?>
+		</select>
+		<p class="formHint">Select the programme</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="batch_start"><em>*</em>Batch Start</label>
+		<select id="batch_start" name="batch_start" class="required">
+			<option value="">Select the year</option>
+			<?php
+			    $current_year = intval(date('Y'));
+			    for($i=2002;$i<=$current_year;$i++)
+			    {
+			        echo '<option value="'.$i.'">'.$i.'</option>';
+			    }
+			?>
+		</select>
+		<p class="formHint">Select the starting year of the batch</p>
+	</div>
+    
+    <div class="ctrlHolder">
+		<label for="is_active"><em>*</em>Is Batch Active</label>
+		<input name="is_active" id="is_active" type="checkbox" class="checkbox"/>
+		<p class="formHint">Click if batch is active</p>
+	</div>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</fieldset>
+</form>
+
+<script>
+
+$(function(){
+  $('form.uniForm').uniform({
+    prevent_submit : true
+  });
+});       
+
+function submit() {
+	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'batch', 'action' => 'savebatch'))?>';
+    $.ajax({
+        url : urlSaveInfo,
+        data : {
+            	myarray:getValues(),
+            	format : 'json',
+            },
+        success: function(jStatus){
+        	alert("Your information has been submitted successfully");
+            window.location.replace("/index/index");
+        },
+        error: function(response) {
+          $('#errorBox').text(response.responseText).parent().show();
+             console.log(response);
+        }
+    });
+}
+
+function getValues() {
+	var formData = {};
+	var batch_info = {};
+	$('form#batch :input')
+	.each(function(){ 
+		batch_info[this.name] = this.value; 
+	});
+	batch_info['is_active'] = $('#is_active').is(':checked')?1:0;
+	if(batch_info['programme_id'] == 'BTECH')
+	{
+		batch_info['batch_number'] = batch_info['batch_start'] - 2002 + 1;
+	}
+	else
+	{
+		batch_info['batch_number'] = batch_info['batch_start'] - 2009 + 1;
+	}
+	return formData;
+}
+</script>
+
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	}
+	h3{
+    	color: #343434;
+    	line-height: 1;
+    	margin: 1.5em -28px;
+    	padding: 14px 28px;
+		background-color: #ECEFF4;
+    	border: 1px solid #B4C1DA;
+    	font-size: 17px;
+    	font-weight: 100;
+    	width: 57%;
+	}
+	h4{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:57%;
+		font-size:17px;
+		font-weight:100;
+	}
+	h5{
+		font-size: 14px;
+		font-weight:400;
+		margin: 0 0 15px 0;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
