@@ -1,158 +1,159 @@
 <?php
-/**
- *
- * @category   EduIS
- * @package    Core
- * @subpackage Batch
- * @since	   0.1
- */
-/**
- * Batch(es) in a degree of a department.
- * 
- */
-class BatchController extends Corez_Base_BaseController
+class BatchController extends Zend_Controller_Action
 {
-    /**
-     * @about Interface.
-     */
+    public function init ()
+    {}
     public function indexAction ()
+    {}
+    /**
+     * Ftehces information about a batch on the basis of Btach_id
+     * 
+     * @param int $batch_id
+     */
+    private function getBatchInfo ($batch_id)
+    {
+        $batch = new Core_Model_Batch();
+        $batch->setBatch_id($batch_id);
+        $info = $batch->fetchInfo();
+        if ($info instanceof Core_Model_Batch) {
+            $batch_info = array();
+            $batch_info['department_id'] = $info->getDepartment_id();
+            $batch_info['programme_id'] = $info->getProgramme_id();
+            $batch_info['batch_start'] = $info->getBatch_start();
+            $batch_info['batch_number'] = $info->getBatch_number();
+            $batch_info['is_active'] = $info->getIs_active();
+            return $batch_info;
+        } else {
+            return false;
+        }
+    }
+    /**
+     * fetches batch_id on the basis of batch info given
+     * 
+     * @param string $department_id
+     * @param string $programme_id
+     * @param date $batch_start
+     * @return array|false
+     */
+    private function getBatchIds ($batch_start = null, $department_id = null, 
+    $programme_id = null)
+    {
+        $batch_start_basis = null;
+        $department_id_basis = null;
+        $programme_id_basis = null;
+        $batch = new Core_Model_Batch();
+        if ($batch_start) {
+            $batch_start_basis = true;
+            $batch->setBatch_start($batch_start);
+        }
+        if ($department_id) {
+            $department_id_basis = true;
+            $batch->setDepartment_id($department_id);
+        }
+        if ($programme_id) {
+            $programme_id_basis = true;
+            $batch->setProgramme_id($programme_id);
+        }
+        $batch_ids = $batch->fetchBatchIds($batch_start_basis, 
+        $department_id_basis, $programme_id_basis);
+        if (is_array($batch_ids)) {
+            return $batch_ids;
+        } else {
+            return false;
+        }
+    }
+    private function saveBatchInfo ($batch_info)
+    {
+        $batch = new Core_Model_Batch();
+        try {
+            $batch->save($batch_info);
+        } catch (Exception $e) {
+            Zend_Registry::get('logger')->debug($e);
+            throw new Exception(
+            'There was some error saving batch information. Please try again', 
+            Zend_Log::ERR);
+        }
+    }
+    public function addbatchAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $this->view->assign('controller', $this->_request->getControllerName());
-        $this->view->assign('module', $this->_request->getModuleName());
     }
-    /**
-     * Back end data provider to datagrid.
-     * @return json
-     */
-    public function fillgridAction ()
+    public function savebatchAction ()
     {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
-        $valid = $request->getParam('nd');
-        if ($request->isXmlHttpRequest() and $valid) {
-            self::createModel();
-            $this->grid = $this->_helper->grid();
-            $this->grid->sql = $this->model->select()->from(
-            $this->model->info('name'));
-            $searchOn = $request->getParam('_search');
-            if ($searchOn != 'false') {
-                $sarr = $request->getParams();
-                foreach ($sarr as $key => $value) {
-                    switch ($key) {
-                        case 'department_id':
-                        case 'degree_id':
-                            $this->grid->sql->where("$key LIKE ?", $value . '%');
-                            break;
-                        case 'batch_start':
-                            $this->grid->sql->where("$key = ?", $value);
-                            break;
-                    }
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $my_array = $params['myarray'];
+        $batch_info = $my_array['batch_info'];
+        $save['department_id'] = $batch_info['department_id'];
+        $save['programme_id'] = $batch_info['programme_id'];
+        $save['batch_start'] = $batch_info['batch_start'];
+        $save['batch_number'] = $batch_info['batch_number'];
+        $save['is_active'] = $batch_info['is_active'];
+        $this->saveBatchInfo($save);
+    }
+    public function viewbatchinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function getbatchidsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request_object = $this->getRequest();
+        $params = array_diff($request_object->getParams(), 
+        $request_object->getUserParams());
+        $my_array = $params['myarray'];
+        $batch_params = $my_array['batch_params'];
+        if (! empty($batch_params)) {
+            $department_id = $batch_params['department_id'] || null;
+            $programme_id = $batch_params['programme_id'] || null;
+            $batch_start = $batch_params['batch_start'] || null;
+            $batch_ids = $this->getBatchIds($department_id, $programme_id, 
+            $batch_start);
+            $this->_helper->json($batch_ids);
+        }
+    }
+    public function getbatchinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request_object = $this->getRequest();
+        $params = array_diff($request_object->getParams(), 
+        $request_object->getUserParams());
+        $my_array = $params['myarray'];
+        $batch_id = $my_array['batch_id'];
+        $batch_info = $this->getBatchInfo($batch_id);
+        $response['batch_info'] = $batch_info;
+        $format = $request_object->getParam('format');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                if (! empty($batch_info)) {
+                    $this->view->assign('response', $response);
+                } else {
+                    $this->view->assign('response', false);
                 }
-            }
-            self::fillgridfinal();
-        } else {
-            $this->getResponse()
-                ->setException('Non ajax request')
-                ->setHttpResponseCode(400);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($response, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($response);
+                break;
+            default:
+                ;
+                break;
         }
     }
-    ////////combos//////////
-    /*
-	public function combobatchyearAction() {
-		$request = $this->getRequest ();
-		$department_id = $request->getParam ( 'department_id' );
-		$degree_id = $request->getParam ( 'degree_id' );
-		if (isset ( $department_id ) and isset ( $degree_id )) {
-			$result = $this->table->fillbatchyear ( $department_id, $degree_id );
-			echo '<select>';
-			echo '<option>Select one</option>';
-			foreach ( $result as $key => $row ) {
-				echo '<option value="' . $row ['batch_start'] . '">' . $row ['batch_start'] . '</option>';
-			}
-			echo '</select>';
-		} else {
-            header ( "HTTP/1.1 403 Forbidden" );
-            die;
-		}
-	
-	}*/
-    /**
-     * Show active batches of a department's degree
-     */
-    public function getactivebatchesAction ()
-    {
-        $request = $this->getRequest();
-        $format = $request->getParam('format', 'json');
-        $department = $request->getParam('department_id');
-        $degree = $request->getParam('degree_id');
-        if (isset($degree) and isset($department)) {
-            $result = Core_Model_DbTable_Batch::getBatches($department, $degree);
-            switch (strtolower($format)) {
-                case 'json':
-                    $this->_helper->json($result);
-                    return;
-                case 'select':
-                    echo '<select>';
-                    echo '<option>Select one</option>';
-                    foreach ($result as $key => $row) {
-                        echo '<option value="' . $row['batch_start'] . '">' .
-                         $row['batch_start'] . '</option>';
-                    }
-                    echo '</select>';
-                    return;
-                default:
-                    $this->getResponse()
-                        ->setException('Unsupported format request')
-                        ->setHttpResponseCode(400);
-            }
-        } else {
-            header("HTTP/1.1 400 Bad Request");
-        }
-    }
-    /**
-     * Get students of a given batch of a department's degree
-     */
-    public function getbatchstudentAction ()
-    {
-        $request = $this->getRequest();
-        $format = $request->getParam('format', 'json');
-        $department = $request->getParam('department_id');
-        $degree = $request->getParam('degree_id');
-        $batch = $request->getParam('batch_id');
-        if (isset($degree) and isset($department) and isset($batch)) {
-            $result = Core_Model_DbTable_Batch::getBatchStudent($department, 
-            $degree, $batch);
-            switch (strtolower($format)) {
-                case 'json':
-                    $this->_helper->json($result);
-                    return;
-                case 'select':
-                    echo '<select>';
-                    echo '<option>Select one</option>';
-                    foreach ($result as $key => $row) {
-                        echo '<option value="' . $row['batch_start'] . '">' .
-                         $row['batch_start'] . '</option>';
-                    }
-                    echo '</select>';
-                    return;
-                default:
-                    $this->getResponse()
-                        ->setException('Unsupported format request')
-                        ->setHttpResponseCode(400);
-            }
-        } else {
-            $this->getResponse()
-                ->setException('Valid parameters are required')
-                ->setHttpResponseCode(400);
-        }
-    }
-    /**
-     * @deprecated "I think its useless. -hemant"
-     * Show all batches of a department's degree
-     */
-    public function getallbatches ()
-    {
-        ;
-    }
+    public function editbatchinfoAction ()
+    {}
+    public function savebatchinfoAction ()
+    {}
 }
