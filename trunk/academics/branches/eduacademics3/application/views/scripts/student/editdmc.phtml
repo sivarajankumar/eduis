@@ -3,7 +3,6 @@
 <fieldset id="dmc_info">
 
 	<h5>Please fill this form and click on next to fill the subject wise details of DMC.</h5>
-
 	<div class="ctrlHolder">
 		<label for="dmc_id"><em>*</em>Serial Number</label>
 		<input name="dmc_id" id="dmc_id" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateAlphaNum"/>
@@ -110,7 +109,6 @@
 <h4><?php echo $subject_info['name']?></h4>
 
 <fieldset id="<?php echo str_replace(' ', '_', $subject_info['name'])?>" class="subjects" title="<?php echo $subject_id?>" >
-    				
 	<div class="ctrlHolder">
 		<label for="internal"><em>*</em>Internal Marks</label>
 		<input name="internal" id="internal" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
@@ -127,6 +125,18 @@
 		<label for=""><em>*</em>Percentage</label>
 		<input name="percentage" id="percentage" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
 		<p class="formHint">Percentage obtained by Student in the subject</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="is_pass"><em>*</em>Is subject passed</label>
+		<input name="is_pass" id="is_pass" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		<p class="formHint">Click if this subject is passed</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="is_verified"><em>*</em>Is Verified</label>
+		<input name="is_verified" id="is_verified" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		<p class="formHint">Click if this is verified</p>
 	</div>
 </fieldset>
 
@@ -204,28 +214,18 @@
 
     function get_dmc_info(){
     	dmc_data['class_id'] = <?php echo $_GET['class_id'];?>;
-    	dmc_data['is_considered'] = false;
-    	dmc_data['is_granted'] = false;
-    	dmc_data['is_copied'] = false;
+    	
     	$('fieldset#dmc_info :input')
     	.not('button,:input[value^="e.g."]')
     	.not(':input[type="checkbox"]')
     	.each(function(){ 
     		dmc_data[this.name] = this.value;
     	});
+    	dmc_data['is_considered'] = $('#is_considered').is(':checked')?1:0;
+    	dmc_data['is_granted'] = $('#is_granted').is(':checked')?1:0;
+    	dmc_data['is_copied'] = $('#is_copied').is(':checked')?1:0;
+    	
     	show_subject_div();
-    	if($('#is_considered : checked'))
-    	{
-    		dmc_data['is_considered'] = true;
-    	}
-    	if($('#is_granted : checked'))
-    	{
-    		dmc_data['is_considered'] = true;
-    	}
-    	if($('#is_copied : checked'))
-    	{
-    		dmc_data['is_considered'] = true;
-    	}
     }
 
     function submit_dmc_info(){
@@ -258,13 +258,17 @@
         var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmc'))?>";
 		$('fieldset.subjects').each(function(){
 	        var sub_data = {};
+	        sub_data['is_pass'] = 0;
+	        sub_data['is_verified'] = 0;
 			var div_id = $(this).attr('id');
 			var div_title = $(this).attr('title');
-			//var dmc_info_id = 0;
+
 			$('fieldset#'+div_id+' :input').each(function(){
 				sub_data[this.name] = this.value;
 			})
-			//sub_data['dmc_info_id'] = dmc_info_id;
+			sub_data['is_pass'] = $('fieldset#'+div_id+' :input[name="is_pass"]').is(':checked')?1:0;
+			sub_data['is_verified'] = $('fieldset#'+div_id+' :input[name="is_verified"]').is(':checked')?1:0;
+						
 			dmc_info_data[div_title]=sub_data;
 			data['dmc_data'] = dmc_data;
 			data['dmc_info_data'] = dmc_info_data;
