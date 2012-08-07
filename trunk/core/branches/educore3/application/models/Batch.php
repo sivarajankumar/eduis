@@ -224,13 +224,40 @@ class Core_Model_Batch extends Core_Model_Generic
         (empty($batch_ids)) && ($batch_ids = false);
         return $batch_ids;
     }
-    public function save ($batch_info)
+    /**
+     * batch id must be set
+     * 
+     */
+    public function batchExistCheck ()
+    {
+        $batch_id = $this->getBatch_id(true);
+        return $this->getMapper()->batchExistCheck($batch_id);
+    }
+    public function saveInfo ($batch_info)
+    {
+        $department_id = $batch_info['department_id'];
+        $programme_id = $batch_info['programme_id'];
+        $batch_start = $batch_info['batch_start'];
+        $this->setDepartment_id($department_id);
+        $this->setProgramme_id($programme_id);
+        $this->setBatch_start($batch_start);
+        $batch_id = $this->fetchBatchIds(true, true, true);
+        if (empty($batch_id)) {
+            Zend_Registry::get('logger')->debug('saving batch info');
+            return $this->save($batch_info);
+        } else {
+            Zend_Registry::get('logger')->debug('updating batch info');
+            $this->update($batch_info, $batch_id[0]);
+            return $batch_id[0];
+        }
+    }
+    protected function save ($batch_info)
     {
         $this->initSave();
         $prepared_data = $this->prepareDataForSaveProcess($batch_info);
         return $this->getMapper()->save($prepared_data);
     }
-    public function update ($batch_info,$batch_id)
+    protected function update ($batch_info, $batch_id)
     {
         $this->initSave();
         $prepared_data = $this->prepareDataForSaveProcess($batch_info);
