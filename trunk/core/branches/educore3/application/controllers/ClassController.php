@@ -18,7 +18,7 @@ class ClassController extends Zend_Controller_Action
         if ($info instanceof Core_Model_Class) {
             $class_info = array();
             $class_info['class_id'] = $info->getClass_id();
-            $class_info['batch_id'] = $info->getBatch_id();
+            $class_info['class_id'] = $info->getBatch_id();
             $class_info['semester_id'] = $info->getSemester_id();
             $class_info['semester_type'] = $info->getSemester_type();
             $class_info['semester_duration'] = $info->getSemester_duration();
@@ -34,20 +34,20 @@ class ClassController extends Zend_Controller_Action
     /**
      * fetches $class_id on the basis of class info given
      * Enter description here ...
-     * @param int $batch_id
+     * @param int $class_id
      * @param int $semester_id
      * @param bool $is_active
      */
-    private function getClassIds ($batch_id = null, $semester_id = null, 
+    private function getClassIds ($class_id = null, $semester_id = null, 
     $is_active = null)
     {
-        $batch_id_basis = null;
+        $class_id_basis = null;
         $semester_id_basis = null;
         $is_active_basis = null;
         $class = new Core_Model_Class();
-        if ($batch_id) {
-            $batch_id_basis = true;
-            $class->setBatch_id($batch_id);
+        if ($class_id) {
+            $class_id_basis = true;
+            $class->setBatch_id($class_id);
         }
         if ($semester_id) {
             $semester_id_basis = true;
@@ -57,7 +57,7 @@ class ClassController extends Zend_Controller_Action
             $is_active_basis = true;
             $class->setIs_active($is_active);
         }
-        $class_ids = $class->fetchClassIds($batch_id_basis, $semester_id_basis, 
+        $class_ids = $class->fetchClassIds($class_id_basis, $semester_id_basis, 
         $is_active_basis);
         if (is_array($class_ids)) {
             return $class_ids;
@@ -127,27 +127,30 @@ class ClassController extends Zend_Controller_Action
             $this->view->assign('programmes', $programmes);
         }
     }
-    public function savebatchAction ()
+    public function saveClassAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $my_array = $params['myarray'];
-        $batch_info = $my_array['batch_info'];
-        $save['department_id'] = $batch_info['department_id'];
-        $save['programme_id'] = $batch_info['programme_id'];
-        $save['batch_start'] = $batch_info['batch_start'];
-        $save['batch_number'] = $batch_info['batch_number'];
-        $save['is_active'] = $batch_info['is_active'];
-        $this->saveBatchInfo($save);
+        $class_info = $my_array['class_info'];
+        $save['class_id'] = $class_info['class_id'];
+        $save['semester_id'] = $class_info['semester_id'];
+        $save['semester_type'] = $class_info['semester_type'];
+        $save['semester_duration'] = $class_info['semester_duration'];
+        $save['handled_by_dept'] = $class_info['handled_by_dept'];
+        $save['completion_date'] = $class_info['completion_date'];
+        $save['start_date'] = $class_info['start_date'];
+        $save['handled_by_dept'] = $class_info['is_active'];
+        $this->saveClassInfo($save);
     }
-    public function viewbatchinfoAction ()
+    public function viewclassinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
     }
-    public function getbatchidsAction ()
+    public function getclassidsAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
@@ -155,17 +158,16 @@ class ClassController extends Zend_Controller_Action
         $params = array_diff($request_object->getParams(), 
         $request_object->getUserParams());
         $my_array = $params['myarray'];
-        $batch_params = $my_array['batch_params'];
-        if (! empty($batch_params)) {
-            $department_id = $batch_params['department_id'] || null;
-            $programme_id = $batch_params['programme_id'] || null;
-            $batch_start = $batch_params['batch_start'] || null;
-            $batch_ids = $this->getBatchIds($department_id, $programme_id, 
-            $batch_start);
-            $this->_helper->json($batch_ids);
+        $class_params = $my_array['class_params'];
+        if (! empty($class_params)) {
+            $class_id = $class_params['class_id'] || null;
+            $semester_id = $class_params['semester_id'] || null;
+            $is_active = $class_params['is_active'] || null;
+            $class_ids = $this->getClassIds($class_id, $semester_id, $is_active);
+            $this->_helper->json($class_ids);
         }
     }
-    public function getbatchinfoAction ()
+    public function getclassinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
@@ -173,15 +175,15 @@ class ClassController extends Zend_Controller_Action
         $params = array_diff($request_object->getParams(), 
         $request_object->getUserParams());
         $my_array = $params['myarray'];
-        $batch_id = $my_array['batch_id'];
-        $batch_info = $this->getBatchInfo($batch_id);
-        $response['batch_info'] = $batch_info;
+        $class_id = $my_array['class_id'];
+        $class_info = $this->getClassInfo($class_id);
+        $response['class_info'] = $class_info;
         $format = $request_object->getParam('format');
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
                 $this->_helper->layout()->enableLayout();
-                if (! empty($batch_info)) {
+                if (! empty($class_info)) {
                     $this->view->assign('response', $response);
                 } else {
                     $this->view->assign('response', false);
