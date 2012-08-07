@@ -43,8 +43,85 @@ class StudentController extends Zend_Controller_Action
         $this->_member_id = $_member_id;
     }
     public function indexAction ()
+    {}
+    /**
+     * Checks if member is registered in the core,
+     * @return true if member_id is registered, false otherwise
+     */
+    private function memberIdCheck ($member_id_to_check)
     {
-        // action body
+        $student = new Acad_Model_Member_Student();
+        $student->setMember_id($member_id_to_check);
+        $member_id_exists = $student->memberIdCheck();
+        if (! $member_id_exists) {
+            Zend_Registry::get('logger')->debug(
+            'Member with member_id : ' . $member_id_to_check .
+             ' is not registered in CORE');
+        }
+        return $member_id_exists;
+    }
+    /**
+     * before calling this function use memberidcheck function
+     * Enter description here ...
+     * @param int $member_id
+     */
+    private function fetchcriticalinfo ($member_id)
+    {
+        $member_id_exists = $this->memberIdCheck($member_id);
+        if ($member_id_exists) {
+            $student = new Acad_Model_Member_Student();
+            $student->setMember_id($member_id);
+            $student_model = $student->fetchCriticalInfo();
+            if ($student_model instanceof Acad_Model_Member_Student) {
+                $critical_data['member_id'] = $this->getMember_id();
+                $critical_data['first_name'] = $student_model->getFirst_name();
+                $critical_data['middle_name'] = $student_model->getMiddle_name();
+                $critical_data['last_name'] = $student_model->getLast_name();
+                $critical_data['cast'] = $student_model->getCast_name();
+                $critical_data['nationality'] = $student_model->getNationality_name();
+                $critical_data['religion'] = $student_model->getReligion_name();
+                $critical_data['blood_group'] = $student_model->getBlood_group();
+                $critical_data['dob'] = $student_model->getDob();
+                $critical_data['gender'] = $student_model->getGender();
+                $critical_data['member_type_id'] = $student_model->getMember_type_id();
+                $critical_data['religion_id'] = $student_model->getReligion_id();
+                $critical_data['nationality_id'] = $student_model->getNationality_id();
+                $critical_data['cast_id'] = $student_model->getCast_id();
+                return $critical_data;
+            }
+        }
+    }
+    public function fetchcriticalinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(TRUE);
+        $this->_helper->layout()->disableLayout();
+        $member_id = $this->getMember_id();
+        $critical_data = self::fetchcriticalinfo($member_id);
+        $this->_helper->json($critical_data);
+    }
+    public function testAction ()
+    {
+        $request = $this->getRequest();
+        ////
+        /*
+         * use this where request will be recieved
+         */
+        //$member_id_to_check = $request->getParam('member_id');
+        ////
+        $member_id = $this->getMember_id();
+        $client = new Zend_Http_Client();
+        $client->setMethod(Zend_Http_Client::POST);
+        $client->setUri('http://' . CORE_SERVER . '/getcriticalinfo');
+        $client->setParameterPost(array('member_id' => $member_id));
+        $response = $client->request();
+    }
+    public function memberidcheckAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $member_id_to_check = $this->getMember_id();
+        $member_id_exists = $this->memberIdCheck($member_id_to_check);
+        $this->_helper->json($member_id_exists);
     }
     /*
      * returns matric data of student
@@ -71,10 +148,13 @@ class StudentController extends Zend_Controller_Action
         }
         return $matric_data;
     }
-    /*
+    /**
      * returns btech data of student
-     * @param int qualification_id  
+     * Enter description here ...
+     * @param int qualification_id 
+     * @todo no need of qualification id.. must work only for btech.. get id from model 
      * @return array $btech return array of present data of student in qualification table
+     *
      */
     private function fetchBtechData ($qualification_id)
     {
@@ -92,12 +172,59 @@ class StudentController extends Zend_Controller_Action
             $btech_data['state_name'] = $qualification_model->getState_name();
             $btech_data['total_marks'] = $qualification_model->getTotal_marks();
             $btech_data['discipline_id'] = $qualification_model->getDiscipline_id();
-            $btech_data['institution'] = $qualification_model->getDiscipline_id();
+            $btech_data['institution'] = $qualification_model->getInstitution();
             $btech_data['roll_no'] = $qualification_model->getRoll_no();
             // $btech_data['unv_regn_no'] = $qualification_model->getUniversityRegisrtationNo();
             ;
         }
         return $btech_data;
+    }
+    /**
+     * returns mtech data of student
+     * Enter description here ...
+     * @param int qualification_id 
+     * @return array $mtech return array of present data of student in qualification table
+     *
+     */
+    private function fetchMtechData ()
+    {
+        $qualification_id = $this->fetchQualificationId('MTECH');
+        Zend_Registry::get('logger')->debug(
+        'in fetch data $qualification_id : ' . $qualification_id);
+        $student_model = new Acad_Model_Member_Student();
+        $student_model->setMember_id($this->getMember_id());
+        $qualification = $student_model->fetchQualificationInfo(
+        $qualification_id);
+        $mtech_data = array();
+        if ($qualification instanceof Acad_Model_Qualification_Mtech) {
+            $mtech_data['university'] = $qualification->getUniversity();
+            $mtech_data['city_name'] = $qualification->getCity_name();
+            $mtech_data['marks_obtained'] = $qualification->getMarks_obtained();
+            $mtech_data['passing_year'] = $qualification->getPassing_year();
+            $mtech_data['percentage'] = $qualification->getPercentage();
+            $mtech_data['state_name'] = $qualification->getState_name();
+            $mtech_data['total_marks'] = $qualification->getTotal_marks();
+            $mtech_data['discipline_id'] = $qualification->getDiscipline_id();
+            $mtech_data['institution'] = $qualification->getInstitution();
+            $mtech_data['roll_no'] = $qualification->getRoll_no();
+        }
+        return $mtech_data;
+    }
+    protected function fetchQualificationId ($qualification_name)
+    {
+        $qualification_model = new Acad_Model_Qualification();
+        $qualifications = $qualification_model->fetchQualifications();
+        if ($qualifications == false) {
+            throw new Exception('Qualifications table is empty', Zend_Log::WARN);
+        }
+        $qualifications = array_flip($qualifications);
+        if (empty($qualifications[$qualification_name])) {
+            throw new Exception(
+            'Qualifications with name : ' . $qualification_name .
+             ' not in database', Zend_Log::WARN);
+        } else {
+            return $qualifications[$qualification_name];
+        }
     }
     /*
      * returns twelfth data of student
@@ -328,32 +455,39 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
-        Zend_Registry::get('logger')->debug($this->getMember_id());
-        $critcal_info = $student_model->fetchCriticalInfo();
-        Zend_Registry::get('logger')->debug($critcal_info);
-        if ($critcal_info == false) {
-            $PROTOCOL = 'http://';
-            $URL_STU_CRITICAL_INFO = $PROTOCOL . CORE_SERVER .
-             '/student/fetchcriticalinfo';
-            $client = new Zend_Http_Client($URL_STU_CRITICAL_INFO);
-            $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
-            $response = $client->request();
-            Zend_Registry::get('logger')->debug($response);
-            if ($response->isError()) {
-                $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
-                 $response->getMessage();
-                throw new Zend_Exception($remoteErr, Zend_Log::ERR);
-            }
-            $critical_data = Zend_Json::decode($response->getBody());
-            if ($critical_data) {
-                $student_model->saveCriticalInfo($critical_data);
-            } else {
-                $msg = 'PLEASE REGISTER IN CORE MODULE....GOTO core.aceambala.com';
-                throw new Exception('$msg');
-            }
+        $member_id_to_check = $this->getMember_id();
+        $member_exists_in_acad = $this->memberIdCheck($member_id_to_check);
+        Zend_Registry::get('logger')->debug(
+        '(register action)Member id exists : ' . $member_exists_in_acad .
+         ' Acadmics');
+        /*
+         * dont use this if statement because user may have updated the data in core
+         * and the old data may still exist in academics database .thus in the case
+         * of old data member_id still exists that is member_id_check will return true.
+         * so drop the if statement
+         */
+        //if ($member_exists_in_acad == false) {
+        $PROTOCOL = 'http://';
+        $URL_STU_CRITICAL_INFO = $PROTOCOL . CORE_SERVER .
+         '/student/fetchcriticalinfo';
+        $client = new Zend_Http_Client($URL_STU_CRITICAL_INFO);
+        $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+        $response = $client->request();
+        Zend_Registry::get('logger')->debug($response);
+        if ($response->isError()) {
+            $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
+             $response->getMessage();
+            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
         }
-         // $this->_redirect('student/profile');
+        $critical_data = Zend_Json::decode($response->getBody());
+        if ($critical_data) {
+            $student_model->saveCriticalInfo($critical_data);
+        } else {
+            $msg = 'PLEASE REGISTER IN CORE MODULE....GOTO core.aceambala.com';
+            throw new Exception('$msg');
+        }
+         //}
+    // $this->_redirect('student/profile');
     }
     /**
      * @todo check status of profile in auth that it is filled or not
@@ -527,6 +661,116 @@ class StudentController extends Zend_Controller_Action
                 break;
             case 'test':
                 Zend_Registry::get('logger')->debug($qualification_data);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    public function viewmtechinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $this->_getParam('format', 'html');
+        $student_model = new Acad_Model_Member_Student();
+        $student_model->setMember_id($this->getMember_id());
+        $qualification_data = self::fetchMtechData();
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                if (! empty($qualification_data)) {
+                    $this->view->assign('mtech', $qualification_data);
+                    Zend_Registry::get('logger')->debug($qualification_data);
+                }
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' .
+                 $this->_helper->json($qualification_data, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($qualification_data);
+                break;
+            case 'test':
+                Zend_Registry::get('logger')->debug($qualification_data);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    public function editmtechinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $this->_getParam('format', 'html');
+        $student_model = new Acad_Model_Member_Student();
+        $student_model->setMember_id($this->getMember_id());
+        $student_model = new Acad_Model_Member_Student();
+        $qualification_data = self::fetchMtechData();
+        Zend_Registry::get('logger')->debug($qualification_data);
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                if (! empty($qualification_data)) {
+                    $this->view->assign('qualification_data', 
+                    $qualification_data);
+                }
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' .
+                 $this->_helper->json($qualification_data, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($qualification_data);
+                break;
+            case 'test':
+                Zend_Registry::get('logger')->debug($qualification_data);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    public function savemtechinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug($params);
+        $format = $this->_getParam('format', 'html');
+        $qualification_id = $this->fetchQualificationId('MTECH');
+        $save_data = $params['myarray']['qualification_data'];
+        Zend_Registry::get('logger')->debug($save_data);
+        $student_model = new Acad_Model_Member_Student();
+        $student_model->setMember_id($this->getMember_id());
+        Zend_Registry::get('logger')->debug($save_data);
+        $student_model->saveQualificationInfo($qualification_id, $save_data);
+        $success = true;
+        switch ($format) {
+            case 'html':
+                if (! empty($success)) {
+                    $this->view->assign('is_successfull', $success);
+                }
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($success, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($success);
+                break;
+            case 'test':
+                Zend_Registry::get('logger')->debug($success);
                 break;
             default:
                 ;
@@ -844,47 +1088,43 @@ class StudentController extends Zend_Controller_Action
     }
     public function savebtechinfoAction ()
     {
-        {
-            $this->_helper->viewRenderer->setNoRender(true);
-            $this->_helper->layout()->disableLayout();
-            $request = $this->getRequest();
-            $params = array_diff($request->getParams(), 
-            $request->getUserParams());
-            Zend_Registry::get('logger')->debug($params);
-            $format = $this->_getParam('format', 'html');
-            $qualification_name = $params['myarray']['qualification_name'];
-            $qualification_model = new Acad_Model_Qualification();
-            $qualifications = $qualification_model->fetchQualifications();
-            $qualification_id = array_search($qualification_name, 
-            $qualifications);
-            $save_data = $params['myarray']['qualification_data'];
-            Zend_Registry::get('logger')->debug($save_data);
-            $student_model = new Acad_Model_Member_Student();
-            $student_model->setMember_id($this->getMember_id());
-            Zend_Registry::get('logger')->debug($save_data);
-            $student_model->saveQualificationInfo($qualification_id, $save_data);
-            $success = true;
-            switch ($format) {
-                case 'html':
-                    if (! empty($success)) {
-                        $this->view->assign('is_successfull', $success);
-                    }
-                    break;
-                case 'jsonp':
-                    $callback = $this->getRequest()->getParam('callback');
-                    echo $callback . '(' . $this->_helper->json($success, false) .
-                     ')';
-                    break;
-                case 'json':
-                    $this->_helper->json($success);
-                    break;
-                case 'test':
-                    Zend_Registry::get('logger')->debug($success);
-                    break;
-                default:
-                    ;
-                    break;
-            }
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug($params);
+        $format = $this->_getParam('format', 'html');
+        $qualification_name = $params['myarray']['qualification_name'];
+        $qualification_model = new Acad_Model_Qualification();
+        $qualifications = $qualification_model->fetchQualifications();
+        $qualification_id = array_search($qualification_name, $qualifications);
+        $save_data = $params['myarray']['qualification_data'];
+        Zend_Registry::get('logger')->debug($save_data);
+        $student_model = new Acad_Model_Member_Student();
+        $student_model->setMember_id($this->getMember_id());
+        Zend_Registry::get('logger')->debug($save_data);
+        $student_model->saveQualificationInfo($qualification_id, $save_data);
+        $success = true;
+        switch ($format) {
+            case 'html':
+                if (! empty($success)) {
+                    $this->view->assign('is_successfull', $success);
+                }
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($success, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($success);
+                break;
+            case 'test':
+                Zend_Registry::get('logger')->debug($success);
+                break;
+            default:
+                ;
+                break;
         }
     }
     public function saveleetinfoAction ()
@@ -1326,8 +1566,6 @@ class StudentController extends Zend_Controller_Action
     }
     public function viewdmcAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
