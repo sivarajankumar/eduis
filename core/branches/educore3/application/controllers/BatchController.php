@@ -74,10 +74,26 @@ class BatchController extends Zend_Controller_Action
             Zend_Log::ERR);
         }
     }
+    private function getDepartments ()
+    {
+        $department = new Core_Model_Department();
+        $departments = $department->fetchDepartments();
+        if (empty($departments)) {
+            return false;
+        } else {
+            return $departments;
+        }
+    }
     public function addbatchAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $departments = $this->getDepartments();
+        if (empty($departments)) {
+            $this->view->assign('departments', false);
+        } else {
+            $this->view->assign('departments', $departments);
+        }
     }
     public function savebatchAction ()
     {
@@ -152,8 +168,4 @@ class BatchController extends Zend_Controller_Action
                 break;
         }
     }
-    public function editbatchinfoAction ()
-    {}
-    public function savebatchinfoAction ()
-    {}
 }
