@@ -24,17 +24,23 @@ abstract class Core_Model_Generic
     }
     public function __set ($name, $value)
     {
+        $class_name = get_class($this);
         $method = 'set' . $name;
         if ('mapper' == $name || ! method_exists($this, $method)) {
-            throw new Exception('Invalid property specified');
+            throw new Exception(
+            'Invalid property : ' . $name . ' ,specified in class :' .
+             $class_name);
         }
         $this->$method($value);
     }
     public function __get ($name)
     {
+        $class_name = get_class($this);
         $method = 'get' . $name;
         if ('mapper' == $name || ! method_exists($this, $method)) {
-            throw new Exception('Invalid property specified');
+            throw new Exception(
+            'Invalid property : ' . $name . ' ,specified in class :' .
+             $class_name);
         }
         return $this->$method();
     }

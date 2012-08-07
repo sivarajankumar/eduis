@@ -224,4 +224,16 @@ class Core_Model_Batch extends Core_Model_Generic
         (empty($batch_ids)) && ($batch_ids = false);
         return $batch_ids;
     }
+    public function save ($batch_info)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($batch_info);
+        return $this->getMapper()->save($prepared_data);
+    }
+    public function update ($batch_info,$batch_id)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($batch_info);
+        return $this->getMapper()->update($prepared_data, $batch_id);
+    }
 }

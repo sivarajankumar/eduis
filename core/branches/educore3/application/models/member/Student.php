@@ -357,10 +357,15 @@ class Core_Model_Member_Student extends Core_Model_Generic
         }
     }
     /**
-     * 
+     * Checks if member is registered in the core,
+     * operating conditions : member_id must be set in the object
+     * @return true if member_id is registered, false otherwise
      */
-    public function initInfo ()
-    {}
+    public function memberIdCheck ()
+    {
+        $member_id = $this->getMember_id(true);
+        return $this->getMapper()->memberIdCheck($member_id);
+    }
     /**
      * Fetches CRITICAL information of a Student(
      * Member_id must be set before calling this function)
