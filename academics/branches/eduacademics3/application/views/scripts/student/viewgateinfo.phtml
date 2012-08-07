@@ -1,8 +1,6 @@
-
-<div class="ui-widget-content ui-corner-all"><center><H3>Gate Details</H3></center></div>
+<div class="ui-state-hover"><center><H3>Gate Details</H3></center></div>
 <div id="Matric Details">
     	<table id="corner" cellspacing="10" cellpadding="10">
-          
         <?php 
         	foreach ($this->gate as $key => $value) 
         		{
@@ -16,16 +14,12 @@
     	            }
     	            echo '</tr>';
         		} 
-            ?>
-        	
+        ?>
     	</table>
 </div>
-<div id="edit_btn" class="ui-widget-content ui-corner-all">
-	<h3><center><a href="/student/editgateinfo">Edit</a></center></h3>
-</div>
-<div id="goback_btn" class="ui-widget-content ui-corner-all">
-	<h3><center><a href="/student/profile">Go Back</a></center></h3>
-</div>
+<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editgateinfo');">
+<input type="button" class="ui-button" value="Go Back" onclick="window.location.replace('/student/profile');">
+
 <style type="text/css">
 	table {
       	border-color: #c20f2e;

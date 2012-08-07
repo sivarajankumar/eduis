@@ -1,4 +1,4 @@
-<div class="ui-widget-content ui-corner-all"><center><H3>Diploma Details</H3></center></div>
+<div class="ui-state-hover"><center><H3>Diploma Details</H3></center></div>
 <div id="dip_details">
     	<table id="corner" cellspacing="10" cellpadding="10">
           
@@ -19,12 +19,9 @@
         	
     	</table>
 </div>
-<div id="edit_btn" class="ui-widget-content ui-corner-all">
-	<h3><center><a href="/student/editdiplomainfo">Edit</a></center></h3>
-</div>
-<div id="goback_btn" class="ui-widget-content ui-corner-all">
-	<h3><center><a href="/student/profile">Go Back</a></center></h3>
-</div>
+<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editdiplomainfo');">
+<input type="button" class="ui-button" value="Go Back" onclick="window.location.replace('/student/profile');">
+
 <style type="text/css">
 	table {
       	border-color: #c20f2e;
