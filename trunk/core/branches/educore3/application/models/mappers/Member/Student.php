@@ -33,6 +33,15 @@ class Core_Model_Mapper_Member_Student
         }
         return $this->_dbTable;
     }
+    public function memberIdCheck ($member_id)
+    {
+        $member_ids = $this->getDbTable()->find($member_id);
+        if (0 == count($member_ids)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     /**
      * Fetches CRITICAL information of a Student
      * 
