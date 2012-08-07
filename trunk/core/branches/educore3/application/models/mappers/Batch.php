@@ -78,6 +78,7 @@ class Core_Model_Mapper_Batch
             $select->where('programme_id = ?', $programme_id);
         }
         $batch_ids = array();
+        $r = $select->__toString();
         $batch_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $batch_ids;
     }

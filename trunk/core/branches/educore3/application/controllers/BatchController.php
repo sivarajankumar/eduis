@@ -56,6 +56,7 @@ class BatchController extends Zend_Controller_Action
         }
         $batch_ids = $batch->fetchBatchIds($batch_start_basis, 
         $department_id_basis, $programme_id_basis);
+        Zend_Registry::get('logger')->debug($batch_ids);
         if (is_array($batch_ids)) {
             return $batch_ids;
         } else {
@@ -154,11 +155,14 @@ class BatchController extends Zend_Controller_Action
         $my_array = $params['myarray'];
         $batch_params = $my_array['batch_params'];
         if (! empty($batch_params)) {
-            $department_id = $batch_params['department_id'] || null;
-            $programme_id = $batch_params['programme_id'] || null;
-            $batch_start = $batch_params['batch_start'] || null;
-            $batch_ids = $this->getBatchIds($department_id, $programme_id, 
-            $batch_start);
+            $batch_params['department_id'] &&
+             ($department_id = $batch_params['department_id']);
+            $batch_params['programme_id'] &&
+             ($programme_id = $batch_params['programme_id']);
+            $batch_params['batch_start'] &&
+             ($batch_start = $batch_params['batch_start']);
+            $batch_ids = $this->getBatchIds($batch_start, $department_id, 
+            $programme_id);
             $this->_helper->json($batch_ids);
         }
     }
