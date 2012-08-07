@@ -1,169 +1,106 @@
 <?php
-class Acad_Model_Department
+class Acad_Model_Department extends Acad_Model_Generic
 {
-    /**
-     * Department
-     * @var string
-     */
-    protected $_department;
-    /**
-     * Programs/Courses/Degrees provided by department
-     * @var array
-     */
-    protected $_programs;
-    
-    /**
-     * Faculty members of department
-     * 
-     * All faculty members which belong to the department.
-     *  
-     * @var array
-     */
-    protected $_faculties;
-    /**
-     * Set department
-     * @param string $department - department
-     * @return Acad_Model_Department
-     */
-    
-    /**
-     * Faculty members teaching in department
-     * 
-     * It has those faculty members which are teaching in department even if 
-     * they do not belong to the department. 
-     * 
-     * @var array
-     */
-    protected $_teachingFaculty;
-
-    /**
-     * @var Acad_Model_DepartmentMapper
-     */
+    protected $_department_id;
+    protected $_department_name;
     protected $_mapper;
     /**
-     * Set data mapper
-     * 
-     * @param  mixed $mapper 
+     * @return the $_department_id
+     */
+    public function getDepartment_id ($throw_exception = null)
+    {
+        $department_id = $this->_department_id;
+        if (empty($department_id) and $throw_exception == true) {
+            $message = '_department_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $department_id;
+        }
+    }
+    /**
+     * @param field_type $_department_id
+     */
+    public function setDepartment_id ($_department_id)
+    {
+        $this->_department_id = $_department_id;
+    }
+    /**
+     * Sets Mapper
+     * @param Acad_Model_Mapper_Department $mapper
      * @return Acad_Model_Department
      */
-    public function setMapper (Acad_Model_DepartmentMapper $mapper)
+    public function setMapper ($mapper)
     {
         $this->_mapper = $mapper;
         return $this;
     }
     /**
-     * Get data mapper
-     *
-     * Lazy loads Acad_Model_DepartmentMapper instance if no mapper registered.
-     * 
-     * @return Acad_Model_DepartmentMapper
+     * gets the mapper from the object class
+     * @return Acad_Model_Mapper_Department
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Acad_Model_DepartmentMapper());
+            $this->setMapper(new Acad_Model_Mapper_Department());
         }
         return $this->_mapper;
     }
-    
-    public function setDepartment ($department)
+    /**
+     * Provides correct db column names corresponding to model properties
+     * @todo add correct names where required
+     * @param string $key
+     */
+    protected function correctDbKeys ($key)
     {
-        $this->_department = $department;
-        return $this;
+        switch ($key) {
+            /*case 'nationalit':
+                return 'nationality';
+                break;*/
+            default:
+                return $key;
+                break;
+        }
     }
     /**
-     * Get department
-     * @return string $department - department
+     * Provides correct model property names corresponding to db column names
+     * @todo add correct names where required
+     * @param string $key
      */
-    public function getDepartment ()
+    protected function correctModelKeys ($key)
     {
-        return $this->_department;
+        switch ($key) {
+            /*case 'nationality':
+                return 'nationalit';
+                break;*/
+            default:
+                return $key;
+                break;
+        }
     }
     /**
-     * Set programs/courses/degrees provided by department
-     * @param array $programs - programs/courses/degrees provided by department
-     * @return Acad_Model_Department
+     * $department['']=$department_name
+     *
      */
-    public function setProgram ($programs)
+    public function fetchDepartments ()
     {
-        return $this;
-    }
-    /**
-     * Get programs/courses/degrees provided by department
-     * @return array $programs - programs/courses/degrees provided by department
-     */
-    public function getProgram ()
-    {
-        return $this->_programs;
-    }
-    
-    /**
-     * Set faculty members
-     * @param array $faculties - faculty members
-     * @return Acad_Model_Department
-     */
-    public function setFacultyMembers ()
-    {
-        if (isset($this->_department)) {
-            $department = $this->_department;
+        $departments = $this->getMapper()->fetchDepartments();
+        if (empty($departments)) {
+            return false;
         } else {
-            throw new Exception(
-            'Unable to determine "department" to get faculty list.', 
-            Zend_Log::ERR);
+            return $departments;
         }
-        $sql = Zend_Db_Table::getDefaultAdapter()->select()
-            ->distinct()
-            ->from('subject_faculty', 'staff_id')
-            ->join('semester_degree', 
-        'semester_degree.department_id = subject_faculty.department_id', array())
-            ->where('semester_degree.handled_by_dept =? ', $department);
-        $this->_faculties = $sql->query()->fetchAll();
-        return $this;
     }
-    /**
-     * Get faculty members
-     * 
-     * All faculty members which belong to the department.
-     *  
-     * @return array $faculties - faculty members
-     */
-    public function getFacultyMembers ()
+    public function save ($dep_info)
     {
-        if (!isset($this->_faculties)) {
-            $this->setFacultyMembers();
-        }
-        return $this->_faculties;
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($dep_info);
+        return $this->getMapper()->save($prepared_data);
     }
-    
-     
-    /**
-     * Set faculty members teaching in department
-     * @param array $teachingFaculty - faculty members teaching in department
-     * @return Acad_Model_Department
-     */
-    public function setTeachingFaculty($teachingFaculty){
-        
-        return $this;
-    }
-    
-    /**
-     * Get faculty members teaching in department
-     * 
-     * Get all faculty members which are teaching in department even if 
-     * they do not belong to the department. 
-     * 
-     * @return array $teachingFaculty - faculty members teaching in department
-     */
-    public function getTeachingFaculty(){
-        return $this->_teachingFaculty;
-    }
-    
-    public function getAttendanceOverview($dateFrom = null) {
-        return $this->getMapper()->fetchAttendanceStat($dateFrom);
-    }
-    
-    public function getAttendanceDetail($dateFrom = null, $degree = null, $semester = null) {
-        return $this->getMapper()->fetchAttendanceDetail($this,$dateFrom);
+    public function update ($dep_info, $dep_id)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($dep_info);
+        return $this->getMapper()->update($prepared_data, $dep_id);
     }
 }
-?>
