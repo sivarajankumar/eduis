@@ -68,27 +68,26 @@ class ClassController extends Zend_Controller_Action
     private function saveClassInfo ($class_info)
     {
         $class = new Core_Model_Class();
-        // try {
-        $class_id = $class->saveInfo($class_info);
-        Zend_Registry::get('logger')->debug(
-        'New class added,$class_id = ' . $class_id);
-        /* } catch (Exception $e) {
+        try {
+            $class_id = $class->saveInfo($class_info);
+            Zend_Registry::get('logger')->debug(
+            'New class added,$class_id = ' . $class_id);
+        } catch (Exception $e) {
             Zend_Registry::get('logger')->debug($e);
             throw new Exception(
             'There was some error saving Class information in core server. Please try again', 
             Zend_Log::ERR);
-        }*/
-        $class_info['class_id'] = $class_id;
-        /*Zend_Registry::get('logger')->debug('SAVECLASS INFO FUNCTION -  ');
-        Zend_Registry::get('logger')->debug($class_info);
-        Zend_Registry::get('logger')->debug('IN CORE');*/
+        }
+        $class_info['class_id'] = 321;
         $httpClient = new Zend_Http_Client(
         'http://' . ACADEMIC_SERVER . '/class/saveclass', array('timeout' => 30));
         $httpClient->setMethod('POST');
         $httpClient->setParameterPost(
         array('myarray' => array('class_info' => $class_info)));
+        try {
+            $response = $httpClient->request();
+        } catch (Exception $e) {}
         $response = $httpClient->request();
-        Zend_Registry::get('logger')->debug($httpClient->getLastRequest());
         if ($response->isError()) {
             $remoteErr = 'ERROR from ' . ACADEMIC_SERVER . ' : (' .
              $response->getStatus() . ') ' . $response->getMessage();
