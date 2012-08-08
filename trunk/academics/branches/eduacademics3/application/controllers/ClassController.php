@@ -186,7 +186,7 @@ class ClassController extends Zend_Controller_Action
         $class_id = $my_array['class_id'];
         $class_info = $this->getClassInfo($class_id);
         $response['class_info'] = $class_info;
-        $format = $request_object->getParam('format');
+        $format = $this->_getParam('format', 'html');
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
