@@ -233,7 +233,7 @@ class Acad_Model_Course_DmcMarks extends Acad_Model_Generic
     {}
     /**
      * Fethces the DMC marks information of the subject in the given DMC(
-     * Requires $dmc_info_id and $dmc_info_id to be set
+     * Requires $dmc_info_id and $student_subject_id to be set
      */
     public function fetchInfo ()
     {
