@@ -343,18 +343,15 @@ class StudentController extends Zend_Controller_Action
             foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
                 $dmc_info_data[$dmc_info_id] = $this->createDmcInfoArray(
                 $dmc_info_id);
-                Zend_Registry::get('logger')->debug($dmc_info_id);
             }
         } else {
             $dmc_info_data[$dmc_info_ids] = $this->createDmcInfoArray(
             $dmc_info_ids);
-            Zend_Registry::get('logger')->debug($dmc_info_data);
         }
         return $dmc_info_data;
     }
     private function createDmcInfoArray ($dmc_info_id)
     {
-        Zend_Registry::get('logger')->debug($dmc_info_id);
         $student = new Acad_Model_Member_Student();
         $dmc_info = $student->fetchDmcInfo($dmc_info_id);
         if ($dmc_info instanceof Acad_Model_Course_DmcInfo) {
@@ -373,42 +370,56 @@ class StudentController extends Zend_Controller_Action
             $info['scaled_marks'] = $dmc_info->getScaled_marks();
             $info['percentage'] = $dmc_info->getPercentage();
             return $info;
+        } else {
+            throw new Exception('Dmc_info does not exist', Zend_Log::WARN);
         }
     }
-    private function fetchsubjectDmc ($dmc_info_id, $subject_ids)
+    private function fetchDmcSubjectMarks ($dmc_info_id, $subject_ids)
     {
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
-        $dmc_data = array();
+        $dmc_subject_marks = array();
         if (is_array($subject_ids)) {
             foreach ($subject_ids as $key => $subject_id) {
-                $dmc_object = $student_model->fetchDmc($dmc_info_id, 
-                $subject_id);
-                $dmc_object->setStudent_subject_id($subject_id);
-                if ($dmc_object instanceof Acad_Model_Course_DmcMarks) {
-                    $dmc_data[$subject_id]['date'] = $dmc_object->getDate();
-                    $dmc_data[$subject_id]['external'] = $dmc_object->getExternal();
-                    $dmc_data[$subject_id]['internal'] = $dmc_object->getInternal();
-                    $dmc_data[$subject_id]['percentage'] = $dmc_object->getPercentage();
-                }
+                $dmc_subject_marks[$subject_id] = $this->getDmcSubjectMarks(
+                $dmc_info_id, $subject_id);
             }
         } else {
-            $dmc_object = $student_model->fetchDmc($dmc_info_id, $subject_ids);
-            if ($dmc_object instanceof Acad_Model_Course_DmcMarks) {
-                $dmc_data['date'] = $dmc_object->getDate();
-                $dmc_data['external'] = $dmc_object->getExternal();
-                $dmc_data['internal'] = $dmc_object->getInternal();
-                $dmc_data['percentage'] = $dmc_object->getPercentage();
-            }
+            $dmc_subject_marks = $this->getDmcSubjectMarks($dmc_info_id, 
+            $subject_id);
         }
-        return $dmc_data;
+        return $dmc_subject_marks;
+    }
+    private function getDmcSubjectMarks ($dmc_info_id, $subject_id)
+    {
+        $student_model = new Acad_Model_Member_Student();
+        $student_model->setMember_id($this->getMember_id());
+        $info = $student_model->fetchDmc($dmc_info_id, $subject_id);
+        if ($info instanceof Acad_Model_Course_DmcMarks) {
+            $info->setStudent_subject_id($subject_id);
+            $dmc_subject_marks = array();
+            $dmc_subject_marks['date'] = $info->getDate();
+            $dmc_subject_marks['external'] = $info->getExternal();
+            $dmc_subject_marks['internal'] = $info->getInternal();
+            $dmc_subject_marks['percentage'] = $info->getPercentage();
+            return $dmc_subject_marks;
+        } elseif ($info == false) {
+            throw new Exception(
+            'Subject Marks were not submitted for dmc_info_id : ' .
+             $dmc_info_id . ' and subject_id : ' . $subject_id, Zend_Log::WARN);
+        }
     }
     private function fetchStudentSubjects ($class_id)
     {
+        $member_id = $this->getMember_id();
         $class_object = new Acad_Model_StudentSubject();
         $class_object->setClass_id($class_id);
-        $class_object->setMember_id($this->getMember_id());
+        $class_object->setMember_id($member_id);
         $subject_ids = $class_object->fetchSubjects();
+        if (empty($subject_ids)) {
+            throw new Exception(
+            'No Subjects reported for Member_id : ' . $member_id, Zend_Log::WARN);
+        }
         $subject_data = array();
         foreach ($subject_ids as $key => $subject_id) {
             $subject_object = new Acad_Model_Subject();
@@ -429,7 +440,7 @@ class StudentController extends Zend_Controller_Action
         $student_subject->setClass_id($class_id);
         $subject_ids = $student_subject->fetchSubjects();
         $subject_data = array();
-        $dmc_data = array();
+        $dmc_subject_data = array();
         $dmc_info_data = array();
         switch ($dmc_view_type) {
             case 'latest':
@@ -440,20 +451,20 @@ class StudentController extends Zend_Controller_Action
                     $dmc_info_id_array = array_keys($class_dmc_info_id_array);
                     $dmc_info_id = $dmc_info_id_array[0];
                     $dmc_info_data = self::fetchDmcInfo($dmc_info_id);
-                    $dmc_data = self::fetchsubjectDmc($dmc_info_id, 
+                    $dmc_subject_data = self::fetchDmcSubjectMarks($dmc_info_id, 
                     $subject_ids);
                 }
                 break;
             case 'single':
                 $subject_data = self::fetchStudentSubjects($class_id);
                 $dmc_info_data = self::fetchDmcInfo($dmc_info_id);
-                $dmc_data = self::fetchsubjectDmc($dmc_info_id, $subject_ids);
+                $dmc_subject_data = self::fetchDmcSubjectMarks($dmc_info_id, 
+                $subject_ids);
                 break;
         }
-        Zend_Registry::get('logger')->debug($dmc_info_data);
-        Zend_Registry::get('logger')->debug($subject_data);
         $response = array('dmc_info_data' => $dmc_info_data, 
-        'dmc_data' => $dmc_data, 'subject_data' => $subject_data);
+        'dmc_data' => $dmc_subject_data, 'subject_data' => $subject_data);
+        Zend_Registry::get('logger')->debug($response);
         return $response;
     }
     public function registerAction ()
@@ -480,10 +491,10 @@ class StudentController extends Zend_Controller_Action
         $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
         $response = $client->request();
         Zend_Registry::get('logger')->debug($response);
-        if ($response->isError()) {
-            $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
+        if ($response->isWARNor()) {
+            $remoteWARN = 'REMOTE WARNOR: (' . $response->getStatus() . ') ' .
              $response->getMessage();
-            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+            throw new Zend_Exception($remoteWARN, Zend_Log::WARN);
         }
         $critical_data = Zend_Json::decode($response->getBody());
         if ($critical_data) {
@@ -1530,10 +1541,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        Zend_Registry::get('logger')->debug($params);
         $response = self::fetchclassdmc($params['class_id'], 
         $params['dmc_view_type'], $params['dmc_info_id']);
-        Zend_Registry::get('logger')->debug($response);
         switch ($format) {
             case 'html':
                 if (! empty($response)) {
@@ -1722,7 +1731,6 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $dmc_info = $params['myarray']['dmc_info'];
-        Zend_Registry::get('logger')->debug($params);
         $this->saveDmcInfo($dmc_info);
     }
     public function addsubjectmarksAction ()
@@ -1747,7 +1755,7 @@ class StudentController extends Zend_Controller_Action
         $dmc_info_id = $params['dmc_info_id'];
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
-        $dmc_data = self::fetchsubjectDmc($dmc_info_id, $subject_id);
+        $dmc_data = self::fetchDmcSubjectMarks($dmc_info_id, $subject_id);
         switch ($format) {
             case 'html':
                 if (! empty($dmc_data)) {
