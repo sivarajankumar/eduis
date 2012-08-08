@@ -72,7 +72,7 @@ class BatchController extends Zend_Controller_Action
             Zend_Registry::get('logger')->debug($e);
             throw new Exception(
             'There was some error saving batch information in academics. Please try again', 
-            Zend_Log::ERR);
+            Zend_Log::WARN);
         }
     }
     private function getDepartments ()
