@@ -76,7 +76,7 @@ class ClassController extends Zend_Controller_Action
             Zend_Registry::get('logger')->debug($e);
             throw new Exception(
             'There was some error saving Class information in core server. Please try again', 
-            Zend_Log::ERR);
+            Zend_Log::WARN);
         }
         $class_info['class_id'] = $class_id;
         $httpClient = new Zend_Http_Client(
@@ -91,7 +91,7 @@ class ClassController extends Zend_Controller_Action
         if ($response->isError()) {
             $remoteErr = 'ERROR from ' . ACADEMIC_SERVER . ' : (' .
              $response->getStatus() . ') ' . $response->getMessage();
-            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+            throw new Zend_Exception($remoteErr, Zend_Log::WARN);
         }
     }
     private function getDepartments ()
