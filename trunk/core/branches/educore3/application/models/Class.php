@@ -292,7 +292,6 @@ class Core_Model_Class extends Core_Model_Generic
     }
     public function saveInfo ($class_info)
     {
-        Zend_Registry::get('logger')->debug($class_info);
         $batch_id = $class_info['batch_id'];
         $semester_id = $class_info['semester_id'];
         $is_active = $class_info['is_active'];
