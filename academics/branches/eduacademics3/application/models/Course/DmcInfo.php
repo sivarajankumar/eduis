@@ -11,7 +11,7 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     protected $_custody_date;
     protected $_is_granted;
     protected $_grant_date;
-    protected $_recieveing_date;
+    protected $_receiving_date;
     protected $_is_copied;
     protected $_dispatch_date;
     protected $_marks_obtained;
@@ -139,11 +139,11 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
         return $this->_grant_date;
     }
     /**
-     * @return the $_recieveing_date
+     * @return the $_receiving_date
      */
-    public function getRecieveing_date ()
+    public function getReceiving_date ()
     {
-        return $this->_recieveing_date;
+        return $this->_receiving_date;
     }
     /**
      * @return the $_is_copied
@@ -251,11 +251,11 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
         $this->_grant_date = $_grant_date;
     }
     /**
-     * @param field_type $_recieveing_date
+     * @param field_type $_receiving_date
      */
-    public function setRecieveing_date ($_recieveing_date)
+    public function setReceiving_date ($_receiving_date)
     {
-        $this->_recieveing_date = $_recieveing_date;
+        $this->_receiving_date = $_receiving_date;
     }
     /**
      * @param field_type $_is_copied
@@ -368,14 +368,20 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
             return $this;
         }
     }
-    public function fetchDmcInfoId ()
+    /**
+     * 
+     * Enter description here ...
+     * @return dmc_info_id
+     */
+    public function checkDmcId ()
     {
         $dmc_id = $this->getDmc_id(true);
-        $dmc_info_id = $this->getMapper()->fetchInfo(null, $dmc_id);
+        $dmc_info_id = $this->getMapper()->fetchDmcInfoIds(null, null, null, 
+        null, null, null, $dmc_id);
         if (empty($dmc_info_id)) {
             return false;
         } else {
-            return $dmc_info_id;
+            return array_pop($dmc_info_id);
         }
     }
     /**

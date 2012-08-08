@@ -104,7 +104,7 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         ////
         /*
-         * use this where request will be recieved
+         * use this where request will be received
          */
         //$member_id_to_check = $request->getParam('member_id');
         ////
@@ -189,8 +189,6 @@ class StudentController extends Zend_Controller_Action
     private function fetchMtechData ()
     {
         $qualification_id = $this->fetchQualificationId('MTECH');
-        Zend_Registry::get('logger')->debug(
-        'in fetch data $qualification_id : ' . $qualification_id);
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         $qualification = $student_model->fetchQualificationInfo(
@@ -302,71 +300,80 @@ class StudentController extends Zend_Controller_Action
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         if ($specific_dmc_info_id) {
-            $dmc_info = self::setDmcInfoData($specific_dmc_info_id);
+            $dmc_info = self::getDmcInfo($specific_dmc_info_id);
             return $dmc_info;
         }
         if ($class_specific) {
             $dmc_info_ids = $student_model->fetchDmcInfoIds(true, null, null, 
             null, null);
-            $dmc_info = self::setDmcInfoData($dmc_info_ids);
+            $dmc_info = self::getDmcInfo($dmc_info_ids);
             return $dmc_info;
         }
         if ($result_type_specific) {
             $dmc_info_ids = $student_model->fetchDmcInfoIds(null, true, null, 
             null, true);
-            $dmc_info = self::setDmcInfoData($dmc_info_ids);
+            $dmc_info = self::getDmcInfo($dmc_info_ids);
             return $dmc_info;
         }
         if ($all) {
             $dmc_info_ids = $student_model->fetchDmcInfoIds(null, null, true, 
             null, null);
-            $dmc_info = self::setDmcInfoData($dmc_info_ids);
+            $dmc_info = self::getDmcInfo($dmc_info_ids);
             return $dmc_info;
         }
         if ($considered_only) {
             $dmc_info_ids = $student_model->fetchDmcInfoIds(null, null, null, 
             true, null);
-            $dmc_info = self::setDmcInfoData($dmc_info_ids);
+            $dmc_info = self::getDmcInfo($dmc_info_ids);
             return $dmc_info;
         }
         if ($ordered_by_date) {
             $dmc_info_ids = $student_model->fetchDmcInfoIds(null, null, null, 
             null, true);
-            $dmc_info = self::setDmcInfoData($dmc_info_ids);
+            $dmc_info = self::getDmcInfo($dmc_info_ids);
             return $dmc_info;
         }
     }
-    private function setDmcInfoData ($dmc_info_ids)
+    private function getDmcInfo ($dmc_info_ids)
     {
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         if (is_array($dmc_info_ids) and ! empty($dmc_info_ids)) {
             $dmc_info_data = array();
             foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
-                $dmc_info_model = $student_model->fetchDmcInfo($dmc_info_id);
-                if ($dmc_info_model instanceof Acad_Model_Course_DmcInfo) {
-                    $dmc_info_data[$dmc_info_id]['dmc_id'] = $dmc_id;
-                    $dmc_info_data[$dmc_info_id]['dispatch_date'] = $dmc_info_model->getDispatch_date();
-                    $dmc_info_data[$dmc_info_id]['marks_obtained'] = $dmc_info_model->getMarks_obtained();
-                    $dmc_info_data[$dmc_info_id]['percentage'] = $dmc_info_model->getPercentage();
-                    $dmc_info_data[$dmc_info_id]['result_type_id'] = $dmc_info_model->getResult_type_id();
-                    $dmc_info_data[$dmc_info_id]['scaled_marks'] = $dmc_info_model->getScaled_marks();
-                    $dmc_info_data[$dmc_info_id]['total_marks'] = $dmc_info_model->getTotal_marks();
-                }
+                $dmc_info_data[$dmc_info_id] = $this->createDmcInfoArray(
+                $dmc_info_id);
+                Zend_Registry::get('logger')->debug($dmc_info_id);
             }
         } else {
-            $dmc_info_model = $student_model->fetchDmcInfo($dmc_info_ids);
-            if ($dmc_info_model instanceof Acad_Model_Course_DmcInfo) {
-                $dmc_info_data[$dmc_info_ids]['dmc_id'] = $dmc_info_model->getDmc_id();
-                $dmc_info_data[$dmc_info_ids]['dispatch_date'] = $dmc_info_model->getDispatch_date();
-                $dmc_info_data[$dmc_info_ids]['marks_obtained'] = $dmc_info_model->getMarks_obtained();
-                $dmc_info_data[$dmc_info_ids]['percentage'] = $dmc_info_model->getPercentage();
-                $dmc_info_data[$dmc_info_ids]['result_type_id'] = $dmc_info_model->getResult_type_id();
-                $dmc_info_data[$dmc_info_ids]['scaled_marks'] = $dmc_info_model->getScaled_marks();
-                $dmc_info_data[$dmc_info_ids]['total_marks'] = $dmc_info_model->getTotal_marks();
-            }
+            $dmc_info_data[$dmc_info_ids] = $this->createDmcInfoArray(
+            $dmc_info_ids);
+            Zend_Registry::get('logger')->debug($dmc_info_data);
         }
         return $dmc_info_data;
+    }
+    private function createDmcInfoArray ($dmc_info_id)
+    {
+        Zend_Registry::get('logger')->debug($dmc_info_id);
+        $student = new Acad_Model_Member_Student();
+        $dmc_info = $student->fetchDmcInfo($dmc_info_id);
+        if ($dmc_info instanceof Acad_Model_Course_DmcInfo) {
+            $info['dmc_id'] = $dmc_info->getDmc_id();
+            $info['class_id'] = $dmc_info->getClass_id();
+            $info['result_type_id'] = $dmc_info->getResult_type_id();
+            $info['is_considered'] = $dmc_info->getIs_considered();
+            $info['examination'] = $dmc_info->getExamination();
+            $info['custody_date'] = $dmc_info->getCustody_date();
+            $info['is_granted'] = $dmc_info->getIs_granted();
+            $info['grant_date'] = $dmc_info->getGrant_date();
+            $info['is_copied'] = $dmc_info->getIs_copied();
+            $info['dispatch_date'] = $dmc_info->getDispatch_date();
+            $info['marks_obtained'] = $dmc_info->getMarks_obtained();
+            $info['total_marks'] = $dmc_info->getTotal_marks();
+            $info['scaled_marks'] = $dmc_info->getScaled_marks();
+            $info['percentage'] = $dmc_info->getPercentage();
+            return $info;
+        }
     }
     private function fetchsubjectDmc ($dmc_info_id, $subject_ids)
     {
@@ -375,7 +382,6 @@ class StudentController extends Zend_Controller_Action
         $dmc_data = array();
         if (is_array($subject_ids)) {
             foreach ($subject_ids as $key => $subject_id) {
-                Zend_Registry::get('logger')->debug($subject_id);
                 $dmc_object = $student_model->fetchDmc($dmc_info_id, 
                 $subject_id);
                 $dmc_object->setStudent_subject_id($subject_id);
@@ -433,8 +439,6 @@ class StudentController extends Zend_Controller_Action
                 if (! empty($class_dmc_info_id_array)) {
                     $dmc_info_id_array = array_keys($class_dmc_info_id_array);
                     $dmc_info_id = $dmc_info_id_array[0];
-                    Zend_Registry::get('logger')->debug(
-                    $class_dmc_info_id_array);
                     $dmc_info_data = self::fetchDmcInfo($dmc_info_id);
                     $dmc_data = self::fetchsubjectDmc($dmc_info_id, 
                     $subject_ids);
@@ -443,12 +447,13 @@ class StudentController extends Zend_Controller_Action
             case 'single':
                 $subject_data = self::fetchStudentSubjects($class_id);
                 $dmc_info_data = self::fetchDmcInfo($dmc_info_id);
-                $dmc_data = self::fetchsubjectDmc($dmc_info_id, $subject_ids);
+                //$dmc_data = self::fetchsubjectDmc($dmc_info_id, $subject_ids);
                 break;
         }
+        Zend_Registry::get('logger')->debug($dmc_info_data);
+        Zend_Registry::get('logger')->debug($subject_data);
         $response = array('dmc_info_data' => $dmc_info_data, 
         'dmc_data' => $dmc_data, 'subject_data' => $subject_data);
-        Zend_Registry::get('logger')->debug($response);
         return $response;
     }
     public function registerAction ()
@@ -554,7 +559,6 @@ class StudentController extends Zend_Controller_Action
         foreach ($no_details_sems as $no_details_sem) {
             $degree_data[$no_details_sem][] = array();
         }
-        Zend_Registry::get('logger')->debug($degree_data);
         $exam_model = new Acad_Model_CompetitiveExam();
         $exams = $exam_model->fetchExams();
         $present_exam_ids_array = $student_model->fetchCompetitveExamIds();
@@ -567,7 +571,6 @@ class StudentController extends Zend_Controller_Action
         'qualifications' => $qualifications, 
         'filled_qualifications' => $filled_qualifications, 'exams' => $exams, 
         'filled_exams' => $filled_exams);
-        Zend_Registry::get('logger')->debug($response);
         switch ($format) {
             case 'html':
                 $this->view->assign('filled_qualifications', 
@@ -587,7 +590,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($filled_qualifications);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($filled_qualifications);
                 break;
             default:
                 ;
@@ -606,7 +608,6 @@ class StudentController extends Zend_Controller_Action
         $qualifications = $qualification_model->fetchQualifications();
         $qualification_id = array_search($qualification_name, $qualifications);
         $qualification_data = self::fetchMatricData($qualification_id);
-        Zend_Registry::get('logger')->debug($qualification_data);
         switch ($format) {
             case 'html':
                 if (! empty($qualification_data)) {
@@ -622,7 +623,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($qualification_data);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($qualification_data);
                 break;
             default:
                 ;
@@ -649,7 +649,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->layout()->enableLayout();
                 if (! empty($qualification_data)) {
                     $this->view->assign('twelfth', $qualification_data);
-                    Zend_Registry::get('logger')->debug($qualification_data);
                 }
                 break;
             case 'jsonp':
@@ -661,7 +660,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($qualification_data);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($qualification_data);
                 break;
             default:
                 ;
@@ -684,7 +682,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->layout()->enableLayout();
                 if (! empty($qualification_data)) {
                     $this->view->assign('mtech', $qualification_data);
-                    Zend_Registry::get('logger')->debug($qualification_data);
                 }
                 break;
             case 'jsonp':
@@ -696,7 +693,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($qualification_data);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($qualification_data);
                 break;
             default:
                 ;
@@ -714,7 +710,6 @@ class StudentController extends Zend_Controller_Action
         $student_model->setMember_id($this->getMember_id());
         $student_model = new Acad_Model_Member_Student();
         $qualification_data = self::fetchMtechData();
-        Zend_Registry::get('logger')->debug($qualification_data);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -733,7 +728,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($qualification_data);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($qualification_data);
                 break;
             default:
                 ;
@@ -746,14 +740,11 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug($params);
         $format = $this->_getParam('format', 'html');
         $qualification_id = $this->fetchQualificationId('MTECH');
         $save_data = $params['myarray']['qualification_data'];
-        Zend_Registry::get('logger')->debug($save_data);
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
-        Zend_Registry::get('logger')->debug($save_data);
         $student_model->saveQualificationInfo($qualification_id, $save_data);
         $success = true;
         switch ($format) {
@@ -771,7 +762,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($success);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($success);
                 break;
             default:
                 ;
@@ -798,7 +788,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->layout()->enableLayout();
                 if (! empty($qualification_data)) {
                     $this->view->assign('diploma', $qualification_data);
-                    Zend_Registry::get('logger')->debug($qualification_data);
                 }
                 break;
             case 'jsonp':
@@ -810,7 +799,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($qualification_data);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($qualification_data);
                 break;
             default:
                 ;
@@ -837,7 +825,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->layout()->enableLayout();
                 if (! empty($qualification_data)) {
                     $this->view->assign('btech', $qualification_data);
-                    Zend_Registry::get('logger')->debug($qualification_data);
                 }
                 break;
             case 'jsonp':
@@ -849,7 +836,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($qualification_data);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($qualification_data);
                 break;
             default:
                 ;
@@ -868,7 +854,6 @@ class StudentController extends Zend_Controller_Action
         $exam_name = 'LEET';
         $exam_model = new Acad_Model_CompetitiveExam();
         $exams = $exam_model->fetchExams();
-        Zend_Registry::get('logger')->debug($exams);
         $exam_id = array_search($exam_name, $exams);
         $exam_data = self::fetchCompetitiveExamData($exam_id);
         switch ($format) {
@@ -888,7 +873,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($exam_data);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($exam_data);
                 break;
             default:
                 ;
@@ -911,7 +895,6 @@ class StudentController extends Zend_Controller_Action
             case 'html':
                 if (! empty($exam_data)) {
                     $this->view->assign('aieee', $exam_data);
-                    Zend_Registry::get('logger')->debug($exam_data);
                 }
                 break;
             case 'jsonp':
@@ -923,7 +906,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($exam_data);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($exam_data);
                 break;
             default:
                 ;
@@ -963,7 +945,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($exam_data);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($exam_data);
                 break;
             default:
                 ;
@@ -982,7 +963,6 @@ class StudentController extends Zend_Controller_Action
         $qualifications = $qualification_model->fetchQualifications();
         $qualification_id = array_search($qualification_name, $qualifications);
         $save_data = $params['myarray']['qualification_data'];
-        Zend_Registry::get('logger')->debug($save_data);
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         $student_model->saveQualificationInfo($qualification_id, $save_data);
@@ -1002,7 +982,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($success);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($success);
                 break;
             default:
                 ;
@@ -1021,7 +1000,6 @@ class StudentController extends Zend_Controller_Action
         $qualifications = $qualification_model->fetchQualifications();
         $qualification_id = array_search($qualification_name, $qualifications);
         $save_data = $params['myarray']['qualification_data'];
-        Zend_Registry::get('logger')->debug($save_data);
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         $student_model->saveQualificationInfo($qualification_id, $save_data);
@@ -1041,7 +1019,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($success);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($success);
                 break;
             default:
                 ;
@@ -1060,7 +1037,6 @@ class StudentController extends Zend_Controller_Action
         $qualifications = $qualification_model->fetchQualifications();
         $qualification_id = array_search($qualification_name, $qualifications);
         $save_data = $params['myarray']['qualification_data'];
-        Zend_Registry::get('logger')->debug($save_data);
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         $student_model->saveQualificationInfo($qualification_id, $save_data);
@@ -1080,7 +1056,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($success);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($success);
                 break;
             default:
                 ;
@@ -1093,17 +1068,14 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug($params);
         $format = $this->_getParam('format', 'html');
         $qualification_name = $params['myarray']['qualification_name'];
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
         $qualification_id = array_search($qualification_name, $qualifications);
         $save_data = $params['myarray']['qualification_data'];
-        Zend_Registry::get('logger')->debug($save_data);
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
-        Zend_Registry::get('logger')->debug($save_data);
         $student_model->saveQualificationInfo($qualification_id, $save_data);
         $success = true;
         switch ($format) {
@@ -1121,7 +1093,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($success);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($success);
                 break;
             default:
                 ;
@@ -1153,7 +1124,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($success);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($success);
                 break;
             default:
                 ;
@@ -1185,7 +1155,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($success);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($success);
                 break;
             default:
                 ;
@@ -1228,7 +1197,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($success);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($success);
                 break;
             default:
                 ;
@@ -1262,7 +1230,6 @@ class StudentController extends Zend_Controller_Action
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
             $qualification_data = self::fetchMatricData($qualification_id);
-            Zend_Registry::get('logger')->debug($qualification_data);
             switch ($format) {
                 case 'html':
                     $this->_helper->viewRenderer->setNoRender(false);
@@ -1281,7 +1248,6 @@ class StudentController extends Zend_Controller_Action
                     $this->_helper->json($qualification_data);
                     break;
                 case 'test':
-                    Zend_Registry::get('logger')->debug($qualification_data);
                     break;
                 default:
                     ;
@@ -1311,7 +1277,6 @@ class StudentController extends Zend_Controller_Action
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
             $qualification_data = self::fetchTwelfthData($qualification_id);
-            Zend_Registry::get('logger')->debug($qualification_data);
             switch ($format) {
                 case 'html':
                     $this->_helper->viewRenderer->setNoRender(false);
@@ -1330,7 +1295,6 @@ class StudentController extends Zend_Controller_Action
                     $this->_helper->json($qualification_data);
                     break;
                 case 'test':
-                    Zend_Registry::get('logger')->debug($qualification_data);
                     break;
                 default:
                     ;
@@ -1360,7 +1324,6 @@ class StudentController extends Zend_Controller_Action
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
             $qualification_data = self::fetchBtechData($qualification_id);
-            Zend_Registry::get('logger')->debug($qualification_data);
             switch ($format) {
                 case 'html':
                     $this->_helper->viewRenderer->setNoRender(false);
@@ -1379,7 +1342,6 @@ class StudentController extends Zend_Controller_Action
                     $this->_helper->json($qualification_data);
                     break;
                 case 'test':
-                    Zend_Registry::get('logger')->debug($qualification_data);
                     break;
                 default:
                     ;
@@ -1409,7 +1371,6 @@ class StudentController extends Zend_Controller_Action
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
             $qualification_data = self::fetchDiplomaData($qualification_id);
-            Zend_Registry::get('logger')->debug($qualification_data);
             switch ($format) {
                 case 'html':
                     $this->_helper->viewRenderer->setNoRender(false);
@@ -1428,7 +1389,6 @@ class StudentController extends Zend_Controller_Action
                     $this->_helper->json($qualification_data);
                     break;
                 case 'test':
-                    Zend_Registry::get('logger')->debug($qualification_data);
                     break;
                 default:
                     ;
@@ -1457,7 +1417,6 @@ class StudentController extends Zend_Controller_Action
             $exam_id = array_search($exam_name, $exams_names);
             if ($exam_id) {
                 $exam_data = self::fetchCompetitiveExamData($exam_id);
-                Zend_Registry::get('logger')->debug($exam_data);
                 switch ($format) {
                     case 'html':
                         if (! empty($exam_data)) {
@@ -1473,7 +1432,6 @@ class StudentController extends Zend_Controller_Action
                         $this->_helper->json($exam_data);
                         break;
                     case 'test':
-                        Zend_Registry::get('logger')->debug($exam_data);
                         break;
                     default:
                         ;
@@ -1514,7 +1472,6 @@ class StudentController extends Zend_Controller_Action
                     $this->_helper->json($qualification_data);
                     break;
                 case 'test':
-                    Zend_Registry::get('logger')->debug($qualification_data);
                     break;
                 default:
                     ;
@@ -1554,7 +1511,6 @@ class StudentController extends Zend_Controller_Action
                     $this->_helper->json($qualification_data);
                     break;
                 case 'test':
-                    Zend_Registry::get('logger')->debug($qualification_data);
                     break;
                 default:
                     ;
@@ -1562,10 +1518,6 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
-    /**
-     * 
-     * only to render view of 
-     */
     public function createdmcAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -1578,13 +1530,14 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        Zend_Registry::get('logger')->debug($params);
         $response = self::fetchclassdmc($params['class_id'], 
         $params['dmc_view_type'], $params['dmc_info_id']);
-        switch ($format) {
+        Zend_Registry::get('logger')->debug($response);
+        /*switch ($format) {
             case 'html':
                 if (! empty($response)) {
                     $this->view->assign('response', $response);
-                    Zend_Registry::get('logger')->debug($response);
                 }
                 break;
             case 'jsonp':
@@ -1596,12 +1549,11 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($response);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($response);
                 break;
             default:
                 ;
                 break;
-        }
+        }*/
     }
     public function editdmcAction ()
     {
@@ -1623,7 +1575,6 @@ class StudentController extends Zend_Controller_Action
             case 'html':
                 if (! empty($response)) {
                     $this->view->assign('response', $response);
-                    Zend_Registry::get('logger')->debug($response);
                 }
                 break;
             case 'jsonp':
@@ -1635,7 +1586,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($response);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($response);
                 break;
             default:
                 ;
@@ -1652,14 +1602,12 @@ class StudentController extends Zend_Controller_Action
         $format = $this->_getParam('format', 'html');
         $dmc_info = $params['myarray']['dmc_data'];
         $dmc_data_array = $params['myarray']['dmc_info_data'];
-        Zend_Registry::get('logger')->debug($dmc_info);
         $dmc_id = $dmc_info['dmc_id'];
         $class_id = $dmc_info['class_id'];
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         $dmc_info_id = $student_model->saveDmcInfo($dmc_info);
-        Zend_Registry::get('logger')->debug($dmc_info_id);
-        $dmc_data_value = array_values($dmc_data_array);
+        /*$dmc_data_value = array_values($dmc_data_array);
         $subject_ids = array_keys($dmc_data_array);
         $student_subject_model = new Acad_Model_StudentSubject();
         $student_subject_model->setMember_id($this->getMember_id());
@@ -1672,13 +1620,122 @@ class StudentController extends Zend_Controller_Action
             $data_array['dmc_info_id'] = $dmc_info_id;
             $dmc_data_array[$subject_id] = $data_array;
         }
-        Zend_Registry::get('logger')->debug($dmc_data_array);
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         foreach ($dmc_data_array as $dmc_data) {
             $student_model->saveDmcMarks($dmc_data);
+        }*/
+    }
+    /**
+     * gets the class information of student
+     * Enter description here ...
+     * @param int $class_id
+     */
+    private function getClassInfo ($class_id)
+    {
+        $member_id = $this->getMember_id();
+        $student = new Acad_Model_Member_Student();
+        $student->setMember_id($member_id);
+        $info = $student->fetchClassInfo($class_id);
+        if ($info instanceof Acad_Model_StudentClass) {
+            array('member_id', 'class_id', 'group_id', 'roll_no', 'start_date', 
+            'completion_date', 'is_initial_batch_identifier');
+            $class_info = array();
+            $class_info['group_id'] = $info->getGroup_id();
+            $class_info['roll_no'] = $info->getRoll_no();
+            $class_info['start_date'] = $info->getStart_date();
+            $class_info['completion_date'] = $info->getCompletion_date();
+            $class_info['is_initial_batch_identifier'] = $info->getIs_initial_batch_identifier();
+            return $class_info;
+        } else {
+            return flase;
         }
     }
+    private function getActiveClassIds ()
+    {
+        $member_id = $this->getMember_id();
+        $student = new Acad_Model_Member_Student();
+        $student->setMember_id($member_id);
+        return $student->fetchActiveClassIds();
+    }
+    private function getAllClassIds ()
+    {
+        $member_id = $this->getMember_id();
+        $student = new Acad_Model_Member_Student();
+        $student->setMember_id($member_id);
+        return $student->fetchAllClassIds();
+    }
+    public function adddmcinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $member_id = $this->getMember_id();
+        $class_ids = $this->getAllClassIds();
+        if (empty($class_ids)) {
+            $this->view->assign('class_info', false);
+        } else {
+            $class_info = array();
+            foreach ($class_ids as $class_id) {
+                $info = $this->getClassInfo($class_id);
+                foreach ($info as $class_id => $semester_id) {
+                    $class_info[$class_id] = $semester_id;
+                }
+            }
+            $this->view->assign('class_info', $class_info);
+        }
+    }
+    public function viewdmcinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function editdmcinfoAction ()
+    {}
+    private function saveDmcInfo ($dmc_info)
+    {
+        $member_id = $this->getMember_id();
+        $student = new Acad_Model_Member_Student();
+        $student->setMember_id($member_id);
+        $save_info['dmc_id'] = $dmc_info['dmc_id'];
+        $save_info['class_id'] = $dmc_info['class_id'];
+        $save_info['result_type_id'] = $dmc_info['result_type_id'];
+        $save_info['is_considered'] = $dmc_info['is_considered'];
+        $save_info['examination'] = $dmc_info['examination'];
+        $save_info['custody_date'] = $dmc_info['custody_date'];
+        $save_info['is_granted'] = $dmc_info['is_granted'];
+        $save_info['grant_date'] = $dmc_info['grant_date'];
+        $save_info['receiving_date'] = $dmc_info['receiving_date'];
+        $save_info['is_copied'] = $dmc_info['is_copied'];
+        $save_info['dispatch_date'] = $dmc_info['dispatch_date'];
+        $save_info['marks_obtained'] = $dmc_info['marks_obtained'];
+        $save_info['total_marks'] = $dmc_info['total_marks'];
+        $save_info['scaled_marks'] = $dmc_info['scaled_marks'];
+        $save_info['percentage'] = $dmc_info['percentage'];
+        return $student->saveDmcInfo($save_info);
+    }
+    public function savedmcinfoAction ()
+    {
+        $dmc_data_array = array();
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $this->_getParam('format', 'html');
+        $dmc_info = $params['myarray']['dmc_info'];
+        Zend_Registry::get('logger')->debug($params);
+        $this->saveDmcInfo($dmc_info);
+    }
+    public function addsubjectmarksAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function viewsubjectmarksAction ()
+    {}
+    public function editsubjectmarksAction ()
+    {}
+    public function savesubjectmarksAction ()
+    {}
     public function fetchsubjectdmcAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -1706,7 +1763,6 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($dmc_data);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($dmc_data);
                 break;
             default:
                 ;
@@ -1750,6 +1806,5 @@ class StudentController extends Zend_Controller_Action
                 $inner_array[$semester_idA][$dmc_info_id]['dispatch_date'] = $dmc_dispatch_dates[$dmc_info_id];
             }
         }
-        Zend_Registry::get('logger')->debug($inner_array);
     }
 }

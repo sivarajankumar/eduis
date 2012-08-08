@@ -402,8 +402,10 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         if (! empty($student_class_ids) and ! empty($active_class_ids)) {
             $student_active_class_ids = array_intersect($student_class_ids, 
             $active_class_ids);
+            return $student_active_class_ids;
+        } else {
+            return false;
         }
-        return $student_active_class_ids;
     }
     /**
      * Fetches the All class_ids of a Student
@@ -625,6 +627,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
      */
     public function fetchDmcInfo ($dmc_info_id)
     {
+        Zend_Registry::get('logger')->debug($dmc_info_id);
         $dmc_info_object = new Acad_Model_Course_DmcInfo();
         $dmc_info_object->setDmc_info_id($dmc_info_id);
         return $dmc_info_object->fetchInfo();
@@ -792,7 +795,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $dmc_info_object = new Acad_Model_Course_DmcInfo();
         $dmc_id = $data_array['dmc_id'];
         $dmc_info_object->setDmc_id($dmc_id);
-        $dmc_info_id = $dmc_info_object->fetchDmcInfoId();
+        $dmc_info_id = $dmc_info_object->checkDmcId();
         if ($dmc_info_id == false) {
             $dmc_info_object->initSave();
             $preparedData = $dmc_info_object->prepareDataForSaveProcess(

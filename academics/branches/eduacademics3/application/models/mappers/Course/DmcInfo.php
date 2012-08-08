@@ -47,7 +47,7 @@ class Acad_Model_Mapper_Course_DmcInfo
         if (isset($dmc_info_id)) {
             $required_cols = array('dmc_info_id', 'dmc_id', 'is_considered', 
             'result_type_id', 'class_id', 'member_id', 'examination', 
-            'custody_date', 'is_granted', 'grant_date', 'recieveing_date', 
+            'custody_date', 'is_granted', 'grant_date', 'receiving_date', 
             'is_copied', 'dispatch_date', 'marks_obtained', 'total_marks', 
             'scaled_marks', 'percentage');
             $select->from($dmc_info_table, $required_cols)->where(
@@ -74,18 +74,23 @@ class Acad_Model_Mapper_Course_DmcInfo
      * @param bool $ordered_by_date
      */
     public function fetchDmcInfoIds ($member_id, $class_id = null, 
-    $result_type_id = null, $all = null, $is_considered = null, $ordered_by_date = null)
+    $result_type_id = null, $all = null, $is_considered = null, $ordered_by_date = null, 
+    $dmc_id = null)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $dmc_info_table = $db_table->info('name');
         $dmc_info_ids = array();
         $required_cols = array('dmc_info_id', 'dmc_id');
-        $select = $adapter->select()
-            ->from($dmc_info_table, $required_cols)
-            ->where('member_id = ?', $member_id);
+        $select = $adapter->select()->from($dmc_info_table, $required_cols);
+        if (isset($member_id)) {
+            $select->where('member_id = ?', $member_id);
+        }
         if (isset($class_id)) {
             $select->where('class_id = ?', $class_id);
+        }
+        if (isset($dmc_id)) {
+            $select->where('dmc_id = ?', $dmc_id);
         }
         if (isset($result_type_id)) {
             $select->where('result_type_id = ?', $result_type_id);
@@ -151,11 +156,13 @@ class Acad_Model_Mapper_Course_DmcInfo
     }
     public function save ($prepared_data)
     {
+        Zend_Registry::get('logger')->debug('saving dmc info');
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
     public function update ($prepared_data, $dmc_info_id)
     {
+        Zend_Registry::get('logger')->debug('updating dmc info');
         $dbtable = $this->getDbTable();
         $where = 'dmc_info_id = ' . $dmc_info_id;
         return $dbtable->update($prepared_data, $where);

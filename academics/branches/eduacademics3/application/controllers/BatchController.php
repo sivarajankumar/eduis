@@ -178,7 +178,7 @@ class BatchController extends Zend_Controller_Action
         $batch_id = $my_array['batch_id'];
         $batch_info = $this->getBatchInfo($batch_id);
         $response['batch_info'] = $batch_info;
-        $format = $request_object->getParam('format');
+        $format = $this->_getParam('format', 'html');
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
