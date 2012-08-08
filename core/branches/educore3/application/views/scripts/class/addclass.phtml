@@ -208,7 +208,7 @@ function submit_class_info() {
 			},
 		success: function(jStatus){
 			alert("The information has been saved sucessfully.");
-			//window.location.replace("/index/index");
+			window.location.replace("/index/index");
 		},
 		error: function(response) {
 			$('#errorBox').text(response.responseText).parent().show();
