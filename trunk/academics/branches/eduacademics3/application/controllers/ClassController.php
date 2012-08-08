@@ -69,7 +69,7 @@ class ClassController extends Zend_Controller_Action
     {
         $class = new Acad_Model_Class();
         try {
-            $class->save($class_info);
+            $class->saveInfo($class_info);
         } catch (Exception $e) {
             Zend_Registry::get('logger')->debug($e);
             throw new Exception(
