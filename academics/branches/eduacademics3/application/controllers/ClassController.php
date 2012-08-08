@@ -12,10 +12,10 @@ class ClassController extends Zend_Controller_Action
      */
     private function getClassInfo ($class_id)
     {
-        $class = new Core_Model_Class();
+        $class = new Acad_Model_Class();
         $class->setClass_id($class_id);
         $info = $class->fetchInfo();
-        if ($info instanceof Core_Model_Class) {
+        if ($info instanceof Acad_Model_Class) {
             $class_info = array();
             $class_info['class_id'] = $info->getClass_id();
             $class_info['class_id'] = $info->getBatch_id();
@@ -44,7 +44,7 @@ class ClassController extends Zend_Controller_Action
         $class_id_basis = null;
         $semester_id_basis = null;
         $is_active_basis = null;
-        $class = new Core_Model_Class();
+        $class = new Acad_Model_Class();
         if ($class_id) {
             $class_id_basis = true;
             $class->setBatch_id($class_id);
@@ -67,7 +67,7 @@ class ClassController extends Zend_Controller_Action
     }
     private function saveClassInfo ($class_info)
     {
-        $class = new Core_Model_Class();
+        $class = new Acad_Model_Class();
         try {
             $class->save($class_info);
         } catch (Exception $e) {
@@ -79,7 +79,7 @@ class ClassController extends Zend_Controller_Action
     }
     private function getDepartments ()
     {
-        $department = new Core_Model_Department();
+        $department = new Acad_Model_Department();
         $departments = $department->fetchDepartments();
         if (empty($departments)) {
             return false;
@@ -89,9 +89,9 @@ class ClassController extends Zend_Controller_Action
     }
     private function getProgrammeInfo ($programme_id)
     {
-        $programme = new Core_Model_Programme();
+        $programme = new Acad_Model_Programme();
         $info = $programme->fetchInfo();
-        if ($info instanceof Core_Model_Programme) {
+        if ($info instanceof Acad_Model_Programme) {
             $prog_info['programme_name'] = $info->getProgramme_name();
             $prog_info['total_semesters'] = $info->getTotal_semesters();
             $prog_info['duration'] = $info->getDuration();
@@ -102,7 +102,7 @@ class ClassController extends Zend_Controller_Action
     }
     private function getProgrammes ()
     {
-        $programme = new Core_Model_Programme();
+        $programme = new Acad_Model_Programme();
         $programmes = $programme->fetchProgrammes();
         if (empty($programmes)) {
             return false;
