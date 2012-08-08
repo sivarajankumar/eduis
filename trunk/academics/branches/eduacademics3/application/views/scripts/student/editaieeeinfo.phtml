@@ -10,9 +10,9 @@
 	</div>
 					
 	<div class="ctrlHolder">
-		<label for="doc"><em>*</em>Date of Conduct</label>
-		<input name="doc" id="doc" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
-		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+		<label for="date">Date of Conduct</label>
+		<input name="date" id="date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput"/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of aiee exam</p>
 	</div>
         
 					
@@ -23,7 +23,7 @@
 	</div>
 					
 	<div class="ctrlHolder">
-		<label for="total_score"><em>*</em>AIEEE Marks</label>
+		<label for="total_score"><em>*</em>AIEEE Total Score</label>
 		<input name="total_score" id="total_score" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput validateInteger"/>
 		<p class="formHint">Marks of AIEEE Form</p>
 	</div>
@@ -38,8 +38,8 @@
 
 <script type="text/javascript">
 <?php
-    if(isset($this->qualification_data)){
-        foreach ($this->qualification_data as $key => $value){
+    if(isset($this->exam_data)){
+        foreach ($this->exam_data as $key => $value){
             $divname = $key;
             echo '$("#'.$key.'").val("'.$value.'");';
         }
@@ -52,11 +52,11 @@
     	});
     });
     serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
-    $("#doc").datepicker({
+    $("#date").datepicker({
     	dateFormat: 'yy-mm-dd',
     	changeMonth: true,
 		changeYear: true,
-		yearRange: '-25:-15',
+		yearRange: '-5:+5',
 		onClose : function(dateText, inst) {
 			this.focus();
 			}
