@@ -68,13 +68,31 @@ class ClassController extends Zend_Controller_Action
     private function saveClassInfo ($class_info)
     {
         $class = new Core_Model_Class();
-        try {
-            $class->save($class_info);
-        } catch (Exception $e) {
+        // try {
+        $class_id = $class->saveInfo($class_info);
+        Zend_Registry::get('logger')->debug(
+        'New class added,$class_id = ' . $class_id);
+        /* } catch (Exception $e) {
             Zend_Registry::get('logger')->debug($e);
             throw new Exception(
-            'There was some error saving Class information. Please try again', 
+            'There was some error saving Class information in core server. Please try again', 
             Zend_Log::ERR);
+        }*/
+        $class_info['class_id'] = $class_id;
+        /*Zend_Registry::get('logger')->debug('SAVECLASS INFO FUNCTION -  ');
+        Zend_Registry::get('logger')->debug($class_info);
+        Zend_Registry::get('logger')->debug('IN CORE');*/
+        $httpClient = new Zend_Http_Client(
+        'http://' . ACADEMIC_SERVER . '/class/saveclass', array('timeout' => 30));
+        $httpClient->setMethod('POST');
+        $httpClient->setParameterPost(
+        array('myarray' => array('class_info' => $class_info)));
+        $response = $httpClient->request();
+        Zend_Registry::get('logger')->debug($httpClient->getLastRequest());
+        if ($response->isError()) {
+            $remoteErr = 'ERROR from ' . ACADEMIC_SERVER . ' : (' .
+             $response->getStatus() . ') ' . $response->getMessage();
+            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
         }
     }
     private function getDepartments ()
@@ -135,14 +153,14 @@ class ClassController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $my_array = $params['myarray'];
         $class_info = $my_array['class_info'];
-        $save['class_id'] = $class_info['class_id'];
+        $save['batch_id'] = $class_info['batch_id'];
         $save['semester_id'] = $class_info['semester_id'];
         $save['semester_type'] = $class_info['semester_type'];
         $save['semester_duration'] = $class_info['semester_duration'];
         $save['handled_by_dept'] = $class_info['handled_by_dept'];
         $save['completion_date'] = $class_info['completion_date'];
         $save['start_date'] = $class_info['start_date'];
-        $save['handled_by_dept'] = $class_info['is_active'];
+        $save['is_active'] = $class_info['is_active'];
         $this->saveClassInfo($save);
     }
     public function viewclassinfoAction ()

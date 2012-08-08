@@ -89,6 +89,15 @@ class Core_Model_Mapper_Class
         $class_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $class_ids;
     }
+    public function classExistCheck ($class_id)
+    {
+        $classes = $this->getDbTable()->find($class_id);
+        if (0 == count($classes)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
