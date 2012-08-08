@@ -288,8 +288,9 @@ class StudentController extends Zend_Controller_Action
             $exam_data['name'] = $exam_model->getName();
             $exam_data['total_score'] = $student_exam_model->getTotal_score();
             $exam_data['abbr'] = $exam_model->getAbbreviation();
-            $exam_data['air'] = $student_exam_model->getAll_india_rank();
+            $exam_data['all_india_rank'] = $student_exam_model->getAll_india_rank();
             $exam_data['roll_no'] = $student_exam_model->getRoll_no();
+            $exam_data['date'] = $student_exam_model->getDate();
             $exam_data['total_score'] = $student_exam_model->getTotal_score();
         }
         return $exam_data;
@@ -1435,6 +1436,11 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
+    private function getCompetitiveExams ()
+    {
+        $exams = new Acad_Model_CompetitiveExam();
+        return $exams->fetchExams();
+    }
     public function editaieeeinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -1443,14 +1449,15 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $exam_name = 'AIEEE';
+        $exams_names = $this->getCompetitiveExams();
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
         $exam_ids = $student_model->fetchCompetitveExamIds();
         if (! empty($exam_ids)) {
-            $exam_id = array_search($exam_name, $exam_ids);
-            Zend_Registry::get('logger')->debug($exam_ids);
+            $exam_id = array_search($exam_name, $exams_names);
             if ($exam_id) {
                 $exam_data = self::fetchCompetitiveExamData($exam_id);
+                Zend_Registry::get('logger')->debug($exam_data);
                 switch ($format) {
                     case 'html':
                         if (! empty($exam_data)) {
