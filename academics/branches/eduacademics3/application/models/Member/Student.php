@@ -627,7 +627,6 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
      */
     public function fetchDmcInfo ($dmc_info_id)
     {
-        Zend_Registry::get('logger')->debug($dmc_info_id);
         $dmc_info_object = new Acad_Model_Course_DmcInfo();
         $dmc_info_object->setDmc_info_id($dmc_info_id);
         return $dmc_info_object->fetchInfo();
