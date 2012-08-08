@@ -135,14 +135,22 @@ class ClassController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $my_array = $params['myarray'];
         $class_info = $my_array['class_info'];
+        echo '9888888888888888888888888888';
+        print_r($class_info);
+        echo '6777777777777777777777777457';
+        /*$class_info = array('batch_id' => 42, 'semester_id' => 1, 
+        'semester_type' => 'ODD', 'semester_duration' => 5, 
+        'handled_by_dept' => 'CSE', 'completion_date' => '2012-12-26', 
+        'start_date' => '2012-08-14', 'is_active' => 1, 'class_id' => 321);*/
         $save['class_id'] = $class_info['class_id'];
+        $save['batch_id'] = $class_info['batch_id'];
         $save['semester_id'] = $class_info['semester_id'];
         $save['semester_type'] = $class_info['semester_type'];
         $save['semester_duration'] = $class_info['semester_duration'];
         $save['handled_by_dept'] = $class_info['handled_by_dept'];
         $save['completion_date'] = $class_info['completion_date'];
         $save['start_date'] = $class_info['start_date'];
-        $save['handled_by_dept'] = $class_info['is_active'];
+        $save['is_active'] = $class_info['is_active'];
         $this->saveClassInfo($save);
     }
     public function viewclassinfoAction ()
