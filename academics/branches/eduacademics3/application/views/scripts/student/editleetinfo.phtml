@@ -10,9 +10,9 @@
 	</div>
 					
 	<div class="ctrlHolder">
-		<label for="doc"><em>*</em>Date of Conduct</label>
-		<input name="doc" id="doc" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
-		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+		<label for="date">Date of Conduct</label>
+		<input name="date" id="date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput"/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of leet</p>
 	</div>
         
 	<div class="ctrlHolder">
@@ -49,11 +49,11 @@
     	});
     });
  	
-    $("#doc").datepicker({
+    $("#date").datepicker({
     	dateFormat: 'yy-mm-dd',
     	changeMonth: true,
 		changeYear: true,
-		yearRange: '-25:-15',
+		yearRange: '-5:+5',
 		onClose : function(dateText, inst) {
 			this.focus();
 			}
