@@ -2,14 +2,15 @@
     $department = $this->departments;
     $programme = $this->programmes;
 ?>
-<form id="batch" class="uniForm" action="javascript:submit()">
-<h3>Add New Batch</h3>
+<h3>Add New Class</h3>
+<form id="batch" class="uniForm" action="javascript:submit_batch_info()">
+
 <fieldset id="batch_info">
-	<h5>Please fill this form and click on next to add a new batch.</h5>
+	<h5>Please fill this form and click on next to add a new class.</h5>
 	<div class="ctrlHolder">
 		<label for="department_id"><em>*</em>Department</label>
 		<select id="department_id" name="department_id" class="required">
-		<option value="">Select the programme</option>
+		<option value="">Select the department</option>
 		<?php 
 		    foreach ($department as $key => $value)
 		    {
@@ -63,49 +64,183 @@
 </fieldset>
 </form>
 
+
+<form id="class" class="uniForm" action="javascript:submit_class_info()">
+<fieldset id="class_info">
+	<h5>Please fill this form and click on next to add a new class.</h5>
+	<div class="ctrlHolder">
+		<label for="semester_id"><em>*</em>Semester</label>
+		<select id="semester_id" name="semester_id" class="required">
+		<option value="">Select the semester</option>
+		<?php 
+		    for($i=1;$i<=8;$i++)
+            {
+                echo '<option value="'.$i.'">'.$i.'</option>';
+            }
+		?>
+		</select>
+		<p class="formHint">Select Department</p>
+	</div>
+					
+	<div class="ctrlHolder">
+		<label for="semster_type"><em>*</em>Semester type</label>
+		<select id="semster_type" name="semster_type" class="required">
+			<option value="">Select the Semester type</option>
+			<option value="ODD">Odd</option>
+			<option value="EVEN">Even</option>
+		</select>
+		<p class="formHint">Select the semster type</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="semster_duration"><em>*</em>Semester Duration</label>
+		<select id="semster_duration" name="semster_duration" class="required">
+			<option value="">Select the Semester Duration</option>
+			<option value="2">Two Years</option>
+			<option value="4">Four Years</option>
+		</select>
+		<p class="formHint">Select the semster duration</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="handled_by_dept"><em>*</em>Handled By Department</label>
+		<select id="handled_by_dept" name="handled_by_dept" class="required">
+		<option value="">Select the department</option>
+		<?php 
+		    foreach ($department as $key => $value)
+		    {
+                echo '<option value="'.$key.'">'.$value.'</option>';
+		    }
+		?>
+		</select>
+		<p class="formHint">Select Department</p>
+	</div>
+    
+    <div class="ctrlHolder">
+		<label for="start_date">Start Date</label>
+		<input name="start_date" id="start_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of start</p>
+	</div>
+		
+    <div class="ctrlHolder">
+		<label for="completion_date">Completion Date</label>
+		<input name="completion_date" id="completion_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click end date</p>
+	</div>
+    
+    <div class="ctrlHolder">
+		<label for="is_active"><em>*</em>Is Batch Active</label>
+		<input name="is_active" id="is_active" type="checkbox" class="checkbox"/>
+		<p class="formHint">Click if batch is active</p>
+	</div>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</fieldset>
+</form>
+
 <script>
 
 $(function(){
-  $('form.uniForm').uniform({
-    prevent_submit : true
-  });
+	var batch_no = 0;
+	$('form#class').hide(10);
+	$('form.uniForm').uniform({
+		prevent_submit : true
+	});
+
+	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	$("#start_date").datepicker({
+	dateFormat: 'yy-mm-dd',
+	changeMonth: true,
+		changeYear: true,
+		yearRange: '-10:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+		}
+	});
+	$("#completion_date").datepicker({
+	  	dateFormat: 'yy-mm-dd',
+	  	changeMonth: true,
+			changeYear: true,
+			yearRange: '-10:+5',
+			onClose : function(dateText, inst) {
+				this.focus();
+			}
+	});
 });       
 
-function submit() {
+function submit_batch_info() {
 	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'batch', 'action' => 'getbatchids'))?>';
-    $.ajax({
-        url : urlSaveInfo,
-        data : {
-            	myarray:getValues(),
-            	format : 'json',
-            },
-        success: function(jStatus){
-        	alert(jStatus);
-            //window.location.replace("/index/index");
-        },
-        error: function(response) {
-          $('#errorBox').text(response.responseText).parent().show();
-             console.log(response);
-        }
+	$.ajax({
+		url : urlSaveInfo,
+		data : {
+				myarray:getBatchValues(),
+				format : 'json'
+			},
+		success: function(jStatus){
+			if(jStatus == false)
+			{
+				var choice = confirm('The batch for selected branch is not registered. Please register the batch first. Click Ok to Add New Batch');
+				if(choice)
+					window.location.replace('/batch/addbatch');
+			}
+			else {
+				batch_no = jStatus;
+				$('form#batch').hide();
+				$('form#class').show('slow');
+			}
+		},
+		error: function(response) {
+			$('#errorBox').text(response.responseText).parent().show();
+			console.log(response);
+		}
     });
 }
 
-function getValues() {
+function submit_class_info() {
+	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'batch', 'action' => 'saveclass'))?>';
+	$.ajax({
+		url : urlSaveInfo,
+		data : {
+				myarray:getClassValues(),
+				format : 'json'
+			},
+		success: function(jStatus){
+			alert("The information has been saved sucessfully.");
+			//window.location.replace("/index/index");
+		},
+		error: function(response) {
+			$('#errorBox').text(response.responseText).parent().show();
+			console.log(response);
+		}
+    });
+}
+
+function getBatchValues() {
 	var formData = {};
-	var batch_info = {};
+	var batch_params = {};
 	$('form#batch :input')
 	.each(function(){ 
-		batch_info[this.name] = this.value; 
+		batch_params[this.name] = this.value; 
 	});
-	/*if(batch_info['programme_id'] == 'BTECH')
-	{
-		batch_info['batch_number'] = batch_info['batch_start'] - 2002 + 1;
-	}
-	else
-	{
-		batch_info['batch_number'] = batch_info['batch_start'] - 2009 + 1;
-	}*/
-	formData['batch_params'] = batch_info;
+	formData['batch_params'] = batch_params;
+	return formData;
+}
+
+function getClassValues() {
+	var formData = {};
+	var class_info = {};
+	$('form#class :input')
+	.each(function(){ 
+		class_info[this.name] = this.value; 
+	});
+	class_info['is_active'] = $('#is_active').is(':checked')?1:0;
+	class_info['batch_id'] = parseInt(batch_no, 10);
+	formData['class_info'] = class_info;
+	
 	return formData;
 }
 </script>
