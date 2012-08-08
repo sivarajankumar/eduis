@@ -447,7 +447,7 @@ class StudentController extends Zend_Controller_Action
             case 'single':
                 $subject_data = self::fetchStudentSubjects($class_id);
                 $dmc_info_data = self::fetchDmcInfo($dmc_info_id);
-                //$dmc_data = self::fetchsubjectDmc($dmc_info_id, $subject_ids);
+                $dmc_data = self::fetchsubjectDmc($dmc_info_id, $subject_ids);
                 break;
         }
         Zend_Registry::get('logger')->debug($dmc_info_data);
@@ -1534,7 +1534,7 @@ class StudentController extends Zend_Controller_Action
         $response = self::fetchclassdmc($params['class_id'], 
         $params['dmc_view_type'], $params['dmc_info_id']);
         Zend_Registry::get('logger')->debug($response);
-        /*switch ($format) {
+        switch ($format) {
             case 'html':
                 if (! empty($response)) {
                     $this->view->assign('response', $response);
@@ -1553,7 +1553,7 @@ class StudentController extends Zend_Controller_Action
             default:
                 ;
                 break;
-        }*/
+        }
     }
     public function editdmcAction ()
     {
