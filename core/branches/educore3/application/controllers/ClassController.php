@@ -78,7 +78,7 @@ class ClassController extends Zend_Controller_Action
             'There was some error saving Class information in core server. Please try again', 
             Zend_Log::ERR);
         }
-        $class_info['class_id'] = 321;
+        $class_info['class_id'] = $class_id;
         $httpClient = new Zend_Http_Client(
         'http://' . ACADEMIC_SERVER . '/class/saveclass', array('timeout' => 30));
         $httpClient->setMethod('POST');

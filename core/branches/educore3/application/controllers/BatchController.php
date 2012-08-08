@@ -78,11 +78,13 @@ class BatchController extends Zend_Controller_Action
         }
         $batch_info['batch_id'] = $batch_id;
         Zend_Registry::get('logger')->debug($batch_info);
-        $httpClient = new Zend_Http_Client(
-        'http://' . ACADEMIC_SERVER . '/batch/savebatch', array('timeout' => 30));
+        $httpClient = new Zend_Http_Client();
+        $httpClient->setUri('http://' . ACADEMIC_SERVER . '/batch/savebatch');
+        $httpClient->setConfig(array('timeout' => 30));
         $httpClient->setMethod('POST');
         $httpClient->setParameterPost(
         array('myarray' => array('batch_info' => $batch_info)));
+        Zend_Registry::get('logger')->debug($httpClient);
         $response = $httpClient->request();
         if ($response->isError()) {
             $remoteErr = 'ERROR from ' . ACADEMIC_SERVER . ' : (' .
