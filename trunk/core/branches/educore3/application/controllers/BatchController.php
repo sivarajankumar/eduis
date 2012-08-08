@@ -74,7 +74,7 @@ class BatchController extends Zend_Controller_Action
             Zend_Registry::get('logger')->debug($e);
             throw new Exception(
             'There was some error saving batch information in core. Please try again', 
-            Zend_Log::ERR);
+            Zend_Log::WARN);
         }
         $batch_info['batch_id'] = $batch_id;
         Zend_Registry::get('logger')->debug($batch_info);
@@ -90,7 +90,7 @@ class BatchController extends Zend_Controller_Action
             $remoteErr = 'ERROR from ' . ACADEMIC_SERVER . ' : (' .
              $response->getStatus() . ') ' . $response->getMessage() . ', i.e. ' .
              $response->getHeader('Message');
-            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+            throw new Zend_Exception($remoteErr, Zend_Log::WARN);
         }
     }
     private function getDepartments ()
