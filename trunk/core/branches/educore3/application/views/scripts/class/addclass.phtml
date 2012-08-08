@@ -50,13 +50,7 @@
 		<p class="formHint">Select the starting year of the batch</p>
 	</div>
     
-    <!--<div class="ctrlHolder">
-		<label for="is_active"><em>*</em>Is Batch Active</label>
-		<input name="is_active" id="is_active" type="checkbox" class="checkbox"/>
-		<p class="formHint">Click if batch is active</p>
-	</div>
-	
-	--><div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+   <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
 	<div class="buttonHolder">
 		<button type="reset" class="secondaryAction">Reset</button>
 		<button type="submit" class="primaryAction">Next</button>
@@ -83,18 +77,20 @@
 	</div>
 					
 	<div class="ctrlHolder">
-		<label for="semster_type"><em>*</em>Semester type</label>
-		<select id="semster_type" name="semster_type" class="required">
-			<option value="">Select the Semester type</option>
-			<option value="ODD">Odd</option>
-			<option value="EVEN">Even</option>
-		</select>
+		<label for="semester_type"><em>*</em>Semester type</label>
+		<input name="semester_type" id="semester_type" value="" data-default-value="e.g. ODD" size="35" maxlength="20" type="text" class="required textInput" readonly="readonly"/>
 		<p class="formHint">Select the semster type</p>
 	</div>
 	
 	<div class="ctrlHolder">
-		<label for="semster_duration"><em>*</em>Semester Duration</label>
-		<select id="semster_duration" name="semster_duration" class="required">
+		<label for="semester_duration"><em>*</em>Semester Duration (in Months)</label>
+		<input name="semester_duration" id="semester_duration" value="" data-default-value="e.g. 3" size="35" maxlength="20" type="text" class="required textInput validateNumber"/>
+		<p class="formHint">Select the semster duration</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="semester_duration"><em>*</em>Semester Duration</label>
+		<select id="semester_duration" name="semester_duration" class="required">
 			<option value="">Select the Semester Duration</option>
 			<option value="2">Two Years</option>
 			<option value="4">Four Years</option>
@@ -117,19 +113,19 @@
 	</div>
     
     <div class="ctrlHolder">
-		<label for="start_date">Start Date</label>
-		<input name="start_date" id="start_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+		<label for="start_date"><em>*</em>Start Date</label>
+		<input name="start_date" id="start_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
 		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of start</p>
 	</div>
 		
     <div class="ctrlHolder">
-		<label for="completion_date">Completion Date</label>
-		<input name="completion_date" id="completion_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+		<label for="completion_date"><em>*</em>Completion Date</label>
+		<input name="completion_date" id="completion_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="required textInput "/>
 		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click end date</p>
 	</div>
     
     <div class="ctrlHolder">
-		<label for="is_active"><em>*</em>Is Batch Active</label>
+		<label for="is_active">Is Batch Active</label>
 		<input name="is_active" id="is_active" type="checkbox" class="checkbox"/>
 		<p class="formHint">Click if batch is active</p>
 	</div>
@@ -170,6 +166,18 @@ $(function(){
 				this.focus();
 			}
 	});
+
+	$('#semester_id').change(function(){
+		var semester_id = parseInt($(this).val(), 10); 
+		if(semester_id % 2 == 0)
+		{
+			$('#semester_type').attr('value','EVEN');
+		}
+		else
+		{
+			$('#semester_type').attr('value','ODD');
+		}
+	});
 });       
 
 function submit_batch_info() {
@@ -201,7 +209,7 @@ function submit_batch_info() {
 }
 
 function submit_class_info() {
-	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'batch', 'action' => 'saveclass'))?>';
+	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'class', 'action' => 'saveclass'))?>';
 	$.ajax({
 		url : urlSaveInfo,
 		data : {
