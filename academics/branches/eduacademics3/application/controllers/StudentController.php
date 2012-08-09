@@ -1680,26 +1680,6 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
     }
-    private function getProgrammes ()
-    {
-        $programme = new Acad_Model_Programme();
-        $programmes = $programme->fetchProgrammes();
-        if (empty($programmes)) {
-            return false;
-        } else {
-            return $programmes;
-        }
-    }
-    private function getDepartments ()
-    {
-        $department = new Acad_Model_Department();
-        $departments = $department->fetchDepartments();
-        if (empty($departments)) {
-            return false;
-        } else {
-            return $departments;
-        }
-    }
     /**
      * fetches batch_id on the basis of batch info given
      * 
@@ -1796,18 +1776,6 @@ class StudentController extends Zend_Controller_Action
                 }
             }
             $this->view->assign('class_info', $class_info);
-        }
-        $departments = $this->getDepartments();
-        if (empty($departments)) {
-            $this->view->assign('departments', false);
-        } else {
-            $this->view->assign('departments', $departments);
-        }
-        $programmes = $this->getProgrammes();
-        if (empty($programmes)) {
-            $this->view->assign('programmes', false);
-        } else {
-            $this->view->assign('programmes', $programmes);
         }
     }
     private function saveDmcInfo ($dmc_info)
