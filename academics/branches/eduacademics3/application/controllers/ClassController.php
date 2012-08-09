@@ -38,16 +38,16 @@ class ClassController extends Zend_Controller_Action
      * @param int $semester_id
      * @param bool $is_active
      */
-    private function getClassIds ($class_id = null, $semester_id = null, 
+    private function getClassIds ($batch_id = null, $semester_id = null, 
     $is_active = null)
     {
-        $class_id_basis = null;
+        $batch_id_basis = null;
         $semester_id_basis = null;
         $is_active_basis = null;
         $class = new Acad_Model_Class();
-        if ($class_id) {
-            $class_id_basis = true;
-            $class->setBatch_id($class_id);
+        if ($batch_id) {
+            $batch_id_basis = true;
+            $class->setBatch_id($batch_id);
         }
         if ($semester_id) {
             $semester_id_basis = true;
@@ -57,7 +57,7 @@ class ClassController extends Zend_Controller_Action
             $is_active_basis = true;
             $class->setIs_active($is_active);
         }
-        $class_ids = $class->fetchClassIds($class_id_basis, $semester_id_basis, 
+        $class_ids = $class->fetchClassIds($batch_id_basis, $semester_id_basis, 
         $is_active_basis);
         if (is_array($class_ids)) {
             return $class_ids;
@@ -135,13 +135,6 @@ class ClassController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $my_array = $params['myarray'];
         $class_info = $my_array['class_info'];
-        echo '9888888888888888888888888888';
-        print_r($class_info);
-        echo '6777777777777777777777777457';
-        /*$class_info = array('batch_id' => 42, 'semester_id' => 1, 
-        'semester_type' => 'ODD', 'semester_duration' => 5, 
-        'handled_by_dept' => 'CSE', 'completion_date' => '2012-12-26', 
-        'start_date' => '2012-08-14', 'is_active' => 1, 'class_id' => 321);*/
         $save['class_id'] = $class_info['class_id'];
         $save['batch_id'] = $class_info['batch_id'];
         $save['semester_id'] = $class_info['semester_id'];

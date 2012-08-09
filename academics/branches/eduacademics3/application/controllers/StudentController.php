@@ -582,6 +582,7 @@ class StudentController extends Zend_Controller_Action
         'qualifications' => $qualifications, 
         'filled_qualifications' => $filled_qualifications, 'exams' => $exams, 
         'filled_exams' => $filled_exams);
+        Zend_Registry::get('logger')->debug($response);
         switch ($format) {
             case 'html':
                 $this->view->assign('filled_qualifications', 
@@ -1699,6 +1700,85 @@ class StudentController extends Zend_Controller_Action
             return $departments;
         }
     }
+    /**
+     * fetches batch_id on the basis of batch info given
+     * 
+     * @param string $department_id
+     * @param string $programme_id
+     * @param date $batch_start
+     * @return array|false
+     */
+    private function getBatchIds ($batch_start = null, $department_id = null, 
+    $programme_id = null)
+    {
+        $batch_start_basis = null;
+        $department_id_basis = null;
+        $programme_id_basis = null;
+        $batch = new Acad_Model_Batch();
+        if ($batch_start) {
+            $batch_start_basis = true;
+            $batch->setBatch_start($batch_start);
+        }
+        if ($department_id) {
+            $department_id_basis = true;
+            $batch->setDepartment_id($department_id);
+        }
+        if ($programme_id) {
+            $programme_id_basis = true;
+            $batch->setProgramme_id($programme_id);
+        }
+        $batch_ids = $batch->fetchBatchIds($batch_start_basis, 
+        $department_id_basis, $programme_id_basis);
+        Zend_Registry::get('logger')->debug($batch_ids);
+        if (is_array($batch_ids)) {
+            return $batch_ids;
+        } else {
+            if ($batch_ids == false) {
+                throw new Exception(
+                'No batch id exists for batch_start year : ' . $batch_start .
+                 ' department_id : ' . $department_id . ' and programme_id : ' .
+                 $programme_id, Zend_Log::WARN);
+            }
+        }
+    }
+    /**
+     * fetches $class_id on the basis of class info given
+     * Enter description here ...
+     * @param int $class_id
+     * @param int $semester_id
+     * @param bool $is_active
+     */
+    private function getClassIds ($batch_id = null, $semester_id = null, 
+    $is_active = null)
+    {
+        $batch_id_basis = null;
+        $semester_id_basis = null;
+        $is_active_basis = null;
+        $class = new Acad_Model_Class();
+        if ($batch_id) {
+            $batch_id_basis = true;
+            $class->setBatch_id($batch_id);
+        }
+        if ($semester_id) {
+            $semester_id_basis = true;
+            $class->setSemester_id($semester_id);
+        }
+        if ($is_active) {
+            $is_active_basis = true;
+            $class->setIs_active($is_active);
+        }
+        $class_ids = $class->fetchClassIds($batch_id_basis, $semester_id_basis, 
+        $is_active_basis);
+        if (is_array($class_ids)) {
+            return $class_ids;
+        } else {
+            if ($class_ids == false) {
+                throw new Exception(
+                'No class id exists for batch_id : ' . $batch_id .
+                 ' semester_id : ' . $semester_id, Zend_Log::WARN);
+            }
+        }
+    }
     public function editdmcinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -1761,22 +1841,33 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $dmc_info = $params['myarray']['dmc_info'];
-        $class_finder = $params['myarray']['class_finder'];
         $class_id = null;
-        //$member_id = $this->getMember_id();
-        if()
-        
-        
-        
-        
-        
-        
-        
-        
-        if (empty($dmc_info['class_id'])) {} else {
-            $class_id = $dmc_info['class_id'];
+        if (empty($params['myarray']['class_finder'])) {
+            if (empty($dmc_info['class_id'])) {
+                throw new Exception(
+                'Class_Id is required to save Dmc Information.None provided', 
+                Zend_Log::WARN);
+            } else {
+                $this->saveDmcInfo($dmc_info);
+                Zend_Registry::get('logger')->debug('DMC information saved : ');
+                Zend_Registry::get('logger')->debug($dmc_info);
+            }
+        } else {
+            $class_finder = $params['myarray']['class_finder'];
+            $batch_start = $class_finder['batch_start'];
+            $programme_id = $class_finder['programme_id'];
+            $department_id = $class_finder['department_id'];
+            $semester_id = $class_finder['semester_id'];
+            $batch_ids = $this->getBatchIds($batch_start, $programme_id, 
+            $department_id);
+            $batch_id = $batch_ids[0];
+            $class_ids = $this->getClassIds($batch_id, $semester_id);
+            $class_id = $class_ids[0];
+            $dmc_info['class_id'] = $class_id;
+            $this->saveDmcInfo($dmc_info);
+            Zend_Registry::get('logger')->debug('DMC information saved : ');
+            Zend_Registry::get('logger')->debug($dmc_info);
         }
-        $this->saveDmcInfo($dmc_info);
     }
     public function addsubjectmarksAction ()
     {
