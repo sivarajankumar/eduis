@@ -1,0 +1,322 @@
+<?php
+    $department = $this->departments;
+    $programme = $this->programmes;
+?>
+
+<form id="dmc_info_form" class="uniForm" action="javascript:submit_dmc_info()">
+<h3>DMC Details</h3>
+<fieldset id="class_finder_info">
+
+	<h5>Please fill this form and click on next to save the details of DMC.</h5>
+	<div class="ctrlHolder">
+		<label for="department_id"><em>*</em>Department</label>
+		<select id="department_id" name="department_id" class="required">
+			<option value="">Select the department</option>
+            <?php 
+                foreach ($department as $key => $value)
+                {
+                    echo '<option value="'.$key.'">'.$value.'</option>';
+                }
+            ?>
+		</select>
+		<p class="formHint">Select Department</p>
+	</div>
+					
+	<div class="ctrlHolder">
+		<label for="programme_id"><em>*</em>Programme</label>
+		<select id="programme_id" name="programme_id" class="required">
+			<option value="">Select the programme</option>
+			<?php 
+		        foreach ($programme as $key => $value)
+		        {
+                    echo '<option value="'.$key.'">'.$value.'</option>';
+		        }
+		    ?>
+		</select>
+		<p class="formHint">Select the programme</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="batch_start"><em>*</em>Batch Start</label>
+		<select id="batch_start" name="batch_start" class="required">
+			<option value="">Select the year</option>
+			<?php
+			    $current_year = intval(date('Y'));
+			    for($i=2002;$i<=$current_year;$i++)
+			    {
+			        echo '<option value="'.$i.'">'.$i.'</option>';
+			    }
+			?>
+		</select>
+		<p class="formHint">Select the starting year of the batch</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="semester_id"><em>*</em>Semester</label>
+		<select id="semester_id" name="semester_id" class="required">
+			<option value="">Select the semester</option>
+	        <?php 
+                for($i=1;$i<=8;$i++)
+                {
+                    echo '<option value="'.$i.'">'.$i.'</option>';
+                }
+            ?>
+		</select>
+		<p class="formHint">Select Department</p>
+	</div>	
+</fieldset>
+
+<fieldset id="dmc_info">
+
+	<div class="ctrlHolder">
+		<label for="dmc_id"><em>*</em>Serial Number</label>
+		<input name="dmc_id" id="dmc_id" value="" data-default-value="e.g. 450" size="35" maxlength="50" type="text" class="textInput required validateAlphaNum"/>
+		<p class="formHint">Serial Number on the top of DMC</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="dispatch_date"><em>*</em>Date of Dispatch</label>
+		<input name="dispatch_date" id="dispatch_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of Dispatch</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="custody_date"><em>*</em>Date of Custody</label>
+		<input name="custody_date" id="custody_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of Custody</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="receiving_date"><em>*</em>Date of Recieving</label>
+		<input name="receiving_date" id="receiving_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of Receiving</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="grant_date"><em>*</em>Grant Date</label>
+		<input name="grant_date" id="grant_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of Grant</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="examination"><em>*</em>Examination</label>
+		<select id="examination" name="examination" class="selectInput required">
+			<option value="unv_exam">University Exam</option>
+		</select>
+		<p class="formHint">Select the type of result</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="result_type_id"><em>*</em>Result Type</label>
+		<select id="result_type_id" name="result_type_id" class="selectInput required">
+			<option value="1">Regular Pass</option>
+			<option value="2">Regular Fail</option>
+			<option value="3">Re-evaluation Pass</option>
+			<option value="4">Re-evaluation Fail</option>
+			<option value="5">Re-appear Pass</option>
+			<option value="6">Re-appear Fail</option>
+		</select>
+		<p class="formHint">Select the type of result</p>
+	</div>
+
+    <div class="ctrlHolder">
+		<label for="is_considered"><em>*</em>Is DMC Considered</label>
+		<input name="is_considered" id="is_considered" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		<p class="formHint">Click if this dmc is considered</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="is_granted"><em>*</em>Is DMC Granted</label>
+		<input name="is_granted" id="is_granted" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		<p class="formHint">Click if this dmc is granted</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="is_copied"><em>*</em>Is DMC Copied</label>
+		<input name="is_copied" id="is_copied" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		<p class="formHint">Click if this dmc is copied</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="marks_obtained"><em>*</em>Marks Obtained</label>
+		<input name="marks_obtained" id="marks_obtained" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Marks Obtained</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="total_marks"><em>*</em>Total Marks</label>
+		<input name="total_marks" id="total_marks" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Total Marks</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="scaled_marks"><em>*</em>Scaled Marks</label>
+		<input name="scaled_marks" id="scaled_marks" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Scaled Marks</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="percentage"><em>*</em>Percentage</label>
+		<input name="percentage" id="percentage" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
+		<p class="formHint">Percentage obtained by Candidate</p>
+	</div>
+
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</fieldset>
+</form>
+
+<script>
+    <?php
+        if(array_values($this->response['dmc_info_data']) != null){
+            foreach ($this->response['dmc_info_data'] as $dmc_info_id => $dmc_data){
+                $dmc_indo_id = $dmc_info_id;
+                foreach ($dmc_data as $key => $value){
+                    $divname = $key;
+                    echo '$("#'.$key.'").val("'.$value.'");';
+                }
+            }
+        }
+    ?>
+	var urlSaveRegistrationInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmcinfo'))?>";
+	$(function(){
+	    $('form#dmc_info_form').uniform({
+    	  prevent_submit : true
+	    });
+	});
+
+	$("#dispatch_date").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+			}
+	});
+
+	$("#custody_date").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+			}
+	});
+
+	$("#receiving_date").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+			}
+	});
+
+	$("#grant_date").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+			}
+	});
+
+    function get_dmc_info(){
+        var formData = {};
+    	var dmc_info = {};
+    	var batch_info = {};
+    	//dmc_data['class_id'] = <?php echo $_GET['class_id'];?>;
+    	
+    	$('fieldset#dmc_info :input')
+    	.not('button,:input[value^="e.g."]')
+    	.not(':input[type="checkbox"]')
+    	.each(function(){
+    		dmc_info[this.name] = this.value;
+    	});
+    	dmc_info['is_considered'] = $('#is_considered').is(':checked')?1:0;
+    	dmc_info['is_granted'] = $('#is_granted').is(':checked')?1:0;
+    	dmc_info['is_copied'] = $('#is_copied').is(':checked')?1:0;
+
+    	$('fieldset#batch_info :input')
+    	.not('button,:input[value^="e.g."]')
+    	.not(':input[type="checkbox"]')
+    	.each(function(){
+    		batch_info[this.name] = this.value;
+    	});
+    	
+    	formData['dmc_info'] = dmc_info;
+    	formData['class_finder'] = batch_info; 
+    	return formData;
+    }
+
+    function submit_dmc_info(){
+    	var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmc'))?>";
+    	$.ajax({
+    		url : urlSaveDmcInfo,
+    		data : {myarray:get_dmc_info()},
+    		success: function(jStatus){
+        		//if(jStatus){
+            		$('#dmc_info_div').hide();
+        			show_subject_div();
+        			submit_subjectinfo();
+        		//}
+            },
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+		});
+    }
+    
+</script>
+
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	}
+	h3{
+    	color: #343434;
+    	line-height: 1;
+    	margin: 1.5em -28px;
+    	padding: 14px 28px;
+		background-color: #ECEFF4;
+    	border: 1px solid #B4C1DA;
+    	font-size: 17px;
+    	font-weight: 100;
+    	width: 57%;
+	}
+	h4{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:57%;
+		font-size:17px;
+		font-weight:100;
+	}
+	h5{
+		font-size: 14px;
+		font-weight:400;
+		margin: 0 0 15px 0;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
