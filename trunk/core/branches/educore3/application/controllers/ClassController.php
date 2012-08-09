@@ -219,4 +219,50 @@ class ClassController extends Zend_Controller_Action
                 break;
         }
     }
+    public function fetchprogrammesAction ()
+    {
+        $format = $this->_getParam('format', 'html');
+        $response['programmes'] = $this->getProgrammes();
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(true);
+                $this->_helper->layout()->disableLayout();
+                $this->view->assign('response', $response);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($response, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($response);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    public function fetchdepartmentsAction ()
+    {
+        $format = $this->_getParam('format', 'html');
+        $response['departments'] = $this->getDepartments();
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(true);
+                $this->_helper->layout()->disableLayout();
+                $this->view->assign('response', $response);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($response, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($response);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
 }
