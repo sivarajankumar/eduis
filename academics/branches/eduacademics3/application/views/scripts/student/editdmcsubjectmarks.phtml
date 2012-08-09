@@ -1,0 +1,303 @@
+<form id="class_info_form" class="uniForm" action="javascript:submit_class_info()">
+<h3>DMC Subject Marks</h3>
+<fieldset id="class_finder_info">
+
+	<h5>Please fill this form and click on next to fill the marks of subjects.</h5>
+	<div class="ctrlHolder">
+		<label for="department_id"><em>*</em>Department</label>
+		<select id="department_id" name="department_id" class="required">
+			<option value="">Select the department</option>
+		</select>
+		<p class="formHint">Select Department</p>
+	</div>
+					
+	<div class="ctrlHolder">
+		<label for="programme_id"><em>*</em>Programme</label>
+		<select id="programme_id" name="programme_id" class="required">
+			<option value="">Select the programme</option>
+		</select>
+		<p class="formHint">Select the programme</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="batch_start"><em>*</em>Batch Start</label>
+		<select id="batch_start" name="batch_start" class="required">
+			<option value="">Select the year</option>
+			<?php
+			    $current_year = intval(date('Y'));
+			    for($i=2002;$i<=$current_year;$i++)
+			    {
+			        echo '<option value="'.$i.'">'.$i.'</option>';
+			    }
+			?>
+		</select>
+		<p class="formHint">Select the starting year of the batch</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="semester_id"><em>*</em>Semester</label>
+		<select id="semester_id" name="semester_id" class="required">
+			<option value="">Select the semester</option>
+	        <?php 
+                for($i=1;$i<=8;$i++)
+                {
+                    echo '<option value="'.$i.'">'.$i.'</option>';
+                }
+            ?>
+		</select>
+		<p class="formHint">Select Department</p>
+	</div>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</fieldset>
+</form>
+
+<form id="subjects" class="uniForm" action="javascript:submit_subject_info()">
+<h5>Please select the DMC whose subjects you want to fill</h5>
+<fieldset>
+	<div class="ctrlHolder">
+		<label for="dmc_id"><em>*</em>DMC</label>
+		<select id="dmc_id" name="dmc_id" class="required">
+			<option value="">Select the DMC</option>
+		</select>
+		<p class="formHint">Select Department</p>
+	</div>
+</fieldset>
+</form>
+
+<script>
+    <?php
+        if(array_values($this->response['dmc_info_data']) != null){
+            foreach ($this->response['dmc_info_data'] as $dmc_info_id => $dmc_data){
+                $dmc_indo_id = $dmc_info_id;
+                foreach ($dmc_data as $key => $value){
+                    $divname = $key;
+                    echo '$("#'.$key.'").val("'.$value.'");';
+                }
+            }
+        }
+    ?>
+	
+	$(function(){
+	    $('form#dmc_info_form').uniform({
+    	  prevent_submit : true
+	    });
+
+	    var urlgetProgrammes = "http://core.aceambala.com/class/fetchprogrammes";
+	    $.ajax({
+    		url : urlgetProgrammes,
+    		dataType : 'jsonp',
+            data : {format:'jsonp'},
+    		success: function(jStatus){
+    			$.each(jStatus['programmes'],function(programme_id,programme_name){
+					html_text = '<option value="'+programme_id+'">'+programme_name+'</option>';
+					$('#programme_id').append(html_text);
+    			});
+            },
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+		});
+
+		var urlgetDepartments = "http://core.aceambala.com/class/fetchdepartments";
+	    $.ajax({
+    		url : urlgetDepartments,
+    		dataType : 'jsonp',
+            data : {format:'jsonp'},
+    		success: function(jStatus){
+    			$.each(jStatus['departments'],function(department_id,department_name){
+    				html_text = '<option value="'+department_id+'">'+department_name+'</option>';
+					$('#department_id').append(html_text);
+    			});
+            },
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+		});
+	});
+	
+    function get_class_info(){
+        var formData = {};
+    	var class_finder = {};
+
+    	$('fieldset#class_finder_info :input')
+    	.not('button,:input[value^="e.g."]')
+    	.not(':input[type="checkbox"]')
+    	.each(function(){
+    		class_finder[this.name] = this.value;
+    	});
+    	
+    	formData['class_finder'] = class_finder; 
+    	return formData;
+    }
+
+    function submit_class_info(){
+    	var urlfetchDmcInfoIds = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchdmcinfoids'))?>";
+    	$.ajax({
+    		url : urlfetchDmcInfoIds,
+    		data : {
+        			myarray:get_class_info(),
+					format:'jsonp'
+        			},
+    		success: function(jStatus){
+					$('form#class_info_form').hide("fast");
+					
+					$.each(jStatus['dmc_info'],function(dmc_info_id,serial_no){
+	    				html_text = '<option value="'+dmc_info_id+'">'+serial_no+'</option>';
+						$('#dmc_id').append(html_text);
+	    			});
+
+					var class_id = jStatus['class_info']['class_id'];
+					
+					var urlgetSubjects = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchsubjects'))?>";
+				    $.ajax({
+			    		url : urlgetSubjects,
+			    		dataType : 'jsonp',
+			            data : {'class_id':class_id},
+			    		success: function(jStatus){
+
+			    			$.each(jStatus['subject_info'],function(subject_id,subject_data){
+				    			
+			    				var html = '<h4>'+subject_data['name']+' ('+subject_data['code']+')</h4>'+
+
+								'<fieldset id="'+subject_data['name']+'" class="subjects" title="'+subject_id+'" >'+
+									'<div class="ctrlHolder">'+
+										'<label for="internal"><em>*</em>Internal Marks</label>'+
+										'<input name="internal" id="internal" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>'+
+										'<p class="formHint">Internal Marks of the Subject</p>'+
+									'</div>'+
+									
+									'<div class="ctrlHolder">'+
+										'<label for="external"><em>*</em>External Marks</label>'+
+										'<input name="external" id="external" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>'+
+										'<p class="formHint">External Marks of the subject</p>'+
+									'</div>'+
+									
+									'<div class="ctrlHolder">'+
+										'<label for=""><em>*</em>Percentage</label>'+
+										'<input name="percentage" id="percentage" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>'+
+										'<p class="formHint">Percentage obtained by Student in the subject</p>'+
+									'</div>'+
+									
+									'<div class="ctrlHolder">'+
+										'<label for="is_pass"><em>*</em>Is subject passed</label>'+
+										'<input name="is_pass" id="is_pass" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>'+
+										'<p class="formHint">Click if this subject is passed</p>'+
+									'</div>'+
+									
+									'<div class="ctrlHolder">'+
+										'<label for="is_verified"><em>*</em>Is Verified</label>'+
+										'<input name="is_verified" id="is_verified" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>'+
+										'<p class="formHint">Click if this is verified</p>'+
+									'</div>'+
+								'</fieldset>';
+
+								$('#subjects').append(html);
+			    			});
+			            },
+			            error: function(response) {
+							$('#errorBox').text(response.responseText).parent().show();
+			    				console.log(response);
+			    		}
+					});
+        		},
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+		});
+    }
+
+    function submit_subject_info()
+    {
+    	var urlsavesubjectinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savesubjects'))?>";
+	    $.ajax({
+    		url : urlsavesubjectinfo,
+    		dataType : 'jsonp',
+            data : {myarray:get_subjects_info()},
+    		success: function(jStatus){
+    			$.each(jStatus['departments'],function(department_id,department_name){
+    				html_text = '<option value="'+department_id+'">'+department_name+'</option>';
+					$('#department_id').append(html_text);
+    			});
+            },
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+		});
+    }
+
+    function get_subjects_info()
+    {
+    	$('fieldset.subjects').each(function(){
+			var sub_data = {};
+			sub_data['is_pass'] = 0;
+			sub_data['is_verified'] = 0;
+			var div_id = $(this).attr('id');
+			var div_title = $(this).attr('title');
+
+			$('fieldset#'+div_id+' :input').each(function(){
+				sub_data[this.name] = this.value;
+			})
+			sub_data['is_pass'] = $('fieldset#'+div_id+' :input[name="is_pass"]').is(':checked')?1:0;
+			sub_data['is_verified'] = $('fieldset#'+div_id+' :input[name="is_verified"]').is(':checked')?1:0;
+			sub_data['date'] = '<?php echo date("Y-m-d");?>';
+						
+			dmc_info_data[div_title]=sub_data;
+			data['dmc_data'] = dmc_data;
+			data['dmc_info_data'] = dmc_info_data;
+		});
+	}
+    
+</script>
+
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	}
+	h3{
+    	color: #343434;
+    	line-height: 1;
+    	margin: 1.5em -28px;
+    	padding: 14px 28px;
+		background-color: #ECEFF4;
+    	border: 1px solid #B4C1DA;
+    	font-size: 17px;
+    	font-weight: 100;
+    	width: 57%;
+	}
+	h4{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:57%;
+		font-size:17px;
+		font-weight:100;
+	}
+	h5{
+		font-size: 14px;
+		font-weight:400;
+		margin: 0 0 15px 0;
+	}
+</style>
+<?php
+    $this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+    $this->headLink()->prependStylesheet(
+	'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+    $this->headLink()->prependStylesheet(
+	'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+    $this->headLink()->prependStylesheet(
+	'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
