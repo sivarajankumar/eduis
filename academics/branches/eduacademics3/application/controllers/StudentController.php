@@ -405,8 +405,8 @@ class StudentController extends Zend_Controller_Action
             return $dmc_subject_marks;
         } elseif ($info == false) {
             throw new Exception(
-            'Subject Marks were not submitted for dmc_info_id : ' .
-             $dmc_info_id . ' and subject_id : ' . $subject_id, Zend_Log::WARN);
+            'Subject Marks were not submitted for dmc_info_id : ' . $dmc_info_id .
+             ' and subject_id : ' . $subject_id, Zend_Log::WARN);
         }
     }
     private function fetchStudentSubjects ($class_id)
@@ -1674,7 +1674,32 @@ class StudentController extends Zend_Controller_Action
         $student->setMember_id($member_id);
         return $student->fetchAllClassIds();
     }
-    public function adddmcinfoAction ()
+    public function viewdmcinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    private function getProgrammes ()
+    {
+        $programme = new Acad_Model_Programme();
+        $programmes = $programme->fetchProgrammes();
+        if (empty($programmes)) {
+            return false;
+        } else {
+            return $programmes;
+        }
+    }
+    private function getDepartments ()
+    {
+        $department = new Acad_Model_Department();
+        $departments = $department->fetchDepartments();
+        if (empty($departments)) {
+            return false;
+        } else {
+            return $departments;
+        }
+    }
+    public function editdmcinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
@@ -1692,14 +1717,19 @@ class StudentController extends Zend_Controller_Action
             }
             $this->view->assign('class_info', $class_info);
         }
+        $departments = $this->getDepartments();
+        if (empty($departments)) {
+            $this->view->assign('departments', false);
+        } else {
+            $this->view->assign('departments', $departments);
+        }
+        $programmes = $this->getProgrammes();
+        if (empty($programmes)) {
+            $this->view->assign('programmes', false);
+        } else {
+            $this->view->assign('programmes', $programmes);
+        }
     }
-    public function viewdmcinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    public function editdmcinfoAction ()
-    {}
     private function saveDmcInfo ($dmc_info)
     {
         $member_id = $this->getMember_id();
@@ -1731,6 +1761,21 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $dmc_info = $params['myarray']['dmc_info'];
+        $class_finder = $params['myarray']['class_finder'];
+        $class_id = null;
+        //$member_id = $this->getMember_id();
+        if()
+        
+        
+        
+        
+        
+        
+        
+        
+        if (empty($dmc_info['class_id'])) {} else {
+            $class_id = $dmc_info['class_id'];
+        }
         $this->saveDmcInfo($dmc_info);
     }
     public function addsubjectmarksAction ()
@@ -1743,7 +1788,21 @@ class StudentController extends Zend_Controller_Action
     public function editsubjectmarksAction ()
     {}
     public function savesubjectmarksAction ()
-    {}
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $this->_getParam('format', 'html');
+        $dmc_subject_marks = $params['myarray']['dmc_subject_marks'];
+        $class_finder = $params['myarray']['class_finder'];
+        $class_id = null;
+        $member_id = $this->getMember_id();
+        if (empty($dmc_info['class_id'])) {} else {
+            $class_id = $dmc_info['class_id'];
+        }
+        $this->saveDmcInfo($dmc_info);
+    }
     public function fetchsubjectdmcAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
