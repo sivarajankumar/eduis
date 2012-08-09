@@ -442,6 +442,8 @@ class StudentController extends Zend_Controller_Action
         $request_object = $this->getRequest();
         $params = array_diff($request_object->getParams(), 
         $request_object->getUserParams());
+        $member_id = $this->getMember_id();
+        $student = new Acad_Model_Member_Student();
         $class_finder = $params['myarray']['class_finder'];
         $batch_start = $class_finder['batch_start'];
         $programme_id = $class_finder['programme_id'];
@@ -453,32 +455,50 @@ class StudentController extends Zend_Controller_Action
         $batch_id = $batch_ids[0];
         $class_ids = $this->getClassIds($batch_id, $semester_id);
         $class_id = $class_ids[0];
-        $response['class_info']['class_id'] = $class_id;
-        $format = $this->_getParam('format', 'html');
-        $member_id = $this->getMember_id();
-        $student = new Acad_Model_Member_Student();
-        $student->setMember_id($member_id);
-        $dmc_info_ids = $student->fetchDmcInfoIds($class_id);
-        foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
-            $response['dmc_info'][$dmc_info_id] = $dmc_id;
-        }
-        switch ($format) {
-            case 'html':
-                $this->_helper->viewRenderer->setNoRender(false);
-                $this->_helper->layout()->enableLayout();
-                $this->view->assign('response', $response);
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($response, false) .
-                 ')';
-                break;
-            case 'json':
-                $this->_helper->json($response);
-                break;
-            default:
-                ;
-                break;
+        $log_msg = 'Class_ID corresponding to BATCH_START year : ' . $batch_start .
+         ' ,DEPARTMENT : ' . $department_id . ' ,PROGRAMME : ' . $programme_id .
+         ' and SEMESTER : ' . $semester_id . ' is : ' . $class_id;
+        Zend_Registry::get('logger')->debug($log_msg);
+        $student_class_ids = $this->getAllClassIds();
+        Zend_Registry::get('logger')->debug('Student_class_ids : ');
+        Zend_Registry::get('logger')->debug($student_class_ids);
+        $class_enroll_check = array_search($class_id, $student_class_ids);
+        if (empty($class_enroll_check)) {
+            $response['class_info']['class_id'] = $class_id;
+            $format = $this->_getParam('format', 'html');
+            $member_id = $this->getMember_id();
+            $student->setMember_id($member_id);
+            $dmc_info_ids = $student->fetchDmcInfoIds($class_id);
+            foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
+                $response['dmc_info'][$dmc_info_id] = $dmc_id;
+            }
+            Zend_Registry::get('logger')->debug('Response : ');
+            Zend_Registry::get('logger')->debug($response);
+            switch ($format) {
+                case 'html':
+                    $this->_helper->viewRenderer->setNoRender(false);
+                    $this->_helper->layout()->enableLayout();
+                    $this->view->assign('response', $response);
+                    break;
+                case 'jsonp':
+                    $callback = $this->getRequest()->getParam('callback');
+                    echo $callback . '(' . $this->_helper->json($response, 
+                    false) . ')';
+                    break;
+                case 'json':
+                    $this->_helper->json($response);
+                    break;
+                default:
+                    ;
+                    break;
+            }
+        } else {
+            $message = 'Student with MEMBER_ID : ' . $member_id .
+             ' ,is not enrolled with CLASS corresponding to BATCH_START year : ' .
+             $batch_start . ' ,DEPARTMENT : ' . $department_id . ' ,PROGRAMME : ' .
+             $programme_id . ' and SEMESTER : ' . $semester_id;
+            $code = Zend_Log::WARN;
+            throw new Exception($message, $code);
         }
     }
     public function fetchsubjectsAction ()
@@ -1754,7 +1774,17 @@ class StudentController extends Zend_Controller_Action
         $member_id = $this->getMember_id();
         $student = new Acad_Model_Member_Student();
         $student->setMember_id($member_id);
-        return $student->fetchAllClassIds();
+        $class_ids = $student->fetchAllClassIds();
+        if (is_array($class_ids)) {
+            return $class_ids;
+        } else {
+            if ($class_ids == false) {
+                throw new Exception(
+                'Student with member_id : ' . $member_id .
+                 ' has not been registered in any Acdemic Class ', 
+                Zend_Log::WARN);
+            }
+        }
     }
     public function viewdmcinfoAction ()
     {
@@ -1790,6 +1820,7 @@ class StudentController extends Zend_Controller_Action
         }
         $batch_ids = $batch->fetchBatchIds($batch_start_basis, 
         $department_id_basis, $programme_id_basis);
+        Zend_Registry::get('logger')->debug('Batch Ids : ');
         Zend_Registry::get('logger')->debug($batch_ids);
         if (is_array($batch_ids)) {
             return $batch_ids;
@@ -1918,14 +1949,14 @@ class StudentController extends Zend_Controller_Action
             Zend_Registry::get('logger')->debug($dmc_info);
         }
     }
-    public function viewsubjectmarksAction ()
+    public function viewdmcsubjectmarksAction ()
     {}
-    public function editsubjectmarksAction ()
+    public function editdmcsubjectmarksAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
     }
-    public function savesubjectmarksAction ()
+    public function savedmcsubjectmarksAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
