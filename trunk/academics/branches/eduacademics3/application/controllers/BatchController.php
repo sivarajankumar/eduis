@@ -75,56 +75,6 @@ class BatchController extends Zend_Controller_Action
             Zend_Log::WARN);
         }
     }
-    private function getDepartments ()
-    {
-        $department = new Acad_Model_Department();
-        $departments = $department->fetchDepartments();
-        if (empty($departments)) {
-            return false;
-        } else {
-            return $departments;
-        }
-    }
-    private function getProgrammeInfo ($programme_id)
-    {
-        $programme = new Acad_Model_Programme();
-        $info = $programme->fetchInfo();
-        if ($info instanceof Acad_Model_Programme) {
-            $prog_info['programme_name'] = $info->getProgramme_name();
-            $prog_info['total_semesters'] = $info->getTotal_semesters();
-            $prog_info['duration'] = $info->getDuration();
-            return $prog_info;
-        } else {
-            return false;
-        }
-    }
-    private function getProgrammes ()
-    {
-        $programme = new Acad_Model_Programme();
-        $programmes = $programme->fetchProgrammes();
-        if (empty($programmes)) {
-            return false;
-        } else {
-            return $programmes;
-        }
-    }
-    public function addbatchAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-        $departments = $this->getDepartments();
-        $programmes = $this->getProgrammes();
-        if (empty($departments)) {
-            $this->view->assign('departments', false);
-        } else {
-            $this->view->assign('departments', $departments);
-        }
-        if (empty($programmes)) {
-            $this->view->assign('programmes', false);
-        } else {
-            $this->view->assign('programmes', $programmes);
-        }
-    }
     public function savebatchAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
