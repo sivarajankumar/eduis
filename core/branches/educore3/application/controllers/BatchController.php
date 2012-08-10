@@ -1,6 +1,7 @@
 <?php
 class BatchController extends Zend_Controller_Action
 {
+    const AUTH_SID = 'ACESID';
     public function init ()
     {}
     public function indexAction ()
@@ -78,19 +79,20 @@ class BatchController extends Zend_Controller_Action
         }
         $batch_info['batch_id'] = $batch_id;
         Zend_Registry::get('logger')->debug($batch_info);
-        $httpClient = new Zend_Http_Client();
-        $httpClient->setUri('http://' . ACADEMIC_SERVER . '/batch/savebatch');
-        $httpClient->setConfig(array('timeout' => 30));
+        $httpClient = new Zend_Http_Client(
+        'http://' . ACADEMIC_SERVER . '/batch/savebatch');
+        $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
         $httpClient->setMethod('POST');
         $httpClient->setParameterPost(
         array('myarray' => array('batch_info' => $batch_info)));
         Zend_Registry::get('logger')->debug($httpClient);
         $response = $httpClient->request();
         if ($response->isError()) {
-            $remoteErr = 'ERROR from ' . ACADEMIC_SERVER . ' : (' .
-             $response->getStatus() . ') ' . $response->getMessage() . ', i.e. ' .
+            $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
              $response->getHeader('Message');
-            throw new Zend_Exception($remoteErr, Zend_Log::WARN);
+            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+        } else {
+            $jsonContent = $response->getBody($response);
         }
     }
     private function getDepartments ()
