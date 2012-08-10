@@ -1,7 +1,6 @@
 <?php
 class BatchController extends Zend_Controller_Action
 {
-    const AUTH_SID = 'ACESID';
     public function init ()
     {}
     public function indexAction ()
