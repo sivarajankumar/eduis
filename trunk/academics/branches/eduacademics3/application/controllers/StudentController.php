@@ -480,8 +480,6 @@ class StudentController extends Zend_Controller_Action
         Zend_Registry::get('logger')->debug('Student_class_ids : ');
         Zend_Registry::get('logger')->debug($student_class_ids);
         $class_enroll_check = array_keys($student_class_ids, $class_id);
-        Zend_Registry::get('logger')->debug($class_enroll_check);
-        Zend_Registry::get('logger')->debug('class_enroll_check ');
         if (! empty($class_enroll_check)) {
             $response['class_info']['class_id'] = $class_id;
             $format = $this->_getParam('format', 'html');
