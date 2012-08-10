@@ -435,6 +435,24 @@ class StudentController extends Zend_Controller_Action
         $dmc_subject_marks['date'] = $marks_info['date'];
         return $student->saveDmcMarks($dmc_subject_marks);
     }
+    private function fetchAllDmcInfoIds ($class_id)
+    {
+        $member_id = $this->getMember_id();
+        $student = new Acad_Model_Member_Student();
+        $student->setMember_id($member_id);
+        $dmc_info_ids = $student->fetchDmcInfoIds($class_id);
+        if (is_array($dmc_info_ids)) {
+            Zend_Registry::get('logger')->debug('Dmc_info_ids : ');
+            Zend_Registry::get('logger')->debug($dmc_info_ids);
+            return $dmc_info_ids;
+        } else {
+            if ($dmc_info_ids == false) {
+                throw new Exception(
+                'Student with member_id : ' . $member_id .
+                 ' has no DMC information in database ', Zend_Log::WARN);
+            }
+        }
+    }
     public function fetchdmcinfoidsAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -443,7 +461,6 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request_object->getParams(), 
         $request_object->getUserParams());
         $member_id = $this->getMember_id();
-        $student = new Acad_Model_Member_Student();
         $class_finder = $params['myarray']['class_finder'];
         $batch_start = $class_finder['batch_start'];
         $programme_id = $class_finder['programme_id'];
@@ -462,13 +479,13 @@ class StudentController extends Zend_Controller_Action
         $student_class_ids = $this->getAllClassIds();
         Zend_Registry::get('logger')->debug('Student_class_ids : ');
         Zend_Registry::get('logger')->debug($student_class_ids);
-        $class_enroll_check = array_search($class_id, $student_class_ids);
-        if (empty($class_enroll_check)) {
+        $class_enroll_check = array_keys($student_class_ids, $class_id);
+        Zend_Registry::get('logger')->debug($class_enroll_check);
+        Zend_Registry::get('logger')->debug('class_enroll_check ');
+        if (! empty($class_enroll_check)) {
             $response['class_info']['class_id'] = $class_id;
             $format = $this->_getParam('format', 'html');
-            $member_id = $this->getMember_id();
-            $student->setMember_id($member_id);
-            $dmc_info_ids = $student->fetchDmcInfoIds($class_id);
+            $dmc_info_ids = $this->fetchAllDmcInfoIds($class_id);
             foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
                 $response['dmc_info'][$dmc_info_id] = $dmc_id;
             }
