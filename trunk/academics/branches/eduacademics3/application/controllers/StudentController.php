@@ -418,7 +418,6 @@ class StudentController extends Zend_Controller_Action
                 $subject_data[$student_subject_id]['code'] = $subject->getSubject_code();
             }
         }
-        Zend_Registry::get('logger')->debug($subject_data);
         return $subject_data;
     }
     private function savedmcsubjectmarks ($marks_info)
