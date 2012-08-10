@@ -498,10 +498,10 @@ class StudentController extends Zend_Controller_Action
                     $this->view->assign('response', $response);
                     break;
                 case 'jsonp':
-                    $this->_helper->json($response);
-                    /* $callback = $this->getRequest()->getParam('callback');
+                    //$this->_helper->json($response);
+                    $callback = $this->getRequest()->getParam('callback');
                     echo $callback . '(' . $this->_helper->json($response, 
-                    false) . ')';*/
+                    false) . ')';
                     break;
                 case 'json':
                     $this->_helper->json($response);
