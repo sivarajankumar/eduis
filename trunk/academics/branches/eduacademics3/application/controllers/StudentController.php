@@ -526,9 +526,9 @@ class StudentController extends Zend_Controller_Action
         $request_object = $this->getRequest();
         $params = array_diff($request_object->getParams(), 
         $request_object->getUserParams());
-        Zend_Registry::get('logger')->debug($params);
-        $params['myarray']['class_id'] || $params['class_id'];
-        $class_id = $params['class_id'];
+        ($class_id = $params['myarray']['class_id']) ||
+         ($class_id = $params['class_id']);
+        Zend_Registry::get('logger')->debug($class_id);
         $student_subjects = $this->fetchStudentSubjects($class_id);
         $response['subject_info'] = $student_subjects;
         Zend_Registry::get('logger')->debug($response);
