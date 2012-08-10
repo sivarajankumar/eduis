@@ -142,10 +142,10 @@
     	var urlfetchDmcInfoIds = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchdmcinfoids'))?>";
     	$.ajax({
     		url : urlfetchDmcInfoIds,
-    		datatype : 'jsonp',
+    		datatype : 'json',
     		data : {
         			myarray:get_class_info(),
-					format:'jsonp'
+					format:'json'
         			},
     		success: function(jStatus){
 					$('form#class_info_form').hide();
@@ -232,10 +232,10 @@
     	var urlsavesubjectinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmcsubjectmarks'))?>";
 	    $.ajax({
     		url : urlsavesubjectinfo,
-    		dataType : 'jsonp',
+    		dataType : 'json',
             data : {
                 	myarray:get_subjects_info(),
-					format : 'jsonp'
+					format : 'json'
                 	},
     		success: function(jStatus){
     			
