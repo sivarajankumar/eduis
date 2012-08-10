@@ -57,7 +57,7 @@
 </fieldset>
 </form>
 
-<form id="subjects" class="uniForm" action="javascript:submit_subject_info()">
+<form id="subjects_form" class="uniForm" action="javascript:submit_subject_info()">
 <h5>Please select the DMC whose subjects you want to fill</h5>
 <fieldset>
 	<div class="ctrlHolder">
@@ -84,7 +84,8 @@
     ?>
 	
 	$(function(){
-	    $('form#dmc_info_form').uniform({
+		$('#subjects_form').hide();
+	    $('form#class_info_form').uniform({
     	  prevent_submit : true
 	    });
 
@@ -149,13 +150,19 @@
         			},
     		success: function(jStatus){
 					$('form#class_info_form').hide();
-					alert(jStatus);
+					$('#subjects_form').show("fast");
+					
+					//alert(jStatus);
 					
 					$.each(jStatus['dmc_info'],function(dmc_info_id,serial_no){
 	    				html_text = '<option value="'+dmc_info_id+'">'+serial_no+'</option>';
 						$('#dmc_id').append(html_text);
 	    			});
 
+					$('form#subjects_form').uniform({
+						prevent_submit : true
+					});
+					
 					var class_id = jStatus['class_info']['class_id'];
 					
 					var urlgetSubjects = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchsubjects'))?>";
@@ -204,7 +211,7 @@
 									'</div>'+
 								'</fieldset>';
 
-								$('#subjects').append(html);
+								$('#subjects_form').append(html);
 			    			});
 
 			    			var btn_html = '<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>'+ 
@@ -212,7 +219,7 @@
 			    							'<button type="reset" class="secondaryAction">Reset</button>'+
 			    							'<button type="submit" class="primaryAction">Next</button>'+
 			    							'</div>';
-			    			$('#subjects').append(btn_html);
+			    			$('#subjects_form').append(btn_html);
 			            },
 			            error: function(response) {
 							$('#errorBox').text(response.responseText).parent().show();
@@ -238,7 +245,7 @@
 					format : 'json'
                 	},
     		success: function(jStatus){
-    			
+    			alert('Your Information has been saved sucessfully');
             },
             error: function(response) {
 				$('#errorBox').text(response.responseText).parent().show();
@@ -249,24 +256,29 @@
 
     function get_subjects_info()
     {
+    	var formData = {};
+		var subject_marks_info = {};
+    	var subject_info = {};
     	$('fieldset.subjects').each(function(){
-        	var formData = {};
-			var sub_data = {};
-			sub_data['is_pass'] = 0;
-			sub_data['is_verified'] = 0;
 			var div_id = $(this).attr('id');
 			var div_title = $(this).attr('title');
 
 			$('fieldset#'+div_id+' :input').each(function(){
-				sub_data[this.name] = this.value;
+				subject_marks_info[this.name] = this.value;
 			})
-			sub_data['is_pass'] = $('fieldset#'+div_id+' :input[name="is_pass"]').is(':checked')?1:0;
-			sub_data['is_verified'] = $('fieldset#'+div_id+' :input[name="is_verified"]').is(':checked')?1:0;
-			sub_data['date'] = '<?php echo date("Y-m-d");?>';
-						
-			formData['subject_info'] = sub_data;
-			return formData;
+			subject_marks_info['is_pass'] = $('fieldset#'+div_id+' :input[name="is_pass"]').is(':checked')?1:0;
+			subject_marks_info['is_verified'] = $('fieldset#'+div_id+' :input[name="is_verified"]').is(':checked')?1:0;
+			subject_marks_info['date'] = '<?php echo date("Y-m-d");?>';
+
+			subject_info[div_title] = subject_marks_info;
 		});
+    	formData['subject_marks_info'] = subject_info;
+
+    	var dmc_info = {};
+    	dmc_info['dmc_info_id'] = $('#dmc_id').val();
+    	formData['dmc_info'] = dmc_info;
+    	
+		return formData;
 	}
     
 </script>
