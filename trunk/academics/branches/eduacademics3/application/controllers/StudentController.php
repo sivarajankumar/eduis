@@ -499,7 +499,8 @@ class StudentController extends Zend_Controller_Action
                     break;
                 case 'jsonp':
                     //$this->_helper->json($response);
-                    $callback = $this->getRequest()->getParam('callback');
+                    $callback = $this->getRequest()->getParam(
+                    'callback');
                     echo $callback . '(' . $this->_helper->json($response, 
                     false) . ')';
                     break;
@@ -1987,12 +1988,12 @@ class StudentController extends Zend_Controller_Action
         Zend_Registry::get('logger')->debug($params);
         $subject_marks_info = $params['myarray']['subject_marks_info'];
         $dmc_info = $params['myarray']['dmc_info'];
-        $dmc_info_id = $dmc_info['dmc_info'];
+        $dmc_info_id = $dmc_info['dmc_info_id'];
         foreach ($subject_marks_info as $stu_sub_id => $dmc_subject_marks) {
-            $dmc_subject_marks['dmc_info_id'];
+            $dmc_subject_marks['dmc_info_id'] = $dmc_info_id;
+            $dmc_subject_marks['student_subject_id'] = $stu_sub_id;
             $this->savedmcsubjectmarks($dmc_subject_marks);
         }
-        Zend_Registry::get('logger')->debug($dmc_subject_marks);
     }
     public function fetchsubjectdmcAction ()
     {
