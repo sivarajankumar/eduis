@@ -424,7 +424,7 @@ class StudentController extends Zend_Controller_Action
     {
         $member_id = $this->getMember_id();
         $student = new Acad_Model_Member_Student();
-        $student->setMember_id();
+        $student->setMember_id($member_id);
         $dmc_subject_marks['dmc_info_id'] = $marks_info['dmc_info_id'];
         $dmc_subject_marks['student_subject_id'] = $marks_info['student_subject_id'];
         $dmc_subject_marks['external'] = $marks_info['external'];
@@ -460,6 +460,8 @@ class StudentController extends Zend_Controller_Action
         $request_object = $this->getRequest();
         $params = array_diff($request_object->getParams(), 
         $request_object->getUserParams());
+        Zend_Registry::get('logger')->debug('Parameter recieved from view :');
+        Zend_Registry::get('logger')->debug($params);
         $member_id = $this->getMember_id();
         $class_finder = $params['myarray']['class_finder'];
         $batch_start = $class_finder['batch_start'];
@@ -1978,7 +1980,9 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        Zend_Registry::get('logger')->debug($params);
         $dmc_subject_marks = $params['myarray']['dmc_subject_marks'];
+        Zend_Registry::get('logger')->debug($dmc_subject_marks);
         return $this->savedmcsubjectmarks($dmc_subject_marks);
     }
     public function fetchsubjectdmcAction ()
