@@ -379,8 +379,8 @@ class StudentController extends Zend_Controller_Action
         foreach ($contact_type_ids as $key => $contact_type_id) {
             $contact_info = $student_model->fetchContactInfo($contact_type_id);
             if ($contact_info instanceof Core_Model_MemberContacts) {
-                $contact_data[$contact_type_id]['contact_details'] = $contact_info->getContact_details();
-                $contact_data[$contact_type_id]['contact_type_name'] = $contact_info->getContact_type_name();
+                $contact_type_name = $contact_info->getContact_type_name();
+                $contact_data[$contact_type_name]['details'] = $contact_info->getContact_details();
             } elseif ($contact_info == false) {
                 $message = 'Contact info for member id : ' . $member_id .
                  ' not present.';
