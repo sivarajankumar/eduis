@@ -376,12 +376,12 @@ class StudentController extends Zend_Controller_Action
         }
         $contact_data = array();
         $contact_type_ids = $student_model->fetchContactTypeIds();
-        foreach ($contact_type_ids as $contact_type_id) {
-            $contact_model = $student_model->fetchContactInfo($contact_type_id);
-            if ($contact_model instanceof Core_Model_MemberContacts) {
-                $contact_data[$contact_type_id]['contact_details'] = $contact_model->getContact_details();
-                $contact_data[$contact_type_id]['contact_type_name'] = $contact_model->getContact_type_name();
-            } elseif ($contact_model == false) {
+        foreach ($contact_type_ids as $key => $contact_type_id) {
+            $contact_info = $student_model->fetchContactInfo($contact_type_id);
+            if ($contact_info instanceof Core_Model_MemberContacts) {
+                $contact_data[$contact_type_id]['contact_details'] = $contact_info->getContact_details();
+                $contact_data[$contact_type_id]['contact_type_name'] = $contact_info->getContact_type_name();
+            } elseif ($contact_info == false) {
                 $message = 'Contact info for member id : ' . $member_id .
                  ' not present.';
                 $code = Zend_Log::ERR;
@@ -403,6 +403,7 @@ class StudentController extends Zend_Controller_Action
         if (! empty($page_header)) {
             $response['page_header'] = $page_header;
         }
+        Zend_Registry::get('logger')->debug($response);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);

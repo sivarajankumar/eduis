@@ -421,6 +421,7 @@ class Core_Model_Member_Student extends Core_Model_Generic
     /**
      * Fetches Contact information of a Student,
      * Member_id must be set before calling this function 
+     * @param int $contact_type_id the id for contact_type
      * @return contact|false object of Core_Model_MemberContacts
      */
     public function fetchContactInfo ($contact_type_id)
@@ -428,7 +429,8 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $member_id = $this->getMember_id(true);
         $contacts_object = new Core_Model_MemberContacts();
         $contacts_object->setMember_id($member_id);
-        return $contacts_object->setContact_type_id($contact_type_id);
+        $contacts_object->setContact_type_id($contact_type_id);
+        return $contacts_object->fetchInfo();
     }
     /**
      * Fetches information about Relative of a Student,
