@@ -59,23 +59,30 @@ class StudentController extends Zend_Controller_Action
         if ($member_id_exists) {
             $student = new Core_Model_Member_Student();
             $student->setMember_id($member_id);
-            $student_model = $student->fetchCriticalInfo();
-            if ($student_model instanceof Core_Model_Member_Student) {
-                $critical_data['member_id'] = $this->getMember_id();
-                $critical_data['first_name'] = $student_model->getFirst_name();
-                $critical_data['middle_name'] = $student_model->getMiddle_name();
-                $critical_data['last_name'] = $student_model->getLast_name();
-                $critical_data['cast'] = $student_model->getCast_name();
-                $critical_data['nationality'] = $student_model->getNationality_name();
-                $critical_data['religion'] = $student_model->getReligion_name();
-                $critical_data['blood_group'] = $student_model->getBlood_group();
-                $critical_data['dob'] = $student_model->getDob();
-                $critical_data['gender'] = $student_model->getGender();
-                $critical_data['member_type_id'] = $student_model->getMember_type_id();
-                $critical_data['religion_id'] = $student_model->getReligion_id();
-                $critical_data['nationality_id'] = $student_model->getNationality_id();
-                $critical_data['cast_id'] = $student_model->getCast_id();
-                return $critical_data;
+            $info = $student->fetchCriticalInfo();
+            if ($info == false) {
+                $message = 'Critical info for member id : ' . $member_id .
+                 ' not present.';
+                $code = Zend_Log::ERR;
+                throw new Exception($message, $code);
+            } else {
+                if ($info instanceof Core_Model_Member_Student) {
+                    $critical_data['member_id'] = $this->getMember_id();
+                    $critical_data['first_name'] = $info->getFirst_name();
+                    $critical_data['middle_name'] = $info->getMiddle_name();
+                    $critical_data['last_name'] = $info->getLast_name();
+                    $critical_data['cast'] = $info->getCast_name();
+                    $critical_data['nationality'] = $info->getNationality_name();
+                    $critical_data['religion'] = $info->getReligion_name();
+                    $critical_data['blood_group'] = $info->getBlood_group();
+                    $critical_data['dob'] = $info->getDob();
+                    $critical_data['gender'] = $info->getGender();
+                    $critical_data['member_type_id'] = $info->getMember_type_id();
+                    $critical_data['religion_id'] = $info->getReligion_id();
+                    $critical_data['nationality_id'] = $info->getNationality_id();
+                    $critical_data['cast_id'] = $info->getCast_id();
+                    return $critical_data;
+                }
             }
         }
     }
@@ -287,20 +294,36 @@ class StudentController extends Zend_Controller_Action
         //registration info
         $student_model = new Core_Model_Member_Student();
         $student_model->setMember_id($member_id);
-        $student_model->fetchCriticalInfo();
         $registration_model = $student_model->fetchRegistrationInfo();
         if ($registration_model instanceof Core_Model_StudentRegistration) {
             $registration_id = $registration_model->getRegistration_id();
+        } else {
+            $message = 'Registration info for member id : ' . $member_id .
+             ' not present.';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
         }
         //class info
         $current_class_ids = $student_model->fetchActiveClassIds();
-        foreach ($current_class_ids as $current_class_id) {
-            $student_class_model = $student_model->fetchClassInfo(
-            $current_class_id);
-            if ($student_class_model instanceof Core_Model_StudentClass) {
-                $page_header['roll_no'] = $student_class_model->getRoll_no();
-                $page_header['group_id'] = $student_class_model->getGroup_id();
+        if (! empty($current_class_ids)) {
+            foreach ($current_class_ids as $current_class_id) {
+                $student_class_model = $student_model->fetchClassInfo(
+                $current_class_id);
+                if ($student_class_model instanceof Core_Model_StudentClass) {
+                    $page_header['roll_no'] = $student_class_model->getRoll_no();
+                    $page_header['group_id'] = $student_class_model->getGroup_id();
+                } elseif ($student_class_model == false) {
+                    $message = 'Class info for member id : ' . $member_id .
+                     ' not present.';
+                    $code = Zend_Log::ERR;
+                    throw new Exception($message, $code);
+                }
             }
+        } else {
+            $message = 'Member id : ' . $member_id .
+             ' not currently active in any class.';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
         }
         //student_class info
         $class_model = new Core_Model_Class();
@@ -318,7 +341,12 @@ class StudentController extends Zend_Controller_Action
         $relationIds = $student_model->fetchRelationIds();
         foreach ($relationIds as $relation_id) {
             $relative_model = $student_model->fetchRelativeInfo($relation_id);
-            if ($relative_model instanceof Core_Model_MemberRelatives) {
+            if ($relative_model == false) {
+                $message = 'Relative\'s info for member id : ' . $member_id .
+                 ' not present.';
+                $code = Zend_Log::ERR;
+                throw new Exception($message, $code);
+            } elseif ($relative_model instanceof Core_Model_MemberRelatives) {
                 $relative_data[$relative_model->getRelation_name()]['name'] = $relative_model->getName();
                 $relative_data[$relative_model->getRelation_name()]['contact'] = $relative_model->getContact();
                 $relative_data[$relative_model->getRelation_name()]['designation'] = $relative_model->getDesignation();
@@ -326,8 +354,6 @@ class StudentController extends Zend_Controller_Action
                 $relative_data[$relative_model->getRelation_name()]['occupation'] = $relative_model->getOccupation();
                 $relative_data[$relative_model->getRelation_name()]['office_add'] = $relative_model->getOffice_add();
                 $relative_data[$relative_model->getRelation_name()]['landline_no'] = $relative_model->getLandline_no();
-            } elseif (! $relative_model) {
-                //relation info not found
             }
         }
         //for address info
@@ -335,14 +361,17 @@ class StudentController extends Zend_Controller_Action
         $address_types = $student_model->fetchAddressTypes();
         foreach ($address_types as $address_type) {
             $address_model = $student_model->fetchAddressInfo($address_type);
-            if ($address_model instanceof Core_Model_MemberAddress) {
+            if ($address_model == false) {
+                $message = 'Address info for member id : ' . $member_id .
+                 ' not present.';
+                $code = Zend_Log::ERR;
+                throw new Exception($message, $code);
+            } elseif ($address_model instanceof Core_Model_MemberAddress) {
                 $address_data[$address_type]['address'] = $address_model->getAddress();
                 $address_data[$address_type]['city'] = $address_model->getCity();
                 $address_data[$address_type]['district'] = $address_model->getDistrict();
                 $address_data[$address_type]['code'] = $address_model->getPostal_code();
                 $address_data[$address_type]['state'] = $address_model->getState();
-            } elseif (! $address_model) {
-                //address info not found
             }
         }
         $contact_data = array();
@@ -352,8 +381,11 @@ class StudentController extends Zend_Controller_Action
             if ($contact_model instanceof Core_Model_MemberContacts) {
                 $contact_data[$contact_type_id]['contact_details'] = $contact_model->getContact_details();
                 $contact_data[$contact_type_id]['contact_type_name'] = $contact_model->getContact_type_name();
-            } elseif (! $contact_model) {
-                //contact info not found
+            } elseif ($contact_model == false) {
+                $message = 'Contact info for member id : ' . $member_id .
+                 ' not present.';
+                $code = Zend_Log::ERR;
+                throw new Exception($message, $code);
             }
         }
         if (! empty($critical_data)) {
