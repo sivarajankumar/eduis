@@ -580,14 +580,14 @@ class StudentController extends Zend_Controller_Action
                 $code = Zend_Log::ERR;
                 throw new Exception($message, $code);
             } elseif ($relative_model instanceof Core_Model_MemberRelatives) {
-                $relative_data[$relative_model->getRelation_name()]['name'] = $relative_model->getName();
-                $relative_data[$relative_model->getRelation_name()]['contact'] = $relative_model->getContact();
-                $relative_data[$relative_model->getRelation_name()]['designation'] = $relative_model->getDesignation();
-                $relative_data[$relative_model->getRelation_name()]['email'] = $relative_model->getEmail();
-                $relative_data[$relative_model->getRelation_name()]['occupation'] = $relative_model->getOccupation();
-                $relative_data[$relative_model->getRelation_name()]['office_add'] = $relative_model->getOffice_add();
-                $relative_data[$relative_model->getRelation_name()]['landline_no'] = $relative_model->getLandline_no();
-                
+                $relation_name = $relative_model->getRelation_name();
+                $relative_data[$relation_name]['name'] = $relative_model->getName();
+                $relative_data[$relation_name]['contact'] = $relative_model->getContact();
+                $relative_data[$relation_name]['designation'] = $relative_model->getDesignation();
+                $relative_data[$relation_name]['email'] = $relative_model->getEmail();
+                $relative_data[$relation_name]['occupation'] = $relative_model->getOccupation();
+                $relative_data[$relation_name]['office_add'] = $relative_model->getOffice_add();
+                $relative_data[$relation_name]['landline_no'] = $relative_model->getLandline_no();
             }
         }
         //for address info
