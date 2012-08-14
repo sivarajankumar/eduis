@@ -180,25 +180,7 @@ class StudentController extends Zend_Controller_Action
         $class_info = $params['myarray']['class_info'];
         $class_id = $class_info['class_id'];
         $stu_class_info = $this->fetchClassInfoAction($class_id);
-        $format = $this->_getParam('format', 'html');
-        switch ($format) {
-            case 'html':
-                $this->_helper->viewRenderer->setNoRender(false);
-                $this->_helper->layout()->enableLayout();
-                $this->view->assign('student_class_info', $stu_class_info);
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' .
-                 $this->_helper->json($stu_class_info, false) . ')';
-                break;
-            case 'json':
-                $this->_helper->json($stu_class_info);
-                break;
-            default:
-                ;
-                break;
-        }
+        $this->_helper->json($stu_class_info);
     }
     public function editclassinfoAction ()
     {
