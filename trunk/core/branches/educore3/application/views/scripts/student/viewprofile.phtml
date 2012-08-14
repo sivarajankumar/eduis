@@ -19,20 +19,30 @@ span {
 <h1>Personal Profile</h1>
 </center>
 <div id="class_info"
-	style="float: inherit; width: 1264px; height: 125px; padding: 4px">
-<p><span style="float: left;"><strong>Roll Number: <?php
-echo strtoupper($this->page_header['roll_no']);
-?></strong></span> <span style="float: right;"><strong>Degree  : <?php
-echo strtoupper($this->page_header['programme_id']);
-?></strong></span><br>
-<span style="float: right;"><strong>Depatment: <?php
-echo strtoupper($this->page_header['department_id']);
-?></strong></span> <span style="float: left;"><strong>Semester: <?php
-echo strtoupper($this->page_header['semester_id']);
-?></strong></span><br>
-<span style="float: left;"><strong>Group  : <?php
-echo strtoupper($this->page_header['group_id']);
-?></strong></span></p>
+	style="float: inherit; width: auto; height: 125px; padding: 4px">
+<p><span style="float: left;"> <strong>Roll Number: 
+			    <?php
+    echo strtoupper($this->page_header['roll_no']);
+    ?>
+			</strong> </span> <span style="float: right;"> <strong>Degree  : 
+		        <?php
+        echo strtoupper($this->page_header['programme_id']);
+        ?>
+			</strong> </span><br>
+<span style="float: right;"> <strong>Department: 
+			    <?php
+    echo strtoupper($this->page_header['department_id']);
+    ?>
+			</strong> </span> <span style="float: left;"> <strong>Semester: 
+			    <?php
+    echo strtoupper($this->page_header['semester_id']);
+    ?>
+			</strong> </span><br>
+<span style="float: left;"> <strong>Group  : 
+			    <?php
+    echo strtoupper($this->page_header['group_id']);
+    ?>
+			</strong> </span></p>
 </div>
 
 <div id="tabs">
