@@ -332,16 +332,24 @@ class StudentController extends Zend_Controller_Action
                     $info = $student->fetchRelativeInfo($relation_id);
                     if ($info instanceof Core_Model_MemberRelatives) {
                         $relation_name = $info->getRelation_name();
-                        $relatives_info[$relation_name]['contact_details'] = $info->getContact_details();
+                        $relatives_info[$relation_name]['occupation'] = $info->getOccupation();
+                        $relatives_info[$relation_name]['designation'] = $info->getDesignation();
+                        $relatives_info[$relation_name]['office_add'] = $info->getOffice_add();
+                        $relatives_info[$relation_name]['name'] = $info->getName();
+                        $relatives_info[$relation_name]['contact'] = $info->getContact();
+                        $relatives_info[$relation_name]['annual_income'] = $info->getAnnual_income();
+                        $relatives_info[$relation_name]['landline_no'] = $info->getLandline_no();
+                        $relatives_info[$relation_name]['email'] = $info->getEmail();
                         foreach ($relatives_info as $key => $array) {
-                            foreach ($array as $value) {
+                            foreach ($array as $k => $value) {
                                 if ($value == null) {
-                                    unset($relatives_info[$key]);
+                                    unset($relatives_info[$key][$k]);
                                 }
                             }
                         }
                     }
                 }
+                Zend_Registry::get('logger')->debug($relatives_info);
                 return $relatives_info;
             } else {
                 $message = 'Relative\'s info for member id : ' . $member_id .
