@@ -177,10 +177,10 @@ class ClassController extends Zend_Controller_Action
         $my_array = $params['myarray'];
         $class_finder = $my_array['class_finder'];
         if (! empty($class_finder)) {
-            $class_id = $class_finder['class_id'] || null;
+            $batch_id = $class_finder['batch_id'] || null;
             $semester_id = $class_finder['semester_id'] || null;
             $is_active = $class_finder['is_active'] || null;
-            $class_ids = $this->getClassIds($class_id, $semester_id, $is_active);
+            $class_ids = $this->getClassIds($batch_id, $semester_id, $is_active);
             $this->_helper->json($class_ids);
         }
     }
