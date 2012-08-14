@@ -1,0 +1,236 @@
+<?php
+    $department_id = $this->department_id;
+?>
+
+<h2>Class Information:</h2>
+
+<form action="javascript:get_all_params()" class="uniForm">
+    <fieldset id="info">
+    
+	<div class="ctrlHolder">
+		<label for="programme_id"><em>*</em>Programme</label>
+		<select id="programme_id" name="programme_id" class="required">
+			<option value="">Select the programme</option>
+		</select>
+		<p class="formHint">Select the programme</p>
+	</div>
+	
+	<div class="ctrlHolder"><label for="department_id"><em>*</em>Department</label>
+		<input name="department_id" id="department_id" value="<?php echo $department_id?>" readonly="readonly" size="35" disabled="disabled" maxlength="50" type="text" class="textInput required" />
+		<p class="formHint">Your Trade</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="batch_start"><em>*</em>Batch Start</label>
+		<select id="batch_start" name="batch_start" class="required">
+			<option value="">Select the year</option>
+			<?php
+			    $current_year = intval(date('Y'));
+			    for($i=2002;$i<=$current_year;$i++)
+			    {
+			        echo '<option value="'.$i.'">'.$i.'</option>';
+			    }
+			?>
+		</select>
+		<p class="formHint">Select the starting year of the batch</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="group_id"><em>*</em>Group</label>
+		<select id="group_id" name="group_id" class="selectInput required">
+			<option value='A1'>A1</option>
+			<option value='A2'>A2</option>
+			<option value='A3'>A3</option>
+		</select>
+		<p class="formHint">Select Your Group</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="semester_id"><em>*</em>Semester</label>
+		<select id="semester_id" name="semester_id" class="required">
+		<option value="">Select the semester</option>
+		<?php 
+		    for($i=1;$i<=8;$i++)
+            {
+                echo '<option value="'.$i.'">'.$i.'</option>';
+            }
+		?>
+		</select>
+		<p class="formHint">Select Department</p>
+	</div>
+	
+	<div class="ctrlHolder"><label for="roll_no"><em>*</em>Roll number</label>
+		<input name="roll_no" id="roll_no" data-default-value="e.g. 2308015" size="35" maxlength="50" type="text" class="textInput required validateInteger" />
+		<p class="formHint">Enter your University Roll Number</p>
+	</div>
+</fieldset>
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</form>
+
+<script>
+	var params = {};
+	var class_id;
+	$(function(){
+		
+		$('form.uniForm').uniform({
+			prevent_submit : true
+		});
+
+	    var urlgetProgrammes = "http://core.aceambala.com/class/fetchprogrammes";
+	    $.ajax({
+    		url : urlgetProgrammes,
+    		dataType : 'jsonp',
+            data : {format:'jsonp'},
+    		success: function(jStatus){
+    			$.each(jStatus['programmes'],function(programme_id,programme_name){
+					//alert(index +'   '+ semester);
+					html_text = '<option value="'+programme_id+'">'+programme_name+'</option>';
+					$('#programme_id').append(html_text);
+    			});
+            },
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+		});
+	});
+
+	function get_all_params(){
+		$('fieldset#info :input').each(function(){
+			params[this.name] = this.value;
+		});
+
+		submit();
+	}
+	
+    function get_batch_info(){
+        var formData = {};
+        var batch_params = {};
+    
+        batch_params['programme_id'] = params['programme_id'];
+        batch_params['department_id'] = params['department_id'];
+        batch_params['batch_start'] = params['batch_start'];
+    	
+    	formData['batch_params'] = batch_params; 
+    	return formData;
+    }
+
+    function get_class_info(batch_id){
+        var formData = {};
+        var class_finder = {};
+    
+        class_finder['semester_id'] = params['semester_id'];
+        class_finder['batch_id'] = batch_id;
+    	
+    	formData['class_finder'] = class_finder; 
+    	return formData;
+    }
+
+    function submit(){
+    	var urlGetBatchIdsInfo = "<?php echo $this->url(array('controller' => 'batch', 'action' => 'getbatchids'))?>";
+    	$.ajax({
+    		url : urlGetBatchIdsInfo,
+    		dataType : 'json',
+    		data : {
+        			myarray:get_batch_info(),
+        			format : 'json'
+            		},
+    		success: function(jStatus){
+					var batch_id = parseInt(jStatus);
+					var urlGetClassIdsInfo = "<?php echo $this->url(array('controller' => 'class', 'action' => 'getclassids'))?>";
+					$.ajax({
+			    		url : urlGetClassIdsInfo,
+			    		dataType : 'json',
+			    		data : {
+			        			myarray:get_class_info(batch_id),
+			        			format : 'json'
+			            		},
+			    		success: function(jStatus){
+								class_id = parseInt(jStatus);
+								submit111();
+			        		},
+			            error: function(response) {
+							$('#errorBox').text(response.responseText).parent().show();
+			    				console.log(response);
+			    		}
+					});
+        		},
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+		});
+
+    }
+
+    function get_class_values(){
+        var formData = {};
+        var class_info = {};
+    
+        class_info['group_id'] = params['group_id'];
+        class_info['roll_no'] = params['roll_no'];
+        class_info['class_id'] = class_id
+    	
+    	formData['class_info'] = class_info; 
+    	return formData;
+    }
+    
+    function submit111() {
+    	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'saveclassinfo'))?>';
+        $.ajax({
+            url : urlSaveInfo,
+            data : {
+                	myarray : get_class_values(),
+					format : 'json'
+                	},
+            success: function(jStatus){
+                alert("Your information has been submitted successfully");
+                window.location.replace("/student/profile");
+            },
+    		error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    }
+    
+</script>
+
+<style type="text/css">
+.uniForm{
+	background-color:white;
+	padding:10px 10px 10px 25px;
+	border:1px solid #b4c1da;
+	margin:-5px 0 40px 0;
+	box-shadow:#e4e4e4 0px 0px 1px 1px; 
+}
+h2{
+	padding:3px 3px 3px 10px;
+	background-color:#eceff4;
+	border:1px solid #b4c1da;
+	width:57%;
+	font-size:17px;
+	font-weight:100;
+}
+span{
+	float:right;
+	font-size:14px;
+	font-weight:100;	
+}
+</style>
+    
+    
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
