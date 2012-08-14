@@ -3,23 +3,67 @@ class StudentController extends Zend_Controller_Action
 {
     /**
      * 
-     * pick from auth
-     * @var unknown_type
+     * @var int
      */
     protected $_member_id;
+    protected $_user_name;
+    protected $_user_type;
+    protected $_department_id;
     /**
      * @return the $_member_id
      */
-    public function getMember_id ()
+    protected function getMember_id ()
     {
         return $this->_member_id;
     }
     /**
-     * @param field_type $_member_id
+     * @return the $_user_name
      */
-    public function setMember_id ($_member_id)
+    protected function getUser_name ()
+    {
+        return $this->_user_name;
+    }
+    /**
+     * @return the $_user_type
+     */
+    protected function getUser_type ()
+    {
+        return $this->_user_type;
+    }
+    /**
+     * @return the $_department_id
+     */
+    protected function getDepartment_id ()
+    {
+        return $this->_department_id;
+    }
+    /**
+     * @param int $_member_id
+     */
+    protected function setMember_id ($_member_id)
     {
         $this->_member_id = $_member_id;
+    }
+    /**
+     * @param field_type $_user_name
+     */
+    protected function setUser_name ($_user_name)
+    {
+        $this->_user_name = $_user_name;
+    }
+    /**
+     * @param field_type $_user_type
+     */
+    protected function setUser_type ($_user_type)
+    {
+        $this->_user_type = $_user_type;
+    }
+    /**
+     * @param field_type $_department_id
+     */
+    protected function setDepartment_id ($_department_id)
+    {
+        $this->_department_id = $_department_id;
     }
     public function indexAction ()
     {}
@@ -27,178 +71,11 @@ class StudentController extends Zend_Controller_Action
     {
         if (Zend_Auth::getInstance()->hasIdentity()) {
             $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-            $this->department_id = $authInfo['department_id'];
-            $this->identity = $authInfo['identity'];
+            $this->setDepartment_id($authInfo['department_id']);
+            $this->setUser_name($authInfo['identity']);
+            $this->setUser_type($authInfo['userType']);
             $this->setMember_id($authInfo['member_id']);
         }
-    }
-    /**
-     * Checks if member is registered in the core,
-     * @return true if member_id is registered, false otherwise
-     */
-    private function memberIdCheck ($member_id_to_check)
-    {
-        $student = new Core_Model_Member_Student();
-        $student->setMember_id($member_id_to_check);
-        $member_id_exists = $student->memberIdCheck();
-        if (! $member_id_exists) {
-            Zend_Registry::get('logger')->debug(
-            'Member with member_id : ' . $member_id_to_check .
-             ' is not registered in CORE');
-        }
-        return $member_id_exists;
-    }
-    /**
-     * before calling this function use memberidcheck function
-     * Enter description here ...
-     * @param int $member_id
-     */
-    private function fetchcriticalinfo ($member_id)
-    {
-        $member_id_exists = $this->memberIdCheck($member_id);
-        if ($member_id_exists) {
-            $student = new Core_Model_Member_Student();
-            $student->setMember_id($member_id);
-            $info = $student->fetchCriticalInfo();
-            if ($info == false) {
-                $message = 'Critical info for member id : ' . $member_id .
-                 ' not present.';
-                $code = Zend_Log::ERR;
-                throw new Exception($message, $code);
-            } else {
-                if ($info instanceof Core_Model_Member_Student) {
-                    $critical_data['member_id'] = $this->getMember_id();
-                    $critical_data['first_name'] = $info->getFirst_name();
-                    $critical_data['middle_name'] = $info->getMiddle_name();
-                    $critical_data['last_name'] = $info->getLast_name();
-                    $critical_data['cast'] = $info->getCast_name();
-                    $critical_data['nationality'] = $info->getNationality_name();
-                    $critical_data['religion'] = $info->getReligion_name();
-                    $critical_data['blood_group'] = $info->getBlood_group();
-                    $critical_data['dob'] = $info->getDob();
-                    $critical_data['gender'] = $info->getGender();
-                    $critical_data['member_type_id'] = $info->getMember_type_id();
-                    $critical_data['religion_id'] = $info->getReligion_id();
-                    $critical_data['nationality_id'] = $info->getNationality_id();
-                    $critical_data['cast_id'] = $info->getCast_id();
-                    return $critical_data;
-                }
-            }
-        }
-    }
-    private function saveClassData ($data_to_save)
-    {
-        /**
-         *
-         * Batch Information specific data
-         */
-        $member_id = $this->getMember_id();
-        $student_model = new Core_Model_Member_Student();
-        $department_id = $data_to_save['department_id'];
-        $programme_id = $data_to_save['programme_id'];
-        $batch_start = $data_to_save['batch_start'];
-        $batch = new Core_Model_Batch();
-        $batch->setDepartment_id($department_id);
-        $batch->setProgramme_id($programme_id);
-        $batch->setBatch_start($batch_start);
-        $batch_id_array = $batch->fetchBatchIds(true, true, true);
-        $member_batch_id = $batch_id_array[0];
-        /**
-         * Class Information Specific data
-         */
-        $semester_id = $data_to_save['semester_id'];
-        $class = new Core_Model_Class();
-        $class->setBatch_id($member_batch_id);
-        $class->setSemester_id($semester_id);
-        $class_id_array = $class->fetchClassIds(true, true);
-        $member_class_id = $class_id_array[0];
-        $class->setClass_id($member_class_id);
-        $class_info = $class->fetchInfo();
-        if ($class_info instanceof Core_Model_Class) {
-            $class_start_date = $class_info->getStart_date();
-            $member_class_start = $class_start_date;
-        }
-        $this->saveAdmissionData($data_to_save);
-        $this->saveRegistrationData($data_to_save);
-        $student_model->setMember_id($member_id);
-        $class_array = array('member_id' => $member_id, 
-        'class_id' => $member_class_id, 'group_id' => $data_to_save['group_id'], 
-        'roll_no' => $data_to_save['roll_no'], 
-        'start_date' => $member_class_start);
-        $student_model->saveClassInfo($class_array);
-    }
-    private function saveCriticalData ($data_to_save)
-    {
-        /**
-         * 
-         * static for student
-         * @var int
-         */
-        $member_id = $this->getMember_id();
-        $data_to_save['member_type_id'] = 1;
-        $student_model = new Core_Model_Member_Student();
-        $student_model->setMember_id($member_id);
-        $student_model->saveCriticalInfo($data_to_save);
-    }
-    private function saveRelativeData ($data_to_save)
-    {
-        $member_id = $this->getMember_id();
-        $student_model = new Core_Model_Member_Student();
-        foreach ($data_to_save as $relative_id => $relative_info) {
-            $relative_info['member_id'] = $member_id;
-            $student_model->setMember_id($member_id);
-            $student_model->saveRelativesInfo($relative_info);
-        }
-    }
-    private function saveAddressData ($data_to_save)
-    {
-        $member_id = $this->getMember_id();
-        $student_model = new Core_Model_Member_Student();
-        foreach ($data_to_save as $address_type => $address_fields) {
-            $address_fields['member_id'] = $member_id;
-            $student_model->setMember_id($member_id);
-            $student_model->saveAddressInfo($address_fields);
-        }
-    }
-    private function saveContactsData ($data_to_save)
-    {
-        $member_id = $this->getMember_id();
-        $student_model = new Core_Model_Member_Student();
-        foreach ($data_to_save as $contact_type => $contact_data) {
-            $contact_data['member_id'] = $member_id;
-            $student_model->setMember_id($member_id);
-            $student_model->saveContactsInfo($contact_data);
-        }
-    }
-    private function saveAdmissionData ($data_to_save)
-    {
-        /**
-         * 
-         * static for student
-         * @var int
-         */
-        $member_id = $this->getMember_id();
-        $department_id = $data_to_save['department_id'];
-        $student_model = new Core_Model_Member_Student();
-        $admission = array('member_id' => $member_id, 
-        'alloted_branch' => $department_id);
-        $student_model->setMember_id($member_id);
-        $student_model->saveAdmissionInfo($admission);
-    }
-    private function saveRegistrationData ($data_to_save)
-    {
-        /**
-         * 
-         * static for student
-         * @var int
-         */
-        $member_id = $this->getMember_id();
-        $student_model = new Core_Model_Member_Student();
-        $registration_id = $data_to_save['registration_id'];
-        $registration_array = array('member_id' => $member_id, 
-        'registration_id' => $registration_id);
-        $student_model->setMember_id($member_id);
-        $student_model->saveRegistrationInfo($registration_array);
     }
     public function memberidcheckAction ()
     {
@@ -208,11 +85,214 @@ class StudentController extends Zend_Controller_Action
         $member_id_exists = $this->memberIdCheck($member_id_to_check);
         $this->_helper->json($member_id_exists);
     }
+    /**
+     * @deprecated
+     * Enter description here ...
+     */
     public function createprofileAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
     }
+    ////////////////////////////////////////////////////
+    /**
+     * finds the class_id according to given data
+     * Enter description here ...
+     * @deprecated in class controller already done
+     * @param int $batch_id
+     * @param int $semester_id
+     */
+    private function getClassId ($batch_id, $semester_id)
+    {
+        $class = new Core_Model_Class();
+        $class->setBatch_id($batch_id);
+        $class->setSemester_id($semester_id);
+        $class_ids = $class->fetchClassIds(true, true);
+        if (is_array($class_ids)) {
+            return array_pop($class_ids);
+        } else {
+            $message = 'No class info for batch_id ' . $batch_id .
+             ' and semester_id ' . $semester_id;
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        }
+    }
+    /**
+     * 
+     * finds the batch_id according to given data
+     * @deprecated in class controller already done
+     * @param int $department_id
+     * @param int $programme_id
+     * @param int $batch_start
+     */
+    private function getBatchId ($department_id, $programme_id, $batch_start)
+    {
+        $batch = new Core_Model_Batch();
+        $batch->setDepartment_id($department_id);
+        $batch->setProgramme_id($programme_id);
+        $batch->setBatch_start($batch_start);
+        $batch_ids = $batch->fetchBatchIds(true, true, true);
+        if (is_array($batch_ids)) {
+            return array_pop($batch_ids);
+        } else {
+            $message = 'No batch info for department_id ' . $department_id .
+             ' and programme_id ' . $programme_id . ' and batch_start ' .
+             $batch_start;
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        }
+    }
+    /**
+     * fetches students information for an acdemic class
+     * Enter description here ...
+     * @param int $class_id
+     */
+    private function fetchClassInfo ($class_id)
+    {
+        $member_id = $this->getMember_id();
+        $student = new Core_Model_Member_Student();
+        $student->setMember_id($member_id);
+        $info = $student->fetchClassInfo($class_id);
+        if ($info instanceof Core_Model_StudentClass) {
+            $stu_class_info = array();
+            $stu_class_info['roll_no'] = $info->getRoll_no();
+            $stu_class_info['group_id'] = $info->getGroup_id();
+            $stu_class_info['start_date'] = $info->getStart_date();
+            $stu_class_info['completion_date'] = $info->getCompletion_date();
+            return $stu_class_info;
+        } else {
+            $message = 'No member_class info for class_id ' . $class_id;
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        }
+    }
+    public function viewclassinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function fetchclassinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $class_info = $params['myarray']['class_info'];
+        $class_id = $class_info['class_id'];
+        $stu_class_info = $this->fetchClassInfoAction($class_id);
+        $format = $this->_getParam('format', 'html');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('student_class_info', $stu_class_info);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' .
+                 $this->_helper->json($stu_class_info, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($stu_class_info);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    public function editclassinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $department_id = $this->getDepartment_id();
+        $this->view->assign('department_id', $department_id);
+    }
+    public function saveclassinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $my_array = $params['myarray'];
+        $student_class_info = $my_array['student_class_info'];
+        return $this->saveClassInfo($student_class_info);
+    }
+    public function viewunvregistrationinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function editunvregistrationinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function saveunvregistrationinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function viewpersonalinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function editpersonalinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function savepersonalinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function viewaddressinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function editaddressinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function saveaddressinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function viewcontactinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function editcontactinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function savecontactinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function viewrelativesinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function editrelativesinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function saverelativesinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    ///////////////////////////////////////////////////////
     /**
      * 
      *to save profile of student
@@ -238,7 +318,7 @@ class StudentController extends Zend_Controller_Action
             switch ($category) {
                 case 'critical_data':
                     $this->saveCriticalData($value_array);
-                    $this->saveClassData($value_array);
+                    $this->saveClassInfo($value_array);
                     break;
                 case 'relative_data':
                     $this->saveRelativeData($value_array);
@@ -265,7 +345,7 @@ class StudentController extends Zend_Controller_Action
         $critical_data = array();
         $member_id = $this->getMember_id();
         //critical info
-        $raw_critical_data = self::fetchcriticalinfo($member_id);
+        $raw_critical_data = self::fetchCriticalInfo($member_id);
         $name['first_name'] = $raw_critical_data['first_name'];
         $name['middle_name'] = $raw_critical_data['middle_name'];
         $name['last_name'] = $raw_critical_data['last_name'];
@@ -448,7 +528,151 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
         $member_id = $this->getMember_id();
-        $critical_data = self::fetchcriticalinfo($member_id);
+        $critical_data = self::fetchCriticalInfo($member_id);
         $this->_helper->json($critical_data);
+    }
+    /**
+     * Checks if member is registered in the core,
+     * @return true if member_id is registered, false otherwise
+     */
+    private function memberIdCheck ($member_id_to_check)
+    {
+        $student = new Core_Model_Member_Student();
+        $student->setMember_id($member_id_to_check);
+        $member_id_exists = $student->memberIdCheck();
+        if (! $member_id_exists) {
+            Zend_Registry::get('logger')->debug(
+            'Member with member_id : ' . $member_id_to_check .
+             ' is not registered in CORE');
+        }
+        return $member_id_exists;
+    }
+    /**
+     * before calling this function use memberidcheck function
+     * Enter description here ...
+     * @param int $member_id
+     */
+    private function fetchCriticalInfo ($member_id)
+    {
+        $member_id_exists = $this->memberIdCheck($member_id);
+        if ($member_id_exists) {
+            $student = new Core_Model_Member_Student();
+            $student->setMember_id($member_id);
+            $info = $student->fetchCriticalInfo();
+            if ($info == false) {
+                $message = 'Critical info for member id : ' . $member_id .
+                 ' not present.';
+                $code = Zend_Log::ERR;
+                throw new Exception($message, $code);
+            } else {
+                if ($info instanceof Core_Model_Member_Student) {
+                    $critical_data['member_id'] = $this->getMember_id();
+                    $critical_data['first_name'] = $info->getFirst_name();
+                    $critical_data['middle_name'] = $info->getMiddle_name();
+                    $critical_data['last_name'] = $info->getLast_name();
+                    $critical_data['cast'] = $info->getCast_name();
+                    $critical_data['nationality'] = $info->getNationality_name();
+                    $critical_data['religion'] = $info->getReligion_name();
+                    $critical_data['blood_group'] = $info->getBlood_group();
+                    $critical_data['dob'] = $info->getDob();
+                    $critical_data['gender'] = $info->getGender();
+                    $critical_data['member_type_id'] = $info->getMember_type_id();
+                    $critical_data['religion_id'] = $info->getReligion_id();
+                    $critical_data['nationality_id'] = $info->getNationality_id();
+                    $critical_data['cast_id'] = $info->getCast_id();
+                    return $critical_data;
+                }
+            }
+        }
+    }
+    /**
+     * @todo view changes no class finder
+     * Enter description here ...
+     * @param unknown_type $data_to_save
+     */
+    private function saveClassInfo ($data_to_save)
+    {
+        $member_id = $this->getMember_id();
+        $class_info = array('member_id' => $member_id, 
+        'class_id' => $data_to_save['class_id'], 
+        'group_id' => $data_to_save['group_id'], 
+        'roll_no' => $data_to_save['roll_no'], 
+        'start_date' => $data_to_save['start_date'], 
+        'completion_date' => $data_to_save['completion_date']);
+        $student = new Core_Model_Member_Student();
+        return $student->saveClassInfo($class_info);
+    }
+    private function saveCriticalData ($data_to_save)
+    {
+        /**
+         * 
+         * static for student
+         * @var int
+         */
+        $member_id = $this->getMember_id();
+        $data_to_save['member_type_id'] = 1;
+        $student_model = new Core_Model_Member_Student();
+        $student_model->setMember_id($member_id);
+        $student_model->saveCriticalInfo($data_to_save);
+    }
+    private function saveRelativeData ($data_to_save)
+    {
+        $member_id = $this->getMember_id();
+        $student_model = new Core_Model_Member_Student();
+        foreach ($data_to_save as $relative_id => $relative_info) {
+            $relative_info['member_id'] = $member_id;
+            $student_model->setMember_id($member_id);
+            $student_model->saveRelativesInfo($relative_info);
+        }
+    }
+    private function saveAddressData ($data_to_save)
+    {
+        $member_id = $this->getMember_id();
+        $student_model = new Core_Model_Member_Student();
+        foreach ($data_to_save as $address_type => $address_fields) {
+            $address_fields['member_id'] = $member_id;
+            $student_model->setMember_id($member_id);
+            $student_model->saveAddressInfo($address_fields);
+        }
+    }
+    private function saveContactsData ($data_to_save)
+    {
+        $member_id = $this->getMember_id();
+        $student_model = new Core_Model_Member_Student();
+        foreach ($data_to_save as $contact_type => $contact_data) {
+            $contact_data['member_id'] = $member_id;
+            $student_model->setMember_id($member_id);
+            $student_model->saveContactsInfo($contact_data);
+        }
+    }
+    private function saveAdmissionData ($data_to_save)
+    {
+        /**
+         * 
+         * static for student
+         * @var int
+         */
+        $member_id = $this->getMember_id();
+        $department_id = $data_to_save['department_id'];
+        $student_model = new Core_Model_Member_Student();
+        $admission = array('member_id' => $member_id, 
+        'alloted_branch' => $department_id);
+        $student_model->setMember_id($member_id);
+        $student_model->saveAdmissionInfo($admission);
+    }
+    private function saveRegistrationData ($data_to_save)
+    {
+        /**
+         * 
+         * static for student
+         * @var int
+         */
+        $member_id = $this->getMember_id();
+        $student_model = new Core_Model_Member_Student();
+        $registration_id = $data_to_save['registration_id'];
+        $registration_array = array('member_id' => $member_id, 
+        'registration_id' => $registration_id);
+        $student_model->setMember_id($member_id);
+        $student_model->saveRegistrationInfo($registration_array);
     }
 }
