@@ -116,6 +116,7 @@ class StudentController extends Zend_Controller_Action
         'start_date' => $data_to_save['start_date'], 
         'completion_date' => $data_to_save['completion_date']);
         $student = new Core_Model_Member_Student();
+        $student->setMember_id($member_id);
         return $student->saveClassInfo($class_info);
     }
     private function saveCriticalData ($data_to_save)
@@ -293,6 +294,41 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
+    private function fetchContactsInfo ()
+    {
+        $member_id = $this->getMember_id();
+        $member_id_exists = $this->memberIdCheck($member_id);
+        if ($member_id_exists) {
+            $contact = new Core_Model_Mapper_MemberContacts();
+            $contact_type_ids = $contact->fetchContactTypeIds($member_id);
+            $student = new Core_Model_Member_Student();
+            $student->setMember_id($member_id);
+            if (is_array($contact_type_ids)) {
+                $contact_info = array();
+                foreach ($contact_type_ids as $contact_type_id) {
+                    $info = $student->fetchContactInfo($contact_type_id);
+                    if ($info instanceof Core_Model_MemberAddress) {
+                        $contact_info[$contact_type_id]['postal_code'] = $info->getPostal_code();
+                        $contact_info[$contact_type_id]['city'] = $info->getCity();
+                        $contact_info[$contact_type_id]['district'] = $info->getDistrict();
+                        $contact_info[$contact_type_id]['state'] = $info->getState();
+                        $contact_info[$contact_type_id]['address'] = $info->getAddress();
+                        foreach ($contact_info as $key => $value) {
+                            if ($value == null) {
+                                unset($contact_info[$key]);
+                            }
+                        }
+                    }
+                }
+                return $contact_info;
+            } else {
+                $message = 'Contact info for member id : ' . $member_id .
+                 ' not present.';
+                $code = Zend_Log::ERR;
+                throw new Exception($message, $code);
+            }
+        }
+    }
     /**
      * All links are here
      */
@@ -332,7 +368,7 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $my_array = $params['myarray'];
-        $student_class_info = $my_array['student_class_info'];
+        $student_class_info = $my_array['class_info'];
         return $this->saveClassInfo($student_class_info);
     }
     public function fetchunvregistrationinfoAction ()
@@ -441,6 +477,13 @@ class StudentController extends Zend_Controller_Action
             $this->saveAddressData($data_to_save);
         }
     }
+    public function fetchcontactinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $contact_info = $this->fetchContactsInfo();
+        $this->_helper->json($contact_info);
+    }
     public function viewcontactinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -452,6 +495,11 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
     }
     public function savecontactinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+    }
+    public function fetchrelativesinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
@@ -588,6 +636,13 @@ class StudentController extends Zend_Controller_Action
                 $relative_data[$relation_name]['occupation'] = $relative_model->getOccupation();
                 $relative_data[$relation_name]['office_add'] = $relative_model->getOffice_add();
                 $relative_data[$relation_name]['landline_no'] = $relative_model->getLandline_no();
+                foreach ($relative_data as $k => $array) {
+                    foreach ($array as $key => $value) {
+                        if ($value == null) {
+                            unset($relative_data[$k][$key]);
+                        }
+                    }
+                }
             }
         }
         //for address info
@@ -615,6 +670,13 @@ class StudentController extends Zend_Controller_Action
             if ($contact_info instanceof Core_Model_MemberContacts) {
                 $contact_type_name = $contact_info->getContact_type_name();
                 $contact_data[$contact_type_name]['details'] = $contact_info->getContact_details();
+                foreach ($contact_data as $k1 => $array) {
+                    foreach ($array as $key => $value) {
+                        if ($value == null) {
+                            unset($contact_data[$k1]);
+                        }
+                    }
+                }
             } elseif ($contact_info == false) {
                 $message = 'Contact info for member id : ' . $member_id .
                  ' not present.';
