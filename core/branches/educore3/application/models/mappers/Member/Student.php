@@ -57,6 +57,11 @@ class Core_Model_Mapper_Member_Student
         $table_name = $this->getDbTable()->info('name');
         $select = $adapter->select()
             ->from($table_name, $req_cols)
+            ->joinInner('casts', 'casts.cast_id = members.cast_id')
+            ->joinInner('nationalities', 
+        'nationalities.nationality_id = members.nationality_id')
+            ->joinInner('religions', 
+        'religions.religion_id = members.religion_id')
             ->where('member_id = ?', $member_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
