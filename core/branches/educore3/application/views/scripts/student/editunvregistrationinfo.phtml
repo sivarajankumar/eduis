@@ -1,0 +1,116 @@
+<h2>University Registration Information:</h2>
+
+<form id="unv_reg_info" action="javascript:submit()" class="uniForm">
+   	<h5>Please enter the following information</h5> 
+    <fieldset id="loginInfo">
+	
+		<div class="ctrlHolder"><label for="registration_id"><em>*</em>Registration Number</label>
+			<input name="registration_id" id="registration_id" data-default-value="e.g. 08-ECA-74" size="35" maxlength="50" type="text" class="textInput required " />
+			<p class="formHint">Enter your University Registration Number</p>
+		</div>
+	
+		<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+		<div class="buttonHolder">
+			<button type="reset" class="secondaryAction">Reset</button>
+			<button type="submit" class="primaryAction">Next</button>
+		</div>
+	</fieldset>
+	
+</form>
+
+<script type="text/javascript">
+
+    $(function(){
+    	$('form.uniForm').uniform({
+    		prevent_submit : true
+    	});
+    
+        var urlgetinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchunvregistrationinfo'))?>";
+        $.ajax({
+    		url : urlgetinfo,
+    		dataType : 'json',
+            data : {format:'json'},
+    		success: function(jStatus){
+    			$.each(jStatus,function(key,value){
+    				var field = '#'+key; 
+					$(field).val(value);
+					$(field).focus();
+    			});
+            },
+            error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    });
+    
+	function get_params()
+	{
+		formData = {};
+		student_registration_info = {};
+		$('form#unv_reg_info :input')
+		.not('button')
+		.each(function(){
+			student_registration_info[this.name] = this.value;
+		});
+
+		formData['student_registration_info'] = student_registration_info;
+		return formData;
+	}
+    
+    function submit()
+    {
+    	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'saveunvregistrationinfo'))?>';
+        $.ajax({
+            url : urlSaveInfo,
+            data : {
+                	myarray : get_params(),
+					format : 'json'
+                	},
+            success: function(jStatus){
+                alert('Your information has been saved sucessfully');
+            },
+    		error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    }
+
+</script>
+
+<style type="text/css">
+.uniForm{
+	background-color:white;
+	padding:10px 10px 10px 25px;
+	border:1px solid #b4c1da;
+	margin:-5px 0 40px 0;
+	box-shadow:#e4e4e4 0px 0px 1px 1px; 
+}
+h2{
+	padding:3px 3px 3px 10px;
+	background-color:#eceff4;
+	border:1px solid #b4c1da;
+	width:57%;
+	font-size:17px;
+	font-weight:100;
+}
+span{
+	float:right;
+	font-size:14px;
+	font-weight:100;	
+}
+</style>
+    
+    
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form.jquery.js');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
