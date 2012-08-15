@@ -1,0 +1,220 @@
+<h2>Personal Information</h2>
+
+<form id="address_info" action="javascript:submit()" class="uniForm">
+	
+	<div class="ctrlHolder noLabel">
+		<ul>
+			<li><label for="is_cp_same"><input name="is_cp_same" id="is_cp_same" value="false" type="checkbox"/> Check if Communication and Permanent Addesses are same.</label></li>
+		</ul>
+		<p class="formHint"></p>
+    </div>
+    
+	<fieldset id="ca">
+	<h4>Communication Address:</h4>
+	<div class="ctrlHolder">
+		<label for="postal_code">Pin Code</label>
+		<input name="postal_code" id="postal_code" value="" data-default-value="e.g. 125001" size="35" maxlength="10" type="text" class="textInput validateInteger"/> 
+		<p class="formHint">Pincode of communication address.</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="state"><em>*</em>State/Provience</label>
+		<input name="state" id="state" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">State/Territory of communication address.</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for=""><em>*</em>District</label>
+		<input name="district" id="district" value="" data-default-value="e.g. Mohindergarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">District of communication address.<br/>(It should be same as above if Union Territory)</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="city"><em>*</em>City/Town/Village</label>
+		<input name="city" id="city" value="" data-default-value="e.g. Narnaul" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">City/Town/Village of communication address.<br/>(It may be same as District)</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="address"><em>*</em>Address</label>
+		<textarea name="address" id="address" data-default-value="e.g. H.no. 3, PWD B&R Colony, Near Old court"    rows="25" cols="25"></textarea>
+		<p class="formHint">House number and Area etc.</p>
+	</div>
+	</fieldset>
+	
+	<fieldset id="pa">
+	<h4>Permanent Address:</h4>
+	<div class="ctrlHolder">
+		<label for="postal_code">Pin Code</label>
+		<input name="postal_code" id="postal_code" value="" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
+		<p class="formHint">Pincode of permanent address.</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="state"><em>*</em>State/Territory</label>
+		<input name="state" id="state" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">State/Territory of permanent address.</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="district"><em>*</em>District</label>
+		<input name="district" id="district" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">District of permanent address.<br/>(It should be same as above if Union Territory)</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="city"><em>*</em>City/Town/Village</label>
+		<input name="city" id="city" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
+	</div>
+        
+	<div class="ctrlHolder">
+		<label for="address"><em>*</em>Address</label>
+		<textarea name="address" id="address"  data-default-value="e.g. H.no. 2135, Sector 9C" rows="25" cols="25"></textarea>
+		<p class="formHint">House number and Area etc.</p>
+	</div>
+    </fieldset>    
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</form>
+
+<script type="text/javascript">
+
+    $(function(){
+    	$('form.uniForm').uniform({
+    		prevent_submit : true
+    	});
+
+		$('#is_cp_same').click(function(){
+			if($(this).is(':checked'))
+				$('fieldset#pa').hide();
+			else
+				$('fieldset#pa').show();
+		});
+
+        var urlgetinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchaddressinfo'))?>";
+        $.ajax({
+    		url : urlgetinfo,
+    		dataType : 'json',
+            data : {format:'json'},
+    		success: function(jStatus){
+    			$.each(jStatus,function(address_type,data){
+    				if(address_type == 'MAILING')
+					{
+    					$.each(data,function(key,value){
+							var field = '#'+key;
+							$('#ca').find(field).val(value).focus();
+							
+		    			});
+					}
+					else
+					{
+						$.each(data,function(key,value){
+							var field = '#'+key;
+							$('#pa').find(field).val(value).focus();
+		    			});
+	 				}
+							
+    			});
+            },
+            error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    });
+    
+	function get_params()
+	{
+		var formData = {};
+		var student_address_info = {};
+		var ca = {};
+		var pa = {};
+		
+		$('fieldset#ca :input')
+		.not('button')
+		.each(function(){
+			ca[this.name] = this.value;
+		});
+		
+		if($('#is_cp_same').is(':checked'))
+		{
+			pa = ca; 
+		}
+		else
+		{
+			$('fieldset#pa :input')
+			.not('button')
+			.each(function(){
+				pa[this.name] = this.value;
+			});
+		}
+
+		student_address_info['MAILING'] = ca;
+		student_address_info['RESIDENTIAL'] = pa;	
+		formData['student_address_info'] = student_address_info;
+		return formData;
+	}
+    
+    function submit()
+    {
+    	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'saveaddressinfo'))?>';
+        $.ajax({
+            url : urlSaveInfo,
+            data : {
+                	myarray : get_params(),
+					format : 'json'
+                	},
+            success: function(jStatus){
+                alert('Your information has been saved sucessfully');
+            },
+    		error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    }
+
+</script>
+
+<style type="text/css">
+.uniForm{
+	background-color:white;
+	padding:10px 10px 10px 25px;
+	border:1px solid #b4c1da;
+	margin:-5px 0 40px 0;
+	box-shadow:#e4e4e4 0px 0px 1px 1px; 
+}
+h2{
+	padding:3px 3px 3px 10px;
+	background-color:#eceff4;
+	border:1px solid #b4c1da;
+	width:57%;
+	font-size:17px;
+	font-weight:100;
+}
+span{
+	float:right;
+	font-size:14px;
+	font-weight:100;	
+}
+h4{
+	font-size:1.2em;
+}
+</style>
+    
+    
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form.jquery.js');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
