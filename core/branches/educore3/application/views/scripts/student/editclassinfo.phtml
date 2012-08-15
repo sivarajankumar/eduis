@@ -4,9 +4,15 @@
 
 <h2>Class Information:</h2>
 
-<form action="javascript:get_all_params()" class="uniForm">
-    <fieldset id="info">
-    
+<form action="javascript:getclass_id()" class="uniForm" id="class_info">
+    <fieldset>
+
+	<div class="ctrlHolder">
+		<label for="department_id"><em>*</em>Department</label>
+		<input name="department_id" id="department_id" value="<?php echo $department_id?>" readonly="readonly" size="35" disabled="disabled" maxlength="50" type="text" class="textInput required" />
+		<p class="formHint">Your Trade</p>
+	</div>
+
 	<div class="ctrlHolder">
 		<label for="programme_id"><em>*</em>Programme</label>
 		<select id="programme_id" name="programme_id" class="required">
@@ -14,12 +20,7 @@
 		</select>
 		<p class="formHint">Select the programme</p>
 	</div>
-	
-	<div class="ctrlHolder"><label for="department_id"><em>*</em>Department</label>
-		<input name="department_id" id="department_id" value="<?php echo $department_id?>" readonly="readonly" size="35" disabled="disabled" maxlength="50" type="text" class="textInput required" />
-		<p class="formHint">Your Trade</p>
-	</div>
-	
+
 	<div class="ctrlHolder">
 		<label for="batch_start"><em>*</em>Batch Start</label>
 		<select id="batch_start" name="batch_start" class="required">
@@ -34,17 +35,7 @@
 		</select>
 		<p class="formHint">Select the starting year of the batch</p>
 	</div>
-	
-	<div class="ctrlHolder">
-		<label for="group_id"><em>*</em>Group</label>
-		<select id="group_id" name="group_id" class="selectInput required">
-			<option value='A1'>A1</option>
-			<option value='A2'>A2</option>
-			<option value='A3'>A3</option>
-		</select>
-		<p class="formHint">Select Your Group</p>
-	</div>
-	
+
 	<div class="ctrlHolder">
 		<label for="semester_id"><em>*</em>Semester</label>
 		<select id="semester_id" name="semester_id" class="required">
@@ -58,12 +49,32 @@
 		</select>
 		<p class="formHint">Select Department</p>
 	</div>
-	
+
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+	</fieldset>
+</form>
+
+<form action="javascript:submit_other_info()" class="uniForm" id="other_info">
+	<fieldset>
+	<div class="ctrlHolder">
+		<label for="group_id"><em>*</em>Group</label>
+		<select id="group_id" name="group_id" class="selectInput required">
+			<option value='A1'>A1</option>
+			<option value='A2'>A2</option>
+			<option value='A3'>A3</option>
+		</select>
+		<p class="formHint">Select Your Group</p>
+	</div>
+
 	<div class="ctrlHolder"><label for="roll_no"><em>*</em>Roll number</label>
 		<input name="roll_no" id="roll_no" data-default-value="e.g. 2308015" size="35" maxlength="50" type="text" class="textInput required validateInteger" />
 		<p class="formHint">Enter your University Roll Number</p>
 	</div>
-</fieldset>
+	</fieldset>
+
 	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
 	<div class="buttonHolder">
 		<button type="reset" class="secondaryAction">Reset</button>
@@ -72,10 +83,10 @@
 </form>
 
 <script>
+	$('form#other_info').hide();
 	var params = {};
 	var class_id;
 	$(function(){
-		
 		$('form.uniForm').uniform({
 			prevent_submit : true
 		});
@@ -94,20 +105,18 @@
             },
             error: function(response) {
 				$('#errorBox').text(response.responseText).parent().show();
-    				console.log(response);
+    			console.log(response);
     		}
 		});
 	});
 
-	function get_all_params(){
-		$('fieldset#info :input').each(function(){
+	function getclass_info_params(){
+		$('form#class_info :input').each(function(){
 			params[this.name] = this.value;
 		});
-
-		submit();
 	}
 	
-    function get_batch_info(){
+    function get_batch_params(){
         var formData = {};
         var batch_params = {};
     
@@ -119,7 +128,7 @@
     	return formData;
     }
 
-    function get_class_info(batch_id){
+    function get_class_params(batch_id){
         var formData = {};
         var class_finder = {};
     
@@ -130,13 +139,14 @@
     	return formData;
     }
 
-    function submit(){
+    function getclass_id(){
+        getclass_info_params();
     	var urlGetBatchIdsInfo = "<?php echo $this->url(array('controller' => 'batch', 'action' => 'getbatchids'))?>";
     	$.ajax({
     		url : urlGetBatchIdsInfo,
     		dataType : 'json',
     		data : {
-        			myarray:get_batch_info(),
+        			myarray:get_batch_params(),
         			format : 'json'
             		},
     		success: function(jStatus){
@@ -146,12 +156,12 @@
 			    		url : urlGetClassIdsInfo,
 			    		dataType : 'json',
 			    		data : {
-			        			myarray:get_class_info(batch_id),
+			        			myarray:get_class_params(batch_id),
 			        			format : 'json'
 			            		},
 			    		success: function(jStatus){
 								class_id = parseInt(jStatus);
-								submit111();
+								submit_class_info();
 			        		},
 			            error: function(response) {
 							$('#errorBox').text(response.responseText).parent().show();
@@ -171,16 +181,15 @@
         var formData = {};
         var class_info = {};
     
-        class_info['group_id'] = params['group_id'];
-        class_info['roll_no'] = params['roll_no'];
-        class_info['class_id'] = class_id
+        class_info['semester_id'] = params['semester_id'];
+        class_info['class_id'] = class_id;
     	
     	formData['class_info'] = class_info; 
     	return formData;
     }
     
-    function submit111() {
-    	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'saveclassinfo'))?>';
+    function submit_class_info() {
+    	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchclassinfo'))?>';
         $.ajax({
             url : urlSaveInfo,
             data : {
@@ -188,8 +197,46 @@
 					format : 'json'
                 	},
             success: function(jStatus){
-                alert("Your information has been submitted successfully");
-                window.location.replace("/student/profile");
+                $('form#class_info').hide();
+                $('form#other_info').show();
+                $.each(jStatus,function(key,value){
+                    var field = '#'+key; 
+					$(field).val(value);
+                });
+            },
+    		error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    }
+
+	function get_other_params()
+	{
+		formData = {};
+		class_info = {};
+		$('form#other_info :input')
+		.not('button')
+		.each(function(){
+			class_info[this.name] = this.value;
+		});
+		class_info['class_id'] = class_id;
+
+		formData['class_info'] = class_info;
+		return formData;
+	}
+    
+    function submit_other_info()
+    {
+    	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'saveclassinfo'))?>';
+        $.ajax({
+            url : urlSaveInfo,
+            data : {
+                	myarray : get_other_params(),
+					format : 'json'
+                	},
+            success: function(jStatus){
+                alert('Your information has been saved sucessfully');
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
