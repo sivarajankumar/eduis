@@ -10,7 +10,7 @@ class ClassController extends Zend_Controller_Action
      * 
      * @param int $class_id
      */
-    private function getClassInfo ($class_id)
+    private function findClassInfo ($class_id)
     {
         $class = new Core_Model_Class();
         $class->setClass_id($class_id);
@@ -18,7 +18,7 @@ class ClassController extends Zend_Controller_Action
         if ($info instanceof Core_Model_Class) {
             $class_info = array();
             $class_info['class_id'] = $info->getClass_id();
-            $class_info['class_id'] = $info->getBatch_id();
+            $class_info['batch_id'] = $info->getBatch_id();
             $class_info['semester_id'] = $info->getSemester_id();
             $class_info['semester_type'] = $info->getSemester_type();
             $class_info['semester_duration'] = $info->getSemester_duration();
@@ -38,7 +38,7 @@ class ClassController extends Zend_Controller_Action
      * @param int $semester_id
      * @param bool $is_active
      */
-    private function getClassIds ($class_id = null, $semester_id = null, 
+    private function findClassIds ($class_id = null, $semester_id = null, 
     $is_active = null)
     {
         $class_id_basis = null;
@@ -179,7 +179,7 @@ class ClassController extends Zend_Controller_Action
         if (! empty($class_finder)) {
             $batch_id = $class_finder['batch_id'];
             $semester_id = $class_finder['semester_id'];
-            $class_ids = $this->getClassIds($batch_id, $semester_id);
+            $class_ids = $this->findClassIds($batch_id, $semester_id);
             $this->_helper->json($class_ids);
         }
     }
@@ -190,32 +190,39 @@ class ClassController extends Zend_Controller_Action
         $request_object = $this->getRequest();
         $params = array_diff($request_object->getParams(), 
         $request_object->getUserParams());
-        $my_array = $params['myarray'];
-        $class_id = $my_array['class_id'];
-        $class_info = $this->getClassInfo($class_id);
-        $response['class_info'] = $class_info;
-        $format = $this->_getParam('format', 'html');
-        switch ($format) {
-            case 'html':
-                $this->_helper->viewRenderer->setNoRender(false);
-                $this->_helper->layout()->enableLayout();
-                if (! empty($class_info)) {
-                    $this->view->assign('response', $response);
-                } else {
-                    $this->view->assign('response', false);
-                }
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($response, false) .
-                 ')';
-                break;
-            case 'json':
-                $this->_helper->json($response);
-                break;
-            default:
-                ;
-                break;
+        $class_id = null;
+        if (! empty($params['myarray'])) {
+            $my_array = $params['myarray'];
+            $class_id = $my_array['class_id'];
+        } else {
+            $class_id = $request_object->getParam('class_id');
+        }
+        if ($class_id != null) {
+            $class_info = $this->findClassInfo($class_id);
+            $response['class_info'] = $class_info;
+            $format = $this->_getParam('format', 'html');
+            switch ($format) {
+                case 'html':
+                    $this->_helper->viewRenderer->setNoRender(false);
+                    $this->_helper->layout()->enableLayout();
+                    if (! empty($class_info)) {
+                        $this->view->assign('response', $response);
+                    } else {
+                        $this->view->assign('response', false);
+                    }
+                    break;
+                case 'jsonp':
+                    $callback = $this->getRequest()->getParam('callback');
+                    echo $callback . '(' . $this->_helper->json($response, 
+                    false) . ')';
+                    break;
+                case 'json':
+                    $this->_helper->json($response);
+                    break;
+                default:
+                    ;
+                    break;
+            }
         }
     }
     public function fetchprogrammesAction ()

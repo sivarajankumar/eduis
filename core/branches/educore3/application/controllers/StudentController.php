@@ -364,6 +364,51 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $this->view->assign('department_id', $this->getDepartment_id());
+        $class_ids = $this->getAllClassIds();
+        $member_id = $this->getMember_id();
+        $student = new Core_Model_Member_Student();
+        $student->setMember_id($member_id);
+        $raw_class_info = array();
+        $httpClient = new Zend_Http_Client();
+        $httpClient->setUri('http://' . CORE_SERVER . '/class/getclassinfo');
+        $httpClient->setMethod('POST');
+        // get roll_num
+        foreach ($class_ids as $class_id) {
+            $info = $this->fetchClassInfo($class_id);
+            $httpClient->setParameterPost(
+            array('class_id' => $class_id, 'format' => 'json'));
+            $response = $httpClient->request();
+            if ($response->isError()) {
+                $error = 'ERROR: (' . $response->getStatus() . ') ' .
+                 $response->getHeader('Message');
+                throw new Zend_Exception($error, Zend_Log::ERR);
+            } else {
+                $jsonContent = $response->getBody($response);
+                $class_info = Zend_Json::decode($jsonContent);
+                $batch_id = $class_info['class_info']['batch_id'];
+                $raw_class_info[$batch_id] = $info['roll_no'];
+            }
+        }
+        $stu_class_info = array();
+        $httpClient->setUri('http://' . CORE_SERVER . '/batch/getbatchinfo');
+        foreach ($raw_class_info as $batch_id => $roll_num) {
+            $httpClient->setParameterPost(
+            array('batch_id' => $batch_id, 'format' => 'json'));
+            $response = $httpClient->request();
+            if ($response->isError()) {
+                $error = 'ERROR: (' . $response->getStatus() . ') ' .
+                 $response->getHeader('Message');
+                throw new Zend_Exception($error, Zend_Log::ERR);
+            } else {
+                $jsonContent = $response->getBody($response);
+                $batch_info = Zend_Json::decode($jsonContent);
+                $batch_start = $batch_info['batch_info']['batch_start'];
+                $stu_class_info[$batch_start] = $roll_num;
+            }
+        }
+        Zend_Registry::get('logger')->debug($stu_class_info);
+        $this->view->assign('student_class_info', $stu_class_info);
     }
     public function fetchclassinfoAction ()
     {
@@ -376,6 +421,40 @@ class StudentController extends Zend_Controller_Action
         $stu_class_info = $this->fetchClassInfo($class_id);
         Zend_Registry::get('logger')->debug($stu_class_info);
         $this->_helper->json($stu_class_info);
+    }
+    private function getActiveClassIds ()
+    {
+        $member_id = $this->getMember_id();
+        $student = new Core_Model_Member_Student();
+        $student->setMember_id($member_id);
+        $class_ids = $student->fetchActiveClassIds();
+        if (is_array($class_ids)) {
+            return $class_ids;
+        } else {
+            if ($class_ids == false) {
+                throw new Exception(
+                'Student with member_id : ' . $member_id .
+                 ' has not been registered in any Acdemic Class ', 
+                Zend_Log::WARN);
+            }
+        }
+    }
+    private function getAllClassIds ()
+    {
+        $member_id = $this->getMember_id();
+        $student = new Core_Model_Member_Student();
+        $student->setMember_id($member_id);
+        $class_ids = $student->fetchAllClassIds();
+        if (is_array($class_ids)) {
+            return $class_ids;
+        } else {
+            if ($class_ids == false) {
+                throw new Exception(
+                'Student with member_id : ' . $member_id .
+                 ' has not been registered in any Acdemic Class ', 
+                Zend_Log::WARN);
+            }
+        }
     }
     public function editclassinfoAction ()
     {
