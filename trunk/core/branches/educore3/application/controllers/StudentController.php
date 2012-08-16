@@ -127,15 +127,13 @@ class StudentController extends Zend_Controller_Action
         $student_model->setMember_id($member_id);
         return $student_model->saveCriticalInfo($data_to_save);
     }
-    private function saveRelativeInfo ($data_to_save)
+    private function saveRelativeInfo ($relative_info)
     {
         $member_id = $this->getMember_id();
         $student_model = new Core_Model_Member_Student();
-        foreach ($data_to_save as $relative_id => $relative_info) {
-            $relative_info['member_id'] = $member_id;
-            $student_model->setMember_id($member_id);
-            return $student_model->saveRelativesInfo($relative_info);
-        }
+        $relative_info['member_id'] = $member_id;
+        $student_model->setMember_id($member_id);
+        return $student_model->saveRelativesInfo($relative_info);
     }
     private function saveAddressData ($address_info)
     {
@@ -144,15 +142,12 @@ class StudentController extends Zend_Controller_Action
         $student_model->setMember_id($member_id);
         return $student_model->saveAddressInfo($address_info);
     }
-    private function saveContactsInfo ($data_to_save)
+    private function saveContactsInfo ($contact_info)
     {
         $member_id = $this->getMember_id();
         $student_model = new Core_Model_Member_Student();
-        foreach ($data_to_save as $contact_type => $contact_data) {
-            $contact_data['member_id'] = $member_id;
-            $student_model->setMember_id($member_id);
-            return $student_model->saveContactsInfo($contact_data);
-        }
+        $student_model->setMember_id($member_id);
+        return $student_model->saveContactsInfo($contact_info);
     }
     private function saveAdmissionData ($data_to_save)
     {
@@ -330,15 +325,14 @@ class StudentController extends Zend_Controller_Action
                 foreach ($relation_ids as $relation_id) {
                     $info = $student->fetchRelativeInfo($relation_id);
                     if ($info instanceof Core_Model_MemberRelatives) {
-                        $relation_name = $info->getRelation_name();
-                        $relatives_info[$relation_name]['occupation'] = $info->getOccupation();
-                        $relatives_info[$relation_name]['designation'] = $info->getDesignation();
-                        $relatives_info[$relation_name]['office_add'] = $info->getOffice_add();
-                        $relatives_info[$relation_name]['name'] = $info->getName();
-                        $relatives_info[$relation_name]['contact'] = $info->getContact();
-                        $relatives_info[$relation_name]['annual_income'] = $info->getAnnual_income();
-                        $relatives_info[$relation_name]['landline_no'] = $info->getLandline_no();
-                        $relatives_info[$relation_name]['email'] = $info->getEmail();
+                        $relatives_info[$relation_id]['occupation'] = $info->getOccupation();
+                        $relatives_info[$relation_id]['designation'] = $info->getDesignation();
+                        $relatives_info[$relation_id]['office_add'] = $info->getOffice_add();
+                        $relatives_info[$relation_id]['name'] = $info->getName();
+                        $relatives_info[$relation_id]['contact'] = $info->getContact();
+                        $relatives_info[$relation_id]['annual_income'] = $info->getAnnual_income();
+                        $relatives_info[$relation_id]['landline_no'] = $info->getLandline_no();
+                        $relatives_info[$relation_id]['email'] = $info->getEmail();
                         foreach ($relatives_info as $key => $array) {
                             foreach ($array as $k => $value) {
                                 if ($value == null) {
@@ -528,6 +522,7 @@ class StudentController extends Zend_Controller_Action
         $my_array = $params['myarray'];
         $all_contact_info = $my_array['contact_info'];
         foreach ($all_contact_info as $contact_type => $contact_info) {
+            $contact_info['contact_type_id'] = $contact_type;
             $this->saveContactsInfo($contact_info);
         }
     }
@@ -557,6 +552,7 @@ class StudentController extends Zend_Controller_Action
         $my_array = $params['myarray'];
         $all_relatives_info = $my_array['relatives_info'];
         foreach ($all_relatives_info as $relatives_type => $relatives_info) {
+            $relatives_info['relation_id'] = $relatives_type;
             $this->saveRelativeInfo($relatives_info);
         }
     }
