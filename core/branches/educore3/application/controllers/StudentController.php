@@ -407,6 +407,8 @@ class StudentController extends Zend_Controller_Action
                 $stu_class_info[$batch_start] = $roll_num;
             }
         }
+        Zend_Registry::get('logger')->debug(
+        'Name of varibale assigned to view is : student_class_info');
         Zend_Registry::get('logger')->debug($stu_class_info);
         $this->view->assign('student_class_info', $stu_class_info);
     }
