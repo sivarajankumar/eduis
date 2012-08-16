@@ -47,14 +47,14 @@
 	function get_params()
 	{
 		formData = {};
-		student_registration_info = {};
+		registration_info = {};
 		$('form#unv_reg_info :input')
 		.not('button')
 		.each(function(){
-			student_registration_info[this.name] = this.value;
+			registration_info[this.name] = this.value;
 		});
 
-		formData['student_registration_info'] = student_registration_info;
+		formData['registration_info'] = registration_info;
 		return formData;
 	}
     
