@@ -498,6 +498,7 @@ class StudentController extends Zend_Controller_Action
         $my_array = $params['myarray'];
         $all_address_info = $my_array['address_info'];
         foreach ($all_address_info as $address_type => $address_info) {
+            $address_info['address_type'] = $address_type;
             $this->saveAddressData($address_info);
         }
     }
