@@ -1,0 +1,143 @@
+<h2>Contact Information</h2>
+
+<form id="contact_info" action="javascript:submit()" class="uniForm">
+	<fieldset>
+		<div class="ctrlHolder">
+			<label for="3"><em>*</em>Email address</label>
+			<input name="3" id="3" value="" data-default-value="e.g. ravigupta@gmail.com"  size="35" maxlength="50" type="text" class="required textInput validateEmail"/>
+			<p class="formHint">A valid email address</p>
+    	</div>
+
+		<div class="ctrlHolder">
+			<label for="5">Mobile Number</label>
+			<input name="5" id="5" value="" data-default-value="e.g. 9996569129"  size="10" maxlength="50" type="text" class="required textInput validatePhone"/>
+			<p class="formHint">A valid 10 digit Mobile Number</p>
+    	</div>
+    
+		<div class="ctrlHolder">
+			<label for="1">Landline</label>
+			<input name="1" id="1" value="" data-default-value="e.g. 01712521521"  size="35" maxlength="50" type="text" class=" required textInput"/>
+			<p class="formHint">A valid landline number with area code</p>
+    	</div>
+    
+		<div class="ctrlHolder">
+			<label for="2">Office Landline</label>
+			<input name="2" id="2" value="" data-default-value="e.g. 01712521786"  size="35" maxlength="50" type="text" class=" required textInput"/>
+			<p class="formHint">A valid landline number with area code</p>
+    	</div>
+    	
+		<div class="ctrlHolder">
+			<label for="4">Father's Mobile Number</label>
+			<input name="4" id="4" value="" data-default-value="e.g. 9996569129"  size="10" maxlength="50" type="text" class="required textInput validatePhone"/>
+			<p class="formHint">A valid 10 digit Mobile Number</p>
+    	</div>
+    </fieldset>
+    
+    <div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</form>
+
+<script type="text/javascript">
+
+    $(function(){
+    	$('form.uniForm').uniform({
+    		prevent_submit : true
+    	});
+
+        var urlgetinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchcontactinfo'))?>";
+        $.ajax({
+    		url : urlgetinfo,
+    		dataType : 'json',
+            data : {format:'json'},
+    		success: function(jStatus){
+    			$.each(jStatus,function(contact_type,data){
+    				$.each(data,function(key,value){
+						var field = '#'+key;
+						$('#ca').find(field).val(value).focus();	
+		    		});		
+    			});
+            },
+            error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    });
+    
+	function get_params()
+	{
+		var formData = {};
+		var contact_info = {};
+		
+		$('form#contact_info :input')
+		.not('button')
+		.each(function(){
+			contact_info[this.name] = this.value;
+		});
+
+		formData['contact_info'] = contact_info;
+		return formData;
+	}
+    
+    function submit()
+    {
+    	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savecontactinfo'))?>';
+        $.ajax({
+            url : urlSaveInfo,
+            data : {
+                	myarray : get_params(),
+						format : 'json'
+                	},
+            success: function(jStatus){
+                alert('Your information has been saved sucessfully');
+            },
+    		error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    }
+
+</script>
+
+<style type="text/css">
+.uniForm{
+	background-color:white;
+	padding:10px 10px 10px 25px;
+	border:1px solid #b4c1da;
+	margin:-5px 0 40px 0;
+	box-shadow:#e4e4e4 0px 0px 1px 1px; 
+}
+h2{
+	padding:3px 3px 3px 10px;
+	background-color:#eceff4;
+	border:1px solid #b4c1da;
+	width:57%;
+	font-size:17px;
+	font-weight:100;
+}
+span{
+	float:right;
+	font-size:14px;
+	font-weight:100;	
+}
+h4{
+	font-size:1.2em;
+}
+</style>
+    
+    
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form.jquery.js');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
