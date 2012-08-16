@@ -192,32 +192,39 @@ class BatchController extends Zend_Controller_Action
         $request_object = $this->getRequest();
         $params = array_diff($request_object->getParams(), 
         $request_object->getUserParams());
-        $my_array = $params['myarray'];
-        $batch_id = $my_array['batch_id'];
-        $batch_info = $this->getBatchInfo($batch_id);
-        $response['batch_info'] = $batch_info;
-        $format = $this->_getParam('format', 'html');
-        switch ($format) {
-            case 'html':
-                $this->_helper->viewRenderer->setNoRender(false);
-                $this->_helper->layout()->enableLayout();
-                if (! empty($batch_info)) {
-                    $this->view->assign('response', $response);
-                } else {
-                    $this->view->assign('response', false);
-                }
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($response, false) .
-                 ')';
-                break;
-            case 'json':
-                $this->_helper->json($response);
-                break;
-            default:
-                ;
-                break;
+        $batch_id = null;
+        if (! empty($params['myarray'])) {
+            $my_array = $params['myarray'];
+            $batch_id = $my_array['batch_id'];
+        } else {
+            $batch_id = $request_object->getParam('batch_id');
+        }
+        if ($batch_id != null) {
+            $batch_info = $this->getBatchInfo($batch_id);
+            $response['batch_info'] = $batch_info;
+            $format = $this->_getParam('format', 'html');
+            switch ($format) {
+                case 'html':
+                    $this->_helper->viewRenderer->setNoRender(false);
+                    $this->_helper->layout()->enableLayout();
+                    if (! empty($batch_info)) {
+                        $this->view->assign('response', $response);
+                    } else {
+                        $this->view->assign('response', false);
+                    }
+                    break;
+                case 'jsonp':
+                    $callback = $this->getRequest()->getParam('callback');
+                    echo $callback . '(' . $this->_helper->json($response, 
+                    false) . ')';
+                    break;
+                case 'json':
+                    $this->_helper->json($response);
+                    break;
+                default:
+                    ;
+                    break;
+            }
         }
     }
 }
