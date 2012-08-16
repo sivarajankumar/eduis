@@ -1,0 +1,67 @@
+<?php
+    $departments = array('BT' => 'Biotechnology', 'CSE' => 'Computer Science', 'MECH' => 'Mechanical', 'ECE' => 'Electronics and Communication');
+    $department_id = $this->department_id;
+?>
+
+<div class="ui-state-hover"><center><H3>Class Information</H3></center></div>
+<div class="info" id="class_info">
+	<table id="info_table" style="width: 100%" cellspacing="6" cellpadding="6">
+		<tr>
+			<td><span id="heading">Department</span><span id="content"><?php echo $departments[$department_id]?></span></td>
+		</tr>
+	</table>
+</div>
+
+<script>
+
+	$(function(){
+	    var urlgetProgrammes = "http://core.aceambala.com/class/fetchprogrammes";
+	    $.ajax({
+    		url : urlgetProgrammes,
+    		dataType : 'jsonp',
+            data : {format:'jsonp'},
+    		success: function(jStatus){
+    			$.each(jStatus['programmes'],function(programme_id,programme_name){
+					html_text = '<option value="'+programme_id+'">'+programme_name+'</option>';
+					$('#programme_id').append(html_text);
+    			});
+            },
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+		});
+	});
+    
+</script>
+
+<style type="text/css">
+	.info
+	{
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+		font-size: 14px;
+		margin: 15px;
+		text-align: left;
+		border-collapse: collapse;
+	}
+	td span#heading{
+		color:red;
+		font-size:16px;
+	}
+	td span#content{
+		float:right;
+		font-size:16px;
+	}
+	table {
+      	border-color: #c20f2e;
+		width:97%;
+	}
+	td{
+		border-bottom:1px dashed #999;
+	}
+	tr.heading{
+		color:black;
+		font-size: 1.3em;
+		background-color: #FFFFCC;
+	}
+</style>

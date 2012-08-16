@@ -1,0 +1,79 @@
+<div class="ui-state-hover"><center><H3>Personal Information</H3></center></div>
+<div class="info" id="personal_info">
+	<table id="info_table" style="width: 100%" cellspacing="6" cellpadding="6">
+		
+	</table>
+</div>
+
+<script type="text/javascript">
+
+    $(function(){
+        var casts = { 1:'General', 2:'OBC', 3: 'SC', 4:'ST', 5:'BC'};
+        var religions = { 1:'Hindu', 2:'Muslim', 3:'Sikh', 4:'Christian'};
+        var nationalities = { 1:'Indian', 2:'American', 3:'British', 4:'Australian'};
+        
+        var urlgetinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchpersonalinfo'))?>";
+        $.ajax({
+    		url : urlgetinfo,
+    		dataType : 'json',
+            data : {format:'json'},
+            success: function(jStatus){
+    			var html = '';
+    			$.each(jStatus,function(key,value){
+					if(key == 'cast_id')
+					{
+						html += '<tr class="row"><td><span id="heading">Cast</span><span id="content">'+casts[value]+'</span></td></tr>';
+					}
+					else if(key == 'religion_id')
+					{
+						html += '<tr class="row"><td><span id="heading">Religion</span><span id="content">'+religions[value]+'</span></td></tr>';
+					}
+					else if(key == 'nationality_id')
+					{
+						html += '<tr class="row"><td><span id="heading">Nationality</span><span id="content">'+nationalities[value]+'</span></td></tr>';
+					}
+					else
+					{
+						html += '<tr class="row"><td><span id="heading">'+key.replace(/_/g," ").toUpperCase()+'</span><span id="content">'+value+'</span></td></tr>';
+					}
+    			});
+    			$('#info_table').append(html);
+            },
+            error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    });
+</script>
+
+<style type="text/css">
+	.info
+	{
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+		font-size: 14px;
+		margin: 15px;
+		text-align: left;
+		border-collapse: collapse;
+	}
+	td span#heading{
+		color:red;
+		font-size:16px;
+	}
+	td span#content{
+		float:right;
+		font-size:16px;
+	}
+	table {
+      	border-color: #c20f2e;
+		width:97%;
+	}
+	td{
+		border-bottom:1px dashed #999;
+	}
+	tr.heading{
+		color:black;
+		font-size: 1.3em;
+		background-color: #FFFFCC;
+	}
+</style>
