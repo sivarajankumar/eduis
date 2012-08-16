@@ -9,26 +9,26 @@
     	</div>
 
 		<div class="ctrlHolder">
-			<label for="5">Mobile Number</label>
-			<input name="5" id="5" value="" data-default-value="e.g. 9996569129"  size="10" maxlength="50" type="text" class="required textInput validatePhone"/>
+			<label for="4">Mobile Number</label>
+			<input name="4" id="4" value="" data-default-value="e.g. 9996569129"  size="10" maxlength="50" type="text" class="textInput validatePhone"/>
 			<p class="formHint">A valid 10 digit Mobile Number</p>
     	</div>
     
 		<div class="ctrlHolder">
 			<label for="1">Landline</label>
-			<input name="1" id="1" value="" data-default-value="e.g. 01712521521"  size="35" maxlength="50" type="text" class=" required textInput"/>
+			<input name="1" id="1" value="" data-default-value="e.g. 01712521521"  size="35" maxlength="50" type="text" class="validateNumber"/>
 			<p class="formHint">A valid landline number with area code</p>
     	</div>
     
 		<div class="ctrlHolder">
 			<label for="2">Office Landline</label>
-			<input name="2" id="2" value="" data-default-value="e.g. 01712521786"  size="35" maxlength="50" type="text" class=" required textInput"/>
+			<input name="2" id="2" value="" data-default-value="e.g. 01712521786"  size="35" maxlength="50" type="text" class="validateNumber"/>
 			<p class="formHint">A valid landline number with area code</p>
     	</div>
     	
 		<div class="ctrlHolder">
-			<label for="4">Father's Mobile Number</label>
-			<input name="4" id="4" value="" data-default-value="e.g. 9996569129"  size="10" maxlength="50" type="text" class="required textInput validatePhone"/>
+			<label for="5">Home Mobile Number</label>
+			<input name="5" id="5" value="" data-default-value="e.g. 9996569129"  size="10" maxlength="50" type="text" class="textInput validatePhone"/>
 			<p class="formHint">A valid 10 digit Mobile Number</p>
     	</div>
     </fieldset>
@@ -45,18 +45,19 @@
     $(function(){
     	$('form.uniForm').uniform({
     		prevent_submit : true
-    	});
+		});
 
-        var urlgetinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchcontactinfo'))?>";
-        $.ajax({
+		var urlgetinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchcontactinfo'))?>";
+		$.ajax({
     		url : urlgetinfo,
     		dataType : 'json',
             data : {format:'json'},
     		success: function(jStatus){
-    			$.each(jStatus,function(contact_type,data){
+    			$.each(jStatus,function(contact_type_id,data){
     				$.each(data,function(key,value){
-						var field = '#'+key;
-						$('#ca').find(field).val(value).focus();	
+						var field = '#'+contact_type_id;
+						$('fieldset').find(field).val(value).focus();
+						alert(value);
 		    		});		
     			});
             },
@@ -73,7 +74,7 @@
 		var contact_info = {};
 		
 		$('form#contact_info :input')
-		.not('button')
+		.not('button,:input[value^="e.g."]')
 		.each(function(){
 			contact_info[this.name] = this.value;
 		});
@@ -132,10 +133,9 @@ h4{
     
 <?php
 $this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
-$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form.jquery.js');
+    
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
-
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
 $this->headLink()->prependStylesheet(
