@@ -125,14 +125,14 @@
 	function get_params()
 	{
 		formData = {};
-		student_personal_info = {};
+		personal_info = {};
 		$('form#personal_info :input')
 		.not('button')
 		.each(function(){
-			student_personal_info[this.name] = this.value;
+			personal_info[this.name] = this.value;
 		});
 
-		formData['student_personal_info'] = student_personal_info;
+		formData['personal_info'] = personal_info;
 		return formData;
 	}
     
