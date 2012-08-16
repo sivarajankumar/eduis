@@ -228,9 +228,9 @@ class StudentController extends Zend_Controller_Action
                 $critical_data['first_name'] = $info->getFirst_name();
                 $critical_data['middle_name'] = $info->getMiddle_name();
                 $critical_data['last_name'] = $info->getLast_name();
-                $critical_data['cast'] = $info->getCast_name();
-                $critical_data['nationality'] = $info->getNationality_name();
-                $critical_data['religion'] = $info->getReligion_name();
+                $critical_data['cast'] = $info->getCast_id();
+                $critical_data['nationality'] = $info->getNationality_id();
+                $critical_data['religion'] = $info->getReligion_id();
                 $critical_data['blood_group'] = $info->getBlood_group();
                 $critical_data['dob'] = $info->getDob();
                 $critical_data['gender'] = $info->getGender();
@@ -297,8 +297,7 @@ class StudentController extends Zend_Controller_Action
                 foreach ($contact_type_ids as $contact_type_id) {
                     $info = $student->fetchContactInfo($contact_type_id);
                     if ($info instanceof Core_Model_MemberContacts) {
-                        $contact_type_name = $info->getContact_type_name();
-                        $contact_info[$contact_type_name]['contact_details'] = $info->getContact_details();
+                        $contact_info[$contact_type_id]['contact_details'] = $info->getContact_details();
                         foreach ($contact_info as $key => $array) {
                             foreach ($array as $value) {
                                 if ($value == null) {
@@ -470,6 +469,7 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $my_array = $params['myarray'];
         $critical_info = $my_array['personal_info'];
+        Zend_Registry::get('logger')->debug($params);
         return $this->saveCriticalData($critical_info);
     }
     public function fetchaddressinfoAction ()
