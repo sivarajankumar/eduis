@@ -94,7 +94,7 @@ class ClassController extends Zend_Controller_Action
             throw new Zend_Exception($remoteErr, Zend_Log::WARN);
         }
     }
-    private function getDepartments ()
+    private function findDepartments ()
     {
         $department = new Core_Model_Department();
         $departments = $department->fetchDepartments();
@@ -104,7 +104,7 @@ class ClassController extends Zend_Controller_Action
             return $departments;
         }
     }
-    private function getProgrammeInfo ($programme_id)
+    private function findProgrammeInfo ($programme_id)
     {
         $programme = new Core_Model_Programme();
         $info = $programme->fetchInfo();
@@ -117,7 +117,7 @@ class ClassController extends Zend_Controller_Action
             return false;
         }
     }
-    private function getProgrammes ()
+    private function findProgrammes ()
     {
         $programme = new Core_Model_Programme();
         $programmes = $programme->fetchProgrammes();
@@ -131,8 +131,8 @@ class ClassController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $departments = $this->getDepartments();
-        $programmes = $this->getProgrammes();
+        $departments = $this->findDepartments();
+        $programmes = $this->findProgrammes();
         if (empty($departments)) {
             $this->view->assign('departments', false);
         } else {
@@ -228,7 +228,7 @@ class ClassController extends Zend_Controller_Action
     public function fetchprogrammesAction ()
     {
         $format = $this->_getParam('format', 'html');
-        $response['programmes'] = $this->getProgrammes();
+        $response['programmes'] = $this->findProgrammes();
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(true);
@@ -251,7 +251,7 @@ class ClassController extends Zend_Controller_Action
     public function fetchdepartmentsAction ()
     {
         $format = $this->_getParam('format', 'html');
-        $response['departments'] = $this->getDepartments();
+        $response['departments'] = $this->findDepartments();
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(true);

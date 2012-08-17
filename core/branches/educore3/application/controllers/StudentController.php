@@ -184,7 +184,7 @@ class StudentController extends Zend_Controller_Action
      * Enter description here ...
      * @param int $class_id
      */
-    private function fetchClassInfo ($class_id)
+    private function findStuClassInfo ($class_id)
     {
         $member_id = $this->getMember_id();
         $member_id_exists = $this->memberIdCheck($member_id);
@@ -211,7 +211,7 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
-    private function fetchCriticalInfo ()
+    private function findCriticalInfo ()
     {
         $member_id = $this->getMember_id();
         $member_id_exists = $this->memberIdCheck($member_id);
@@ -243,7 +243,7 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
-    private function fetchAddressInfo ()
+    private function findAddressInfo ()
     {
         $member_id = $this->getMember_id();
         $member_id_exists = $this->memberIdCheck($member_id);
@@ -278,7 +278,7 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
-    private function fetchContactsInfo ()
+    private function findContactsInfo ()
     {
         $member_id = $this->getMember_id();
         $member_id_exists = $this->memberIdCheck($member_id);
@@ -311,7 +311,7 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
-    private function fetchRelativesInfo ()
+    private function findRelativesInfo ()
     {
         $member_id = $this->getMember_id();
         $member_id_exists = $this->memberIdCheck($member_id);
@@ -441,7 +441,7 @@ class StudentController extends Zend_Controller_Action
         $student->setMember_id($member_id);
         $raw_class_info = array();
         foreach ($class_ids as $class_id) {
-            $info = $this->fetchClassInfo($class_id);
+            $info = $this->findStuClassInfo($class_id);
             $class_info = $this->findClassInfo($class_id);
             $batch_id = $class_info['class_info']['batch_id'];
             $raw_class_info[$batch_id] = $info['roll_no'];
@@ -465,7 +465,7 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $class_info = $params['myarray']['class_info'];
         $class_id = $class_info['class_id'];
-        $stu_class_info = $this->fetchClassInfo($class_id);
+        $stu_class_info = $this->findStuClassInfo($class_id);
         Zend_Registry::get('logger')->debug($stu_class_info);
         $this->_helper->json($stu_class_info);
     }
@@ -533,7 +533,7 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $personal_info = $this->fetchCriticalInfo();
+        $personal_info = $this->findCriticalInfo();
         Zend_Registry::get('logger')->debug($personal_info);
         $this->_helper->json($personal_info);
     }
@@ -562,7 +562,7 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $address_info = $this->fetchAddressInfo();
+        $address_info = $this->findAddressInfo();
         $this->_helper->json($address_info);
     }
     public function viewaddressinfoAction ()
@@ -592,7 +592,7 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $contact_info = $this->fetchContactsInfo();
+        $contact_info = $this->findContactsInfo();
         $this->_helper->json($contact_info);
     }
     public function viewcontactinfoAction ()
@@ -622,7 +622,7 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $relative_info = $this->fetchRelativesInfo();
+        $relative_info = $this->findRelativesInfo();
         $this->_helper->json($relative_info);
     }
     public function viewrelativesinfoAction ()
