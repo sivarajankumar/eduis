@@ -1,14 +1,85 @@
-<?php
-$image_url = 'http://'.CDN_SERVER. '/images/activity/arrow.png';
-?>
-<h2>Welcome User!</h2>
-<h3>Click any option..</h3>
-<div id="container_div" style="background-color: #E0E7E7; padding: 2px;">
-	<div id="content" style="background-color: #E0E7E7;  border: 2px solid #FFFFFF; margin: 0px;">
-		<ul style="list-style-image: url('<?php echo $image_url;?>'); font-size: 15px; list-style-position: inside; line-height: 25px;">
-			<li><a href="/student/viewprofile">View your profile</a></li>
-			<li><a href="/student/createprofile">Create Profile</a></li>
-			
-		</ul>
+<link rel="stylesheet" href="<?php echo 'http://'. CDN_SERVER . '/css/admission.css';?>">
+
+<div id="main">
+	<div id="sidebar" style="float:left">
+	<ul class="menu">
+		<li class="item1">
+			<a href="#">Class Information</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editclassinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewclassinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item2">
+			<a href="#">Personal Information</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editpersonalinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewpersonalinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item3">
+			<a href="#">Contact Information</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editcontactinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewcontactinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item4">
+			<a href="#">Address Information</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editaddressinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewaddressinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item5">
+			<a href="#">Relatives Information</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editrelativesinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewrelativesinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item6">
+			<a href="#">University Registration Information</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editunvregistrationinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewunvregistrationinfo" target="content_frame">View </a></li>
+			</ul>
+		</li>
+	</ul>
+	</div>
+	<div id="page_content">
+		<iframe name="content_frame" width="850" height="900" frameborder="0" scrolling="auto"></iframe>
 	</div>
 </div>
+
+<script type="text/javascript">
+	$(function() {
+        var menu_ul = $('.menu > li > ul'),
+		menu_a  = $('.menu > li > a');
+
+        menu_ul.hide();
+    
+        menu_a.click(function(e) {
+			e.preventDefault();
+            if(!$(this).hasClass('active')) {
+                menu_a.removeClass('active');
+                menu_ul.filter(':visible').slideUp('normal');
+                $(this).addClass('active').next().stop(true,true).slideDown('normal');
+            } else {
+                $(this).removeClass('active');
+                $(this).next().stop(true,true).slideUp('normal');
+            }
+        });
+    });
+</script>
+
+<style type="text/css">
+	#page_content{
+    	float:right;
+    }
+</style>
