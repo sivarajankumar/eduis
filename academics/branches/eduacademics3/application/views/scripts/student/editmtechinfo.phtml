@@ -1,4 +1,4 @@
-<h2>Academic Information:<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
+<h2>Academic Information</h2>
 <form id="mtech_form" class="uniForm" action="javascript:submit_btech_info()">
 <fieldset id="mtech">
 <h3>Mtech</h3>
@@ -14,15 +14,15 @@
 		<p class="formHint">Select the discipline of study</p>
 	</div>
 	
-	<!--<div class="ctrlHolder">
+	<div class="ctrlHolder">
 		<label for="unv_regn_no"><em>*</em> University Registration No.</label>
 		<input name="unv_regn_no" id="unv_regn_no" value="" data-default-value="e.g. 2310654" size="35" maxlength="20" type="text" class="textInput validateAlphaNum required"/>
 		<p class="formHint"> University registration number of Candidate </p>
 	</div>
 			
-	--><div class="ctrlHolder">
-		<label for="roll_no"><em>*</em> Roll no.</label>
-		<input name="roll_no" id="roll_no" value="" data-default-value="e.g. 2310654" size="35" maxlength="20" type="text" class="textInput required"/>
+	<div class="ctrlHolder">
+		<label for="board_roll_no"><em>*</em> Roll no.</label>
+		<input name="board_roll_no" id="board_roll_no" value="" data-default-value="e.g. 2310654" size="35" maxlength="20" type="text" class="textInput required"/>
 		<p class="formHint"> Mtech roll number of Candidate </p>
 	</div>
 				
@@ -100,7 +100,7 @@
     	var data = {};
         var urlSaveMtechInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savemtechinfo'))?>";
     	var qualificationData = {};
-    	$('fieldset#mtech :input')
+    	$('fieldset#btech :input')
     	.not('button,:input[value^="e.g."]')
     	.each(function(){ 
     		qualificationData[this.name] = this.value;
@@ -113,7 +113,7 @@
     		success: function(jStatus){
         		if(jStatus){
     				alert('Your information has been sucessfully submitted...');
-					window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
+					window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'viewmtechinfo'))?>';
         		}
             },
             error: function(response) {
