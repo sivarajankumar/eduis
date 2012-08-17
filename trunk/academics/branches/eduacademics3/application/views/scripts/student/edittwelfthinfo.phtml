@@ -1,4 +1,4 @@
-<h2>Academic Information:<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
+<h2>Academic Information</h2>
 <form id="twelfth_form" action="javascript:submit_twelfth_info()" class="uniForm">
 <fieldset id="twelfth">
 	<h3>Twelfth Marks</h3>
@@ -120,7 +120,7 @@
 			success: function(jStatus){
 				if(jStatus){
     				alert('Your information has been sucessfully submitted...');
-    				window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
+    				window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'viewtwelfthinfo'))?>';
 				}
             },
             error: function(response) {
