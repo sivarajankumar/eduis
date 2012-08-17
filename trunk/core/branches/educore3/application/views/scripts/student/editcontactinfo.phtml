@@ -47,6 +47,8 @@
     		prevent_submit : true
 		});
 
+    	$('#topContent').hide();
+    	
 		var urlgetinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchcontactinfo'))?>";
 		$.ajax({
     		url : urlgetinfo,
@@ -59,6 +61,7 @@
 						$('fieldset').find(field).val(value).focus();
 		    		});		
     			});
+    			$('input:first').focus();
             },
             error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
@@ -95,6 +98,7 @@
                 	},
             success: function(jStatus){
                 alert('Your information has been saved sucessfully');
+                window.location.replace('/student/viewcontactinfo');
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();

@@ -36,7 +36,9 @@
 		<label for="nationality_id">Nationality</label>
 		<select id="nationality_id" name="nationality_id" class="selectInput">
 			<option value="1">INDIAN</option>
-         	<option value="2">NRI</option>
+         	<option value="2">AMERICAN</option>
+         	<option value="3">BRITISH</option>
+         	<option value="4">AUSTRAILIAN</option>
 		</select>
 		<p class="formHint">Nationality</p>
 	</div>
@@ -93,6 +95,8 @@
     		prevent_submit : true
     	});
 
+    	$('#topContent').hide();
+    	
     	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
         $("#dob").datepicker({
         	dateFormat: 'yy-mm-dd',
@@ -148,6 +152,7 @@
                 	},
             success: function(jStatus){
                 alert('Your information has been saved sucessfully');
+                window.location.replace('/student/viewpersonalinfo');
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();

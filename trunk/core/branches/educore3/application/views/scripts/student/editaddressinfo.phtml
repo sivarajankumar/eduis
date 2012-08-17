@@ -88,6 +88,8 @@
     		prevent_submit : true
     	});
 
+    	$('#topContent').hide();
+    	
 		$('#is_cp_same').click(function(){
 			if($(this).is(':checked'))
 				$('fieldset#pa').hide();
@@ -107,7 +109,6 @@
     					$.each(data,function(key,value){
 							var field = '#'+key;
 							$('#ca').find(field).val(value).focus();
-							
 		    			});
 					}
 					else
@@ -117,8 +118,8 @@
 							$('#pa').find(field).val(value).focus();
 		    			});
 	 				}
-							
     			});
+				$('#is_cp_same').focus();
             },
             error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
@@ -170,6 +171,7 @@
                 	},
             success: function(jStatus){
                 alert('Your information has been saved sucessfully');
+                window.location.replace('/student/viewaddressinfo');
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();

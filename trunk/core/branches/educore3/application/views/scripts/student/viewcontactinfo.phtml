@@ -8,6 +8,7 @@
 <script type="text/javascript">
 	var contact = { 1:'Home Landline', 2:'Office Landline', 3: 'Email Id', 4:'Mobile', 5:'Home Mobile' };
     $(function(){
+    	$('#topContent').hide();
 		var urlgetinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchcontactinfo'))?>";
 		$.ajax({
     		url : urlgetinfo,
@@ -42,11 +43,11 @@
 	}
 	td span#heading{
 		color:red;
-		font-size:16px;
+		font-size:0.9em;
 	}
 	td span#content{
 		float:right;
-		font-size:16px;
+		font-size:0.9em;
 	}
 	table {
       	border-color: #c20f2e;
@@ -58,6 +59,11 @@
 	tr.heading{
 		color:black;
 		font-size: 1.3em;
-		background-color: #FFFFCC;
+		background-color: #F7F7F7;
+		border:1px solid black;
 	}
+	tr.heading td{
+		border:none;
+	}
+}
 </style>

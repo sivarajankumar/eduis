@@ -91,6 +91,8 @@
 			prevent_submit : true
 		});
 
+		$('#topContent').hide();
+
 	    var urlgetProgrammes = "http://core.aceambala.com/class/fetchprogrammes";
 	    $.ajax({
     		url : urlgetProgrammes,
@@ -237,6 +239,7 @@
                 	},
             success: function(jStatus){
                 alert('Your information has been saved sucessfully');
+                window.location.replace('/student/viewclassinfo');
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
