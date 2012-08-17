@@ -10,7 +10,7 @@ class BatchController extends Zend_Controller_Action
      * 
      * @param int $batch_id
      */
-    private function getBatchInfo ($batch_id)
+    private function findBatchInfo ($batch_id)
     {
         $batch = new Core_Model_Batch();
         $batch->setBatch_id($batch_id);
@@ -35,7 +35,7 @@ class BatchController extends Zend_Controller_Action
      * @param date $batch_start
      * @return array|false
      */
-    private function getBatchIds ($batch_start = null, $department_id = null, 
+    private function findBatchIds ($batch_start = null, $department_id = null, 
     $programme_id = null)
     {
         $batch_start_basis = null;
@@ -94,7 +94,7 @@ class BatchController extends Zend_Controller_Action
             $jsonContent = $response->getBody($response);
         }
     }
-    private function getDepartments ()
+    private function findDepartments ()
     {
         $department = new Core_Model_Department();
         $departments = $department->fetchDepartments();
@@ -104,7 +104,7 @@ class BatchController extends Zend_Controller_Action
             return $departments;
         }
     }
-    private function getProgrammeInfo ($programme_id)
+    private function findProgrammeInfo ($programme_id)
     {
         $programme = new Core_Model_Programme();
         $info = $programme->fetchInfo();
@@ -117,7 +117,7 @@ class BatchController extends Zend_Controller_Action
             return false;
         }
     }
-    private function getProgrammes ()
+    private function findProgrammes ()
     {
         $programme = new Core_Model_Programme();
         $programmes = $programme->fetchProgrammes();
@@ -131,8 +131,8 @@ class BatchController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $departments = $this->getDepartments();
-        $programmes = $this->getProgrammes();
+        $departments = $this->findDepartments();
+        $programmes = $this->findProgrammes();
         if (empty($departments)) {
             $this->view->assign('departments', false);
         } else {
@@ -180,7 +180,7 @@ class BatchController extends Zend_Controller_Action
              ($programme_id = $batch_params['programme_id']);
             $batch_params['batch_start'] &&
              ($batch_start = $batch_params['batch_start']);
-            $batch_ids = $this->getBatchIds($batch_start, $department_id, 
+            $batch_ids = $this->findBatchIds($batch_start, $department_id, 
             $programme_id);
             $this->_helper->json($batch_ids);
         }
@@ -200,7 +200,7 @@ class BatchController extends Zend_Controller_Action
             $batch_id = $request_object->getParam('batch_id');
         }
         if ($batch_id != null) {
-            $batch_info = $this->getBatchInfo($batch_id);
+            $batch_info = $this->findBatchInfo($batch_id);
             $response['batch_info'] = $batch_info;
             $format = $this->_getParam('format', 'html');
             switch ($format) {
