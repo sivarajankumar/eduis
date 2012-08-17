@@ -246,6 +246,7 @@
                 	},
     		success: function(jStatus){
     			alert('Your Information has been saved sucessfully');
+    			window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'viewdmc'))?>';
             },
             error: function(response) {
 				$('#errorBox').text(response.responseText).parent().show();

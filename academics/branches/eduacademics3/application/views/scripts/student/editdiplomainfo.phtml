@@ -1,4 +1,4 @@
-<h2>Academic Information:<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
+<h2>Academic Information</h2>
 <form id="diploma_form" class="uniForm" action="javascript:submit_diploma_info()">
 <fieldset id="diploma">
 	<h3>Diploma Marks</h3>
@@ -113,7 +113,7 @@
 			success: function(jStatus){
 				if(jStatus){
     				alert('Your information has been sucessfully submitted...');
-    				window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
+    				window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'viewdiplomainfo'))?>';
 				}
             },
             error: function(response) {

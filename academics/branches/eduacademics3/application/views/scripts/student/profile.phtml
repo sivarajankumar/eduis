@@ -1,129 +1,97 @@
-<!--[if lte ie 7]>
-      <style type="text/css" media="screen">
-        /* Move these to your IE6/7 specific stylesheet if possible */
-        .uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
-      </style>
-<![endif]-->
+<link rel="stylesheet" href="<?php echo 'http://'. CDN_SERVER . '/css/admission.css';?>">
 
-<h2>Academic Information:</h2>
-<div id="initial_div">
-	<h3>Degree Details</h3>
-	<?php
-        foreach ($this->qualifications as $key => $value)
-        {
-            echo '<span class="name_span">'.$value.' Information : </span>';
-            if(isset($this->qualifications)){
-                if(isset($this->filled_qualifications[$key])){
-                    $action_name = 'view'.strtolower($value).'info';
-                    echo '<span class="view_span"><a href="'.$this->url(array('controller' => 'student', 'action' => $action_name)).'">View Information</a></span><br><br>';
-                }
-                else {
-                    $action_name = 'edit'.strtolower($value).'info';
-                    echo '<span class="create_span"><a href="'.$this->url(array('controller' => 'student', 'action' => $action_name)).'">Fill Information</a></span><br><br>';
-                }
-            }
-        }
-    ?>
-    <?php
-        foreach ($this->exams as $key => $value)
-        {
-            echo '<span class="name_span">'.$value.' Information : </span>';
-            if(isset($this->exams)){
-                if(isset($this->filled_exams[$key])){
-                    $action_name = 'view'.strtolower($value).'info';
-                    echo '<span class="view_span"><a href="'.$this->url(array('controller' => 'student', 'action' => $action_name)).'">View Information</a></span><br><br>';
-                }
-                else {
-                    $action_name = 'edit'.strtolower($value).'info';
-                    echo '<span class="create_span"><a href="'.$this->url(array('controller' => 'student', 'action' => $action_name)).'">Fill Information</a></span><br><br>';
-                }
-            }
-        }
-    ?>
-    <br>
-    <hr>
-    <br>
-    <h3>Degree Details</h3>
-    <?php 
-        foreach ($this->class_semester as $class_id => $sem_no){
-            echo '<span class="name_span">Sem No.:'.$sem_no.'</span>';
-            foreach ($this->degree_data[$sem_no] as $dmc_info_id => $dmc_data){
-                if($dmc_data != null){
-                    echo '<a href="/student/viewdmc?dmc_info_id='.$dmc_info_id.'&class_id='.$dmc_data['class_id'].'&dmc_view_type=single"><span class="serial_no">DMC Serial No.'.$dmc_data['dmc_id'].'</span></a>';
-                    echo '<span class="serial_no"> '.$dmc_data['dispatch_date'].'</span>';
-                    //echo '<br>';
-                    echo '&nbsp;&nbsp;&nbsp;&nbsp;';
-                }
-            }
-            echo '<a href="/student/editdmc?class_id='.$class_id.'&dmc_view_type=latest">+ Add More</a>';
-            echo '<br><br>';
-        }
-    ?>
+<div id="main">
+	<div id="sidebar" style="float:left">
+	<ul class="menu">
+		<li class="item1">
+			<a href="#">Btech</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editbtechinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewbtechinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item2">
+			<a href="#">Diploma</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editdiplomainfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewdiplomainfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item3">
+			<a href="#">Matric</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editmatricinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewmatricinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item4">
+			<a href="#">Mtech</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editmtechinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewmtechinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item5">
+			<a href="#">Twelfth</a>
+			<ul>
+				<li class="subitem1"><a href="/student/edittwelfthinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewtwelfthinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item6">
+			<a href="#">AIEEE</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editaieeeinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewaieeeinfo" target="content_frame">View </a></li>
+			</ul>
+		</li>
+		
+		<li class="item6">
+			<a href="#">LEET</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editleetinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewleetinfo" target="content_frame">View </a></li>
+			</ul>
+		</li>
+	</ul>
+	</div>
+	<div id="page_content">
+		<iframe id="abc" name="content_frame" width="850" height="900" frameborder="0" scrolling="auto" onload="hide_top()"></iframe>
+	</div>
 </div>
-    
-<style type="text/css">
-    #initial_div{
-    	padding:10px;
-		background-color:white;
-		box-shadow:#e4e4e4 0px 0px 1px 1px;
-		width:37%;
-	}
-	h2,h3{
-		padding:3px 3px 3px 10px;
-		background-color:#eceff4;
-		border:1px solid #b4c1da;
-		width:57%;
-		font-size:1.4em;
-		font-weight:100;
-	}
-	.name_span{
-		padding:3px 3px 3px 10px;
-		font-size:1.4em;
-		margin:0 10px 10px 0;
-	}
-	.view_span{
-		padding:3px 3px 3px 10px;
-		background-color:#fef8f6;
-		border:1px solid #cd0a0a;
-		font-size:1.3em;
-		float:right;
-	}
-	.view_span a{
-		text-decoration: none;
-		color:black;
-	}
-	.view_span:hover{
-		box-shadow:#b99393 0px 0px 1px 1px;
-		cursor: pointer;
-	}
-	.create_span{
-		padding:3px 3px 3px 10px;
-		background-color:#fcfaf1;
-		border:1px solid #fcefa1;
-		font-size:1.3em;
-		float:right;
-	}
-	.create_span a{
-		text-decoration: none;
-		color:black;
-	}
-	.create_span:hover{
-		box-shadow:#aca162 0px 0px 1px 1px;
-		cursor: pointer;
-	}
-	.serial_no{
-		font-size: 1.2em;
-		text-decoration: none;
-	}
-</style>
 
-<?php
-$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+<script type="text/javascript">
+	$(function() {
+        var menu_ul = $('.menu > li > ul'),
+		menu_a  = $('.menu > li > a');
+
+        menu_ul.hide();
     
-$this->headLink()->prependStylesheet(
-'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
-$this->headLink()->prependStylesheet(
-'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
-$this->headLink()->prependStylesheet(
-'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
-?>
+        menu_a.click(function(e) {
+			e.preventDefault();
+            if(!$(this).hasClass('active')) {
+                menu_a.removeClass('active');
+                menu_ul.filter(':visible').slideUp('normal');
+                $(this).addClass('active').next().stop(true,true).slideDown('normal');
+            } else {
+                $(this).removeClass('active');
+                $(this).next().stop(true,true).slideUp('normal');
+            }
+        });
+    });
+	function hide_top()
+	{
+		$('iframe#abc').contents().find('div#topContent').hide();
+	}
+</script>
+
+<style type="text/css">
+	#page_content{
+    	float:right;
+    }
+</style>
