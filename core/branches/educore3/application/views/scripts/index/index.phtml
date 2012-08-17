@@ -53,7 +53,7 @@
 	</ul>
 	</div>
 	<div id="page_content">
-		<iframe name="content_frame" width="850" height="900" frameborder="0" scrolling="auto"></iframe>
+		<iframe name="content_frame" width="850" height="900" frameborder="0" scrolling="auto" onload="hide_top()"></iframe>
 	</div>
 </div>
 
@@ -76,6 +76,12 @@
             }
         });
     });
+
+	function hide_top()
+	{
+		$('iframe#abc').contents().find('div#topContent').hide();
+	}
+
 </script>
 
 <style type="text/css">
