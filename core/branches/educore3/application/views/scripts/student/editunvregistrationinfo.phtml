@@ -24,7 +24,9 @@
     	$('form.uniForm').uniform({
     		prevent_submit : true
     	});
-    
+
+    	$('#topContent').hide();
+        
         var urlgetinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchunvregistrationinfo'))?>";
         $.ajax({
     		url : urlgetinfo,
@@ -69,6 +71,7 @@
                 	},
             success: function(jStatus){
                 alert('Your information has been saved sucessfully');
+                window.location.replace('/student/viewunvregistrationinfo');
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
@@ -105,10 +108,9 @@ span{
     
 <?php
 $this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
-$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form.jquery.js');
+    
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
-
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
 $this->headLink()->prependStylesheet(

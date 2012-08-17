@@ -1,6 +1,6 @@
 <div class="ui-state-hover"><center><H3>Address Information</H3></center></div>
 <div class="info" id="address_info">
-	<table id="info_table" style="width: 100%" cellspacing="6" cellpadding="6">
+	<table id="info_table" style="width: 100%" cellspacing="5" cellpadding="5">
 		
 	</table>
 </div>
@@ -8,6 +8,8 @@
 <script type="text/javascript">
 
     $(function(){
+    	$('#topContent').hide();
+        
         var urlgetinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchaddressinfo'))?>";
         $.ajax({
     		url : urlgetinfo,
@@ -20,6 +22,7 @@
     				$.each(data,function(key,value){
         				html += '<tr class="row"><td><span id="heading">'+key.replace(/_/g," ").toUpperCase()+'</span><span id="content">'+value+'</span></td></tr>';
 		    		});
+		    		html += '<tr></tr>';
     			});
     			$('#info_table').append(html);
             },
@@ -43,11 +46,11 @@
 	}
 	td span#heading{
 		color:red;
-		font-size:16px;
+		font-size:0.9em;
 	}
 	td span#content{
 		float:right;
-		font-size:16px;
+		font-size:0.9em;
 	}
 	table {
       	border-color: #c20f2e;
@@ -59,6 +62,11 @@
 	tr.heading{
 		color:black;
 		font-size: 1.3em;
-		background-color: #FFFFCC;
+		background-color: #F7F7F7;
+		border:1px solid black;
 	}
+	tr.heading td{
+		border:none;
+	}
+}
 </style>
