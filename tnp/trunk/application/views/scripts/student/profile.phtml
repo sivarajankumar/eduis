@@ -9,175 +9,168 @@
 	$skills = $this->response['skills'];
 	$job_preferred = $this->response['job_preferred'];
 ?>
-<h1>Training and Placement</h1>
-<div id="main_div">
-	<div id="employablitytest_div" class="category_div">
-		<h2>Employability Test</h2>
-		<ul class="ui-tabs">
-		<?php 
+
+<link rel="stylesheet" href="<?php echo 'http://'. CDN_SERVER . '/css/admission.css';?>">
+<h3>Training and Placement</h3>
+
+<div id="main">
+	<div id="sidebar" style="float:left">
+	<ul class="menu">
+		<li class="item1">
+			<a href="#">Employability Test</a>
+			<ul>
+			<?php 
 			foreach ($emptestinfo as $test_id => $test_info)
 			{
-				echo '<a href="viewtestinfo?employability_test_id='.$test_id.'&test_name='.$test_info['test_name'].'&date_of_conduct='.$test_info['date'].'">';
-					echo '<li><span class="black">'.$test_info['test_name'].'</span>';
-					echo '<span class="red">  ('.$test_info['date'].')</span></li>';
-				echo '</a>';
+				echo '<li class="subitem1"><a target="content_frame" href="viewtestinfo?employability_test_id='.$test_id.'&test_name='.$test_info['test_name'].'&date_of_conduct='.$test_info['date'].'">';
+					echo $test_info['test_name'];
+					echo '  ('.$test_info['date'].')';
+				echo '</a></li>';
 			}
-		?>
-		</ul>
-		<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/edittestinfo');">
-		<br/>
-	</div>
-	
-	<div id="training_div" class="category_div">
-		<h2>Certifications</h2>
-		<ul class="ui-tabs">
-		<?php 
+			?>
+			<li class="subitem1"><a href="/student/edittestinfo" target="content_frame">Add New</a></li>
+			</ul>
+		</li>
+
+		<li class="item2">
+			<a href="#">Certifications</a>
+			<ul>
+			<?php 
 			foreach ($certifications as $certification_id => $certification_info)
 			{
-				echo '<a href="viewcertification?certification_id='.$certification_id.'">';
-					echo '<li><span class="red">'.$certification_info['name'].'</span></li>';
-				echo '</a>';
+				echo '<li class="subitem1"><a href="viewcertification?certification_id='.$certification_id.'" target="content_frame">';
+					echo $certification_info['name'];
+				echo '</a></li>';
 			}
-		?>
-		</ul>
-		
-	<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/editcertification');">
-	</div>
-	
-	<div id="experience_div" class="category_div">
-		<h2>Experience</h2>
-		<ul class="ui-tabs">
-		<?php
+			?>
+			<li class="subitem1"><a href="/student/editcertification" target="content_frame">Add New</a></li>
+			</ul>
+		</li>
+
+		<li class="item3">
+			<a href="#">Experience</a>
+			<ul>
+			<?php
 			foreach ($experience as $experience_id => $experience_info)
 			{
-				echo '<a href="viewexperience?experience_id='.$experience_id.'">';
-					echo '<li><span class="red">'.$experience_info['organisation'].'</span></li>';
-				echo '</a>';
+				echo '<li class="subitem1"><a href="viewexperience?experience_id='.$experience_id.'" target="content_frame">';
+					echo $experience_info['organisation'];
+				echo '</a></li>';
 			}
-		?>
-		</ul>
-		
-	<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/editexperience');">
-	</div>
-	
-	<div id="certification_div" class="category_div">
-		<h2>Trainings</h2>
-		<ul class="ui-tabs">
-		<?php 
+			?>
+			<li class="subitem1"><a href="/student/editexperience" target="content_frame">Add New</a></li>
+			</ul>
+		</li>
+
+		<li class="item4">
+			<a href="#">Trainings</a>
+			<ul>
+			<?php 
 			foreach ($training as $training_id => $training_info)
 			{
-				echo '<a href="viewtraining?training_id='.$training_id.'">';
-					echo '<li><span class="black">'.$training_info['institute'].' </span>';
-					echo '<span class="red">'.$training_info['semester'].'th semester</span></li>';
-				echo '</a>';
+				echo '<li class="subitem1"><a href="viewtraining?training_id='.$training_id.'" target="content_frame">';
+					echo $training_info['institute'].' ';
+					echo $training_info['semester'].'th semester';
+				echo '</a></li>';
 			}
-		?>
-		</ul>
-		
-	<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/edittraining');">
-	</div>
-	
-	<div id="language_div" class="category_div">
-		<h2>Languages Known</h2>
-		<ul class="ui-tabs">
-		<?php 
+			?>
+			<li class="subitem1"><a href="/student/edittraining" target="content_frame">Add New</a></li>
+			</ul>
+		</li>
+
+		<li class="item5">
+			<a href="#">Languages Known</a>
+			<ul>
+			<?php 
 			foreach ($languages_known as $name => $proficiency)
 			{
 				//echo '<a href="viewtestinfo?employability_test_id='.$test_id.'&test_name='.$test_info['test_name'].'&date_of_conduct='.$test_info['date'].'">';
-				echo '<li><span class="black">'.$name.'</span>';
-				echo '<span class="red">  '.$proficiency.'</span></li>';
+				echo '<li class="subitem1"><a href="#">'.$name;
+				echo ' ('.$proficiency.')</a></li>';
 				//echo '</a>';
 			}
-		?>
-		</ul>
-		
-		<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/editlanguagesknown');">
-		<br/>
-	</div>
-	
-	<div id="skills_div" class="category_div">
-		<h2>Skills </h2>
-		<ul class="ui-tabs">
-		<?php 
+			?>
+			<li class="subitem1"><a href="/student/editlanguagesknown" target="content_frame">Add New</a></li>
+			</ul>
+		</li>
+
+		<li class="item6">
+			<a href="#">Skills</a>
+			<ul>
+			<?php 
 			foreach ($skills as $name => $proficiency)
 			{
-				echo '<li><span class="black">'.$name.'</span>';
-				echo '<span class="red">  '.$proficiency.'</span></li>';
+				echo '<li class="subitem1"><a href="#">'.$name;
+				echo '  '.$proficiency.'</a></li>';
 			}
-		?>
-		</ul>
+			?>
+			<li class="subitem1"><a href="/student/editskills" target="content_frame">Add New</a></li>
+			</ul>
+		</li>
 		
-		<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/editskills');">
-		<br/>
-	</div>
-	
-	<div id="cocurricular_div" class="category_div">
-		<h2>Co Curricular</h2>
-		<ul class="ui-tabs">
-		<?php
+		<li class="item6">
+			<a href="#">Co Curricular</a>
+			<ul>
+			<?php
 			if($co_curricular){
-				echo '<a href="/student/viewcocurricular"><li><span class="black">Co-Curricular </span><span class="red">View</span></li><a/>';
+				echo '<li class="subitem1"><a href="/student/viewcocurricular" target="content_frame">Co-Curricular View</a></li>';
 			}
 			else {
-				echo '<a href="/student/editcocurricular"><li><span class="black">Co-Curricular </span><span class="red">Create</span></li><a/>';
+				echo '<li class="subitem1"><a href="/student/editcocurricular" target="content_frame">Co-Curricular Create</a></li>';
 			}
-		?>
-		</ul>
+			?>
+			</ul>
+		</li>
+		
+		<li class="item6">
+			<a href="#">Job Preferred</a>
+			<ul>
+			<?php
+			echo '<li class="subitem1"><a href="#">'.$job_preferred[0].'</a></li>';
+			?>
+			<li class="subitem1"><a href="/student/editjobpreferred" target="content_frame">Add New</a></li>
+			</ul>
+		</li>
+	</ul>
 	</div>
-	
-	<div id="job_div" class="category_div">
-		<h2>Job Preferred</h2>
-		<ul class="ui-tabs">
-		<?php
-			echo '<li><span class="black">'.$job_preferred[0].'</span>';
-		?>
-		</ul>
-		<input type="button" class="ui-button" value="Add New" onclick="window.location.replace('/student/editjobpreferred');">
-		<br/>
+	<div id="page_content">
+		<iframe id="content_frame" name="content_frame" width="850" height="900" frameborder="0" scrolling="auto" onload="hide_top()"></iframe>
 	</div>
 </div>
 
-<style>
-	#main_div{
-		background-color:white;
-		padding:8px;
-		border:1px solid #b4c1da;
-		margin:-5px 0 40px 0;
-		box-shadow:#e7e7e7 0px 0px 1px 1px;
-		border-radius:4px;
-		width:27%;
+<script type="text/javascript">
+	$(function() {
+        var menu_ul = $('.menu > li > ul'),
+		menu_a  = $('.menu > li > a');
+
+        menu_ul.hide();
+    
+        menu_a.click(function(e) {
+			e.preventDefault();
+            if(!$(this).hasClass('active')) {
+                menu_a.removeClass('active');
+                menu_ul.filter(':visible').slideUp('normal');
+                $(this).addClass('active').next().stop(true,true).slideDown('normal');
+            } else {
+                $(this).removeClass('active');
+                $(this).next().stop(true,true).slideUp('normal');
+            }
+        });
+
+        $('.menu > li > a:first').click();
+        var path = $('.subitem1 > a').attr('href');
+        $('#content_frame').attr('src',path);
+    });
+	function hide_top()
+	{
+		$('iframe#content_frame').contents().find('div#topContent').hide();
 	}
-	.category_div{
-		padding: 5px;
-		background-color:white;
-		/*box-shadow:#e4e4e4 0px 0px 1px 1px;*/
-	}
-	.category_div li{
-		padding: 2px 2px 2px 8px;
-		list-style-position: inside;
-		margin-top:-1px;
-		width:auto;
-		list-style-image: url("http://site.cdn.aceambala.com/images/activity/arrow_green.png");
-	}
-	a{
-		text-decoration: none;
-		color:black;
-	}
-	.category_div li:hover{
-		background-color:#eaeaeb;
-	}
-	h2,h3{
-		padding:3px 3px 3px 10px;
-		background-color:#eceff4;
-		border:1px solid #b4c1da;
-		width:auto;
-		font-size:1.4em;
-		font-weight:100;
-		margin:0px;
-	}
-	h1{
-		font-weight:100;	
-	}
+</script>
+
+<style type="text/css">
+	#page_content{
+    	float:right;
+    }
 	.red{
 		color:red;
 		font-size:1.2em;
