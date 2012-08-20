@@ -826,6 +826,8 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             return $dmc_marks_object->getMapper()->save($preparedData);
         } else {
             $dmc_marks_object->initSave();
+            unset($data_array['dmc_info_id']);
+            unset($data_array['student_subject_id']);
             $prepared_data = $dmc_marks_object->prepareDataForSaveProcess(
             $data_array);
             return $dmc_marks_object->getMapper()->update($prepared_data, 
