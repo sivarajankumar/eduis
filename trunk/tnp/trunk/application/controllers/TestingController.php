@@ -296,8 +296,69 @@ class TestingController extends Zend_Controller_Action
         $this->view->assign('section_record', $section_record);
         $this->_helper->json($section_record);
     }
+    public function fetchemptestrecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $this->_getParam('format', 'html');
+        $employability_test_id = $params['employability_test_id'];
+        $member_id = $this->getMember_id();
+        $test_record_id = $this->getEmpTestRecordId($member_id, 
+        $employability_test_id);
+        $test_record = $this->getEmpTestRecordInfo(array_pop($test_record_id));
+        switch ($format) {
+            case 'html':
+                $this->view->assign('test_record', $test_record);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($test_record, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($test_record);
+                break;
+            case 'test':
+                Zend_Registry::get('logger')->debug($test_record);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    public function fetchsectionrecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $format = $this->_getParam('format', 'html');
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $employability_test_id = $params['employability_test_id'];
+        $section_record = $this->generateSectionScore($employability_test_id);
+        switch ($format) {
+            case 'html':
+                $this->view->assign('section_record', $section_record);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' .
+                 $this->_helper->json($section_record, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($section_record);
+                break;
+            case 'test':
+                Zend_Registry::get('logger')->debug($section_record);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
     /**
-     * Saves the test record(user poinyt of view)
+     * Saves the test record(user point of view)
      * 
      * Enter description here ...
      */
@@ -607,6 +668,13 @@ class TestingController extends Zend_Controller_Action
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($member_id);
         return $student->fetchEmpTestRecordIds();
+    }
+    private function getEmpTestRecordId ($member_id, $employability_test_id)
+    {
+        $test = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
+        $test->setMember_id($member_id);
+        $test->setEmployability_test_id($employability_test_id);
+        return $test->fetchTestRecordIds(true, true);
     }
     private function generateEmpTestRecords ()
     {

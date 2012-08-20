@@ -174,6 +174,13 @@ class Tnp_Model_MemberInfo_EmployabilityTestRecord extends Tnp_Model_Generic
                 break;
         }
     }
+    /**
+     * 
+     * Enter description here ...
+     * @param bool $member_specific
+     * @param bool $employability_test_specific
+     * @param bool $test_regn_no_specific
+     */
     public function fetchTestRecordIds ($member_specific = null, 
     $employability_test_specific = null, $test_regn_no_specific = null)
     {
@@ -190,7 +197,6 @@ class Tnp_Model_MemberInfo_EmployabilityTestRecord extends Tnp_Model_Generic
             $test_regn_no = $this->getTest_regn_no(true);
         }
         $record_ids = array();
-        
         $record_ids = $this->getMapper()->fetchTestRecordIds($member_id, 
         $employability_test_id, $test_regn_no);
         if (empty($record_ids)) {
