@@ -60,7 +60,7 @@ class Tnp_Model_Mapper_EmployabilityTestRecord
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $emp_test_section_record_table = $db_table->info('name');
-        $required_cols = array('employability_test_id');
+        $required_cols = array('test_record_id');
         $select = $adapter->select()->from($emp_test_section_record_table, 
         $required_cols);
         if (! empty($member_id)) {

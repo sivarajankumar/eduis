@@ -148,6 +148,10 @@ class Tnp_Model_EmpTestInfo_Section extends Tnp_Model_Generic
             return $section_ids;
         }
     }
+    /**
+     * 
+     * @return Tnp_Model_EmpTestInfo_Section|false
+     */
     public function fetchInfo ()
     {
         $section_id = $this->getTest_section_id(true);
