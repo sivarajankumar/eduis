@@ -203,12 +203,13 @@ class StudentController extends Zend_Controller_Action
                         unset($stu_class_info[$key]);
                     }
                 }
-                return $stu_class_info;
             } else {
-                $message = 'No member_class info for class_id ' . $class_id;
+                $stu_class_info = false;
+                /*$message = 'No member_class info for class_id ' . $class_id;
                 $code = Zend_Log::ERR;
-                throw new Exception($message, $code);
+                throw new Exception($message, $code);*/
             }
+            return $stu_class_info;
         }
     }
     private function findCriticalInfo ()
@@ -223,9 +224,9 @@ class StudentController extends Zend_Controller_Action
                 $critical_data['first_name'] = $info->getFirst_name();
                 $critical_data['middle_name'] = $info->getMiddle_name();
                 $critical_data['last_name'] = $info->getLast_name();
-                $critical_data['cast'] = $info->getCast_id();
-                $critical_data['nationality'] = $info->getNationality_id();
-                $critical_data['religion'] = $info->getReligion_id();
+                $critical_data['cast_id'] = $info->getCast_id();
+                $critical_data['nationality_id'] = $info->getNationality_id();
+                $critical_data['religion_id'] = $info->getReligion_id();
                 $critical_data['blood_group'] = $info->getBlood_group();
                 $critical_data['dob'] = $info->getDob();
                 $critical_data['gender'] = $info->getGender();
@@ -234,13 +235,14 @@ class StudentController extends Zend_Controller_Action
                         unset($critical_data[$key]);
                     }
                 }
-                return $critical_data;
             } else {
-                $message = 'Personal info for member id : ' . $member_id .
+                $critical_data = false;
+                /*$message = 'Personal info for member id : ' . $member_id .
                  ' not present.';
                 $code = Zend_Log::ERR;
-                throw new Exception($message, $code);
+                throw new Exception($message, $code);*/
             }
+            return $critical_data;
         }
     }
     private function findAddressInfo ()
@@ -269,13 +271,14 @@ class StudentController extends Zend_Controller_Action
                         }
                     }
                 }
-                return $address_info;
             } else {
-                $message = 'Address info for member id : ' . $member_id .
+                $address_info = false;
+                /*$message = 'Address info for member id : ' . $member_id .
                  ' not present.';
                 $code = Zend_Log::ERR;
-                throw new Exception($message, $code);
+                throw new Exception($message, $code);*/
             }
+            return $address_info;
         }
     }
     private function findContactsInfo ()
@@ -302,13 +305,14 @@ class StudentController extends Zend_Controller_Action
                         }
                     }
                 }
-                return $contact_info;
             } else {
-                $message = 'Contact info for member id : ' . $member_id .
+                $contact_info = false;
+                /*$message = 'Contact info for member id : ' . $member_id .
                  ' not present.';
                 $code = Zend_Log::ERR;
-                throw new Exception($message, $code);
+                throw new Exception($message, $code);*/
             }
+            return $contact_info;
         }
     }
     private function findRelativesInfo ()
@@ -342,14 +346,14 @@ class StudentController extends Zend_Controller_Action
                         }
                     }
                 }
-                Zend_Registry::get('logger')->debug($relatives_info);
-                return $relatives_info;
             } else {
-                $message = 'Relative\'s info for member id : ' . $member_id .
+                $relatives_info = false;
+                /*$message = 'Relative\'s info for member id : ' . $member_id .
                  ' not present.';
                 $code = Zend_Log::ERR;
-                throw new Exception($message, $code);
+                throw new Exception($message, $code);*/
             }
+            return $relatives_info;
         }
     }
     private function getActiveClassIds ()
@@ -358,16 +362,16 @@ class StudentController extends Zend_Controller_Action
         $student = new Core_Model_Member_Student();
         $student->setMember_id($member_id);
         $class_ids = $student->fetchActiveClassIds();
-        if (is_array($class_ids)) {
-            return $class_ids;
-        } else {
+        //if (is_array($class_ids)) {
+        return $class_ids;
+        /*        } else {
             if ($class_ids == false) {
                 throw new Exception(
                 'Student with member_id : ' . $member_id .
                  ' has not been registered in any Acdemic Class ', 
                 Zend_Log::WARN);
             }
-        }
+        }*/
     }
     private function getAllClassIds ()
     {
@@ -375,16 +379,16 @@ class StudentController extends Zend_Controller_Action
         $student = new Core_Model_Member_Student();
         $student->setMember_id($member_id);
         $class_ids = $student->fetchAllClassIds();
-        if (is_array($class_ids)) {
-            return $class_ids;
-        } else {
+        //if (is_array($class_ids)) {
+        return $class_ids;
+        /*  } else {
             if ($class_ids == false) {
                 throw new Exception(
                 'Student with member_id : ' . $member_id .
                  ' has not been registered in any Acdemic Class ', 
                 Zend_Log::WARN);
             }
-        }
+        }*/
     }
     private function findClassInfo ($class_id)
     {
@@ -395,9 +399,10 @@ class StudentController extends Zend_Controller_Action
         array('class_id' => $class_id, 'format' => 'json'));
         $response = $httpClient->request();
         if ($response->isError()) {
-            $error = 'ERROR: (' . $response->getStatus() . ') ' .
+            $class_info = false;
+            /*$error = 'ERROR: (' . $response->getStatus() . ') ' .
              $response->getHeader('Message');
-            throw new Zend_Exception($error, Zend_Log::ERR);
+            throw new Zend_Exception($error, Zend_Log::ERR);*/
         } else {
             $jsonContent = $response->getBody($response);
             $class_info = Zend_Json::decode($jsonContent);
@@ -413,9 +418,10 @@ class StudentController extends Zend_Controller_Action
         array('batch_id' => $batch_id, 'format' => 'json'));
         $response = $httpClient->request();
         if ($response->isError()) {
-            $error = 'ERROR: (' . $response->getStatus() . ') ' .
+            $batch_info = false;
+            /*$error = 'ERROR: (' . $response->getStatus() . ') ' .
              $response->getHeader('Message');
-            throw new Zend_Exception($error, Zend_Log::ERR);
+            throw new Zend_Exception($error, Zend_Log::ERR);*/
         } else {
             $jsonContent = $response->getBody($response);
             $batch_info = Zend_Json::decode($jsonContent);
@@ -436,26 +442,30 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $this->view->assign('department_id', $this->getDepartment_id());
         $class_ids = $this->getAllClassIds();
-        $member_id = $this->getMember_id();
-        $student = new Core_Model_Member_Student();
-        $student->setMember_id($member_id);
-        $raw_class_info = array();
-        foreach ($class_ids as $class_id) {
-            $info = $this->findStuClassInfo($class_id);
-            $class_info = $this->findClassInfo($class_id);
-            $batch_id = $class_info['class_info']['batch_id'];
-            $raw_class_info[$batch_id] = $info['roll_no'];
+        if ($class_ids == false) {
+            $this->view->assign('student_class_info', false);
+        } else {
+            $member_id = $this->getMember_id();
+            $student = new Core_Model_Member_Student();
+            $student->setMember_id($member_id);
+            $raw_class_info = array();
+            foreach ($class_ids as $class_id) {
+                $info = $this->findStuClassInfo($class_id);
+                $class_info = $this->findClassInfo($class_id);
+                $batch_id = $class_info['class_info']['batch_id'];
+                $raw_class_info[$batch_id] = $info['roll_no'];
+            }
+            $stu_class_info = array();
+            foreach ($raw_class_info as $batch_id => $roll_num) {
+                $batch_info = $this->findBatchInfo($batch_id);
+                $batch_start = $batch_info['batch_info']['batch_start'];
+                $stu_class_info[$batch_start] = $roll_num;
+            }
+            Zend_Registry::get('logger')->debug(
+            'Name of varibale assigned to view is : student_class_info');
+            Zend_Registry::get('logger')->debug($stu_class_info);
+            $this->view->assign('student_class_info', $stu_class_info);
         }
-        $stu_class_info = array();
-        foreach ($raw_class_info as $batch_id => $roll_num) {
-            $batch_info = $this->findBatchInfo($batch_id);
-            $batch_start = $batch_info['batch_info']['batch_start'];
-            $stu_class_info[$batch_start] = $roll_num;
-        }
-        Zend_Registry::get('logger')->debug(
-        'Name of varibale assigned to view is : student_class_info');
-        Zend_Registry::get('logger')->debug($stu_class_info);
-        $this->view->assign('student_class_info', $stu_class_info);
     }
     public function fetchclassinfoAction ()
     {
@@ -496,10 +506,11 @@ class StudentController extends Zend_Controller_Action
             $student = new Core_Model_Member_Student();
             $student->setMember_id($member_id);
             $info = $student->fetchRegistrationInfo();
+            $registration_info = array();
             if ($info instanceof Core_Model_StudentRegistration) {
-                $registration_info = array();
                 $registration_info['registration_id'] = $info->getRegistration_id();
             }
+            $registration_info = false;
             Zend_Registry::get('logger')->debug($registration_info);
             $this->_helper->json($registration_info);
         }
@@ -648,11 +659,14 @@ class StudentController extends Zend_Controller_Action
             $this->saveRelativeInfo($relatives_info);
         }
     }
-    public function testAction ()
+    public function aclconfigAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $methods = get_class_methods('StudentController');
+        $o = Zend_Auth::getInstance()->getIdentity();
+        $this->_helper->json($o);
+        //Zend_Registry::get('logger')->debug($o);
+        /*$methods = get_class_methods('StudentController');
         $actions = array();
         foreach ($methods as $value) {
             $actions[] = substr("$value", 0, strpos($value, 'Action'));
@@ -677,12 +691,12 @@ class StudentController extends Zend_Controller_Action
         foreach ($actions as $action) {
             $bind = array('student', 'main', 'student', $action);
             $db->getAdapter()->query($sql, $bind);
-        }
-        /*foreach ($actions as $action) {
+        }*/
+    /*foreach ($actions as $action) {
             echo '<pre>';
             print_r($action);
             echo '</pre>';
         }*/
-        Zend_Registry::get('logger')->debug($actions);
+    //Zend_Registry::get('logger')->debug($actions);
     }
 }
