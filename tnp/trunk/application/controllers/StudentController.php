@@ -7,41 +7,97 @@
  */
 class StudentController extends Zend_Controller_Action
 {
-    protected $_member_id;
     /**
-     * The default action - show the home page
+     * 
+     * @var int
      */
-    public function init ()
-    {
-        /* Initialize action controller here */
-        if (Zend_Auth::getInstance()->hasIdentity()) {
-            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-            $this->department_id = $authInfo['department_id'];
-            $this->identity = $authInfo['identity'];
-            $this->setMember_id($authInfo['member_id']);
-        }
-    }
+    protected $_member_id;
+    protected $_user_name;
+    protected $_user_type;
+    protected $_department_id;
     /**
-     * @todo Consider :if you dont want any other class to call this function
-     * make it private
-     * dont allow even view to acess it
-     * cause it is for internal functioning only
      * @return the $_member_id
      */
-    public function getMember_id ()
+    protected function getMember_id ()
     {
         return $this->_member_id;
     }
     /**
-     * @param field_type $_member_id
+     * @return the $_user_name
      */
-    public function setMember_id ($_member_id)
+    protected function getUser_name ()
+    {
+        return $this->_user_name;
+    }
+    /**
+     * @return the $_user_type
+     */
+    protected function getUser_type ()
+    {
+        return $this->_user_type;
+    }
+    /**
+     * @return the $_department_id
+     */
+    protected function getDepartment_id ()
+    {
+        return $this->_department_id;
+    }
+    /**
+     * @param int $_member_id
+     */
+    protected function setMember_id ($_member_id)
     {
         $this->_member_id = $_member_id;
     }
-    public function indexAction ()
+    /**
+     * @param field_type $_user_name
+     */
+    protected function setUser_name ($_user_name)
     {
-        //action body
+        $this->_user_name = $_user_name;
+    }
+    /**
+     * @param field_type $_user_type
+     */
+    protected function setUser_type ($_user_type)
+    {
+        $this->_user_type = $_user_type;
+    }
+    /**
+     * @param field_type $_department_id
+     */
+    protected function setDepartment_id ($_department_id)
+    {
+        $this->_department_id = $_department_id;
+    }
+    public function indexAction ()
+    {}
+    public function init ()
+    {
+        if (Zend_Auth::getInstance()->hasIdentity()) {
+            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+            $this->setDepartment_id($authInfo['department_id']);
+            $this->setUser_name($authInfo['identity']);
+            $this->setUser_type($authInfo['userType']);
+            $this->setMember_id($authInfo['member_id']);
+        }
+    }
+    public function memberidcheckAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $member_id_to_check = $this->getMember_id();
+        $member_id_exists = $this->memberIdCheck($member_id_to_check);
+        $this->_helper->json($member_id_exists);
+    }
+    public function fetchcriticalinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(TRUE);
+        $this->_helper->layout()->disableLayout();
+        $member_id = $this->getMember_id();
+        $critical_data = self::fetchcriticalinfo($member_id);
+        $this->_helper->json($critical_data);
     }
     private function fetchTechnicalFields ()
     {
@@ -49,35 +105,40 @@ class StudentController extends Zend_Controller_Action
         $technical_fields = $technical_field->fetchTechnicalFields();
         return $technical_fields;
     }
-    function registerAction ()
+    public function registerAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
         $student_model = new Tnp_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
-        $critcal_info = $student_model->fetchCriticalInfo();
-        Zend_Registry::get('logger')->debug($critcal_info);
-        if ($critcal_info == false) {
-            $PROTOCOL = 'http://';
-            $URL_STU_CRITICAL_INFO = $PROTOCOL . CORE_SERVER .
-             '/student/fetchcriticalinfo';
-            $client = new Zend_Http_Client($URL_STU_CRITICAL_INFO);
-            $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
-            $response = $client->request();
-            if ($response->isError()) {
-                $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
-                 $response->getMessage();
-                throw new Zend_Exception($remoteErr, Zend_Log::ERR);
-            }
-            $critical_data = Zend_Json::decode($response->getBody());
-            if ($critical_data) {
-                $student_model->saveCriticalInfo($critical_data);
-            } else {
-                $msg = 'PLEASE REGISTER IN CORE MODULE....GOTO core.aceambala.com';
-                throw new Exception('$msg');
-            }
+        $member_id_to_check = $this->getMember_id();
+        $member_exists_in_acad = $this->memberIdCheck($member_id_to_check);
+        /*
+         * dont use this if statement because user may have updated the data in core
+         * and the old data may still exist in academics database .thus in the case
+         * of old data member_id still exists that is member_id_check will return true.
+         * so drop the if statement
+         */
+        //if ($member_exists_in_acad == false) {
+        $client = new Zend_Http_Client();
+        $client->setUri('http://' . CORE_SERVER . '/student/fetchpersonalinfo');
+        $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+        $response = $client->request();
+        if ($response->isError()) {
+            $remoteWARN = 'REMOTE WARNOR: (' . $response->getStatus() . ') ' .
+             $response->getMessage() . $response->getBody();
+            throw new Zend_Exception($remoteWARN, Zend_Log::WARN);
         }
-        $this->_redirect('student/profile');
+        //$critical_data = Zend_Json::decode($response->getBody());
+        Zend_Registry::get('logger')->debug($response);
+         //Zend_Registry::get('logger')->debug($critical_data);
+    /*if ($critical_data) {
+            $student_model->saveCriticalInfo($critical_data);
+        } else {
+            $msg = 'PLEASE REGISTER IN CORE MODULE....GOTO core.aceambala.com';
+            throw new Exception('$msg');
+        }*/
+    //}
+    // $this->_redirect('student/profile');
     }
     public function profileAction ()
     {
@@ -774,6 +835,90 @@ class StudentController extends Zend_Controller_Action
             Zend_Registry::get('logger')->debug($mem_lang_info);
             $student->saveLanguageInfo($language_info);
         }
+    }
+    public function aclconfigAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $methods = get_class_methods('StudentController');
+        $actions = array();
+        foreach ($methods as $value) {
+            $actions[] = substr("$value", 0, strpos($value, 'Action'));
+        }
+        foreach ($actions as $key => $value) {
+            if ($value == null) {
+                unset($actions[$key]);
+            }
+        }
+        $db = new Zend_Db_Table();
+        $delete2 = 'DELETE FROM `tnp`.`mod_role_resource` WHERE `module_id`=? AND `controller_id`=?';
+        $db->getAdapter()->query($delete2, array('tnp', 'student'));
+        $delete1 = 'DELETE FROM `tnp`.`mod_action` WHERE `module_id`=? AND `controller_id`=?';
+        $db->getAdapter()->query($delete1, array('tnp', 'student'));
+        print_r(sizeof($actions));
+        $sql = 'INSERT INTO `tnp`.`mod_action`(`module_id`,`controller_id`,`action_id`) VALUES (?,?,?)';
+        foreach ($actions as $action) {
+            $bind = array('tnp', 'student', $action);
+            $db->getAdapter()->query($sql, $bind);
+        }
+        $sql = 'INSERT INTO `tnp`.`mod_role_resource`(`role_id`,`module_id`,`controller_id`,`action_id`) VALUES (?,?,?,?)';
+        foreach ($actions as $action) {
+            $bind = array('student', 'tnp', 'student', $action);
+            $db->getAdapter()->query($sql, $bind);
+        }
+        /*foreach ($actions as $action) {
+            echo '<pre>';
+            print_r($action);
+            echo '</pre>';
+        }*/
+        Zend_Registry::get('logger')->debug($actions);
+    }
+    /**
+     * before calling this function use memberidcheck function
+     * Enter description here ...
+     * @param int $member_id
+     */
+    private function fetchcriticalinfo ($member_id)
+    {
+        $member_id_exists = $this->memberIdCheck($member_id);
+        if ($member_id_exists) {
+            $student = new Tnp_Model_Member_Student();
+            $student->setMember_id($member_id);
+            $student_model = $student->fetchCriticalInfo();
+            if ($student_model instanceof Tnp_Model_Member_Student) {
+                $critical_data['member_id'] = $this->getMember_id();
+                $critical_data['first_name'] = $student_model->getFirst_name();
+                $critical_data['middle_name'] = $student_model->getMiddle_name();
+                $critical_data['last_name'] = $student_model->getLast_name();
+                $critical_data['cast'] = $student_model->getCast_name();
+                $critical_data['nationality'] = $student_model->getNationality_name();
+                $critical_data['religion'] = $student_model->getReligion_name();
+                $critical_data['blood_group'] = $student_model->getBlood_group();
+                $critical_data['dob'] = $student_model->getDob();
+                $critical_data['gender'] = $student_model->getGender();
+                $critical_data['member_type_id'] = $student_model->getMember_type_id();
+                $critical_data['religion_id'] = $student_model->getReligion_id();
+                $critical_data['nationality_id'] = $student_model->getNationality_id();
+                $critical_data['cast_id'] = $student_model->getCast_id();
+                return $critical_data;
+            }
+        }
+    }
+    /**
+     * Checks if member is registered in the core,
+     * @return true if member_id is registered, false otherwise
+     */
+    private function memberIdCheck ($member_id_to_check)
+    {
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($member_id_to_check);
+        $member_id_exists = $student->memberIdCheck();
+        if (! $member_id_exists) {
+            Zend_Registry::get('logger')->debug(
+            'Member with member_id : ' . $member_id_to_check .
+             ' is not registered in CORE');
+        }
+        return $member_id_exists;
     }
 }
 ?>
