@@ -497,19 +497,30 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
      * Operating Condition : Member Id is set
      * 
      * @param int $employability_test_id
-     * @param int $test_section_id
      * @param bool $all to get
      * @return false|array
      */
-    public function fetchEmpTestSectionScoreIds ($employability_test_id, 
-    $test_section_id)
+    public function fetchEmpTestSectionScoreIds ($employability_test_id)
     {
         $member_id = $this->getMember_id(true);
         $emp_test_sec_score = new Tnp_Model_MemberInfo_EmployabilityTestSectionScore();
         $emp_test_sec_score->setMember_id($member_id);
         $emp_test_sec_score->setEmployability_test_id($employability_test_id);
-        $emp_test_sec_score->setTest_section_id($test_section_id);
-        return $emp_test_sec_score->fetchSectionScoreIds(true, true, true);
+        return $emp_test_sec_score->fetchSectionScoreIds(true, true);
+    }
+    /**
+     * Operating Condition : Member Id is set
+     * 
+     * @param int $section_score_id
+     * @return Tnp_Model_MemberInfo_EmployabilityTestSectionScore|false
+     */
+    public function fetchEmpTestSectionScoreInfo ($section_score_id)
+    {
+        $member_id = $this->getMember_id(true);
+        $emp_test_sec_score = new Tnp_Model_MemberInfo_EmployabilityTestSectionScore();
+        $emp_test_sec_score->setMember_id($member_id);
+        $emp_test_sec_score->setSection_score_id($section_score_id);
+        return $emp_test_sec_score->fetchInfo();
     }
     /**
      * Operating Condition : Member Id is set
@@ -942,5 +953,15 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
             return $job_preferred->getMapper()->delete($member_id, 
             $job_area_preferred);
         }
+    }
+    /**
+     * Checks if member is registered in the core,
+     * operating conditions : member_id must be set in the object
+     * @return true if member_id is registered, false otherwise
+     */
+    public function memberIdCheck ()
+    {
+        $member_id = $this->getMember_id(true);
+        return $this->getMapper()->memberIdCheck($member_id);
     }
 }

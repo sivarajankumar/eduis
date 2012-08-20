@@ -140,6 +140,10 @@ class Tnp_Model_EmpTestInfo_Test extends Tnp_Model_Generic
             return $emp_test_ids;
         }
     }
+    /**
+     * 
+     *@return Tnp_Model_EmpTestInfo_Test|false
+     */
     public function fetchInfo ()
     {
         $emp_test_id = $this->getEmployability_test_id(true);
