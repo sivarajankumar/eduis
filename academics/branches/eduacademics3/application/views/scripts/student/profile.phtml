@@ -4,46 +4,22 @@
 	<div id="sidebar" style="float:left">
 	<ul class="menu">
 		<li class="item1">
-			<a href="#">Btech</a>
-			<ul>
-				<li class="subitem1"><a href="/student/editbtechinfo" target="content_frame">Add/Edit</a></li>
-				<li class="subitem1"><a href="/student/viewbtechinfo" target="content_frame">View</a></li>
-			</ul>
-		</li>
-
-		<li class="item2">
-			<a href="#">Diploma</a>
-			<ul>
-				<li class="subitem1"><a href="/student/editdiplomainfo" target="content_frame">Add/Edit</a></li>
-				<li class="subitem1"><a href="/student/viewdiplomainfo" target="content_frame">View</a></li>
-			</ul>
-		</li>
-
-		<li class="item3">
 			<a href="#">Matric</a>
 			<ul>
 				<li class="subitem1"><a href="/student/editmatricinfo" target="content_frame">Add/Edit</a></li>
 				<li class="subitem1"><a href="/student/viewmatricinfo" target="content_frame">View</a></li>
 			</ul>
 		</li>
-
-		<li class="item4">
-			<a href="#">Mtech</a>
-			<ul>
-				<li class="subitem1"><a href="/student/editmtechinfo" target="content_frame">Add/Edit</a></li>
-				<li class="subitem1"><a href="/student/viewmtechinfo" target="content_frame">View</a></li>
-			</ul>
-		</li>
-
-		<li class="item5">
+		
+		<li class="item2">
 			<a href="#">Twelfth</a>
 			<ul>
 				<li class="subitem1"><a href="/student/edittwelfthinfo" target="content_frame">Add/Edit</a></li>
 				<li class="subitem1"><a href="/student/viewtwelfthinfo" target="content_frame">View</a></li>
 			</ul>
 		</li>
-
-		<li class="item6">
+		
+		<li class="item3">
 			<a href="#">AIEEE</a>
 			<ul>
 				<li class="subitem1"><a href="/student/editaieeeinfo" target="content_frame">Add/Edit</a></li>
@@ -51,17 +27,50 @@
 			</ul>
 		</li>
 		
-		<li class="item6">
+		<li class="item4">
+			<a href="#">Diploma</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editdiplomainfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewdiplomainfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+		
+		<li class="item5">
 			<a href="#">LEET</a>
 			<ul>
 				<li class="subitem1"><a href="/student/editleetinfo" target="content_frame">Add/Edit</a></li>
 				<li class="subitem1"><a href="/student/viewleetinfo" target="content_frame">View </a></li>
 			</ul>
 		</li>
+		
+		<li class="item6">
+			<a href="#">Btech(Academic)</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editbtechinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewbtechinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+		
+		<li class="item6">
+			<a href="#">Gate</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editgateinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewgateinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<!--<li class="item7">
+			<a href="#">Mtech</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editmtechinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewmtechinfo" target="content_frame">View</a></li>
+			</ul>
+		</li> -->
+
 	</ul>
 	</div>
 	<div id="page_content">
-		<iframe id="abc" name="content_frame" width="850" height="900" frameborder="0" scrolling="auto" onload="hide_top()"></iframe>
+		<iframe id="content_frame" name="content_frame" width="850" height="900" frameborder="0" scrolling="auto" onload="hide_top()"></iframe>
 	</div>
 </div>
 
@@ -86,7 +95,7 @@
     });
 	function hide_top()
 	{
-		$('iframe#abc').contents().find('div#topContent').hide();
+		$('iframe#content_frame').contents().find('div#topContent').hide();
 	}
 </script>
 
