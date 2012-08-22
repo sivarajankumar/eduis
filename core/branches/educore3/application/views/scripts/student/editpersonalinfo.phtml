@@ -1,6 +1,6 @@
 <h2>Personal Information</h2>
 
-<form id="personal_info" action="javascript:submit()" class="uniForm">
+<form id="personal_info" action="javascript:submit()" class="uniForm" enctype="multipart/form-data">
    	
    	<fieldset>
    	<h5>Please enter the following information</h5>
@@ -80,6 +80,12 @@
 		<p class="formHint">Cast of Candidate</p>
 	</div>
 	
+	<div class="ctrlHolder">
+		<label for="image">Image</label>
+		<input type="file" name="image" id="image"/>
+		<p class="formHint">Image of Candidate</p>
+	</div>
+	
 	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
 	<div class="buttonHolder">
 		<button type="reset" class="secondaryAction">Reset</button>
@@ -124,6 +130,42 @@
     			$('#errorBox').text(response.responseText).parent().show();
     			console.log(response);
     		}
+    	});
+
+    	$('#image').change(function(){
+        	//var img = $(this).
+			var size = parseInt(this.files[0].size, 10);
+			if(size < 50000 && size > 10000)
+			{
+				alert('ok' + size);
+				var name = this.files[0].name;
+				if(name.match(/.jpg/g) || name.match(/.png/g) || name.match(/.gif/g))
+				{
+					alert('file type ok');
+					var image = $('#image').attr('value');
+					alert(image);
+					var urlsaveimage = "<?php echo $this->url(array('controller' => 'student', 'action' => 'saveimage'))?>";
+		            $.ajax({
+		        		url : urlsaveimage,
+		                data : {image:image},
+		        		success: function(jStatus){
+		        			
+		                },
+		                error: function(response) {
+		        			$('#errorBox').text(response.responseText).parent().show();
+		        			console.log(response);
+		        		}
+		        	});
+				}
+				else
+				{
+					alert('not ok');
+				}
+			}
+			else
+			{
+				alert('not ok' + size);
+			}
     	});
     });
     
