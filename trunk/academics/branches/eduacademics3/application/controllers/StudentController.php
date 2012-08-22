@@ -11,7 +11,7 @@ class StudentController extends Zend_Controller_Action
      * 
      *@todo remove static value
      */
-    protected $_member_id = 3;
+    protected $_member_id;
     /**
      * The default action - show the home page
      */
@@ -48,17 +48,71 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $member_id_to_check = $this->getMember_id();
-        $member_id_exists = $this->memberIdCheck($member_id_to_check);
-        $this->_helper->json($member_id_exists);
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        if (! empty($member_id)) {
+            $member_id_exists = $this->memberIdCheck($member_id);
+            $format = $this->_getParam('format', 'html');
+            switch ($format) {
+                case 'html':
+                    $this->_helper->viewRenderer->setNoRender(false);
+                    $this->_helper->layout()->enableLayout();
+                    $this->view->assign('member_id_exists', $member_id_exists);
+                    break;
+                case 'jsonp':
+                    $callback = $this->getRequest()->getParam('callback');
+                    echo $callback . '(' . $this->_helper->json(
+                    $member_id_exists, false) . ')';
+                    break;
+                case 'json':
+                    $this->_helper->json($member_id_exists);
+                    break;
+                default:
+                    ;
+                    break;
+            }
+        }
     }
     public function fetchcriticalinfoAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(TRUE);
+        $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $member_id = $this->getMember_id();
-        $critical_data = self::fetchcriticalinfo($member_id);
-        $this->_helper->json($critical_data);
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        if (! empty($member_id)) {
+            $critical_data = self::fetchcriticalinfo($member_id);
+            $format = $this->_getParam('format', 'html');
+            switch ($format) {
+                case 'html':
+                    $this->_helper->viewRenderer->setNoRender(false);
+                    $this->_helper->layout()->enableLayout();
+                    $this->view->assign('critical_data', $critical_data);
+                    break;
+                case 'jsonp':
+                    $callback = $this->getRequest()->getParam('callback');
+                    echo $callback . '(' . $this->_helper->json($critical_data, 
+                    false) . ')';
+                    break;
+                case 'json':
+                    $this->_helper->json($critical_data);
+                    break;
+                default:
+                    ;
+                    break;
+            }
+        }
     }
     public function fetchsubjectsAction ()
     {
@@ -69,8 +123,15 @@ class StudentController extends Zend_Controller_Action
         $request_object->getUserParams());
         ($class_id = $params['myarray']['class_id']) ||
          ($class_id = $params['class_id']);
-        Zend_Registry::get('logger')->debug($class_id);
-        $student_subjects = $this->fetchStudentSubjects($class_id);
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $student_subjects = $this->fetchStudentSubjects($class_id, $member_id);
         $response['subject_info'] = $student_subjects;
         Zend_Registry::get('logger')->debug($response);
         $format = $this->_getParam('format', 'html');
@@ -1260,7 +1321,13 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $dmc_info_id = $params['dmc_info_id'];
-        $response = self::fetchclassdmc($dmc_info_id);
+        $member_id = null;
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $response = self::fetchDMC($dmc_info_id, $member_id);
         switch ($format) {
             case 'html':
                 if (! empty($response)) {
@@ -1290,33 +1357,38 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $format = $this->_getParam('format', 'html');
-        if (! $params['dmc_info_id']) {
-            $response = self::fetchclassdmc($params['class_id'], 
-            $params['dmc_view_type']);
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
         } else {
-            $response = self::fetchclassdmc($params['class_id'], 
-            $this->_getParam('dmc_view_type', 'latest'), $params['dmc_info_id']);
+            $member_id = $params['member_id'];
         }
-        switch ($format) {
-            case 'html':
-                if (! empty($response)) {
-                    $this->view->assign('response', $response);
-                }
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($response, false) .
-                 ')';
-                break;
-            case 'json':
-                $this->_helper->json($response);
-                break;
-            case 'test':
-                break;
-            default:
-                ;
-                break;
+        $format = $this->_getParam('format', 'html');
+        if ((! empty($params['dmc_info_id'])) && ($member_id != null)) {
+            $response = self::fetchDMC($params['dmc_info_id'], $member_id);
+            Zend_Registry::get('logger')->debug($response);
+            switch ($format) {
+                case 'html':
+                    if (! empty($response)) {
+                        $this->view->assign('response', $response);
+                    }
+                    break;
+                case 'jsonp':
+                    $callback = $this->getRequest()->getParam('callback');
+                    echo $callback . '(' . $this->_helper->json($response, 
+                    false) . ')';
+                    break;
+                case 'json':
+                    $this->_helper->json($response);
+                    break;
+                case 'test':
+                    break;
+                default:
+                    ;
+                    break;
+            }
         }
     }
     public function savedmcAction ()
@@ -1886,9 +1958,8 @@ class StudentController extends Zend_Controller_Action
              ' and subject_id : ' . $subject_id, Zend_Log::WARN);
         }
     }
-    private function fetchStudentSubjects ($class_id)
+    private function fetchStudentSubjects ($class_id, $member_id)
     {
-        $member_id = $this->getMember_id();
         $student = new Acad_Model_Member_Student();
         $student->setMember_id($member_id);
         $student_subject_ids = $student->fetchClassSubjects($class_id);
@@ -1957,7 +2028,13 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
-    private function fetchclassdmc ($dmc_info_id)
+    /**
+     * CHANGE OF CONCEPT , NOW WE DONT NEED CLASS_ID AS PARAMETER
+     * Enter description here ...
+     * @param unknown_type $dmc_info_id
+     * @param unknown_type $member_id
+     */
+    private function fetchDMC ($dmc_info_id, $member_id)
     {
         $subject_data = array();
         $dmc_info_raw = array();
@@ -1970,10 +2047,9 @@ class StudentController extends Zend_Controller_Action
         $student_subject_ids = $student_subject->fetchSubjects();
         $dmc_subject_data = self::fetchDmcSubjectMarks($dmc_info_id, 
         $student_subject_ids);
-        $subject_data = $this->fetchStudentSubjects($class_id);
+        $subject_data = $this->fetchStudentSubjects($class_id, $member_id);
         $response = array('dmc_info_data' => $dmc_info_data, 
         'dmc_data' => $dmc_subject_data, 'subject_data' => $subject_data);
-        Zend_Registry::get('logger')->debug($response);
         return $response;
     }
     private function saveExamInfo ($exam_name, $save_data)
