@@ -4,11 +4,10 @@
     $dmcInfoData = $this->response['dmc_info_data'];
     $dmc_info_id =array_keys($dmcInfoData);
 ?>
-<div class="ui-widget-content ui-corner-all"><center><h3>Degree Details</h3></center></div>
 
 <div id="dmc_info" class="ui-widget-content ui-corner-all">
-<h3><center>DMC Information</center></h3>
-<hr>
+
+
 <?php
         foreach ($dmcInfoData as $dmc_property => $val){
             if($dmc_property != 'result_type_id'){
@@ -44,8 +43,7 @@
 </div>
 
 <div id="dmc_subject_info" class="ui-widget-content ui-corner-all">
-<h3><center>Subjectwise Details</center></h3>
-<hr>
+
 <table cellpadding="5" cellspacing="10">
 <?php 
     $i = 1;
