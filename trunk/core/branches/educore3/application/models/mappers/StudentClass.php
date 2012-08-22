@@ -68,7 +68,8 @@ class Core_Model_Mapper_StudentClass
             ->from($stu_class_table, $required_cols)
             ->where('member_id = ?', $member_id);
         $class_ids = array();
-        return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        $class_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $class_ids;
     }
     /**
      * Fetches all Classes in which a student has/had enrolled
