@@ -34,6 +34,24 @@ class Acad_Model_Mapper_Class
         return $this->_dbTable;
     }
     /**
+     * Fetches Batch semesters
+     * 
+     * @param integer $batch_id
+     */
+    public function fetchBatchSemesters ($batch_id)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $class_table = $db_table->info('name');
+        $required_cols = array('semester_id');
+        $select = $adapter->select()
+            ->from($class_table, $required_cols)
+            ->where('batch_id = ?', $batch_id);
+        $student_info = array();
+        $student_info = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $student_info;
+    }
+    /**
      * Fetches Class details
      * 
      * @param integer $class_id

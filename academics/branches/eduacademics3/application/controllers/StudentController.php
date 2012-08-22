@@ -11,7 +11,7 @@ class StudentController extends Zend_Controller_Action
      * 
      *@todo remove static value
      */
-    protected $_member_id;
+    protected $_member_id = 3;
     /**
      * The default action - show the home page
      */
@@ -59,71 +59,6 @@ class StudentController extends Zend_Controller_Action
         $member_id = $this->getMember_id();
         $critical_data = self::fetchcriticalinfo($member_id);
         $this->_helper->json($critical_data);
-    }
-    public function fetchdmcinfoidsAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request_object = $this->getRequest();
-        $params = array_diff($request_object->getParams(), 
-        $request_object->getUserParams());
-        Zend_Registry::get('logger')->debug('Parameter recieved from view :');
-        Zend_Registry::get('logger')->debug($params);
-        $member_id = $this->getMember_id();
-        $class_finder = $params['myarray']['class_finder'];
-        $batch_start = $class_finder['batch_start'];
-        $programme_id = $class_finder['programme_id'];
-        $department_id = $class_finder['department_id'];
-        $semester_id = $class_finder['semester_id'];
-        $response = array();
-        $batch_ids = $this->getBatchIds($batch_start, $department_id, 
-        $programme_id);
-        $batch_id = $batch_ids[0];
-        $class_ids = $this->getClassIds($batch_id, $semester_id);
-        $class_id = $class_ids[0];
-        $log_msg = 'Class_ID corresponding to BATCH_START year : ' . $batch_start .
-         ' ,DEPARTMENT : ' . $department_id . ' ,PROGRAMME : ' . $programme_id .
-         ' and SEMESTER : ' . $semester_id . ' is : ' . $class_id;
-        Zend_Registry::get('logger')->debug($log_msg);
-        $student_class_ids = $this->getAllClassIds();
-        Zend_Registry::get('logger')->debug('Student_class_ids : ');
-        Zend_Registry::get('logger')->debug($student_class_ids);
-        $class_enroll_check = array_keys($student_class_ids, $class_id);
-        if (! empty($class_enroll_check)) {
-            $response['class_info']['class_id'] = $class_id;
-            $format = $this->_getParam('format', 'html');
-            $dmc_info_ids = $this->fetchAllDmcInfoIds($class_id);
-            foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
-                $response['dmc_info'][$dmc_info_id] = $dmc_id;
-            }
-            Zend_Registry::get('logger')->debug('Response : ');
-            Zend_Registry::get('logger')->debug($response);
-            switch ($format) {
-                case 'html':
-                    $this->_helper->viewRenderer->setNoRender(false);
-                    $this->_helper->layout()->enableLayout();
-                    $this->view->assign('response', $response);
-                    break;
-                case 'jsonp':
-                    $callback = $this->getRequest()->getParam('callback');
-                    echo $callback . '(' . $this->_helper->json($response, 
-                    false) . ')';
-                    break;
-                case 'json':
-                    $this->_helper->json($response);
-                    break;
-                default:
-                    ;
-                    break;
-            }
-        } else {
-            $message = 'Student with MEMBER_ID : ' . $member_id .
-             ' ,is not enrolled with CLASS corresponding to BATCH_START year : ' .
-             $batch_start . ' ,DEPARTMENT : ' . $department_id . ' ,PROGRAMME : ' .
-             $programme_id . ' and SEMESTER : ' . $semester_id;
-            $code = Zend_Log::WARN;
-            throw new Exception($message, $code);
-        }
     }
     public function fetchsubjectsAction ()
     {
@@ -192,6 +127,11 @@ class StudentController extends Zend_Controller_Action
         }*/
     //}
     // $this->_redirect('student/profile');
+    }
+    public function createprofileAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
     }
     /**
      * @todo check status of profile in auth that it is filled or not
@@ -390,74 +330,6 @@ class StudentController extends Zend_Controller_Action
                 break;
             case 'json':
                 $this->_helper->json($qualification_data);
-                break;
-            case 'test':
-                break;
-            default:
-                ;
-                break;
-        }
-    }
-    public function editmtechinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $format = $this->_getParam('format', 'html');
-        $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
-        $qualification_data = self::fetchMtechData();
-        switch ($format) {
-            case 'html':
-                $this->_helper->viewRenderer->setNoRender(false);
-                $this->_helper->layout()->enableLayout();
-                if (! empty($qualification_data)) {
-                    $this->view->assign('qualification_data', 
-                    $qualification_data);
-                }
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' .
-                 $this->_helper->json($qualification_data, false) . ')';
-                break;
-            case 'json':
-                $this->_helper->json($qualification_data);
-                break;
-            case 'test':
-                break;
-            default:
-                ;
-                break;
-        }
-    }
-    public function savemtechinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $format = $this->_getParam('format', 'html');
-        $qualification_id = $this->fetchQualificationId('MTECH');
-        $save_data = $params['myarray']['qualification_data'];
-        $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
-        $student_model->saveQualificationInfo($qualification_id, $save_data);
-        $success = true;
-        switch ($format) {
-            case 'html':
-                if (! empty($success)) {
-                    $this->view->assign('is_successfull', $success);
-                }
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($success, false) .
-                 ')';
-                break;
-            case 'json':
-                $this->_helper->json($success);
                 break;
             case 'test':
                 break;
@@ -797,6 +669,40 @@ class StudentController extends Zend_Controller_Action
                 break;
         }
     }
+    public function savemtechinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $this->_getParam('format', 'html');
+        $qualification_id = $this->fetchQualificationId('MTECH');
+        $save_data = $params['myarray']['qualification_data'];
+        $student_model = new Acad_Model_Member_Student();
+        $student_model->setMember_id($this->getMember_id());
+        $student_model->saveQualificationInfo($qualification_id, $save_data);
+        $success = true;
+        switch ($format) {
+            case 'html':
+                if (! empty($success)) {
+                    $this->view->assign('is_successfull', $success);
+                }
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($success, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($success);
+                break;
+            case 'test':
+                break;
+            default:
+                ;
+                break;
+        }
+    }
     public function saveleetinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -889,11 +795,6 @@ class StudentController extends Zend_Controller_Action
                 ;
                 break;
         }
-    }
-    public function createprofileAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
     }
     public function editmatricinfoAction ()
     {
@@ -1036,6 +937,40 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
+    public function editmtechinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $this->_getParam('format', 'html');
+        $student_model = new Acad_Model_Member_Student();
+        $student_model->setMember_id($this->getMember_id());
+        $qualification_data = self::fetchMtechData();
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                if (! empty($qualification_data)) {
+                    $this->view->assign('qualification_data', 
+                    $qualification_data);
+                }
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' .
+                 $this->_helper->json($qualification_data, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($qualification_data);
+                break;
+            case 'test':
+                break;
+            default:
+                ;
+                break;
+        }
+    }
     public function editdiplomainfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -1168,7 +1103,7 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $exam_name = 'AIEEE';
+        $exam_name = 'GATE';
         $exam_model = new Acad_Model_CompetitiveExam();
         $exams = $exam_model->fetchExams();
         $exam_id = array_search($exam_name, $exams);
@@ -1205,6 +1140,118 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
     }
+    public function fetchacademicinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $this->_getParam('format');
+        /* --------------------------------------------------------------------------- */
+        /*
+         * All Class ids of student
+         */
+        $student_class_ids = $this->getAllClassIds();
+        $class = new Acad_Model_Class();
+        /* --------------------------------------------------------------------------- */
+        /*
+         * Class_info for all batches to which the student belongs student
+         */
+        $all_class_batch = array();
+        $httpClient = new Zend_Http_Client();
+        $httpClient->setUri('http://' . ACADEMIC_SERVER . '/class/getclassinfo');
+        $httpClient->setMethod('POST');
+        foreach ($student_class_ids as $class_id) {
+            $httpClient->setParameterPost(
+            array('class_id' => $class_id, 'format' => 'json'));
+            $response = $httpClient->request();
+            if ($response->isError()) {
+                $class_info = false;
+                $error = 'ERROR: (' . $response->getStatus() . ') ' .
+                 $response->getHeader('Message') . $response->getBody();
+                throw new Zend_Exception($error, Zend_Log::ERR);
+            } else {
+                $jsonContent = $response->getBody($response);
+                $class_info = Zend_Json::decode($jsonContent);
+                $all_class_batch[$class_id] = $class_info['class_info']['batch_id'];
+                $r[$class_id][] = $class_info['class_info']['semester_id'];
+            }
+        }
+        /*echo "<pre>";
+        print_r($r);
+        echo "</pre>";*/
+        $student_batches = array();
+        $student_batches = array_unique($all_class_batch);
+        /* --------------------------------------------------------------------------- */
+        /*
+         * dep prog batch_start of student
+         */
+        $batch_info = array();
+        $batch_sems = array();
+        $batch_class_ids = array();
+        $httpClient->setUri('http://' . ACADEMIC_SERVER . '/batch/getbatchinfo');
+        foreach ($student_batches as $classid => $bath_id) {
+            $class->setBatch_id($bath_id);
+            $temp = $class->fetchClassIds(true);
+            foreach ($temp as $key => $clss_id) {
+                if (array_search($clss_id, $student_class_ids)) {} else {
+                    unset($temp[$key]);
+                }
+            }
+            $temp = array_flip($temp);
+            $class_semesters = array();
+            foreach ($temp as $id => $junk_key) {
+                $class->setClass_id($id);
+                $classinfo = $class->fetchInfo();
+                if ($classinfo instanceof Acad_Model_Class) {
+                    $sem_id = $classinfo->getSemester_id();
+                    $class_semesters[$id] = $sem_id;
+                }
+            }
+            $batch_info[$bath_id]['class_ids'] = $class_semesters;
+            $httpClient->setParameterPost(
+            array('batch_id' => $bath_id, 'format' => 'json'));
+            $response = $httpClient->request();
+            if ($response->isError()) {
+                $class_info = false;
+                $error = 'ERROR: (' . $response->getStatus() . ') ' .
+                 $response->getHeader('Message') . $response->getBody();
+                throw new Zend_Exception($error, Zend_Log::ERR);
+            } else {
+                $jsonContent = $response->getBody($response);
+                $info = Zend_Json::decode($jsonContent);
+                $batch_info[$bath_id]['batch_info'] = $info['batch_info'];
+            }
+        }
+        /* --------------------------------------------------------------------------- */
+        /*
+         * roll num, group of  student
+         */
+        $stu_cl_inf = array();
+        foreach ($student_batches as $classid => $batch_id) {
+            $stu_cl_inf[$classid] = $this->getClassInfo($classid);
+        }
+        $response = array();
+        $response['student_class_info'] = $stu_cl_inf;
+        $response['batch_display'] = $batch_info;
+        switch ($format) {
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($response, false) .
+                 ')';
+                break;
+            case 'json':
+               /* echo "<pre>";
+                print_r($response);
+                echo "</pre>";
+                Zend_Registry::get('logger')->debug($response);*/
+                $this->_helper->json($response);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
     public function viewdmcAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -1212,8 +1259,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $response = self::fetchclassdmc($params['class_id'], 
-        $params['dmc_view_type'], $params['dmc_info_id']);
+        $dmc_info_id = $params['dmc_info_id'];
+        $response = self::fetchclassdmc($dmc_info_id);
         switch ($format) {
             case 'html':
                 if (! empty($response)) {
@@ -1305,6 +1352,50 @@ class StudentController extends Zend_Controller_Action
         foreach ($dmc_data_array as $dmc_data) {
             $student_model->saveDmcMarks($dmc_data);
         }*/
+    }
+    public function fetchdmcinfoidsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request_object = $this->getRequest();
+        $params = array_diff($request_object->getParams(), 
+        $request_object->getUserParams());
+        Zend_Registry::get('logger')->debug('Parameter recieved from view :');
+        Zend_Registry::get('logger')->debug($params);
+        $member_id = $this->getMember_id();
+        $class_id = $params['class_id'];
+        $student_class_ids = $this->getAllClassIds();
+        Zend_Registry::get('logger')->debug('Student_class_ids : ');
+        Zend_Registry::get('logger')->debug($student_class_ids);
+        $class_enroll_check = array_keys($student_class_ids, $class_id);
+        if (! empty($class_enroll_check)) {
+            $response['class_info']['class_id'] = $class_id;
+            $format = $this->_getParam('format', 'html');
+            $dmc_info_ids = $this->fetchAllDmcInfoIds($class_id);
+            foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
+                $response['dmc_info'][$dmc_info_id] = $dmc_id;
+            }
+            Zend_Registry::get('logger')->debug('Response : ');
+            Zend_Registry::get('logger')->debug($response);
+            switch ($format) {
+                case 'html':
+                    $this->_helper->viewRenderer->setNoRender(false);
+                    $this->_helper->layout()->enableLayout();
+                    $this->view->assign('response', $response);
+                    break;
+                case 'jsonp':
+                    $callback = $this->getRequest()->getParam('callback');
+                    echo $callback . '(' . $this->_helper->json($response, 
+                    false) . ')';
+                    break;
+                case 'json':
+                    $this->_helper->json($response);
+                    break;
+                default:
+                    ;
+                    break;
+            }
+        }
     }
     public function viewdmcinfoAction ()
     {
@@ -1854,8 +1945,7 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
-    private function fetchclassdmc ($class_id, $dmc_view_type, 
-    $dmc_info_id = null)
+    private function fetchclassdmc ($dmc_info_id)
     {
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($this->getMember_id());
@@ -1866,26 +1956,9 @@ class StudentController extends Zend_Controller_Action
         $subject_data = array();
         $dmc_subject_data = array();
         $dmc_info_data = array();
-        switch ($dmc_view_type) {
-            case 'latest':
-                $subject_data = self::fetchStudentSubjects($class_id);
-                $class_dmc_info_id_array = $student_model->fetchDmcInfoIds(
-                $class_id, null, null, null, true);
-                if (! empty($class_dmc_info_id_array)) {
-                    $dmc_info_id_array = array_keys($class_dmc_info_id_array);
-                    $dmc_info_id = $dmc_info_id_array[0];
-                    $dmc_info_data = self::fetchDmcInfo($dmc_info_id);
-                    $dmc_subject_data = self::fetchDmcSubjectMarks($dmc_info_id, 
-                    $subject_ids);
-                }
-                break;
-            case 'single':
-                $subject_data = self::fetchStudentSubjects($class_id);
-                $dmc_info_data = self::fetchDmcInfo($dmc_info_id);
-                $dmc_subject_data = self::fetchDmcSubjectMarks($dmc_info_id, 
-                $subject_ids);
-                break;
-        }
+        $dmc_info_data = self::fetchDmcInfo($dmc_info_id);
+        $dmc_subject_data = self::fetchDmcSubjectMarks($dmc_info_id, 
+        $subject_ids);
         $response = array('dmc_info_data' => $dmc_info_data, 
         'dmc_data' => $dmc_subject_data, 'subject_data' => $subject_data);
         Zend_Registry::get('logger')->debug($response);

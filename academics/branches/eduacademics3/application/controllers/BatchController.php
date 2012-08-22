@@ -10,7 +10,7 @@ class BatchController extends Zend_Controller_Action
      * 
      * @param int $batch_id
      */
-    private function getBatchInfo ($batch_id)
+    private function findBatchInfo ($batch_id)
     {
         $batch = new Acad_Model_Batch();
         $batch->setBatch_id($batch_id);
@@ -35,7 +35,7 @@ class BatchController extends Zend_Controller_Action
      * @param date $batch_start
      * @return array|false
      */
-    private function getBatchIds ($batch_start = null, $department_id = null, 
+    private function findBatchIds ($batch_start = null, $department_id = null, 
     $programme_id = null)
     {
         $batch_start_basis = null;
@@ -66,13 +66,23 @@ class BatchController extends Zend_Controller_Action
     private function saveBatchInfo ($batch_info)
     {
         $batch = new Acad_Model_Batch();
-        try {
-            $batch->saveInfo($batch_info);
-        } catch (Exception $e) {
-            Zend_Registry::get('logger')->debug($e);
-            throw new Exception(
-            'There was some error saving batch information in academics. Please try again', 
-            Zend_Log::WARN);
+        $batch->saveInfo($batch_info);
+    }
+    public function addbatchAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $departments = $this->findDepartments();
+        $programmes = $this->findProgrammes();
+        if (empty($departments)) {
+            $this->view->assign('departments', false);
+        } else {
+            $this->view->assign('departments', $departments);
+        }
+        if (empty($programmes)) {
+            $this->view->assign('programmes', false);
+        } else {
+            $this->view->assign('programmes', $programmes);
         }
     }
     public function savebatchAction ()
@@ -83,7 +93,6 @@ class BatchController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $my_array = $params['myarray'];
         $batch_info = $my_array['batch_info'];
-        $save['batch_id'] = $batch_info['batch_id'];
         $save['department_id'] = $batch_info['department_id'];
         $save['programme_id'] = $batch_info['programme_id'];
         $save['batch_start'] = $batch_info['batch_start'];
@@ -112,7 +121,7 @@ class BatchController extends Zend_Controller_Action
              ($programme_id = $batch_params['programme_id']);
             $batch_params['batch_start'] &&
              ($batch_start = $batch_params['batch_start']);
-            $batch_ids = $this->getBatchIds($batch_start, $department_id, 
+            $batch_ids = $this->findBatchIds($batch_start, $department_id, 
             $programme_id);
             $this->_helper->json($batch_ids);
         }
@@ -124,32 +133,39 @@ class BatchController extends Zend_Controller_Action
         $request_object = $this->getRequest();
         $params = array_diff($request_object->getParams(), 
         $request_object->getUserParams());
-        $my_array = $params['myarray'];
-        $batch_id = $my_array['batch_id'];
-        $batch_info = $this->getBatchInfo($batch_id);
-        $response['batch_info'] = $batch_info;
-        $format = $this->_getParam('format', 'html');
-        switch ($format) {
-            case 'html':
-                $this->_helper->viewRenderer->setNoRender(false);
-                $this->_helper->layout()->enableLayout();
-                if (! empty($batch_info)) {
-                    $this->view->assign('response', $response);
-                } else {
-                    $this->view->assign('response', false);
-                }
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($response, false) .
-                 ')';
-                break;
-            case 'json':
-                $this->_helper->json($response);
-                break;
-            default:
-                ;
-                break;
+        $batch_id = null;
+        if (! empty($params['myarray'])) {
+            $my_array = $params['myarray'];
+            $batch_id = $my_array['batch_id'];
+        } else {
+            $batch_id = $request_object->getParam('batch_id');
+        }
+        if ($batch_id != null) {
+            $batch_info = $this->findBatchInfo($batch_id);
+            $response['batch_info'] = $batch_info;
+            $format = $this->_getParam('format', 'html');
+            switch ($format) {
+                case 'html':
+                    $this->_helper->viewRenderer->setNoRender(false);
+                    $this->_helper->layout()->enableLayout();
+                    if (! empty($batch_info)) {
+                        $this->view->assign('response', $response);
+                    } else {
+                        $this->view->assign('response', false);
+                    }
+                    break;
+                case 'jsonp':
+                    $callback = $this->getRequest()->getParam('callback');
+                    echo $callback . '(' . $this->_helper->json($response, 
+                    false) . ')';
+                    break;
+                case 'json':
+                    $this->_helper->json($response);
+                    break;
+                default:
+                    ;
+                    break;
+            }
         }
     }
 }
