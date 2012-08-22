@@ -2,7 +2,7 @@
 	$test_names = $this->test_names;
 ?>
 
-<h2>Professional Certification<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
+<h2>Professional Certification</h2>
 <form action="javascript:submit();" class="uniForm">
 	
 	<fieldset id="technical_info">
@@ -24,7 +24,7 @@
 	<fieldset id="certification_info">
 		<div class="ctrlHolder">
 			<label for="certification_name"><em class="red">*</em>Certification Name</label>
-			<input name="certification_name" id="certification_name" value="" data-default-value="e.g. OCJP" size="35" maxlength="50" type="text" class="textInput "/>
+			<input name="certification_name" id="certification_name" value="" data-default-value="e.g. OCJP" size="35" maxlength="50" type="text" class="required textInput "/>
 			<p class="formHint">Name of the Certification.</p>
 		</div>
 	 </fieldset>
@@ -99,9 +99,10 @@ function submit() {
         data : {myarray:getValues()},
         success: function(jStatus){
         	alert("Your information has been submitted successfully");
-            window.location.replace("/student/profile");
+            window.parent.location.reload();
         },
             error: function(response) {
+              alert(response.responseText);
           	  $('#errorBox').text(response.responseText).parent().show();
                 console.log(response);
                 }
@@ -142,15 +143,16 @@ function getValues() {
 		padding:10px 10px 10px 25px;
 		border:1px solid #b4c1da;
 		margin:-5px 0 40px 0;
-		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		width:auto;
 	}
 	h2,h3{
 		padding:3px 3px 3px 10px;
 		background-color:#eceff4;
 		border:1px solid #b4c1da;
-		width:57%;
 		font-size:17px;
 		font-weight:100;
+		margin-top:2px;
 	}
 	#goback a{
 		float:right;

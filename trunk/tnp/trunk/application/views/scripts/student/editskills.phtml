@@ -2,7 +2,7 @@
 	$skills = $this->all_skills;
 ?>
 
-<h2>Skill Set:<span id="goback"><a href="<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>">Go back to profile page</a></span></h2>
+<h2>Skill Set</h2>
 <form action="javascript:submit();" class="uniForm">
 <fieldset>
 	<div class="ctrlHolder"><label for="skill_id"><em>*</em>Name</label>
@@ -57,7 +57,7 @@
 </div>
 </form>
 
-<script><!--
+<script>
 
 	$(function(){
   		$('form.uniForm').uniform({
@@ -156,31 +156,30 @@
 		formData['member_proficiency'] = $('#profiency').val();
 		return formData;
 	}
---></script>
+</script>
 <style>
-.uniForm {
-	background-color: white;
-	padding: 10px 10px 10px 25px;
-	border: 1px solid #b4c1da;
-	margin: -5px 0 40px 0;
-	box-shadow: #e4e4e4 0px 0px 1px 1px;
-}
-
-h2,h3 {
-	padding: 3px 3px 3px 10px;
-	background-color: #eceff4;
-	border: 1px solid #b4c1da;
-	width: 57%;
-	font-size: 17px;
-	font-weight: 100;
-}
-
-#goback a {
-	float: right;
-	color: red;
-	font-size: 14px;
-	text-decoration: none;
-}
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		width:auto;
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		font-size:17px;
+		font-weight:100;
+		margin-top:2px;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
 </style>
 <?php
 $this->headScript()->appendFile(
