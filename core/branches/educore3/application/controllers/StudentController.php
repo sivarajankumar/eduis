@@ -81,8 +81,17 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $member_id_to_check = $this->getMember_id();
-        $member_id_exists = $this->memberIdCheck($member_id_to_check);
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $member_id_exists = $this->memberIdCheck($member_id);
         $this->_helper->json($member_id_exists);
     }
     /**
@@ -106,57 +115,51 @@ class StudentController extends Zend_Controller_Action
      * Enter description here ...
      * @param unknown_type $data_to_save
      */
-    private function saveClassInfo ($class_info)
+    private function saveClassInfo ($member_id, $class_info)
     {
-        $member_id = $this->getMember_id();
         $class_info['member_id'] = $member_id;
         $student = new Core_Model_Member_Student();
         $student->setMember_id($member_id);
         return $student->saveClassInfo($class_info);
     }
-    private function saveCriticalData ($data_to_save)
+    private function saveCriticalData ($member_id, $data_to_save)
     {
         /**
          * 
          * static for student
          * @var int
          */
-        $member_id = $this->getMember_id();
         $data_to_save['member_type_id'] = 1;
         $student_model = new Core_Model_Member_Student();
         $student_model->setMember_id($member_id);
         return $student_model->saveCriticalInfo($data_to_save);
     }
-    private function saveRelativeInfo ($relative_info)
+    private function saveRelativeInfo ($member_id, $relative_info)
     {
-        $member_id = $this->getMember_id();
         $student_model = new Core_Model_Member_Student();
         $relative_info['member_id'] = $member_id;
         $student_model->setMember_id($member_id);
         return $student_model->saveRelativesInfo($relative_info);
     }
-    private function saveAddressData ($address_info)
+    private function saveAddressData ($member_id, $address_info)
     {
-        $member_id = $this->getMember_id();
         $student_model = new Core_Model_Member_Student();
         $student_model->setMember_id($member_id);
         return $student_model->saveAddressInfo($address_info);
     }
-    private function saveContactsInfo ($contact_info)
+    private function saveContactsInfo ($member_id, $contact_info)
     {
-        $member_id = $this->getMember_id();
         $student_model = new Core_Model_Member_Student();
         $student_model->setMember_id($member_id);
         return $student_model->saveContactsInfo($contact_info);
     }
-    private function saveAdmissionData ($data_to_save)
+    private function saveAdmissionData ($member_id, $data_to_save)
     {
         /**
          * 
          * static for student
          * @var int
          */
-        $member_id = $this->getMember_id();
         $department_id = $data_to_save['department_id'];
         $student_model = new Core_Model_Member_Student();
         $admission = array('member_id' => $member_id, 
@@ -164,14 +167,13 @@ class StudentController extends Zend_Controller_Action
         $student_model->setMember_id($member_id);
         return $student_model->saveAdmissionInfo($admission);
     }
-    private function saveRegistrationInfo ($data_to_save)
+    private function saveRegistrationInfo ($member_id, $data_to_save)
     {
         /**
          * 
          * static for student
          * @var int
          */
-        $member_id = $this->getMember_id();
         $student_model = new Core_Model_Member_Student();
         $registration_id = $data_to_save['registration_id'];
         $registration_array = array('member_id' => $member_id, 
@@ -184,9 +186,8 @@ class StudentController extends Zend_Controller_Action
      * Enter description here ...
      * @param int $class_id
      */
-    private function findStuClassInfo ($class_id)
+    private function findStuClassInfo ($member_id, $class_id)
     {
-        $member_id = $this->getMember_id();
         $member_id_exists = $this->memberIdCheck($member_id);
         if ($member_id_exists) {
             $student = new Core_Model_Member_Student();
@@ -212,9 +213,8 @@ class StudentController extends Zend_Controller_Action
             return $stu_class_info;
         }
     }
-    private function findCriticalInfo ()
+    private function findCriticalInfo ($member_id)
     {
-        $member_id = $this->getMember_id();
         $member_id_exists = $this->memberIdCheck($member_id);
         if ($member_id_exists) {
             $student = new Core_Model_Member_Student();
@@ -245,9 +245,8 @@ class StudentController extends Zend_Controller_Action
             return $critical_data;
         }
     }
-    private function findAddressInfo ()
+    private function findAddressInfo ($member_id)
     {
-        $member_id = $this->getMember_id();
         $member_id_exists = $this->memberIdCheck($member_id);
         if ($member_id_exists) {
             $address = new Core_Model_Mapper_MemberAddress();
@@ -281,9 +280,8 @@ class StudentController extends Zend_Controller_Action
             return $address_info;
         }
     }
-    private function findContactsInfo ()
+    private function findContactsInfo ($member_id)
     {
-        $member_id = $this->getMember_id();
         $member_id_exists = $this->memberIdCheck($member_id);
         if ($member_id_exists) {
             $contact = new Core_Model_Mapper_MemberContacts();
@@ -315,9 +313,8 @@ class StudentController extends Zend_Controller_Action
             return $contact_info;
         }
     }
-    private function findRelativesInfo ()
+    private function findRelativesInfo ($member_id)
     {
-        $member_id = $this->getMember_id();
         $member_id_exists = $this->memberIdCheck($member_id);
         if ($member_id_exists) {
             $relative = new Core_Model_Mapper_MemberRelatives();
@@ -356,9 +353,8 @@ class StudentController extends Zend_Controller_Action
             return $relatives_info;
         }
     }
-    private function getActiveClassIds ()
+    private function getActiveClassIds ($member_id)
     {
-        $member_id = $this->getMember_id();
         $student = new Core_Model_Member_Student();
         $student->setMember_id($member_id);
         $class_ids = $student->fetchActiveClassIds();
@@ -373,9 +369,8 @@ class StudentController extends Zend_Controller_Action
             }
         }*/
     }
-    private function getAllClassIds ()
+    private function getAllClassIds ($member_id)
     {
-        $member_id = $this->getMember_id();
         $student = new Core_Model_Member_Student();
         $student->setMember_id($member_id);
         $class_ids = $student->fetchAllClassIds();
@@ -440,17 +435,26 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $this->view->assign('department_id', $this->getDepartment_id());
-        $class_ids = $this->getAllClassIds();
+        $class_ids = $this->getAllClassIds($member_id);
         if ($class_ids == false) {
             $this->view->assign('student_class_info', false);
         } else {
-            $member_id = $this->getMember_id();
             $student = new Core_Model_Member_Student();
             $student->setMember_id($member_id);
             $raw_class_info = array();
             foreach ($class_ids as $class_id) {
-                $info = $this->findStuClassInfo($class_id);
+                $info = $this->findStuClassInfo($member_id, $class_id);
                 $class_info = $this->findClassInfo($class_id);
                 $batch_id = $class_info['class_info']['batch_id'];
                 $raw_class_info[$batch_id] = $info['roll_no'];
@@ -473,9 +477,17 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $class_info = $params['myarray']['class_info'];
         $class_id = $class_info['class_id'];
-        $stu_class_info = $this->findStuClassInfo($class_id);
+        $stu_class_info = $this->findStuClassInfo($member_id, $class_id);
         Zend_Registry::get('logger')->debug($stu_class_info);
         $this->_helper->json($stu_class_info);
     }
@@ -492,15 +504,32 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $my_array = $params['myarray'];
         $student_class_info = $my_array['class_info'];
-        return $this->saveClassInfo($student_class_info);
+        return $this->saveClassInfo($member_id, $student_class_info);
     }
     public function fetchunvregistrationinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $member_id = $this->getMember_id();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $member_id_exists = $this->memberIdCheck($member_id);
         if ($member_id_exists) {
             $student = new Core_Model_Member_Student();
@@ -510,10 +539,10 @@ class StudentController extends Zend_Controller_Action
             if ($info instanceof Core_Model_StudentRegistration) {
                 $registration_info['registration_id'] = $info->getRegistration_id();
             }
-            $registration_info = false;
-            Zend_Registry::get('logger')->debug($registration_info);
             $this->_helper->json($registration_info);
-        }
+        } else {}
+        $registration_info = false;
+        $this->_helper->json($registration_info);
     }
     public function viewunvregistrationinfoAction ()
     {
@@ -531,9 +560,17 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $my_array = $params['myarray'];
         $reg_info = $my_array['registration_info'];
-        return $this->saveRegistrationInfo($reg_info);
+        return $this->saveRegistrationInfo($member_id, $reg_info);
     }
     /**
      * before calling this function use memberidcheck function
@@ -544,7 +581,17 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $personal_info = $this->findCriticalInfo();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $personal_info = $this->findCriticalInfo($member_id);
         Zend_Registry::get('logger')->debug($personal_info);
         $this->_helper->json($personal_info);
     }
@@ -564,16 +611,34 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $my_array = $params['myarray'];
         $critical_info = $my_array['personal_info'];
         Zend_Registry::get('logger')->debug($params);
-        return $this->saveCriticalData($critical_info);
+        return $this->saveCriticalData($member_id, $critical_info);
     }
     public function fetchaddressinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $address_info = $this->findAddressInfo();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $address_info = $this->findAddressInfo($member_id);
         $this->_helper->json($address_info);
     }
     public function viewaddressinfoAction ()
@@ -592,18 +657,36 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $my_array = $params['myarray'];
         $all_address_info = $my_array['address_info'];
         foreach ($all_address_info as $address_type => $address_info) {
             $address_info['address_type'] = $address_type;
-            $this->saveAddressData($address_info);
+            $this->saveAddressData($member_id, $address_info);
         }
     }
     public function fetchcontactinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $contact_info = $this->findContactsInfo();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $contact_info = $this->findContactsInfo($member_id);
         $this->_helper->json($contact_info);
     }
     public function viewcontactinfoAction ()
@@ -622,18 +705,36 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $my_array = $params['myarray'];
         $all_contact_info = $my_array['contact_info'];
         foreach ($all_contact_info as $contact_type => $contact_info) {
             $contact_info['contact_type_id'] = $contact_type;
-            $this->saveContactsInfo($contact_info);
+            $this->saveContactsInfo($member_id, $contact_info);
         }
     }
     public function fetchrelativesinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $relative_info = $this->findRelativesInfo();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $relative_info = $this->findRelativesInfo($member_id);
         $this->_helper->json($relative_info);
     }
     public function viewrelativesinfoAction ()
@@ -652,21 +753,26 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $my_array = $params['myarray'];
         $all_relatives_info = $my_array['relatives_info'];
         foreach ($all_relatives_info as $relatives_type => $relatives_info) {
             $relatives_info['relation_id'] = $relatives_type;
-            $this->saveRelativeInfo($relatives_info);
+            $this->saveRelativeInfo($member_id, $relatives_info);
         }
     }
     public function aclconfigAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $o = Zend_Auth::getInstance()->getIdentity();
-        $this->_helper->json($o);
-        //Zend_Registry::get('logger')->debug($o);
-        /*$methods = get_class_methods('StudentController');
+        $methods = get_class_methods('StudentController');
         $actions = array();
         foreach ($methods as $value) {
             $actions[] = substr("$value", 0, strpos($value, 'Action'));
@@ -691,12 +797,12 @@ class StudentController extends Zend_Controller_Action
         foreach ($actions as $action) {
             $bind = array('student', 'main', 'student', $action);
             $db->getAdapter()->query($sql, $bind);
-        }*/
-    /*foreach ($actions as $action) {
+        }
+        /*foreach ($actions as $action) {
             echo '<pre>';
             print_r($action);
             echo '</pre>';
-        }*/
-    //Zend_Registry::get('logger')->debug($actions);
+        }
+        Zend_Registry::get('logger')->debug($actions);*/
     }
 }
