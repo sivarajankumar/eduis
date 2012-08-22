@@ -7,7 +7,7 @@
 			<li><label for="is_cp_same"><input name="is_cp_same" id="is_cp_same" value="false" type="checkbox"/> Check if Communication and Permanent Addesses are same.</label></li>
 		</ul>
 		<p class="formHint"></p>
-    </div>
+	</div>
     
 	<fieldset id="ca">
 	<h4>Communication Address:</h4>
@@ -16,13 +16,13 @@
 		<input name="postal_code" id="postal_code" value="" data-default-value="e.g. 125001" size="35" maxlength="10" type="text" class="textInput validateInteger"/> 
 		<p class="formHint">Pincode of communication address.</p>
 	</div>
-        
+
 	<div class="ctrlHolder">
 		<label for="state"><em>*</em>State/Provience</label>
 		<input name="state" id="state" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
 		<p class="formHint">State/Territory of communication address.</p>
 	</div>
-	
+
 	<div class="ctrlHolder">
 		<label for=""><em>*</em>District</label>
 		<input name="district" id="district" value="" data-default-value="e.g. Mohindergarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
@@ -87,8 +87,6 @@
     	$('form.uniForm').uniform({
     		prevent_submit : true
     	});
-
-    	$('#topContent').hide();
     	
 		$('#is_cp_same').click(function(){
 			if($(this).is(':checked'))
@@ -124,6 +122,7 @@
             error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
     			console.log(response);
+    			alert("Something went wrong. The information was not saved. Please try again and if the problem still persists, then contact the administrator");
     		}
     	});
     });
@@ -188,15 +187,16 @@
 	padding:10px 10px 10px 25px;
 	border:1px solid #b4c1da;
 	margin:-5px 0 40px 0;
-	box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	box-shadow:#e4e4e4 0px 0px 1px 1px;
+	width:auto;
 }
 h2{
 	padding:3px 3px 3px 10px;
 	background-color:#eceff4;
 	border:1px solid #b4c1da;
-	width:57%;
 	font-size:17px;
 	font-weight:100;
+	margin-top:2px;	
 }
 span{
 	float:right;
