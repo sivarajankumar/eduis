@@ -1241,7 +1241,7 @@ class StudentController extends Zend_Controller_Action
                  ')';
                 break;
             case 'json':
-               /* echo "<pre>";
+                /*echo "<pre>";
                 print_r($response);
                 echo "</pre>";
                 Zend_Registry::get('logger')->debug($response);*/
@@ -1897,20 +1897,32 @@ class StudentController extends Zend_Controller_Action
             'No Subjects reported for Member_id : ' . $member_id, Zend_Log::WARN);
         }
         $subject_data = array();
-        $subject = new Acad_Model_Subject();
         foreach ($student_subject_ids as $student_subject_id => $subject_id) {
-            $subject->setSubject_id($subject_id);
-            $info = $subject->fetchInfo();
+            $info = $this->fetchSubjectInfo($subject_id);
             if ($info == false) {
                 throw new Exception(
                 'Subjects details for subject_id : ' . $subject_id .
                  ' does not exist', Zend_Log::WARN);
-            } elseif ($info instanceof Acad_Model_Subject) {
-                $subject_data[$student_subject_id]['name'] = $subject->getSubject_name();
-                $subject_data[$student_subject_id]['code'] = $subject->getSubject_code();
+            } else {
+                $subject_data[$student_subject_id]['name'] = $info['name'];
+                $subject_data[$student_subject_id]['code'] = $info['code'];
             }
         }
         return $subject_data;
+    }
+    private function fetchSubjectInfo ($subject_id)
+    {
+        $subject = new Acad_Model_Subject();
+        $subject->setSubject_id($subject_id);
+        $info = $subject->fetchInfo();
+        if ($info == false) {
+            $subject_info = false;
+        } elseif ($info instanceof Acad_Model_Subject) {
+            $subject_info = array();
+            $subject_info['name'] = $subject->getSubject_name();
+            $subject_info['code'] = $subject->getSubject_code();
+        }
+        return $subject_info;
     }
     private function savedmcsubjectmarks ($marks_info)
     {
@@ -1947,18 +1959,18 @@ class StudentController extends Zend_Controller_Action
     }
     private function fetchclassdmc ($dmc_info_id)
     {
-        $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $subject_data = array();
+        $dmc_info_raw = array();
+        $dmc_info_raw = self::fetchDmcInfo($dmc_info_id);
         $student_subject = new Acad_Model_StudentSubject();
         $student_subject->setMember_id($this->getMember_id());
+        $dmc_info_data = array_pop($dmc_info_raw);
+        $class_id = $dmc_info_data['class_id'];
         $student_subject->setClass_id($class_id);
-        $subject_ids = $student_subject->fetchSubjects();
-        $subject_data = array();
-        $dmc_subject_data = array();
-        $dmc_info_data = array();
-        $dmc_info_data = self::fetchDmcInfo($dmc_info_id);
+        $student_subject_ids = $student_subject->fetchSubjects();
         $dmc_subject_data = self::fetchDmcSubjectMarks($dmc_info_id, 
-        $subject_ids);
+        $student_subject_ids);
+        $subject_data = $this->fetchStudentSubjects($class_id);
         $response = array('dmc_info_data' => $dmc_info_data, 
         'dmc_data' => $dmc_subject_data, 'subject_data' => $subject_data);
         Zend_Registry::get('logger')->debug($response);
