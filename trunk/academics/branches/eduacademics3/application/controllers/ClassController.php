@@ -10,7 +10,7 @@ class ClassController extends Zend_Controller_Action
      * 
      * @param int $class_id
      */
-    private function getClassInfo ($class_id)
+    private function findClassInfo ($class_id)
     {
         $class = new Acad_Model_Class();
         $class->setClass_id($class_id);
@@ -18,7 +18,7 @@ class ClassController extends Zend_Controller_Action
         if ($info instanceof Acad_Model_Class) {
             $class_info = array();
             $class_info['class_id'] = $info->getClass_id();
-            $class_info['class_id'] = $info->getBatch_id();
+            $class_info['batch_id'] = $info->getBatch_id();
             $class_info['semester_id'] = $info->getSemester_id();
             $class_info['semester_type'] = $info->getSemester_type();
             $class_info['semester_duration'] = $info->getSemester_duration();
@@ -38,16 +38,16 @@ class ClassController extends Zend_Controller_Action
      * @param int $semester_id
      * @param bool $is_active
      */
-    private function getClassIds ($batch_id = null, $semester_id = null, 
+    private function findClassIds ($class_id = null, $semester_id = null, 
     $is_active = null)
     {
-        $batch_id_basis = null;
+        $class_id_basis = null;
         $semester_id_basis = null;
         $is_active_basis = null;
         $class = new Acad_Model_Class();
-        if ($batch_id) {
-            $batch_id_basis = true;
-            $class->setBatch_id($batch_id);
+        if ($class_id) {
+            $class_id_basis = true;
+            $class->setBatch_id($class_id);
         }
         if ($semester_id) {
             $semester_id_basis = true;
@@ -57,7 +57,7 @@ class ClassController extends Zend_Controller_Action
             $is_active_basis = true;
             $class->setIs_active($is_active);
         }
-        $class_ids = $class->fetchClassIds($batch_id_basis, $semester_id_basis, 
+        $class_ids = $class->fetchClassIds($class_id_basis, $semester_id_basis, 
         $is_active_basis);
         if (is_array($class_ids)) {
             return $class_ids;
@@ -68,13 +68,23 @@ class ClassController extends Zend_Controller_Action
     private function saveClassInfo ($class_info)
     {
         $class = new Acad_Model_Class();
-        try {
-            $class->saveInfo($class_info);
-        } catch (Exception $e) {
-            Zend_Registry::get('logger')->debug($e);
-            throw new Exception(
-            'There was some error saving Class information. Please try again', 
-            Zend_Log::WARN);
+        $class_id = $class->saveInfo($class_info);
+    }
+    public function addclassAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $departments = $this->findDepartments();
+        $programmes = $this->findProgrammes();
+        if (empty($departments)) {
+            $this->view->assign('departments', false);
+        } else {
+            $this->view->assign('departments', $departments);
+        }
+        if (empty($programmes)) {
+            $this->view->assign('programmes', false);
+        } else {
+            $this->view->assign('programmes', $programmes);
         }
     }
     public function saveclassAction ()
@@ -85,7 +95,6 @@ class ClassController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $my_array = $params['myarray'];
         $class_info = $my_array['class_info'];
-        $save['class_id'] = $class_info['class_id'];
         $save['batch_id'] = $class_info['batch_id'];
         $save['semester_id'] = $class_info['semester_id'];
         $save['semester_type'] = $class_info['semester_type'];
@@ -109,12 +118,11 @@ class ClassController extends Zend_Controller_Action
         $params = array_diff($request_object->getParams(), 
         $request_object->getUserParams());
         $my_array = $params['myarray'];
-        $class_params = $my_array['class_params'];
-        if (! empty($class_params)) {
-            $class_id = $class_params['class_id'] || null;
-            $semester_id = $class_params['semester_id'] || null;
-            $is_active = $class_params['is_active'] || null;
-            $class_ids = $this->getClassIds($class_id, $semester_id, $is_active);
+        $class_finder = $my_array['class_finder'];
+        if (! empty($class_finder)) {
+            $batch_id = $class_finder['batch_id'];
+            $semester_id = $class_finder['semester_id'];
+            $class_ids = $this->findClassIds($batch_id, $semester_id);
             $this->_helper->json($class_ids);
         }
     }
@@ -125,32 +133,39 @@ class ClassController extends Zend_Controller_Action
         $request_object = $this->getRequest();
         $params = array_diff($request_object->getParams(), 
         $request_object->getUserParams());
-        $my_array = $params['myarray'];
-        $class_id = $my_array['class_id'];
-        $class_info = $this->getClassInfo($class_id);
-        $response['class_info'] = $class_info;
-        $format = $this->_getParam('format', 'html');
-        switch ($format) {
-            case 'html':
-                $this->_helper->viewRenderer->setNoRender(false);
-                $this->_helper->layout()->enableLayout();
-                if (! empty($class_info)) {
-                    $this->view->assign('response', $response);
-                } else {
-                    $this->view->assign('response', false);
-                }
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($response, false) .
-                 ')';
-                break;
-            case 'json':
-                $this->_helper->json($response);
-                break;
-            default:
-                ;
-                break;
+        $class_id = null;
+        if (! empty($params['myarray'])) {
+            $my_array = $params['myarray'];
+            $class_id = $my_array['class_id'];
+        } else {
+            $class_id = $request_object->getParam('class_id');
+        }
+        if ($class_id != null) {
+            $class_info = $this->findClassInfo($class_id);
+            $response['class_info'] = $class_info;
+            $format = $this->_getParam('format', 'html');
+            switch ($format) {
+                case 'html':
+                    $this->_helper->viewRenderer->setNoRender(false);
+                    $this->_helper->layout()->enableLayout();
+                    if (! empty($class_info)) {
+                        $this->view->assign('response', $response);
+                    } else {
+                        $this->view->assign('response', false);
+                    }
+                    break;
+                case 'jsonp':
+                    $callback = $this->getRequest()->getParam('callback');
+                    echo $callback . '(' . $this->_helper->json($response, 
+                    false) . ')';
+                    break;
+                case 'json':
+                    $this->_helper->json($response);
+                    break;
+                default:
+                    ;
+                    break;
+            }
         }
     }
 }

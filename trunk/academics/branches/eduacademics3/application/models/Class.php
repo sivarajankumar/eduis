@@ -305,6 +305,20 @@ class Acad_Model_Class extends Acad_Model_Generic
         $class_id = $this->getClass_id(true);
         return $this->getMapper()->classExistCheck($class_id);
     }
+    /**
+     * Fetches semesters covered by a batch 
+     * @return array with class_id as key and semesters as value
+     */
+    public function fetchBatchSemesters ()
+    {
+        $batch_id = $this->getBatch_id(true);
+        $sems = $this->getMapper()->fetchBatchSemesters($batch_id);
+        if (empty($sems)) {
+            return false;
+        } else {
+            return $sems;
+        }
+    }
     public function saveInfo ($class_info)
     {
         Zend_Registry::get('logger')->debug($class_info);
