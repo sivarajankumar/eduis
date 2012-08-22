@@ -10,8 +10,7 @@
 <h3><center>DMC Information</center></h3>
 <hr>
 <?php
-    foreach ($dmcInfoData as $key => $value){
-        foreach ($value as $dmc_property => $val){
+        foreach ($dmcInfoData as $dmc_property => $val){
             if($dmc_property != 'result_type_id'){
                 $dmc_property_modified = ucfirst(str_replace('_',' ',$dmc_property));
                 echo '<span class="dmc_info_index">'.$dmc_property_modified.'</span> <span class="dmc_info_value">'.$val.'</span><br>';
@@ -41,7 +40,6 @@
                 }
             }
         }
-    }
 ?>
 </div>
 
