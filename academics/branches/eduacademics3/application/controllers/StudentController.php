@@ -158,9 +158,20 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
+        $request_object = $this->getRequest();
+        $params = array_diff($request_object->getParams(), 
+        $request_object->getUserParams());
         $student_model = new Acad_Model_Member_Student();
-        $member_id_to_check = $this->getMember_id();
-        $member_exists_in_acad = $this->memberIdCheck($member_id_to_check);
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $format = $this->_getParam('format', 'html');
+        $member_exists_in_acad = $this->memberIdCheck($member_id);
         /*
          * dont use this if statement because user may have updated the data in core
          * and the old data may still exist in academics database .thus in the case
@@ -204,10 +215,18 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $format = $this->_getParam('format', 'html');
         $this->_helper->viewRenderer->setNoRender(false);
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $filled_qualifications = array();
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
@@ -225,7 +244,7 @@ class StudentController extends Zend_Controller_Action
         $dmc_dispatch_dates = array();
         $no_details_sems = array();
         $student = new Acad_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
+        $student->setMember_id($member_id);
         $class_ids = $student->fetchAllClassIds();
         $class = new Acad_Model_Class();
         foreach ($class_ids as $class_id) {
@@ -302,12 +321,21 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $format = $this->_getParam('format', 'html');
         $qualification_name = 'MATRIC';
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
         $qualification_id = array_search($qualification_name, $qualifications);
-        $qualification_data = self::fetchMatricData($qualification_id);
+        $qualification_data = self::fetchMatricData($qualification_id, 
+        $member_id);
         switch ($format) {
             case 'html':
                 if (! empty($qualification_data)) {
@@ -337,12 +365,21 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $student_model->setMember_id($member_id);
         $qualification_name = 'TWELFTH';
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
         $qualification_id = array_search($qualification_name, $qualifications);
-        $qualification_data = self::fetchTwelfthData($qualification_id);
+        $qualification_data = self::fetchTwelfthData($qualification_id, 
+        $member_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -374,8 +411,16 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
-        $qualification_data = self::fetchMtechData();
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $student_model->setMember_id($member_id);
+        $qualification_data = self::fetchMtechData($member_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -406,13 +451,22 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $qualification_name = 'DIPLOMA';
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
         $qualification_id = array_search($qualification_name, $qualifications);
-        $qualification_data = self::fetchDiplomaData($qualification_id);
+        $qualification_data = self::fetchDiplomaData($qualification_id, 
+        $member_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -443,13 +497,22 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $qualification_name = 'BTECH';
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
         $qualification_id = array_search($qualification_name, $qualifications);
-        $qualification_data = self::fetchBtechData($qualification_id);
+        $qualification_data = self::fetchBtechData($qualification_id, 
+        $member_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -480,13 +543,21 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $exam_name = 'LEET';
         $exam_model = new Acad_Model_CompetitiveExam();
         $exams = $exam_model->fetchExams();
         $exam_id = array_search($exam_name, $exams);
-        $exam_data = self::fetchCompetitiveExamData($exam_id);
+        $exam_data = self::fetchCompetitiveExamData($exam_id, $member_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -516,12 +587,20 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $format = $this->_getParam('format', 'html');
         $exam_name = 'AIEEE';
         $exam_model = new Acad_Model_CompetitiveExam();
         $exams = $exam_model->fetchExams();
         $exam_id = array_search($exam_name, $exams);
-        $exam_data = self::fetchCompetitiveExamData($exam_id);
+        $exam_data = self::fetchCompetitiveExamData($exam_id, $member_id);
         switch ($format) {
             case 'html':
                 if (! empty($exam_data)) {
@@ -552,13 +631,21 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $exam_name = 'GATE';
         $exam_model = new Acad_Model_CompetitiveExam();
         $exams = $exam_model->fetchExams();
         $exam_id = array_search($exam_name, $exams);
-        $exam_data = self::fetchCompetitiveExamData($exam_id);
+        $exam_data = self::fetchCompetitiveExamData($exam_id, $member_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -589,13 +676,21 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $qualification_name = $params['myarray']['qualification_name'];
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
         $qualification_id = array_search($qualification_name, $qualifications);
         $save_data = $params['myarray']['qualification_data'];
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $student_model->saveQualificationInfo($qualification_id, $save_data);
         $success = true;
         switch ($format) {
@@ -626,13 +721,21 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $qualification_name = $params['myarray']['qualification_name'];
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
         $qualification_id = array_search($qualification_name, $qualifications);
         $save_data = $params['myarray']['qualification_data'];
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $student_model->saveQualificationInfo($qualification_id, $save_data);
         $success = true;
         switch ($format) {
@@ -663,13 +766,21 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $qualification_name = $params['myarray']['qualification_name'];
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
         $qualification_id = array_search($qualification_name, $qualifications);
         $save_data = $params['myarray']['qualification_data'];
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $student_model->saveQualificationInfo($qualification_id, $save_data);
         $success = true;
         switch ($format) {
@@ -700,13 +811,21 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $qualification_name = $params['myarray']['qualification_name'];
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
         $qualification_id = array_search($qualification_name, $qualifications);
         $save_data = $params['myarray']['qualification_data'];
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $student_model->saveQualificationInfo($qualification_id, $save_data);
         $success = true;
         switch ($format) {
@@ -737,10 +856,18 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $qualification_id = $this->fetchQualificationId('MTECH');
         $save_data = $params['myarray']['qualification_data'];
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $student_model->saveQualificationInfo($qualification_id, $save_data);
         $success = true;
         switch ($format) {
@@ -770,10 +897,18 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $format = $this->_getParam('format', 'html');
         $save_data = $params['myarray']['exam_data'];
         $exam_name = 'LEET';
-        $success = self::saveExamInfo($exam_name, $save_data);
+        $success = self::saveExamInfo($member_id, $exam_name, $save_data);
         switch ($format) {
             case 'html':
                 if (! empty($success)) {
@@ -801,10 +936,18 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $format = $this->_getParam('format', 'html');
         $save_data = $params['myarray']['exam_data'];
         $exam_name = 'AIEEE';
-        $success = self::saveExamInfo($exam_name, $save_data);
+        $success = self::saveExamInfo($member_id, $exam_name, $save_data);
         switch ($format) {
             case 'html':
                 if (! empty($success)) {
@@ -832,10 +975,18 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $format = $this->_getParam('format', 'html');
         $save_data = $params['myarray']['exam_data'];
         $exam_name = 'GATE';
-        $success = self::saveExamInfo($exam_name, $save_data);
+        $success = self::saveExamInfo($member_id, $exam_name, $save_data);
         switch ($format) {
             case 'html':
                 if (! empty($success)) {
@@ -864,8 +1015,16 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $qualification_name = 'MATRIC';
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
@@ -878,7 +1037,8 @@ class StudentController extends Zend_Controller_Action
         $student_qualifications);
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
-            $qualification_data = self::fetchMatricData($qualification_id);
+            $qualification_data = self::fetchMatricData($qualification_id, 
+            $member_id);
             switch ($format) {
                 case 'html':
                     $this->_helper->viewRenderer->setNoRender(false);
@@ -911,8 +1071,16 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $qualification_name = 'TWELFTH';
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
@@ -925,7 +1093,8 @@ class StudentController extends Zend_Controller_Action
         $student_qualifications);
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
-            $qualification_data = self::fetchTwelfthData($qualification_id);
+            $qualification_data = self::fetchTwelfthData($qualification_id, 
+            $member_id);
             switch ($format) {
                 case 'html':
                     $this->_helper->viewRenderer->setNoRender(false);
@@ -959,7 +1128,15 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $student_model->setMember_id($member_id);
         $qualification_name = 'BTECH';
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
@@ -972,7 +1149,8 @@ class StudentController extends Zend_Controller_Action
         $student_qualifications);
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
-            $qualification_data = self::fetchBtechData($qualification_id);
+            $qualification_data = self::fetchBtechData($qualification_id, 
+            $member_id);
             switch ($format) {
                 case 'html':
                     $this->_helper->viewRenderer->setNoRender(false);
@@ -1006,8 +1184,16 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
-        $qualification_data = self::fetchMtechData();
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $student_model->setMember_id($member_id);
+        $qualification_data = self::fetchMtechData($member_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -1039,8 +1225,16 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $qualification_name = 'DIPLOMA';
         $qualification_model = new Acad_Model_Qualification();
         $qualifications = $qualification_model->fetchQualifications();
@@ -1053,7 +1247,8 @@ class StudentController extends Zend_Controller_Action
         $student_qualifications);
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
-            $qualification_data = self::fetchDiplomaData($qualification_id);
+            $qualification_data = self::fetchDiplomaData($qualification_id, 
+            $member_id);
             switch ($format) {
                 case 'html':
                     $this->_helper->viewRenderer->setNoRender(false);
@@ -1086,15 +1281,24 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $exam_name = 'AIEEE';
         $exams_names = $this->getCompetitiveExams();
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $exam_ids = $student_model->fetchCompetitveExamIds();
         if (! empty($exam_ids)) {
             $exam_id = array_search($exam_name, $exams_names);
             if ($exam_id) {
-                $exam_data = self::fetchCompetitiveExamData($exam_id);
+                $exam_data = self::fetchCompetitiveExamData($exam_id, 
+                $member_id);
                 switch ($format) {
                     case 'html':
                         if (! empty($exam_data)) {
@@ -1124,6 +1328,14 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $format = $this->_getParam('format', 'html');
         $exam_name = 'AIEEE';
         $exam_model = new Acad_Model_CompetitiveExam();
@@ -1131,7 +1343,8 @@ class StudentController extends Zend_Controller_Action
         $exam_id = array_search($exam_name, $exams);
         if ($exam_id) {
             $student_model = new Acad_Model_Member_Student();
-            $qualification_data = self::fetchCompetitiveExamData($exam_id);
+            $qualification_data = self::fetchCompetitiveExamData($exam_id, 
+            $member_id);
             switch ($format) {
                 case 'html':
                     $this->_helper->viewRenderer->setNoRender(false);
@@ -1163,6 +1376,14 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $format = $this->_getParam('format', 'html');
         $exam_name = 'GATE';
         $exam_model = new Acad_Model_CompetitiveExam();
@@ -1170,7 +1391,8 @@ class StudentController extends Zend_Controller_Action
         $exam_id = array_search($exam_name, $exams);
         if ($exam_id) {
             $student_model = new Acad_Model_Member_Student();
-            $qualification_data = self::fetchCompetitiveExamData($exam_id);
+            $qualification_data = self::fetchCompetitiveExamData($exam_id, 
+            $member_id);
             switch ($format) {
                 case 'html':
                     $this->_helper->viewRenderer->setNoRender(false);
@@ -1207,6 +1429,14 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $format = $this->_getParam('format');
         /* --------------------------------------------------------------------------- */
         /*
@@ -1290,7 +1520,7 @@ class StudentController extends Zend_Controller_Action
          */
         $stu_cl_inf = array();
         foreach ($student_batches as $classid => $batch_id) {
-            $stu_cl_inf[$classid] = $this->getClassInfo($classid);
+            $stu_cl_inf[$classid] = $this->getClassInfo($member_id, $classid);
         }
         $response = array();
         $response['student_class_info'] = $stu_cl_inf;
@@ -1400,16 +1630,24 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $dmc_info = $params['myarray']['dmc_data'];
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $dmc_data_array = $params['myarray']['dmc_info_data'];
         $dmc_id = $dmc_info['dmc_id'];
         $class_id = $dmc_info['class_id'];
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $dmc_info_id = $student_model->saveDmcInfo($dmc_info);
         /*$dmc_data_value = array_values($dmc_data_array);
         $subject_ids = array_keys($dmc_data_array);
         $student_subject_model = new Acad_Model_StudentSubject();
-        $student_subject_model->setMember_id($this->getMember_id());
+        $student_subject_model->setMember_id($member_id());
         $student_subject_model->setClass_id($class_id);
         $student_subject_id = array();
         foreach ($dmc_data_array as $subject_id => $data_array) {
@@ -1420,7 +1658,7 @@ class StudentController extends Zend_Controller_Action
             $dmc_data_array[$subject_id] = $data_array;
         }
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         foreach ($dmc_data_array as $dmc_data) {
             $student_model->saveDmcMarks($dmc_data);
         }*/
@@ -1432,9 +1670,16 @@ class StudentController extends Zend_Controller_Action
         $request_object = $this->getRequest();
         $params = array_diff($request_object->getParams(), 
         $request_object->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         Zend_Registry::get('logger')->debug('Parameter recieved from view :');
         Zend_Registry::get('logger')->debug($params);
-        $member_id = $this->getMember_id();
         $class_id = $params['class_id'];
         $student_class_ids = $this->getAllClassIds();
         Zend_Registry::get('logger')->debug('Student_class_ids : ');
@@ -1443,7 +1688,7 @@ class StudentController extends Zend_Controller_Action
         if (! empty($class_enroll_check)) {
             $response['class_info']['class_id'] = $class_id;
             $format = $this->_getParam('format', 'html');
-            $dmc_info_ids = $this->fetchAllDmcInfoIds($class_id);
+            $dmc_info_ids = $this->fetchAllDmcInfoIds($member_id, $class_id);
             foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
                 $response['dmc_info'][$dmc_info_id] = $dmc_id;
             }
@@ -1478,14 +1723,24 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $member_id = $this->getMember_id();
+        $request_object = $this->getRequest();
+        $params = array_diff($request_object->getParams(), 
+        $request_object->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $class_ids = $this->getAllClassIds();
         if (empty($class_ids)) {
             $this->view->assign('class_info', false);
         } else {
             $class_info = array();
             foreach ($class_ids as $class_id) {
-                $info = $this->getClassInfo($class_id);
+                $info = $this->getClassInfo($member_id, $class_id);
                 foreach ($info as $class_id => $semester_id) {
                     $class_info[$class_id] = $semester_id;
                 }
@@ -1500,6 +1755,14 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $format = $this->_getParam('format', 'html');
         $dmc_info = $params['myarray']['dmc_info'];
         $class_id = null;
@@ -1509,7 +1772,7 @@ class StudentController extends Zend_Controller_Action
                 'Class_Id is required to save Dmc Information.None provided', 
                 Zend_Log::WARN);
             } else {
-                $this->saveDmcInfo($dmc_info);
+                $this->saveDmcInfo($member_id, $dmc_info);
                 Zend_Registry::get('logger')->debug('DMC information saved : ');
                 Zend_Registry::get('logger')->debug($dmc_info);
             }
@@ -1525,7 +1788,7 @@ class StudentController extends Zend_Controller_Action
             $class_ids = $this->getClassIds($batch_id, $semester_id);
             $class_id = $class_ids[0];
             $dmc_info['class_id'] = $class_id;
-            $this->saveDmcInfo($dmc_info);
+            $this->saveDmcInfo($member_id, $dmc_info);
             Zend_Registry::get('logger')->debug('DMC information saved : ');
             Zend_Registry::get('logger')->debug($dmc_info);
         }
@@ -1543,6 +1806,14 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $format = $this->_getParam('format', 'html');
         Zend_Registry::get('logger')->debug($params);
         $subject_marks_info = $params['myarray']['subject_marks_info'];
@@ -1551,7 +1822,7 @@ class StudentController extends Zend_Controller_Action
         foreach ($subject_marks_info as $stu_sub_id => $dmc_subject_marks) {
             $dmc_subject_marks['dmc_info_id'] = $dmc_info_id;
             $dmc_subject_marks['student_subject_id'] = $stu_sub_id;
-            $this->savedmcsubjectmarks($dmc_subject_marks);
+            $this->savedmcsubjectmarks($member_id, $dmc_subject_marks);
         }
     }
     public function fetchsubjectdmcAction ()
@@ -1560,12 +1831,21 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $format = $this->_getParam('format', 'html');
         $subject_id = $params['subject_id'];
         $dmc_info_id = $params['dmc_info_id'];
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
-        $dmc_data = self::fetchDmcSubjectMarks($dmc_info_id, $subject_id);
+        $student_model->setMember_id($member_id);
+        $dmc_data = self::fetchDmcSubjectMarks($member_id, $dmc_info_id, 
+        $subject_id);
         switch ($format) {
             case 'html':
                 if (! empty($dmc_data)) {
@@ -1653,7 +1933,7 @@ class StudentController extends Zend_Controller_Action
             $student->setMember_id($member_id);
             $student_model = $student->fetchCriticalInfo();
             if ($student_model instanceof Acad_Model_Member_Student) {
-                $critical_data['member_id'] = $this->getMember_id();
+                $critical_data['member_id'] = $member_id;
                 $critical_data['first_name'] = $student_model->getFirst_name();
                 $critical_data['middle_name'] = $student_model->getMiddle_name();
                 $critical_data['last_name'] = $student_model->getLast_name();
@@ -1671,15 +1951,16 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
-    /*
+    /**
      * returns matric data of student
      * @param int qualification_id  
+     * @param int member_id
      * @return array $matric_data return array of present data of student in qualification table
      */
-    private function fetchMatricData ($qualification_id)
+    private function fetchMatricData ($qualification_id, $member_id)
     {
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $qualification_model = $student_model->fetchQualificationInfo(
         $qualification_id);
         if ($qualification_model instanceof Acad_Model_Qualification_Matric) {
@@ -1700,14 +1981,15 @@ class StudentController extends Zend_Controller_Action
      * returns btech data of student
      * Enter description here ...
      * @param int qualification_id 
+     * @param int member_id
      * @todo no need of qualification id.. must work only for btech.. get id from model 
      * @return array $btech return array of present data of student in qualification table
      *
      */
-    private function fetchBtechData ($qualification_id)
+    private function fetchBtechData ($qualification_id, $member_id)
     {
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $qualification_model = $student_model->fetchQualificationInfo(
         $qualification_id);
         $btech_data = array();
@@ -1729,15 +2011,15 @@ class StudentController extends Zend_Controller_Action
     /**
      * returns mtech data of student
      * Enter description here ...
-     * @param int qualification_id 
+     * @param int $member_id 
      * @return array $mtech return array of present data of student in qualification table
      *
      */
-    private function fetchMtechData ()
+    private function fetchMtechData ($member_id)
     {
         $qualification_id = $this->fetchQualificationId('MTECH');
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $qualification = $student_model->fetchQualificationInfo(
         $qualification_id);
         $mtech_data = array();
@@ -1776,10 +2058,10 @@ class StudentController extends Zend_Controller_Action
      * @param int qualification_id  
      * @return array $twelfth_array return array of present data of student in qualification table
      */
-    private function fetchTwelfthData ($qualification_id)
+    private function fetchTwelfthData ($qualification_id, $member_id)
     {
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $qualification_model = $student_model->fetchQualificationInfo(
         $qualification_id);
         if ($qualification_model instanceof Acad_Model_Qualification_Twelfth) {
@@ -1798,10 +2080,10 @@ class StudentController extends Zend_Controller_Action
         }
         return $twelfth_data;
     }
-    private function fetchDiplomaData ($qualification_id)
+    private function fetchDiplomaData ($qualification_id, $member_id)
     {
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $qualification_model = $student_model->fetchQualificationInfo(
         $qualification_id);
         if ($qualification_model instanceof Acad_Model_Qualification_Diploma) {
@@ -1820,10 +2102,10 @@ class StudentController extends Zend_Controller_Action
         }
         return $diploma_data;
     }
-    private function fetchCompetitiveExamData ($exam_id)
+    private function fetchCompetitiveExamData ($exam_id, $member_id)
     {
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $exam_data = array();
         $exam_model = new Acad_Model_CompetitiveExam();
         $exam_model->setExam_id($exam_id);
@@ -1840,51 +2122,51 @@ class StudentController extends Zend_Controller_Action
         }
         return $exam_data;
     }
-    private function fetchDmcInfo ($specific_dmc_info_id = null, 
+    private function fetchDmcInfo ($member_id, $specific_dmc_info_id = null, 
     $class_specific = null, $result_type_specific = null, $all = null, 
     $considered_only = null, $ordered_by_date = null)
     {
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         if ($specific_dmc_info_id) {
-            $dmc_info = self::getDmcInfo($specific_dmc_info_id);
+            $dmc_info = self::getDmcInfo($member_id, $specific_dmc_info_id);
             return $dmc_info;
         }
         if ($class_specific) {
             $dmc_info_ids = $student_model->fetchDmcInfoIds(true, null, null, 
             null, null);
-            $dmc_info = self::getDmcInfo($dmc_info_ids);
+            $dmc_info = self::getDmcInfo($member_id, $dmc_info_ids);
             return $dmc_info;
         }
         if ($result_type_specific) {
             $dmc_info_ids = $student_model->fetchDmcInfoIds(null, true, null, 
             null, true);
-            $dmc_info = self::getDmcInfo($dmc_info_ids);
+            $dmc_info = self::getDmcInfo($member_id, $dmc_info_ids);
             return $dmc_info;
         }
         if ($all) {
             $dmc_info_ids = $student_model->fetchDmcInfoIds(null, null, true, 
             null, null);
-            $dmc_info = self::getDmcInfo($dmc_info_ids);
+            $dmc_info = self::getDmcInfo($member_id, $dmc_info_ids);
             return $dmc_info;
         }
         if ($considered_only) {
             $dmc_info_ids = $student_model->fetchDmcInfoIds(null, null, null, 
             true, null);
-            $dmc_info = self::getDmcInfo($dmc_info_ids);
+            $dmc_info = self::getDmcInfo($member_id, $dmc_info_ids);
             return $dmc_info;
         }
         if ($ordered_by_date) {
             $dmc_info_ids = $student_model->fetchDmcInfoIds(null, null, null, 
             null, true);
-            $dmc_info = self::getDmcInfo($dmc_info_ids);
+            $dmc_info = self::getDmcInfo($member_id, $dmc_info_ids);
             return $dmc_info;
         }
     }
-    private function getDmcInfo ($dmc_info_ids)
+    private function getDmcInfo ($member_id, $dmc_info_ids)
     {
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         if (is_array($dmc_info_ids) and ! empty($dmc_info_ids)) {
             $dmc_info_data = array();
             foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
@@ -1921,26 +2203,27 @@ class StudentController extends Zend_Controller_Action
             throw new Exception('Dmc_info does not exist', Zend_Log::WARN);
         }
     }
-    private function fetchDmcSubjectMarks ($dmc_info_id, $subject_ids)
+    private function fetchDmcSubjectMarks ($member_id, $dmc_info_id, 
+    $subject_ids)
     {
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $dmc_subject_marks = array();
         if (is_array($subject_ids)) {
             foreach ($subject_ids as $key => $subject_id) {
                 $dmc_subject_marks[$subject_id] = $this->getDmcSubjectMarks(
-                $dmc_info_id, $subject_id);
+                $member_id, $dmc_info_id, $subject_id);
             }
         } else {
-            $dmc_subject_marks = $this->getDmcSubjectMarks($dmc_info_id, 
-            $subject_id);
+            $dmc_subject_marks = $this->getDmcSubjectMarks($member_id, 
+            $dmc_info_id, $subject_id);
         }
         return $dmc_subject_marks;
     }
-    private function getDmcSubjectMarks ($dmc_info_id, $subject_id)
+    private function getDmcSubjectMarks ($member_id, $dmc_info_id, $subject_id)
     {
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $info = $student_model->fetchDmc($dmc_info_id, $subject_id);
         if ($info instanceof Acad_Model_Course_DmcMarks) {
             $info->setStudent_subject_id($subject_id);
@@ -1995,9 +2278,8 @@ class StudentController extends Zend_Controller_Action
         }
         return $subject_info;
     }
-    private function savedmcsubjectmarks ($marks_info)
+    private function savedmcsubjectmarks ($member_id, $marks_info)
     {
-        $member_id = $this->getMember_id();
         $student = new Acad_Model_Member_Student();
         $student->setMember_id($member_id);
         $dmc_subject_marks['dmc_info_id'] = $marks_info['dmc_info_id'];
@@ -2010,9 +2292,8 @@ class StudentController extends Zend_Controller_Action
         $dmc_subject_marks['date'] = $marks_info['date'];
         return $student->saveDmcMarks($dmc_subject_marks);
     }
-    private function fetchAllDmcInfoIds ($class_id)
+    private function fetchAllDmcInfoIds ($member_id, $class_id)
     {
-        $member_id = $this->getMember_id();
         $student = new Acad_Model_Member_Student();
         $student->setMember_id($member_id);
         $dmc_info_ids = $student->fetchDmcInfoIds($class_id);
@@ -2038,24 +2319,24 @@ class StudentController extends Zend_Controller_Action
     {
         $subject_data = array();
         $dmc_info_raw = array();
-        $dmc_info_raw = self::fetchDmcInfo($dmc_info_id);
+        $dmc_info_raw = self::fetchDmcInfo($member_id, $dmc_info_id);
         $student_subject = new Acad_Model_StudentSubject();
-        $student_subject->setMember_id($this->getMember_id());
+        $student_subject->setMember_id($member_id);
         $dmc_info_data = array_pop($dmc_info_raw);
         $class_id = $dmc_info_data['class_id'];
         $student_subject->setClass_id($class_id);
         $student_subject_ids = $student_subject->fetchSubjects();
-        $dmc_subject_data = self::fetchDmcSubjectMarks($dmc_info_id, 
+        $dmc_subject_data = self::fetchDmcSubjectMarks($member_id, $dmc_info_id, 
         $student_subject_ids);
         $subject_data = $this->fetchStudentSubjects($class_id, $member_id);
         $response = array('dmc_info_data' => $dmc_info_data, 
         'dmc_data' => $dmc_subject_data, 'subject_data' => $subject_data);
         return $response;
     }
-    private function saveExamInfo ($exam_name, $save_data)
+    private function saveExamInfo ($member_id, $exam_name, $save_data)
     {
         $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $exam_model = new Acad_Model_CompetitiveExam();
         $exams = $exam_model->fetchExams();
         $exam_id = array_search($exam_name, $exams);
@@ -2073,9 +2354,8 @@ class StudentController extends Zend_Controller_Action
      * Enter description here ...
      * @param int $class_id
      */
-    private function getClassInfo ($class_id)
+    private function getClassInfo ($member_id, $class_id)
     {
-        $member_id = $this->getMember_id();
         $student = new Acad_Model_Member_Student();
         $student->setMember_id($member_id);
         $info = $student->fetchClassInfo($class_id);
@@ -2197,9 +2477,8 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
-    private function saveDmcInfo ($dmc_info)
+    private function saveDmcInfo ($member_id, $dmc_info)
     {
-        $member_id = $this->getMember_id();
         $student = new Acad_Model_Member_Student();
         $student->setMember_id($member_id);
         $save_info['dmc_id'] = $dmc_info['dmc_id'];
