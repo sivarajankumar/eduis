@@ -213,7 +213,7 @@
 	});
 
     function get_dmc_info(){
-    	dmc_data['class_id'] = <?php echo $_GET['class_id'];?>;
+    	dmc_data['class_id'] = <?php echo $this->response['dmc_info_data']['class_id'];?>;
     	
     	$('fieldset#dmc_info :input')
     	.not('button,:input[value^="e.g."]')
