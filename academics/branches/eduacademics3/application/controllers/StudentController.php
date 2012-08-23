@@ -1480,12 +1480,15 @@ class StudentController extends Zend_Controller_Action
         $batch_info = array();
         $batch_sems = array();
         $batch_class_ids = array();
-        $httpClient->setUri('http://' . ACADEMIC_SERVER . '/batch/getbatchinfo');
+        //$temp = array();
+        $httpClient->setUri(
+        'http://' . ACADEMIC_SERVER . '/batch/getbatchinfo');
         foreach ($student_batches as $classid => $bath_id) {
             $class->setBatch_id($bath_id);
             $temp = $class->fetchClassIds(true);
             foreach ($temp as $key => $clss_id) {
-                if (array_search($clss_id, $student_class_ids)) {} else {
+                $returned_key = array_search($clss_id, $student_class_ids);
+                if (is_integer($returned_key)) {} else {
                     unset($temp[$key]);
                 }
             }
@@ -1520,7 +1523,7 @@ class StudentController extends Zend_Controller_Action
          */
         $stu_cl_inf = array();
         foreach ($student_batches as $classid => $batch_id) {
-            $stu_cl_inf[$classid] = $this->getClassInfo($member_id, $classid);
+            $stu_cl_inf[$batch_id] = $this->getClassInfo($member_id, $classid);
         }
         $response = array();
         $response['student_class_info'] = $stu_cl_inf;
@@ -1532,10 +1535,6 @@ class StudentController extends Zend_Controller_Action
                  ')';
                 break;
             case 'json':
-                /*echo "<pre>";
-                print_r($response);
-                echo "</pre>";
-                Zend_Registry::get('logger')->debug($response);*/
                 $this->_helper->json($response);
                 break;
             default:
