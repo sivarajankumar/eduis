@@ -154,12 +154,9 @@
 <script>
     <?php
         if(array_values($this->response['dmc_info_data']) != null){
-            foreach ($this->response['dmc_info_data'] as $dmc_info_id => $dmc_data){
-                $dmc_indo_id = $dmc_info_id;
-                foreach ($dmc_data as $key => $value){
-                    $divname = $key;
-                    echo '$("#'.$key.'").val("'.$value.'");';
-                }   
+            foreach ($this->response['dmc_info_data'] as $key => $value){
+                $divname = $key;
+                echo '$("#'.$key.'").val("'.$value.'");';
             }
         }
     ?>
