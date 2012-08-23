@@ -1,0 +1,21 @@
+<script type="text/javascript">
+	$(function(){
+		var urlfetchinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchacademicinfo'))?>";
+		$.ajax({
+			url : urlfetchinfo,
+			data : {
+				format : 'json'
+				},
+        	success: function(jStatus){
+        		if(jStatus){
+            		alert(jStatus);
+        		}
+            },
+            error: function(response) {
+        		$('#errorBox').text(response.responseText).parent().show();
+        			console.log(response);
+        	}
+
+		});
+	});
+</script>
