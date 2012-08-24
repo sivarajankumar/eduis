@@ -10,7 +10,6 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     protected $_examination;
     protected $_custody_date;
     protected $_is_granted;
-    protected $_grant_date;
     protected $_receiving_date;
     protected $_is_copied;
     protected $_dispatch_date;
@@ -132,13 +131,6 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
         return $this->_is_granted;
     }
     /**
-     * @return the $_grant_date
-     */
-    public function getGrant_date ()
-    {
-        return $this->_grant_date;
-    }
-    /**
      * @return the $_receiving_date
      */
     public function getReceiving_date ()
@@ -242,13 +234,6 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     public function setIs_granted ($_is_granted)
     {
         $this->_is_granted = $_is_granted;
-    }
-    /**
-     * @param field_type $_grant_date
-     */
-    public function setGrant_date ($_grant_date)
-    {
-        $this->_grant_date = $_grant_date;
     }
     /**
      * @param field_type $_receiving_date
@@ -381,7 +366,7 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
         if (empty($dmc_info_id)) {
             return false;
         } else {
-            return array_pop($dmc_info_id);
+            return array_search($dmc_id, $dmc_info_id);
         }
     }
     /**
