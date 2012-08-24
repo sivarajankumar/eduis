@@ -47,9 +47,9 @@ class Acad_Model_Mapper_Course_DmcInfo
         if (isset($dmc_info_id)) {
             $required_cols = array('dmc_info_id', 'dmc_id', 'is_considered', 
             'result_type_id', 'class_id', 'member_id', 'examination', 
-            'custody_date', 'is_granted', 'grant_date', 'receiving_date', 
-            'is_copied', 'dispatch_date', 'marks_obtained', 'total_marks', 
-            'scaled_marks', 'percentage');
+            'custody_date', 'is_granted', 'receiving_date', 'is_copied', 
+            'dispatch_date', 'marks_obtained', 'total_marks', 'scaled_marks', 
+            'percentage');
             $select->from($dmc_info_table, $required_cols)->where(
             'dmc_info_id = ?', $dmc_info_id);
             $dmc_info = array();
