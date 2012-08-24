@@ -22,8 +22,8 @@
 	</div>
 	
 	<div class="ctrlHolder">
-		<label for="grant_date"><em>*</em>Recieved by student on</label>
-		<input name="grant_date" id="grant_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<label for="receiving_date"><em>*</em>Recieved by student on</label>
+		<input name="receiving_date" id="receiving_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
 		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of Receiving</p>
 	</div>
 	
@@ -285,6 +285,7 @@
 						
 			dmc_data[div_title]=sub_data;
 			data['dmc_subject_marks'] = dmc_data;
+			data['dmc_info_id'] = '<?php echo $_GET['dmc_info_id']?>';
 			data['dmc_info_data'] = dmc_info_data;
 		});
 		$.ajax({
