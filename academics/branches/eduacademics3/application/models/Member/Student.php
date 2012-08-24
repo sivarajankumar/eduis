@@ -799,14 +799,33 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             $dmc_info_object->initSave();
             $preparedData = $dmc_info_object->prepareDataForSaveProcess(
             $data_array);
-            return $dmc_info_object->getMapper()->save($preparedData);
+            try {
+                $dmc_info_id = $dmc_info_object->getMapper()->save(
+                $preparedData);
+            } catch (Exception $e) {
+                Zend_Registry::get('logger')->debug($e->getMessage());
+                Zend_Registry::get('logger')->debug($e->getCode());
+                Zend_Registry::get('logger')->debug($e->getLine());
+                Zend_Registry::get('logger')->debug($e->getTrace());
+                Zend_Registry::get('logger')->debug($e->getTraceAsString());
+            }
+            return $dmc_info_id;
         } else {
             $dmc_info_object->initSave();
             $prepared_data = $dmc_info_object->prepareDataForSaveProcess(
             $data_array);
             $data_array['member_id'] = null;
-            return $dmc_info_object->getMapper()->update($prepared_data, 
-            $dmc_info_id);
+            try {
+                $dmc_info_object->getMapper()->update($prepared_data, 
+                $dmc_info_id);
+            } catch (Exception $e) {
+                Zend_Registry::get('logger')->debug($e->getMessage());
+                Zend_Registry::get('logger')->debug($e->getCode());
+                Zend_Registry::get('logger')->debug($e->getLine());
+                Zend_Registry::get('logger')->debug($e->getTrace());
+                Zend_Registry::get('logger')->debug($e->getTraceAsString());
+            }
+            return $dmc_info_id;
         }
     }
     public function saveDmcMarks ($data_array)
