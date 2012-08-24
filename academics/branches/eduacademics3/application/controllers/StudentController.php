@@ -1418,7 +1418,7 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
-    public function createdmcAction ()
+    public function adddmcAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
