@@ -1637,9 +1637,8 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $dmc_info_data = $params['myarray']['dmc_info_data'];
-        $dmc_info_id = $params['myarray']['dmc_info_id'];
         $dmc_subject_marks = $params['myarray']['dmc_subject_marks'];
-        $this->saveDmcInfo($member_id, $dmc_info_data);
+        $dmc_info_id = $this->saveDmcInfo($member_id, $dmc_info_data);
         Zend_Registry::get('logger')->debug($params);
         foreach ($dmc_subject_marks as $stu_subj_id => $marks_info) {
             $marks_info['student_subject_id'] = $stu_subj_id;
