@@ -4,12 +4,54 @@
     $dmcInfoData = $this->response['dmc_info_data'];
     $dmc_info_id =array_keys($dmcInfoData);
 ?>
+<div class="ui-state-hover"><center><H3>DMC Details</H3></center></div>
 
-<div id="dmc_info" class="ui-widget-content ui-corner-all">
+<ul id="dmc_info" class="ui-widget-content ui-corner-all">
+	
+    <li><span class="dmc_info_index">Serial Number : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['dmc_id'] ?></span></li>
 
+    <!--<span class="dmc_info_index">Class id : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['class_id'] ?></span>
+    <br>
+    --><li><span class="dmc_info_index">Result Type : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['result_type_id'] ?></span></li>
 
-<?php
-        foreach ($dmcInfoData as $dmc_property => $val){
+    <li><span class="dmc_info_index">Is considered : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['is_considered']?'Yes':'No' ?></span></li>
+
+    <li><span class="dmc_info_index">Examination : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['examination'] ?></span></li>
+
+    <li><span class="dmc_info_index">Custody date : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['custody_date'] ?></span></li>
+
+    <li><span class="dmc_info_index">Is granted : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['is_granted']?'Yes':'No' ?></span></li>
+
+    <li><span class="dmc_info_index">Grant date : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['grant_date']?'Yes':'No' ?></span></li>
+
+    <li><span class="dmc_info_index">Is copied : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['is_copied']?'Yes':'No' ?></span></li>
+
+    <li><span class="dmc_info_index">Dispatch date : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['dispatch_date'] ?></span></li>
+
+    <li><span class="dmc_info_index">Marks obtained : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['marks_obtained'] ?></span></li>
+
+    <li><span class="dmc_info_index">Total marks : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['total_marks'] ?></span></li>
+
+    <li><span class="dmc_info_index">Scaled marks : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['scaled_marks'] ?></span></li>
+
+    <li><span class="dmc_info_index">Percentage : </span>
+    <span class="dmc_info_value"><?php echo $dmcInfoData['percentage'] ?></span></li>
+</ul>
+<?php 
+/*        foreach ($dmcInfoData as $dmc_property => $val){
             if($dmc_property != 'result_type_id'){
                 $dmc_property_modified = ucfirst(str_replace('_',' ',$dmc_property));
                 echo '<span class="dmc_info_index">'.$dmc_property_modified.'</span> <span class="dmc_info_value">'.$val.'</span><br>';
@@ -38,13 +80,11 @@
                         echo '<span class="dmc_info_index">Result Type</span> <span class="dmc_info_value">Regular Pass</span><br>';
                 }
             }
-        }
+        }*/
 ?>
-</div>
 
-<div id="dmc_subject_info" class="ui-widget-content ui-corner-all">
 
-<table cellpadding="5" cellspacing="10">
+<table id="table-design" cellpadding="3" cellspacing="3">
 <?php 
     $i = 1;
     $j = 1;
@@ -82,50 +122,59 @@
     }
 ?>
 </table>
-</div>
-<div id="edit_btn" class="ui-widget-content ui-corner-all">
-	<h3><center><a href="/student/editdmc?class_id=<?php echo $_GET['class_id']?>&dmc_view_type=single&dmc_info_id=<?php echo $dmc_info_id[0];?>">Edit</a></center></h3>
-</div>
-
-<!--<input type="button" class="ui-button" value="Go Back" onclick="window.location.replace('/student/profile');">-->
+<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editdmcinfo?class_id=<?php echo $_GET['class_id']?>&dmc_view_type=single&dmc_info_id=<?php echo $dmc_info_id[0];?>');">
 
 <style>
-	#dmc_info{
+    #table-design {
+    	border: 1px solid #DFDFDF;
+    	background-color: #F9F9F9;
+    	-moz-border-radius: 3px;
+    	-webkit-border-radius: 3px;
+    	border-radius: 3px;
+    	font-family: Arial,"Bitstream Vera Sans",Helvetica,Verdana,sans-serif;
+    	color: #333;
+		float:left;
+		margin: 20px 0 0 10px;
+		width:65%;
+    }
+    #table-design td, #table-design th {
+    	border-top-color: white;
+    	border-bottom: 1px solid #DFDFDF;
+    	color: #313131;
+    }
+    #table-design th {
+    	text-shadow: rgba(255, 255, 255, 0.796875) 0px 1px 0px;
+    	font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+    	font-weight: normal;
+    	padding: 7px 7px 8px;
+    	text-align: left;
+    	line-height: 1.3em;
+    	font-size: 14px;
+    	background-color:#D2D2D2;
+    }
+    #table-design td {
+    	font-size: 12px;
+    	padding: 4px 7px 2px;
+    }
+
+	ul{
 		margin:20px 0 0 0;
 		width:20%;
 		padding:5px 10px 5px 10px;
 		background: none;
 		float:left;
+		list-style: none;
 	}
-	#dmc_info h3{
-		margin: 10px 0 10px 0;
-	}
+	
 	.dmc_info_index{
 		font-size: 14px;
 		color:red;
 	}
 	.dmc_info_value{
 		font-size: 14px;
-		float:right;
 	}
-	#dmc_subject_info{
-		margin:20px 0 0 0;
-		width:76%;
-		float:right;
-		clear:none;
-	}
-	table{
-		margin:-5px 0 0 0;
-	}
-	#edit_btn {
-		width:48%;
-		float:left;
+	input {
 		clear:both;
-		margin-top:20px;
-	}
-	#goback_btn { 
-		width:48%;
-		float:right;
-		margin-top:20px;	
+		margin:20px 0 0 20px;
 	}
 </style>

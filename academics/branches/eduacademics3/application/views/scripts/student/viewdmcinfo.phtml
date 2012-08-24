@@ -1,3 +1,6 @@
+<div id="info">
+</div>
+
 <script type="text/javascript">
 	$(function(){
 		var urlfetchinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchacademicinfo'))?>";
@@ -8,14 +11,91 @@
 				},
         	success: function(jStatus){
         		if(jStatus){
-            		alert(jStatus);
+            		var html = '';
+            		$.each(jStatus['batch_display'],function(batch_id,data){
+						html += '<div class="batch_info" id="'+batch_id+'"><span class="heading">Department:</span> '+data['batch_info']['department_id']+' &nbsp;&nbsp;';
+						html += '<span class="heading">Programme: </span>'+data['batch_info']['programme_id']+' &nbsp;&nbsp;';
+						html += '<span class="heading">Batch: </span>'+data['batch_info']['batch_start']+' &nbsp;&nbsp;';
+						html += '<span class="heading">Roll Number: </span>'+jStatus['student_class_info'][batch_id]['roll_no']+' &nbsp;&nbsp;';
+						html += '<span class="heading">Group: </span>'+jStatus['student_class_info'][batch_id]['group_id'].toUpperCase()+' <br>';
+						
+						$.each(data['class_ids'],function(class_id,semester){
+							html += '<span class="semesters" onclick="get_dmc_ids('+class_id+','+batch_id+')"><span class="heading">Semester: </span>'+semester+'</span><br>';
+						});
+						html += '</div>';
+            		});
+            		
+            		$('#info').append(html);
         		}
+            },
+            error: function(response) {
+        		//$('#errorBox').text(response.responseText).parent().show();
+        		//console.log(response);
+
+        		alert(response);
+        	}
+		});
+	});
+
+	function get_dmc_ids(class_id,batch_id)
+	{
+		var urlfetchinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchdmcinfoids'))?>";
+		$.ajax({
+			url: urlfetchinfo,
+			data : {
+					class_id : class_id,
+					format : 'json'
+				},
+			success: function(jStatus){
+        		var html = 'Please select the dmc. <select id="dmc_info_id" name="dmc_info_id">';
+        		html += '<option value="">Serial Number</option>';
+        		$.each(jStatus['dmc_info'],function(dmc_info_id,serial_no){
+            		html += '<option value="'+dmc_info_id+'">'+serial_no+'</option>';
+            	});
+        		html += '</select> &nbsp;';
+        		html += '<input type="button" value="View Details" onclick="change_location()">';
+
+        		$('#'+batch_id).append(html);
             },
             error: function(response) {
         		$('#errorBox').text(response.responseText).parent().show();
         			console.log(response);
         	}
-
 		});
-	});
+	}
+
+	function change_location()
+	{
+		if($('#dmc_info_id').val() == '')
+			alert('You must select the serial number first');
+		else
+		{
+			var dmc_info_id = $('#dmc_info_id').val();
+    		var location = "/student/viewdmc?dmc_info_id="+dmc_info_id;
+    		window.location.replace(location);
+		}
+	}
 </script>
+
+<style type="text/css">
+	.batch_info{
+		background-color: #F2F2F2;
+		border: 1px solid #B2B2B2;
+		border-radius: 2px;
+		padding: 4px 4px 4px 10px;
+		margin: 0 0 10px 0;
+		font-size:1.1em;
+		line-height: 1.4em;
+	}
+	.batch_info > span.heading{
+		color:red;
+	}
+	.batch_info > .semesters:hover{
+		background-color: #D2D2D2;
+		cursor: pointer;
+	}
+	.batch_info > .semesters > span.heading{
+		color:red;
+	}
+	
+</style>
