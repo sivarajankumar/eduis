@@ -16,14 +16,14 @@
 	</div>
 	
 	<div class="ctrlHolder">
-		<label for="custody_date"><em>*</em>Date of Custody</label>
+		<label for="custody_date"><em>*</em>Recieved by college on</label>
 		<input name="custody_date" id="custody_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
 		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of Custody</p>
 	</div>
 	
 	<div class="ctrlHolder">
-		<label for="receiving_date"><em>*</em>Date of Recieving</label>
-		<input name="receiving_date" id="receiving_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<label for="grant_date"><em>*</em>Recieved by student on</label>
+		<input name="grant_date" id="grant_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
 		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of Receiving</p>
 	</div>
 	
@@ -50,19 +50,19 @@
     
     <div class="ctrlHolder">
 		<label for="is_considered"><em>*</em>Is DMC Considered</label>
-		<input name="is_considered" id="is_considered" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		<input name="is_considered" id="is_considered" size="35" maxlength="50" type="checkbox" class="checkbox"/>
 		<p class="formHint">Click if this dmc is considered</p>
 	</div>
 	
 	<div class="ctrlHolder">
 		<label for="is_granted"><em>*</em>Is DMC Granted</label>
-		<input name="is_granted" id="is_granted" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		<input name="is_granted" id="is_granted" size="35" maxlength="50" type="checkbox" class="checkbox"/>
 		<p class="formHint">Click if this dmc is granted</p>
 	</div>
 	
 	<div class="ctrlHolder">
 		<label for="is_copied"><em>*</em>Is DMC Copied</label>
-		<input name="is_copied" id="is_copied" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		<input name="is_copied" id="is_copied" size="35" maxlength="50" type="checkbox" class="checkbox"/>
 		<p class="formHint">Click if this dmc is copied</p>
 	</div>
     				
@@ -159,18 +159,35 @@
                 echo '$("#'.$key.'").val("'.$value.'");';
             }
         }
+        if($this->response['dmc_info_data']['is_considered'] == '1'){
+            echo "$('#is_considered').attr('checked',true);";
+        }
+        if($this->response['dmc_info_data']['is_granted'] == '1'){
+            echo "$('#is_granted').attr('checked',true);";
+        }
+        if($this->response['dmc_info_data']['is_copied'] == '1'){
+            echo "$('#is_copied').attr('checked',true);";
+        }
     ?>
     <?php 
         foreach ($this->response['dmc_data'] as $subject_id => $subject_info){
+            $fieldset_name = str_replace(' ', '_', $this->response['subject_data'][$subject_id]['name']);
             foreach ($subject_info as $key => $value){
-                $fieldset_name = str_replace(' ', '_', $this->response['subject_data'][$subject_id]['name']);
                 $input_name="'".$key."'";
                 $jquery_command = '$("fieldset#'.$fieldset_name.' :input[name='.$input_name.']").val("'.$value.'");';
                 echo $jquery_command;
-            }   
+            }
+            if($subject_info['is_verified'] == '1'){
+                $jquery_command = '$("fieldset#'.$fieldset_name.' :input[name=is_verified]").attr("checked",true);';
+                echo $jquery_command;
+            }
+            if($subject_info['is_pass'] == '1'){
+                $jquery_command = '$("fieldset#'.$fieldset_name.' :input[name=is_pass]").attr("checked",true);';
+                echo $jquery_command;
+            }
         }
     ?>
-    var dmc_data = {};
+    var dmc_info_data = {};
 	var urlSaveRegistrationInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmcinfo'))?>";
 	$(function(){
 	    $('form#dmc_info_form').uniform({
@@ -210,17 +227,17 @@
 	});
 
     function get_dmc_info(){
-    	dmc_data['class_id'] = <?php echo $this->response['dmc_info_data']['class_id'];?>;
+    	dmc_info_data['class_id'] = <?php echo $this->response['dmc_info_data']['class_id'];?>;
     	
     	$('fieldset#dmc_info :input')
     	.not('button,:input[value^="e.g."]')
     	.not(':input[type="checkbox"]')
     	.each(function(){ 
-    		dmc_data[this.name] = this.value;
+    		dmc_info_data[this.name] = this.value;
     	});
-    	dmc_data['is_considered'] = $('#is_considered').is(':checked')?1:0;
-    	dmc_data['is_granted'] = $('#is_granted').is(':checked')?1:0;
-    	dmc_data['is_copied'] = $('#is_copied').is(':checked')?1:0;
+    	dmc_info_data['is_considered'] = $('#is_considered').is(':checked')?1:0;
+    	dmc_info_data['is_granted'] = $('#is_granted').is(':checked')?1:0;
+    	dmc_info_data['is_copied'] = $('#is_copied').is(':checked')?1:0;
     	
     	show_subject_div();
     }
@@ -229,7 +246,7 @@
     	var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmc'))?>";
     	$.ajax({
     		url : urlSaveDmcInfo,
-    		data : {myarray:dmc_data},
+    		data : {myarray:dmc_info_data},
     		success: function(jStatus){
         		//if(jStatus){
             		$('#dmc_info_div').hide();
@@ -251,7 +268,7 @@
     }
     function submit(){
         var data = {};
-        var dmc_info_data = {};
+        var dmc_data = {};
         var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmc'))?>";
 		$('fieldset.subjects').each(function(){
 	        var sub_data = {};
@@ -266,8 +283,8 @@
 			sub_data['is_pass'] = $('fieldset#'+div_id+' :input[name="is_pass"]').is(':checked')?1:0;
 			sub_data['is_verified'] = $('fieldset#'+div_id+' :input[name="is_verified"]').is(':checked')?1:0;
 						
-			dmc_info_data[div_title]=sub_data;
-			data['dmc_data'] = dmc_data;
+			dmc_data[div_title]=sub_data;
+			data['dmc_subject_marks'] = dmc_data;
 			data['dmc_info_data'] = dmc_info_data;
 		});
 		$.ajax({
