@@ -1,0 +1,250 @@
+<!--[if lte ie 7]>
+	<style type="text/css" media="screen">
+		/* Move these to your IE6/7 specific stylesheet if possible */
+		.uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+	</style>
+<![endif]-->
+<form action="javascipt:submit()">
+<div class="main_div">
+	<div class="heading">
+		<h4>Personal Information</h4>
+	</div>
+	<fieldset id="personal" class="search_field_div">
+		<label for="gender">Gender</label>
+		<select name="gender" id="gender">
+			<option value="Any">ANY</option>
+			<option value="MALE">MALE</option>
+			<option value="FEMALE">FEMALE</option>
+		</select>
+		
+		<label for="cast_id">Cast</label>
+		<select id="cast_id" name="cast_id">
+			<option value="Any">ANY</option>
+       		<option value="1">GEN</option>
+       		<option value="2">BC</option>
+       		<option value="3">SC</option>
+       		<option value="4">ST</option>
+		</select>
+		
+		<label for="religion_id">Religion</label>
+		<select id="religion_id" name="religion_id" class="selectInput required">
+			<option value="Any">ANY</option>
+       		<option value="1">Hindu</option>
+       		<option value="2">Muslim</option>
+       		<option value="3">Sikh</option>
+       		<option value="4">Christian</option>
+		</select>
+		
+		<label for="dob_from">Date of Birth from</label>
+		<input name="dob_from" id="dob_from" data-default-value="1990-12-31" value=""  size="20" maxlength="50" type="text" readonly="readonly"/>
+		
+		<label for="dob_to">to</label>
+		<input name="dob_to" id="dob_to" data-default-value="1990-12-31" value=""  size="20" maxlength="50" type="text" readonly="readonly"/>
+	</fieldset>
+</div>
+
+<br>
+
+<div id="academic" class="main_div">
+	<div class="heading">
+		<h4>Academic Information</h4>
+	</div>
+	<div class="search_field_div">
+	
+		<fieldset id="btech">
+
+			<label for="discipline_id">Discipline</label>
+			<select id="discipline_id" name="discipline_id" class="selectInput required">
+				<option value="Any">ANY</option>
+				<option value="CSE">Computer Science</option>
+				<option value="ECE">Electronics And Communication</option>
+				<option value="MECH">Mechanical</option>
+				<option value="BT">Biotechnology</option>
+			</select>
+			
+			<label for="btech_passing_year">B.Tech Passing Year</label>
+			<select name="btech_passing_year">
+				<option value="Any">ANY</option>
+				<?php
+			    	$current_year = intval(date('Y'));
+			    	for($i=2002+4;$i<=$current_year+4;$i++)
+			    	{
+			    	    echo '<option value="'.$i.'">'.$i.'</option>';
+			    	}
+				?>
+			</select>
+			
+			<label for="btech_percentage">B.Tech Percentage</label>
+			<input type="text" id="btech_percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
+			<div id="btech_slider-range"></div>
+			
+			<label for="backlog">Backlog in B.Tech</label>
+			<select name="backlog">
+				<option value="never">Never</option>
+				<option value="none">Currently None or cleared</option>
+				<option value="Any">ANY</option>
+				<?php 
+					for($i=1;$i<=10;$i++)
+						echo '<option value="'.$i.'">'.$i.'</option>';
+				?>
+				<option value="10+">More than 10</option>
+			</select>
+		
+		</fieldset>
+		
+		<fieldset id="twelfth">
+			<label for="twelfth_percentage">10+2 Percentage</label>
+			<input type="text" id="twelfth_percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
+			<div id="twelfth_slider-range"></div>
+			
+			<label for="twelfth_passing_year">Tenth Passing Year</label>
+			<select name="twelfth_passing_year">
+				<option value="Any">ANY</option>
+				<?php
+			    	$current_year = intval(date('Y'));
+			    	for($i=2002;$i<=$current_year;$i++)
+			    	{
+			    	    echo '<option value="'.$i.'">'.$i.'</option>';
+			    	}
+				?>
+			</select>
+		</fieldset>
+		
+		<fieldset id="tenth">
+			<label for="tenth_percentage">Tenth Percentage</label>
+			<input type="text" id="tenth_percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
+			<div id="tenth_slider-range"></div>
+			
+			<label for="tenth_passing_year">Tenth Passing Year</label>
+			<select name="tenth_passing_year">
+				<option value="Any">ANY</option>
+				<?php
+			    	$current_year = intval(date('Y'));
+			    	for($i=2002;$i<=$current_year;$i++)
+			    	{
+			    	    echo '<option value="'.$i.'">'.$i.'</option>';
+			    	}
+				?>
+			</select>
+		</fieldset>
+		
+	</div>
+</div>
+
+<br>
+
+<div id="career" class="main_div">
+	<div class="heading">
+		<h4>Career Information</h4>
+	</div>
+</div>
+
+<br>
+
+<input type="button" value="Search" onclick="javascript:submit_values()"/>
+</form>
+
+<script type="text/javascript">
+	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	$("#dob_from").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '-25:-15',
+		onClose : function(dateText, inst) {
+			this.focus();
+			}
+	});
+
+	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	$("#dob_to").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '-25:-15',
+		onClose : function(dateText, inst) {
+			this.focus();
+			}
+	});
+	$( "#tenth_slider-range" ).slider({
+		range: true,
+		min: 0,
+		max: 100,
+		values: [ 75, 100 ],
+		slide: function( event, ui ) {
+			$( "#tenth_percentage" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+		}
+	});
+	$( "#tenth_percentage" ).val( $( "#tenth_slider-range" ).slider( "values", 0 ) +
+		" - " + $( "#tenth_slider-range" ).slider( "values", 1 ) );
+
+	$( "#twelfth_slider-range" ).slider({
+		range: true,
+		min: 0,
+		max: 100,
+		values: [ 75, 100 ],
+		slide: function( event, ui ) {
+			$( "#twelfth_percentage" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+		}
+	});
+	$( "#twelfth_percentage" ).val( $( "#twelfth_slider-range" ).slider( "values", 0 ) +
+		" - " + $( "#twelfth_slider-range" ).slider( "values", 1 ) );
+
+	$( "#btech_slider-range" ).slider({
+		range: true,
+		min: 0,
+		max: 100,
+		values: [ 60, 100 ],
+		slide: function( event, ui ) {
+			$( "#btech_percentage" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+		}
+	});
+	$( "#btech_percentage" ).val( $( "#btech_slider-range" ).slider( "values", 0 ) +
+		" - " + $( "#btech_slider-range" ).slider( "values", 1 ) );
+
+	function submit_values()
+	{
+		var personal_values={};
+		
+		personal_values['0gender'] = $('#gender').val();
+		personal_values['0cast_id'] = $('#cast_id').val();
+		personal_values['0religion_id'] = $('#religion_id').val();
+		personal_values['0dob'] = {'from':$("#dob_from").val(),'to':$("#dob_to").val()};
+
+		var urlsubmitpersonal = "http://core.aceambala.com/search/search";
+		
+		$.ajax({
+    		url : urlsubmitpersonal,
+    		datatype : 'json',
+    		data : {
+        			myarray:personal_values,
+					format:'json'
+        			},
+    		success: function(jStatus){
+
+    		},
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+		});
+	}
+
+</script>
+
+<style type="text/css">
+	.main_div{
+		background-color: #F9F9F9;
+		border: 0.1em solid #D1D1D1;
+		border-radius:4px;	
+	}
+	.heading {
+		background-color:#E1E1E1;
+	}
+	.heading > h4{
+		font-size: 1.1em;
+		margin-top:0px;
+		margin-bottom:10px;
+		padding:2px 0 2px 10px;
+	}
+</style>
