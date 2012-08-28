@@ -101,7 +101,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 break;
             case 'development':
                 $profiler = new Zend_Db_Profiler_Firebug(
-                'DB Queries : '.ucfirst(strtolower(APPLICATION_ENV)));
+                'DB Queries : ' . ucfirst(strtolower(APPLICATION_ENV)));
                 $profiler->setEnabled(true);
                 $db = $this->bootstrapDb()->getResource('db');
                 $db->setProfiler($profiler);
