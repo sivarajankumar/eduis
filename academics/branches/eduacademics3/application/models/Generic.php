@@ -28,7 +28,8 @@ abstract class Acad_Model_Generic
         $method = 'set' . $name;
         if ('mapper' == $name || ! method_exists($this, $method)) {
             throw new Exception(
-            'Invalid property : ' . $name . ' ,specified in class :' . $class_name);
+            'Invalid property : ' . $name . ' ,specified in class :' .
+             $class_name);
         }
         $this->$method($value);
     }
@@ -38,7 +39,8 @@ abstract class Acad_Model_Generic
         $method = 'get' . $name;
         if ('mapper' == $name || ! method_exists($this, $method)) {
             throw new Exception(
-            'Invalid property : ' . $name . ' ,specified in class :' . $class_name);
+            'Invalid property : ' . $name . ' ,specified in class :' .
+             $class_name);
         }
         return $this->$method();
     }
@@ -89,12 +91,7 @@ abstract class Acad_Model_Generic
         foreach ($valid_options as $valid_option) {
             $validated_options[$valid_option] = $options[$valid_option];
         }
-        if (empty($validated_options)) {
-            $error = 'No valid option was provided';
-            throw new Exception($error);
-        } else {
-            return $validated_options;
-        }
+        return $validated_options;
     }
     /**
      * Filters out invalid options
@@ -163,82 +160,53 @@ abstract class Acad_Model_Generic
                 $data_to_validate[$value] = $data[$value];
             }
             if (! empty($data_to_validate)) {
-                //now, preparing validated database operations
-                $validated_data = $this->validateData(
-                $data_to_validate);
+                $validated_data = $this->validateData($data_to_validate);
                 $preparedDataForSaveProcess = array();
                 foreach ($validated_data as $valid_key => $valid_value) {
                     $db_column_name = $this->correctDbKeys($valid_key);
                     $preparedDataForSaveProcess[$db_column_name] = $valid_value;
                 }
                 return $preparedDataForSaveProcess;
-            } else {
-                throw new Exception(
-                'No Valid Data was supplied for save process');
             }
-        } else {
-            throw new Exception(
-            'Please initialise the save process prior to saving data');
         }
     }
     /**
      * Enter description here ...
      * @param array $options containing properties mapped to values
-     * @param array $property_range containing properties mapped to array containing upper and lower range
-     * @throws Exception when trying to set equality and range both ,for property, at the same time
+     * @param array $range_op containing properties mapped to array containing upper and lower range
      * @throws Exception when invalid properties are specified 
      * @return array containing Member Ids
      */
-    public function search (array $options = null, array $property_range = null)
+    public function search (array $exact_params = null, array $range_params = null)
     {
-        //declaration necessary because their scope is required to be throughout the function
-        $setter_options = array();
         $valid_options = array();
-        $invalid_names = array();
-        $property_range_keys = array();
+        $invalid_options = array();
         $valid_range_keys = array();
-        $invalid_names_1 = array();
-        $range = array();
-        $error1 = '';
-        $error2 = '';
-        if (! empty($options)) {
-            //$setter_options array is now ready for search
-            //but will it participate,is not confirmed
-            $setter_options = $this->validOptions(
-            $options);
-            $invalid_names = array_keys($this->invalidOptions($options));
-            if (! empty($invalid_names)) {
-                $error1 = "<b>" . implode(', ', $invalid_names) . "</b>";
-            }
+        $invalid_range_params = array();
+        if (! empty($exact_params)) {
+            $valid_options = $this->validOptions($exact_params);
+            $invalid_options = array_keys($this->invalidOptions($exact_params));
         }
-        if (! empty($property_range)) {
-            $range = $this->validOptions($property_range);
-            $invalid_names_1 = array_keys(
-            $this->invalidOptions($property_range));
-            if (! empty($invalid_names_1)) {
-                $error2 = "<b>" . implode(', ', $invalid_names_1) . "</b>";
-            }
+        if (! empty($range_params)) {
+            $valid_range_keys = $this->validOptions($range_params);
+            $invalid_range_params = array_keys(
+            $this->invalidOptions($range_params));
         }
-        $error_append = ' are invalid parameters and therefore, they were not included in search.';
+        $error_append = ' is(are) invalid parameter(s), and were therefore not included in search.';
         $suggestion = 'Please try again with correct parameters to get more accurate results';
-        $message = "$error_append " . "</br>" . "$suggestion";
+        $message = "$error_append " . ' ' . "$suggestion";
         $deciding_intersection = array_intersect($valid_options, 
         $valid_range_keys);
-        if (! empty($invalid_names) or ! empty($invalid_names_1)) {
+        if (! empty($invalid_options) or ! empty($invalid_range_params)) {
+            $garbage = array_merge($invalid_range_params, $invalid_options);
             Zend_Registry::get('logger')->debug(
-            var_export($error1 . ' ' . $error2 . $message));
-            echo "</br>";
+            '[ ' . implode($garbage, ', ') . ']' . $message);
         }
         if (empty($deciding_intersection)) {
-            //now we can set off for search operation
-            $this->setOptions($setter_options);
-            return $this->getMapper()->fetchStudents($this, $setter_options, 
-            $range);
+            return $this->getMapper()->fetchStudents($valid_options, 
+            $valid_range_keys);
         } else {
-            $error = implode(', ', $deciding_intersection);
-            throw new Exception(
-            'Range and equality cannot be set for ' . $error .
-             ' at the same time');
+            return null;
         }
     }
 }
