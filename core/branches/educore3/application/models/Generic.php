@@ -91,12 +91,7 @@ abstract class Core_Model_Generic
         foreach ($valid_options as $valid_option) {
             $validated_options[$valid_option] = $options[$valid_option];
         }
-        if (empty($validated_options)) {
-            $error = 'No valid option was provided';
-            throw new Exception($error);
-        } else {
-            return $validated_options;
-        }
+        return $validated_options;
     }
     /**
      * Filters out invalid options
@@ -165,22 +160,14 @@ abstract class Core_Model_Generic
                 $data_to_validate[$value] = $data[$value];
             }
             if (! empty($data_to_validate)) {
-                //now, preparing validated database operations
-                $validated_data = $this->validateData(
-                $data_to_validate);
+                $validated_data = $this->validateData($data_to_validate);
                 $preparedDataForSaveProcess = array();
                 foreach ($validated_data as $valid_key => $valid_value) {
                     $db_column_name = $this->correctDbKeys($valid_key);
                     $preparedDataForSaveProcess[$db_column_name] = $valid_value;
                 }
                 return $preparedDataForSaveProcess;
-            } else {
-                throw new Exception(
-                'No Valid Data was supplied for save process');
             }
-        } else {
-            throw new Exception(
-            'Please initialise the save process prior to saving data');
         }
     }
     /**
