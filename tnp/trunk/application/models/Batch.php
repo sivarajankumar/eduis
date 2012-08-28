@@ -232,4 +232,40 @@ class Tnp_Model_Batch extends Tnp_Model_Generic
             return $batch_ids;
         }
     }
+    /**
+     * batch id must be set
+     * 
+     */
+    public function batchExistCheck ()
+    {
+        $batch_id = $this->getBatch_id(true);
+        return $this->getMapper()->batchExistCheck($batch_id);
+    }
+    public function saveInfo ($batch_info)
+    {
+        $batch_id = $batch_info['batch_id'];
+        $this->setBatch_id($batch_id);
+        $batch_id_exists = $this->batchExistCheck();
+        if ($batch_id_exists) {
+            Zend_Registry::get('logger')->debug('updating batch info');
+            $this->update($batch_info, $batch_id);
+            return $batch_id;
+        } else {
+            Zend_Registry::get('logger')->debug('saving batch info');
+            return $this->save($batch_info);
+        }
+    }
+    protected function save ($batch_info)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($batch_info);
+        return $this->getMapper()->save($prepared_data);
+    }
+    protected function update ($batch_info, $batch_id)
+    {
+        $this->initSave();
+        unset($batch_info['batch_id']);
+        $prepared_data = $this->prepareDataForSaveProcess($batch_info);
+        return $this->getMapper()->update($prepared_data, $batch_id);
+    }
 }

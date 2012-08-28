@@ -133,289 +133,7 @@ class TestingController extends Zend_Controller_Action
         }
         $this->_redirect('student/profile');*/
     }
-    /**
-     * for testing purposes only
-     * Enter description here ...
-     */
-    public function profileAction ()
-    {
-        $response = array();
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $format = $this->_getParam('format', 'html');
-        $response['employability_test'] = $this->findEmpTestInfo();
-        /*------------------------------------------------------------------------------*/
-        $response['certifications'] = $this->findCertificationsInfo();
-        /*------------------------------------------------------------------------------*/
-        $response['training'] = $this->findTrainingInfo();
-        /*------------------------------------------------------------------------------*/
-        $response['experience'] = $this->findExperienceInfo();
-        /*------------------------------------------------------------------------------*/
-        $response['language'] = $this->findLanguageInfo();
-        /*------------------------------------------------------------------------------*/
-        $response['job_preferred'] = $this->findJobPreferred();
-        /*------------------------------------------------------------------------------*/
-        $response['co_curricular'] = $this->findCourricularInfo();
-        /*------------------------------------------------------------------------------*/
-        $response['skills'] = $this->findSkillsInfo();
-        /*------------------------------------------------------------------------------*/
-        Zend_Registry::get('logger')->debug($response);
-        switch ($format) {
-            case 'html':
-                $this->view->assign('response', $response);
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($response, false) .
-                 ')';
-                break;
-            case 'json':
-                $this->_helper->json($response);
-                break;
-            case 'test':
-                Zend_Registry::get('logger')->debug($response);
-                break;
-            default:
-                ;
-                break;
-        }
-    }
-    public function testAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug($params);
-        $member_id = $this->getMember_id();
-        $is_new_language = $params['myarray']['new_language'];
-        Zend_Registry::get('logger')->debug($is_new_language);
-        $language_info = $params['myarray']['language_info'];
-        Zend_Registry::get('logger')->debug($language_info);
-        $member_proficiency = $params['myarray']['member_proficiency'];
-        Zend_Registry::get('logger')->debug($member_proficiency);
-        /*
-             * if language does not exist in databse add it, otherwise update member's proficiency
-             */
-        if ($is_new_language == 'true') {
-            $language = new Tnp_Model_Language();
-            $language_id = $language->saveInfo($language_info);
-        } else {
-            $student = new Tnp_Model_Member_Student();
-            $student->setMember_id($member_id);
-            $language_id = $language_info['language_id'];
-            $proficiency = array();
-            $can_speak = (($member_proficiency['SPEAK'] == 'true') ? ($proficiency[] = 'SPEAK') : null);
-            $can_read = (($member_proficiency['READ'] == 'true') ? ($proficiency[] = 'READ') : null);
-            $can_write = (($member_proficiency['WRITE'] == 'true') ? ($proficiency[] = 'WRITE') : null);
-            $proficiency = array($can_read, $can_write, $can_speak);
-            $mem_lang_info = array('language_id' => $language_id, 
-            'proficiency' => implode(',', $proficiency));
-            Zend_Registry::get('logger')->debug($mem_lang_info);
-            $student->saveLanguageInfo($language_info);
-        }
-    }
-    public function aclconfigAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $methods = get_class_methods('StudentController');
-        $actions = array();
-        foreach ($methods as $value) {
-            $actions[] = substr("$value", 0, strpos($value, 'Action'));
-        }
-        foreach ($actions as $key => $value) {
-            if ($value == null) {
-                unset($actions[$key]);
-            }
-        }
-        $db = new Zend_Db_Table();
-        $delete2 = 'DELETE FROM `tnp`.`mod_role_resource` WHERE `module_id`=? AND `controller_id`=?';
-        $db->getAdapter()->query($delete2, array('tnp', 'student'));
-        $delete1 = 'DELETE FROM `tnp`.`mod_action` WHERE `module_id`=? AND `controller_id`=?';
-        $db->getAdapter()->query($delete1, array('tnp', 'student'));
-        print_r(sizeof($actions));
-        $sql = 'INSERT INTO `tnp`.`mod_action`(`module_id`,`controller_id`,`action_id`) VALUES (?,?,?)';
-        foreach ($actions as $action) {
-            $bind = array('tnp', 'student', $action);
-            $db->getAdapter()->query($sql, $bind);
-        }
-        $sql = 'INSERT INTO `tnp`.`mod_role_resource`(`role_id`,`module_id`,`controller_id`,`action_id`) VALUES (?,?,?,?)';
-        foreach ($actions as $action) {
-            $bind = array('student', 'tnp', 'student', $action);
-            $db->getAdapter()->query($sql, $bind);
-        }
-        /*foreach ($actions as $action) {
-            echo '<pre>';
-            print_r($action);
-            echo '</pre>';
-        }*/
-        Zend_Registry::get('logger')->debug($actions);
-    }
-    /* ------------------------------------------------------------------------------------------- */
-    public function viewemptestrecordAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $response = array();
-        $test_record = $this->generateEmpTestRecords();
-        if ($test_record != false) {
-            $section_record = array();
-            foreach ($test_record as $key => $record) {
-                $employability_test_id = $record['employability_test_id'];
-                $section_record[$employability_test_id] = $this->generateSectionScore(
-                $employability_test_id);
-            }
-            $this->view->assign('test_record', $test_record);
-            $this->view->assign('section_record', $section_record);
-        }
-        Zend_Registry::get('logger')->debug(
-        'Vars assigned to view are : \'test_record\' where the key is the test_record_id');
-        Zend_Registry::get('logger')->debug($test_record);
-        Zend_Registry::get('logger')->debug(
-        ' and : \'section_record\' where the key is the employability_test_id');
-        Zend_Registry::get('logger')->debug($section_record);
-    }
-    /**
-     * assigns test and section record for a given employability_test_id of member_id
-     * Enter description here ...
-     */
-    public function editemptestrecordAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $test_record_id = $params['test_record_id'];
-        $test_record = $this->getEmpTestRecordInfo($test_record_id);
-        $employability_test_id = $test_record['employability_test_id'];
-        $section_record = $this->generateSectionScore($employability_test_id);
-        $this->view->assign('test_record', $test_record);
-        $this->view->assign('section_record', $section_record);
-        $this->_helper->json($section_record);
-    }
-    public function fetchemptestrecordAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $format = $this->_getParam('format', 'html');
-        $employability_test_id = $params['employability_test_id'];
-        $member_id = $this->getMember_id();
-        $test_record_id = $this->getEmpTestRecordId($member_id, 
-        $employability_test_id);
-        $test_record = $this->getEmpTestRecordInfo(array_pop($test_record_id));
-        switch ($format) {
-            case 'html':
-                $this->view->assign('test_record', $test_record);
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($test_record, false) .
-                 ')';
-                break;
-            case 'json':
-                $this->_helper->json($test_record);
-                break;
-            case 'test':
-                Zend_Registry::get('logger')->debug($test_record);
-                break;
-            default:
-                ;
-                break;
-        }
-    }
-    public function fetchsectionrecordAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $format = $this->_getParam('format', 'html');
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $employability_test_id = $params['employability_test_id'];
-        $section_record = $this->generateSectionScore($employability_test_id);
-        switch ($format) {
-            case 'html':
-                $this->view->assign('section_record', $section_record);
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' .
-                 $this->_helper->json($section_record, false) . ')';
-                break;
-            case 'json':
-                $this->_helper->json($section_record);
-                break;
-            case 'test':
-                Zend_Registry::get('logger')->debug($section_record);
-                break;
-            default:
-                ;
-                break;
-        }
-    }
-    /**
-     * Saves the test record(user point of view)
-     * 
-     * Enter description here ...
-     */
-    public function saveemptestrecordAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug(
-        'params requires are \'test_info\' ,  \'test_record\' , \'test_section_record\' in myarray ex \'$params[\'myarray\'][\'test_info\']');
-        $test_info = $params['myarray']['test_info'];
-        $test_score = $params['myarray']['test_record'];
-        $section_record = $params['myarray']['test_section_record'];
-        $employability_test_id = $this->saveEmpTest($test_info);
-        $test_score['employability_test_id'] = $employability_test_id;
-        $this->saveEmpTestRecord($test_score);
-        foreach ($section_record as $name => $section_score) {
-            $section_array = array();
-            $this->saveSectionScore($section_score);
-        }
-    }
-    /**
-     * Saves the new test
-     * Enter description here ...
-     */
-    public function saveemptestAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug(
-        'params requires are \'test_info\' myarray[\'test_info\']');
-        $test_info = $params['myarray']['test_info'];
-        $this->saveEmpTest($test_info);
-    }
-    /**
-     * Saves the new test
-     * Enter description here ...
-     */
-    public function saveemptestsectionAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug(
-        'params requires are \'section_info\' myarray[\'section_info\']');
-        $section_info = $params['myarray']['section_info'];
-        foreach ($section_info as $employability_test_id => $section_name) {
-            $info['employability_test_id'] = $employability_test_id;
-            $info['section_name'] = $section_name;
-            $this->saveEmpTestSection($info);
-        }
-    }
-    /* ------------------------------------------------------------------------------------------- */
+    /* ######################################################################### */
     public function savecertificationAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -631,6 +349,289 @@ class TestingController extends Zend_Controller_Action
         $technical_fields = $technical_field->fetchTechnicalFields();
         return $technical_fields;
     }
+    /**
+     * for testing purposes only
+     * Enter description here ...
+     */
+    public function profileAction ()
+    {
+        $response = array();
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $this->_getParam('format', 'html');
+        $response['employability_test'] = $this->findEmpTestInfo();
+        /*------------------------------------------------------------------------------*/
+        $response['certifications'] = $this->findCertificationsInfo();
+        /*------------------------------------------------------------------------------*/
+        $response['training'] = $this->findTrainingInfo();
+        /*------------------------------------------------------------------------------*/
+        $response['experience'] = $this->findExperienceInfo();
+        /*------------------------------------------------------------------------------*/
+        $response['language'] = $this->findLanguageInfo();
+        /*------------------------------------------------------------------------------*/
+        $response['job_preferred'] = $this->findJobPreferred();
+        /*------------------------------------------------------------------------------*/
+        $response['co_curricular'] = $this->findCourricularInfo();
+        /*------------------------------------------------------------------------------*/
+        $response['skills'] = $this->findSkillsInfo();
+        /*------------------------------------------------------------------------------*/
+        Zend_Registry::get('logger')->debug($response);
+        switch ($format) {
+            case 'html':
+                $this->view->assign('response', $response);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($response, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($response);
+                break;
+            case 'test':
+                Zend_Registry::get('logger')->debug($response);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    public function testAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug($params);
+        $member_id = $this->getMember_id();
+        $is_new_language = $params['myarray']['new_language'];
+        Zend_Registry::get('logger')->debug($is_new_language);
+        $language_info = $params['myarray']['language_info'];
+        Zend_Registry::get('logger')->debug($language_info);
+        $member_proficiency = $params['myarray']['member_proficiency'];
+        Zend_Registry::get('logger')->debug($member_proficiency);
+        /*
+             * if language does not exist in databse add it, otherwise update member's proficiency
+             */
+        if ($is_new_language == 'true') {
+            $language = new Tnp_Model_Language();
+            $language_id = $language->saveInfo($language_info);
+        } else {
+            $student = new Tnp_Model_Member_Student();
+            $student->setMember_id($member_id);
+            $language_id = $language_info['language_id'];
+            $proficiency = array();
+            $can_speak = (($member_proficiency['SPEAK'] == 'true') ? ($proficiency[] = 'SPEAK') : null);
+            $can_read = (($member_proficiency['READ'] == 'true') ? ($proficiency[] = 'READ') : null);
+            $can_write = (($member_proficiency['WRITE'] == 'true') ? ($proficiency[] = 'WRITE') : null);
+            $proficiency = array($can_read, $can_write, $can_speak);
+            $mem_lang_info = array('language_id' => $language_id, 
+            'proficiency' => implode(',', $proficiency));
+            Zend_Registry::get('logger')->debug($mem_lang_info);
+            $student->saveLanguageInfo($language_info);
+        }
+    }
+    public function aclconfigAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $methods = get_class_methods('StudentController');
+        $actions = array();
+        foreach ($methods as $value) {
+            $actions[] = substr("$value", 0, strpos($value, 'Action'));
+        }
+        foreach ($actions as $key => $value) {
+            if ($value == null) {
+                unset($actions[$key]);
+            }
+        }
+        $db = new Zend_Db_Table();
+        $delete2 = 'DELETE FROM `tnp`.`mod_role_resource` WHERE `module_id`=? AND `controller_id`=?';
+        $db->getAdapter()->query($delete2, array('tnp', 'student'));
+        $delete1 = 'DELETE FROM `tnp`.`mod_action` WHERE `module_id`=? AND `controller_id`=?';
+        $db->getAdapter()->query($delete1, array('tnp', 'student'));
+        print_r(sizeof($actions));
+        $sql = 'INSERT INTO `tnp`.`mod_action`(`module_id`,`controller_id`,`action_id`) VALUES (?,?,?)';
+        foreach ($actions as $action) {
+            $bind = array('tnp', 'student', $action);
+            $db->getAdapter()->query($sql, $bind);
+        }
+        $sql = 'INSERT INTO `tnp`.`mod_role_resource`(`role_id`,`module_id`,`controller_id`,`action_id`) VALUES (?,?,?,?)';
+        foreach ($actions as $action) {
+            $bind = array('student', 'tnp', 'student', $action);
+            $db->getAdapter()->query($sql, $bind);
+        }
+        /*foreach ($actions as $action) {
+            echo '<pre>';
+            print_r($action);
+            echo '</pre>';
+        }*/
+        Zend_Registry::get('logger')->debug($actions);
+    }
+    /* -------------------------------	EMP TEST -> ACCOMPLISHED ------------------------------------------ */
+    public function viewemptestrecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $response = array();
+        $test_record = $this->generateEmpTestRecords();
+        if ($test_record != false) {
+            $section_record = array();
+            foreach ($test_record as $key => $record) {
+                $employability_test_id = $record['employability_test_id'];
+                $section_record[$employability_test_id] = $this->generateSectionScore(
+                $employability_test_id);
+            }
+            $this->view->assign('test_record', $test_record);
+            $this->view->assign('section_record', $section_record);
+        }
+        Zend_Registry::get('logger')->debug(
+        'Vars assigned to view are : \'test_record\' where the key is the test_record_id');
+        Zend_Registry::get('logger')->debug($test_record);
+        Zend_Registry::get('logger')->debug(
+        ' and : \'section_record\' where the key is the employability_test_id');
+        Zend_Registry::get('logger')->debug($section_record);
+    }
+    /**
+     * assigns test and section record for a given employability_test_id of member_id
+     * Enter description here ...
+     */
+    public function editemptestrecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $test_record_id = $params['test_record_id'];
+        $test_record = $this->getEmpTestRecordInfo($test_record_id);
+        $employability_test_id = $test_record['employability_test_id'];
+        $section_record = $this->generateSectionScore($employability_test_id);
+        $this->view->assign('test_record', $test_record);
+        $this->view->assign('section_record', $section_record);
+        $this->_helper->json($section_record);
+    }
+    public function fetchemptestrecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $this->_getParam('format', 'html');
+        $employability_test_id = $params['employability_test_id'];
+        $member_id = $this->getMember_id();
+        $test_record_id = $this->getEmpTestRecordId($member_id, 
+        $employability_test_id);
+        $test_record = $this->getEmpTestRecordInfo(array_pop($test_record_id));
+        switch ($format) {
+            case 'html':
+                $this->view->assign('test_record', $test_record);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($test_record, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($test_record);
+                break;
+            case 'test':
+                Zend_Registry::get('logger')->debug($test_record);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    public function fetchsectionrecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $format = $this->_getParam('format', 'html');
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $employability_test_id = $params['employability_test_id'];
+        $section_record = $this->generateSectionScore($employability_test_id);
+        switch ($format) {
+            case 'html':
+                $this->view->assign('section_record', $section_record);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' .
+                 $this->_helper->json($section_record, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($section_record);
+                break;
+            case 'test':
+                Zend_Registry::get('logger')->debug($section_record);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    /**
+     * Saves the test record(user point of view)
+     * 
+     * Enter description here ...
+     */
+    public function saveemptestrecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug(
+        'params requires are \'test_info\' ,  \'test_record\' , \'test_section_record\' in myarray ex \'$params[\'myarray\'][\'test_info\']');
+        $test_info = $params['myarray']['test_info'];
+        $test_score = $params['myarray']['test_record'];
+        $section_record = $params['myarray']['test_section_record'];
+        $employability_test_id = $this->saveEmpTest($test_info);
+        $test_score['employability_test_id'] = $employability_test_id;
+        $this->saveEmpTestRecord($test_score);
+        foreach ($section_record as $name => $section_score) {
+            $section_array = array();
+            $this->saveSectionScore($section_score);
+        }
+    }
+    /**
+     * Saves the new test
+     * Enter description here ...
+     */
+    public function saveemptestAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug(
+        'params requires are \'test_info\' myarray[\'test_info\']');
+        $test_info = $params['myarray']['test_info'];
+        $this->saveEmpTest($test_info);
+    }
+    /**
+     * Saves the new test
+     * Enter description here ...
+     */
+    public function saveemptestsectionAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug(
+        'params requires are \'section_info\' myarray[\'section_info\']');
+        $section_info = $params['myarray']['section_info'];
+        foreach ($section_info as $employability_test_id => $section_name) {
+            $info['employability_test_id'] = $employability_test_id;
+            $info['section_name'] = $section_name;
+            $this->saveEmpTestSection($info);
+        }
+    }
+    /* ------------------------------------------------------------------------------------------- */
     /*********************************************************************************************/
     private function getEmpTestRecordInfo ($test_record_id)
     {
