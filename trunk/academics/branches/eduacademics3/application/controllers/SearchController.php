@@ -18,7 +18,6 @@ class SearchController extends Zend_Controller_Action
         $format = $this->_getParam('format', 'log');
         $tenth_fields = array();
         $twelfth_fields = array();
-        Zend_Registry::get('logger')->debug($params);
         foreach ($params as $key => $value) {
             switch (substr($key, 0, 1)) {
                 case ('0'):
@@ -48,7 +47,6 @@ class SearchController extends Zend_Controller_Action
             $matric = new Acad_Model_Qualification_Matric();
             $matric_matches = $matric->search($tenth_exact_params, 
             $tenth_range_params);
-            Zend_Registry::get('logger')->debug($matric_matches);
         }
         if (! empty($twelfth_fields)) {
             $twelfth_range_fields = array('percentage' => '');
