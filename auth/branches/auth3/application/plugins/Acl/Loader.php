@@ -81,14 +81,19 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
     {
         return Zend_Registry::get('logger');
     }
+    /**
+     * initUserAcl() - Bind user specific ACL with user session.
+     *
+     * @return Zend_Acl
+     */
     protected function initUserAcl ()
     {
         $authContent = Zend_Auth::getInstance()->getStorage()->read();
         if (! is_array($authContent)) {
             self::getLogger()->debug('Fresh visitor');
             $authAcl = new Zend_Session_Namespace('authAcl');
-            if(isset($authAcl->message)){
-            	Zend_Registry::get('logger')->debug($authAcl->message);
+            if (isset($authAcl->message)) {
+                Zend_Registry::get('logger')->debug($authAcl->message);
             }
             if (! isset($authAcl->authId)) {
                 $authAcl->redirectedFrom = array_intersect_key(
@@ -98,14 +103,15 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
                 $this->getRequest()->getParams(), 
                 $this->getRequest()->getUserParams());
                 self::getLogger()->debug(
-                'Redirecting to "' . self::AUTH_URL . '", redirecting from');
+                'Redirecting to "' . self::AUTH_URL . '", redirecting AUTH from');
                 self::getLogger()->debug($authAcl->redirectedFrom);
                 $this->getResponse()->setRedirect(
                 self::AUTH_URL . '/welcomeguest', 303);
                 return;
             } else {
                 Zend_Registry::get('logger')->debug(
-                'User has logged into auth module with identity :'.$authAcl->authId);
+                'User has logged into auth module with identity :' .
+                 $authAcl->authId);
             }
             self::updateACL($authAcl->authId);
         }
@@ -220,10 +226,9 @@ class Auth_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
                     } else {
                         if ('development' != strtolower(APPLICATION_ENV)) {
                             throw new Exception(
-                            'ACL denied "' .
-                             str_ireplace('_', '/', $reqResource) . '" to ' .
-                             $authContent['identity'] . ' at ' .
-                             $_SERVER['REMOTE_ADDR'], Zend_Log::ALERT);
+                            'ACL denied "' . str_ireplace('_', '/', 
+                            $reqResource) . '" to ' . $authContent['identity'] .
+                             ' at ' . $_SERVER['REMOTE_ADDR'], Zend_Log::ALERT);
                         }
                         Zend_Registry::get('logger')->notice(
                         'ACL ERROR: BLOCKED BY ACL. BUT FUNCTIONAL DUE TO DEVELOPMENT ENV.');
