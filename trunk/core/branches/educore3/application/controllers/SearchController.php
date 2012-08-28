@@ -65,11 +65,12 @@ class SearchController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
+        $param_view = array_diff($request->getParams(), 
+        $request->getUserParams());
+        $params = $param_view['myarray'];
         $format = $this->_getParam('format', 'log');
         $critical_fields = array();
         $rel_fields = array();
-        Zend_Registry::get('logger')->debug($params);
         foreach ($params as $key => $value) {
             switch (substr($key, 0, 1)) {
                 case ('0'):
@@ -115,8 +116,9 @@ class SearchController extends Zend_Controller_Action
         }
         if (empty($member_ids)) {
             $member_ids = false;
+        } else {
+            $member_ids = array_unique($member_ids);
         }
-        $member_ids = array_unique($member_ids);
         switch ($format) {
             case 'html':
                 $this->view->assign('response', $member_ids);
