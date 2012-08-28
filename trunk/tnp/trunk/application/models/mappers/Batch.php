@@ -40,8 +40,8 @@ class Tnp_Model_Mapper_Batch
      */
     public function fetchInfo ($batch_id)
     {
+        $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $adapter = $db_table->getAdapter();
         $batch_table = $db_table->info('name');
         $required_cols = array('batch_id', 'department_id', 'programme_id', 
         'batch_start', 'batch_number', 'is_active');
@@ -80,6 +80,15 @@ class Tnp_Model_Mapper_Batch
         $batch_ids = array();
         $batch_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $batch_ids;
+    }
+    public function batchExistCheck ($batch_id)
+    {
+        $batches = $this->getDbTable()->find($batch_id);
+        if (0 == count($batches)) {
+            return false;
+        } else {
+            return true;
+        }
     }
     public function save ($prepared_data)
     {

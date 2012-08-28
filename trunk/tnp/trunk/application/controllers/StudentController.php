@@ -87,15 +87,33 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $member_id_to_check = $this->getMember_id();
-        $member_id_exists = $this->memberIdCheck($member_id_to_check);
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $member_id_exists = $this->memberIdCheck($member_id);
         $this->_helper->json($member_id_exists);
     }
     public function fetchcriticalinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(TRUE);
         $this->_helper->layout()->disableLayout();
-        $member_id = $this->getMember_id();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $critical_data = self::fetchcriticalinfo($member_id);
         $this->_helper->json($critical_data);
     }
@@ -110,8 +128,17 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $student_model = new Tnp_Model_Member_Student();
-        $member_id_to_check = $this->getMember_id();
-        $member_exists_in_acad = $this->memberIdCheck($member_id_to_check);
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $member_exists_in_acad = $this->memberIdCheck($member_id);
         /*
          * dont use this if statement because user may have updated the data in core
          * and the old data may still exist in academics database .thus in the case
@@ -147,9 +174,17 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $format = $this->_getParam('format', 'html');
         $student_model = new Tnp_Model_Member_Student();
-        $student_model->setMember_id($this->getMember_id());
+        $student_model->setMember_id($member_id);
         $student_emp_test = array();
         $student_test_ids = $student_model->fetchEmpTestRecordIds();
         $emp_model = new Tnp_Model_EmpTestInfo_Test();
@@ -174,7 +209,7 @@ class StudentController extends Zend_Controller_Action
         $student_training = array();
         $student_training_ids = $student_model->fetchTrainingIds();
         $training_model = new Tnp_Model_MemberInfo_Training();
-        $training_model->setMember_id($this->getMember_id());
+        $training_model->setMember_id($member_id);
         if (! empty($student_training_ids)) {
             foreach ($student_training_ids as $key => $training_id) {
                 $training_model->setTraining_id($training_id);
@@ -201,7 +236,7 @@ class StudentController extends Zend_Controller_Action
             $response['languages_known'] = false;
         }*/
         $student_lang = new Tnp_Model_MemberInfo_Language();
-        $student_lang->setMember_id($this->getMember_id());
+        $student_lang->setMember_id($member_id);
         $stu_lang = $student_lang->fetchLanguagesInfo();
         $lang = new Tnp_Model_Language();
         $languages = $lang->fetchLanguages();
@@ -219,7 +254,7 @@ class StudentController extends Zend_Controller_Action
         }
         $co_curr_array = array();
         $student_co_curr = new Tnp_Model_MemberInfo_CoCurricular();
-        $student_co_curr->setMember_id($this->getMember_id());
+        $student_co_curr->setMember_id($member_id);
         $student_co_curr->fetchInfo();
         $co_curr_array['achievements'] = $student_co_curr->getAchievements();
         $co_curr_array['activities'] = $student_co_curr->getActivities();
@@ -305,11 +340,19 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $test_info = $params['myarray']['test_info'];
         $test_score = $params['myarray']['test_score'];
         $section_info = $params['myarray']['test_section_info'];
         $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
+        $student->setMember_id($member_id);
         $test_model = new Tnp_Model_EmpTestInfo_Test();
         Zend_Registry::get('logger')->debug($test_info);
         $employability_test_id = $test_model->saveInfo($test_info);
@@ -333,6 +376,14 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $certification = $params['myarray']['certification_info'];
         $technical_info = $params['myarray']['technical_info'];
         $student_certification = $params['myarray']['certification_detail'];
@@ -347,7 +398,7 @@ class StudentController extends Zend_Controller_Action
         }
         $certification_id = $certification_model->saveInfo($certification);
         $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
+        $student->setMember_id($member_id);
         $student_certification['certification_id'] = $certification_id;
         Zend_Registry::get('logger')->debug($student_certification);
         $student->saveCertificationInfo($student_certification);
@@ -378,6 +429,14 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $training_info = $params['myarray']['training_info'];
         $training_details = $params['myarray']['training_detail'];
         $technical_info = $params['myarray']['technical_info'];
@@ -396,7 +455,7 @@ class StudentController extends Zend_Controller_Action
             $training_details['training_id'] = $training_id;
         }
         $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
+        $student->setMember_id($member_id);
         $student->saveTrainingInfo($training_details);
     }
     public function editexperienceAction ()
@@ -422,6 +481,14 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         Zend_Registry::get('logger')->debug($params);
         $experience_info = $params['myarray']['experience_info'];
         $student_experience = $params['myarray']['student_experience'];
@@ -450,7 +517,7 @@ class StudentController extends Zend_Controller_Action
             $student_experience['functional_area_id'] = $functional_area_id;
         }
         $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
+        $student->setMember_id($member_id);
         $student->saveExperienceInfo($student_experience);
     }
     /**
@@ -482,6 +549,14 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $is_new_skill = $params['myarray']['new_skill'];
         $skill_info = $params['myarray']['skill_info'];
         $member_proficiency = $params['myarray']['member_proficiency'];
@@ -499,7 +574,6 @@ class StudentController extends Zend_Controller_Action
             $skill_data = array('skill_name' => $skill_info['skill_name']);
             $skill_id = $skill->saveInfo($skill_data);
         }
-        $member_id = $this->getMember_id();
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($member_id);
         $mem_skill_info = array('skill_id' => $skill_id, 
@@ -517,8 +591,18 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
+        $student->setMember_id($member_id);
         $job_preferred = $student->fetchJobPreferred();
         $this->view->assign('job_preferred', $job_preferred);
         Zend_Registry::get('logger')->debug($job_preferred);
@@ -529,9 +613,17 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $job_preference = $params['myarray']['job_area_name'];
         $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
+        $student->setMember_id($member_id);
         Zend_Registry::get('logger')->debug($job_preference);
         $student->saveJobAreaPreferred($job_preference);
     }
@@ -540,8 +632,18 @@ class StudentController extends Zend_Controller_Action
         $cocurricular = array();
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
+        $student->setMember_id($member_id);
         $cocurricular_model = $student->fetchCoCurricularInfo();
         if ($cocurricular_model instanceof Tnp_Model_MemberInfo_CoCurricular) {
             $cocurricular_model->fetchInfo();
@@ -563,6 +665,14 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $cocurricular_info = array();
         $cocurricular_info = $params['myarray']['cocurricular'];
         if (! empty($cocurricular_info)) {
@@ -573,7 +683,7 @@ class StudentController extends Zend_Controller_Action
             $member_cocurricular_info['activities'] = $activities;
             $member_cocurricular_info['hobbies'] = $hobbies;
             $student = new Tnp_Model_Member_Student();
-            $student->setMember_id($this->getMember_id());
+            $student->setMember_id($member_id);
             $student->saveCoCurricularInfo($member_cocurricular_info);
         }
     }
@@ -583,12 +693,20 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $employability_test_id = $params['employability_test_id'];
         $test_name = $params['test_name'];
         $date_of_conduct = $params['date_of_conduct'];
         $test_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
         $test_record->setEmployability_test_id($employability_test_id);
-        $test_record->setMember_id($this->getMember_id());
+        $test_record->setMember_id($member_id);
         $record_ids = $test_record->fetchTestRecordIds(true, true);
         $response = array();
         foreach ($record_ids as $key => $record_id) {
@@ -609,12 +727,20 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $employability_test_id = $params['employability_test_id'];
         $test_name = $params['test_name'];
         $date_of_conduct = $params['date_of_conduct'];
         $section_score = new Tnp_Model_MemberInfo_EmployabilityTestSectionScore();
         $section_score->setEmployability_test_id($employability_test_id);
-        $section_score->setMember_id($this->getMember_id());
+        $section_score->setMember_id($member_id);
         $section_score_ids = $section_score->fetchSectionScoreIds(true, true);
         $test = new Tnp_Model_EmpTestInfo_Section();
         $response = array();
@@ -641,9 +767,17 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $certification_id = $params['certification_id'];
         $student_certification = new Tnp_Model_MemberInfo_Certification();
-        $student_certification->setMember_id($this->getMember_id());
+        $student_certification->setMember_id($member_id);
         $student_certification->setCertification_id($certification_id);
         $student_certification->fetchInfo();
         $start_date = $student_certification->getStart_date();
@@ -671,9 +805,17 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $student_experience_id = $params['experience_id'];
         $student_experience = new Tnp_Model_MemberInfo_Experience();
-        $student_experience->setMember_id($this->getMember_id());
+        $student_experience->setMember_id($member_id);
         $student_experience->setStudent_experience_id($student_experience_id);
         $student_experience->fetchInfo();
         $industry_id = $student_experience->getIndustry_id();
@@ -711,9 +853,17 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $training_id = $params['training_id'];
         $student_trainng = new Tnp_Model_MemberInfo_Training();
-        $student_trainng->setMember_id($this->getMember_id());
+        $student_trainng->setMember_id($member_id);
         $student_trainng->setTraining_id($training_id);
         $student_trainng->fetchInfo();
         $training = new Tnp_Model_Training();
@@ -742,8 +892,18 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $student_lang = new Tnp_Model_MemberInfo_Language();
-        $student_lang->setMember_id($this->getMember_id());
+        $student_lang->setMember_id($member_id);
         $language_ids = $student_lang->fetchLanguagesKnown();
         $language = new Tnp_Model_Language();
         $languages = array();
@@ -770,6 +930,14 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $is_new_language = $params['myarray']['new_language'];
         $language_info = $params['myarray']['language_info'];
         $member_proficiency = $params['myarray']['member_proficiency'];
@@ -790,7 +958,6 @@ class StudentController extends Zend_Controller_Action
              */
             $language_id = $language->saveInfo($lan_data);
         }
-        $member_id = $this->getMember_id();
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($member_id);
         $proficiency = array();
@@ -807,8 +974,15 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         Zend_Registry::get('logger')->debug($params);
-        $member_id = $this->getMember_id();
         $is_new_language = $params['myarray']['new_language'];
         Zend_Registry::get('logger')->debug($is_new_language);
         $language_info = $params['myarray']['language_info'];
@@ -886,7 +1060,7 @@ class StudentController extends Zend_Controller_Action
             $student->setMember_id($member_id);
             $student_model = $student->fetchCriticalInfo();
             if ($student_model instanceof Tnp_Model_Member_Student) {
-                $critical_data['member_id'] = $this->getMember_id();
+                $critical_data['member_id'] = $member_id;
                 $critical_data['first_name'] = $student_model->getFirst_name();
                 $critical_data['middle_name'] = $student_model->getMiddle_name();
                 $critical_data['last_name'] = $student_model->getLast_name();
