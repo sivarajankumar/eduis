@@ -1,19 +1,19 @@
 <?php
 /**
+ * Logger helper class
+ * 
+ * @author 
+ * @version
  *
- * @category   EduIS
- * @package    Core
- * @subpackage Helper
- * @since	   0.1
  */
 class Tnp_Controller_Helper_Logger extends Zend_Controller_Action_Helper_Abstract
 {
     /**
      * Logger instance
      *
-     * @var Zend_Log The logger
+     * @var Zend_Log
      */
-    private $_logger;
+    private $logger;
     /**
      * Constructor: initialize plugin loader with logger instance 
      * depending on if configuration allows it

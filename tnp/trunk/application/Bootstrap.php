@@ -2,52 +2,42 @@
 /**
  * Application bootstrap
  * 
- * @package Auth
+ * @package Tnp
  */
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
-
     protected function _initAppConfig ()
     {
-		// Define path to application domain name.
-		/**
-		 * @todo Dynamically define DOMAIN_NAME from $_SERVER
-		 */
-		defined('DOMAIN_NAME')
-		    || define('DOMAIN_NAME', 'aceambala.com');
-		    
         // Define path to CDN server.
         defined('CDN_SERVER') ||
-         define('CDN_SERVER', 'site.cdn.'.DOMAIN_NAME);
+         define('CDN_SERVER', 'site.cdn.aceambala.com');
         // Define path to CDN server.
         defined('AUTH_SERVER') ||
-         define('AUTH_SERVER', 'auth.'.DOMAIN_NAME);
+         define('AUTH_SERVER', 'auth.aceambala.com');
         // Define path to Core server.
         defined('CORE_SERVER') ||
-         define('CORE_SERVER', 'core.'.DOMAIN_NAME);
+         define('CORE_SERVER', 'core.aceambala.com');
         // Define path to Academics server.
         defined('ACADEMIC_SERVER') ||
-         define('ACADEMIC_SERVER', 'academic.'.DOMAIN_NAME);
+         define('ACADEMIC_SERVER', 'academic.aceambala.com');
         // Define path to Library server.
         defined('LIBRARY_SERVER') ||
-         define('LIBRARY_SERVER', 'library.'.DOMAIN_NAME);
+         define('LIBRARY_SERVER', 'library.aceambala.com');
         // Define path to Academics server.
         defined('ACCOUNT_SERVER') ||
-         define('ACCOUNT_SERVER', 'account.'.DOMAIN_NAME);
-        // Define path to Academics server.
-        defined('TNP_SERVER') ||
-         define('TNP_SERVER', 'tnp.'.DOMAIN_NAME);
+         define('ACCOUNT_SERVER', 'account.aceambala.com');
     }
     protected function _initViewBase ()
     {
         $this->bootstrap('View');
+        /* @var $view Zend_View_Abstract */
         $view = $this->getResource('View');
         $view->addHelperPath('ZendX/JQuery/View/Helper/', 
         'ZendX_JQuery_View_Helper');
         //Set default document type.
         $view->doctype('XHTML1_STRICT');
         // Set the initial title and separator:
-        $view->headTitle('TNP')->setSeparator(' :: ');
+        $view->headTitle('Tnp')->setSeparator(' :: ');
     }
     protected function _initCache ()
     {
@@ -106,7 +96,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 break;
             case 'development':
                 $profiler = new Zend_Db_Profiler_Firebug(
-                'DB Queries : '.ucfirst(strtolower(APPLICATION_ENV)));
+                'DB Queries : ' . ucfirst(strtolower(APPLICATION_ENV)));
                 $profiler->setEnabled(true);
                 $db = $this->bootstrapDb()->getResource('db');
                 $db->setProfiler($profiler);
@@ -118,3 +108,4 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         }
     }
 }
+
