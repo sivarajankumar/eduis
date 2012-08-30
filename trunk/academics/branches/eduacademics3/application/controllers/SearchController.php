@@ -34,7 +34,7 @@ class SearchController extends Zend_Controller_Action
                     $diploma_fields[$diploma_key] = $params[$key];
                     break;
                 default:
-                    throw new Exception('invalid params');
+                    //throw new Exception('invalid params');
                     break;
             }
         }
