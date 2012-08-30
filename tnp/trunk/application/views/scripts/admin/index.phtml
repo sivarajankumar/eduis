@@ -4,7 +4,7 @@
 		.uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
 	</style>
 <![endif]-->
-<form action="javascipt:submit()">
+<form action="javascipt:void(0)">
 <div class="main_div">
 	<div class="heading">
 		<h4>Personal Information</h4>
@@ -15,7 +15,7 @@
 			<option value="Any">ANY</option>
 			<option value="MALE">MALE</option>
 			<option value="FEMALE">FEMALE</option>
-		</select>
+		</select>&nbsp;
 		
 		<label for="cast_id">Cast</label>
 		<select id="cast_id" name="cast_id">
@@ -24,7 +24,7 @@
        		<option value="2">BC</option>
        		<option value="3">SC</option>
        		<option value="4">ST</option>
-		</select>
+		</select>&nbsp;
 		
 		<label for="religion_id">Religion</label>
 		<select id="religion_id" name="religion_id" class="selectInput required">
@@ -33,13 +33,19 @@
        		<option value="2">Muslim</option>
        		<option value="3">Sikh</option>
        		<option value="4">Christian</option>
-		</select>
+		</select>&nbsp;
 		
 		<label for="dob_from">Date of Birth from</label>
-		<input name="dob_from" id="dob_from" data-default-value="1990-12-31" value=""  size="20" maxlength="50" type="text" readonly="readonly"/>
+		<input name="dob_from" id="dob_from" size="18" maxlength="50" type="text" readonly="readonly"/>
 		
-		<label for="dob_to">to</label>
-		<input name="dob_to" id="dob_to" data-default-value="1990-12-31" value=""  size="20" maxlength="50" type="text" readonly="readonly"/>
+		<label for="dob_to">To</label>
+		<input name="dob_to" id="dob_to" size="18" maxlength="50" type="text" readonly="readonly"/>&nbsp;
+		
+		<label for="annual_income_from">Annual Income From</label>
+		<input name="annual_income_from" id="annual_income_from" size="18" maxlength="50" type="text"/>
+		
+		<label for="annual_income_to">To</label>
+		<input name="annual_income_to" id="annual_income_to" size="18" maxlength="50" type="text"/>
 	</fieldset>
 </div>
 
@@ -60,22 +66,22 @@
 				<option value="ECE">Electronics And Communication</option>
 				<option value="MECH">Mechanical</option>
 				<option value="BT">Biotechnology</option>
-			</select>
+			</select>&nbsp;
 			
-			<label for="btech_passing_year">B.Tech Passing Year</label>
-			<select name="btech_passing_year">
+			<label for="passing_year">B.Tech Passing Year</label>
+			<select name="passing_year" id="passing_year">
 				<option value="Any">ANY</option>
 				<?php
 			    	$current_year = intval(date('Y'));
 			    	for($i=2002+4;$i<=$current_year+4;$i++)
 			    	{
-			    	    echo '<option value="'.$i.'">'.$i.'</option>';
+			    	    echo '<option value="'.$i.'">'.$i.' - '.($i+4).'</option>';
 			    	}
 				?>
-			</select>
+			</select><br>
 			
-			<label for="btech_percentage">B.Tech Percentage</label>
-			<input type="text" id="btech_percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
+			<label for="percentage">B.Tech Percentage</label>
+			<input type="text" id="percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
 			<div id="btech_slider-range"></div>
 			
 			<label for="backlog">Backlog in B.Tech</label>
@@ -93,12 +99,12 @@
 		</fieldset>
 		
 		<fieldset id="twelfth">
-			<label for="twelfth_percentage">10+2 Percentage</label>
-			<input type="text" id="twelfth_percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
+			<label for="percentage">10+2 Percentage</label>
+			<input type="text" id="percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
 			<div id="twelfth_slider-range"></div>
 			
-			<label for="twelfth_passing_year">Tenth Passing Year</label>
-			<select name="twelfth_passing_year">
+			<label for="passing_year">10+2 Passing Year</label>
+			<select name="passing_year" id="passing_year">
 				<option value="Any">ANY</option>
 				<?php
 			    	$current_year = intval(date('Y'));
@@ -111,12 +117,12 @@
 		</fieldset>
 		
 		<fieldset id="tenth">
-			<label for="tenth_percentage">Tenth Percentage</label>
-			<input type="text" id="tenth_percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
+			<label for="percentage">Tenth Percentage</label>
+			<input type="text" id="percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
 			<div id="tenth_slider-range"></div>
 			
-			<label for="tenth_passing_year">Tenth Passing Year</label>
-			<select name="tenth_passing_year">
+			<label for="passing_year">Tenth Passing Year</label>
+			<select name="passing_year" id="passing_year">
 				<option value="Any">ANY</option>
 				<?php
 			    	$current_year = intval(date('Y'));
@@ -142,6 +148,10 @@
 <br>
 
 <input type="button" value="Search" onclick="javascript:submit_values()"/>
+</form>
+
+<form >
+	<input type="button" onclick="send_mail()">
 </form>
 
 <script type="text/javascript">
@@ -170,62 +180,127 @@
 		range: true,
 		min: 0,
 		max: 100,
-		values: [ 75, 100 ],
+		values: [ 40, 100 ],
 		slide: function( event, ui ) {
-			$( "#tenth_percentage" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+			$("fieldset#tenth > #percentage").val( ui.values[ 0 ] + "-" + ui.values[ 1 ] );
 		}
 	});
-	$( "#tenth_percentage" ).val( $( "#tenth_slider-range" ).slider( "values", 0 ) +
-		" - " + $( "#tenth_slider-range" ).slider( "values", 1 ) );
+	$( "fieldset#tenth > #percentage" ).val( $( "#tenth_slider-range" ).slider( "values", 0 ) +
+		"-" + $( "#tenth_slider-range" ).slider( "values", 1 ) );
 
 	$( "#twelfth_slider-range" ).slider({
 		range: true,
 		min: 0,
 		max: 100,
-		values: [ 75, 100 ],
+		values: [ 40, 100 ],
 		slide: function( event, ui ) {
-			$( "#twelfth_percentage" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+			$( "fieldset#twelfth > #percentage" ).val( ui.values[ 0 ] + "-" + ui.values[ 1 ] );
 		}
 	});
-	$( "#twelfth_percentage" ).val( $( "#twelfth_slider-range" ).slider( "values", 0 ) +
-		" - " + $( "#twelfth_slider-range" ).slider( "values", 1 ) );
+	$( "fieldset#twelfth > #percentage" ).val( $( "#twelfth_slider-range" ).slider( "values", 0 ) +
+		"-" + $( "#twelfth_slider-range" ).slider( "values", 1 ) );
 
 	$( "#btech_slider-range" ).slider({
 		range: true,
 		min: 0,
 		max: 100,
-		values: [ 60, 100 ],
+		values: [ 40, 100 ],
 		slide: function( event, ui ) {
-			$( "#btech_percentage" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+			$( "fieldset#btech > #percentage" ).val( ui.values[ 0 ] + "-" + ui.values[ 1 ] );
 		}
 	});
-	$( "#btech_percentage" ).val( $( "#btech_slider-range" ).slider( "values", 0 ) +
-		" - " + $( "#btech_slider-range" ).slider( "values", 1 ) );
+	$( "fieldset#btech > #percentage" ).val( $( "#btech_slider-range" ).slider( "values", 0 ) +
+		"-" + $( "#btech_slider-range" ).slider( "values", 1 ) );
 
 	function submit_values()
 	{
 		var personal_values={};
+		var dob = {};
+		var annual_income = {};
 		
-		personal_values['0gender'] = $('#gender').val();
-		personal_values['0cast_id'] = $('#cast_id').val();
-		personal_values['0religion_id'] = $('#religion_id').val();
-		personal_values['0dob'] = {'from':$("#dob_from").val(),'to':$("#dob_to").val()};
-
+		if($('#gender').val()!='Any')
+			personal_values['0gender'] = $('#gender').val();
+		if($('#cast_id').val()!='Any')
+			personal_values['0cast_id'] = $('#cast_id').val();
+		if($('#religion_id').val()!='Any')
+			personal_values['0religion_id'] = $('#religion_id').val();
+		if($("#dob_from").val()!='')
+			dob['from'] = $("#dob_from").val();
+		if($("#dob_to").val()!='')
+			dob['to'] = $("#dob_to").val();
+		if(dob['from']!=null || dob['to']!=null)
+			personal_values['0dob'] = dob;
+		
+		if($("#annual_income_from").val()!='')
+			annual_income['from'] = $("#annual_income_from").val();
+		if($("#annual_income_to").val()!='')
+			annual_income['to'] = $("#annual_income_to").val();
+		if(annual_income['from']!=null || annual_income['to']!=null)
+			personal_values['1annual_income'] = annual_income;
+		
 		var urlsubmitpersonal = "http://core.aceambala.com/search/search";
-		
 		$.ajax({
     		url : urlsubmitpersonal,
-    		datatype : 'json',
+    		dataType : 'jsonp',
     		data : {
         			myarray:personal_values,
-					format:'json'
+					format:'jsonp'
         			},
     		success: function(jStatus){
-
+				alert(jStatus);
     		},
             error: function(response) {
 				$('#errorBox').text(response.responseText).parent().show();
-    				console.log(response);
+    			console.log(response);
+    		}
+		});
+
+		var academic_values = {};
+
+		if($('fieldset#btech > #discipline_id').val() != 'Any')
+			academic_values['discipline_id'] = $('fieldset#btech > #discipline_id').val();
+
+		if($('fieldset#btech > #passing_year').val() != 'Any')
+			academic_values['batch_start'] = $('fieldset#btech > #passing_year').val();
+		
+		if($('fieldset#tenth > #passing_year').val() != 'Any')
+			academic_values['0passing_year'] = $('fieldset#tenth > #passing_year').val();
+		
+		var tenth_percentage = $('fieldset#tenth > #percentage').val();
+		var tenth_l = tenth_percentage.substring(0,tenth_percentage.search('-'));
+		var tenth_u = tenth_percentage.substring(tenth_percentage.search('-')+1,tenth_percentage.length);
+
+		academic_values['0percentage'] = {'from':tenth_l, 'to':tenth_u};
+
+		if($('fieldset#twelfth > #passing_year').val() != 'Any')
+			academic_values['1passing_year'] = $('fieldset#twelfth > #passing_year').val();
+		
+		var twelfth_percentage = $('fieldset#twelfth > #percentage').val();
+		var twelfth_l = twelfth_percentage.substring(0,twelfth_percentage.search('-'));
+		var twelfth_u = twelfth_percentage.substring(twelfth_percentage.search('-')+1,twelfth_percentage.length);
+
+		academic_values['1percentage'] = {'from':twelfth_l, 'to':twelfth_u};
+		
+		var btech_percentage = $('fieldset#btech > #percentage').val();
+		var btech_l = btech_percentage.substring(0,btech_percentage.search('-'));
+		var btech_u = btech_percentage.substring(btech_percentage.search('-')+1,btech_percentage.length);
+
+		academic_values['3percentage'] = {'from':btech_l, 'to':btech_u};
+		
+		var urlsubmitacademic = "http://academic.aceambala.com/search/search";
+		$.ajax({
+    		url : urlsubmitacademic,
+    		dataType : 'jsonp',
+    		data : {
+        			myarray : academic_values,
+					format : 'jsonp'
+        			},
+    		success: function(jStatus){
+				alert(jStatus);
+    		},
+            error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
     		}
 		});
 	}
@@ -246,5 +321,13 @@
 		margin-top:0px;
 		margin-bottom:10px;
 		padding:2px 0 2px 10px;
+	}
+	.search_field_div{
+		padding:2px;
+	}
+	fieldset{
+		padding:5px 20px 5px 5px;
+		line-height: 2.6em;
+		border:0.1em solid #F9F9F9;
 	}
 </style>
