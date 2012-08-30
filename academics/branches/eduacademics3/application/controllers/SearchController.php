@@ -14,7 +14,8 @@ class SearchController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
+        $params_v = array_diff($request->getParams(), $request->getUserParams());
+        $params = $params_v['myarray'];
         $format = $this->_getParam('format', 'log');
         $tenth_fields = array();
         $twelfth_fields = array();
