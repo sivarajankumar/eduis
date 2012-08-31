@@ -66,6 +66,32 @@ class Acad_Model_Mapper_Course_DmcInfo
     /**
      * 
      * Enter description here ...
+     * @param int $result_type_id
+     */
+    public function fetchBackLogMembers ()
+    {
+        //"SELECT brand FROM cars GROUP BY brand HAVING COUNT(*) >= 4";
+        $result = array();
+        $result_types = array();
+        $result = $this->fetchResultTypes();
+        foreach ($result as $result_type_id => $result_type_name_array) {
+            $result_types[$result_type_id] = $result_type_name_array['result_type_name'];
+        }
+        $result_type_id = array_search('regular_fail', $result_types);
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $dmc_info_table = $db_table->info('name');
+        $required_cols = array('member_id');
+        $member_ids = array();
+        $select = $adapter->select();
+        $select->from($dmc_info_table, $required_cols)->where(
+        'result_type_id = ?', 2);
+        $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $member_ids;
+    }
+    /**
+     * 
+     * Enter description here ...
      * @param int $member_id
      * @param int $class_id 
      * @param int $result_type_id

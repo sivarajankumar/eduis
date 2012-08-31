@@ -45,13 +45,35 @@ class Acad_Model_Mapper_Qualification_Mtech
         $mtech_table = $db_table->info('name');
         $required_cols = array('member_id', 'qualification_id', 'discipline_id', 
         'marks_obtained', 'total_marks', 'percentage', 'passing_year', 
-        'institution', 'university', 'city_name', 'state_name','roll_no');
+        'institution', 'university', 'city_name', 'state_name', 'roll_no');
         $select = $adapter->select()
             ->from($mtech_table, $required_cols)
             ->where('member_id = ?', $member_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $student_info[$member_id];
+    }
+    public function fetchStudents ($exact_property, $property_range)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $stu_table = $db_table->info('name');
+        $required_cols = array('member_id');
+        $select = $adapter->select()->from($stu_table, $required_cols);
+        foreach ($property_range as $key => $range) {
+            if (! empty($range['from'])) {
+                $select->where("$key >= ?", $range['from']);
+            }
+            if (! empty($range['to'])) {
+                $select->where("$key <= ?", $range['to']);
+            }
+        }
+        foreach ($exact_property as $exact_key => $exact_range) {
+            $select->where("$exact_key = ?", $exact_range);
+        }
+        $member_ids = array();
+        $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $member_ids;
     }
     public function save ($prepared_data)
     {
