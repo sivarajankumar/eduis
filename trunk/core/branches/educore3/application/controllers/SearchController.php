@@ -71,48 +71,50 @@ class SearchController extends Zend_Controller_Action
         $format = $this->_getParam('format', 'log');
         $critical_fields = array();
         $rel_fields = array();
-        foreach ($params as $key => $value) {
-            switch (substr($key, 0, 1)) {
-                case ('0'):
-                    $critical_key = substr($key, 1);
-                    $critical_fields[$critical_key] = $params[$key];
-                    break;
-                case ('1'):
-                    $rel_key = substr($key, 1);
-                    $rel_fields[$rel_key] = $params[$key];
-                    break;
-                default:
-                    throw new Exception('invalid params');
-                    break;
-            }
-        }
-        /* -------------------------------------- */
         $member_ids = array();
-        if (! empty($critical_fields)) {
-            $critical_range_fields = array('dob' => '');
-            $critical_range_params = array_intersect_key($critical_fields, 
-            $critical_range_fields);
-            $critical_exact_params = array_diff_key($critical_fields, 
-            $critical_range_params);
-            $student = new Core_Model_Member_Student();
-            $personal_matches = $student->search($critical_exact_params, 
-            $critical_range_params);
-            Zend_Registry::get('logger')->debug($personal_matches);
-        }
-        if (! empty($rel_fields)) {
-            $rel_range_fields = array('annual_income' => '');
-            $rel_range_params = array_intersect_key($rel_fields, 
-            $rel_range_fields);
-            $rel_exact_params = array_diff_key($rel_fields, $rel_range_params);
-            $relatives = new Core_Model_MemberRelatives();
-            $rel_matches = $relatives->search($rel_exact_params, 
-            $rel_range_params);
-        }
-        if (! empty($personal_matches)) {
-            $member_ids = array_merge($member_ids, $personal_matches);
-        }
-        if (! empty($rel_matches)) {
-            $member_ids = array_merge($member_ids, $rel_matches);
+        if (! empty($params)) {
+            foreach ($params as $key => $value) {
+                switch (substr($key, 0, 1)) {
+                    case ('0'):
+                        $critical_key = substr($key, 1);
+                        $critical_fields[$critical_key] = $params[$key];
+                        break;
+                    case ('1'):
+                        $rel_key = substr($key, 1);
+                        $rel_fields[$rel_key] = $params[$key];
+                        break;
+                    default:
+                        //throw new Exception('invalid params');
+                        break;
+                }
+            }
+            /* -------------------------------------- */
+            if (! empty($critical_fields)) {
+                $critical_range_fields = array('dob' => '');
+                $critical_range_params = array_intersect_key($critical_fields, 
+                $critical_range_fields);
+                $critical_exact_params = array_diff_key($critical_fields, 
+                $critical_range_params);
+                $student = new Core_Model_Member_Student();
+                $personal_matches = $student->search($critical_exact_params, 
+                $critical_range_params);
+            }
+            if (! empty($rel_fields)) {
+                $rel_range_fields = array('annual_income' => '');
+                $rel_range_params = array_intersect_key($rel_fields, 
+                $rel_range_fields);
+                $rel_exact_params = array_diff_key($rel_fields, 
+                $rel_range_params);
+                $relatives = new Core_Model_MemberRelatives();
+                $rel_matches = $relatives->search($rel_exact_params, 
+                $rel_range_params);
+            }
+            if (! empty($personal_matches)) {
+                $member_ids = array_merge($member_ids, $personal_matches);
+            }
+            if (! empty($rel_matches)) {
+                $member_ids = array_merge($member_ids, $rel_matches);
+            }
         }
         if (empty($member_ids)) {
             $member_ids = false;
