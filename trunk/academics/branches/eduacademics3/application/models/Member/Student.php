@@ -853,4 +853,72 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             $dmc_info_id, $student_subject_id);
         }
     }
+    private function fetchMemberDmcInfoIdsByDate ($member_id, $class_id)
+    {
+        $dmc_info = new Acad_Model_Course_DmcInfo();
+        $dmc_info->setMember_id($member_id);
+        $dmc_info->setClass_id($class_id);
+        $dmc_info_ids = $dmc_info->fetchMemberDmcInfoIds(true, null, null, null, 
+        true);
+        return $dmc_info_ids;
+    }
+    public function getBacklogCount ()
+    {
+        $student = new Acad_Model_Member_Student();
+        $member_id = $this->getMember_id(true);
+        $dmc_info_id_referred = array();
+        /**
+         * calculate students's latest dmc_info_id for each class
+         * which willbe referred to find out backlogs
+         */
+        $student->setMember_id($member_id);
+        $class_ids = $student->fetchAllClassIds();
+        if (! empty($class_ids)) {
+            foreach ($class_ids as $class_id) {
+                $dmc_info_ids = $this->fetchMemberDmcInfoIdsByDate($member_id, 
+                $class_id);
+                if (! empty($dmc_info_ids)) {
+                    $order_reversed = array_reverse($dmc_info_ids, true);
+                    $single_latest = array_pop($order_reversed);
+                    $dmc_info_id_referred[$class_id] = array_search(
+                    $single_latest, $dmc_info_ids);
+                }
+            }
+            $fail_subj_sql = 'SELECT `dmc_marks`.`student_subject_id`
+        FROM
+        `academics`.`dmc_marks`
+        INNER JOIN `academics`.`dmc_info`
+        ON (`dmc_marks`.`dmc_info_id` = `dmc_info`.`dmc_info_id`)
+        WHERE (`dmc_info`.`dmc_info_id` = ?
+        AND `dmc_marks`.`is_pass` = ?)';
+            $db = new Zend_Db_Table();
+            $adapter = $db->getAdapter();
+            $backlogs = array();
+            if (! empty($dmc_info_id_referred)) {
+                foreach ($dmc_info_id_referred as $dmc_info_id) {
+                    $bind = array($dmc_info_id, 0);
+                    $result = array();
+                    $result = $adapter->query($fail_subj_sql, $bind)->fetchAll(
+                    Zend_Db::FETCH_COLUMN);
+                    if (! empty($result)) {
+                        $backlogs[$dmc_info_id] = count($result);
+                    }
+                }
+                $backlog_count = 0;
+                foreach ($backlogs as $class_back_logs) {
+                    $backlog_count += $class_back_logs;
+                }
+                return $backlog_count;
+            } else {
+                Zend_Registry::get('logger')->debug(
+                'Member_id : ' . $member_id .
+                 ' has not registered any semester dmc yet !');
+                return false;
+            }
+        } else {
+            Zend_Registry::get('logger')->debug(
+            'Member_id : ' . $member_id . ' is not registered in any class');
+            return false;
+        }
+    }
 }

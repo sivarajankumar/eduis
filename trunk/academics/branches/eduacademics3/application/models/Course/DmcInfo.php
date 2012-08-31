@@ -424,6 +424,31 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
             return $dmc_info_ids;
         }
     }
+    /**
+     * 
+     * Enter description here ...
+     * @param string $result_type ex : 'regular_pass'
+     */
+    public function fetchBackLogMembers ($number_of_backlogs)
+    {
+        $member_ids = $this->getMapper()->fetchBackLogMembers();
+        if (empty($member_ids)) {
+            return false;
+        } else {
+            $member_back_logs = array_count_values($member_ids);
+            $result = array();
+            foreach ($member_back_logs as $member_id => $backlog_count) {
+                if ($backlog_count >= $number_of_backlogs) {
+                    $result[$member_id]['back_log_count'] = $backlog_count;
+                }
+            }
+            if (empty($result)) {
+                return false;
+            } else {
+                return $result;
+            }
+        }
+    }
     public function fetchResultTypes ()
     {
         return $this->getMapper()->fetchResultTypes();
