@@ -4,7 +4,7 @@
 		.uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
 	</style>
 <![endif]-->
-<form action="javascipt:void(0)">
+<form action="javascipt:void(0)" id="search_criteria">
 <div class="main_div">
 	<div class="heading">
 		<h4>Personal Information</h4>
@@ -68,7 +68,7 @@
 				<option value="BT">Biotechnology</option>
 			</select>&nbsp;
 			
-			<label for="passing_year">B.Tech Passing Year</label>
+			<label for="passing_year">B.Tech Batch</label>
 			<select name="passing_year" id="passing_year">
 				<option value="Any">ANY</option>
 				<?php
@@ -84,16 +84,15 @@
 			<input type="text" id="percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
 			<div id="btech_slider-range"></div>
 			
-			<label for="backlog">Backlog in B.Tech</label>
-			<select name="backlog">
+			<label for="backlogs">Backlogs in B.Tech</label>
+			<select name="backlogs">
 				<option value="never">Never</option>
-				<option value="none">Currently None or cleared</option>
-				<option value="Any">ANY</option>
+				<option value="0">0</option>
 				<?php 
 					for($i=1;$i<=10;$i++)
 						echo '<option value="'.$i.'">'.$i.'</option>';
 				?>
-				<option value="10+">More than 10</option>
+				<option value="Any">Any</option>
 			</select>
 		
 		</fieldset>
@@ -104,6 +103,24 @@
 			<div id="twelfth_slider-range"></div>
 			
 			<label for="passing_year">10+2 Passing Year</label>
+			<select name="passing_year" id="passing_year">
+				<option value="Any">ANY</option>
+				<?php
+			    	$current_year = intval(date('Y'));
+			    	for($i=2002;$i<=$current_year;$i++)
+			    	{
+			    	    echo '<option value="'.$i.'">'.$i.'</option>';
+			    	}
+				?>
+			</select>
+		</fieldset>
+		
+		<fieldset id="diploma">
+			<label for="percentage">Diploma Percentage</label>
+			<input type="text" id="percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
+			<div id="diploma_slider-range"></div>
+			
+			<label for="passing_year">Diploma Passing Year</label>
 			<select name="passing_year" id="passing_year">
 				<option value="Any">ANY</option>
 				<?php
@@ -148,10 +165,6 @@
 <br>
 
 <input type="button" value="Search" onclick="javascript:submit_values()"/>
-</form>
-
-<form >
-	<input type="button" onclick="send_mail()">
 </form>
 
 <script type="text/javascript">
@@ -212,6 +225,18 @@
 	$( "fieldset#btech > #percentage" ).val( $( "#btech_slider-range" ).slider( "values", 0 ) +
 		"-" + $( "#btech_slider-range" ).slider( "values", 1 ) );
 
+	$( "#diploma_slider-range" ).slider({
+		range: true,
+		min: 0,
+		max: 100,
+		values: [ 40, 100 ],
+		slide: function( event, ui ) {
+			$( "fieldset#diploma > #percentage" ).val( ui.values[ 0 ] + "-" + ui.values[ 1 ] );
+		}
+	});
+	$( "fieldset#diploma > #percentage" ).val( $( "#diploma_slider-range" ).slider( "values", 0 ) +
+		"-" + $( "#diploma_slider-range" ).slider( "values", 1 ) );
+
 	function submit_values()
 	{
 		var personal_values={};
@@ -247,7 +272,7 @@
 					format:'jsonp'
         			},
     		success: function(jStatus){
-				alert(jStatus);
+        		
     		},
             error: function(response) {
 				$('#errorBox').text(response.responseText).parent().show();
@@ -280,12 +305,23 @@
 		var twelfth_u = twelfth_percentage.substring(twelfth_percentage.search('-')+1,twelfth_percentage.length);
 
 		academic_values['1percentage'] = {'from':twelfth_l, 'to':twelfth_u};
+
+		if($('fieldset#diploma > #passing_year').val() != 'Any')
+			academic_values['2passing_year'] = $('fieldset#diploma > #passing_year').val();
+		
+		var diploma_percentage = $('fieldset#diploma > #percentage').val();
+		var diploma_l = diploma_percentage.substring(0,diploma_percentage.search('-'));
+		var diploma_u = diploma_percentage.substring(diploma_percentage.search('-')+1,diploma_percentage.length);
+
+		academic_values['2percentage'] = {'from':diploma_l, 'to':diploma_u};
 		
 		var btech_percentage = $('fieldset#btech > #percentage').val();
 		var btech_l = btech_percentage.substring(0,btech_percentage.search('-'));
 		var btech_u = btech_percentage.substring(btech_percentage.search('-')+1,btech_percentage.length);
 
 		academic_values['3percentage'] = {'from':btech_l, 'to':btech_u};
+
+		academic_values['backlogs'] = $('#backlogs').val();
 		
 		var urlsubmitacademic = "http://academic.aceambala.com/search/search";
 		$.ajax({
