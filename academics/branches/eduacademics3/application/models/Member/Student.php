@@ -581,7 +581,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
      * @param bool $ordered_by_date
      */
     public function fetchDmcInfoIds ($class_specific = null, 
-    $result_type_specific = null, $all = null, $considered_only = null, 
+    $result_type_specific = null, $latest_only = null, $considered_only = null, 
     $ordered_by_date = null)
     {
         $member_id = $this->getMember_id(true);
@@ -605,7 +605,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             $is_considered = $considered_only;
         }
         return $dmc_info_object->fetchMemberDmcInfoIds($class_id, 
-        $result_type_id, $all, $is_considered, $ordered_by_date);
+        $result_type_id, $latest_only, $is_considered, $ordered_by_date);
     }
     /**
      * Fetches DMC of a Student,
@@ -862,63 +862,74 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         true);
         return $dmc_info_ids;
     }
-    public function getBacklogCount ()
+    private function getLatestDmcInfoId ($member_id, $class_id)
     {
-        $student = new Acad_Model_Member_Student();
-        $member_id = $this->getMember_id(true);
-        $dmc_info_id_referred = array();
-        /**
-         * calculate students's latest dmc_info_id for each class
-         * which willbe referred to find out backlogs
-         */
-        $student->setMember_id($member_id);
-        $class_ids = $student->fetchAllClassIds();
-        if (! empty($class_ids)) {
-            foreach ($class_ids as $class_id) {
-                $dmc_info_ids = $this->fetchMemberDmcInfoIdsByDate($member_id, 
-                $class_id);
-                if (! empty($dmc_info_ids)) {
-                    $order_reversed = array_reverse($dmc_info_ids, true);
-                    $single_latest = array_pop($order_reversed);
-                    $dmc_info_id_referred[$class_id] = array_search(
-                    $single_latest, $dmc_info_ids);
-                }
-            }
-            $fail_subj_sql = 'SELECT `dmc_marks`.`student_subject_id`
-        FROM
-        `academics`.`dmc_marks`
-        INNER JOIN `academics`.`dmc_info`
-        ON (`dmc_marks`.`dmc_info_id` = `dmc_info`.`dmc_info_id`)
-        WHERE (`dmc_info`.`dmc_info_id` = ?
-        AND `dmc_marks`.`is_pass` = ?)';
-            $db = new Zend_Db_Table();
-            $adapter = $db->getAdapter();
-            $backlogs = array();
-            if (! empty($dmc_info_id_referred)) {
-                foreach ($dmc_info_id_referred as $dmc_info_id) {
-                    $bind = array($dmc_info_id, 0);
-                    $result = array();
-                    $result = $adapter->query($fail_subj_sql, $bind)->fetchAll(
-                    Zend_Db::FETCH_COLUMN);
-                    if (! empty($result)) {
-                        $backlogs[$dmc_info_id] = count($result);
-                    }
-                }
-                $backlog_count = 0;
-                foreach ($backlogs as $class_back_logs) {
-                    $backlog_count += $class_back_logs;
-                }
-                return $backlog_count;
-            } else {
-                Zend_Registry::get('logger')->debug(
-                'Member_id : ' . $member_id .
-                 ' has not registered any semester dmc yet !');
-                return false;
-            }
+        $dmc_info = new Acad_Model_Course_DmcInfo();
+        $dmc_info->setMember_id($member_id);
+        $dmc_info->setClass_id($class_id);
+        $dmc_info_ids = $dmc_info->fetchMemberDmcInfoIds(true, null, true, null, 
+        true);
+        if (! empty($dmc_info_ids)) {
+            $latest_dmc_info_id = array_pop(array_flip($dmc_info_ids));
+            return $latest_dmc_info_id;
         } else {
             Zend_Registry::get('logger')->debug(
-            'Member_id : ' . $member_id . ' is not registered in any class');
+            'Member_id : ' . $member_id .
+             ' has not registered any dmc for class_id : ' . $class_id);
             return false;
         }
+    }
+    private function fetchFailedSubjectIds ($dmc_info_id)
+    {
+        $dmc_info = new Acad_Model_Course_DmcInfo();
+        $dmc_info->setDmc_info_id($dmc_info_id);
+        $failed_stu_subj_ids = $dmc_info->fetchFailedSubjectIds();
+        return $failed_stu_subj_ids;
+    }
+    /**
+     * Total backlogs active currently(considering all semesters)
+     * ..
+     */
+    public function fetchCurrentBacklogCount ($class_id)
+    {
+        $member_id = $this->getMember_id(true);
+        $class_ids = $this->fetchAllClassIds();
+        if (is_array($class_ids)) {
+            $class_backlog_count = 0;
+            foreach ($class_ids as $class_id) {
+                $class_backlog_count += $this->fetchClassBacklogCount($class_id);
+            }
+            return $class_backlog_count;
+        } else {
+            return false;
+        }
+    }
+    /**
+     * Total backlogs active currently(for particular semster)
+     * ..
+     * @param int $class_id
+     */
+    public function fetchClassBacklogCount ($class_id)
+    {
+        $member_id = $this->getMember_id(true);
+        $dmc_info_id_latest = $this->getLatestDmcInfoId($member_id, $class_id);
+        $backlog_count = 0;
+        if (isset($dmc_info_id_latest)) {
+            $failed_stu_subj_ids = $this->fetchFailedSubjectIds(
+            $dmc_info_id_latest);
+            if (is_array($failed_stu_subj_ids)) {
+                $backlog_count = count($failed_stu_subj_ids);
+                return $backlog_count;
+            } else {
+                return $backlog_count;
+            }
+        }
+    }
+    public function hasBacklogCheck ()
+    {
+        $dmc_info = new Acad_Model_Course_DmcInfo();
+        $member_id = $this->getMember_id(true);
+        $dmc_info->setMember_id($member_id);
+        return $dmc_info->hasBacklogCheck();
     }
 }

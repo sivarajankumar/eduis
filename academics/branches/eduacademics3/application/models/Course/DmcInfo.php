@@ -396,7 +396,7 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
      * @param bool $ordered_by_date
      */
     public function fetchMemberDmcInfoIds ($class_specific = null, 
-    $result_type_specific = null, $all = null, $considered_only = null, 
+    $result_type_specific = null, $latest_only = null, $considered_only = null, 
     $ordered_by_date = null)
     {
         $member_id = $this->getMember_id(true);
@@ -417,7 +417,8 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
             $is_considered = $this->getIs_considered(true);
         }
         $dmc_info_ids = $this->getMapper()->fetchDmcInfoIds($member_id, 
-        $class_id, $result_type_id, $all, $is_considered, $ordered_by_date);
+        $class_id, $result_type_id, $latest_only, $is_considered, 
+        $ordered_by_date);
         if (empty($dmc_info_ids)) {
             return false;
         } else {
@@ -448,6 +449,26 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
                 return $result;
             }
         }
+    }
+    /**
+     * 
+     * Enter description here ...
+     * @param string $result_type ex : 'regular_pass'
+     */
+    public function fetchFailedSubjectIds ()
+    {
+        $dmc_info_id = $this->getDmc_info_id(true);
+        $stu_subj_ids = $this->getMapper()->fetchFailedSubjectIds($dmc_info_id);
+        if (empty($stu_subj_ids)) {
+            return false;
+        } else {
+            return $stu_subj_ids;
+        }
+    }
+    public function hasBacklogCheck ()
+    {
+        $member_id = $this->getMember_id(true);
+        return $this->getMapper()->hasBacklogCheck($member_id);
     }
     public function fetchResultTypes ()
     {
