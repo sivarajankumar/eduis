@@ -67,14 +67,16 @@ class SearchController extends Zend_Controller_Action
             }
             $member_ids = $this->combineResult($member_ids, $diploma_matches);
         }
-        if (empty($params_v['backlogs'])) {
-            $back_logs = $params_v['backlogs'];
+        if (! empty($params['backlogs'])) {
+            $back_logs = $params['backlogs'];
             if ($back_logs == 'never') {
                 $backlog_filtered = $this->neverbackLogSearch($member_ids);
-            } elseif (is_int($back_logs)) {
+            } else {
+                //if (is_int($back_logs)) {
                 $back_log_limit = $back_logs;
                 $backlog_filtered = $this->backLogSearch($back_log_limit, 
                 $member_ids);
+                 //}
             }
             if (empty($backlog_filtered)) {
                 return $this->returnResult($format, false);
