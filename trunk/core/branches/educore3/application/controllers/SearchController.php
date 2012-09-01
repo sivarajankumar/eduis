@@ -76,7 +76,7 @@ class SearchController extends Zend_Controller_Action
                 $student = new Core_Model_Member_Student();
                 $personal_matches = $student->search($critical_exact_params, 
                 $critical_range_params);
-                $this->exitSearchcCheck($member_ids, $format);
+                $this->exitSearchcCheck($personal_matches, $format);
             }
             $member_ids = $this->combineResult($member_ids, $personal_matches);
             if (! empty($rel_fields)) {
