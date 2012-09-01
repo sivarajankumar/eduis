@@ -227,4 +227,15 @@ class Core_Model_StudentClass extends Core_Model_Generic
             return $class_ids;
         }
     }
+    public function fetchClassStudents ($batch_start = null, $department_id = null, 
+    $programme_id = null, $semester_id = null)
+    {
+        $member_ids = $this->getMapper()->fetchBatchDepartmentProgrammeStudents(
+        $batch_start, $department_id, $programme_id, $semester_id);
+        if (empty($member_ids)) {
+            return false;
+        } else {
+            return $member_ids;
+        }
+    }
 }

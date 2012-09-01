@@ -702,4 +702,12 @@ class Core_Model_Member_Student extends Core_Model_Generic
             $member_id, $class_id);
         }
     }
+    public function fetchClassStudents ($batch_start = null, $department_id = null, 
+    $programme_id = null, $semester_id = null)
+    {
+        $student_class_object = new Core_Model_StudentClass();
+        $member_ids = $student_class_object->fetchClassStudents($batch_start, 
+        $department_id, $programme_id, $semester_id);
+        return $member_ids;
+    }
 }
