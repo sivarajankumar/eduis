@@ -28,23 +28,30 @@ class SearchController extends Zend_Controller_Action
         $critical_fields = array();
         $rel_fields = array();
         if (! empty($params)) {
-            if (! empty($params['batch_start'])) {
-                $batch_member_ids = $student->fetchClassStudents(
-                $params['batch_start']);
-            }
-            $member_ids = $this->combineResult($member_ids, $batch_member_ids);
-            if (! empty($params['discipline_id'])) {
-                $department_member_ids = $student->fetchClassStudents(null, 
-                $params['discipline_id']);
-            }
-            $member_ids = $this->combineResult($member_ids, 
-            $department_member_ids);
             if (! empty($params['programme_id'])) {
                 $programme_member_ids = $student->fetchClassStudents(null, null, 
                 $params['programme_id']);
+                $this->exitSearchcCheck($programme_member_ids, $format);
             }
+            /*
+             * we have members for programme specified
+             */
             $member_ids = $this->combineResult($member_ids, 
             $programme_member_ids);
+            if (! empty($params['discipline_id'])) {
+                $department_member_ids = $student->fetchClassStudents(null, 
+                $params['discipline_id']);
+                $this->exitSearchcCheck($department_member_ids, $format);
+            }
+            $member_ids = $this->combineResult($member_ids, 
+            $department_member_ids);
+            if (! empty($params['batch_start'])) {
+                $batch_member_ids = $student->fetchClassStudents(
+                $params['batch_start']);
+                $this->exitSearchcCheck($batch_member_ids, $format);
+            }
+            $member_ids = $this->combineResult($member_ids, $batch_member_ids);
+            $this->exitSearchcCheck($member_ids, $format);
             foreach ($params as $key => $value) {
                 switch (substr($key, 0, 1)) {
                     case ('0'):
@@ -69,7 +76,9 @@ class SearchController extends Zend_Controller_Action
                 $student = new Core_Model_Member_Student();
                 $personal_matches = $student->search($critical_exact_params, 
                 $critical_range_params);
+                $this->exitSearchcCheck($member_ids, $format);
             }
+            $member_ids = $this->combineResult($member_ids, $personal_matches);
             if (! empty($rel_fields)) {
                 $rel_range_fields = array('annual_income' => '');
                 $rel_range_params = array_intersect_key($rel_fields, 
@@ -79,13 +88,22 @@ class SearchController extends Zend_Controller_Action
                 $relatives = new Core_Model_MemberRelatives();
                 $rel_matches = $relatives->search($rel_exact_params, 
                 $rel_range_params);
+                $this->exitSearchcCheck($rel_matches, $format);
             }
-            $member_ids = $this->combineResult($member_ids, $personal_matches);
             $member_ids = $this->combineResult($member_ids, $rel_matches);
         }
-        if (empty($member_ids)) {
+        $this->exitSearchcCheck($member_ids, $format);
+    }
+    private function exitSearchcCheck ($search_result, $format)
+    {
+        if (empty($search_result) or ($search_result == false)) {
             $member_ids = false;
+            $this->returnResult($format, $member_ids);
         }
+    }
+    private function returnResult ($format, $member_ids)
+    {
+        Zend_Registry::get('logger')->debug($member_ids);
         switch ($format) {
             case 'html':
                 $this->view->assign('response', $member_ids);

@@ -47,14 +47,17 @@ class SearchController extends Zend_Controller_Action
             }
             if (! empty($tenth_fields)) {
                 $matric_matches = $this->tenthSearch($tenth_fields);
+                $this->exitSearchcCheck($tenth_fields, $format);
             }
             $member_ids = $this->combineResult($member_ids, $matric_matches);
             if (! empty($twelfth_fields)) {
                 $twelfth_matches = $this->twelfthSearch($twelfth_fields);
+                $this->exitSearchcCheck($twelfth_matches, $format);
             }
             $member_ids = $this->combineResult($member_ids, $twelfth_matches);
             if (! empty($diploma_fields)) {
                 $diploma_matches = $this->DiplomaSearch($diploma_fields);
+                $this->exitSearchcCheck($diploma_matches, $format);
             }
             $member_ids = $this->combineResult($member_ids, $diploma_matches);
         }
@@ -68,10 +71,20 @@ class SearchController extends Zend_Controller_Action
                 $member_ids);
             }
         }
+        $this->exitSearchcCheck($backlog_filtered, $format);
         $member_ids = $this->combineResult($member_ids, $backlog_filtered);
-        if (empty($member_ids)) {
+        $this->exitSearchcCheck($member_ids, $format);
+    }
+    private function exitSearchcCheck ($search_result, $format)
+    {
+        if (empty($search_result) or ($search_result == false)) {
             $member_ids = false;
+            $this->returnResult($format, $member_ids);
         }
+    }
+    private function returnResult ($format, $member_ids)
+    {
+        Zend_Registry::get('logger')->debug($member_ids);
         switch ($format) {
             case 'html':
                 $this->view->assign('response', $member_ids);
@@ -88,7 +101,7 @@ class SearchController extends Zend_Controller_Action
                 Zend_Registry::get('logger')->debug($member_ids);
                 break;
             default:
-                // dont raise any exception;
+                ;
                 break;
         }
     }
