@@ -92,7 +92,7 @@
 					for($i=1;$i<=10;$i++)
 						echo '<option value="'.$i.'">'.$i.'</option>';
 				?>
-				<option value="Any">Any</option>
+				<option value="999">Any</option>
 			</select>
 		
 		</fieldset>
@@ -168,8 +168,9 @@
 </form>
 
 <script type="text/javascript">
-var personal_result = new Array();
-var academic_result = new Array();
+	var personal_result = new Array();
+	var academic_result = new Array();
+	
 	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
 	$("#dob_from").datepicker({
 		dateFormat: 'yy-mm-dd',
@@ -180,10 +181,6 @@ var academic_result = new Array();
 			this.focus();
 			}
 	});
-
-	var b = new Array(12,45,2,67,34,10,14);
-	
-	alert(b.sort());
 	
 	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
 	$("#dob_to").datepicker({
