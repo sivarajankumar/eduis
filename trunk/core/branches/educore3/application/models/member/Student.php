@@ -503,6 +503,25 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $student_class_object->setClass_id($class_id);
         return $student_class_object->fetchInfo();
     }
+    public function fetchRollNumber ()
+    {
+        $member_id = $this->getMember_id(true);
+        $class_ids = $this->fetchAllClassIds();
+        if (is_array($class_ids)) {
+            $student_class_object = new Core_Model_StudentClass();
+            $student_class_object->setMember_id($member_id);
+            $class_id = array_pop($class_ids);
+            $student_class_object->setClass_id($class_id);
+            $roll_number = $student_class_object->fetchRollNumber();
+            if (is_array($roll_number)) {
+                return array_pop($roll_number);
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
     /**
      * Fetches Batch Id of a Student,
      * Member_id must be set before calling this function 

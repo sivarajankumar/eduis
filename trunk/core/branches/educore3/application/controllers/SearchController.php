@@ -16,6 +16,7 @@ class SearchController extends Zend_Controller_Action
         $request = $this->getRequest();
         $param_view = array_diff($request->getParams(), 
         $request->getUserParams());
+        $format = $this->_getParam('format', 'log');
         $params = $param_view['myarray'];
         $member_ids = array();
         $batch_member_ids = array();
@@ -24,7 +25,6 @@ class SearchController extends Zend_Controller_Action
         $personal_matches = array();
         $rel_matches = array();
         $student = new Core_Model_Member_Student();
-        $format = $this->_getParam('format', 'log');
         $critical_fields = array();
         $rel_fields = array();
         if (! empty($params)) {
@@ -93,6 +93,7 @@ class SearchController extends Zend_Controller_Action
             $member_ids = $this->combineResult($member_ids, $rel_matches);
         }
         $this->exitSearchcCheck($member_ids, $format);
+        $this->returnResult($format, $member_ids);
     }
     private function exitSearchcCheck ($search_result, $format)
     {
@@ -142,6 +143,46 @@ class SearchController extends Zend_Controller_Action
             }
         }
         return array_unique($member_ids);
+    }
+    public function fetchRollNumbers ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $param_view = array_diff($request->getParams(), 
+        $request->getUserParams());
+        //$member_ids = $param_view['myarray'];
+        $member_ids = array(1, 2, 3, 4, 5);
+        $format = $this->_getParam('format', 'log');
+        $student = new Core_Model_Member_Student();
+        $member_rolls = array();
+        foreach ($member_ids as $member_id) {
+            $student->setMember_id($member_id);
+            $roll_number = $student->fetchRollNumber();
+            $member_rolls[$member_id] = $roll_number;
+        }
+        if (empty($member_rolls)) {
+            $member_rolls = false;
+        }
+        switch ($format) {
+            case 'html':
+                $this->view->assign('response', $member_rolls);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($member_rolls, 
+                false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($member_rolls);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug($member_ids);
+                break;
+            default:
+                ;
+                break;
+        }
     }
 }
 
