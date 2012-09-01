@@ -47,17 +47,23 @@ class SearchController extends Zend_Controller_Action
             }
             if (! empty($tenth_fields)) {
                 $matric_matches = $this->tenthSearch($tenth_fields);
-                $this->exitSearchcCheck($tenth_fields, $format);
+                if (empty($matric_matches)) {
+                    return $this->returnResult($format, false);
+                }
             }
             $member_ids = $this->combineResult($member_ids, $matric_matches);
             if (! empty($twelfth_fields)) {
                 $twelfth_matches = $this->twelfthSearch($twelfth_fields);
-                $this->exitSearchcCheck($twelfth_matches, $format);
+                if (empty($twelfth_matches)) {
+                    return $this->returnResult($format, false);
+                }
             }
             $member_ids = $this->combineResult($member_ids, $twelfth_matches);
             if (! empty($diploma_fields)) {
                 $diploma_matches = $this->DiplomaSearch($diploma_fields);
-                $this->exitSearchcCheck($diploma_matches, $format);
+                if (empty($diploma_matches)) {
+                    return $this->returnResult($format, false);
+                }
             }
             $member_ids = $this->combineResult($member_ids, $diploma_matches);
         }
@@ -70,22 +76,18 @@ class SearchController extends Zend_Controller_Action
                 $backlog_filtered = $this->backLogSearch($back_log_limit, 
                 $member_ids);
             }
+            if (empty($backlog_filtered)) {
+                return $this->returnResult($format, false);
+            }
         }
-        $this->exitSearchcCheck($backlog_filtered, $format);
         $member_ids = $this->combineResult($member_ids, $backlog_filtered);
-        $this->exitSearchcCheck($member_ids, $format);
         $this->returnResult($format, $member_ids);
-    }
-    private function exitSearchcCheck ($search_result, $format)
-    {
-        if (empty($search_result) or ($search_result == false)) {
-            $member_ids = false;
-            $this->returnResult($format, $member_ids);
-        }
     }
     private function returnResult ($format, $member_ids)
     {
-        Zend_Registry::get('logger')->debug($member_ids);
+        if (empty($member_ids)) {
+            $member_ids = false;
+        }
         switch ($format) {
             case 'html':
                 $this->view->assign('response', $member_ids);
