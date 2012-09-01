@@ -90,6 +90,33 @@ class Core_Model_Mapper_StudentClass
         $class_id = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $class_id[0];
     }
+    public function fetchBatchDepartmentProgrammeStudents ($batch_start = null, 
+    $department_id = null, $programme_id = null, $semester_id = null)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $stu_class_table = $db_table->info('name');
+        $required_cols = array('member_id');
+        $select = $adapter->select()
+            ->from($stu_class_table, $required_cols)
+            ->joinInner('class', 'student_class.class_id = class.class_id')
+            ->joinInner('batch', 'class.batch_id = batch.batch_id');
+        if (isset($department_id)) {
+            $select->where('batch.department_id = ?', $department_id);
+        }
+        if (isset($programme_id)) {
+            $select->where('batch.programme_id = ?', $programme_id);
+        }
+        if (isset($batch_start)) {
+            $select->where('batch.batch_start = ?', $batch_start);
+        }
+        if (isset($semester_id)) {
+            $select->where('class.semester_id = ?', $semester_id);
+        }
+        $member_ids = array();
+        $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $member_ids;
+    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();

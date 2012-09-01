@@ -68,11 +68,34 @@ class SearchController extends Zend_Controller_Action
         $param_view = array_diff($request->getParams(), 
         $request->getUserParams());
         $params = $param_view['myarray'];
+        $member_ids = array();
+        $batch_member_ids = array();
+        $department_member_ids = array();
+        $programme_member_ids = array();
+        $personal_matches = array();
+        $rel_matches = array();
+        $student = new Core_Model_Member_Student();
         $format = $this->_getParam('format', 'log');
         $critical_fields = array();
         $rel_fields = array();
-        $member_ids = array();
         if (! empty($params)) {
+            if (! empty($params['batch_start'])) {
+                $batch_member_ids = $student->fetchClassStudents(
+                $params['batch_start']);
+            }
+            $member_ids = $this->combineResult($member_ids, $batch_member_ids);
+            if (! empty($params['discipline_id'])) {
+                $department_member_ids = $student->fetchClassStudents(null, 
+                $params['discipline_id']);
+            }
+            $member_ids = $this->combineResult($member_ids, 
+            $department_member_ids);
+            if (! empty($params['programme_id'])) {
+                $programme_member_ids = $student->fetchClassStudents(null, null, 
+                $params['programme_id']);
+            }
+            $member_ids = $this->combineResult($member_ids, 
+            $programme_member_ids);
             foreach ($params as $key => $value) {
                 switch (substr($key, 0, 1)) {
                     case ('0'):
@@ -88,7 +111,6 @@ class SearchController extends Zend_Controller_Action
                         break;
                 }
             }
-            /* -------------------------------------- */
             if (! empty($critical_fields)) {
                 $critical_range_fields = array('dob' => '');
                 $critical_range_params = array_intersect_key($critical_fields, 
@@ -109,17 +131,11 @@ class SearchController extends Zend_Controller_Action
                 $rel_matches = $relatives->search($rel_exact_params, 
                 $rel_range_params);
             }
-            if (! empty($personal_matches)) {
-                $member_ids = array_merge($member_ids, $personal_matches);
-            }
-            if (! empty($rel_matches)) {
-                $member_ids = array_merge($member_ids, $rel_matches);
-            }
+            $member_ids = $this->combineResult($member_ids, $personal_matches);
+            $member_ids = $this->combineResult($member_ids, $rel_matches);
         }
         if (empty($member_ids)) {
             $member_ids = false;
-        } else {
-            $member_ids = array_unique($member_ids);
         }
         switch ($format) {
             case 'html':
@@ -140,6 +156,25 @@ class SearchController extends Zend_Controller_Action
                 ;
                 break;
         }
+    }
+    /**
+     * 
+     * Enter description here ...
+     * @param array $member_ids the original array to start with
+     * @param array $array_to_try the search results
+     */
+    private function combineResult ($member_ids, $search_results)
+    {
+        if (empty($member_ids)) {
+            if (! empty($search_results)) {
+                $member_ids = array_merge($member_ids, $search_results);
+            }
+        } else {
+            if (! empty($search_results)) {
+                $member_ids = array_intersect($member_ids, $search_results);
+            }
+        }
+        return array_unique($member_ids);
     }
 }
 
