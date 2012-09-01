@@ -89,6 +89,43 @@ class Acad_Model_Mapper_Course_DmcInfo
         $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $member_ids;
     }
+    public function fetchFailedSubjectIds ($dmc_info_id)
+    {
+        $db_table = $this->getDbTable();
+        $adapter = $db_table->getAdapter();
+        $dmc_info_table = $db_table->info('name');
+        $required_cols = array('student_subject_id');
+        $student_subject_ids = array();
+        $select = $adapter->select();
+        $cond = 'dmc_marks.dmc_info_id = dmc_info.dmc_info_id';
+        $select->from('dmc_marks', $required_cols)
+            ->joinInner($dmc_info_table, $cond)
+            ->where('dmc_info.dmc_info_id = ?', $dmc_info_id)
+            ->where('dmc_marks.is_pass = ?', 0);
+        $student_subject_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $student_subject_ids;
+    }
+    public function hasBacklogCheck ($member_id)
+    {
+        $db_table = $this->getDbTable();
+        $adapter = $db_table->getAdapter();
+        $dmc_info_table = $db_table->info('name');
+        $required_cols = array('class_id');
+        $student_subject_ids = array();
+        $select = $adapter->select();
+        $cond = 'dmc_info.result_type_id = result_type.result_type_id';
+        $select->from($dmc_info_table, $required_cols)
+            ->joinInner('result_type', $cond)
+            ->where('result_type.result_type_name = ?', 'regular_fail')
+            ->where('dmc_info.member_id = ?', $member_id);
+        $class_ids = array();
+        $class_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        if (0 == count($class_ids)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     /**
      * 
      * Enter description here ...
@@ -100,8 +137,8 @@ class Acad_Model_Mapper_Course_DmcInfo
      * @param bool $ordered_by_date
      */
     public function fetchDmcInfoIds ($member_id, $class_id = null, 
-    $result_type_id = null, $all = null, $is_considered = null, $ordered_by_date = null, 
-    $dmc_id = null)
+    $result_type_id = null, $single_latest = null, $is_considered = null, 
+    $ordered_by_date = null, $dmc_id = null)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
@@ -127,10 +164,13 @@ class Acad_Model_Mapper_Course_DmcInfo
         if (isset($ordered_by_date)) {
             $select->order('dispatch_date DESC');
         }
-        $dmc_info = array();
+        $dmc_info_id = array();
         $info = array();
-        $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        foreach ($dmc_info as $dmc_info_id => $dmc_id_array) {
+        if ($single_latest == false) {
+            $select->order('dispatch_date DESC')->limit(1);
+        }
+        $dmc_info_ids = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        foreach ($dmc_info_ids as $dmc_info_id => $dmc_id_array) {
             $info[$dmc_info_id] = $dmc_id_array['dmc_id'];
         }
         return $info;

@@ -18,47 +18,46 @@ class TestingController extends Zend_Controller_Action
          * @var unknown_type
          */
         $subjects_passed_in_first_attempt = 'SELECT
-  `dmc_marks`.`student_subject_id`,
-  `student_class`.`member_id`
-FROM `academics`.`batch`
-  INNER JOIN `academics`.`class`
-    ON (`batch`.`batch_id` = `class`.`batch_id`)
-  INNER JOIN `academics`.`student_class`
-    ON (`class`.`class_id` = `student_class`.`class_id`)
-  INNER JOIN `academics`.`dmc_info`
-    ON (`dmc_info`.`member_id` = `student_class`.`member_id`)
-      AND (`dmc_info`.`class_id` = `student_class`.`class_id`)
-  INNER JOIN `academics`.`result_type`
-    ON (`dmc_info`.`result_type_id` = `result_type`.`result_type_id`)
-  INNER JOIN `academics`.`dmc_marks`
-    ON (`dmc_marks`.`dmc_info_id` = `dmc_info`.`dmc_info_id`)
-WHERE (`batch`.`department_id` = ?
-       AND `batch`.`programme_id` = ?
-       AND `batch`.`batch_start` = ?
-       AND `dmc_marks`.`is_pass` = ?
-       AND `result_type`.`result_type_name` = ?)';
-        $bind = array('CSE', 'BTECH', 2005, 1, 'regular_fail');
+                      `dmc_marks`.`student_subject_id`,
+                      `student_class`.`member_id`
+                    FROM `academics`.`batch`
+                      INNER JOIN `academics`.`class`
+                        ON (`batch`.`batch_id` = `class`.`batch_id`)
+                      INNER JOIN `academics`.`student_class`
+                        ON (`class`.`class_id` = `student_class`.`class_id`)
+                      INNER JOIN `academics`.`dmc_info`
+                        ON (`dmc_info`.`member_id` = `student_class`.`member_id`)
+                          AND (`dmc_info`.`class_id` = `student_class`.`class_id`)
+                      INNER JOIN `academics`.`result_type`
+                        ON (`dmc_info`.`result_type_id` = `result_type`.`result_type_id`)
+                      INNER JOIN `academics`.`dmc_marks`
+                        ON (`dmc_marks`.`dmc_info_id` = `dmc_info`.`dmc_info_id`)
+                    WHERE (`batch`.`department_id` = ?
+                           AND `batch`.`programme_id` = ?
+                           AND `batch`.`batch_start` = ?
+                           AND `dmc_marks`.`is_pass` = ?
+                           AND `result_type`.`result_type_name` = ?)';
         /********************************************************************************/
         $subjects_failing_currently = 'SELECT
-  `dmc_marks`.`student_subject_id`,
-  `student_class`.`member_id`
-FROM `academics`.`batch`
-  INNER JOIN `academics`.`class`
-    ON (`batch`.`batch_id` = `class`.`batch_id`)
-  INNER JOIN `academics`.`student_class`
-    ON (`class`.`class_id` = `student_class`.`class_id`)
-  INNER JOIN `academics`.`dmc_info`
-    ON (`dmc_info`.`member_id` = `student_class`.`member_id`)
-      AND (`dmc_info`.`class_id` = `student_class`.`class_id`)
-  INNER JOIN `academics`.`result_type`
-    ON (`dmc_info`.`result_type_id` = `result_type`.`result_type_id`)
-  INNER JOIN `academics`.`dmc_marks`
-    ON (`dmc_marks`.`dmc_info_id` = `dmc_info`.`dmc_info_id`)
-WHERE (`batch`.`department_id` = ?
-       AND `batch`.`programme_id` = ?
-       AND `batch`.`batch_start` = ?
-       AND `dmc_marks`.`is_pass` = ?
-       AND `result_type`.`result_type_name` = ?)';
+                      `dmc_marks`.`student_subject_id`,
+                      `student_class`.`member_id`
+                    FROM `academics`.`batch`
+                      INNER JOIN `academics`.`class`
+                        ON (`batch`.`batch_id` = `class`.`batch_id`)
+                      INNER JOIN `academics`.`student_class`
+                        ON (`class`.`class_id` = `student_class`.`class_id`)
+                      INNER JOIN `academics`.`dmc_info`
+                        ON (`dmc_info`.`member_id` = `student_class`.`member_id`)
+                          AND (`dmc_info`.`class_id` = `student_class`.`class_id`)
+                      INNER JOIN `academics`.`result_type`
+                        ON (`dmc_info`.`result_type_id` = `result_type`.`result_type_id`)
+                      INNER JOIN `academics`.`dmc_marks`
+                        ON (`dmc_marks`.`dmc_info_id` = `dmc_info`.`dmc_info_id`)
+                    WHERE (`batch`.`department_id` = ?
+                           AND `batch`.`programme_id` = ?
+                           AND `batch`.`batch_start` = ?
+                           AND `dmc_marks`.`is_pass` = ?
+                           AND `result_type`.`result_type_name` = ?)';
         $bind = array('CSE', 'BTECH', 2005, 1, 'regular_fail');
         /*******************************************************************************/
         /**
@@ -76,8 +75,8 @@ FROM `academics`.`batch`
     ON (`class`.`class_id` = `student_class`.`class_id`)
   INNER JOIN `academics`.`dmc_info`
     ON (`dmc_info`.`member_id` = `student_class`.`member_id`)
-      AND (`dmc_info`.`class_id` = `student_class`.`class_id`)
-  INNER JOIN `academics`.`result_type`
+      AND (`dmc_info`.`class_id` = `student_class`.`class_id`)';
+        $semester_passed_in_first_attempt = $semester_passed_in_first_attempt . 'INNER JOIN `academics`.`result_type`
     ON (`dmc_info`.`result_type_id` = `result_type`.`result_type_id`)
   INNER JOIN `academics`.`dmc_marks`
     ON (`dmc_marks`.`dmc_info_id` = `dmc_info`.`dmc_info_id`)
@@ -174,10 +173,14 @@ WHERE (`batch`.`department_id` =?
         $this->_helper->layout()->disableLayout();
         $member_ids = array(3, 4);
         $mem_backlogds = array();
+        $student = new Acad_Model_Member_Student();
         foreach ($member_ids as $member_id) {
-            $mem_backlogds[$member_id] = $this->getBacklogCount($member_id);
+            $student->setMember_id($member_id);
+            $mem_backlogds[$member_id] = $student->fetchCurrentBacklogCount();
         }
+        $t = $student->fetchNeverBacklogStudents();
         Zend_Registry::get('logger')->debug($mem_backlogds);
+        Zend_Registry::get('logger')->debug($t);
     }
     public function studentInfoAction ($info_required)
     {
