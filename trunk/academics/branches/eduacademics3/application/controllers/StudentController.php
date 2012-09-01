@@ -1875,43 +1875,7 @@ class StudentController extends Zend_Controller_Action
                 break;
         }
     }
-    public function aclconfigAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $methods = get_class_methods('StudentController');
-        $actions = array();
-        foreach ($methods as $value) {
-            $actions[] = substr("$value", 0, strpos($value, 'Action'));
-        }
-        foreach ($actions as $key => $value) {
-            if ($value == null) {
-                unset($actions[$key]);
-            }
-        }
-        $db = new Zend_Db_Table();
-        $delete2 = 'DELETE FROM `academics`.`mod_role_resource` WHERE `module_id`=? AND `controller_id`=?';
-        $db->getAdapter()->query($delete2, array('academic', 'student'));
-        $delete1 = 'DELETE FROM `academics`.`mod_action` WHERE `module_id`=? AND `controller_id`=?';
-        $db->getAdapter()->query($delete1, array('academic', 'student'));
-        print_r(sizeof($actions));
-        $sql = 'INSERT INTO `academics`.`mod_action`(`module_id`,`controller_id`,`action_id`) VALUES (?,?,?)';
-        foreach ($actions as $action) {
-            $bind = array('academic', 'student', $action);
-            $db->getAdapter()->query($sql, $bind);
-        }
-        $sql = 'INSERT INTO `academics`.`mod_role_resource`(`role_id`,`module_id`,`controller_id`,`action_id`) VALUES (?,?,?,?)';
-        foreach ($actions as $action) {
-            $bind = array('student', 'academic', 'student', $action);
-            $db->getAdapter()->query($sql, $bind);
-        }
-        /*foreach ($actions as $action) {
-            echo '<pre>';
-            print_r($action);
-            echo '</pre>';
-        }*/
-        Zend_Registry::get('logger')->debug($actions);
-    }
+    
     /**
      * Checks if member is registered in the core,
      * @return true if member_id is registered, false otherwise
