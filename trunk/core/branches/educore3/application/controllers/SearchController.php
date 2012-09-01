@@ -144,7 +144,7 @@ class SearchController extends Zend_Controller_Action
         }
         return array_unique($member_ids);
     }
-    public function fetchRollNumbers ()
+    public function fetchrollnumbersAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
