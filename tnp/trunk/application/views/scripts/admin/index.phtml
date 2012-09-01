@@ -164,10 +164,12 @@
 
 <br>
 
-<input type="button" value="Search" onclick="javascript:submit_values()"/>
+<input type="button" value="Search" onclick="javascript:submit_personal_values()"/>
 </form>
 
 <script type="text/javascript">
+var personal_result = new Array();
+var academic_result = new Array();
 	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
 	$("#dob_from").datepicker({
 		dateFormat: 'yy-mm-dd',
@@ -179,6 +181,10 @@
 			}
 	});
 
+	var b = new Array(12,45,2,67,34,10,14);
+	
+	alert(b.sort());
+	
 	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
 	$("#dob_to").datepicker({
 		dateFormat: 'yy-mm-dd',
@@ -237,7 +243,7 @@
 	$( "fieldset#diploma > #percentage" ).val( $( "#diploma_slider-range" ).slider( "values", 0 ) +
 		"-" + $( "#diploma_slider-range" ).slider( "values", 1 ) );
 
-	function submit_values()
+	function submit_personal_values()
 	{
 		var personal_values={};
 		var dob = {};
@@ -262,6 +268,14 @@
 			annual_income['to'] = $("#annual_income_to").val();
 		if(annual_income['from']!=null || annual_income['to']!=null)
 			personal_values['1annual_income'] = annual_income;
+
+		if($('fieldset#btech > #discipline_id').val() != 'Any')
+			personal_values['discipline_id'] = $('fieldset#btech > #discipline_id').val();
+
+		if($('fieldset#btech > #passing_year').val() != 'Any')
+			personal_values['batch_start'] = $('fieldset#btech > #passing_year').val();
+
+		personal_values['programme_id'] = 'B.TECH';
 		
 		var urlsubmitpersonal = "http://core.aceambala.com/search/search";
 		$.ajax({
@@ -272,21 +286,26 @@
 					format:'jsonp'
         			},
     		success: function(jStatus){
-        		
+    			if(jStatus != 'false')
+				{
+    				var i=0;
+    				$.each(jStatus,function(index,value){
+						personal_result[i] = value;
+						i++;
+        			});
+				}
+    			submit_academic_values();
     		},
             error: function(response) {
 				$('#errorBox').text(response.responseText).parent().show();
     			console.log(response);
     		}
 		});
+	}
 
+	function submit_academic_values()
+	{
 		var academic_values = {};
-
-		if($('fieldset#btech > #discipline_id').val() != 'Any')
-			academic_values['discipline_id'] = $('fieldset#btech > #discipline_id').val();
-
-		if($('fieldset#btech > #passing_year').val() != 'Any')
-			academic_values['batch_start'] = $('fieldset#btech > #passing_year').val();
 		
 		if($('fieldset#tenth > #passing_year').val() != 'Any')
 			academic_values['0passing_year'] = $('fieldset#tenth > #passing_year').val();
@@ -332,13 +351,43 @@
 					format : 'jsonp'
         			},
     		success: function(jStatus){
-				alert(jStatus);
+				if(jStatus != 'false')
+				{
+					var i=0;
+    				$.each(jStatus,function(index,value){
+						academic_result[i] = value;
+						i++;
+        			});
+				}
+
+				intersect_arrays();
     		},
             error: function(response) {
 				$('#errorBox').text(response.responseText).parent().show();
     			console.log(response);
     		}
 		});
+	}
+
+	function intersect_arrays()
+	{
+		personal_result.sort();
+		academic_result.sort();
+		var i=j=0;
+		ret=[];
+		while(i<personal_result.length && j<academic_result.length)
+		{
+			if(personal_result[i]<academic_result[j])
+				i++;
+			else if(academic_result[j]<personal_result[i])
+				j++;
+			else 
+			{
+				ret.push(personal_result[i]);
+				i++,j++;
+			}
+		}
+		
 	}
 
 </script>
