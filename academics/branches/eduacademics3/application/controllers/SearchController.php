@@ -74,6 +74,7 @@ class SearchController extends Zend_Controller_Action
         $this->exitSearchcCheck($backlog_filtered, $format);
         $member_ids = $this->combineResult($member_ids, $backlog_filtered);
         $this->exitSearchcCheck($member_ids, $format);
+        $this->returnResult($format, $member_ids);
     }
     private function exitSearchcCheck ($search_result, $format)
     {
