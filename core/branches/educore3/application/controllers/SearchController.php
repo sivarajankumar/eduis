@@ -183,8 +183,7 @@ class SearchController extends Zend_Controller_Action
         $request = $this->getRequest();
         $param_view = array_diff($request->getParams(), 
         $request->getUserParams());
-        //$member_ids = $param_view['myarray'];
-        $member_ids = array(1, 2, 3, 4, 5);
+        $member_ids = $param_view['myarray'];
         $format = $this->_getParam('format', 'log');
         $student = new Core_Model_Member_Student();
         $member_rolls = array();
