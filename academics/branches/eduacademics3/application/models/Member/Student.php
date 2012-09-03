@@ -932,4 +932,13 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         $dmc_info->setMember_id($member_id);
         return $dmc_info->hasBacklogCheck();
     }
+    public function fetchAllStudents ()
+    {
+        $all_members = $this->getMapper()->fetchStudents();
+        if (empty($all_members)) {
+            return false;
+        } else {
+            return $all_members;
+        }
+    }
 }
