@@ -729,4 +729,13 @@ class Core_Model_Member_Student extends Core_Model_Generic
         $department_id, $programme_id, $semester_id);
         return $member_ids;
     }
+    public function fetchAllStudents ()
+    {
+        $all_members = $this->getMapper()->fetchStudents();
+        if (empty($all_members)) {
+            return false;
+        } else {
+            return $all_members;
+        }
+    }
 }

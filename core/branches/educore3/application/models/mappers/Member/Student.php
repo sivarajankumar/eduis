@@ -67,23 +67,27 @@ class Core_Model_Mapper_Member_Student
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $student_info[$member_id];
     }
-    public function fetchStudents ($exact_property, $property_range)
+    public function fetchStudents ($exact_property = null, $property_range = null)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $stu_table = $db_table->info('name');
         $required_cols = array('member_id');
         $select = $adapter->select()->from($stu_table, $required_cols);
-        foreach ($property_range as $key => $range) {
-            if (! empty($range['from'])) {
-                $select->where("$key >= ?", $range['from']);
-            }
-            if (! empty($range['to'])) {
-                $select->where("$key <= ?", $range['to']);
+        if (! empty($property_range)) {
+            foreach ($property_range as $key => $range) {
+                if (! empty($range['from'])) {
+                    $select->where("$key >= ?", $range['from']);
+                }
+                if (! empty($range['to'])) {
+                    $select->where("$key <= ?", $range['to']);
+                }
             }
         }
-        foreach ($exact_property as $exact_key => $exact_range) {
-            $select->where("$exact_key = ?", $exact_range);
+        if (! empty($exact_property)) {
+            foreach ($exact_property as $exact_key => $exact_range) {
+                $select->where("$exact_key = ?", $exact_range);
+            }
         }
         $member_ids = array();
         $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
