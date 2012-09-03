@@ -20,6 +20,11 @@ class SearchController extends Zend_Controller_Action
         $tenth_fields = array();
         $twelfth_fields = array();
         $member_ids = array();
+        $member_ids = $this->fetchAllStudents();
+        if (empty($member_ids)) {
+            return $this->returnResult($format, false);
+        }
+        $member_ids = $this->combineResult($member_ids, $member_ids);
         $matric_matches = array();
         $twelfth_matches = array();
         $matric_matches = array();
@@ -109,6 +114,11 @@ class SearchController extends Zend_Controller_Action
                 ;
                 break;
         }
+    }
+    private function fetchAllStudents ()
+    {
+        $student = new Acad_Model_Member_Student();
+        return $student->fetchAllStudents();
     }
     private function neverbackLogSearch ($member_ids)
     {
