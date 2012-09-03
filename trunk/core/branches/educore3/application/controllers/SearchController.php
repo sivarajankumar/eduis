@@ -19,6 +19,11 @@ class SearchController extends Zend_Controller_Action
         $format = $this->_getParam('format', 'log');
         $params = $param_view['myarray'];
         $member_ids = array();
+        $member_ids = $this->fetchAllStudents();
+        if (empty($member_ids)) {
+            return $this->returnResult($format, false);
+        }
+        $member_ids = $this->combineResult($member_ids, $member_ids);
         $batch_member_ids = array();
         $department_member_ids = array();
         $programme_member_ids = array();
@@ -29,27 +34,24 @@ class SearchController extends Zend_Controller_Action
         $rel_fields = array();
         if (! empty($params)) {
             if (! empty($params['programme_id'])) {
-                $programme_member_ids = $student->fetchClassStudents(null, null, 
-                $params['programme_id']);
-                if (empty($programme_member_ids)) {
+                $p_search = $this->programmeSearch($params['programme_id']);
+                if (empty($p_search)) {
                     return $this->returnResult($format, false);
                 }
             }
             $member_ids = $this->combineResult($member_ids, 
             $programme_member_ids);
             if (! empty($params['discipline_id'])) {
-                $department_member_ids = $student->fetchClassStudents(null, 
-                $params['discipline_id']);
-                if (empty($department_member_ids)) {
+                $d_search = $this->disciplineSearch($params['discipline_id']);
+                if (empty($p_search)) {
                     return $this->returnResult($format, false);
                 }
             }
             $member_ids = $this->combineResult($member_ids, 
             $department_member_ids);
             if (! empty($params['batch_start'])) {
-                $batch_member_ids = $student->fetchClassStudents(
-                $params['batch_start']);
-                if (empty($batch_member_ids)) {
+                $b_search = $this->batchStartSearch($params['batch_start']);
+                if (empty($b_search)) {
                     return $this->returnResult($format, false);
                 }
             }
@@ -99,6 +101,36 @@ class SearchController extends Zend_Controller_Action
             $member_ids = $this->combineResult($member_ids, $rel_matches);
         }
         $this->returnResult($format, $member_ids);
+    }
+    private function programmeSearch ($programme_id)
+    {
+        $student = new Core_Model_Member_Student();
+        $programme_member_ids = $student->fetchClassStudents(null, null, 
+        $programme_id);
+        return $programme_member_ids;
+    }
+    private function disciplineSearch ($discipline_id)
+    {
+        $student = new Core_Model_Member_Student();
+        $department_member_ids = $student->fetchClassStudents(null, 
+        $discipline_id);
+        return $department_member_ids;
+    }
+    private function batchStartSearch ($batch_start)
+    {
+        $student = new Core_Model_Member_Student();
+        $batch_start_member_ids = $student->fetchClassStudents($batch_start);
+        return $batch_start_member_ids;
+    }
+    private function fetchAllClassesStudents ()
+    {
+        $student = new Core_Model_Member_Student();
+        return $student->fetchClassStudents();
+    }
+    private function fetchAllStudents ()
+    {
+        $student = new Core_Model_Member_Student();
+        return $student->fetchAllStudents();
     }
     private function returnResult ($format, $member_ids)
     {
