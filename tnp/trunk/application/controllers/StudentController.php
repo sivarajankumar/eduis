@@ -264,7 +264,6 @@ class StudentController extends Zend_Controller_Action
         } else {
             $response['co_curricular'] = false;
         }
-        $response['skills'] = $skill_info;
         $response['employability_test'] = $student_emp_test;
         $response['certifications'] = $student_certifications;
         $response['training'] = $student_training;
@@ -506,66 +505,6 @@ class StudentController extends Zend_Controller_Action
         $student->setMember_id($member_id);
         $student->saveExperienceInfo($student_experience);
     }
-    /**
-     * Enables the user add edit existing skills or add new skills to database
-     * 
-     */
-    public function editskillsAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-        $skill = new Tnp_Model_Skill();
-        $skill_ids = $skill->fetchSkillIds();
-        if (is_array($skill_ids)) {
-            $all_skills = array();
-            foreach ($skill_ids as $skill_id) {
-                $skill->setSkill_id($skill_id);
-                $skill->fetchInfo();
-                $skill_name = $skill->getSkill_name();
-                $all_skills[$skill_id] = array('skill_name' => $skill_name);
-            }
-        } else {
-            throw new Exception('Skills table empty', Zend_Log::WARN);
-        }
-        $this->view->assign('all_skills', $all_skills);
-    }
-    public function saveskillsAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $is_new_skill = $params['myarray']['new_skill'];
-        $skill_info = $params['myarray']['skill_info'];
-        $member_proficiency = $params['myarray']['member_proficiency'];
-        /*
-         * skill id sent by user
-         */
-        if (! empty($skill_info['skill_id'])) {
-            $skill_id = $skill_info['skill_id'];
-        }
-        /*
-         * if skill does not exist in databse add it, otherwise update member's proficiency
-         */
-        if ($is_new_skill == 'true') {
-            $skill = new Tnp_Model_Skill();
-            $skill_data = array('skill_name' => $skill_info['skill_name']);
-            $skill_id = $skill->saveInfo($skill_data);
-        }
-        $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($member_id);
-        $mem_skill_info = array('skill_id' => $skill_id, 
-        'proficiency' => $member_proficiency);
-        $student->saveSkillInfo($mem_skill_info);
-    }
     public function editjobpreferredAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -673,10 +612,33 @@ class StudentController extends Zend_Controller_Action
             $student->saveCoCurricularInfo($member_cocurricular_info);
         }
     }
-    public function viewskillinfoAction ()
+    /**
+     * Enables the user add edit existing skills or add new skills to database
+     * 
+     */
+    public function editskillsAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $skill = new Tnp_Model_Skill();
+        $skill_ids = $skill->fetchSkillIds();
+        if (is_array($skill_ids)) {
+            $all_skills = array();
+            foreach ($skill_ids as $skill_id) {
+                $skill->setSkill_id($skill_id);
+                $skill->fetchInfo();
+                $skill_name = $skill->getSkill_name();
+                $all_skills[$skill_id] = array('skill_name' => $skill_name);
+            }
+        } else {
+            $all_skills = false;
+        }
+        $this->view->assign('all_skills', $all_skills);
+    }
+    public function saveskillsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
@@ -687,6 +649,49 @@ class StudentController extends Zend_Controller_Action
         } else {
             $member_id = $params['member_id'];
         }
+        $is_new_skill = $params['myarray']['new_skill'];
+        $skill_info = $params['myarray']['skill_info'];
+        $member_proficiency = $params['myarray']['member_proficiency'];
+        /*
+         * skill id sent by user
+         */
+        if (! empty($skill_info['skill_id'])) {
+            $skill_id = $skill_info['skill_id'];
+        }
+        /*
+         * if skill does not exist in databse add it, otherwise update member's proficiency
+         */
+        if ($is_new_skill == 'true') {
+            $skill = new Tnp_Model_Skill();
+            $skill_data = array('skill_name' => $skill_info['skill_name']);
+            $skill_id = $skill->saveInfo($skill_data);
+        }
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($member_id);
+        $mem_skill_info = array('skill_id' => $skill_id, 
+        'proficiency' => $member_proficiency);
+        $student->saveSkillInfo($mem_skill_info);
+    }
+    public function viewskillinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->e();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $skill_info = $this->getSkillInfo($member_id);
+        $this->view->assign('skill_info', $skill_info);
+        Zend_Registry::get('logger')->debug($skill_info);
+    }
+    private function getSkillInfo ($member_id)
+    {
         $student_model = new Tnp_Model_Member_Student();
         $student_model->setMember_id($member_id);
         $skill_ids = $student_model->fetchSkillsIds();
@@ -705,8 +710,7 @@ class StudentController extends Zend_Controller_Action
                 'proficiency' => $proficiency);
             }
         }
-        $this->view->assign('skill_info', $skill_info);
-        Zend_Registry::get('logger')->debug($skill_info);
+        return $skill_info;
     }
     public function viewtestinfoAction ()
     {
