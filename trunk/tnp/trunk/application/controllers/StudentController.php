@@ -675,8 +675,8 @@ class StudentController extends Zend_Controller_Action
     }
     public function viewskillinfoAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
@@ -705,6 +705,7 @@ class StudentController extends Zend_Controller_Action
                 'proficiency' => $proficiency);
             }
         }
+        $this->view->assign('skill_info', $skill_info);
         Zend_Registry::get('logger')->debug($skill_info);
     }
     public function viewtestinfoAction ()
