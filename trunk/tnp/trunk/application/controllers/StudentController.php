@@ -675,8 +675,8 @@ class StudentController extends Zend_Controller_Action
     }
     public function viewskillinfoAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
@@ -688,6 +688,7 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $student_model = new Tnp_Model_Member_Student();
+        $student_model->setMember_id($member_id);
         $skill_ids = $student_model->fetchSkillsIds();
         $skill_info = array();
         if (! empty($skill_ids)) {
@@ -704,6 +705,7 @@ class StudentController extends Zend_Controller_Action
                 'proficiency' => $proficiency);
             }
         }
+        Zend_Registry::get('logger')->debug($skill_info);
     }
     public function viewtestinfoAction ()
     {
