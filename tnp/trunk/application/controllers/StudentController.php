@@ -264,21 +264,6 @@ class StudentController extends Zend_Controller_Action
         } else {
             $response['co_curricular'] = false;
         }
-        $skill_ids = $student_model->fetchSkillsIds();
-        $skill_info = array();
-        if (! empty($skill_ids)) {
-            $skill_object = new Tnp_Model_Skill();
-            foreach ($skill_ids as $skill_id) {
-                $skill_object->setSkill_id($skill_id);
-                $prof = $student_model->fetchSkillInfo($skill_id);
-                if ($prof instanceof Tnp_Model_MemberInfo_Skills) {
-                    $proficiency = $prof->getProficiency();
-                }
-                $skill_object->fetchInfo();
-                $skill_info[$skill_id] = array($skill_object->getSkill_name(), 
-                $proficiency);
-            }
-        }
         $response['skills'] = $skill_info;
         $response['employability_test'] = $student_emp_test;
         $response['certifications'] = $student_certifications;
@@ -686,6 +671,37 @@ class StudentController extends Zend_Controller_Action
             $student = new Tnp_Model_Member_Student();
             $student->setMember_id($member_id);
             $student->saveCoCurricularInfo($member_cocurricular_info);
+        }
+    }
+    public function viewskillinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $student_model = new Tnp_Model_Member_Student();
+        $skill_ids = $student_model->fetchSkillsIds();
+        $skill_info = array();
+        if (! empty($skill_ids)) {
+            $skill_object = new Tnp_Model_Skill();
+            foreach ($skill_ids as $skill_id) {
+                $skill_object->setSkill_id($skill_id);
+                $prof = $student_model->fetchSkillInfo($skill_id);
+                if ($prof instanceof Tnp_Model_MemberInfo_Skills) {
+                    $proficiency = $prof->getProficiency();
+                }
+                $skill_object->fetchInfo();
+                $skill_info[$skill_id] = array($skill_object->getSkill_name(), 
+                $proficiency);
+            }
         }
     }
     public function viewtestinfoAction ()
