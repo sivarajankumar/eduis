@@ -699,8 +699,9 @@ class StudentController extends Zend_Controller_Action
                     $proficiency = $prof->getProficiency();
                 }
                 $skill_object->fetchInfo();
-                $skill_info[$skill_id] = array($skill_object->getSkill_name(), 
-                $proficiency);
+                $skill_info[$skill_id] = array(
+                'skill_name' => $skill_object->getSkill_name(), 
+                'proficiency' => $proficiency);
             }
         }
     }
