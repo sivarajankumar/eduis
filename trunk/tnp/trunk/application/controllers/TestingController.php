@@ -330,22 +330,14 @@ class TestingController extends Zend_Controller_Action
      */
     public function editskillsAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-        $skill = new Tnp_Model_Skill();
-        $skill_ids = $skill->fetchSkillIds();
-        if (is_array($skill_ids)) {
-            $all_skills = array();
-            foreach ($skill_ids as $skill_id) {
-                $skill->setSkill_id($skill_id);
-                $skill->fetchInfo();
-                $skill_name = $skill->getSkill_name();
-                $all_skills[$skill_id] = array('skill_name' => $skill_name);
-            }
-        } else {
-            $all_skills = false;
-        }
-        $this->view->assign('all_skills', $all_skills);
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $skill_id = $params['skill_id'];
+        $skill_info = $this->findSkillsInfo();
+        Zend_Registry::get('logger')->debug($skill_info);
+        $this->view->assign('skill_info', $skill_info);
     }
     /**
      * assigns test and section record for a given employability_test_id of member_id
@@ -575,11 +567,22 @@ class TestingController extends Zend_Controller_Action
         Zend_Registry::get('logger')->debug($test_record);
         $this->view->assign('test_record', $test_record);
     }
-    public function viewcertificationAction ()
+    public function viewlanguagesknownAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $certification_info = $this->findCertificationsInfo();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $language_info = $this->findLanguageInfo($member_id);
+        Zend_Registry::get('logger')->debug($language_info);
     }
     public function addskillAction ()
     {
@@ -947,17 +950,19 @@ class TestingController extends Zend_Controller_Action
                     $proficiency = $prof->getProficiency();
                 }
                 $skill_object->fetchInfo();
-                $skill_info[$skill_id][$skill_object->getSkill_name()] = $proficiency;
+                $skill_info[$skill_id] = array(
+                'skill_name' => $skill_object->getSkill_name(), 
+                'proficiency' => $proficiency);
             }
         } else {
             $skill_info = false;
         }
         return $skill_info;
     }
-    private function findLanguageInfo ()
+    private function findLanguageInfo ($member_id)
     {
         $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
+        $student->setMember_id($member_id);
         $mem_language = new Tnp_Model_MemberInfo_Language();
         $mem_language->setMember_id($this->getMember_id());
         $info = $mem_language->fetchLanguagesInfo();
@@ -966,7 +971,9 @@ class TestingController extends Zend_Controller_Action
             $languages = $lang->fetchLanguages();
             $student_lan_info = array();
             foreach ($info as $key => $proficiency) {
-                $student_lan_info[$languages[$key]] = $proficiency;
+                $student_lan_info[$key] = array(
+                'language_name' => $languages[$key], 
+                'proficiency' => $proficiency);
             }
         } else {
             $student_lan_info = false;
