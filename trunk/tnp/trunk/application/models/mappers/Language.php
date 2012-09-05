@@ -67,8 +67,12 @@ class Tnp_Model_Mapper_Language
     }
     public function save ($prepared_data)
     {
-        $dbtable = $this->getDbTable();
-        return $dbtable->insert($prepared_data);
+        if (! empty($prepared_data['language_name'])) {
+            $dbtable = $this->getDbTable();
+            return $dbtable->insert($prepared_data);
+        } else {
+            return false;
+        }
     }
     public function update ($prepared_data, $language_id)
     {
