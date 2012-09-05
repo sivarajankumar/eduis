@@ -436,13 +436,14 @@ class TestingController extends Zend_Controller_Action
     /* -------------------------------	EMP TEST -> ACCOMPLISHED ------------------------------------------ */
     public function viewemptestrecordAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
         $response = array();
         $test_record = $this->generateEmpTestRecords();
         Zend_Registry::get('logger')->debug(
         'Vars assigned to view are : \'test_record\' where the key is the test_record_id');
         Zend_Registry::get('logger')->debug($test_record);
+        $this->view->assign('test_record',$test_record);
     }
     /**
      * assigns test and section record for a given employability_test_id of member_id
