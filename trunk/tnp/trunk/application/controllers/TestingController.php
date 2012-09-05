@@ -1221,6 +1221,7 @@ class TestingController extends Zend_Controller_Action
     private function fetchSkills ()
     {
         $skill_object = new Tnp_Model_Skill();
+        return $skill_object->fetchSkills();
     }
 }
 ?>
