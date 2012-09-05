@@ -83,6 +83,14 @@ class TestingController extends Zend_Controller_Action
             $this->setMember_id($authInfo['member_id']);
         }
     }
+    public function testAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        //$this->deleteSkill(3, 1);
+        Zend_Registry::get('logger')->debug(
+        $this->deleteCoCurricular(3));
+    }
     public function memberidcheckAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -270,12 +278,62 @@ class TestingController extends Zend_Controller_Action
             $this->saveCourricularInfo($member_cocurricular_info);
         }
     }
+    ///////
+    /**
+     * Enables the user add edit existing skills or add new skills to database
+     * 
+     */
+    public function editskillsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $skill = new Tnp_Model_Skill();
+        $skill_ids = $skill->fetchSkillIds();
+        if (is_array($skill_ids)) {
+            $all_skills = array();
+            foreach ($skill_ids as $skill_id) {
+                $skill->setSkill_id($skill_id);
+                $skill->fetchInfo();
+                $skill_name = $skill->getSkill_name();
+                $all_skills[$skill_id] = array('skill_name' => $skill_name);
+            }
+        } else {
+            $all_skills = false;
+        }
+        $this->view->assign('all_skills', $all_skills);
+    }
+    public function viewskillinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $skill_info = $this->getSkillInfo($member_id);
+        $this->view->assign('skill_info', $skill_info);
+        Zend_Registry::get('logger')->debug($skill_info);
+    }
     public function saveskillsAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
         $is_new_skill = $params['myarray']['new_skill'];
         $skill_info = $params['myarray']['skill_info'];
         $member_proficiency = $params['myarray']['member_proficiency'];
@@ -289,13 +347,132 @@ class TestingController extends Zend_Controller_Action
          * if skill does not exist in databse add it, otherwise update member's proficiency
          */
         if ($is_new_skill == 'true') {
+            $skill = new Tnp_Model_Skill();
             $skill_data = array('skill_name' => $skill_info['skill_name']);
-            $skill_id = $this->saveSkillsInfo($skill_data);
+            $skill_id = $skill->saveInfo($skill_data);
         }
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($member_id);
         $mem_skill_info = array('skill_id' => $skill_id, 
         'proficiency' => $member_proficiency);
-        $this->saveStuSkillsInfo($mem_skill_info);
+        $student->saveSkillInfo($mem_skill_info);
     }
+    public function deleteskillinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $skill_id = $params['skill_id'];
+        $this->deleteSkill($member_id, $skill_id);
+    }
+    public function deletetestrecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $test_record_id = $params['test_record_id'];
+        $this->deleteEmpTestRecord($test_record_id);
+    }
+    public function deletelanguageAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $language_id = $params['language_id'];
+        $this->deleteLanguageKnown($member_id, $language_id);
+    }
+    public function deletecocurricularAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $this->deleteCoCurricular($member_id);
+    }
+    private function deleteSkill ($member_id, $skill_id)
+    {
+        $member_skills = new Tnp_Model_MemberInfo_Skills();
+        $member_skills->setSkill_id($skill_id);
+        $member_skills->setMember_id($member_id);
+        $member_skills->deleteSkill();
+    }
+    private function deleteEmpTestRecord ($test_record_id)
+    {
+        $e_t_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
+        $e_t_record->setTest_record_id($test_record_id);
+        $e_t_record->deleteRecord();
+    }
+    private function deleteLanguageKnown ($member_id, $language_id)
+    {
+        $language = new Tnp_Model_MemberInfo_Language();
+        $language->setMember_id($member_id);
+        $language->setLanguage_id($language_id);
+        $language->deleteLanguageKnown();
+    }
+    private function deleteCoCurricular ($member_id)
+    {
+        $co_curricular = new Tnp_Model_MemberInfo_CoCurricular();
+        $co_curricular->setMember_id($member_id);
+        $co_curricular->deleteCoCurricular();
+    }
+    private function getSkillInfo ($member_id)
+    {
+        $student_model = new Tnp_Model_Member_Student();
+        $student_model->setMember_id($member_id);
+        $skill_ids = $student_model->fetchSkillsIds();
+        $skill_info = array();
+        if (! empty($skill_ids)) {
+            $skill_object = new Tnp_Model_Skill();
+            foreach ($skill_ids as $skill_id) {
+                $skill_object->setSkill_id($skill_id);
+                $prof = $student_model->fetchSkillInfo($skill_id);
+                if ($prof instanceof Tnp_Model_MemberInfo_Skills) {
+                    $proficiency = $prof->getProficiency();
+                }
+                $skill_object->fetchInfo();
+                $skill_info[$skill_id] = array(
+                'skill_name' => $skill_object->getSkill_name(), 
+                'proficiency' => $proficiency);
+            }
+        }
+        return $skill_info;
+    }
+    ///////
     /**
      * Checks if member is registered in the core,
      * @return true if member_id is registered, false otherwise
@@ -398,41 +575,6 @@ class TestingController extends Zend_Controller_Action
                 break;
         }
     }
-    public function testAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug($params);
-        $member_id = $this->getMember_id();
-        $is_new_language = $params['myarray']['new_language'];
-        Zend_Registry::get('logger')->debug($is_new_language);
-        $language_info = $params['myarray']['language_info'];
-        Zend_Registry::get('logger')->debug($language_info);
-        $member_proficiency = $params['myarray']['member_proficiency'];
-        Zend_Registry::get('logger')->debug($member_proficiency);
-        /*
-             * if language does not exist in databse add it, otherwise update member's proficiency
-             */
-        if ($is_new_language == 'true') {
-            $language = new Tnp_Model_Language();
-            $language_id = $language->saveInfo($language_info);
-        } else {
-            $student = new Tnp_Model_Member_Student();
-            $student->setMember_id($member_id);
-            $language_id = $language_info['language_id'];
-            $proficiency = array();
-            $can_speak = (($member_proficiency['SPEAK'] == 'true') ? ($proficiency[] = 'SPEAK') : null);
-            $can_read = (($member_proficiency['READ'] == 'true') ? ($proficiency[] = 'READ') : null);
-            $can_write = (($member_proficiency['WRITE'] == 'true') ? ($proficiency[] = 'WRITE') : null);
-            $proficiency = array($can_read, $can_write, $can_speak);
-            $mem_lang_info = array('language_id' => $language_id, 
-            'proficiency' => implode(',', $proficiency));
-            Zend_Registry::get('logger')->debug($mem_lang_info);
-            $student->saveLanguageInfo($language_info);
-        }
-    }
     /* -------------------------------	EMP TEST -> ACCOMPLISHED ------------------------------------------ */
     public function viewemptestrecordAction ()
     {
@@ -443,7 +585,7 @@ class TestingController extends Zend_Controller_Action
         Zend_Registry::get('logger')->debug(
         'Vars assigned to view are : \'test_record\' where the key is the test_record_id');
         Zend_Registry::get('logger')->debug($test_record);
-        $this->view->assign('test_record',$test_record);
+        $this->view->assign('test_record', $test_record);
     }
     /**
      * assigns test and section record for a given employability_test_id of member_id
