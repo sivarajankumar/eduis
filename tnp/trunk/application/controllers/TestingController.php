@@ -141,7 +141,52 @@ class TestingController extends Zend_Controller_Action
         }
         $this->_redirect('student/profile');*/
     }
-    /* ######################################################################### */
+    /**
+     * Student Skill save functionality is provided by this fucntion
+     * 
+     */
+    public function saveskillsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $skill_info = $params['myarray']['skill_info'];
+        $this->saveStuSkillsInfo($skill_info);
+    }
+    /**
+     * Saves the test record(user point of view)
+     * @todo
+     * Enter description here ...
+     */
+    public function saveemptestrecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug(
+        'params required are \'test_info\' ,  \'test_record\' , \'test_section_record\' in myarray ex \'$params[\'myarray\'][\'test_info\']');
+        /*
+         * in case of edit the $params['myarray']['test_record'] will contain test_record_id
+         */
+        $test_record = $params['myarray']['test_record'];
+        $section_record = $params['myarray']['test_section_record'];
+        $employability_test_id = $test_record['employability_test_id'];
+        $this->saveEmpTestRecord($test_record);
+        foreach ($section_record as $name => $section_score) {
+            $section_array = array();
+            $this->saveSectionScore($section_score);
+        }
+    }
     public function savecertificationAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -302,60 +347,35 @@ class TestingController extends Zend_Controller_Action
         }
         $this->view->assign('all_skills', $all_skills);
     }
-    public function viewskillinfoAction ()
+    /**
+     * assigns test and section record for a given employability_test_id of member_id
+     * Enter description here ...
+     */
+    public function editemptestrecordAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
+        $format = $this->_getParam('format', 'html');
+        $test_record_id = $params['test_record_id'];
+        $test_record = $this->getEmpTestRecordInfo($test_record_id);
+        $employability_test_id = $test_record['employability_test_id'];
+        $test_info = $this->getEmpTestInfo($employability_test_id);
+        $test_record['test_name'] = $test_info['test_name'];
+        $test_record['date_of_conduct'] = $test_info['date_of_conduct'];
+        $section_record = $this->generateSectionScore($employability_test_id);
+        Zend_Registry::get('logger')->debug($test_record);
+        Zend_Registry::get('logger')->debug($section_record);
+        switch ($format) {
+            case 'html':
+                $this->view->assign('test_record', $test_record);
+                $this->view->assign('section_record', $section_record);
+                break;
+            default:
+                ;
+                break;
         }
-        $skill_info = $this->getSkillInfo($member_id);
-        $this->view->assign('skill_info', $skill_info);
-        Zend_Registry::get('logger')->debug($skill_info);
-    }
-    public function saveskillsAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $is_new_skill = $params['myarray']['new_skill'];
-        $skill_info = $params['myarray']['skill_info'];
-        $member_proficiency = $params['myarray']['member_proficiency'];
-        /*
-         * skill id sent by user
-         */
-        if (! empty($skill_info['skill_id'])) {
-            $skill_id = $skill_info['skill_id'];
-        }
-        /*
-         * if skill does not exist in databse add it, otherwise update member's proficiency
-         */
-        if ($is_new_skill == 'true') {
-            $skill = new Tnp_Model_Skill();
-            $skill_data = array('skill_name' => $skill_info['skill_name']);
-            $skill_id = $skill->saveInfo($skill_data);
-        }
-        $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($member_id);
-        $mem_skill_info = array('skill_id' => $skill_id, 
-        'proficiency' => $member_proficiency);
-        $student->saveSkillInfo($mem_skill_info);
     }
     public function deleteskillinfoAction ()
     {
@@ -423,54 +443,6 @@ class TestingController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $this->deleteCoCurricular($member_id);
-    }
-    private function deleteSkill ($member_id, $skill_id)
-    {
-        $member_skills = new Tnp_Model_MemberInfo_Skills();
-        $member_skills->setSkill_id($skill_id);
-        $member_skills->setMember_id($member_id);
-        $member_skills->deleteSkill();
-    }
-    private function deleteEmpTestRecord ($test_record_id)
-    {
-        $e_t_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
-        $e_t_record->setTest_record_id($test_record_id);
-        $e_t_record->deleteRecord();
-    }
-    private function deleteLanguageKnown ($member_id, $language_id)
-    {
-        $language = new Tnp_Model_MemberInfo_Language();
-        $language->setMember_id($member_id);
-        $language->setLanguage_id($language_id);
-        $language->deleteLanguageKnown();
-    }
-    private function deleteCoCurricular ($member_id)
-    {
-        $co_curricular = new Tnp_Model_MemberInfo_CoCurricular();
-        $co_curricular->setMember_id($member_id);
-        $co_curricular->deleteCoCurricular();
-    }
-    private function getSkillInfo ($member_id)
-    {
-        $student_model = new Tnp_Model_Member_Student();
-        $student_model->setMember_id($member_id);
-        $skill_ids = $student_model->fetchSkillsIds();
-        $skill_info = array();
-        if (! empty($skill_ids)) {
-            $skill_object = new Tnp_Model_Skill();
-            foreach ($skill_ids as $skill_id) {
-                $skill_object->setSkill_id($skill_id);
-                $prof = $student_model->fetchSkillInfo($skill_id);
-                if ($prof instanceof Tnp_Model_MemberInfo_Skills) {
-                    $proficiency = $prof->getProficiency();
-                }
-                $skill_object->fetchInfo();
-                $skill_info[$skill_id] = array(
-                'skill_name' => $skill_object->getSkill_name(), 
-                'proficiency' => $proficiency);
-            }
-        }
-        return $skill_info;
     }
     ///////
     /**
@@ -552,7 +524,6 @@ class TestingController extends Zend_Controller_Action
         /*------------------------------------------------------------------------------*/
         $response['co_curricular'] = $this->findCourricularInfo();
         /*------------------------------------------------------------------------------*/
-        $response['skills'] = $this->findSkillsInfo();
         /*------------------------------------------------------------------------------*/
         Zend_Registry::get('logger')->debug($response);
         switch ($format) {
@@ -575,7 +546,24 @@ class TestingController extends Zend_Controller_Action
                 break;
         }
     }
-    /* -------------------------------	EMP TEST -> ACCOMPLISHED ------------------------------------------ */
+    public function viewskillinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $skill_info = $this->findSkillsInfo($member_id);
+        $this->view->assign('skill_info', $skill_info);
+        Zend_Registry::get('logger')->debug($skill_info);
+    }
     public function viewemptestrecordAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -587,34 +575,53 @@ class TestingController extends Zend_Controller_Action
         Zend_Registry::get('logger')->debug($test_record);
         $this->view->assign('test_record', $test_record);
     }
-    /**
-     * assigns test and section record for a given employability_test_id of member_id
-     * Enter description here ...
-     */
-    public function editemptestrecordAction ()
+    public function viewcertificationAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $certification_info = $this->findCertificationsInfo();
+    }
+    public function addskillAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $format = $this->_getParam('format', 'html');
-        $test_record_id = $params['test_record_id'];
-        $test_record = $this->getEmpTestRecordInfo($test_record_id);
-        $employability_test_id = $test_record['employability_test_id'];
-        $test_info = $this->getEmpTestInfo($employability_test_id);
-        $test_record['test_name'] = $test_info['test_name'];
-        $test_record['date_of_conduct'] = $test_info['date_of_conduct'];
-        $section_record = $this->generateSectionScore($employability_test_id);
-        Zend_Registry::get('logger')->debug($test_record);
-        Zend_Registry::get('logger')->debug($section_record);
-        switch ($format) {
-            case 'html':
-                $this->view->assign('test_record', $test_record);
-                $this->view->assign('section_record', $section_record);
-                break;
-            default:
-                ;
-                break;
+        $skill_info = $params['skill_info'];
+        $this->addSkill($skill_info);
+    }
+    /**
+     * Add/Defines new test in database
+     * Enter description here ...
+     */
+    public function addemptestAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug(
+        'params required are \'test_info\' myarray[\'test_info\']');
+        $test_info = $params['myarray']['test_info'];
+        $this->addEmpTest($test_info);
+    }
+    /**
+     * add new sections to a test
+     * Enter description here ...
+     */
+    public function addemptestsectionAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug(
+        'params requires are \'section_info\' myarray[\'section_info\']');
+        $section_info = $params['myarray']['section_info'];
+        foreach ($section_info as $employability_test_id => $section_name) {
+            $info['employability_test_id'] = $employability_test_id;
+            $info['section_name'] = $section_name;
+            $this->addEmpTestSection($info);
         }
     }
     public function fetchemptestrecordAction ()
@@ -679,54 +686,10 @@ class TestingController extends Zend_Controller_Action
                 break;
         }
     }
-    /**
-     * Saves the test record(user point of view)
-     * 
-     * Enter description here ...
-     */
-    public function saveemptestrecordAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug(
-        'params required are \'test_info\' ,  \'test_record\' , \'test_section_record\' in myarray ex \'$params[\'myarray\'][\'test_info\']');
-        $test_info = $params['myarray']['test_info'];
-        $test_score = $params['myarray']['test_record'];
-        $section_record = $params['myarray']['test_section_record'];
-        $employability_test_id = $this->saveEmpTest($test_info);
-        $test_score['employability_test_id'] = $employability_test_id;
-        $this->saveEmpTestRecord($test_score);
-        foreach ($section_record as $name => $section_score) {
-            $section_array = array();
-            $this->saveSectionScore($section_score);
-        }
-    }
     public function viewemptestAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-    }
-    public function addemptestAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    /**
-     * Saves the new test
-     * Enter description here ...
-     */
-    public function saveemptestAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug(
-        'params required are \'test_info\' myarray[\'test_info\']');
-        $test_info = $params['myarray']['test_info'];
-        $this->saveEmpTest($test_info);
     }
     public function fetchEmpTestId ()
     {
@@ -738,7 +701,7 @@ class TestingController extends Zend_Controller_Action
         Zend_Registry::get('logger')->debug(
         'params required are \'test_info\' myarray[\'test_info\']');
         $test_info = $params['myarray']['test_info'];
-        $employability_test_id = $this->saveEmpTest($test_info);
+        $employability_test_id = $this->addEmpTest($test_info);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -760,25 +723,6 @@ class TestingController extends Zend_Controller_Action
             default:
                 ;
                 break;
-        }
-    }
-    /**
-     * Saves the new test
-     * Enter description here ...
-     */
-    public function saveemptestsectionAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug(
-        'params requires are \'section_info\' myarray[\'section_info\']');
-        $section_info = $params['myarray']['section_info'];
-        foreach ($section_info as $employability_test_id => $section_name) {
-            $info['employability_test_id'] = $employability_test_id;
-            $info['section_name'] = $section_name;
-            $this->saveEmpTestSection($info);
         }
     }
     /* ------------------------------------------------------------------------------------------- */
@@ -905,10 +849,10 @@ class TestingController extends Zend_Controller_Action
         }
         return $score_info;
     }
-    private function findCertificationsInfo ()
+    private function findCertificationsInfo ($member_id)
     {
         $student = new Tnp_Model_Member_Student();
-        $student->setMember_id($this->getMember_id());
+        $student->setMember_id($member_id);
         $student_certifications = array();
         $student_certification_ids = $student->fetchCertificationIds();
         $certification = new Tnp_Model_Certification();
@@ -1003,7 +947,7 @@ class TestingController extends Zend_Controller_Action
                     $proficiency = $prof->getProficiency();
                 }
                 $skill_object->fetchInfo();
-                $skill_info[$skill_object->getSkill_name()] = $proficiency;
+                $skill_info[$skill_id][$skill_object->getSkill_name()] = $proficiency;
             }
         } else {
             $skill_info = false;
@@ -1036,14 +980,14 @@ class TestingController extends Zend_Controller_Action
         $job_preferred = $student->fetchJobPreferred();
         return $job_preferred;
     }
-    private function saveEmpTest ($info)
+    private function addEmpTest ($info)
     {
         $emp_test = new Tnp_Model_EmpTestInfo_Test();
         $test_details['test_name'] = $info['test_name'];
         $test_details['date'] = $info['date'];
         return $emp_test->save($test_details);
     }
-    private function saveEmpTestSection ($info)
+    private function addEmpTestSection ($info)
     {
         $test_section = new Tnp_Model_EmpTestInfo_Section();
         $section_array = array();
@@ -1064,6 +1008,9 @@ class TestingController extends Zend_Controller_Action
     private function saveEmpTestRecord ($info)
     {
         $record = array();
+        if ($info['test_record_id']) {
+            $record['test_record_id'] = $info['test_record_id'];
+        }
         $record['employability_test_id'] = $info['employability_test_id'];
         $record['test_regn_no'] = $info['test_regn_no'];
         $record['test_total_score'] = $info['test_total_score'];
@@ -1189,7 +1136,7 @@ class TestingController extends Zend_Controller_Action
         $co_curricular_info['hobbies'] = $info['hobbies'];
         return $student->saveCoCurricularInfo($co_curricular_info);
     }
-    private function saveSkillsInfo ($info)
+    private function addSkill ($info)
     {
         $skills = new Tnp_Model_Skill();
         $skill_info = array();
@@ -1231,6 +1178,32 @@ class TestingController extends Zend_Controller_Action
         $student_model = new Tnp_Model_Member_Student();
         $student_model->setMember_id($member_id);
         return $student_model->saveCriticalInfo($data_to_save);
+    }
+    private function deleteSkill ($member_id, $skill_id)
+    {
+        $member_skills = new Tnp_Model_MemberInfo_Skills();
+        $member_skills->setSkill_id($skill_id);
+        $member_skills->setMember_id($member_id);
+        $member_skills->deleteSkill();
+    }
+    private function deleteEmpTestRecord ($test_record_id)
+    {
+        $e_t_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
+        $e_t_record->setTest_record_id($test_record_id);
+        $e_t_record->deleteRecord();
+    }
+    private function deleteLanguageKnown ($member_id, $language_id)
+    {
+        $language = new Tnp_Model_MemberInfo_Language();
+        $language->setMember_id($member_id);
+        $language->setLanguage_id($language_id);
+        $language->deleteLanguageKnown();
+    }
+    private function deleteCoCurricular ($member_id)
+    {
+        $co_curricular = new Tnp_Model_MemberInfo_CoCurricular();
+        $co_curricular->setMember_id($member_id);
+        $co_curricular->deleteCoCurricular();
     }
 }
 ?>
