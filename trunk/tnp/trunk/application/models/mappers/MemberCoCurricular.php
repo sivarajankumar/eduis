@@ -58,8 +58,7 @@ class Tnp_Model_Mapper_MemberCoCurricular
         $db_table = $this->getDbTable();
         $stu_cc_table = $db_table->info('name');
         $required_cols = array('member_id');
-        $select = $adapter->select()->from($stu_cc_table, 
-        $required_cols);
+        $select = $adapter->select()->from($stu_cc_table, $required_cols);
         if (! empty($achievements)) {
             $select->where('achievements = ?', $achievements);
         }
@@ -76,6 +75,12 @@ class Tnp_Model_Mapper_MemberCoCurricular
     {
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
+    }
+    public function delete ($member_id)
+    {
+        $dbtable = $this->getDbTable();
+        $where = 'member_id = ' . $member_id;
+        return $dbtable->delete($where);
     }
     public function update ($prepared_data, $member_id)
     {

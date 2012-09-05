@@ -97,11 +97,20 @@ class Tnp_Model_Mapper_MemberSkills
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
+    public function delete ($member_id, $skill_id)
+    {
+        $where1 = 'member_id = ' . $member_id;
+        $where2 = 'skill_id = ' . $skill_id;
+        $dbtable = $this->getDbTable();
+        return $dbtable->delete(array($where1, $where2));
+    }
     public function update ($prepared_data, $member_id)
     {
         $dbtable = $this->getDbTable();
-        $where = 'member_id = ' . $member_id;
-        return $dbtable->update($prepared_data, $where);
+        $where1 = 'member_id = ' . $member_id;
+        $where2 = 'skill_id = ' . $prepared_data['skill_id'];
+        $data = array('proficiency' => $prepared_data['proficiency']);
+        return $dbtable->update($data, array($where1, $where2));
     }
 }
 ?>

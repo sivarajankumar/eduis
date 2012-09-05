@@ -87,6 +87,11 @@ class Tnp_Model_Mapper_EmployabilityTestRecord
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
+    public function delete ($record_id)
+    {
+        $dbtable = $this->getDbTable();
+        return $dbtable->delete('test_record_id = ' . $record_id);
+    }
     public function update ($prepared_data, $test_record_id)
     {
         $dbtable = $this->getDbTable();
