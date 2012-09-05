@@ -1,0 +1,185 @@
+<?php 
+	$test_record = $this->test_record;
+	$section_record = $this->section_record;
+?>
+
+<h2>Employability Test</h2>
+<form action="javascript:submit();" id="test_info_form" class="uniForm">
+	<fieldset id="test_info">
+		<div class="ctrlHolder">
+			<label for="test_name"><em>*</em>Test Name</label>
+			<input name="test_name" id="test_name"  value="<?php $test_record['test_name'];?>"  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+			<p class="formHint">Select the name of the test</p>
+		</div>
+
+		<div class="ctrlHolder">
+			<label for="date_of_conduct">Date Of Conduct</label>
+			<input name="date_of_conduct" id="date_of_conduct" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of test</p>
+		</div>
+	</fieldset>
+ 
+ 	<fieldset id="test_score">
+		<div class="ctrlHolder">
+			<label for="test_regn_no">Registration Number</label>
+			<input name="test_regn_no" id="test_regn_no" value="" data-default-value="e.g. 6687897987987" size="35" maxlength="50" type="text" class="textInput "/>
+			<p class="formHint">Enter registration number of test appeared</p>
+		</div>
+
+		<div class="ctrlHolder">
+			<label for="test_percentile">Percentile</label>
+			<input name="test_percentile" id="test_percentile" value="" data-default-value="e.g.Software Development" size="35" maxlength="50" type="text" class="textInput "/>
+			<p class="formHint">Percentile in test</p>
+		</div>
+
+		<div class="ctrlHolder">
+			<label for="test_total_score">Total Score</label>
+			<input name="test_total_score" id="test_total_score" value="" data-default-value="e.g.200" size="35" maxlength="50" type="text" class="textInput "/>
+			<p class="formHint"></p>
+		</div> 
+	</fieldset>
+	
+	<?php 
+		foreach ($section_record as $test_section_id => $data) {
+			echo '<fieldset id="'.$test_section_id.'" class="section" title="'.$data['test_section_name'].'">'.
+					'<h2>'.ucfirst($data['test_section_name']).'</h2>'.
+					'<div class="ctrlHolder"><label for="section_marks">Section Marks </label>'.
+						'<input name="section_marks" id="section_marks" value="'.$data['section_marks'].'" data-default-value="e.g. 29 " size="35" maxlength="50" type="text" class="textInput validateInteger"/>'.
+						'<p class="formHint">Marks obtained in above mentioned section</p>'.
+					'</div>'.
+					'<div class="ctrlHolder">'.
+						'<label for="section_percentile">Section percentile </label>'.
+						'<input name="section_percentile" id="section_percentile" value="'.$data['section_percentile'].'" data-default-value="e.g. 30" size="35" maxlength="50" type="text" class="textInput validateInteger"/>'.
+						'<p class="formHint">Percentile obtained in above mentioned section</p>'.
+					'</div>'.
+				'</fieldset>';
+		}
+	?>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</form>
+
+<script>
+<?php
+	if(isset($this->test_record)){
+		foreach ($this->test_record as $key => $value){
+			$divname = $key;
+			echo '$("#'.$key.'").val("'.$value.'");';
+		}
+	}
+?>
+
+var urlSaveInfo = '<?php echo $this->url(array('controller' => 'testing', 'action' => 'saveemptestrecord'))?>';
+$(function(){
+	$('form#test_info_form').uniform({
+		prevent_submit : true
+	});
+
+	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	$("#date_of_conduct").datepicker({
+  	dateFormat: 'yy-mm-dd',
+  	changeMonth: true,
+		changeYear: true,
+		yearRange: '-5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+		}
+	});
+});
+
+function submit() {
+    $.ajax({
+        url : urlSaveInfo,
+        data : {
+            	myarray:getValues(),
+				format : 'json'
+            	},
+        success: function(jStatus){
+        	alert("Your information has been submitted successfully.");
+            window.location.replace("/student/profile");
+        },
+		error: function(response) {
+			$('#errorBox').text(response.responseText).parent().show();
+			console.log(response);
+		}
+	});
+}
+
+function getValues() {
+	var data = {};
+	var test_info = {};
+	var test_record = {};
+	var test_section_record = {};
+
+	$('fieldset#test_info :input')
+	.not('button,:input[value^="e.g."]')
+	.each(function(){ 
+		test_info[this.name] = this.value; 
+	});
+	
+	$('fieldset#test_score :input')
+	.not('button,#e_mail_confirm,:input[value^="e.g."]')
+	.each(function(){ 
+		test_record[this.name] = this.value; 
+	});
+	
+	$('fieldset.section').each(function(){
+		var sub_data = {};
+		var div_id = $(this).attr('id');
+		var section_name = $(this).attr('title');
+		alert(div_id);
+		$('form#test_info_form > fieldset#'+div_id+' :input').each(function(){
+			sub_data[this.name] = this.value;
+			//alert(this.name+"  "+this.value);
+		})
+		sub_data['test_section_id'] = div_id;
+		sub_data['test_section_name'] = section_name;
+		test_section_record[div_id] = sub_data;
+		
+	});
+	data['test_info'] = test_info;
+	data['test_record'] = test_record;
+	data['test_section_record'] = test_section_record;
+	return data;
+}
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:82%;
+		font-size:17px;
+		font-weight:100;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+	.uniForm{	
+		width:80%;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>

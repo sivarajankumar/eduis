@@ -1,0 +1,140 @@
+<?php 
+	$test_record = $this->test_record;
+	$t = array();
+	foreach ($test_record as $test_record_id => $record) {
+	    $t[$test_record_id] = $record['employability_test_id'];
+	}
+?>
+<div class="ui-state-hover"><center><H3>Employability Test Information</H3></center></div>
+<div class="info" id="relative_info">
+	<?php
+		$s_no = 1;
+		foreach ($test_record as $test_record_id => $record) {
+			echo '<div id='.$test_record_id.' class="data">';
+				echo ''.$s_no.') ';
+				echo '<span class="red">Registration Number: </span>'.$record['test_regn_no'].'&nbsp;&nbsp;';
+				echo '<span class="red">Name: </span>'.$record['test_name'].'&nbsp;&nbsp;';
+				echo '<span class="red">Date: </span>'.$record['date_of_conduct'].'&nbsp;&nbsp;';
+				echo '<span class="red">Score: </span>'.$record['test_total_score'].'&nbsp;&nbsp;';
+				echo '<span class="red">Percentile: </span>'.$record['test_percentile'].'<br>';
+				echo '<input id="button_'.$test_record_id.'" type="button" value="View Details" onclick="show_details('.$test_record_id.')">';
+				$p = "'/testing/editemptestrecord?test_record_id=".$test_record_id."'";
+				echo '<input type="button" value="Edit" onclick="window.location.replace('.$p.')"></td>';
+			echo '</div>';
+			
+			
+			echo '<table class="table-design1" id="table_record'.$test_record_id.'" border="0">';
+				echo '<tr>
+					<th>Section Name</th>
+					<th>Section Percentile</th>
+					<th>Section Marks</th>
+					</tr>';
+				echo '</tr>';
+			echo '</table>';
+			
+			echo '<br>';
+			$s_no++;
+		}
+	?>
+
+</div>
+
+<script type="text/javascript">
+	<?php
+		$js_array = json_encode($t);
+		echo "var j_array = ". $js_array . ";\n";
+	?>
+	$(function(){
+		$('.table-design1').hide();
+	});
+    function show_details(test_record_id){
+        var employability_test_id = j_array[test_record_id];
+        var urlgetinfo = "<?php echo $this->url(array('controller' => 'testing', 'action' => 'fetchsectionrecord'))?>";
+		$.ajax({
+			url : urlgetinfo,
+			dataType : 'json',
+			data : {
+					format:'json',
+					employability_test_id : employability_test_id
+				},
+			success: function(jStatus){
+				var html = '';
+				$.each(jStatus,function(test_section_id,data){
+					html += '<tr><td>'+data['test_section_name'].toUpperCase()+'</td>';
+					html += '<td>'+data['section_marks']+'</td>';
+					html += '<td>'+data['section_percentile']+'</td></tr>';
+    			});
+    			var table_id = '#table_record'+test_record_id;
+    			$(table_id).append(html).show();
+    			$('#button_'+test_record_id).attr('onclick','');
+    			$('#button_'+test_record_id).attr('value','Hide Details');
+    			$('#button_'+test_record_id).bind('click',function(){
+					if($(this).val() == 'Hide Details')
+					{
+						$(table_id).hide();
+						$('#button_'+test_record_id).attr('value','Show Details');
+					}
+					else
+					{
+						$(table_id).show();
+						$('#button_'+test_record_id).attr('value','Hide Details');
+					}
+    			});
+			},
+            error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    }
+</script>
+
+<style type="text/css">
+
+	.info
+	{
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+		font-size: 14px;
+		margin: 15px;
+		text-align: left;
+		border-collapse: collapse;
+	}
+	.data{	
+		background-color:#F9F9F9;
+		border:0.1em solid #D1D1D1;
+		border-radius: 3px;
+		padding: 2px 0 5px 10px;
+		line-height: 25px;
+	}
+	span.red {
+		color:red;
+	}
+	.table-design1 {
+		border: 1px solid #DFDFDF;
+		background-color: white;
+		width: 100%;
+		-moz-border-radius: 3px;
+		-webkit-border-radius: 3px;
+		border-radius: 3px;
+		font-family: Arial,"Bitstream Vera Sans",Helvetica,Verdana,sans-serif;
+		color: #333;
+	}
+	.table-design1 td, .table-design1 th {
+		border-top-color: white;
+		color: #313131;
+	}
+	.table-design1 th {
+		text-shadow: rgba(255, 255, 255, 0.796875) 0px 1px 0px;
+		font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+		font-weight: normal;
+		padding: 7px 7px 8px;
+		text-align: left;
+		line-height: 1.3em;
+		font-size: 14px;
+		background-color:#F2F2F2;
+	}
+	.table-design1 td {
+		font-size: 12px;
+		padding: 4px 7px 2px;
+	}
+</style>
