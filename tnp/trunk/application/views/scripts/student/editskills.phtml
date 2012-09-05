@@ -5,17 +5,33 @@
 <h2>Skill Set</h2>
 <form action="javascript:submit();" class="uniForm">
 <fieldset>
-	<div class="ctrlHolder"><label for="skill_id"><em>*</em>Name</label>
-		<select id="skill_id" name="skill_id" class="selectInput required">
-		<?php
-			foreach ($skills as $skill_id => $skill_data) {
-				echo '<option value="' . $skill_id . '">' . $skill_data['skill_name'] .'</option>';
-   			}
-   		?>
-		<option value="-999">Other</option>
-		</select>
-		<p class="formHint">Name of the skill known by Candidate</p>
-	</div>
+	<?php
+	if(isset($_GET['skill_id']))
+	{
+		$student_skill = $_GET['skill_id'];
+		echo '<div class="ctrlHolder"><label for="skill_id"><em>*</em>Name</label>';
+			echo '<select id="skill_id" name="skill_id" class="selectInput required" readonly="readonly">';
+   				echo '<option value="'.$student_skill.'">'.$skills[$student_skill]['skill_name'].'</option>';
+			echo '</select>';
+			echo '<p class="formHint">Name of the skill known by Candidate</p>';
+		echo '</div>';
+	}
+	else
+	{
+		echo '<div class="ctrlHolder"><label for="skill_id"><em>*</em>Name</label>';
+			echo '<select id="skill_id" name="skill_id" class="selectInput required">';
+				foreach ($skills as $skill_id => $skill_data) {
+					echo '<option value="' . $skill_id . '">' . $skill_data['skill_name'] .'</option>';
+   				}
+   				echo '<option value="-999">Other</option>';
+			echo '</select>';
+			echo '<p class="formHint">Name of the skill known by Candidate</p>';
+		echo '</div>';
+	}
+   	?>
+		
+	
+	
 
 	<!-- <div class="ctrlHolder"><label for="skill_field"><em>*</em>Skill Field</label>
 		<select name="skill_field" id="skill_field" class="selectInput required">
@@ -115,7 +131,7 @@
         	data : {myarray : getValues()},
         	success: function(jStatus){
         		alert("Your information has been submitted successfully");
-                window.location.replace("/student/profile");
+                window.location.replace("/student/viewskillinfo");
         	},
             error: function(response) {
           	  $('#errorBox').text(response.responseText).parent().show();
