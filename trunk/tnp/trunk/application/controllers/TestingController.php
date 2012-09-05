@@ -319,9 +319,11 @@ class TestingController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $skill_id = $params['skill_id'];
-        $skill_info = $this->findSkillsInfo();
-        Zend_Registry::get('logger')->debug($skill_info[$skill_id]);
-        $this->view->assign('skill_info', $skill_info[$skill_id]);
+        $info = $this->findSkillsInfo();
+        $skill_info = array();
+        $skill_info[$skill_id] = $info[$skill_id];
+        Zend_Registry::get('logger')->debug($skill_info);
+        $this->view->assign('skill_info', $skill_info);
     }
     /**
      * assigns test and section record for a given employability_test_id of member_id
