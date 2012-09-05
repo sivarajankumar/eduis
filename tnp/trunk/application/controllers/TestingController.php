@@ -321,7 +321,9 @@ class TestingController extends Zend_Controller_Action
         $skill_id = $params['skill_id'];
         $info = $this->findSkillsInfo();
         $skill_info = array();
-        $skill_info[$skill_id] = $info[$skill_id];
+        $skill_info['skill_id'] = $skill_id;
+        $skill_info['skill_name'] = $info[$skill_id]['skill_name'];
+        $skill_info['proficiency'] = $info[$skill_id]['proficiency'];
         Zend_Registry::get('logger')->debug($skill_info);
         $this->view->assign('skill_info', $skill_info);
     }
