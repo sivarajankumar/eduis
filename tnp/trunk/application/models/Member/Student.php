@@ -886,7 +886,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
             $member_skills->initSave();
             $prepared_data = $member_skills->prepareDataForSaveProcess(
             $data_array);
-            unset($data_array['member_id']);
+            unset($prepared_data['member_id']);
             return $member_skills->getMapper()->update($prepared_data, 
             $member_id);
         }

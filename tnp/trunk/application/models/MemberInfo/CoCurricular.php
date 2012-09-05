@@ -151,4 +151,9 @@ class Tnp_Model_MemberInfo_CoCurricular extends Tnp_Model_Generic
             return $this->setOptions($info);
         }
     }
+    public function deleteCoCurricular ()
+    {
+        $member_id = $this->getMember_id(true);
+        return $this->getMapper()->delete($member_id);
+    }
 }

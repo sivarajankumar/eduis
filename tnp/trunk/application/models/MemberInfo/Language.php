@@ -131,4 +131,10 @@ class Tnp_Model_MemberInfo_Language extends Tnp_Model_Generic
             return $language_info;
         }
     }
+    public function deleteLanguageKnown ()
+    {
+        $member_id = $this->getMember_id(true);
+        $language_id = $this->getLanguage_id(true);
+        return $this->getMapper()->delete($member_id, $language_id);
+    }
 }

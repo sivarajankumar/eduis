@@ -169,4 +169,10 @@ class Tnp_Model_MemberInfo_Skills extends Tnp_Model_Generic
         $proficiency);
         return $member_ids;
     }
+    public function deleteSkill ()
+    {
+        $skill_id = $this->getSkill_id(true);
+        $member_id = $this->getMember_id(true);
+        return $this->getMapper()->delete($member_id, $skill_id);
+    }
 }

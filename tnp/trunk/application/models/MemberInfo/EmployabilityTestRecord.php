@@ -216,4 +216,9 @@ class Tnp_Model_MemberInfo_EmployabilityTestRecord extends Tnp_Model_Generic
             return $this->setOptions($info);
         }
     }
+    public function deleteRecord ()
+    {
+        $record_id = $this->getTest_record_id(true);
+        return $this->getMapper()->delete($record_id);
+    }
 }

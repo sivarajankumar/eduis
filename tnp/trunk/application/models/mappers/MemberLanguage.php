@@ -67,6 +67,13 @@ class Tnp_Model_Mapper_MemberLanguage
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
+    public function delete ($member_id, $language_id)
+    {
+        $dbtable = $this->getDbTable();
+        $where1 = 'member_id = ' . $member_id;
+        $where2 = 'language_id = ' . $language_id;
+        return $dbtable->delete(array($where1, $where2));
+    }
     public function update ($prepared_data, $member_id, $language_id)
     {
         $dbtable = $this->getDbTable();
