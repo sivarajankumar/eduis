@@ -433,43 +433,6 @@ class TestingController extends Zend_Controller_Action
             $student->saveLanguageInfo($language_info);
         }
     }
-    public function aclconfigAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $methods = get_class_methods('StudentController');
-        $actions = array();
-        foreach ($methods as $value) {
-            $actions[] = substr("$value", 0, strpos($value, 'Action'));
-        }
-        foreach ($actions as $key => $value) {
-            if ($value == null) {
-                unset($actions[$key]);
-            }
-        }
-        $db = new Zend_Db_Table();
-        $delete2 = 'DELETE FROM `tnp`.`mod_role_resource` WHERE `module_id`=? AND `controller_id`=?';
-        $db->getAdapter()->query($delete2, array('tnp', 'student'));
-        $delete1 = 'DELETE FROM `tnp`.`mod_action` WHERE `module_id`=? AND `controller_id`=?';
-        $db->getAdapter()->query($delete1, array('tnp', 'student'));
-        print_r(sizeof($actions));
-        $sql = 'INSERT INTO `tnp`.`mod_action`(`module_id`,`controller_id`,`action_id`) VALUES (?,?,?)';
-        foreach ($actions as $action) {
-            $bind = array('tnp', 'student', $action);
-            $db->getAdapter()->query($sql, $bind);
-        }
-        $sql = 'INSERT INTO `tnp`.`mod_role_resource`(`role_id`,`module_id`,`controller_id`,`action_id`) VALUES (?,?,?,?)';
-        foreach ($actions as $action) {
-            $bind = array('student', 'tnp', 'student', $action);
-            $db->getAdapter()->query($sql, $bind);
-        }
-        /*foreach ($actions as $action) {
-            echo '<pre>';
-            print_r($action);
-            echo '</pre>';
-        }*/
-        Zend_Registry::get('logger')->debug($actions);
-    }
     /* -------------------------------	EMP TEST -> ACCOMPLISHED ------------------------------------------ */
     public function viewemptestrecordAction ()
     {
@@ -477,22 +440,9 @@ class TestingController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $response = array();
         $test_record = $this->generateEmpTestRecords();
-        if ($test_record != false) {
-            $section_record = array();
-            foreach ($test_record as $key => $record) {
-                $employability_test_id = $record['employability_test_id'];
-                $section_record[$employability_test_id] = $this->generateSectionScore(
-                $employability_test_id);
-            }
-            $this->view->assign('test_record', $test_record);
-            $this->view->assign('section_record', $section_record);
-        }
         Zend_Registry::get('logger')->debug(
         'Vars assigned to view are : \'test_record\' where the key is the test_record_id');
         Zend_Registry::get('logger')->debug($test_record);
-        Zend_Registry::get('logger')->debug(
-        ' and : \'section_record\' where the key is the employability_test_id');
-        Zend_Registry::get('logger')->debug($section_record);
     }
     /**
      * assigns test and section record for a given employability_test_id of member_id
@@ -504,13 +454,25 @@ class TestingController extends Zend_Controller_Action
         $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $this->_getParam('format', 'html');
         $test_record_id = $params['test_record_id'];
         $test_record = $this->getEmpTestRecordInfo($test_record_id);
         $employability_test_id = $test_record['employability_test_id'];
+        $test_info = $this->getEmpTestInfo($employability_test_id);
+        $test_record['test_name'] = $test_info['test_name'];
+        $test_record['date_of_conduct'] = $test_info['date_of_conduct'];
         $section_record = $this->generateSectionScore($employability_test_id);
-        $this->view->assign('test_record', $test_record);
-        $this->view->assign('section_record', $section_record);
-        $this->_helper->json($section_record);
+        Zend_Registry::get('logger')->debug($test_record);
+        Zend_Registry::get('logger')->debug($section_record);
+        switch ($format) {
+            case 'html':
+                $this->view->assign('test_record', $test_record);
+                $this->view->assign('section_record', $section_record);
+                break;
+            default:
+                ;
+                break;
+        }
     }
     public function fetchemptestrecordAction ()
     {
@@ -553,6 +515,7 @@ class TestingController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $employability_test_id = $params['employability_test_id'];
         $section_record = $this->generateSectionScore($employability_test_id);
+        Zend_Registry::get('logger')->debug($section_record);
         switch ($format) {
             case 'html':
                 $this->view->assign('section_record', $section_record);
@@ -585,7 +548,7 @@ class TestingController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         Zend_Registry::get('logger')->debug(
-        'params requires are \'test_info\' ,  \'test_record\' , \'test_section_record\' in myarray ex \'$params[\'myarray\'][\'test_info\']');
+        'params required are \'test_info\' ,  \'test_record\' , \'test_section_record\' in myarray ex \'$params[\'myarray\'][\'test_info\']');
         $test_info = $params['myarray']['test_info'];
         $test_score = $params['myarray']['test_record'];
         $section_record = $params['myarray']['test_section_record'];
@@ -596,6 +559,16 @@ class TestingController extends Zend_Controller_Action
             $section_array = array();
             $this->saveSectionScore($section_score);
         }
+    }
+    public function viewemptestAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function addemptestAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
     }
     /**
      * Saves the new test
@@ -608,9 +581,43 @@ class TestingController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         Zend_Registry::get('logger')->debug(
-        'params requires are \'test_info\' myarray[\'test_info\']');
+        'params required are \'test_info\' myarray[\'test_info\']');
         $test_info = $params['myarray']['test_info'];
         $this->saveEmpTest($test_info);
+    }
+    public function fetchEmpTestId ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $this->_getParam('format', 'html');
+        Zend_Registry::get('logger')->debug(
+        'params required are \'test_info\' myarray[\'test_info\']');
+        $test_info = $params['myarray']['test_info'];
+        $employability_test_id = $this->saveEmpTest($test_info);
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('employability_test_id', 
+                $employability_test_id);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' .
+                 $this->_helper->json($employability_test_id, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($employability_test_id);
+                break;
+            case 'test':
+                Zend_Registry::get('logger')->debug($employability_test_id);
+                break;
+            default:
+                ;
+                break;
+        }
     }
     /**
      * Saves the new test
@@ -891,7 +898,7 @@ class TestingController extends Zend_Controller_Action
         $emp_test = new Tnp_Model_EmpTestInfo_Test();
         $test_details['test_name'] = $info['test_name'];
         $test_details['date'] = $info['date'];
-        return $emp_test->saveInfo($test_details);
+        return $emp_test->save($test_details);
     }
     private function saveEmpTestSection ($info)
     {
