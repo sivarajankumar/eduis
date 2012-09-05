@@ -1,0 +1,45 @@
+<div class="ui-state-hover"><center><H3>Basic Skills</H3></center></div>
+<div id="skill_details">
+	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+		<tr>
+			<th>Name</th>
+			<th>Proficiency</th>
+			<th></th>
+		</tr>
+		<?php 
+			foreach ($this->skill_info as $skillId => $data)
+        	{
+				echo '<tr>';
+				echo '<td>'.ucfirst($data['skill_name']).'</td>';
+				echo '<td>'.ucfirst($data['proficiency']).'</td>';
+				echo '<td><input type="button" value="Edit" onclick="javascript:change_location('."'".$skillId."'".')"></td>';
+				echo '</tr>'; 
+			}
+		?>
+	</table>
+</div>
+
+<style type="text/css">
+	table {
+      	border-color: #c20f2e;
+		width:97%;
+	}
+	tr{
+		border-bottom:1px dashed #999;
+	}
+	#corner
+	{
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+		font-size: 14px;
+		margin: 15px;
+		text-align: left;
+		border-collapse: collapse;
+	}
+</style>
+
+<script type="text/javascript">
+	function change_location(skillId)
+	{
+		window.location.replace('/student/editskills?skill_id='+skillId);
+	}
+</script>
