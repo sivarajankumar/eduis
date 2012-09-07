@@ -39,7 +39,7 @@ class Tnp_Model_Mapper_Certification
         $adapter = $db_table->getAdapter();
         $certification_table = $db_table->info('name');
         $required_cols = array('certification_id', 'certification_name', 
-        'technical_field_id');
+        'functional_area_id');
         $select = $adapter->select()
             ->from($certification_table, $required_cols)
             ->where('certification_id = ?', $certification_id);
@@ -48,7 +48,7 @@ class Tnp_Model_Mapper_Certification
         return $certification_info[$certification_id];
     }
     public function fetchCertificationIds ($certification_name = null, 
-    $technical_field_id = null)
+    $functional_area_id = null)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
@@ -58,8 +58,8 @@ class Tnp_Model_Mapper_Certification
         if (isset($certification_name)) {
             $select->where('certification_name = ?', $certification_name);
         }
-        if (isset($technical_field_id)) {
-            $select->where('technical_field_id = ?', $technical_field_id);
+        if (isset($functional_area_id)) {
+            $select->where('functional_area_id = ?', $functional_area_id);
         }
         $certification_ids = array();
         $certification_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);

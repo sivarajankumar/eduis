@@ -1,4 +1,10 @@
 <?php
+/**
+ * 
+ * 
+ * @deprecated
+ *
+ */
 class Tnp_Model_TechnicalField extends Tnp_Model_Generic
 {
     protected $_technical_field_id;

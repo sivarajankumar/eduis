@@ -3,7 +3,7 @@ class Tnp_Model_Certification extends Tnp_Model_Generic
 {
     protected $_certification_id;
     protected $_certification_name;
-    protected $_technical_field_id;
+    protected $_functional_area_id;
     protected $_mapper;
     /**
      * @return the $_certification_id
@@ -34,17 +34,17 @@ class Tnp_Model_Certification extends Tnp_Model_Generic
         }
     }
     /**
-     * @return the $_technical_field_id
+     * @return the $_functional_area_id
      */
-    public function getTechnical_field_id ($throw_exception = null)
+    public function getFunctional_area_id ($throw_exception = null)
     {
-        $technical_field_id = $this->_technical_field_id;
-        if (empty($technical_field_id) and $throw_exception == true) {
-            $message = '_technical_field_id is not set';
+        $functional_area_id = $this->_functional_area_id;
+        if (empty($functional_area_id) and $throw_exception == true) {
+            $message = '_functional_area_id is not set';
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
-            return $technical_field_id;
+            return $functional_area_id;
         }
     }
     /**
@@ -62,11 +62,11 @@ class Tnp_Model_Certification extends Tnp_Model_Generic
         $this->_certification_name = $_certification_name;
     }
     /**
-     * @param field_type $_technical_field_id
+     * @param field_type $_functional_area_id
      */
-    public function setTechnical_field_id ($_technical_field_id)
+    public function setFunctional_area_id ($_functional_area_id)
     {
-        $this->_technical_field_id = $_technical_field_id;
+        $this->_functional_area_id = $_functional_area_id;
     }
     /**
      * Sets Mapper
@@ -125,22 +125,22 @@ class Tnp_Model_Certification extends Tnp_Model_Generic
      * 
      * Enter description here ...
      * @param bool $certification_name_specific
-     * @param bool $technical_field_id_specific
+     * @param bool $functional_area_id_specific
      */
     public function fetchCertificationIds ($certification_name_specific = null, 
-    $technical_field_id_specific = null)
+    $functional_area_id_specific = null)
     {
         $certification_name = null;
-        $technical_field_id = null;
+        $functional_area_id = null;
         if ($certification_name_specific == true) {
             $certification_name = $this->getCertification_name(true);
         }
-        if ($technical_field_id_specific == true) {
-            $technical_field_id = $this->getCertification_name(true);
+        if ($functional_area_id_specific == true) {
+            $functional_area_id = $this->getFunctional_area_id(true);
         }
         $certification_ids = array();
         $certification_ids = $this->getMapper()->fetchCertificationIds(
-        $certification_name, $technical_field_id);
+        $certification_name, $functional_area_id);
         if (empty($certification_ids)) {
             return false;
         } else {
