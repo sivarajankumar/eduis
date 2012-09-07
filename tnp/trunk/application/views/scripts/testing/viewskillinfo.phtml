@@ -1,5 +1,13 @@
 <div class="ui-state-hover"><center><H3>Basic Skills</H3></center></div>
 <div id="skill_details">
+	<?php 
+		if($this->skill_info == false)
+		{
+			echo '<h4>No information has been added yet. Click <a href="/testing/addmemberskill">here</a> to add.<h4>';
+		}
+		else
+		{
+	?>
 	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
 		<tr>
 			<th>Name</th>
@@ -7,22 +15,16 @@
 			<th></th>
 		</tr>
 		<?php
-			if($this->skill_info == 'false')
-			{
-				echo "No information has been added yet.";
+			foreach ($this->skill_info as $skillId => $data)
+	        {
+				echo '<tr>';
+				echo '<td>'.ucfirst($data['skill_name']).'</td>';
+				echo '<td>'.ucfirst($data['proficiency']).'</td>';
+				echo '<td><input type="button" value="Edit" onclick="javascript:change_location('."'".$skillId."'".')"></td>';
+				echo '<td><input type="button" value="Delete" onclick="javascript:delete_skill('."'".$skillId."'".')"></td>';
+				echo '</tr>'; 
 			}
-			else
-			{
-				foreach ($this->skill_info as $skillId => $data)
-	        	{
-					echo '<tr>';
-					echo '<td>'.ucfirst($data['skill_name']).'</td>';
-					echo '<td>'.ucfirst($data['proficiency']).'</td>';
-					echo '<td><input type="button" value="Edit" onclick="javascript:change_location('."'".$skillId."'".')"></td>';
-					echo '<td><input type="button" value="Delete" onclick="javascript:delete_skill('."'".$skillId."'".')"></td>';
-					echo '</tr>'; 
-				}
-			}
+		}
 		?>
 	</table>
 </div>
