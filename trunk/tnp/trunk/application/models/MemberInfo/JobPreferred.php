@@ -116,7 +116,7 @@ class Tnp_Model_MemberInfo_JobPreferred extends Tnp_Model_Generic
         if (empty($areas_preferred)) {
             return false;
         } else {
-            return $areas_preferred;
+            return array_pop($areas_preferred);
         }
     }
 }
