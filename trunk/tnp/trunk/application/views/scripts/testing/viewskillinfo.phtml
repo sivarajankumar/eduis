@@ -6,15 +6,22 @@
 			<th>Proficiency</th>
 			<th></th>
 		</tr>
-		<?php 
-			foreach ($this->skill_info as $skillId => $data)
-        	{
-				echo '<tr>';
-				echo '<td>'.ucfirst($data['skill_name']).'</td>';
-				echo '<td>'.ucfirst($data['proficiency']).'</td>';
-				echo '<td><input type="button" value="Edit" onclick="javascript:change_location('."'".$skillId."'".')"></td>';
-				echo '<td><input type="button" value="Delete" onclick="javascript:delete_skill('."'".$skillId."'".')"></td>';
-				echo '</tr>'; 
+		<?php
+			if($this->skill_info == 'false')
+			{
+				echo "No information has been added yet.";
+			}
+			else
+			{
+				foreach ($this->skill_info as $skillId => $data)
+	        	{
+					echo '<tr>';
+					echo '<td>'.ucfirst($data['skill_name']).'</td>';
+					echo '<td>'.ucfirst($data['proficiency']).'</td>';
+					echo '<td><input type="button" value="Edit" onclick="javascript:change_location('."'".$skillId."'".')"></td>';
+					echo '<td><input type="button" value="Delete" onclick="javascript:delete_skill('."'".$skillId."'".')"></td>';
+					echo '</tr>'; 
+				}
 			}
 		?>
 	</table>
