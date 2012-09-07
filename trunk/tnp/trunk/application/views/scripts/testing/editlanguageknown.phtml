@@ -1,0 +1,122 @@
+<?php
+	$languages = $this->language_info;
+	$read_check = strpos($languages['proficiency'], 'READ'); 
+	$write_check = strpos($languages['proficiency'], 'WRITE');
+	$speak_check = strpos($languages['proficiency'], 'SPEAK');
+?>
+
+<h2>Language Known</h2>
+<form action="javascript:submit();" class="uniForm">
+<fieldset>
+	<?php
+		echo '<div class="ctrlHolder"><label for="language_id"><em>*</em>Name</label>';
+			echo '<select id="language_id" name="language_id" class="selectInput required" readonly="readonly">';
+   				echo '<option value="'.$languages['language_id'].'">'.$languages['language_name'].'</option>';
+			echo '</select>';
+			echo '<p class="formHint">Name of the language known by Candidate</p>';
+		echo '</div>';
+   	?>
+
+	<div class="ctrlHolder">
+		<label for="proficiency">Proficiency</label>
+		READ: <input type="checkbox" name="proficiency" value="READ" <?php if($read_check === false) echo ''; else echo 'checked="checked"'?>><br>
+		WRITE: <input type="checkbox" name="proficiency" value="WRITE" <?php if($write_check === false) echo ''; else echo 'checked="checked"'?>><br>
+		SPEAK: <input type="checkbox" name="proficiency" value="SPEAK" <?php if($speak_check === false) echo ''; else echo 'checked="checked"'?>>
+		<p class="formHint">Select proficiency</p>
+	</div>
+</fieldset>
+
+<div id="submitStatus" style="display: none; padding: 1em;"
+	class="ui-state-highlight ui-corner-all"></div>
+
+<div class="buttonHolder">
+	<button type="submit" class="secondaryAction">Cancel and go back</button>
+	<button type="submit" class="primaryAction">Next</button>
+</div>
+</form>
+
+<script>
+	$(function(){
+  		$('form.uniForm').uniform({
+    		prevent_submit : true
+ 		});
+
+  	var proficiency = '<?php echo $languages['proficiency']?>';
+  		$('#proficiency').val(proficiency);
+	});
+
+	function submit() {
+		var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savelanguagesknown'))?>';
+		$.ajax({
+			url : urlSaveInfo,
+			data : {myarray : getValues()},
+			success: function(jStatus){
+				alert('Your information has been submitted sucessfully');
+				window.location.replace("/testing/viewlanguagesknown");
+			},
+			error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+				console.log(response);
+			}
+		});
+	}
+
+	function getValues() {
+		var formData = {};
+		var language_info = {};
+		var proficiency_data = {}; 
+		formData['new_language'] = false;
+	      
+		$('input[name="proficiency"]').each(function(){ 
+			if($(this).is(':checked'))
+			{
+				proficiency_data[$(this).val()] = true;
+			}
+			else
+			{
+				proficiency_data[$(this).val()] = false;
+			}
+		});
+		formData['member_proficiency'] = proficiency_data;
+		var language_id = $('#language_id').val();
+		language_info['language_id'] = language_id;
+
+		formData['language_info'] = language_info;
+	      
+		return formData;
+	}
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		width:auto;
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		font-size:17px;
+		font-weight:100;
+		margin-top:2px;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/demos/css/demo.css');
+?>
