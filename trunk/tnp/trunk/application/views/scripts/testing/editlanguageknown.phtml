@@ -46,19 +46,33 @@
 	});
 
 	function submit() {
-		var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savelanguagesknown'))?>';
-		$.ajax({
-			url : urlSaveInfo,
-			data : {myarray : getValues()},
-			success: function(jStatus){
-				alert('Your information has been submitted sucessfully');
-				window.location.replace("/testing/viewlanguagesknown");
-			},
-			error: function(response) {
-				$('#errorBox').text(response.responseText).parent().show();
-				console.log(response);
+		var selected = 0;
+		$('input[name="proficiency"]').each(function(){
+			if($(this).is(':checked'))
+			{
+				selected++;
 			}
 		});
+
+		if(selected == 0)
+		{
+			alert("Please select atleast one of the Proficiency");
+		}
+		else {
+			var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savelanguagesknown'))?>';
+			$.ajax({
+				url : urlSaveInfo,
+				data : {myarray : getValues()},
+				success: function(jStatus){
+					alert('Your information has been submitted sucessfully');
+					window.location.replace("/testing/viewlanguagesknown");
+				},
+				error: function(response) {
+					$('#errorBox').text(response.responseText).parent().show();
+					console.log(response);
+				}
+			});
+		}
 	}
 
 	function getValues() {
