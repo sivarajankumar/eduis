@@ -1,0 +1,52 @@
+<?php 
+	$cocurricular = $this->co_curicular_info;
+?>
+
+<div class="ui-state-hover"><center><H3>Certification Details</H3></center></div>
+<div id="certification_details">
+	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+	<?php
+		foreach ($cocurricular as $key => $value) 
+		{
+        	echo '<tr>';
+        		echo '<td><span id="heading">'.ucfirst(str_replace('_',' ',$key)).'</span></td>';
+        		$array = explode("\n",$value);
+        		echo '<td><ul style="list-style:none;">';
+        		foreach ($array as $key => $content )
+        		{
+        			echo '<li><span id="content">'.$content.'</span></li>';
+        		}
+        		echo '</td>';
+        	echo '</tr>';
+		}
+	?>
+	</table>
+</div>
+
+<input type="button" value="Edit" onclick="window.location.replace('/testing/editcocurricular')">
+
+<style type="text/css">
+	table {
+      	border-color: #c20f2e;
+		width:97%;
+	}
+	tr{
+		border-bottom:1px dashed #999;
+	}
+	#corner
+	{
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+		font-size: 14px;
+		margin: 15px;
+		text-align: left;
+		border-collapse: collapse;
+	}
+	td span#heading{
+		color:red;
+		font-size:16px;
+	}
+	td span#content{
+		float:right;
+		font-size:16px;
+	}
+</style>

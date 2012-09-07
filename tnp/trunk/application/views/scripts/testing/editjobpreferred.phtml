@@ -1,0 +1,111 @@
+<?php 
+	$job_areas = $this->job_preferred;
+?>
+<h2>Job Preferred</h2>
+<form action="javascript:submit();" class="uniForm">
+
+	<fieldset>
+		<div class="ctrlHolder">
+			<label for="job_area_name"><em>*</em>Job Area Preferred</label>
+			<select id="job_area_name" name="job_area_name" class="selectInput required">
+				<option value="CORE">CORE</option>
+				<option value="DEFENCE">DEFENCE</option>
+				<option value="GOVERNMENT">GOVERNMENT</option>
+				<option value="IT">IT</option>
+			</select>
+			<p class="formHint">Job Preference of Candidate </p>
+		</div>
+		
+	</fieldset>
+             
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+        
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+	<br>
+	</form>
+      
+ <script>
+
+$(function(){
+	$('form.uniForm').uniform({
+		prevent_submit : true
+	});
+
+	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	$("#date").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '-5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+		}
+	});
+
+	$('#job_area_name').val('<?php echo $job_areas[0]?>')
+});
+
+function submit() {
+	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savejobpreferred'))?>';
+    $.ajax({
+        url : urlSaveInfo,
+        data : {myarray : getValues()},
+        success: function(jStatus){
+			alert('Your information has been submitted sucessfully');
+			window.location.replace("/testing/viewjobpreferred");
+        },
+            error: function(response) {
+          	  $('#errorBox').text(response.responseText).parent().show();
+                console.log(response);
+                }
+            });
+}
+
+function getValues() {
+	var formData = {}; 
+	$('form.uniForm :input')
+		.not('button,#e_mail_confirm,:input[value^="e.g."]')
+		.each(function(){ 
+    		formData[this.name] = this.value; 
+	});
+	return formData;
+}
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		width:auto;
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		font-size:17px;
+		font-weight:100;
+		margin-top:2px;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
+  
