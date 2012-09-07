@@ -1,0 +1,70 @@
+<div class="ui-state-hover"><center><H3>Basic Skills</H3></center></div>
+<div id="language_details">
+	<?php 
+		if($this->language_info == false)
+		{
+			echo '<h4>No information has been added yet. Click <a href="/testing/addmemberlanguage">here</a> to add.<h4>';
+		}
+		else
+		{
+	?>
+	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
+		<tr>
+			<th>Name</th>
+			<th>Proficiency</th>
+			<th></th>
+		</tr>
+		<?php
+			foreach ($this->language_info as $languageId => $data)
+	        {
+				echo '<tr>';
+				echo '<td>'.ucfirst($data['language_name']).'</td>';
+				echo '<td>'.ucfirst($data['proficiency']).'</td>';
+				echo '<td><input type="button" value="Edit" onclick="javascript:change_location('."'".$languageId."'".')"></td>';
+				echo '<td><input type="button" value="Delete" onclick="javascript:delete_skill('."'".$languageId."'".')"></td>';
+				echo '</tr>'; 
+			}
+		}
+		?>
+	</table>
+</div>
+
+<style type="text/css">
+	table {
+      	border-color: #c20f2e;
+		width:97%;
+	}
+	tr{
+		border-bottom:1px dashed #999;
+	}
+	#corner
+	{
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+		font-size: 14px;
+		margin: 15px;
+		text-align: left;
+		border-collapse: collapse;
+	}
+</style>
+
+<script type="text/javascript">
+	function change_location(languageId)
+	{
+		window.location.replace('/testing/editlanguageknown?language_id='+languageId);
+	}
+
+	function delete_skill(languageId)
+	{
+		var urlDeleteSkill = '<?php echo $this->url(array('controller' => 'testing', 'action' => 'deletelanguage'))?>';
+		$.ajax({
+			url : urlDeleteSkill,
+			data : {language_id : languageId},
+			success : function(){
+				window.location.reload();
+			},
+			error : function(){
+				alert("The information was not deleted due to some problem. Please try again");
+			}, 
+		});
+	}
+</script>
