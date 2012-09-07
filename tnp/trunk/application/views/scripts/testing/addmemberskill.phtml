@@ -1,20 +1,23 @@
 <?php
-	$skills = $this->skill_info;
+	$skills = $this->skills;
 ?>
 
 <h2>Skill Set</h2>
 <form action="javascript:submit();" class="uniForm">
 <fieldset>
 	<?php
-		echo '<div class="ctrlHolder"><label for="skill_id"><em>*</em>Name</label>';
-			echo '<select id="skill_id" name="skill_id" class="selectInput required" readonly="readonly">';
-   				echo '<option value="'.$skills['skill_id'].'">'.$skills['skill_name'].'</option>';
-			echo '</select>';
-			echo '<p class="formHint">Name of the skill known by Candidate</p>';
-		echo '</div>';
+	echo '<div class="ctrlHolder"><label for="skill_id"><em>*</em>Name</label>';
+		echo '<select id="skill_id" name="skill_id" class="selectInput required">';
+			foreach ($skills as $skill_id => $skill_data) {
+				echo '<option value="' . $skill_id . '">' . $skill_data .'</option>';
+			}
+		echo '<option value="-999">Other</option>';
+		echo '</select>';
+		echo '<p class="formHint">Name of the skill known by Candidate</p>';
+	echo '</div>';
    	?>
 
-	<div class="ctrlHolder"><label for="proficiency"><em>*</em>Proficiency</label>
+	<div class="ctrlHolder"><label for="profiency"><em>*</em>Proficiency</label>
 		<select id="proficiency" name="proficiency" class="selectInput required">
 			<option value="EXPERT">Expert</option>
 			<option value="INTERMEDIATE">Intermediate</option>
@@ -39,9 +42,22 @@
   		$('form.uniForm').uniform({
     		prevent_submit : true
  		});
+	});
 
-  	var proficiency = '<?php echo $skills['proficiency']?>';
-  		$('#proficiency').val(proficiency);
+	$("#skill_id").change(function(){
+		if($(this).val() == -999)
+		{
+			var html = '<div class="ctrlHolder" id="skill_name">'+
+						'<label for="skill_name"><em>*</em>Skill Name</label>'+
+						'<input name="skill_name" id="skill_name" value="" data-default-value="e.g. JAVA" size="35" maxlength="50" type="text" class="textInput required"/>'+
+						'<p class="formHint">Name of the Skill</p>'+
+						'</div>';
+			$(this).parent().after(html);
+		}
+		else
+		{
+			$('#skill_name').remove();
+		}
 	});
 
 	function submit() {
@@ -63,12 +79,23 @@
 	function getValues() {
 		var formData = {};
 		var skill_info = {};
-
-		skill_info['skill_id'] = '<?php echo $skills['skill_id']?>';
+		formData['new_skill'] = false;
+		
+		if($('#skill_id').val() == -999)
+		{
+			var skill_name = $('input[name="skill_name"]').val();
+			skill_info['skill_name'] = skill_name;
+			formData['new_skill'] = true;
+		}
+		else
+		{
+			var skill_id = $('#skill_id').val();
+			skill_info['skill_id'] = skill_id;
+		}
 		skill_info['proficiency'] = $('#proficiency').val();
 		
 	    formData['skill_info'] = skill_info;
-
+	    
 		return formData;
 	}
 </script>
