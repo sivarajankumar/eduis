@@ -1,0 +1,117 @@
+<?php 
+	$cocurricular = $this->cocurricular_info;
+?>
+
+<h2>Co-Curricular Activities</h2>
+<form action="javascript:submit();" class="uniForm">
+
+    <fieldset>
+		<div class="ctrlHolder">
+			<label for="achievements">Achievements</label>
+			<textarea rows="2" cols="20" name="achievements" id="achievements" data-default-value="e.g. 1st prize in Paper Presentation at college level." class="textInput"><?php echo $cocurricular['achievements']?></textarea>
+			<p class="formHint">Achievements of Student</p>
+		</div>
+
+		<div class="ctrlHolder">
+			<label for="activities">Activities </label>
+			<textarea rows="2" cols="20"  name="activities" id="activities" data-default-value="e.g. Sports" class="textInput"><?php echo $cocurricular['activities']?></textarea>
+			<p class="formHint">Activities of Student</p>
+		</div>
+
+		<div class="ctrlHolder">
+			<label for="hobbies">Hobbies</label>
+			<textarea rows="2" cols="20" name="hobbies" id="hobbies" data-default-value="e.g. Reading" class="textInput "><?php echo $cocurricular['hobbies']?></textarea>
+			<p class="formHint">Hobbies of Student</p>
+		</div>
+	</fieldset>
+
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+    <br>
+</form>
+<script>
+
+$(function(){
+	$('form.uniForm').uniform({
+		prevent_submit : true
+	});
+
+	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	$("#date").datepicker({
+  		dateFormat: 'yy-mm-dd',
+  		changeMonth: true,
+		changeYear: true,
+		yearRange: '-5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+		}
+	});
+});       
+ 
+  
+
+function submit() {
+	var saveCocurricular = '<?php echo $this->url(array('controller' => 'student', 'action' => 'updatecocurricular'))?>';
+    $.ajax({
+        url : saveCocurricular,
+        data : {myarray : getValues()},
+        success: function(jStatus){
+            alert("Your information has been saved successfully");
+            window.location.replace("/student/profile");
+        },
+            error: function(response) {
+          	  $('#errorBox').text(response.responseText).parent().show();
+                console.log(response);
+                }
+            });
+}
+
+function getValues() {
+	var formData = {};
+	var cocurricular = {};
+		$('form.uniForm :input')
+			.not('button,#e_mail_confirm,:input[value^="e.g."]')
+			.each(function(){ 
+				cocurricular[this.name] = this.value; 
+		});
+	formData['cocurricular'] =  cocurricular;
+	return formData;
+}
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:57%;
+		font-size:17px;
+		font-weight:100;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>  
