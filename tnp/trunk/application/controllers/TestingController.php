@@ -351,7 +351,7 @@ class TestingController extends Zend_Controller_Action
         }
         $job_preferred = $this->findJobPreferred($member_id);
         Zend_Registry::get('logger')->debug($job_preferred);
-        $this->view->assign('cocurricular_info', $job_preferred);
+        $this->view->assign('job_preferred', $job_preferred);
     }
     public function deletetestrecordAction ()
     {
@@ -524,6 +524,13 @@ class TestingController extends Zend_Controller_Action
             $language_info = $params['myarray']['language_info'];
             $this->addLanguage($language_info);
         }
+    }
+    public function addjobpreferredAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $job_areas = array('CORE', 'DEFENCE', 'GOVERNMENT', 'IT');
+        $this->view->assign('job_areas', $job_areas);
     }
     /**
      * add new sections to a test
