@@ -159,8 +159,40 @@ class TestingController extends Zend_Controller_Action
         } else {
             $member_id = $params['member_id'];
         }
+        $is_new_skill = $params['myarray']['new_skill'];
         $skill_info = $params['myarray']['skill_info'];
-        $this->saveStuSkillsInfo($skill_info);
+        $member_proficiency = $skill_info['proficiency'];
+        /*
+         * skill id sent by user
+         */
+        if (! empty($skill_info['skill_id'])) {
+            $skill_id = $skill_info['skill_id'];
+        }
+        /*
+         * if skill does not exist in databse add it, otherwise update member's proficiency
+         */
+        if ($is_new_skill == 'true') {
+            $skill = new Tnp_Model_Skill();
+            $skill_data = array('skill_name' => $skill_info['skill_name']);
+            $skill_id = $this->addSkill($skill_data);
+        }
+        $mem_skill_info = array('skill_id' => $skill_id, 
+        'proficiency' => $member_proficiency);
+        $this->saveStuSkillsInfo($mem_skill_info);
+        /*$this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $skill_info = $params['myarray']['skill_info'];
+        $this->saveStuSkillsInfo($skill_info);*/
     }
     /**
      * Saves the test record(user point of view)
@@ -176,19 +208,58 @@ class TestingController extends Zend_Controller_Action
         Zend_Registry::get('logger')->debug(
         'params required are \'test_info\' ,  \'test_record\' , \'test_section_record\' in myarray ex \'$params[\'myarray\'][\'test_info\']');
         /*
-         * in case of edit the $params['myarray']['test_record'] will contain test_record_id
+         * in case of edit ,the $params['myarray']['test_record'] will contain test_record_id
          */
         $test_record = $params['myarray']['test_record'];
         $section_record = $params['myarray']['test_section_record'];
-        $employability_test_id = $test_record['employability_test_id'];
         $this->saveEmpTestRecord($test_record);
-        foreach ($section_record as $name => $section_score) {
+        foreach ($section_record as $id => $section_score) {
             $section_array = array();
             $this->saveSectionScore($section_score);
         }
     }
     public function savelanguagesknownAction ()
     {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $is_new_language = $params['myarray']['new_language'];
+        $language_info = $params['myarray']['language_info'];
+        $member_proficiency = $language_info['proficiency'];
+        /*
+         * language id sent by user
+         */
+        if (! empty($language_info['language_id'])) {
+            $language_id = $language_info['language_id'];
+        }
+        /*
+         * if language does not exist in databse add it, otherwise update member's proficiency
+         */
+        if ($is_new_language == 'true') {
+            $language_info = array(
+            'language_name' => $language_info['language_name']);
+            /*
+             * language id generated for new language and $language id updated
+             */
+            $language_id = $this->addLanguage($language_info);
+        }
+        $proficiency = array();
+        $can_speak = (($member_proficiency['SPEAK'] == 'true') ? ($proficiency[] = 'SPEAK') : null);
+        $can_read = (($member_proficiency['READ'] == 'true') ? ($proficiency[] = 'READ') : null);
+        $can_write = (($member_proficiency['WRITE'] == 'true') ? ($proficiency[] = 'WRITE') : null);
+        $mem_lang_info = array('language_id' => $language_id, 
+        'proficiency' => implode(',', $proficiency));
+        $this->saveStuLanguageInfo($mem_lang_info);
+        /*
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
@@ -202,7 +273,7 @@ class TestingController extends Zend_Controller_Action
         (($member_proficiency['WRITE'] == 'true') ? ($proficiency[] = 'WRITE') : null);
         $mem_lang_info = array('language_id' => $language_id, 
         'proficiency' => implode(',', $proficiency));
-        $this->saveStuLanguageInfo($mem_lang_info);
+        $this->saveStuLanguageInfo($mem_lang_info);*/
     }
     public function savecertificationAction ()
     {
@@ -570,6 +641,7 @@ class TestingController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $language_info = $this->findLanguageInfo($member_id);
+        $this->view->assign('language_info', $language_info);
         Zend_Registry::get('logger')->debug($language_info);
     }
     public function addmemberskillAction ()
@@ -615,7 +687,7 @@ class TestingController extends Zend_Controller_Action
             Zend_Registry::get('logger')->debug('\'myarray\' was EMPTY');
         } else {
             $language_info = $params['myarray']['language_info'];
-            $this->addLanguageInfo($language_info);
+            $this->addLanguage($language_info);
         }
     }
     /**
@@ -1120,7 +1192,7 @@ class TestingController extends Zend_Controller_Action
         $student_experience['description'] = $info['description'];
         return $student->saveExperienceInfo($student_experience);
     }
-    private function addLanguageInfo ($info)
+    private function addLanguage ($info)
     {
         $language = new Tnp_Model_Language();
         $language_info = array();
