@@ -642,7 +642,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     /**
      * Operating Condition : Member Id is set
      * @param int $training_id
-     * @return object|false  Object of Tnp_Model_MemberInfo_Skills
+     * @return object|false  Object of Tnp_Model_MemberInfo_Training
      */
     public function fetchTrainingInfo ($training_id)
     {
@@ -894,8 +894,8 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     public function saveTrainingInfo ($data_array)
     {
         $member_id = $this->getMember_id(true);
-        $training_id = $data_array['training_id'];
-        $info = $this->fetchTrainingInfo($training_id);
+        $functional_area_id = $data_array['functional_area_id'];
+        $info = $this->fetchTrainingInfo($functional_area_id);
         $data_array['member_id'] = $member_id;
         if ($info == false) {
             $member_training = new Tnp_Model_MemberInfo_Training();
@@ -910,7 +910,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
             $data_array);
             unset($data_array['member_id']);
             return $member_training->getMapper()->update($prepared_data, 
-            $member_id, $training_id);
+            $member_id, $functional_area_id);
         }
     }
     public function saveLanguageInfo ($data_array)

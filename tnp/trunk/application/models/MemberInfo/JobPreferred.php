@@ -119,4 +119,10 @@ class Tnp_Model_MemberInfo_JobPreferred extends Tnp_Model_Generic
             return array_pop($areas_preferred);
         }
     }
+    public function deleteJobPreferrence ()
+    {
+        $member_id = $this->getMember_id(true);
+        $training_id = $this->getTraining_id(true);
+        return $this->getMapper()->delete($member_id, $training_id);
+    }
 }

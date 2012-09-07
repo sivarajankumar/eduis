@@ -38,11 +38,11 @@ class Tnp_Model_Mapper_MemberTraining
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $student_training_table = $db_table->info('name');
-        $required_cols = array('member_id', 'training_id', 'training_institute', 
-        'start_date', 'completion_date', 'training_semester');
+        $required_cols = array('member_id', 'functional_area_id', 
+        'training_institute', 'start_date', 'completion_date', 
+        'training_semester', 'grade', 'description');
         $select = $adapter->select()
             ->from($student_training_table, $required_cols)
-            ->where('member_id = ?', $member_id)
             ->where('training_id = ?', $training_id);
         $student_training_table_info = array();
         $student_training_table_info = $select->query()->fetchAll(
@@ -63,8 +63,9 @@ class Tnp_Model_Mapper_MemberTraining
         Zend_Db::FETCH_COLUMN);
         return $student_training_table_info;
     }
-    public function fetchMemberIds ($training_id = null, $training_institute = null, 
-    $start_date = null, $completion_date = null, $training_semester = null)
+    public function fetchMemberIds ($functional_area_id = null, 
+    $training_institute = null, $start_date = null, $completion_date = null, 
+    $training_semester = null)
     {
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
@@ -72,8 +73,8 @@ class Tnp_Model_Mapper_MemberTraining
         $required_cols = array('member_id');
         $select = $adapter->select()->from($student_training_table, 
         $required_cols);
-        if (! empty($training_id)) {
-            $select->where('training_id = ?', $training_id);
+        if (! empty($functional_area_id)) {
+            $select->where('functional_area_id = ?', $functional_area_id);
         }
         if (! empty($training_institute)) {
             $select->where('training_institute = ?', $training_institute);
@@ -95,6 +96,13 @@ class Tnp_Model_Mapper_MemberTraining
     {
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
+    }
+    public function delete ($member_id, $training_id)
+    {
+        $dbtable = $this->getDbTable();
+        $where1 = 'member_id = ' . $member_id;
+        $where2 = 'training_id = ' . $training_id;
+        return $dbtable->delete(array($where1, $where2));
     }
     public function update ($prepared_data, $member_id, $training_id)
     {

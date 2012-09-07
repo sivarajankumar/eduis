@@ -1,4 +1,10 @@
 <?php
+/**
+ * 
+ * 
+ * @deprecated
+ *
+ */
 class Tnp_Model_Training extends Tnp_Model_Generic
 {
     protected $_training_id;

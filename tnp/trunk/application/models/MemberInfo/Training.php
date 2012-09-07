@@ -3,11 +3,84 @@ class Tnp_Model_MemberInfo_Training extends Tnp_Model_Generic
 {
     protected $_member_id;
     protected $_training_id;
+    protected $_functional_area_id;
     protected $_training_institute;
     protected $_start_date;
     protected $_completion_date;
     protected $_training_semester;
+    protected $_description;
+    protected $_grade;
     protected $_mapper;
+    /**
+     * @return the $_training_id
+     */
+    public function getTraining_id ($throw_exception = null)
+    {
+        $training_id = $this->_training_id;
+        if (empty($training_id) and $throw_exception == true) {
+            $message = '_training_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $training_id;
+        }
+    }
+    /**
+     * @param field_type $_training_id
+     */
+    public function setTraining_id ($_training_id)
+    {
+        $this->_training_id = $_training_id;
+    }
+    /**
+     * @return the $_grade
+     */
+    public function getGrade ()
+    {
+        return $this->_grade;
+    }
+    /**
+     * @param field_type $_grade
+     */
+    public function setGrade ($_grade)
+    {
+        $this->_grade = $_grade;
+    }
+    /**
+     * @return the $_functional_area_id
+     */
+    public function getFunctional_area_id ($throw_exception = null)
+    {
+        $functional_area_id = $this->_functional_area_id;
+        if (empty($functional_area_id) and $throw_exception == true) {
+            $message = '_functional_area_id is not set';
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $functional_area_id;
+        }
+    }
+    /**
+     * @return the $_description
+     */
+    public function getDescription ()
+    {
+        return $this->_description;
+    }
+    /**
+     * @param field_type $_functional_area_id
+     */
+    public function setFunctional_area_id ($_functional_area_id)
+    {
+        $this->_functional_area_id = $_functional_area_id;
+    }
+    /**
+     * @param field_type $_description
+     */
+    public function setDescription ($_description)
+    {
+        $this->_description = $_description;
+    }
     /**
      * @param bool $throw_exception optional
      * @return the $_member_id
@@ -22,13 +95,6 @@ class Tnp_Model_MemberInfo_Training extends Tnp_Model_Generic
         } else {
             return $member_id;
         }
-    }
-    /**
-     * @return the $_training_id
-     */
-    public function getTraining_id ()
-    {
-        return $this->_training_id;
     }
     /**
      * @return the $_training_institute
@@ -64,13 +130,6 @@ class Tnp_Model_MemberInfo_Training extends Tnp_Model_Generic
     public function setMember_id ($_member_id)
     {
         $this->_member_id = $_member_id;
-    }
-    /**
-     * @param field_type $_training_id
-     */
-    public function setTraining_id ($_training_id)
-    {
-        $this->_training_id = $_training_id;
     }
     /**
      * @param field_type $_training_institute
@@ -153,32 +212,32 @@ class Tnp_Model_MemberInfo_Training extends Tnp_Model_Generic
                 break;
         }
     }
-    public function fetchMemberIds ($training_id_specific = null, 
-    $training_institute_specific = null, $start_date_specific = null, 
-    $completion_date_specific = null, $training_semester_specific = null)
+    public function fetchMemberIds ($functional_area_spec = null, 
+    $training_institute_spec = null, $start_date_spec = null, 
+    $completion_date_spec = null, $training_semester_spec = null)
     {
-        $training_id = null;
+        $functional_area_id = null;
         $training_institute = null;
         $start_date = null;
         $completion_date = null;
         $training_semester = null;
-        if ($training_id_specific == true) {
-            $training_id = $this->getTraining_id(true);
+        if ($functional_area_spec == true) {
+            $functional_area_id = $this->getFunctional_area_id(true);
         }
-        if ($training_institute_specific == true) {
+        if ($training_institute_spec == true) {
             $training_institute = $this->getTraining_institute(true);
         }
-        if ($start_date_specific == true) {
+        if ($start_date_spec == true) {
             $start_date = $this->getStart_date(true);
         }
-        if ($completion_date_specific == true) {
+        if ($completion_date_spec == true) {
             $completion_date = $this->getCompletion_date(true);
         }
-        if ($training_semester_specific == true) {
+        if ($training_semester_spec == true) {
             $training_semester = $this->getTraining_semester(true);
         }
         $member_ids = array();
-        $member_ids = $this->getMapper()->fetchMemberIds($training_id, 
+        $member_ids = $this->getMapper()->fetchMemberIds($functional_area_id, 
         $training_institute, $start_date, $completion_date, $training_semester);
         if (empty($member_ids)) {
             return false;
@@ -201,12 +260,18 @@ class Tnp_Model_MemberInfo_Training extends Tnp_Model_Generic
     public function fetchTrainingIds ()
     {
         $member_id = $this->getMember_id(true);
-        $training_ids = array();
-        $training_ids = $this->getMapper()->fetchTrainingIds($member_id);
-        if (empty($training_ids)) {
+        $functional_area_ids = array();
+        $functional_area_ids = $this->getMapper()->fetchTrainingIds($member_id);
+        if (empty($functional_area_ids)) {
             return false;
         } else {
-            return $training_ids;
+            return $functional_area_ids;
         }
+    }
+    public function deleteTrainingRecord ()
+    {
+        $member_id = $this->getMember_id(true);
+        $training_id = $this->getTraining_id(true);
+        return $this->getMapper()->delete($member_id, $training_id);
     }
 }
