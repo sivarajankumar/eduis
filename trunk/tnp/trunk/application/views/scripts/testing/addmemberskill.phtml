@@ -61,21 +61,37 @@
 	});
 
 	function submit() {
-		var urlSaveInfo = '<?php echo $this->url(array('controller' => 'testing', 'action' => 'saveskills'))?>';
-    	$.ajax({
-        	url : urlSaveInfo,
-        	data : {myarray : getValues()},
-        	success: function(jStatus){
-        		alert("Your information has been submitted successfully");
-                window.location.replace("/testing/viewskillinfo");
-        	},
-            error: function(response) {
-          	  $('#errorBox').text(response.responseText).parent().show();
-                console.log(response);
-                }
-            });
-	}	
+		var flag = 1;
+		if($('#skill_id').val() == -999)
+		{
+			var new_skill = $('input[name="skill_name"]').val();
+			$('#skill_id option').each(function(){
+				if($(this).html().toLowerCase() == new_skill.toLowerCase())
+				{
+					alert("The skill that you have entered is already present in the dropdown. Plese select it from the dropdown menu");
+					flag = 0;
+					return false;
+				}
+			});
+		}
 
+		if(flag)
+		{
+			var urlSaveInfo = '<?php echo $this->url(array('controller' => 'testing', 'action' => 'saveskills'))?>';
+			$.ajax({
+				url : urlSaveInfo,
+				data : {myarray : getValues()},
+				success: function(jStatus){
+					alert("Your information has been submitted successfully");
+					window.location.replace("/testing/viewskillinfo");
+				},
+				error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+					console.log(response);
+				}
+			});	
+		}
+	}
 	function getValues() {
 		var formData = {};
 		var skill_info = {};
