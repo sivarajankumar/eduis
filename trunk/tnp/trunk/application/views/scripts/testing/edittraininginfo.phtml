@@ -124,7 +124,7 @@ function getValues() {
 	.each(function(){
 		training_info[this.name] = this.value; 
 	});
-	//training_info[training_id] = ;
+	training_info[training_id] = <?php echo $training_info['training_id']?>;
 	functional_area_info['functional_area_id'] = $('#functional_area_id').val();
 	
 	formData['functional_area_info'] = functional_area_info;
