@@ -103,7 +103,7 @@ var div_html = '<div class="ctrlHolder" id="other_certification"><label for="cer
 	});
 
 function submit() {
-	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savecertification'))?>';
+	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'testing', 'action' => 'savecertification'))?>';
     $.ajax({
         url : urlSaveInfo,
         data : {myarray:getValues()},
