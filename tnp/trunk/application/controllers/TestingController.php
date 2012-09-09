@@ -955,13 +955,7 @@ class TestingController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $training_info = $params['myarray']['training_info'];
         $functional_area_info = $params['myarray']['functional_area_info'];
-        if (empty($functional_area_info['functional_area_id'])) {
-            $functional_area_id = $this->saveFunctionalAreaInfo(
-            $functional_area_info);
-            $training_info['functional_area_id'] = $functional_area_id;
-        } else {
-            $training_info['functional_area_id'] = $functional_area_info['functional_area_id'];
-        }
+        $training_info['functional_area_id'] = $functional_area_info['functional_area_id'];
         $this->saveStuTrainingInfo($training_info);
     }
     public function saveexperienceAction ()
@@ -1434,6 +1428,7 @@ class TestingController extends Zend_Controller_Action
     {
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($this->getMember_id());
+        Zend_Registry::get('logger')->debug($info);
         $training_info = array();
         $training_info['functional_area_id'] = $info['functional_area_id'];
         $training_info['training_institute'] = $info['training_institute'];

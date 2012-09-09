@@ -894,23 +894,24 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     public function saveTrainingInfo ($data_array)
     {
         $member_id = $this->getMember_id(true);
-        $functional_area_id = $data_array['functional_area_id'];
-        $info = $this->fetchTrainingInfo($functional_area_id);
         $data_array['member_id'] = $member_id;
-        if ($info == false) {
+        if (empty($data_array['training_id'])) {
             $member_training = new Tnp_Model_MemberInfo_Training();
             $member_training->initSave();
             $preparedData = $member_training->prepareDataForSaveProcess(
             $data_array);
+            Zend_Registry::get('logger')->debug('Saving training info');
             return $member_training->getMapper()->save($preparedData);
         } else {
+            $training_id = $data_array['training_id'];
             $member_training = new Tnp_Model_MemberInfo_CoCurricular();
             $member_training->initSave();
             $prepared_data = $member_training->prepareDataForSaveProcess(
             $data_array);
             unset($data_array['member_id']);
+            Zend_Registry::get('logger')->debug('Updating training info');
             return $member_training->getMapper()->update($prepared_data, 
-            $member_id, $functional_area_id);
+            $member_id, $training_id);
         }
     }
     public function saveLanguageInfo ($data_array)
