@@ -406,6 +406,7 @@ class TestingController extends Zend_Controller_Action
         $training_id = $params['training_id'];
         $functional_areas = $this->fetchFunctionalAreas();
         $training_info = $this->findTrainingInfo($member_id, $training_id);
+        $training_info['training_id'] = $training_id;
         $this->view->assign('functional_areas', $functional_areas);
         $this->view->assign('training_info', $training_info);
         Zend_Registry::get('logger')->debug($functional_areas);
