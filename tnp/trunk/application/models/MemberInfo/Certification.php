@@ -126,7 +126,8 @@ class Tnp_Model_MemberInfo_Certification extends Tnp_Model_Generic
     public function fetchCertificationIds ()
     {
         $member_id = $this->getMember_id(true);
-        $certifications_ids = $this->getMapper()->fetchCertificationIds($member_id);
+        $certifications_ids = $this->getMapper()->fetchCertificationIds(
+        $member_id);
         if (empty($certifications_ids)) {
             return false;
         } else {
@@ -144,5 +145,11 @@ class Tnp_Model_MemberInfo_Certification extends Tnp_Model_Generic
         } else {
             return $this->setOptions($info);
         }
+    }
+    public function deleteStuCertification ()
+    {
+        $member_id = $this->getMember_id(true);
+        $certification_id = $this->getCertification_id(true);
+        return $this->getMapper()->delete($member_id, $certification_id);
     }
 }

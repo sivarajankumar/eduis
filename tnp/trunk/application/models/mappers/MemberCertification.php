@@ -94,4 +94,11 @@ class Tnp_Model_Mapper_MemberCertification
         $where2 = 'certification_id = ' . $certification_id;
         return $dbtable->update($prepared_data, array($where1, $where2));
     }
+    public function delete ($member_id, $certification_id)
+    {
+        $dbtable = $this->getDbTable();
+        $where1 = 'member_id = ' . $member_id;
+        $where2 = 'certification_id = ' . $certification_id;
+        return $dbtable->delete(array($where1, $where2));
+    }
 }
