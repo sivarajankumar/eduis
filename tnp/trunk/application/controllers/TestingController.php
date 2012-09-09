@@ -249,8 +249,8 @@ class TestingController extends Zend_Controller_Action
     }
     public function viewcertificationinfoAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
@@ -697,6 +697,8 @@ class TestingController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $functional_areas = $this->fetchFunctionalAreas();
+        $certifications = $this->fetchCertifications();
+        Zend_Registry::get('logger')->debug($certifications);
         Zend_Registry::get('logger')->debug($functional_areas);
         $this->view->assign('functional_areas', $functional_areas);
     }
@@ -933,17 +935,14 @@ class TestingController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $certification = $params['myarray']['certification_info'];
-        $functional_area_info = $params['myarray']['functional_area_info'];
-        $student_certification = $params['myarray']['certification_detail'];
-        if (isset($functional_area_info['functional_area_id'])) {
-            $certification['functional_area_id'] = $functional_area_info['functional_area_id'];
+        $student_certification = $params['myarray']['student_certification'];
+        $certification_info = $params['myarray']['certification_info'];
+        if (! isset($certification_info['certification_id'])) {
+            $certification_id = $this->saveCertificationInfo(
+            $certification_info);
         } else {
-            $functional_area_id = $this->saveFunctionalAreaInfo(
-            $functional_area_info);
-            $certification['functional_area_id'] = $functional_area_id;
+            $certification_id = $certification_info['certification_id'];
         }
-        $certification_id = $this->saveCertificationInfo($certification);
         $student_certification['certification_id'] = $certification_id;
         Zend_Registry::get('logger')->debug($student_certification);
         $this->saveStuCertificationInfo($student_certification);
@@ -1195,7 +1194,6 @@ class TestingController extends Zend_Controller_Action
     }
     private function findCertificationsInfo ($member_id, $certification_id)
     {
-        $func_area = new Tnp_Model_FunctionalArea();
         $certi = new Tnp_Model_Certification();
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($member_id);
@@ -1207,11 +1205,7 @@ class TestingController extends Zend_Controller_Action
             if ($certi_info instanceof Tnp_Model_Certification) {
                 $certi_name = $certi_info->getCertification_name();
                 $func_id = $certi_info->getFunctional_area_id();
-                $func_area->setFunctional_area_id($func_id);
-                $func_info = $func_area->fetchInfo();
-                if ($func_info instanceof Tnp_Model_FunctionalArea) {
-                    $func_area_name = $func_info->getFunctional_area_name();
-                }
+                $func_area_name = $this->findFunctionAreaName($func_id);
             }
             $student_certifications['certification_name'] = $certi_name;
             $student_certifications['functional_area_name'] = $func_area_name;
@@ -1221,6 +1215,15 @@ class TestingController extends Zend_Controller_Action
             $student_certifications = false;
         }
         return $student_certifications;
+    }
+    private function findFunctionAreaName ($func_id)
+    {
+        $func_area = new Tnp_Model_FunctionalArea();
+        $func_area->setFunctional_area_id($func_id);
+        $func_info = $func_area->fetchInfo();
+        if ($func_info instanceof Tnp_Model_FunctionalArea) {
+            return $func_info->getFunctional_area_name();
+        }
     }
     private function generateTrainingInfo ($member_id)
     {
@@ -1247,17 +1250,21 @@ class TestingController extends Zend_Controller_Action
     private function findTrainingInfo ($member_id, $training_id)
     {
         $student = new Tnp_Model_Member_Student();
+        $functional_area = new Tnp_Model_FunctionalArea();
         $student->setMember_id($member_id);
         $training = $student->fetchTrainingInfo($training_id);
         if ($training instanceof Tnp_Model_MemberInfo_Training) {
             $student_training = array();
-            $student_training['functional_area_id'] = $training->getFunctional_area_id();
+            $functional_area_id = $training->getFunctional_area_id();
+            $student_training['functional_area_id'] = $functional_area_id;
             $student_training['training_institute'] = $training->getTraining_institute();
             $student_training['start_date'] = $training->getStart_date();
             $student_training['completion_date'] = $training->getCompletion_date();
             $student_training['training_semester'] = $training->getTraining_semester();
             $student_training['grade'] = $training->getGrade();
             $student_training['description'] = $training->getDescription();
+            $func_area_name = $this->findFunctionAreaName($functional_area_id);
+            $student_training['functional_area_name'] = $func_area_name;
             return $student_training;
         } else {
             return false;
@@ -1423,6 +1430,7 @@ class TestingController extends Zend_Controller_Action
         $cert_info['certification_id'] = $info['certification_id'];
         $cert_info['start_date'] = $info['start_date'];
         $cert_info['complete_date'] = $info['complete_date'];
+        $cert_info['description'] = $info['description'];
         return $student->saveCertificationInfo($cert_info);
     }
     private function saveStuTrainingInfo ($info)
@@ -1617,6 +1625,11 @@ class TestingController extends Zend_Controller_Action
     {
         $func_area = new Tnp_Model_FunctionalArea();
         return $func_area->fetchFunctionalAreas();
+    }
+    private function fetchCertifications ()
+    {
+        $certification = new Tnp_Model_Certification();
+        return $certification->fetchCertifications();
     }
 }
 ?>
