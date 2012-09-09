@@ -951,7 +951,6 @@ class TestingController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $training_info = $params['myarray']['training_info'];
-        $training_details = $params['myarray']['training_detail'];
         $functional_area_info = $params['myarray']['functional_area_info'];
         if (empty($functional_area_info['functional_area_id'])) {
             $functional_area_id = $this->saveFunctionalAreaInfo(
@@ -960,7 +959,7 @@ class TestingController extends Zend_Controller_Action
         } else {
             $training_info['functional_area_id'] = $functional_area_info['functional_area_id'];
         }
-        $this->saveStuTrainingInfo($training_details);
+        $this->saveStuTrainingInfo($training_info);
     }
     public function saveexperienceAction ()
     {
