@@ -29,8 +29,8 @@
 		</div>
 		
         <div class="ctrlHolder">
-			<label for="complete_date">Complete Date</label>
-			<input name="complete_date" id="complete_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+			<label for="completion_date">Complete Date</label>
+			<input name="completion_date" id="completion_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
 			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click end date</p>
 		</div>
 		
@@ -38,6 +38,12 @@
 			<label for="">Training Institute</label>
 			<input name="training_institute" id="training_institute" value="" data-default-value="e.g. Allsoft Solutions" size="35" maxlength="50" type="text" class="textInput required"/>
 			<p class="formHint">Name of the Training Institute</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="">Grade/Marks/Evaluation</label>
+			<input name="grade" id="grade" value="" data-default-value="A+" size="35" maxlength="50" type="text" class="textInput required"/>
+			<p class="formHint">Grade/Marks given by Organization/Institute</p>
 		</div>
 		
 		<div class="ctrlHolder">
@@ -78,7 +84,7 @@ $(function(){
 			this.focus();
 		}
 	});
-	$("#complete_date").datepicker({
+	$("#completion_date").datepicker({
 	  	dateFormat: 'yy-mm-dd',
 	  	changeMonth: true,
 			changeYear: true,
@@ -90,13 +96,13 @@ $(function(){
 });
 
 function submit() {
-	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savetraining'))?>';
+	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'testing', 'action' => 'savetraining'))?>';
     $.ajax({
         url : urlSaveInfo,
         data : {myarray:getValues()},
         success: function(jStatus){
             alert("Your information has been submitted successfully");
-            window.location.replace("/student/profile");
+            window.location.replace("/testing/viewtraininginfo");
         },
 		error: function(response) {
 			$('#errorBox').text(response.responseText).parent().show();

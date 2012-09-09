@@ -4,6 +4,12 @@
 <div class="ui-state-hover"><center><H3>Training Information</H3></center></div>
 <div class="info" id="relative_info">
 	<?php
+	if($training_info == false)
+	{
+		echo '<h4>No information has been added yet</h4>';
+	}
+	else 
+	{
 		$s_no = 1;
 		foreach ($training_info as $training_id => $training_data)
 		{
@@ -25,6 +31,7 @@
 			echo '</div><br>';
 			$s_no++;
 		}
+	}
 	?>
 </div>
 
@@ -48,7 +55,7 @@
     }
     function change_location(training_id)
     {
-		window.location.replace('/testing/edittraininginfo?training_id=?'+training_id);
+		window.location.replace('/testing/edittraininginfo?training_id='+training_id);
     }
     function delete_training(training_id)
     {
