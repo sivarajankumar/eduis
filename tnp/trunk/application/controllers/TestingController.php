@@ -429,6 +429,7 @@ class TestingController extends Zend_Controller_Action
         $certification_id = $params['certification_id'];
         $certification_info = $this->findCertificationsInfo($member_id, 
         $certification_id);
+        $certification_info['certification_id'] = $certification_id;
         Zend_Registry::get('logger')->debug($certification_info);
         $this->view->assign('certification_info', $certification_info);
     }
