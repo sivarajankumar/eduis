@@ -1,0 +1,157 @@
+<?php
+	$functional_areas = $this->functional_areas;
+?>
+
+<h2>Training</h2>
+<form action="javascript:submit();" class="uniForm">
+
+	<fieldset id="functional_area_info">
+		<div class="ctrlHolder">
+			<label for="functional_area_id">Technical Feild</label>
+			<select id="functional_area_id" name="functional_area_id" class="selectInput ">
+				<?php 
+					foreach ($functional_areas as $key => $value)
+            		{
+            			echo '<option value="'.$key.'">'.$value.'</option>';
+            		}
+          		?>
+			</select>
+			<p class="formHint">Technical feild in which training is done </p>
+		</div>
+	</fieldset>
+	
+	<fieldset id="training_info">
+		
+		<div class="ctrlHolder">
+			<label for="start_date">Start Date</label>
+			<input name="start_date" id="start_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of start</p>
+		</div>
+		
+        <div class="ctrlHolder">
+			<label for="complete_date">Complete Date</label>
+			<input name="complete_date" id="complete_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click end date</p>
+		</div>
+		
+        <div class="ctrlHolder">
+			<label for="">Training Institute</label>
+			<input name="training_institute" id="training_institute" value="" data-default-value="e.g. Allsoft Solutions" size="35" maxlength="50" type="text" class="textInput required"/>
+			<p class="formHint">Name of the Training Institute</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="">Training Semester</label>
+			<input name="training_semester" id="training_semester" value="" data-default-value="e.g. 3" size="35" maxlength="50" type="text" class="textInput required validateMax val-8"/>
+			<p class="formHint">Semester after which training is taken</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="description">Description </label>
+			<textarea rows="2" cols="20"  name="description" id="description" data-default-value="e.g. Training done in Core Java. Worked on project named EDUIS" class="textInput"></textarea>
+			<p class="formHint">A short description of training</p>
+		</div>
+	</fieldset>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+	
+</form>
+      
+<script>
+
+$(function(){
+	$('form.uniForm').uniform({
+		prevent_submit : true
+	});
+
+	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	$("#start_date").datepicker({
+	dateFormat: 'yy-mm-dd',
+	changeMonth: true,
+		changeYear: true,
+		yearRange: '-5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+		}
+	});
+	$("#complete_date").datepicker({
+	  	dateFormat: 'yy-mm-dd',
+	  	changeMonth: true,
+			changeYear: true,
+			yearRange: '-5:+5',
+			onClose : function(dateText, inst) {
+				this.focus();
+			}
+	  });
+});
+
+function submit() {
+	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savetraining'))?>';
+    $.ajax({
+        url : urlSaveInfo,
+        data : {myarray:getValues()},
+        success: function(jStatus){
+            alert("Your information has been submitted successfully");
+            window.location.replace("/student/profile");
+        },
+		error: function(response) {
+			$('#errorBox').text(response.responseText).parent().show();
+			console.log(response);
+		}
+	});
+}
+
+function getValues() {
+	var formData = {};
+	var training_info = {};
+	var functional_area_info = {};
+	
+	$('fieldset#training_info :input')
+	.each(function(){
+		training_info[this.name] = this.value; 
+	});
+	functional_area_info['functional_area_id'] = $('#functional_area_id').val();
+	
+	formData['functional_area_info'] = functional_area_info;
+	formData['training_info'] = training_info; 
+	return formData;
+}
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		width:auto;
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		font-size:17px;
+		font-weight:100;
+		margin-top:2px;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
