@@ -261,9 +261,7 @@ class TestingController extends Zend_Controller_Action
         } else {
             $member_id = $params['member_id'];
         }
-        $certification_id = $params['certification_id'];
-        $certification_info = $this->findCertificationsInfo($member_id, 
-        $certification_id);
+        $certification_info = $this->generateCertificationInfo($member_id);
         $this->view->assign('certification_info', $certification_info);
         Zend_Registry::get('logger')->debug($certification_info);
     }
@@ -410,6 +408,26 @@ class TestingController extends Zend_Controller_Action
         $this->view->assign('training_info', $training_info);
         Zend_Registry::get('logger')->debug($training_info);
     }
+    public function editcertificationAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $certification_id = $params['certification_id'];
+        $certification_info = $this->findCertificationsInfo($member_id, 
+        $certification_id);
+        Zend_Registry::get('logger')->debug($certification_info);
+        $this->view->assign('certification_info', $certification_info);
+    }
     public function deletetestrecordAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -509,6 +527,23 @@ class TestingController extends Zend_Controller_Action
         }
         $training_id = $params['training_id'];
         $this->deletetraining($member_id, $training_id);
+    }
+    public function deletestucertificationAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $certification_id = $params['certification_id'];
+        $this->deleteStuCertification($member_id, $certification_id);
     }
     /**
      * for testing purposes only
@@ -643,8 +678,18 @@ class TestingController extends Zend_Controller_Action
     }
     public function addtraininginfoAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $functional_areas = $this->fetchFunctionalAreas();
+        Zend_Registry::get('logger')->debug($functional_areas);
+        $this->view->assign('functional_areas', $functional_areas);
+    }
+    public function addcertificationinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $functional_areas = $this->fetchFunctionalAreas();
@@ -1129,6 +1174,21 @@ class TestingController extends Zend_Controller_Action
         }
         return $score_info;
     }
+    private function generateCertificationInfo ($member_id)
+    {
+        $certification_ids = array();
+        $certification_ids = $this->findCertificationIds($member_id);
+        if (empty($certification_ids)) {
+            return false;
+        } else {
+            $certification_info = array();
+            foreach ($certification_ids as $certification_id) {
+                $certification_info[$certification_id] = $this->findCertificationsInfo(
+                $member_id, $certification_id);
+            }
+            return $certification_info;
+        }
+    }
     private function findCertificationIds ($member_id)
     {
         $student = new Tnp_Model_Member_Student();
@@ -1150,7 +1210,7 @@ class TestingController extends Zend_Controller_Action
             if ($certi_info instanceof Tnp_Model_Certification) {
                 $certi_name = $certi_info->getCertification_name();
                 $func_id = $certi_info->getFunctional_area_id();
-                $func_area->setFunctional_area_id($func_area);
+                $func_area->setFunctional_area_id($func_id);
                 $func_info = $func_area->fetchInfo();
                 if ($func_info instanceof Tnp_Model_FunctionalArea) {
                     $func_area_name = $func_info->getFunctional_area_name();
@@ -1534,6 +1594,13 @@ class TestingController extends Zend_Controller_Action
         $training->setMember_id($member_id);
         $training->setTraining_id($training_id);
         return $training->deleteTrainingRecord();
+    }
+    private function deleteStuCertification ($member_id, $certification_id)
+    {
+        $certification = new Tnp_Model_MemberInfo_Certification();
+        $certification->setMember_id($member_id);
+        $certification->setCertification_id($certification_id);
+        return $certification->deleteStuCertification();
     }
     private function fetchSkills ()
     {
