@@ -43,7 +43,7 @@
 		
 		<div class="ctrlHolder">
 			<label for="">Grade/Marks/Evaluation</label>
-			<input name="grade" id="grade" value="<?php echo $training_info['grade']?>" data-default-value="A+" size="35" maxlength="50" type="text" class="textInput required"/>
+			<input name="grade" id="grade" value="<?php echo $training_info['grade']?>" data-default-value="e.g. A+" size="35" maxlength="50" type="text" class="textInput required"/>
 			<p class="formHint">Grade/Marks given by Organization/Institute</p>
 		</div>
 		
@@ -124,6 +124,7 @@ function getValues() {
 	.each(function(){
 		training_info[this.name] = this.value; 
 	});
+	//training_info[training_id] = ;
 	functional_area_info['functional_area_id'] = $('#functional_area_id').val();
 	
 	formData['functional_area_info'] = functional_area_info;
