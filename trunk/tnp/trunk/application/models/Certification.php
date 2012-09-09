@@ -158,6 +158,15 @@ class Tnp_Model_Certification extends Tnp_Model_Generic
             return $this->setOptions($info);
         }
     }
+    public function fetchCertifications ()
+    {
+        $certifications = $this->getMapper()->fetchCertifications();
+        if (empty($certifications)) {
+            return false;
+        } else {
+            return $certifications;
+        }
+    }
     public function saveInfo ($data_array)
     {
         $this->initSave();
