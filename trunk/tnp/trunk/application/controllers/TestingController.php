@@ -1431,6 +1431,9 @@ class TestingController extends Zend_Controller_Action
         $student->setMember_id($this->getMember_id());
         Zend_Registry::get('logger')->debug($info);
         $training_info = array();
+        if (! empty($info['training_id'])) {
+            $training_info['training_id'] = $info['training_id'];
+        }
         $training_info['functional_area_id'] = $info['functional_area_id'];
         $training_info['training_institute'] = $info['training_institute'];
         $training_info['start_date'] = $info['start_date'];

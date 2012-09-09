@@ -904,7 +904,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
             return $member_training->getMapper()->save($preparedData);
         } else {
             $training_id = $data_array['training_id'];
-            $member_training = new Tnp_Model_MemberInfo_CoCurricular();
+            $member_training = new Tnp_Model_MemberInfo_Training();
             $member_training->initSave();
             $prepared_data = $member_training->prepareDataForSaveProcess(
             $data_array);
