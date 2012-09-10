@@ -95,6 +95,351 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->json($member_id_exists);
     }
     /**
+     * All links are here
+     */
+    public function createprofileAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function fetchclassinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $class_info = $params['myarray']['class_info'];
+        $class_id = $class_info['class_id'];
+        $stu_class_info = $this->findStuClassInfo($member_id, $class_id);
+        Zend_Registry::get('logger')->debug($stu_class_info);
+        $this->_helper->json($stu_class_info);
+    }
+    public function viewclassinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $this->view->assign('department_id', $this->getDepartment_id());
+        $class_ids = $this->getAllClassIds($member_id);
+        if ($class_ids == false) {
+            $this->view->assign('student_class_info', false);
+        } else {
+            $student = new Core_Model_Member_Student();
+            $student->setMember_id($member_id);
+            $raw_class_info = array();
+            foreach ($class_ids as $class_id) {
+                $info = $this->findStuClassInfo($member_id, $class_id);
+                $class_info = $this->findClassInfo($class_id);
+                $batch_id = $class_info['class_info']['batch_id'];
+                $raw_class_info[$batch_id] = $info['roll_no'];
+            }
+            $stu_class_info = array();
+            foreach ($raw_class_info as $batch_id => $roll_num) {
+                $batch_info = $this->findBatchInfo($batch_id);
+                $batch_start = $batch_info['batch_info']['batch_start'];
+                $stu_class_info[$batch_start] = $roll_num;
+            }
+            Zend_Registry::get('logger')->debug(
+            'Name of varibale assigned to view is : student_class_info');
+            Zend_Registry::get('logger')->debug($stu_class_info);
+            $this->view->assign('student_class_info', $stu_class_info);
+        }
+    }
+    public function editclassinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $department_id = $this->getDepartment_id();
+        $this->view->assign('department_id', $department_id);
+    }
+    public function saveclassinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $my_array = $params['myarray'];
+        $student_class_info = $my_array['class_info'];
+        return $this->saveClassInfo($member_id, $student_class_info);
+    }
+    public function fetchunvregistrationinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $member_id_exists = $this->memberIdCheck($member_id);
+        if ($member_id_exists) {
+            $student = new Core_Model_Member_Student();
+            $student->setMember_id($member_id);
+            $info = $student->fetchRegistrationInfo();
+            $registration_info = array();
+            if ($info instanceof Core_Model_StudentRegistration) {
+                $registration_info['registration_id'] = $info->getRegistration_id();
+            }
+            $this->_helper->json($registration_info);
+        } else {}
+        $registration_info = false;
+        $this->_helper->json($registration_info);
+    }
+    public function viewunvregistrationinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function editunvregistrationinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function saveunvregistrationinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $my_array = $params['myarray'];
+        $reg_info = $my_array['registration_info'];
+        return $this->saveRegistrationInfo($member_id, $reg_info);
+    }
+    /**
+     * before calling this function use memberidcheck function
+     * Enter description here ...
+     * @param int $member_id
+     */
+    public function fetchpersonalinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $personal_info = $this->findCriticalInfo($member_id);
+        Zend_Registry::get('logger')->debug($personal_info);
+        $this->_helper->json($personal_info);
+    }
+    public function viewpersonalinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function editpersonalinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function savepersonalinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $my_array = $params['myarray'];
+        $critical_info = $my_array['personal_info'];
+        Zend_Registry::get('logger')->debug($params);
+        return $this->saveCriticalData($member_id, $critical_info);
+    }
+    public function fetchaddressinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $address_info = $this->findAddressInfo($member_id);
+        $this->_helper->json($address_info);
+    }
+    public function viewaddressinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function editaddressinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function saveaddressinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $my_array = $params['myarray'];
+        $all_address_info = $my_array['address_info'];
+        foreach ($all_address_info as $address_type => $address_info) {
+            $address_info['address_type'] = $address_type;
+            $this->saveAddressData($member_id, $address_info);
+        }
+    }
+    public function fetchcontactinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $contact_info = $this->findContactsInfo($member_id);
+        $this->_helper->json($contact_info);
+    }
+    public function viewcontactinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function editcontactinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function savecontactinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $my_array = $params['myarray'];
+        $all_contact_info = $my_array['contact_info'];
+        foreach ($all_contact_info as $contact_type => $contact_info) {
+            $contact_info['contact_type_id'] = $contact_type;
+            $this->saveContactsInfo($member_id, $contact_info);
+        }
+    }
+    public function fetchrelativesinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $relative_info = $this->findRelativesInfo($member_id);
+        $this->_helper->json($relative_info);
+    }
+    public function viewrelativesinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function editrelativesinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function saverelativesinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $my_array = $params['myarray'];
+        $all_relatives_info = $my_array['relatives_info'];
+        foreach ($all_relatives_info as $relatives_type => $relatives_info) {
+            $relatives_info['relation_id'] = $relatives_type;
+            $this->saveRelativeInfo($member_id, $relatives_info);
+        }
+    }
+    /**
      * Checks if member is registered in the core,
      * @return true if member_id is registered, false otherwise
      */
@@ -421,351 +766,6 @@ class StudentController extends Zend_Controller_Action
             $jsonContent = $response->getBody($response);
             $batch_info = Zend_Json::decode($jsonContent);
             return $batch_info;
-        }
-    }
-    /**
-     * All links are here
-     */
-    public function createprofileAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    public function viewclassinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $this->view->assign('department_id', $this->getDepartment_id());
-        $class_ids = $this->getAllClassIds($member_id);
-        if ($class_ids == false) {
-            $this->view->assign('student_class_info', false);
-        } else {
-            $student = new Core_Model_Member_Student();
-            $student->setMember_id($member_id);
-            $raw_class_info = array();
-            foreach ($class_ids as $class_id) {
-                $info = $this->findStuClassInfo($member_id, $class_id);
-                $class_info = $this->findClassInfo($class_id);
-                $batch_id = $class_info['class_info']['batch_id'];
-                $raw_class_info[$batch_id] = $info['roll_no'];
-            }
-            $stu_class_info = array();
-            foreach ($raw_class_info as $batch_id => $roll_num) {
-                $batch_info = $this->findBatchInfo($batch_id);
-                $batch_start = $batch_info['batch_info']['batch_start'];
-                $stu_class_info[$batch_start] = $roll_num;
-            }
-            Zend_Registry::get('logger')->debug(
-            'Name of varibale assigned to view is : student_class_info');
-            Zend_Registry::get('logger')->debug($stu_class_info);
-            $this->view->assign('student_class_info', $stu_class_info);
-        }
-    }
-    public function fetchclassinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $class_info = $params['myarray']['class_info'];
-        $class_id = $class_info['class_id'];
-        $stu_class_info = $this->findStuClassInfo($member_id, $class_id);
-        Zend_Registry::get('logger')->debug($stu_class_info);
-        $this->_helper->json($stu_class_info);
-    }
-    public function editclassinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-        $department_id = $this->getDepartment_id();
-        $this->view->assign('department_id', $department_id);
-    }
-    public function saveclassinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $my_array = $params['myarray'];
-        $student_class_info = $my_array['class_info'];
-        return $this->saveClassInfo($member_id, $student_class_info);
-    }
-    public function fetchunvregistrationinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $member_id_exists = $this->memberIdCheck($member_id);
-        if ($member_id_exists) {
-            $student = new Core_Model_Member_Student();
-            $student->setMember_id($member_id);
-            $info = $student->fetchRegistrationInfo();
-            $registration_info = array();
-            if ($info instanceof Core_Model_StudentRegistration) {
-                $registration_info['registration_id'] = $info->getRegistration_id();
-            }
-            $this->_helper->json($registration_info);
-        } else {}
-        $registration_info = false;
-        $this->_helper->json($registration_info);
-    }
-    public function viewunvregistrationinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    public function editunvregistrationinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    public function saveunvregistrationinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $my_array = $params['myarray'];
-        $reg_info = $my_array['registration_info'];
-        return $this->saveRegistrationInfo($member_id, $reg_info);
-    }
-    /**
-     * before calling this function use memberidcheck function
-     * Enter description here ...
-     * @param int $member_id
-     */
-    public function fetchpersonalinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $personal_info = $this->findCriticalInfo($member_id);
-        Zend_Registry::get('logger')->debug($personal_info);
-        $this->_helper->json($personal_info);
-    }
-    public function viewpersonalinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    public function editpersonalinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    public function savepersonalinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $my_array = $params['myarray'];
-        $critical_info = $my_array['personal_info'];
-        Zend_Registry::get('logger')->debug($params);
-        return $this->saveCriticalData($member_id, $critical_info);
-    }
-    public function fetchaddressinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $address_info = $this->findAddressInfo($member_id);
-        $this->_helper->json($address_info);
-    }
-    public function viewaddressinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    public function editaddressinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    public function saveaddressinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $my_array = $params['myarray'];
-        $all_address_info = $my_array['address_info'];
-        foreach ($all_address_info as $address_type => $address_info) {
-            $address_info['address_type'] = $address_type;
-            $this->saveAddressData($member_id, $address_info);
-        }
-    }
-    public function fetchcontactinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $contact_info = $this->findContactsInfo($member_id);
-        $this->_helper->json($contact_info);
-    }
-    public function viewcontactinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    public function editcontactinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    public function savecontactinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $my_array = $params['myarray'];
-        $all_contact_info = $my_array['contact_info'];
-        foreach ($all_contact_info as $contact_type => $contact_info) {
-            $contact_info['contact_type_id'] = $contact_type;
-            $this->saveContactsInfo($member_id, $contact_info);
-        }
-    }
-    public function fetchrelativesinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $relative_info = $this->findRelativesInfo($member_id);
-        $this->_helper->json($relative_info);
-    }
-    public function viewrelativesinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    public function editrelativesinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    public function saverelativesinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $my_array = $params['myarray'];
-        $all_relatives_info = $my_array['relatives_info'];
-        foreach ($all_relatives_info as $relatives_type => $relatives_info) {
-            $relatives_info['relation_id'] = $relatives_type;
-            $this->saveRelativeInfo($member_id, $relatives_info);
         }
     }
 }
