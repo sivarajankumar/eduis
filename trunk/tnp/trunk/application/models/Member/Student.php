@@ -750,11 +750,16 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
      */
     public function saveEmpTestRecord ($data_array)
     {
+        Zend_Registry::get('logger')->debug($data_array);
         $member_id = $this->getMember_id(true);
-        $test_record_id = $data_array['test_record_id'];
+        $employability_test_id = $data_array['employability_test_id'];
+        $emp_test_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
+        $emp_test_record->setMember_id($member_id);
+        $emp_test_record->setEmployability_test_id($employability_test_id);
+        $emp_test_record_id = $emp_test_record->fetchTestRecordIds(true, true);
         $case = '';
-        (empty($test_record_id)) && ($case = 'save');
-        (! empty($test_record_id)) && ($case = 'update');
+        (empty($emp_test_record_id)) && ($case = 'save');
+        (! empty($emp_test_record_id)) && ($case = 'update');
         $data_array['member_id'] = $member_id;
         switch ($case) {
             case 'save':
@@ -770,7 +775,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
                 $prepared_data = $emp_test_record->prepareDataForSaveProcess(
                 $data_array);
                 return $emp_test_record->getMapper()->update($prepared_data, 
-                $test_record_id);
+                array_pop($emp_test_record_id));
                 break;
             default:
                 ;
@@ -784,7 +789,14 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     public function saveEmpTestSectionScore ($data_array)
     {
         $member_id = $this->getMember_id(true);
-        $test_section_score_id = $data_array['section_score_id'];
+        $section_score = new Tnp_Model_MemberInfo_EmployabilityTestSectionScore();
+        $test_section_id = $data_array['test_section_id'];
+        $employability_test_id = $data_array['employability_test_id'];
+        $section_score->setEmployability_test_id($employability_test_id);
+        $section_score->setMember_id($member_id);
+        $section_score->setTest_section_id($test_section_id);
+        $test_section_score_id = $section_score->fetchSectionScoreIds(true, 
+        true, true);
         $case = '';
         (empty($test_section_score_id)) && ($case = 'save');
         (! empty($test_section_score_id)) && ($case = 'update');
@@ -803,7 +815,7 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
                 $prepared_data = $emp_test_sec_score->prepareDataForSaveProcess(
                 $data_array);
                 return $emp_test_sec_score->getMapper()->update($prepared_data, 
-                $test_section_score_id);
+                array_pop($test_section_score_id));
                 break;
             default:
                 ;

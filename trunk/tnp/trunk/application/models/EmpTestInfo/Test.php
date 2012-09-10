@@ -157,7 +157,7 @@ class Tnp_Model_EmpTestInfo_Test extends Tnp_Model_Generic
     }
     public function save ($data_array)
     {
-        if (! empty($data_array['employability_test_id']) and
+        if (! empty($data_array['test_name']) and
          ! empty($data_array['date_of_conduct'])) {
             $test_name = $data_array['test_name'];
             $date_of_conduct = $data_array['date_of_conduct'];
@@ -165,10 +165,10 @@ class Tnp_Model_EmpTestInfo_Test extends Tnp_Model_Generic
             $this->setDate_of_conduct($date_of_conduct);
             $employability_test_id = $this->fetchTestsIds(true, true);
             if (isset($employability_test_id)) {
-                return $employability_test_id;
+                return array_pop($employability_test_id);
+            } else {
+                return $this->saveInfo($data_array);
             }
-        } else {
-            return $this->saveInfo($data_array);
         }
     }
     private function saveInfo ($data_array)

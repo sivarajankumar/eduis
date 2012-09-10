@@ -870,10 +870,16 @@ class TestingController extends Zend_Controller_Action
          * in case of edit ,the $params['myarray']['test_record'] will contain test_record_id
          */
         $test_record = $params['myarray']['test_record'];
+        $test_info = $params['myarray']['test_info'];
+        $employability_test_id = $this->addEmpTest($test_info);
+        $test_record['employability_test_id'] = $employability_test_id;
+        $test_record_id = $this->saveEmpTestRecord($test_record);
         $section_record = $params['myarray']['test_section_record'];
-        $this->saveEmpTestRecord($test_record);
+        /* Zend_Registry::get('logger')->debug($test_info);
+        Zend_Registry::get('logger')->debug($test_record);
+        Zend_Registry::get('logger')->debug($section_record);*/
         foreach ($section_record as $id => $section_score) {
-            $section_array = array();
+            $section_score['employability_test_id'] = $employability_test_id;
             $this->saveSectionScore($section_score);
         }
     }
@@ -1378,7 +1384,7 @@ class TestingController extends Zend_Controller_Action
     {
         $emp_test = new Tnp_Model_EmpTestInfo_Test();
         $test_details['test_name'] = $info['test_name'];
-        $test_details['date'] = $info['date'];
+        $test_details['date_of_conduct'] = $info['date_of_conduct'];
         return $emp_test->save($test_details);
     }
     private function addEmpTestSection ($info)
@@ -1402,7 +1408,7 @@ class TestingController extends Zend_Controller_Action
     private function saveEmpTestRecord ($info)
     {
         $record = array();
-        if ($info['test_record_id']) {
+        if (isset($info['test_record_id'])) {
             $record['test_record_id'] = $info['test_record_id'];
         }
         $record['employability_test_id'] = $info['employability_test_id'];
@@ -1411,7 +1417,7 @@ class TestingController extends Zend_Controller_Action
         $record['test_percentile'] = $info['test_percentile'];
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($this->getMember_id());
-        $student->saveEmpTestRecord($record);
+        return $student->saveEmpTestRecord($record);
     }
     private function saveTechFieldInfo ($info)
     {
