@@ -150,8 +150,17 @@ class TestingController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $response = array();
-        $test_record = $this->generateEmpTestRecords();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $test_record = $this->generateEmpTestRecords($member_id);
         Zend_Registry::get('logger')->debug(
         'Vars assigned to view are : \'test_record\' where the key is the test_record_id');
         Zend_Registry::get('logger')->debug($test_record);

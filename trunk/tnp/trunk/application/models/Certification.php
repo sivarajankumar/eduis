@@ -164,7 +164,7 @@ class Tnp_Model_Certification extends Tnp_Model_Generic
         if (empty($certifications)) {
             return false;
         } else {
-            return $certifications;
+            return array_unique($certifications);
         }
     }
     public function saveInfo ($data_array)
