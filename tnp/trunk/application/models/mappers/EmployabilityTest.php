@@ -83,8 +83,8 @@ class Tnp_Model_Mapper_EmployabilityTest
             $select->where('test_name = ?', $test_name);
         }
         if ($date_of_conduct == true) {
-            $date_of_conduct = Zend_Locale_Format::getDate($date_of_conduct, 
-            array('date_format' => 'yyyyMMdd', 'fix_date' => true));
+            /*$date_of_conduct = Zend_Locale_Format::getDate($date_of_conduct, 
+            array('date_format' => 'yyyyMMdd', 'fix_date' => true));*/
             $select->where('date_of_conduct = ?', $date_of_conduct);
         }
         $emp_test_ids = array();
@@ -93,6 +93,7 @@ class Tnp_Model_Mapper_EmployabilityTest
     }
     public function save ($prepared_data)
     {
+    	Zend_Registry::get('logger')->debug($prepared_data);
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
