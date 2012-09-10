@@ -67,6 +67,18 @@ class Tnp_Model_Mapper_FunctionalArea
         }
         return $functional_areas;
     }
+    public function fetchFunctionalId ($functional_area_name)
+    {
+        $db_table = $this->getDbTable();
+        $adapter = $db_table->getAdapter();
+        $functional_area_table = $db_table->info('name');
+        $required_cols = array('functional_area_id');
+        $select = $adapter->select()->from($functional_area_table, 
+        $required_cols);
+        $functional_area_id = array();
+        $functional_area_id = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $functional_area_id;
+    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();

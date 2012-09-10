@@ -698,7 +698,9 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
     {
         $member_id = $this->getMember_id(true);
         $data_array['member_id'] = $member_id;
-        if (! isset($data_array['certification_id'])) {
+        $certiffication_id = $data_array['certification_id'];
+        $info = $this->fetchCertificationInfo($certiffication_id);
+        if ($info == false) {
             $member_certification = new Tnp_Model_MemberInfo_Certification();
             $member_certification->initSave();
             $preparedData = $member_certification->prepareDataForSaveProcess(
@@ -710,7 +712,8 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
             $member_certification->initSave();
             $prepared_data = $member_certification->prepareDataForSaveProcess(
             $data_array);
-            unset($data_array['member_id']);
+            unset($prepared_data['member_id']);
+            unset($prepared_data['certification_id']);
             Zend_Registry::get('logger')->debug('Updating Certification Info');
             return $member_certification->getMapper()->update($prepared_data, 
             $member_id, $data_array['certification_id']);

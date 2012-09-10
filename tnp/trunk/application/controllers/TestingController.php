@@ -702,6 +702,7 @@ class TestingController extends Zend_Controller_Action
         Zend_Registry::get('logger')->debug($certifications);
         Zend_Registry::get('logger')->debug($functional_areas);
         $this->view->assign('functional_areas', $functional_areas);
+        $this->view->assign('certifications', $certifications);
     }
     public function fetchemptestrecordAction ()
     {
@@ -936,14 +937,10 @@ class TestingController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug($params);
         $student_certification = $params['myarray']['student_certification'];
         $certification_info = $params['myarray']['certification_info'];
-        if (! isset($certification_info['certification_id'])) {
-            $certification_id = $this->saveCertificationInfo(
-            $certification_info);
-        } else {
-            $certification_id = $certification_info['certification_id'];
-        }
+        $certification_id = $this->saveCertificationInfo($certification_info);
         $student_certification['certification_id'] = $certification_id;
         Zend_Registry::get('logger')->debug($student_certification);
         $this->saveStuCertificationInfo($student_certification);

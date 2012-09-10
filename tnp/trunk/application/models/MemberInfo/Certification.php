@@ -5,8 +5,23 @@ class Tnp_Model_MemberInfo_Certification extends Tnp_Model_Generic
     protected $_certification_id;
     protected $_start_date;
     protected $_complete_date;
+    protected $_description;
     protected $_mapper;
     /**
+	 * @return the $_description
+	 */
+	public function getDescription() {
+		return $this->_description;
+	}
+
+	/**
+	 * @param field_type $_description
+	 */
+	public function setDescription($_description) {
+		$this->_description = $_description;
+	}
+
+	/**
      * @param bool $throw_exception optional
      * @return the $_member_id
      */
