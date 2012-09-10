@@ -95,8 +95,8 @@ class Tnp_Model_Mapper_MemberJobPreferred
     public function delete ($member_id)
     {
         $dbtable = $this->getDbTable();
-        $where1 = 'member_id = ' . $member_id;
-        return $dbtable->delete(array($where1, $where2));
+        $where = 'member_id = ' . $member_id;
+        return $dbtable->delete($where);
     }
 }
 ?>

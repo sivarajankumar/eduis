@@ -70,15 +70,14 @@ class Tnp_Model_Mapper_Certification
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $certification_table = $db_table->info('name');
-        $required_cols = array('certification_id', 'certification_name');
+        $required_cols = array('certification_name');
         $select = $adapter->select()->from($certification_table, $required_cols);
         $certifications = array();
-        $certifications = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        $certifications = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $certifications;
     }
     public function save ($prepared_data)
     {
-        $prepared_data['certification_id'];
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }

@@ -169,9 +169,18 @@ class Tnp_Model_Certification extends Tnp_Model_Generic
     }
     public function saveInfo ($data_array)
     {
-        $this->initSave();
-        $prepared_data = $this->prepareDataForSaveProcess($data_array);
-        return $this->getMapper()->save($prepared_data);
+        $certification_name = $data_array['certification_name'];
+        $functional_area_id = $data_array['functional_area_id'];
+        $this->setCertification_name($certification_name);
+        $this->setFunctional_area_id($functional_area_id);
+        $ids = $this->fetchCertificationIds(true, true);
+        if (empty($ids)) {
+            $this->initSave();
+            $prepared_data = $this->prepareDataForSaveProcess($data_array);
+            return $this->getMapper()->save($prepared_data);
+        } else {
+            return array_pop($ids);
+        }
     }
     public function updateInfo ($data_array)
     {

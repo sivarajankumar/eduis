@@ -89,6 +89,7 @@ class Tnp_Model_Mapper_MemberCertification
     }
     public function update ($prepared_data, $member_id, $certification_id)
     {
+        Zend_Registry::get('logger')->debug($prepared_data);
         $dbtable = $this->getDbTable();
         $where1 = 'member_id = ' . $member_id;
         $where2 = 'certification_id = ' . $certification_id;
