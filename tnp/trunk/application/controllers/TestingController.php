@@ -690,6 +690,18 @@ class TestingController extends Zend_Controller_Action
             $this->addEmpTestSection($info);
         }
     }
+    /**
+     * add new sections to a test
+     * Enter description here ...
+     */
+    public function addemptestrecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+         //Zend_Registry::get('logger')->debug();
+    }
     public function addtraininginfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
