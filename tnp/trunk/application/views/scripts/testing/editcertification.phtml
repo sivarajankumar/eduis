@@ -1,0 +1,173 @@
+<?php
+	$functional_areas = $this->functional_areas;
+	$certifications = $this->certifications;
+	$certification_info = $this->certification_info;
+	$functional_area_id = array_search($certification_info['functional_area_name'], $functional_areas);
+?>
+
+<h2>Professional Certification</h2>
+<form action="javascript:submit();" class="uniForm">
+	
+	<fieldset id="certification_info">
+		<div class="ctrlHolder">
+			<label for="functional_area_id">Technical Field</label>
+			<select id="functional_area_id" name="functional_area_id" class="selectInput ">
+				<?php 
+            		echo '<option value="'.$functional_area_id.'">'.$certification_info['functional_area_name'].'</option>';
+          		?>
+			</select>
+			<p class="formHint">Technical field in which training is done </p>
+		</div>
+
+		<div class="ctrlHolder">
+			<label for="certification_name"><em class="red">*</em>Certification Name</label>
+			<select id="certification_name" name="certification_name" class="selectInput">
+				<?php
+            		echo '<option value="'.$certification_info['certification_name'].'">'.$certification_info['certification_name'].'</option>';
+          		?>
+			</select>
+			<p class="formHint">Name of the Certification.</p>
+		</div>
+	 </fieldset>
+	 
+	 <fieldset id="student_certification">   
+		<div class="ctrlHolder">
+			<label for="start_date">Start Date</label>
+			<input name="start_date" id="start_date" data-default-value="2011-04-04" value="<?php echo $certification_info['start_date']?>"  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of start</p>
+		</div>
+        
+        <div class="ctrlHolder">
+			<label for="complete_date">Complete Date</label>
+			<input name="complete_date" id="complete_date" data-default-value="2011-04-04" value="<?php echo $certification_info['complete_date']?>"  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click completion date</p>
+		</div>  
+		
+		<div class="ctrlHolder">
+			<label for="description">Description </label>
+			<textarea rows="2" cols="20"  name="description" id="description" data-default-value="e.g. OCJP (Oracle Certified Java Programmer) Module 1" class="textInput"><?php echo $certification_info['description']?></textarea>
+			<p class="formHint">A short description of training</p>
+		</div>
+	</fieldset>
+    
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+	
+	<br>
+</form>
+
+<script>
+
+$(function(){
+	$('form.uniForm').uniform({
+		prevent_submit : true
+	});
+
+	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	$("#start_date").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '-5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+		}
+	});
+	$("#complete_date").datepicker({
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '-5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+		}
+	});
+});
+
+var div_html = '<div class="ctrlHolder" id="other_certification"><label for="other_certification_name"><em class="red">*</em>Certification Name</label><input name="other_certification_name" id="other_certification_name" value="" data-default-value="" size="35" maxlength="50" type="text" class="required textInput"/><p class="formHint">Select the name of the Certification</p></div>';
+	$('#certification_name').change(function(){
+		if($('#certification_name').val() == '-999'){
+			$(this).parent().after(div_html);
+		}
+		else {
+			$('div#other_certification').remove();
+		}
+	});
+
+function submit() {
+	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'testing', 'action' => 'savecertification'))?>';
+    $.ajax({
+        url : urlSaveInfo,
+        data : {myarray:getValues()},
+        success: function(jStatus){
+        	alert("Your information has been submitted successfully");
+            window.location.replace('/testing/viewcertificationinfo');
+        },
+            error: function(response) {
+              alert(response.responseText);
+          	  $('#errorBox').text(response.responseText).parent().show();
+                console.log(response);
+                }
+            });
+}
+
+function getValues() {
+	var certification_info = {};
+	var student_certification = {};
+	var formData = {};
+
+	$('fieldset#student_certification :input')
+		.each(function(){ 
+			student_certification[this.name] = this.value; 
+	});
+	
+	certification_info['functional_area_id'] = $('#functional_area_id').val();
+	if($('#certification_name').val() == '-999'){
+		certification_info['certification_name'] = $('#other_certification_name').val();
+	}
+	else{
+		certification_info['certification_name'] = $('#certification_name').val();
+	}
+
+	formData['certification_info'] = certification_info;
+	formData['student_certification'] = student_certification;
+	return formData;
+}
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		width:auto;
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		font-size:17px;
+		font-weight:100;
+		margin-top:2px;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>

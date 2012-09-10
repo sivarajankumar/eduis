@@ -20,9 +20,8 @@
 				echo '<div id="details_div'.$certification_id.'" class="details_div">';
 					echo '<span class="red">Start Date: </span>'.$certification_data['start_date'].'<br>';
 					echo '<span class="red">End Date: </span>'.$certification_data['complete_date'].'<br>';
-					//echo '<span class="red">Field: </span>'.$certification_data['functional_area_id'].'<br>';
 					//echo '<span class="red">Grade: </span>'.$certification_data['grade'].'<br>';
-					//echo '<span class="red">Details: </span>'.$certification_data['description'].'<br>';
+					echo '<span class="red">Details: </span>'.$certification_data['description'].'<br>';
 				echo '</div>';
 				echo '<input id="button_'.$certification_id.'" type="button" value="View Details" onclick="show_details('.$certification_id.')">&nbsp;&nbsp;';
 				echo '<input type="button" value="Edit" onclick="change_location('.$certification_id.')">&nbsp;&nbsp;';
@@ -55,7 +54,7 @@
     }
     function change_location(certification_id)
     {
-		window.location.replace('/testing/editcertificationinfo?certification_id='+certification_id);
+		window.location.replace('/testing/editcertification?certification_id='+certification_id);
     }
     function delete_certification(certification_id)
     {

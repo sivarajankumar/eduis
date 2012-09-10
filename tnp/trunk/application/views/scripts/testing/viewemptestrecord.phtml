@@ -8,6 +8,10 @@
 <div class="ui-state-hover"><center><H3>Employability Test Information</H3></center></div>
 <div class="info" id="relative_info">
 	<?php
+		if($test_record == false)
+		{
+			echo "<h4>No information has been added yet.</h4>";
+		}
 		$s_no = 1;
 		foreach ($test_record as $test_record_id => $record) {
 			echo '<div id='.$test_record_id.' class="data">';
