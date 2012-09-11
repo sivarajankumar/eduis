@@ -166,7 +166,9 @@ class Tnp_Model_EmpTestInfo_Section extends Tnp_Model_Generic
     public function fetchTestSections ()
     {
         $test_sections = array();
-        $test_sections = $this->getMapper()->fetchTestSections();
+        $employability_test_id = $this->getEmployability_test_id(true);
+        $test_sections = $this->getMapper()->fetchTestSections(
+        $employability_test_id);
         if (empty($test_sections)) {
             return false;
         } else {
