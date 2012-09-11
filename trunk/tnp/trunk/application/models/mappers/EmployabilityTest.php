@@ -62,7 +62,7 @@ class Tnp_Model_Mapper_EmployabilityTest
         $emp_test_info = array();
         $emp_test_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         foreach ($emp_test_info as $employability_test_id => $test_name_array) {
-            $emp_tests[$employability_test_id] = $test_name_array['functional_area_name'];
+            $emp_tests[$employability_test_id] = $test_name_array['test_name'];
         }
         return $emp_tests;
     }
@@ -93,7 +93,7 @@ class Tnp_Model_Mapper_EmployabilityTest
     }
     public function save ($prepared_data)
     {
-    	Zend_Registry::get('logger')->debug($prepared_data);
+        Zend_Registry::get('logger')->debug($prepared_data);
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }

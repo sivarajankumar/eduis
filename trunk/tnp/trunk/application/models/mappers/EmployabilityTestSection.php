@@ -71,6 +71,23 @@ class Tnp_Model_Mapper_EmployabilityTestSection
         $emp_test_sections = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $emp_test_sections;
     }
+    public function fetchTestSections ($employability_test_id)
+    {
+        $db_table = $this->getDbTable();
+        $adapter = $db_table->getAdapter();
+        $emp_test_section_table = $db_table->info('name');
+        $required_cols = array('test_section_id', 'test_section_name');
+        $select = $adapter->select()
+            ->from($emp_test_section_table, $required_cols)
+            ->where('employability_test_id = ?', $employability_test_id);
+        $test_sections = array();
+        $test_sections_info = array();
+        $test_sections_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        foreach ($test_sections_info as $employability_test_id => $section_name_array) {
+            $test_sections[$employability_test_id] = $section_name_array['test_section_name'];
+        }
+        return $test_sections;
+    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();

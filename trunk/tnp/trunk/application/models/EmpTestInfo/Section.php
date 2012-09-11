@@ -163,6 +163,16 @@ class Tnp_Model_EmpTestInfo_Section extends Tnp_Model_Generic
             return $this->setOptions($info);
         }
     }
+    public function fetchTestSections ()
+    {
+        $test_sections = array();
+        $test_sections = $this->getMapper()->fetchTestSections();
+        if (empty($test_sections)) {
+            return false;
+        } else {
+            return $test_sections;
+        }
+    }
     public function saveInfo ($data_array)
     {
         $this->initSave();
