@@ -683,12 +683,13 @@ class TestingController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         Zend_Registry::get('logger')->debug(
         'params requires are \'section_info\' myarray[\'section_info\']');
-        $section_info = $params['myarray']['section_info'];
-        foreach ($section_info as $employability_test_id => $section_name) {
-            $info['employability_test_id'] = $employability_test_id;
-            $info['section_name'] = $section_name;
-            $this->addEmpTestSection($info);
-        }
+        $test_info = $params['myarray']['test_info'];
+        $employability_test_id = $this->addEmpTest($test_info);
+        $test_section_name = $params['myarray']['section_info']['test_section_name'];
+        $info['employability_test_id'] = $employability_test_id;
+        $info['section_name'] = $test_section_name;
+        $test_section_id = $this->addEmpTestSection($info);
+        $this->_helper->json($test_section_id);
     }
     /**
      * add new sections to a test
@@ -698,9 +699,21 @@ class TestingController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $test_model = new Tnp_Model_EmpTestInfo_Test();
+        $test_names = $test_model->fetchTests();
+        $this->view->assign('test_names', $test_names);
+    }
+    public function fetchemptestsectionsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-         //Zend_Registry::get('logger')->debug();
+        $employability_test_id = $params['myarray']['employability_test_id'];
+        $test_section = new Tnp_Model_EmpTestInfo_Section();
+        $test_sections = $test_section->fetchTestSections(
+        $employability_test_id);
+        $this->_helper->json($test_sections);
     }
     public function addtraininginfoAction ()
     {
@@ -876,6 +889,7 @@ class TestingController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug($params);
         Zend_Registry::get('logger')->debug(
         'params required are \'test_info\' ,  \'test_record\' , \'test_section_record\' in myarray ex \'$params[\'myarray\'][\'test_info\']');
         /*
@@ -890,8 +904,9 @@ class TestingController extends Zend_Controller_Action
         /* Zend_Registry::get('logger')->debug($test_info);
         Zend_Registry::get('logger')->debug($test_record);
         Zend_Registry::get('logger')->debug($section_record);*/
-        foreach ($section_record as $id => $section_score) {
+        foreach ($section_record as $section_id => $section_score) {
             $section_score['employability_test_id'] = $employability_test_id;
+            $section_score['test_section_id'] = $section_id;
             $this->saveSectionScore($section_score);
         }
     }
