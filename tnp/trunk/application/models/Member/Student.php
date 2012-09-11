@@ -750,7 +750,6 @@ class Tnp_Model_Member_Student extends Tnp_Model_Generic
      */
     public function saveEmpTestRecord ($data_array)
     {
-        Zend_Registry::get('logger')->debug($data_array);
         $member_id = $this->getMember_id(true);
         $employability_test_id = $data_array['employability_test_id'];
         $emp_test_record = new Tnp_Model_MemberInfo_EmployabilityTestRecord();
