@@ -711,8 +711,8 @@ class TestingController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $employability_test_id = $params['myarray']['employability_test_id'];
         $test_section = new Tnp_Model_EmpTestInfo_Section();
-        $test_sections = $test_section->fetchTestSections(
-        $employability_test_id);
+        $test_section->setEmployability_test_id($employability_test_id);
+        $test_sections = $test_section->fetchTestSections();
         $this->_helper->json($test_sections);
     }
     public function addtraininginfoAction ()

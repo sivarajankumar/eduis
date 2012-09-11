@@ -39,7 +39,7 @@ class Tnp_Model_Mapper_MemberCertification
         $adapter = $db_table->getAdapter();
         $certification_table = $db_table->info('name');
         $required_cols = array('member_id', 'certification_id', 'start_date', 
-        'complete_date');
+        'complete_date', 'description');
         $select = $adapter->select()
             ->from($certification_table, $required_cols)
             ->where('member_id = ?', $member_id)

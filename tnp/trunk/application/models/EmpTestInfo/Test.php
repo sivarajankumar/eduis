@@ -162,10 +162,9 @@ class Tnp_Model_EmpTestInfo_Test extends Tnp_Model_Generic
         if (empty($tests)) {
             return false;
         } else {
-            return $tests;
+            return array_unique($tests);
         }
     }
-    
     public function save ($data_array)
     {
         if (! empty($data_array['test_name']) and

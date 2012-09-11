@@ -56,14 +56,10 @@ class Tnp_Model_Mapper_EmployabilityTest
         $db_table = $this->getDbTable();
         $adapter = $db_table->getAdapter();
         $emp_test_table = $db_table->info('name');
-        $required_cols = array('employability_test_id', 'test_name');
+        $required_cols = array('test_name');
         $select = $adapter->select()->from($emp_test_table, $required_cols);
         $emp_tests = array();
-        $emp_test_info = array();
-        $emp_test_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        foreach ($emp_test_info as $employability_test_id => $test_name_array) {
-            $emp_tests[$employability_test_id] = $test_name_array['test_name'];
-        }
+        $emp_tests = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $emp_tests;
     }
     /**
