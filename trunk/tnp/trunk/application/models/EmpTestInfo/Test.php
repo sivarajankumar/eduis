@@ -174,10 +174,10 @@ class Tnp_Model_EmpTestInfo_Test extends Tnp_Model_Generic
             $this->setTest_name($test_name);
             $this->setDate_of_conduct($date_of_conduct);
             $employability_test_id = $this->fetchTestsIds(true, true);
-            if (isset($employability_test_id)) {
-                return array_pop($employability_test_id);
-            } else {
+            if (empty($employability_test_id)) {
                 return $this->saveInfo($data_array);
+            } else {
+                return array_pop($employability_test_id);
             }
         }
     }
