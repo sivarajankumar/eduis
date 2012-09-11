@@ -687,7 +687,7 @@ class TestingController extends Zend_Controller_Action
         $employability_test_id = $this->addEmpTest($test_info);
         $test_section_name = $params['myarray']['section_info']['test_section_name'];
         $info['employability_test_id'] = $employability_test_id;
-        $info['section_name'] = $test_section_name;
+        $info['test_section_name'] = $test_section_name;
         $test_section_id = $this->addEmpTestSection($info);
         $response = array('test_section_id' => $test_section_id, 
         'test_section_name' => $test_section_name);
