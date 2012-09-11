@@ -709,7 +709,8 @@ class TestingController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $employability_test_id = $params['myarray']['employability_test_id'];
+        $test_info = $params['myarray']['test_info'];
+        $employability_test_id = $this->addEmpTest($test_info);
         $test_section = new Tnp_Model_EmpTestInfo_Section();
         $test_section->setEmployability_test_id($employability_test_id);
         $test_sections = $test_section->fetchTestSections();
