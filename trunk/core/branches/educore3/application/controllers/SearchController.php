@@ -215,5 +215,43 @@ class SearchController extends Zend_Controller_Action
                 break;
         }
     }
+    public function fetchmemberidAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $param_view = array_diff($request->getParams(), 
+        $request->getUserParams());
+        $roll_numbers = $param_view['myarray']['roll_number'];
+        $format = $this->_getParam('format', 'log');
+        $student = new Core_Model_StudentClass();
+        $rolls = array();
+        foreach ($roll_numbers as $roll_number) {
+            $student->setRoll_no($roll_number);
+            $member_id = $student->fetchMemberId();
+            $rolls[$roll_number] = $member_id;
+        }
+        if (empty($rolls)) {
+            $rolls = false;
+        }
+        switch ($format) {
+            case 'html':
+                $this->view->assign('rolls', $rolls);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($rolls, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($rolls);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug($rolls);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
 }
 

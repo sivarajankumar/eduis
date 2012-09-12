@@ -223,7 +223,21 @@ class Core_Model_StudentClass extends Core_Model_Generic
         $class_id = $this->getClass_id(true);
         $roll_number = $this->getMapper()->fetchRollNumber($member_id, 
         $class_id);
-        return $roll_number;
+        if (empty($roll_number)) {
+            return false;
+        } else {
+            return $roll_number;
+        }
+    }
+    public function fetchMemberId ()
+    {
+        $roll_number = $this->getRoll_no(true);
+        $member_id = $this->getMapper()->fetchMemberId($roll_number);
+        if (empty($member_id)) {
+            return false;
+        } else {
+            return $member_id;
+        }
     }
     public function fetchClassIds ()
     {
