@@ -67,6 +67,19 @@ class Core_Model_Mapper_StudentClass
         $roll_number = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $roll_number;
     }
+    public function fetchMemberId ($roll_number)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $stu_class_table = $db_table->info('name');
+        $required_cols = array('member_id');
+        $select = $adapter->select()
+            ->from($stu_class_table, $required_cols)
+            ->where('roll_no = ?', $roll_number);
+        $member_id = array();
+        $member_id = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        return $member_id;
+    }
     /**
      * Fetches all Classes in which a student has/had enrolled
      * 
