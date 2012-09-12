@@ -1,0 +1,142 @@
+<form id="student_info" action="javascript:getmemberid();">
+	<label for="roll_no">* Roll Number</label>
+	<input name="roll_no" id="roll_no" type="text" size="30">
+	<input type="submit" value="View Profile">
+</form>
+<div id="student_profile_div">
+	<link rel="stylesheet" href="<?php echo 'http://'.CDN_SERVER.'/css/admission.css';?>">
+
+<div id="main">
+	<div id="sidebar" style="float:left">
+	<ul class="menu">
+		<li class="item1">
+			<a href="#">Class Information</a>
+			<ul class="sub_ul">
+				<li class="subitem1"><a href="http://core.aceambala.com/student/viewclassinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item2">
+			<a href="#">Personal Information</a>
+			<ul class="sub_ul">
+				<li class="subitem1"><a href="http://core.aceambala.com/student/viewpersonalinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item3">
+			<a href="#">Contact Information</a>
+			<ul class="sub_ul">
+				<li class="subitem1"><a href="http://core.aceambala.com/student/viewcontactinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item4">
+			<a href="#">Address Information</a>
+			<ul class="sub_ul">
+				<li class="subitem1"><a href="http://core.aceambala.com/student/viewaddressinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item5">
+			<a href="#">Family Information</a>
+			<ul class="sub_ul">
+				<li class="subitem1"><a href="http://core.aceambala.com/student/viewrelativesinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item6">
+			<a href="#">University Registration Information</a>
+			<ul class="sub_ul">
+				<li class="subitem1"><a href="http://core.aceambala.com/student/viewunvregistrationinfo" target="content_frame">View </a></li>
+			</ul>
+		</li>
+	</ul>
+	</div>
+	<div id="page_content">
+		<iframe id="content_frame" name="content_frame" width="100%" height="900" frameborder="0" scrolling="auto" onload="hide_top()"></iframe>
+	</div>
+</div>
+
+
+</div>
+
+<script type="text/javascript">
+	$(function(){
+		$('#student_profile_div').hide();
+	});
+	function getmemberid()
+	{
+		var urlfetchmemberids = 'http://core.aceambala.com/search/fetchmemberid';
+		if($('#roll_no').val() == '')
+			alert("Please enter the roll number and then click on View Profile Button");
+		else
+		{
+			var roll_number = $('#roll_no').val(); 
+			var abc = new Array();
+			abc[0] = roll_number;
+			$.ajax({
+				url : urlfetchmemberids,
+				dataType : 'jsonp',
+				data : {
+					myarray : {'roll_number':abc},
+					format : 'jsonp'
+				},
+				success : function(jStatus){
+					if(jStatus[roll_number] == false)
+					{
+						alert("The student with this roll number doesn't exist in database. Please check the roll number and try again");
+						$('ul.sub_ul > li > a').each(function(){
+							var link = $(this).attr('href');
+							$(this).attr('href',link+'?member_id=3');
+						});
+						$('#student_profile_div').show();
+						make_sidebar();
+					}
+					else
+					{
+						var member_id = jStatus[roll_number];
+					}
+				},
+				error : function(response){
+					alert(response);
+				}
+			});
+		}
+	}
+
+	function make_sidebar() {
+        var menu_ul = $('.menu > li > ul'),
+		menu_a  = $('.menu > li > a');
+
+        menu_ul.hide();
+    
+        menu_a.click(function(e) {
+			e.preventDefault();
+            if(!$(this).hasClass('active')) {
+                menu_a.removeClass('active');
+                menu_ul.filter(':visible').slideUp('normal');
+                $(this).addClass('active').next().stop(true,true).slideDown('normal');
+            } else {
+                $(this).removeClass('active');
+                $(this).next().stop(true,true).slideUp('normal');
+            }
+        });
+
+        $('.menu > li > a:first').click();
+        var path = $('.subitem1 > a').attr('href');
+        $('#content_frame').attr('src',path);
+    }
+
+	function hide_top()
+	{
+		$('iframe#content_frame').contents().find('div#topContent').hide();		
+	}
+
+</script>
+
+<style type="text/css">
+	#page_content{
+    	float:left;
+		width:65%;
+    }
+</style>
