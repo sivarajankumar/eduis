@@ -9,5 +9,10 @@ class AdminController extends Zend_Controller_Action
     {
         // action body
     }
+    public function viewstudentprofileAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
 }
 
