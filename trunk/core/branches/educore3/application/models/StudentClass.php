@@ -236,7 +236,7 @@ class Core_Model_StudentClass extends Core_Model_Generic
         if (empty($member_id)) {
             return false;
         } else {
-            return $member_id;
+            return array_pop($member_id);
         }
     }
     public function fetchClassIds ()
