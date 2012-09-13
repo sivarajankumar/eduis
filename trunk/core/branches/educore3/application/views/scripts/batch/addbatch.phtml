@@ -94,6 +94,7 @@ function getValues() {
 	var formData = {};
 	var batch_info = {};
 	$('form#batch :input')
+	.not('button,:input[value^="e.g."]')
 	.each(function(){ 
 		batch_info[this.name] = this.value; 
 	});
