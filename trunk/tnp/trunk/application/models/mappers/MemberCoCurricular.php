@@ -49,7 +49,11 @@ class Tnp_Model_Mapper_MemberCoCurricular
             ->where('member_id = ?', $member_id);
         $co_curricular_info = array();
         $co_curricular_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $co_curricular_info[$member_id];
+        if (empty($co_curricular_info)) {
+            return false;
+        } else {
+            return $co_curricular_info[$member_id];
+        }
     }
     public function fetchMemberIds ($achievements = null, $activities = null, 
     $hobbies = null)
