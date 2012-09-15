@@ -18,7 +18,7 @@ class Acad_Model_StudentCompetitiveExam extends Acad_Model_Generic
     {
         $member_id = $this->_member_id;
         if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set';
+            $message = 'Member_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -46,7 +46,7 @@ class Acad_Model_StudentCompetitiveExam extends Acad_Model_Generic
     {
         $exam_id = $this->_exam_id;
         if (empty($exam_id) and $throw_exception == true) {
-            $message = 'exam_id is not set';
+            $message = 'exam_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

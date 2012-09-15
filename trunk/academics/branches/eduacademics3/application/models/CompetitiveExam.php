@@ -12,7 +12,7 @@ class Acad_Model_CompetitiveExam extends Acad_Model_Generic
     {
         $exam_id = $this->_exam_id;
         if (empty($exam_id) and $throw_exception == true) {
-            $message = 'exam_id is not set';
+            $message = 'exam_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

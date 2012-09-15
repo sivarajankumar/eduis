@@ -17,7 +17,7 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
     {
         $member_id = $this->_member_id;
         if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set';
+            $message = 'Member_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -31,7 +31,7 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
     {
         $class_id = $this->_class_id;
         if (empty($class_id) and $throw_exception == true) {
-            $message = '_class_id is not set';
+            $message = '_class_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -45,7 +45,7 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
     {
         $group_id = $this->_group_id;
         if (empty($group_id) and $throw_exception == true) {
-            $message = '_group_id is not set';
+            $message = '_group_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -80,7 +80,7 @@ class Acad_Model_StudentClass extends Acad_Model_Generic
     {
         $is_initial_batch_identifier = $this->_is_initial_batch_identifier;
         if (empty($is_initial_batch_identifier) and $throw_exception == true) {
-            $message = '_is_initial_batch_identifier is not set';
+            $message = '_is_initial_batch_identifier is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
