@@ -19,7 +19,7 @@ class Auth_Model_Member_User extends Auth_Model_Generic
     {
         $member_id = $this->_member_id;
         if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set';
+            $message = 'Member_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -33,7 +33,7 @@ class Auth_Model_Member_User extends Auth_Model_Generic
     {
         $login_id = $this->_login_id;
         if (empty($login_id) and $throw_exception == true) {
-            $message = '_login_id is not set';
+            $message = '_login_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -47,7 +47,7 @@ class Auth_Model_Member_User extends Auth_Model_Generic
     {
         $sec_passwd = $this->_sec_passwd;
         if (empty($sec_passwd) and $throw_exception == true) {
-            $message = '_sec_passwd is not set';
+            $message = '_sec_passwd is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -61,7 +61,7 @@ class Auth_Model_Member_User extends Auth_Model_Generic
     {
         $user_salt = $this->_user_salt;
         if (empty($user_salt) and $throw_exception == true) {
-            $message = '_user_salt is not set';
+            $message = '_user_salt is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -75,7 +75,7 @@ class Auth_Model_Member_User extends Auth_Model_Generic
     {
         $user_type_id = $this->_user_type_id;
         if (empty($user_type_id) and $throw_exception == true) {
-            $message = '_user_type_id is not set';
+            $message = '_user_type_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -89,7 +89,7 @@ class Auth_Model_Member_User extends Auth_Model_Generic
     {
         $department_id = $this->_department_id;
         if (empty($department_id) and $throw_exception == true) {
-            $message = '_department_id is not set';
+            $message = '_department_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -103,7 +103,7 @@ class Auth_Model_Member_User extends Auth_Model_Generic
     {
         $valid_from = $this->_valid_from;
         if (empty($valid_from) and $throw_exception == true) {
-            $message = '_valid_from is not set';
+            $message = '_valid_from is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -117,7 +117,7 @@ class Auth_Model_Member_User extends Auth_Model_Generic
     {
         $valid_upto = $this->_valid_upto;
         if (empty($valid_upto) and $throw_exception == true) {
-            $message = '_valid_upto is not set';
+            $message = '_valid_upto is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -131,7 +131,7 @@ class Auth_Model_Member_User extends Auth_Model_Generic
     {
         $is_active = $this->_is_active;
         if (empty($is_active) and $throw_exception == true) {
-            $message = '_is_active is not set';
+            $message = '_is_active is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
