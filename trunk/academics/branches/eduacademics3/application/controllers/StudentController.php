@@ -330,12 +330,7 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $format = $this->_getParam('format', 'html');
-        $qualification_name = 'MATRIC';
-        $qualification_model = new Acad_Model_Qualification();
-        $qualifications = $qualification_model->fetchQualifications();
-        $qualification_id = array_search($qualification_name, $qualifications);
-        $qualification_data = self::fetchMatricData($qualification_id, 
-        $member_id);
+        $qualification_data = self::fetchMatricData($member_id);
         switch ($format) {
             case 'html':
                 if (! empty($qualification_data)) {
@@ -374,12 +369,7 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $student_model->setMember_id($member_id);
-        $qualification_name = 'TWELFTH';
-        $qualification_model = new Acad_Model_Qualification();
-        $qualifications = $qualification_model->fetchQualifications();
-        $qualification_id = array_search($qualification_name, $qualifications);
-        $qualification_data = self::fetchTwelfthData($qualification_id, 
-        $member_id);
+        $qualification_data = self::fetchTwelfthData($member_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -553,11 +543,7 @@ class StudentController extends Zend_Controller_Action
         }
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($member_id);
-        $exam_name = 'LEET';
-        $exam_model = new Acad_Model_CompetitiveExam();
-        $exams = $exam_model->fetchExams();
-        $exam_id = array_search($exam_name, $exams);
-        $exam_data = self::fetchCompetitiveExamData($exam_id, $member_id);
+        $exam_data = self::fetchCompetitiveExamData('LEET', $member_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -596,11 +582,7 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $format = $this->_getParam('format', 'html');
-        $exam_name = 'AIEEE';
-        $exam_model = new Acad_Model_CompetitiveExam();
-        $exams = $exam_model->fetchExams();
-        $exam_id = array_search($exam_name, $exams);
-        $exam_data = self::fetchCompetitiveExamData($exam_id, $member_id);
+        $exam_data = self::fetchCompetitiveExamData('AIEEE', $member_id);
         switch ($format) {
             case 'html':
                 if (! empty($exam_data)) {
@@ -641,11 +623,7 @@ class StudentController extends Zend_Controller_Action
         }
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($member_id);
-        $exam_name = 'GATE';
-        $exam_model = new Acad_Model_CompetitiveExam();
-        $exams = $exam_model->fetchExams();
-        $exam_id = array_search($exam_name, $exams);
-        $exam_data = self::fetchCompetitiveExamData($exam_id, $member_id);
+        $exam_data = self::fetchCompetitiveExamData('GATE', $member_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -1037,8 +1015,7 @@ class StudentController extends Zend_Controller_Action
         $student_qualifications);
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
-            $qualification_data = self::fetchMatricData($qualification_id, 
-            $member_id);
+            $qualification_data = self::fetchMatricData($member_id);
             switch ($format) {
                 case 'html':
                     $this->_helper->viewRenderer->setNoRender(false);
@@ -1289,37 +1266,26 @@ class StudentController extends Zend_Controller_Action
         } else {
             $member_id = $params['member_id'];
         }
-        $exam_name = 'AIEEE';
-        $exams_names = $this->getCompetitiveExams();
-        $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($member_id);
-        $exam_ids = $student_model->fetchCompetitveExamIds();
-        if (! empty($exam_ids)) {
-            $exam_id = array_search($exam_name, $exams_names);
-            if ($exam_id) {
-                $exam_data = self::fetchCompetitiveExamData($exam_id, 
-                $member_id);
-                switch ($format) {
-                    case 'html':
-                        if (! empty($exam_data)) {
-                            $this->view->assign('exam_data', $exam_data);
-                        }
-                        break;
-                    case 'jsonp':
-                        $callback = $this->getRequest()->getParam('callback');
-                        echo $callback . '(' .
-                         $this->_helper->json($exam_data, false) . ')';
-                        break;
-                    case 'json':
-                        $this->_helper->json($exam_data);
-                        break;
-                    case 'test':
-                        break;
-                    default:
-                        ;
-                        break;
+        $exam_data = self::fetchCompetitiveExamData('AIEEE', $member_id);
+        switch ($format) {
+            case 'html':
+                if (! empty($exam_data)) {
+                    $this->view->assign('exam_data', $exam_data);
                 }
-            }
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($exam_data, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($exam_data);
+                break;
+            case 'test':
+                break;
+            default:
+                ;
+                break;
         }
     }
     public function editleetinfoAction ()
@@ -1337,37 +1303,30 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $format = $this->_getParam('format', 'html');
-        $exam_name = 'AIEEE';
-        $exam_model = new Acad_Model_CompetitiveExam();
-        $exams = $exam_model->fetchExams();
-        $exam_id = array_search($exam_name, $exams);
-        if ($exam_id) {
-            $student_model = new Acad_Model_Member_Student();
-            $qualification_data = self::fetchCompetitiveExamData($exam_id, 
-            $member_id);
-            switch ($format) {
-                case 'html':
-                    $this->_helper->viewRenderer->setNoRender(false);
-                    $this->_helper->layout()->enableLayout();
-                    if (! empty($qualification_data)) {
-                        $this->view->assign('qualification_data', 
-                        $qualification_data);
-                    }
-                    break;
-                case 'jsonp':
-                    $callback = $this->getRequest()->getParam('callback');
-                    echo $callback . '(' .
-                     $this->_helper->json($qualification_data, false) . ')';
-                    break;
-                case 'json':
-                    $this->_helper->json($qualification_data);
-                    break;
-                case 'test':
-                    break;
-                default:
-                    ;
-                    break;
-            }
+        $qualification_data = self::fetchCompetitiveExamData('AIEEE', 
+        $member_id);
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                if (! empty($qualification_data)) {
+                    $this->view->assign('qualification_data', 
+                    $qualification_data);
+                }
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' .
+                 $this->_helper->json($qualification_data, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($qualification_data);
+                break;
+            case 'test':
+                break;
+            default:
+                ;
+                break;
         }
     }
     public function editgateinfoAction ()
@@ -1385,37 +1344,29 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $format = $this->_getParam('format', 'html');
-        $exam_name = 'GATE';
-        $exam_model = new Acad_Model_CompetitiveExam();
-        $exams = $exam_model->fetchExams();
-        $exam_id = array_search($exam_name, $exams);
-        if ($exam_id) {
-            $student_model = new Acad_Model_Member_Student();
-            $qualification_data = self::fetchCompetitiveExamData($exam_id, 
-            $member_id);
-            switch ($format) {
-                case 'html':
-                    $this->_helper->viewRenderer->setNoRender(false);
-                    $this->_helper->layout()->enableLayout();
-                    if (! empty($qualification_data)) {
-                        $this->view->assign('qualification_data', 
-                        $qualification_data);
-                    }
-                    break;
-                case 'jsonp':
-                    $callback = $this->getRequest()->getParam('callback');
-                    echo $callback . '(' .
-                     $this->_helper->json($qualification_data, false) . ')';
-                    break;
-                case 'json':
-                    $this->_helper->json($qualification_data);
-                    break;
-                case 'test':
-                    break;
-                default:
-                    ;
-                    break;
-            }
+        $qualification_data = self::fetchCompetitiveExamData('GATE', $member_id);
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                if (! empty($qualification_data)) {
+                    $this->view->assign('qualification_data', 
+                    $qualification_data);
+                }
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' .
+                 $this->_helper->json($qualification_data, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($qualification_data);
+                break;
+            case 'test':
+                break;
+            default:
+                ;
+                break;
         }
     }
     public function adddmcAction ()
@@ -1442,7 +1393,7 @@ class StudentController extends Zend_Controller_Action
         /*
          * All Class ids of student
          */
-        $student_class_ids = $this->getAllClassIds();
+        $student_class_ids = $this->getAllClassIds($member_id);
         $class = new Acad_Model_Class();
         /* --------------------------------------------------------------------------- */
         /*
@@ -1664,7 +1615,7 @@ class StudentController extends Zend_Controller_Action
         Zend_Registry::get('logger')->debug('Parameter recieved from view :');
         Zend_Registry::get('logger')->debug($params);
         $class_id = $params['class_id'];
-        $student_class_ids = $this->getAllClassIds();
+        $student_class_ids = $this->getAllClassIds($member_id);
         Zend_Registry::get('logger')->debug('Student_class_ids : ');
         Zend_Registry::get('logger')->debug($student_class_ids);
         $class_enroll_check = array_keys($student_class_ids, $class_id);
@@ -1725,7 +1676,7 @@ class StudentController extends Zend_Controller_Action
         } else {
             $member_id = $params['member_id'];
         }
-        $class_ids = $this->getAllClassIds();
+        $class_ids = $this->getAllClassIds($member_id);
         if (empty($class_ids)) {
             $this->view->assign('class_info', false);
         } else {
@@ -1928,8 +1879,12 @@ class StudentController extends Zend_Controller_Action
      * @param int member_id
      * @return array $matric_data return array of present data of student in qualification table
      */
-    private function fetchMatricData ($qualification_id, $member_id)
+    private function fetchMatricData ($member_id)
     {
+        $qualification_name = 'MATRIC';
+        $qualification_model = new Acad_Model_Qualification();
+        $qualifications = $qualification_model->fetchQualifications();
+        $qualification_id = array_search($qualification_name, $qualifications);
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($member_id);
         $qualification_model = $student_model->fetchQualificationInfo(
@@ -2029,8 +1984,12 @@ class StudentController extends Zend_Controller_Action
      * @param int qualification_id  
      * @return array $twelfth_array return array of present data of student in qualification table
      */
-    private function fetchTwelfthData ($qualification_id, $member_id)
+    private function fetchTwelfthData ($member_id)
     {
+        $qualification_name = 'TWELFTH';
+        $qualification_model = new Acad_Model_Qualification();
+        $qualifications = $qualification_model->fetchQualifications();
+        $qualification_id = array_search($qualification_name, $qualifications);
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($member_id);
         $qualification_model = $student_model->fetchQualificationInfo(
@@ -2073,25 +2032,51 @@ class StudentController extends Zend_Controller_Action
         }
         return $diploma_data;
     }
-    private function fetchCompetitiveExamData ($exam_id, $member_id)
+    private function fetchCompetitiveExamData ($exam_name, $member_id)
     {
-        $student_model = new Acad_Model_Member_Student();
-        $student_model->setMember_id($member_id);
-        $exam_data = array();
-        $exam_model = new Acad_Model_CompetitiveExam();
-        $exam_model->setExam_id($exam_id);
-        $exam_model->fetchInfo();
-        $student_exam_model = $student_model->fetchCompetitveExamInfo($exam_id);
-        if ($student_exam_model instanceof Acad_Model_StudentCompetitiveExam) {
-            $exam_data['name'] = $exam_model->getName();
-            $exam_data['total_score'] = $student_exam_model->getTotal_score();
-            $exam_data['abbr'] = $exam_model->getAbbreviation();
-            $exam_data['all_india_rank'] = $student_exam_model->getAll_india_rank();
-            $exam_data['roll_no'] = $student_exam_model->getRoll_no();
-            $exam_data['date'] = $student_exam_model->getDate();
-            $exam_data['total_score'] = $student_exam_model->getTotal_score();
+        $exam_id = null;
+        switch ($exam_name) {
+            case 'LEET':
+                $exam_model = new Acad_Model_CompetitiveExam();
+                $exams = $exam_model->fetchExams();
+                $exam_id = array_search('LEET', $exams);
+                break;
+            case 'AIEEE':
+                $exam_model = new Acad_Model_CompetitiveExam();
+                $exams = $exam_model->fetchExams();
+                $exam_id = array_search('AIEEE', $exams);
+                break;
+            case 'GATE':
+                $exam_model = new Acad_Model_CompetitiveExam();
+                $exams = $exam_model->fetchExams();
+                $exam_id = array_search('GATE', $exams);
+                break;
+            default:
+                ;
+                break;
         }
-        return $exam_data;
+        if (empty($exam_id)) {
+            return false;
+        } else {
+            $student_model = new Acad_Model_Member_Student();
+            $student_model->setMember_id($member_id);
+            $exam_data = array();
+            $exam_model = new Acad_Model_CompetitiveExam();
+            $exam_model->setExam_id($exam_id);
+            $exam_model->fetchInfo();
+            $student_exam_model = $student_model->fetchCompetitveExamInfo(
+            $exam_id);
+            if ($student_exam_model instanceof Acad_Model_StudentCompetitiveExam) {
+                $exam_data['name'] = $exam_model->getName();
+                $exam_data['total_score'] = $student_exam_model->getTotal_score();
+                $exam_data['abbr'] = $exam_model->getAbbreviation();
+                $exam_data['all_india_rank'] = $student_exam_model->getAll_india_rank();
+                $exam_data['roll_no'] = $student_exam_model->getRoll_no();
+                $exam_data['date'] = $student_exam_model->getDate();
+                $exam_data['total_score'] = $student_exam_model->getTotal_score();
+            }
+            return $exam_data;
+        }
     }
     private function fetchDmcInfo ($member_id, $specific_dmc_info_id = null, 
     $class_specific = null, $result_type_specific = null, $all = null, 
@@ -2255,8 +2240,11 @@ class StudentController extends Zend_Controller_Action
         $student->setMember_id($member_id);
         $dmc_subject_marks['dmc_info_id'] = $marks_info['dmc_info_id'];
         $dmc_subject_marks['student_subject_id'] = $marks_info['student_subject_id'];
-        $dmc_subject_marks['external'] = $marks_info['external'];
-        $dmc_subject_marks['internal'] = $marks_info['internal'];
+        $external = $marks_info['external'];
+        $internal = $marks_info['internal'];
+        $dmc_subject_marks['external'] = $external;
+        $dmc_subject_marks['internal'] = $internal;
+        $marks_obtained = ($external + $internal);
         $dmc_subject_marks['percentage'] = $marks_info['percentage'];
         $dmc_subject_marks['is_pass'] = $marks_info['is_pass'];
         $dmc_subject_marks['is_verified'] = $marks_info['is_verified'];
@@ -2351,9 +2339,8 @@ class StudentController extends Zend_Controller_Action
         $student->setMember_id($member_id);
         return $student->fetchActiveClassIds();
     }
-    private function getAllClassIds ()
+    private function getAllClassIds ($member_id)
     {
-        $member_id = $this->getMember_id();
         $student = new Acad_Model_Member_Student();
         $student->setMember_id($member_id);
         $class_ids = $student->fetchAllClassIds();
@@ -2361,10 +2348,10 @@ class StudentController extends Zend_Controller_Action
             return $class_ids;
         } else {
             if ($class_ids == false) {
-                throw new Exception(
+                Zend_Registry::get('logger')->debug(
                 'Student with member_id : ' . $member_id .
-                 ' has not been registered in any Acdemic Class ', 
-                Zend_Log::WARN);
+                 ' has not been registered in any Acdemic Class ');
+                return false;
             }
         }
     }
@@ -2403,10 +2390,11 @@ class StudentController extends Zend_Controller_Action
             return $batch_ids;
         } else {
             if ($batch_ids == false) {
-                throw new Exception(
+                Zend_Registry::get('logger')->debug(
                 'No batch id exists for batch_start year : ' . $batch_start .
                  ' department_id : ' . $department_id . ' and programme_id : ' .
-                 $programme_id, Zend_Log::WARN);
+                 $programme_id);
+                return false;
             }
         }
     }
@@ -2442,9 +2430,10 @@ class StudentController extends Zend_Controller_Action
             return $class_ids;
         } else {
             if ($class_ids == false) {
-                throw new Exception(
+                Zend_Registry::get('logger')->debug(
                 'No class id exists for batch_id : ' . $batch_id .
-                 ' semester_id : ' . $semester_id, Zend_Log::WARN);
+                 ' semester_id : ' . $semester_id);
+                return false;
             }
         }
     }
@@ -2462,10 +2451,135 @@ class StudentController extends Zend_Controller_Action
         $save_info['receiving_date'] = $dmc_info['receiving_date'];
         $save_info['is_copied'] = $dmc_info['is_copied'];
         $save_info['dispatch_date'] = $dmc_info['dispatch_date'];
-        $save_info['marks_obtained'] = $dmc_info['marks_obtained'];
-        $save_info['total_marks'] = $dmc_info['total_marks'];
+        $marks_obtained = $dmc_info['marks_obtained'];
+        $save_info['marks_obtained'] = $marks_obtained;
+        $total_marks = $dmc_info['total_marks'];
+        $save_info['total_marks'] = $total_marks;
         $save_info['scaled_marks'] = $dmc_info['scaled_marks'];
-        $save_info['percentage'] = $dmc_info['percentage'];
+        $save_info['percentage'] = (100 * ($marks_obtained / $total_marks));
         return $student->saveDmcInfo($save_info);
+    }
+    public function collectexportabledataAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $member_ids = array(1, 2, 3, 4, 5);
+        $t = array();
+        foreach ($member_ids as $member_id) {
+            $t[$member_id] = $this->generateReport($member_id);
+            if (empty($t[$member_id])) {
+                unset($t[$member_id]);
+            }
+        }
+        echo "<pre>";
+        print_r($t);
+        echo "</pre>";
+         //Zend_Registry::get('logger')->debug($t);
+    }
+    private function generateReport ($member_id)
+    {
+        $class_ids = $this->getAllClassIds($member_id);
+        $member_data = array();
+        for ($i = 1; $i < 9; $i ++) {
+            $member_data['SEMESTER ' . $i] = null;
+        }
+        $member_data['TENTH BOARD'] = null;
+        $member_data['TENTH MARKS'] = null;
+        $member_data['TENTH YEAR'] = null;
+        $member_data['TWELFTH BOARD'] = null;
+        $member_data['TWELFTH MARKS'] = null;
+        $member_data['TWELFTH YEAR'] = null;
+        $member_data['AIEEE RANK'] = null;
+        $member_data['LEET RANK'] = null;
+        if (is_array($class_ids)) {
+            $class_backlog_count = array();
+            foreach ($class_ids as $class_id) {
+                $cnt = $this->getSemesterBackLogCount($member_id, $class_id);
+                $class_backlog_count[$class_id]['backlogs'] = $cnt;
+            }
+            foreach ($class_backlog_count as $class_id => $array) {
+                $cls = new Acad_Model_Class();
+                $cls->setClass_id($class_id);
+                $cls_inf = $cls->fetchInfo();
+                if ($cls_inf instanceof Acad_Model_Class) {
+                    $semester_id = $cls->getSemester_id();
+                }
+                if ($class_backlog_count[$class_id]['backlogs'] == 0) {
+                    unset($class_backlog_count[$class_id]['backlogs']);
+                    $student = new Acad_Model_Member_Student();
+                    $student->setMember_id($member_id);
+                    $dmc_info_id = $student->fetchLatestDmcInfoId($class_id);
+                    if (! empty($dmc_info_id)) {
+                        $dmc_info = new Acad_Model_Course_DmcInfo();
+                        $dmc_info->setDmc_info_id($dmc_info_id);
+                        $info = $dmc_info->fetchInfo();
+                        if ($info instanceof Acad_Model_Course_DmcInfo) {
+                            $total_marks = $info->getTotal_marks();
+                            $marks_obtained = $info->getMarks_obtained();
+                        }
+                        $percentage = (100 * ($marks_obtained / $total_marks));
+                        $member_data['SEMESTER ' . $semester_id] = $percentage .
+                         ' % ';
+                    }
+                } else {
+                    $member_data['SEMESTER ' . $semester_id] = $class_backlog_count[$class_id]['backlogs'];
+                }
+            }
+            foreach ($member_data as $k => $value) {
+                if (empty($value)) {
+                    $member_data[$k] = null;
+                }
+            }
+            $matric_data = $this->fetchMatricData($member_id);
+            $member_data['TENTH BOARD'] = $matric_data['board'];
+            $member_data['TENTH MARKS'] = $matric_data['marks_obtained'];
+            $member_data['TENTH YEAR'] = $matric_data['passing_year'];
+            $twelfth_data = $this->fetchTwelfthData($member_id);
+            $member_data['TWELFTH BOARD'] = $twelfth_data['board'];
+            $member_data['TWELFTH MARKS'] = $twelfth_data['marks_obtained'];
+            $member_data['TWELFTH YEAR'] = $twelfth_data['passing_year'];
+            $aieee_data = $this->fetchCompetitiveExamData('AIEEE', $member_id);
+            $member_data['AIEEE RANK'] = $aieee_data['all_india_rank'];
+            $leet_data = $this->fetchCompetitiveExamData('LEET', $member_id);
+            $member_data['LEET RANK'] = $leet_data['all_india_rank'];
+            return $member_data;
+        }
+    }
+    private function getCurrentBackLogCount ($member_id)
+    {
+        $student = new Acad_Model_Member_Student();
+        $student->setMember_id($member_id);
+        return $student->fetchCurrentBacklogCount();
+    }
+    private function getSemesterBackLogCount ($member_id, $class_id)
+    {
+        $student = new Acad_Model_Member_Student();
+        $student->setMember_id($member_id);
+        return $student->fetchClassBacklogCount($class_id);
+    }
+    private function backLogSearch ($back_log_limit, $member_ids)
+    {
+        /*$backlog_filter = array();
+        $backlog_filtered = array();
+        foreach ($member_ids as $member_id)
+            $backlog_filter[$member_id] = $this->getCurrentBackLogCount(
+            $member_id);
+        foreach ($backlog_filter as $member_id => $backlog_count)
+            if ($backlog_count <= $back_log_limit)
+                $backlog_filtered[] = $member_id;
+        return $backlog_filtered;*/
+    }
+    private function neverbackLogSearch ($member_ids)
+    {
+        /* $student = new Acad_Model_Member_Student();
+        $backlog_filter = array();
+        $backlog_filtered = array();
+        foreach ($member_ids as $member_id) {
+            $student->setMember_id($member_id);
+            $has_backlog = $student->hasBacklogCheck();
+            if ($has_backlog)
+                $backlog_filtered[] = $member_id;
+        }
+        return $backlog_filtered;*/
     }
 }
