@@ -24,7 +24,7 @@ class Acad_Model_Qualification_Diploma extends Acad_Model_Generic
     {
         $member_id = $this->_member_id;
         if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set';
+            $message = 'Member_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -38,7 +38,7 @@ class Acad_Model_Qualification_Diploma extends Acad_Model_Generic
     {
         $qualification_id = $this->_qualification_id;
         if (empty($qualification_id) and $throw_exception == true) {
-            $message = '_qualification_id is not set';
+            $message = '_qualification_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -52,7 +52,7 @@ class Acad_Model_Qualification_Diploma extends Acad_Model_Generic
     {
         $discipline_id = $this->_discipline_id;
         if (empty($discipline_id) and $throw_exception == true) {
-            $message = '_discipline_id is not set';
+            $message = '_discipline_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

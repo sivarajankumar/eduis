@@ -30,7 +30,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     {
         $member_id = $this->_member_id;
         if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set';
+            $message = 'Member_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -44,7 +44,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     {
         $member_type_id = $this->_member_type_id;
         if (empty($member_type_id) and $throw_exception == true) {
-            $message = 'Member_type_id is not set';
+            $message = 'Member_type_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -862,8 +862,9 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         true);
         return $dmc_info_ids;
     }
-    private function getLatestDmcInfoId ($member_id, $class_id)
+    public function fetchLatestDmcInfoId ($class_id)
     {
+        $member_id = $this->getMember_id(true);
         $dmc_info = new Acad_Model_Course_DmcInfo();
         $dmc_info->setMember_id($member_id);
         $dmc_info->setClass_id($class_id);
@@ -912,18 +913,16 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     public function fetchClassBacklogCount ($class_id)
     {
         $member_id = $this->getMember_id(true);
-        $dmc_info_id_latest = $this->getLatestDmcInfoId($member_id, $class_id);
+        $dmc_info_id_latest = $this->fetchLatestDmcInfoId($class_id);
         $backlog_count = 0;
         if (isset($dmc_info_id_latest)) {
             $failed_stu_subj_ids = $this->fetchFailedSubjectIds(
             $dmc_info_id_latest);
             if (is_array($failed_stu_subj_ids)) {
                 $backlog_count = count($failed_stu_subj_ids);
-                return $backlog_count;
-            } else {
-                return $backlog_count;
             }
         }
+        return $backlog_count;
     }
     public function hasBacklogCheck ()
     {

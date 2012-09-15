@@ -19,7 +19,7 @@ class Acad_Model_Subject extends Acad_Model_Generic
     {
         $subject_id = $this->_subject_id;
         if (empty($subject_id) and $throw_exception == true) {
-            $message = '_subject_id is not set';
+            $message = '_subject_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

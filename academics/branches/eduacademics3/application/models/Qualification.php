@@ -11,7 +11,7 @@ class Acad_Model_Qualification extends Acad_Model_Generic
     {
         $qualification_id = $this->_qualification_id;
         if (empty($qualification_id) and $throw_exception == true) {
-            $message = '_qualification_id is not set';
+            $message = '_qualification_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
