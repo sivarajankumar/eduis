@@ -11,7 +11,7 @@ class Core_Model_Nationality extends Core_Model_Generic
     {
         $nationality_id = $this->_nationality_id;
         if (empty($nationality_id) and $throw_exception == true) {
-            $message = '_nationality_id is not set';
+            $message = '_nationality_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -25,7 +25,7 @@ class Core_Model_Nationality extends Core_Model_Generic
     {
         $nationality_name = $this->_nationality_name;
         if (empty($nationality_name) and $throw_exception == true) {
-            $message = '_nationality_name is not set';
+            $message = '_nationality_name is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

@@ -11,7 +11,7 @@ class Core_Model_Department extends Core_Model_Generic
     {
         $department_id = $this->_department_id;
         if (empty($department_id) and $throw_exception == true) {
-            $message = '_department_id is not set';
+            $message = '_department_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

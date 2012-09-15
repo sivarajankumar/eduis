@@ -1,49 +1,45 @@
 <?php
-class Core_Model_StudentRegistration extends Core_Model_Generic
+class Core_Model_Relations extends Core_Model_Generic
 {
-    protected $_member_id;
-    protected $_registration_id;
+    protected $_relation_id;
+    protected $_relation_name;
     protected $_mapper;
     /**
-     * @param bool $throw_exception optional
-     * @return the $_member_id
+     * @return the $_relation_id
      */
-    public function getMember_id ($throw_exception = null)
+    public function getRelation_id ($throw_exception = null)
     {
-        $member_id = $this->_member_id;
-        if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set in ' . get_class($this);
+        $relation_id = $this->_relation_id;
+        if (empty($relation_id) and $throw_exception == true) {
+            $message = '_relation_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
-            return $member_id;
+            return $relation_id;
         }
     }
     /**
-     * @return the $_registration_id
+     * @return the $_relation_name
      */
-    public function getRegistration_id ()
+    public function getRelation_name ()
     {
-        return $this->_registration_id;
+        return $this->_relation_name;
+    }
+    public function setRelation_id ($_relation_id)
+    {
+        $this->_relation_id = $_relation_id;
     }
     /**
-     * @param field_type $_member_id
+     * @param field_type $_relation_name
      */
-    public function setMember_id ($_member_id)
+    public function setRelation_name ($_relation_name)
     {
-        $this->_member_id = $_member_id;
-    }
-    /**
-     * @param field_type $_registration_id
-     */
-    public function setRegistration_id ($_registration_id)
-    {
-        $this->_registration_id = $_registration_id;
+        $this->_relation_name = $_relation_name;
     }
     /**
      * Sets Mapper
-     * @param Core_Model_Mapper_StudentRegistration $mapper
-     * @return Core_Model_StudentRegistration
+     * @param Core_Model_Mapper_Relations $mapper
+     * @return Core_Model_Relations
      */
     public function setMapper ($mapper)
     {
@@ -52,12 +48,12 @@ class Core_Model_StudentRegistration extends Core_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Core_Model_Mapper_StudentRegistration
+     * @return Core_Model_Mapper_Relations
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Core_Model_Mapper_StudentRegistration());
+            $this->setMapper(new Core_Model_Mapper_Relations());
         }
         return $this->_mapper;
     }
@@ -94,23 +90,16 @@ class Core_Model_StudentRegistration extends Core_Model_Generic
         }
     }
     /**
-     * 
+     * Fetches all Relations
+     * @return array
      */
-    public function initInfo ()
-    {}
-    /**
-     * Fetches information regarding class
-     *
-     */
-    public function fetchInfo ()
+    public function fetchRelations ()
     {
-        $member_id = $this->getMember_id(true);
-        $info = $this->getMapper()->fetchInfo($member_id);
-        if (empty($info)) {
+        $relations = $this->getMapper()->fetchRelations();
+        if (empty($relations)) {
             return false;
         } else {
-            $this->setOptions($info);
-            return $this;
+            return $relations;
         }
     }
 }

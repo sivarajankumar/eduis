@@ -27,7 +27,7 @@ class Core_Model_Programme extends Core_Model_Generic
     {
         $programme_id = $this->_programme_id;
         if (empty($programme_id) and $throw_exception == true) {
-            $message = '_programme_id is not set';
+            $message = '_programme_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

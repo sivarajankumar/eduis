@@ -20,7 +20,7 @@ class Core_Model_StudentAdmission extends Core_Model_Generic
     {
         $member_id = $this->_member_id;
         if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set';
+            $message = 'Member_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

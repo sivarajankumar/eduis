@@ -1,5 +1,5 @@
 <?php
-class Core_Model_Mapper_StudentRegistration
+class Core_Model_Mapper_Relations
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Core_Model_Mapper_StudentRegistration
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Core_Model_Mapper_StudentRegistration
+     * @return Core_Model_Mapper_Relations
      */
     public function setDbTable ($dbTable)
     {
@@ -29,30 +29,26 @@ class Core_Model_Mapper_StudentRegistration
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Core_Model_DbTable_StudentRegistration');
+            $this->setDbTable('Core_Model_DbTable_Relations');
         }
         return $this->_dbTable;
     }
-    /**
-     * Fetches Registration details of a student
-     * 
-     * @param integer $member_id
-     */
-    public function fetchInfo ($member_id)
+    public function fetchRelations ()
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $stu_reg_table = $db_table->info('name');
-        $required_cols = array('member_id', 'registration_id');
-        $select = $adapter->select()
-            ->from($stu_reg_table, $required_cols)
-            ->where('member_id = ?', $member_id);
-        $student_info = array();
-        $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        if (empty($student_info)) {
+        $relation_table = $db_table->info('name');
+        $required_cols = array('relation_id', 'relation_name');
+        $select = $adapter->select()->from($relation_table, $required_cols);
+        $relations = array();
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        if (empty($result)) {
             return false;
         } else {
-            return $student_info[$member_id];
+            foreach ($result as $relation_id => $relation_name_array) {
+                $relations[$relation_id] = $relation_name_array['relation_name'];
+            }
+            return $relations;
         }
     }
     public function save ($prepared_data)
@@ -60,10 +56,10 @@ class Core_Model_Mapper_StudentRegistration
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
-    public function update ($prepared_data, $member_id)
+    public function update ($prepared_data, $relation_id)
     {
         $dbtable = $this->getDbTable();
-        $where = 'member_id = ' . $member_id;
+        $where = 'relation_id = ' . $relation_id;
         return $dbtable->update($prepared_data, $where);
     }
 }
