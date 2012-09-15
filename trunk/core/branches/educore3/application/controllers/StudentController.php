@@ -77,6 +77,201 @@ class StudentController extends Zend_Controller_Action
             $this->setMember_id($authInfo['member_id']);
         }
     }
+    public function sendemailAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $email_ids = $params['myarray']['email_ids'];
+        $subject = $params['myarray']['subject'];
+        $message = $params['myarray']['message'];
+        foreach ($email_ids as $email_id) {
+            $this->sendEmail($email_id, $subject, $message);
+        }
+    }
+    public function collectexportabledataAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        //$member_ids = $params['myarray']['member_ids'];
+        $member_ids = array(1, 2, 3, 4, 5);
+        $data = $this->prepareDataForExport($member_ids);
+        $headings = array_pop($data);
+        $headers = array_keys($headings);
+        foreach ($headers as $key => $header) {
+            $headers[$key] = strtoupper($header);
+        }
+        $this->export_to_excel($headers, $data);
+        /*set_time_limit(0);
+        define('TEMP_CORE', realpath(dirname(__FILE__) . '/../temp'));
+        $filename = TEMP_CORE . "/Student_Data-" . date("m-d-Y") . ".xls";
+        $realPath = realpath($filename);
+        if (false === $realPath) {
+            touch($filename);
+            chmod($filename, 0777);
+        }
+        $filename = realpath($filename);
+        $handle = fopen($filename, "w");
+        $finalData = array();
+        foreach ($data as $key => $row) {
+            foreach ($row as $col => $value) {
+                $finalData[$key][utf8_decode($col)] = utf8_decode($value);
+            }
+        }
+        $headings = array();
+        $copy = array();
+        $copy = $finalData;
+        $headings = array_pop($copy);
+        $headers = array();
+        $headers['headers'] = array_keys($headings);
+        foreach ($headers['headers'] as $key => $header) {
+            $headers['headers'][$key] = strtoupper($header);
+        }
+        Zend_Registry::get('logger')->debug($headers);
+        Zend_Registry::get('logger')->debug($finalData);
+        foreach ($headers as $header) {
+            fputcsv($handle, $header, "\t");
+        }
+        foreach ($finalData as $finalRow) {
+            fputcsv($handle, $finalRow, "\t");
+        }
+        fclose($handle);
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender();
+        $this->getResponse()
+            ->setRawHeader(
+        "Content-Type: application/vnd.ms-excel; charset=UTF-8")
+            ->setRawHeader(
+        "Content-Disposition: attachment; filename=Student_Data.xls")
+            ->setRawHeader("Content-Transfer-Encoding: binary")
+            ->setRawHeader("Expires: 0")
+            ->setRawHeader(
+        "Cache-Control: must-revalidate, post-check=0, pre-check=0")
+            ->setRawHeader("Pragma: public")
+            ->setRawHeader("Content-Length: " . filesize($filename))
+            ->sendResponse();
+        readfile($filename);
+        exit();*/
+    }
+    private function export_to_excel ($headers, $data)
+    {
+        $data_to_export = array();
+        foreach ($data as $key => $row) {
+            foreach ($row as $col => $value) {
+                $data_to_export[$key][utf8_decode($col)] = utf8_decode($value);
+            }
+        }
+        $php_excel = new PHPExcel();
+        $php_excel->getProperties()
+            ->setCreator("AMRIT SINGH")
+            ->setLastModifiedBy("AMRIT SINGH")
+            ->setTitle("Office 2007 XLSX Test Document")
+            ->setSubject("Office 2007 XLSX Test Document")
+            ->setDescription("Contains crucial student data")
+            ->setKeywords("office 2007 openxml php")
+            ->setCategory("Test result file");
+        $excel_sheet = $php_excel->getActiveSheet();
+        $alphabets = range('A', 'P');
+        $styleArray = array('font' => array('bold' => true, 'size' => 12), 
+        'alignment' => array(
+        'center' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER), 
+        'borders' => array(
+        'top' => array('style' => PHPExcel_Style_Border::BORDER_THIN)), 
+        'fill' => array('type' => PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR, 
+        'rotation' => 90, 'startcolor' => array('argb' => 'FFA0A0A0'), 
+        'endcolor' => array('argb' => 'FFFFFFFF')));
+        $excel_sheet->getStyle("A1:P1")->applyFromArray($styleArray);
+        $alphabets_index = 0;
+        $row_number = 1;
+        foreach ($headers as $header) {
+            $cell_coordinate = $alphabets[$alphabets_index] . $row_number;
+            $excel_sheet->setCellValue($cell_coordinate, 
+            strtoupper(' ' . $header . ' '));
+            $alphabets_index = ($alphabets_index + 1);
+        }
+        foreach ($alphabets as $alphabet) {
+            $excel_sheet->getColumnDimension($alphabet)->setAutoSize(true);
+        }
+        $row_number = 2;
+        foreach ($data_to_export as $student_data) {
+            $index_to_get = 0;
+            foreach ($student_data as $info) {
+                if (empty($value)) {
+                    $value = 'NA';
+                }
+                $coordinate = $alphabets[$index_to_get];
+                $excel_sheet->setCellValue($coordinate . $row_number, 
+                ' ' . $info . ' ');
+                $index_to_get = ($index_to_get + 1);
+            }
+            $row_number += 1;
+        }
+        /* 
+         * 
+         * Does not work :-(
+         * /
+        /*$toCol = $excel_sheet->getColumnDimension(
+        $excel_sheet->getHighestColumn())
+            ->getColumnIndex();
+        for ($td = 'A'; $td != $toCol; $td ++) {
+            $calculatedWidth = $excel_sheet->getColumnDimension($td)->getWidth();
+            $excel_sheet->getColumnDimension($td)->setWidth(
+            (int) $calculatedWidth * 2);
+        }
+        $excel_sheet->calculateColumnWidths();*/
+        $php_excel->setActiveSheetIndex(0);
+        header("Content-Type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename=\"Student Data.xls\"");
+        header("Cache-Control: max-age=0");
+        $objWriter = PHPExcel_IOFactory::createWriter($php_excel, "Excel5");
+        $objWriter->save("php://output");
+        exit();
+    }
+    public function fetchemailidsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug(
+        'Params required : array(\'member_ids\'=>array())');
+        if (! empty($params['member_ids'])) {
+            $member_ids = $params['member_ids'];
+            Zend_Registry::get('logger')->debug($params);
+            //for testing set
+            //$member_ids = $member_ids = array(1, 2, 3, 4, 5);
+            $member_email_ids = array();
+            foreach ($member_ids as $member_id) {
+                $email_id = $this->findEmailId($member_id);
+                $member_email_ids[$member_id] = $email_id;
+            }
+            if (empty($member_email_ids)) {
+                $member_email_ids = false;
+            }
+            $format = $this->_getParam('format', 'html');
+            switch ($format) {
+                case 'html':
+                    $this->_helper->viewRenderer->setNoRender(false);
+                    $this->_helper->layout()->enableLayout();
+                    $this->view->assign('member_email_ids', $member_email_ids);
+                    break;
+                case 'jsonp':
+                    $callback = $this->getRequest()->getParam('callback');
+                    echo $callback . '(' .
+                     $this->_helper->json($member_email_ids, false) . ')';
+                    break;
+                case 'json':
+                    $this->_helper->json($member_email_ids);
+                    break;
+                default:
+                    ;
+                    break;
+            }
+        }
+    }
     public function memberidcheckAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -203,16 +398,12 @@ class StudentController extends Zend_Controller_Action
         }
         $member_id_exists = $this->memberIdCheck($member_id);
         if ($member_id_exists) {
-            $student = new Core_Model_Member_Student();
-            $student->setMember_id($member_id);
-            $info = $student->fetchRegistrationInfo();
-            $registration_info = array();
-            if ($info instanceof Core_Model_StudentRegistration) {
-                $registration_info['registration_id'] = $info->getRegistration_id();
-            }
+            $registration_info['registration_id'] = $this->findRegistrationInfo(
+            $member_id);
             $this->_helper->json($registration_info);
-        } else {}
-        $registration_info = false;
+        } else {
+            $registration_info = false;
+        }
         $this->_helper->json($registration_info);
     }
     public function viewunvregistrationinfoAction ()
@@ -577,7 +768,7 @@ class StudentController extends Zend_Controller_Action
                 $critical_data['gender'] = $info->getGender();
                 foreach ($critical_data as $key => $value) {
                     if ($value == null) {
-                        unset($critical_data[$key]);
+                        $critical_data[$key] = null;
                     }
                 }
             } else {
@@ -617,10 +808,6 @@ class StudentController extends Zend_Controller_Action
                 }
             } else {
                 $address_info = false;
-                /*$message = 'Address info for member id : ' . $member_id .
-                 ' not present.';
-                $code = Zend_Log::ERR;
-                throw new Exception($message, $code);*/
             }
             return $address_info;
         }
@@ -629,31 +816,18 @@ class StudentController extends Zend_Controller_Action
     {
         $member_id_exists = $this->memberIdCheck($member_id);
         if ($member_id_exists) {
-            $contact = new Core_Model_Mapper_MemberContacts();
-            $contact_type_ids = $contact->fetchContactTypeIds($member_id);
+            $contact = new Core_Model_MemberContacts();
+            $contact_type_ids = $contact->fetchAllContactTypes();
             $student = new Core_Model_Member_Student();
             $student->setMember_id($member_id);
-            if (is_array($contact_type_ids)) {
-                $contact_info = array();
-                foreach ($contact_type_ids as $contact_type_id) {
-                    $info = $student->fetchContactInfo($contact_type_id);
-                    if ($info instanceof Core_Model_MemberContacts) {
-                        $contact_info[$contact_type_id]['contact_details'] = $info->getContact_details();
-                        foreach ($contact_info as $key => $array) {
-                            foreach ($array as $value) {
-                                if ($value == null) {
-                                    unset($contact_info[$key]);
-                                }
-                            }
-                        }
-                    }
+            $contact_info = array();
+            foreach ($contact_type_ids as $contact_type_id => $contact_type_name) {
+                $contact_info[$contact_type_id] = array(
+                'contact_details' => null);
+                $info = $student->fetchContactInfo($contact_type_id);
+                if ($info instanceof Core_Model_MemberContacts) {
+                    $contact_info[$contact_type_id]['contact_details'] = $info->getContact_details();
                 }
-            } else {
-                $contact_info = false;
-                /*$message = 'Contact info for member id : ' . $member_id .
-                 ' not present.';
-                $code = Zend_Log::ERR;
-                throw new Exception($message, $code);*/
             }
             return $contact_info;
         }
@@ -664,39 +838,53 @@ class StudentController extends Zend_Controller_Action
         if ($member_id_exists) {
             $relative = new Core_Model_Mapper_MemberRelatives();
             $relation_ids = $relative->fetchRelationIds($member_id);
-            $student = new Core_Model_Member_Student();
-            $student->setMember_id($member_id);
             if (is_array($relation_ids)) {
                 $relatives_info = array();
                 foreach ($relation_ids as $relation_id) {
-                    $info = $student->fetchRelativeInfo($relation_id);
-                    if ($info instanceof Core_Model_MemberRelatives) {
-                        $relatives_info[$relation_id]['occupation'] = $info->getOccupation();
-                        $relatives_info[$relation_id]['designation'] = $info->getDesignation();
-                        $relatives_info[$relation_id]['office_add'] = $info->getOffice_add();
-                        $relatives_info[$relation_id]['name'] = $info->getName();
-                        $relatives_info[$relation_id]['contact'] = $info->getContact();
-                        $relatives_info[$relation_id]['annual_income'] = $info->getAnnual_income();
-                        $relatives_info[$relation_id]['landline_no'] = $info->getLandline_no();
-                        $relatives_info[$relation_id]['email'] = $info->getEmail();
-                        foreach ($relatives_info as $key => $array) {
-                            foreach ($array as $k => $value) {
-                                if ($value == null) {
-                                    unset($relatives_info[$key][$k]);
-                                }
+                    $info = $this->findRelativeInfo($member_id, $relation_id);
+                    $relatives_info[$relation_id]['occupation'] = $info['occupation'];
+                    $relatives_info[$relation_id]['designation'] = $info['designation'];
+                    $relatives_info[$relation_id]['office_add'] = $info['office_add'];
+                    $relatives_info[$relation_id]['name'] = $info['name'];
+                    $relatives_info[$relation_id]['contact'] = $info['contact'];
+                    $relatives_info[$relation_id]['annual_income'] = $info['annual_income'];
+                    $relatives_info[$relation_id]['landline_no'] = $info['landline_no'];
+                    $relatives_info[$relation_id]['email'] = $info['email'];
+                    foreach ($relatives_info as $key => $array) {
+                        foreach ($array as $k => $value) {
+                            if ($value == null) {
+                                unset($relatives_info[$key][$k]);
                             }
                         }
                     }
                 }
             } else {
                 $relatives_info = false;
-                /*$message = 'Relative\'s info for member id : ' . $member_id .
-                 ' not present.';
-                $code = Zend_Log::ERR;
-                throw new Exception($message, $code);*/
             }
             return $relatives_info;
         }
+    }
+    private function findRelativeInfo ($member_id, $relation_id)
+    {
+        $member_id_exists = $this->memberIdCheck($member_id);
+        if ($member_id_exists) {
+            $relatives_info = array();
+            $student = new Core_Model_Member_Student();
+            $student->setMember_id($member_id);
+            $info = $student->fetchRelativeInfo($relation_id);
+            if ($info instanceof Core_Model_MemberRelatives) {
+                $relatives_info['occupation'] = $info->getOccupation();
+                $relatives_info['designation'] = $info->getDesignation();
+                $relatives_info['office_add'] = $info->getOffice_add();
+                $relatives_info['name'] = $info->getName();
+                $relatives_info['contact'] = $info->getContact();
+                $relatives_info['annual_income'] = $info->getAnnual_income();
+                $relatives_info['landline_no'] = $info->getLandline_no();
+                $relatives_info['email'] = $info->getEmail();
+            }
+            return $relatives_info;
+        }
+        return false;
     }
     private function getActiveClassIds ($member_id)
     {
@@ -766,6 +954,125 @@ class StudentController extends Zend_Controller_Action
             $jsonContent = $response->getBody($response);
             $batch_info = Zend_Json::decode($jsonContent);
             return $batch_info;
+        }
+    }
+    private function findAllContactTypes ()
+    {
+        $contacts = new Core_Model_MemberContacts();
+        return $contacts->fetchAllContactTypes();
+    }
+    private function findEmailId ($member_id)
+    {
+        $contacty_types = $this->findAllContactTypes();
+        if (empty($contacty_types)) {
+            return false;
+        } else {
+            $contact_type_id = array_search('EMAIL', $contacty_types);
+            if (is_int($contact_type_id)) {
+                $student = new Core_Model_Member_Student();
+                $student->setMember_id($member_id);
+                $info = $student->fetchContactInfo($contact_type_id);
+                if ($info instanceof Core_Model_MemberContacts) {
+                    return $info->getContact_details();
+                }
+            } else {
+                return false;
+            }
+        }
+    }
+    private function sendEmail ($email_id, $subject, $message)
+    {
+        $mail = new Zend_Mail();
+        $mail->setBodyText($message);
+        $mail->addTo($email_id);
+        $mail->setSubject($subject);
+        $mail->send();
+    }
+    private function findRelationId ($relation_name)
+    {
+        $relations = new Core_Model_Relations();
+        $all_relations = $relations->fetchRelations();
+        if (! empty($all_relations)) {
+            $relation_id = array_search($relation_name, $all_relations);
+            if (is_integer($relation_id))
+                return $relation_id;
+            else
+                return false;
+        } else
+            return false;
+    }
+    private function findRegistrationInfo ($member_id)
+    {
+        $student = new Core_Model_Member_Student();
+        $student->setMember_id($member_id);
+        $info = $student->fetchRegistrationInfo();
+        $registration_info = array();
+        if ($info instanceof Core_Model_StudentRegistration) {
+            return $info->getRegistration_id();
+        }
+    }
+    private function prepareDataForExport ($member_ids)
+    {
+        $info_to_export = array();
+        if ((! empty($member_ids)) and (is_array($member_ids))) {
+            foreach ($member_ids as $member_id) {
+                /*
+                 * Personal Info
+                 */
+                $class_ids = $this->getAllClassIds($member_id);
+                //Zend_Registry::get('logger')->debug($class_ids);
+                if (is_array($class_ids)) {
+                    $class_info = $this->findStuClassInfo($member_id, 
+                    array_pop($class_ids));
+                    $info_to_export[$member_id]['roll_number'] = $class_info['roll_no'];
+                } else {
+                    $info_to_export[$member_id]['roll_number'] = false;
+                }
+                $info_to_export[$member_id]['registration_id'] = $this->findRegistrationInfo(
+                $member_id);
+                $critical_info = $this->findCriticalInfo($member_id);
+                $info_to_export[$member_id]['first_name'] = $critical_info['first_name'];
+                $info_to_export[$member_id]['last_name'] = $critical_info['last_name'];
+                $info_to_export[$member_id]['middle_name'] = $critical_info['middle_name'];
+                $info_to_export[$member_id]['dob'] = $critical_info['dob'];
+                $info_to_export[$member_id]['gender'] = $critical_info['gender'];
+                /*
+                 * Fathers name
+                 */
+                $relative_id = $this->findRelationId('FATHER');
+                $relative_info = $this->findRelativeInfo($member_id, 
+                $relative_id);
+                if (empty($relative_info['name'])) {
+                    $info_to_export[$member_id]['father_name'] = null;
+                } else {
+                    $info_to_export[$member_id]['father_name'] = $relative_info['name'];
+                }
+                /*
+                 * Address info
+                 */
+                $address_info = $this->findAddressInfo($member_id);
+                $address_req = $address_info['MAILING'];
+                $info_to_export[$member_id]['postal_code'] = $address_req['postal_code'];
+                $info_to_export[$member_id]['city'] = $address_req['city'];
+                $info_to_export[$member_id]['district'] = $address_req['district'];
+                $info_to_export[$member_id]['state'] = $address_req['state'];
+                $info_to_export[$member_id]['address'] = $address_req['address'];
+                /*
+                 * Contact Info
+                 */
+                $contact = new Core_Model_Mapper_MemberContacts();
+                $all_contact_types = $contact->fetchAllContactTypes();
+                $home_landline = array_search('HOME LANDLINE', 
+                $all_contact_types);
+                $contact_info = $this->findContactsInfo($member_id);
+                //over write; no problem
+                $info_to_export[$member_id]['home_landline'] = $contact_info[$home_landline]['contact_details'];
+                $home_mobile = array_search('HOME MOBILE', $all_contact_types);
+                $info_to_export[$member_id]['home_mobile'] = $contact_info[$home_mobile]['contact_details'];
+                $email = array_search('EMAIL', $all_contact_types);
+                $info_to_export[$member_id]['email'] = $contact_info[$email]['contact_details'];
+            }
+            return $info_to_export;
         }
     }
 }
