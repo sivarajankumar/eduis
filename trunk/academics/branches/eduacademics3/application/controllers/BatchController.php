@@ -68,23 +68,6 @@ class BatchController extends Zend_Controller_Action
         $batch = new Acad_Model_Batch();
         $batch->saveInfo($batch_info);
     }
-    public function addbatchAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-        $departments = $this->findDepartments();
-        $programmes = $this->findProgrammes();
-        if (empty($departments)) {
-            $this->view->assign('departments', false);
-        } else {
-            $this->view->assign('departments', $departments);
-        }
-        if (empty($programmes)) {
-            $this->view->assign('programmes', false);
-        } else {
-            $this->view->assign('programmes', $programmes);
-        }
-    }
     public function savebatchAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -93,6 +76,7 @@ class BatchController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $my_array = $params['myarray'];
         $batch_info = $my_array['batch_info'];
+        $save['batch_id'] = $batch_info['batch_id'];
         $save['department_id'] = $batch_info['department_id'];
         $save['programme_id'] = $batch_info['programme_id'];
         $save['batch_start'] = $batch_info['batch_start'];
