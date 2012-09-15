@@ -914,15 +914,19 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     {
         $member_id = $this->getMember_id(true);
         $dmc_info_id_latest = $this->fetchLatestDmcInfoId($class_id);
-        $backlog_count = 0;
-        if (isset($dmc_info_id_latest)) {
-            $failed_stu_subj_ids = $this->fetchFailedSubjectIds(
-            $dmc_info_id_latest);
-            if (is_array($failed_stu_subj_ids)) {
-                $backlog_count = count($failed_stu_subj_ids);
+        if (! empty($dmc_info_id_latest)) {
+            $backlog_count = 0;
+            if (isset($dmc_info_id_latest)) {
+                $failed_stu_subj_ids = $this->fetchFailedSubjectIds(
+                $dmc_info_id_latest);
+                if (is_array($failed_stu_subj_ids)) {
+                    $backlog_count = count($failed_stu_subj_ids);
+                }
             }
+            return $backlog_count;
+        } else {
+            return false;
         }
-        return $backlog_count;
     }
     public function hasBacklogCheck ()
     {
