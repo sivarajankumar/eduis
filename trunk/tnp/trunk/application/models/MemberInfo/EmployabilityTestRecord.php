@@ -15,7 +15,7 @@ class Tnp_Model_MemberInfo_EmployabilityTestRecord extends Tnp_Model_Generic
     {
         $test_record_id = $this->_test_record_id;
         if (empty($test_record_id) and $throw_exception == true) {
-            $message = '_test_record_id is not set';
+            $message = '_test_record_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -30,7 +30,7 @@ class Tnp_Model_MemberInfo_EmployabilityTestRecord extends Tnp_Model_Generic
     {
         $member_id = $this->_member_id;
         if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set';
+            $message = 'Member_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -44,7 +44,7 @@ class Tnp_Model_MemberInfo_EmployabilityTestRecord extends Tnp_Model_Generic
     {
         $employability_test_id = $this->_employability_test_id;
         if (empty($employability_test_id) and $throw_exception == true) {
-            $message = '_employability_test_id is not set';
+            $message = '_employability_test_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -58,7 +58,7 @@ class Tnp_Model_MemberInfo_EmployabilityTestRecord extends Tnp_Model_Generic
     {
         $test_regn_no = $this->_test_regn_no;
         if (empty($test_regn_no) and $throw_exception == true) {
-            $message = '_test_regn_no is not set';
+            $message = '_test_regn_no is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

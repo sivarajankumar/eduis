@@ -18,7 +18,7 @@ class Tnp_Model_Class extends Tnp_Model_Generic
     {
         $class_id = $this->_class_id;
         if (empty($class_id) and $throw_exception == true) {
-            $message = '_class_id is not set';
+            $message = '_class_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -32,7 +32,7 @@ class Tnp_Model_Class extends Tnp_Model_Generic
     {
         $batch_id = $this->_batch_id;
         if (empty($batch_id) and $throw_exception == true) {
-            $message = '_batch_id is not set';
+            $message = '_batch_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -46,7 +46,7 @@ class Tnp_Model_Class extends Tnp_Model_Generic
     {
         $semester_id = $this->_semester_id;
         if (empty($semester_id) and $throw_exception == true) {
-            $message = '_semester_id is not set';
+            $message = '_semester_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -74,7 +74,7 @@ class Tnp_Model_Class extends Tnp_Model_Generic
     {
         $handled_by_dept = $this->_handled_by_dept;
         if (empty($handled_by_dept) and $throw_exception == true) {
-            $message = '_handled_by_dept is not set';
+            $message = '_handled_by_dept is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -102,7 +102,7 @@ class Tnp_Model_Class extends Tnp_Model_Generic
     {
         $is_active = $this->_is_active;
         if (empty($is_active) and $throw_exception == true) {
-            $message = '_is_active is not set';
+            $message = '_is_active is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

@@ -11,7 +11,7 @@ class Tnp_Model_Role extends Tnp_Model_Generic
     {
         $role_id = $this->_role_id;
         if (empty($role_id) and $throw_exception == true) {
-            $message = '_role_id is not set';
+            $message = '_role_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -25,7 +25,7 @@ class Tnp_Model_Role extends Tnp_Model_Generic
     {
         $role_name = $this->_role_name;
         if (empty($role_name) and $throw_exception == true) {
-            $message = '_role_name is not set';
+            $message = '_role_name is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

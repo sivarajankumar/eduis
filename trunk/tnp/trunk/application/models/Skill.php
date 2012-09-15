@@ -11,7 +11,7 @@ class Tnp_Model_Skill extends Tnp_Model_Generic
     {
         $skill_id = $this->_skill_id;
         if (empty($skill_id) and $throw_exception == true) {
-            $message = '_skill_id is not set';
+            $message = '_skill_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -25,7 +25,7 @@ class Tnp_Model_Skill extends Tnp_Model_Generic
     {
         $skill_name = $this->_skill_name;
         if (empty($skill_name) and $throw_exception == true) {
-            $message = '_skill_name is not set';
+            $message = '_skill_name is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

@@ -14,7 +14,7 @@ class Tnp_Model_MemberInfo_ProfileStatus extends Tnp_Model_Generic
     {
         $member_id = $this->_member_id;
         if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set';
+            $message = 'Member_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -28,7 +28,7 @@ class Tnp_Model_MemberInfo_ProfileStatus extends Tnp_Model_Generic
     {
         $exists = $this->_exists;
         if (empty($exists) and $throw_exception == true) {
-            $message = '_exists is not set';
+            $message = '_exists is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -42,7 +42,7 @@ class Tnp_Model_MemberInfo_ProfileStatus extends Tnp_Model_Generic
     {
         $is_locked = $this->_is_locked;
         if (empty($is_locked) and $throw_exception == true) {
-            $message = '_is_locked is not set';
+            $message = '_is_locked is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -56,7 +56,7 @@ class Tnp_Model_MemberInfo_ProfileStatus extends Tnp_Model_Generic
     {
         $last_updated_on = $this->_last_updated_on;
         if (empty($last_updated_on) and $throw_exception == true) {
-            $message = '_last_updated_on is not set';
+            $message = '_last_updated_on is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

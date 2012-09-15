@@ -15,7 +15,7 @@ class Tnp_Model_MemberInfo_EmployabilityTestSectionScore extends Tnp_Model_Gener
     {
         $section_score_id = $this->_section_score_id;
         if (empty($section_score_id) and $throw_exception == true) {
-            $message = '_section_score_id is not set';
+            $message = '_section_score_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -30,7 +30,7 @@ class Tnp_Model_MemberInfo_EmployabilityTestSectionScore extends Tnp_Model_Gener
     {
         $member_id = $this->_member_id;
         if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set';
+            $message = 'Member_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -44,7 +44,7 @@ class Tnp_Model_MemberInfo_EmployabilityTestSectionScore extends Tnp_Model_Gener
     {
         $test_section_id = $this->_test_section_id;
         if (empty($test_section_id) and $throw_exception == true) {
-            $message = '_test_section_id is not set';
+            $message = '_test_section_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -58,7 +58,7 @@ class Tnp_Model_MemberInfo_EmployabilityTestSectionScore extends Tnp_Model_Gener
     {
         $employability_test_id = $this->_employability_test_id;
         if (empty($employability_test_id) and $throw_exception == true) {
-            $message = '_employability_test_id is not set';
+            $message = '_employability_test_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

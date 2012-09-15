@@ -11,7 +11,7 @@ class Tnp_Model_Industry extends Tnp_Model_Generic
     {
         $industry_id = $this->_industry_id;
         if (empty($industry_id) and $throw_exception == true) {
-            $message = '_industry_id is not set';
+            $message = '_industry_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

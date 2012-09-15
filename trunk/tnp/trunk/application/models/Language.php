@@ -11,7 +11,7 @@ class Tnp_Model_Language extends Tnp_Model_Generic
     {
         $language_id = $this->_language_id;
         if (empty($language_id) and $throw_exception == true) {
-            $message = '_language_id is not set';
+            $message = '_language_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -25,7 +25,7 @@ class Tnp_Model_Language extends Tnp_Model_Generic
     {
         $language_name = $this->_language_name;
         if (empty($language_name) and $throw_exception == true) {
-            $message = '_language_name is not set';
+            $message = '_language_name is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
