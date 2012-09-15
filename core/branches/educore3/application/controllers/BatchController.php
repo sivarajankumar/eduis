@@ -68,30 +68,13 @@ class BatchController extends Zend_Controller_Action
         $batch = new Core_Model_Batch();
         try {
             $batch_id = $batch->saveInfo($batch_info);
-            Zend_Registry::get('logger')->debug(
-            'New batch added, batch id = ' . $batch_id);
+            Zend_Registry::get('logger')->debug('batch id = ' . $batch_id);
+            return $batch_id;
         } catch (Exception $e) {
             Zend_Registry::get('logger')->debug($e);
             throw new Exception(
             'There was some error saving batch information in core. Please try again', 
             Zend_Log::WARN);
-        }
-        $batch_info['batch_id'] = $batch_id;
-        Zend_Registry::get('logger')->debug($batch_info);
-        $httpClient = new Zend_Http_Client(
-        'http://' . ACADEMIC_SERVER . '/batch/savebatch');
-        $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
-        $httpClient->setMethod('POST');
-        $httpClient->setParameterPost(
-        array('myarray' => array('batch_info' => $batch_info)));
-        Zend_Registry::get('logger')->debug($httpClient);
-        $response = $httpClient->request();
-        if ($response->isError()) {
-            $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
-             $response->getHeader('Message');
-            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
-        } else {
-            $jsonContent = $response->getBody($response);
         }
     }
     private function findDepartments ()
@@ -157,7 +140,24 @@ class BatchController extends Zend_Controller_Action
         $save['batch_start'] = $batch_info['batch_start'];
         $save['batch_number'] = $batch_info['batch_number'];
         $save['is_active'] = $batch_info['is_active'];
-        $this->saveBatchInfo($save);
+        $batch_id = $this->saveBatchInfo($save);
+        $batch_info['batch_id'] = $batch_id;
+        Zend_Registry::get('logger')->debug($params);
+        Zend_Registry::get('logger')->debug($batch_info);
+        $httpClient = new Zend_Http_Client(
+        'http://' . ACADEMIC_SERVER . '/batch/savebatch');
+        $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+        $httpClient->setMethod('POST');
+        $httpClient->setParameterPost(
+        array('myarray' => array('batch_info' => $batch_info)));
+        $response = $httpClient->request();
+        if ($response->isError()) {
+            $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
+             $response->getHeader('Message') . $response->getBody();
+            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+        } else {
+            $jsonContent = $response->getBody($response);
+        }
     }
     public function viewbatchinfoAction ()
     {

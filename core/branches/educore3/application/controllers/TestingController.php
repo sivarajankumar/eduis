@@ -32,6 +32,37 @@ class TestingController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
     }
+    public function viewemailidsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $member_ids = array(1, 2, 3, 4, 5);
+        $httpClient = new Zend_Http_Client(
+        'http://' . CORE_SERVER . '/student/fetchemailids');
+        //$httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+        $httpClient->setMethod('POST');
+        $call_back = 'viewbatchinfo';
+        $httpClient->setParameterPost(
+        array('member_ids' => $member_ids, 'format' => 'json', 
+        'call_back' => $call_back));
+        $response = $httpClient->request();
+        if ($response->isError()) {
+            $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
+             $response->getHeader('Message') . $response->getBody();
+            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+        } else {
+            $jsonContent = $response->getBody($response);
+            Zend_Registry::get('logger')->debug($jsonContent);
+            Zend_Registry::get('logger')->debug(
+            Zend_Json_Decoder::decode($jsonContent));
+            Zend_Registry::get('logger')->debug(json_decode($jsonContent));
+            /*Zend_Registry::get('logger')->debug(
+            Zend_Json_Decoder::decode($jsonContent));*/
+        /*$r = Zend_Json_Decoder::decode($jsonContent);
+            $batch_info = $r['batch_info'];
+            Zend_Registry::get('logger')->debug($batch_info);*/
+        }
+    }
     public function getbatchinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
