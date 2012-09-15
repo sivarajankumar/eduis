@@ -18,7 +18,7 @@ class Tnp_Model_TechnicalField extends Tnp_Model_Generic
     {
         $technical_field_id = $this->_technical_field_id;
         if (empty($technical_field_id) and $throw_exception == true) {
-            $message = '_technical_field_id is not set';
+            $message = '_technical_field_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -32,7 +32,7 @@ class Tnp_Model_TechnicalField extends Tnp_Model_Generic
     {
         $technical_field_name = $this->_technical_field_name;
         if (empty($technical_field_name) and $throw_exception == true) {
-            $message = '_technical_field_name is not set';
+            $message = '_technical_field_name is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

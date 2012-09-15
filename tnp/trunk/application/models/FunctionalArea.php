@@ -11,7 +11,7 @@ class Tnp_Model_FunctionalArea extends Tnp_Model_Generic
     {
         $functional_area_id = $this->_functional_area_id;
         if (empty($functional_area_id) and $throw_exception == true) {
-            $message = '_functional_area_id is not set';
+            $message = '_functional_area_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -25,7 +25,7 @@ class Tnp_Model_FunctionalArea extends Tnp_Model_Generic
     {
         $functional_area_name = $this->_functional_area_name;
         if (empty($functional_area_name) and $throw_exception == true) {
-            $message = '_functional_area_name is not set';
+            $message = '_functional_area_name is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

@@ -18,7 +18,7 @@ class Tnp_Model_Training extends Tnp_Model_Generic
     {
         $training_id = $this->_training_id;
         if (empty($training_id) and $throw_exception == true) {
-            $message = '_training_id is not set';
+            $message = '_training_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -32,7 +32,7 @@ class Tnp_Model_Training extends Tnp_Model_Generic
     {
         $technical_field_id = $this->_technical_field_id;
         if (empty($technical_field_id) and $throw_exception == true) {
-            $message = '_technical_field_id is not set';
+            $message = '_technical_field_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -46,7 +46,7 @@ class Tnp_Model_Training extends Tnp_Model_Generic
     {
         $training_technology = $this->_training_technology;
         if (empty($training_technology) and $throw_exception == true) {
-            $message = '_training_technology is not set';
+            $message = '_training_technology is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

@@ -18,7 +18,7 @@ class Tnp_Model_MemberInfo_Training extends Tnp_Model_Generic
     {
         $training_id = $this->_training_id;
         if (empty($training_id) and $throw_exception == true) {
-            $message = '_training_id is not set';
+            $message = '_training_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -53,7 +53,7 @@ class Tnp_Model_MemberInfo_Training extends Tnp_Model_Generic
     {
         $functional_area_id = $this->_functional_area_id;
         if (empty($functional_area_id) and $throw_exception == true) {
-            $message = '_functional_area_id is not set';
+            $message = '_functional_area_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -89,7 +89,7 @@ class Tnp_Model_MemberInfo_Training extends Tnp_Model_Generic
     {
         $member_id = $this->_member_id;
         if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set';
+            $message = 'Member_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

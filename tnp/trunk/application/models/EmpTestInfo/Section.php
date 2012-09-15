@@ -12,7 +12,7 @@ class Tnp_Model_EmpTestInfo_Section extends Tnp_Model_Generic
     {
         $test_section_id = $this->_test_section_id;
         if (empty($test_section_id) and $throw_exception == true) {
-            $message = '_test_section_id is not set';
+            $message = '_test_section_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -26,7 +26,7 @@ class Tnp_Model_EmpTestInfo_Section extends Tnp_Model_Generic
     {
         $employability_test_id = $this->_employability_test_id;
         if (empty($employability_test_id) and $throw_exception == true) {
-            $message = '_employability_test_id is not set';
+            $message = '_employability_test_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -41,7 +41,7 @@ class Tnp_Model_EmpTestInfo_Section extends Tnp_Model_Generic
         return $this->_test_section_name;
         $test_section_name = $this->_test_section_name;
         if (empty($test_section_name) and $throw_exception == true) {
-            $message = '_test_section_name is not set';
+            $message = '_test_section_name is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

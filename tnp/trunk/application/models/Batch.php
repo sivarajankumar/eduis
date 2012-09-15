@@ -15,7 +15,7 @@ class Tnp_Model_Batch extends Tnp_Model_Generic
     {
         $batch_id = $this->_batch_id;
         if (empty($batch_id) and $throw_exception == true) {
-            $message = '_batch_id is not set';
+            $message = '_batch_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -29,7 +29,7 @@ class Tnp_Model_Batch extends Tnp_Model_Generic
     {
         $department_id = $this->_department_id;
         if (empty($department_id) and $throw_exception == true) {
-            $message = '_department_id is not set';
+            $message = '_department_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -43,7 +43,7 @@ class Tnp_Model_Batch extends Tnp_Model_Generic
     {
         $programme_id = $this->_programme_id;
         if (empty($programme_id) and $throw_exception == true) {
-            $message = '_programme_id is not set';
+            $message = '_programme_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -57,7 +57,7 @@ class Tnp_Model_Batch extends Tnp_Model_Generic
     {
         $batch_start = $this->_batch_start;
         if (empty($batch_start) and $throw_exception == true) {
-            $message = '_batch_start is not set';
+            $message = '_batch_start is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -78,7 +78,7 @@ class Tnp_Model_Batch extends Tnp_Model_Generic
     {
         $is_active = $this->_is_active;
         if (empty($is_active) and $throw_exception == true) {
-            $message = '_is_active is not set';
+            $message = '_is_active is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

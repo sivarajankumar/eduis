@@ -12,7 +12,7 @@ class Tnp_Model_Certification extends Tnp_Model_Generic
     {
         $certification_id = $this->_certification_id;
         if (empty($certification_id) and $throw_exception == true) {
-            $message = '_certification_id is not set';
+            $message = '_certification_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -26,7 +26,7 @@ class Tnp_Model_Certification extends Tnp_Model_Generic
     {
         $certification_name = $this->_certification_name;
         if (empty($certification_name) and $throw_exception == true) {
-            $message = '_certification_name is not set';
+            $message = '_certification_name is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -40,7 +40,7 @@ class Tnp_Model_Certification extends Tnp_Model_Generic
     {
         $functional_area_id = $this->_functional_area_id;
         if (empty($functional_area_id) and $throw_exception == true) {
-            $message = '_functional_area_id is not set';
+            $message = '_functional_area_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
