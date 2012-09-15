@@ -11,7 +11,7 @@ class Core_Model_Religion extends Core_Model_Generic
     {
         $religion_id = $this->_religion_id;
         if (empty($religion_id) and $throw_exception == true) {
-            $message = '_religion_id is not set';
+            $message = '_religion_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -25,7 +25,7 @@ class Core_Model_Religion extends Core_Model_Generic
     {
         $religion_name = $this->_religion_name;
         if (empty($religion_name) and $throw_exception == true) {
-            $message = '_religion_name is not set';
+            $message = '_religion_name is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

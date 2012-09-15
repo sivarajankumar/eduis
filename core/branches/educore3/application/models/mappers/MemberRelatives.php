@@ -42,23 +42,27 @@ class Core_Model_Mapper_MemberRelatives
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $relaives_table = $db_table->info('name');
+        $relatives_table = $db_table->info('name');
         $required_cols = array('member_id', 'relation_id', 'name', 'occupation', 
         'designation', 'office_add', 'contact', 'annual_income', 'landline_no', 
         'email');
         $relations_db_table = new Core_Model_DbTable_Relations();
         $relations_table = $relations_db_table->info('name');
         $relations_cols = 'relation_name';
-        $cond = $relaives_table . '.relation_id=' . $relations_table .
+        $cond = $relatives_table . '.relation_id=' . $relations_table .
          '.relation_id';
         $select = $adapter->select()
-            ->from($relaives_table, $required_cols)
+            ->from($relatives_table, $required_cols)
             ->joinInner($relations_table, $cond, $relations_cols)
             ->where('member_id = ?', $member_id)
-            ->where(strval($relaives_table . '.relation_id = ?'), $relation_id);
+            ->where(strval($relatives_table . '.relation_id = ?'), $relation_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $student_info[$member_id];
+        if (empty($student_info)) {
+            return false;
+        } else {
+            return $student_info[$member_id];
+        }
     }
     /**
      * Fetches Relation of a Member

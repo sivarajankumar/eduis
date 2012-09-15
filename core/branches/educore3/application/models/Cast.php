@@ -11,7 +11,7 @@ class Core_Model_Cast extends Core_Model_Generic
     {
         $cast_id = $this->_cast_id;
         if (empty($cast_id) and $throw_exception == true) {
-            $message = '_cast_id is not set';
+            $message = '_cast_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -25,7 +25,7 @@ class Core_Model_Cast extends Core_Model_Generic
     {
         $cast_name = $this->_cast_name;
         if (empty($cast_name) and $throw_exception == true) {
-            $message = '_cast_name is not set';
+            $message = '_cast_name is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {

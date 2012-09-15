@@ -44,7 +44,7 @@ class Core_Model_Mapper_MemberContacts
         $db_table = new Core_Model_DbTable_MemberContacts();
         $member_contacts_table = $db_table->info('name');
         $required_cols = array('member_id', 'contact_type_id', 
-        'contact_details', 'member_id');
+        'contact_details');
         $contacts_type_db_table = new Core_Model_DbTable_ContactType();
         $contacts_type_table = $contacts_type_db_table->info('name');
         $contacts_type_cols = 'contact_type_name';
@@ -58,7 +58,11 @@ class Core_Model_Mapper_MemberContacts
         $contact_type_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $student_info[$member_id];
+        if (empty($student_info)) {
+            return false;
+        } else {
+            return $student_info[$member_id];
+        }
     }
     /**
      * Fetches Contact Type Ids of a Member
@@ -77,6 +81,29 @@ class Core_Model_Mapper_MemberContacts
         $contacty_type_ids = array();
         $contacty_type_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $contacty_type_ids;
+    }
+    /**
+     * Fetches All Contact Types 
+     * 
+     */
+    public function fetchAllContactTypes ()
+    {
+        $contacts_type_db_table = new Core_Model_DbTable_ContactType();
+        $contacts_type_table = $contacts_type_db_table->info('name');
+        $adapter = $this->getDbTable()->getAdapter();
+        $required_cols = array('contact_type_id', 'contact_type_name');
+        $select = $adapter->select()->from($contacts_type_table, $required_cols);
+        $contacty_types = array();
+        $result = array();
+        $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        if (empty($result)) {
+            return false;
+        } else {
+            foreach ($result as $contact_type_id => $contact_type_name_array) {
+                $contacty_types[$contact_type_id] = $contact_type_name_array['contact_type_name'];
+            }
+            return $contacty_types;
+        }
     }
     public function save ($prepared_data)
     {

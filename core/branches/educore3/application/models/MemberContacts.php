@@ -14,7 +14,7 @@ class Core_Model_MemberContacts extends Core_Model_Generic
     {
         $member_id = $this->_member_id;
         if (empty($member_id) and $throw_exception == true) {
-            $message = 'Member_id is not set';
+            $message = 'Member_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -28,7 +28,7 @@ class Core_Model_MemberContacts extends Core_Model_Generic
     {
         $contact_type_id = $this->_contact_type_id;
         if (empty($contact_type_id) and $throw_exception == true) {
-            $message = '_contact_type_id is not set';
+            $message = '_contact_type_id is not set in ' . get_class($this);
             $code = Zend_Log::ERR;
             throw new Exception($message, $code);
         } else {
@@ -147,8 +147,7 @@ class Core_Model_MemberContacts extends Core_Model_Generic
         if (empty($info)) {
             return false;
         } else {
-            $this->setOptions($info);
-            return $this;
+            return $this->setOptions($info);
         }
     }
     /**
@@ -163,6 +162,15 @@ class Core_Model_MemberContacts extends Core_Model_Generic
             return false;
         } else {
             return $contact_type_ids;
+        }
+    }
+    public function fetchAllContactTypes ()
+    {
+        $contacty_types = $this->getMapper()->fetchAllContactTypes();
+        if (empty($contacty_types)) {
+            return false;
+        } else {
+            return $contacty_types;
         }
     }
 }
