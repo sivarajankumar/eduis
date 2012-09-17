@@ -79,6 +79,39 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
+    public function collectexportabledataAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_ids = $params['myarray']['member_ids'];
+        $data = $this->prepareDataForExport($member_ids);
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('data', $data);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($data, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($data);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug($data);
+                break;
+            default:
+                ;
+                break;
+        }
+         //Zend_Registry::get('logger')->debug($t);
+    }
     public function fetchcriticalinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -2459,22 +2492,16 @@ class StudentController extends Zend_Controller_Action
         $save_info['percentage'] = (100 * ($marks_obtained / $total_marks));
         return $student->saveDmcInfo($save_info);
     }
-    public function collectexportabledataAction ()
+    private function prepareDataForExport ($member_ids)
     {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $member_ids = array(1, 2, 3, 4, 5);
-        $t = array();
-        foreach ($member_ids as $member_id) {
-            $t[$member_id] = $this->generateReport($member_id);
-            if (empty($t[$member_id])) {
-                unset($t[$member_id]);
+        $info_to_export = array();
+        if ((! empty($member_ids)) and (is_array($member_ids))) {
+            foreach ($member_ids as $member_id) {
+                $info_to_export[] = $this->generateReport($member_id);
             }
+            return $info_to_export;
         }
-        echo "<pre>";
-        print_r($t);
-        echo "</pre>";
-         //Zend_Registry::get('logger')->debug($t);
+        return false;
     }
     private function generateReport ($member_id)
     {
