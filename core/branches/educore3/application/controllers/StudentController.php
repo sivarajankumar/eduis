@@ -90,15 +90,13 @@ class StudentController extends Zend_Controller_Action
             $this->sendEmail($email_id, $subject, $message);
         }
     }
-    public function collectexportabledataAction ()
+    public function exportexcelAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        //$member_ids = $params['myarray']['member_ids'];
-        $member_ids = array(1, 2, 3, 4, 5);
-        $data = $this->prepareDataForExport($member_ids);
+        $data = $params['myarray']['data'];
         $headings = array_pop($data);
         $headers = array_keys($headings);
         foreach ($headers as $key => $header) {
@@ -156,79 +154,35 @@ class StudentController extends Zend_Controller_Action
         readfile($filename);
         exit();*/
     }
-    private function export_to_excel ($headers, $data)
+    public function collectexportabledataAction ()
     {
-        $data_to_export = array();
-        foreach ($data as $key => $row) {
-            foreach ($row as $col => $value) {
-                $data_to_export[$key][utf8_decode($col)] = utf8_decode($value);
-            }
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_ids = $params['myarray']['member_ids'];
+        $data = $this->prepareDataForExport($member_ids);
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('data', $data);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($data, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($data);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug($data);
+                break;
+            default:
+                ;
+                break;
         }
-        $php_excel = new PHPExcel();
-        $php_excel->getProperties()
-            ->setCreator("AMRIT SINGH")
-            ->setLastModifiedBy("AMRIT SINGH")
-            ->setTitle("Office 2007 XLSX Test Document")
-            ->setSubject("Office 2007 XLSX Test Document")
-            ->setDescription("Contains crucial student data")
-            ->setKeywords("office 2007 openxml php")
-            ->setCategory("Test result file");
-        $excel_sheet = $php_excel->getActiveSheet();
-        $alphabets = range('A', 'P');
-        $styleArray = array('font' => array('bold' => true, 'size' => 12), 
-        'alignment' => array(
-        'center' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER), 
-        'borders' => array(
-        'top' => array('style' => PHPExcel_Style_Border::BORDER_THIN)), 
-        'fill' => array('type' => PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR, 
-        'rotation' => 90, 'startcolor' => array('argb' => 'FFA0A0A0'), 
-        'endcolor' => array('argb' => 'FFFFFFFF')));
-        $excel_sheet->getStyle("A1:P1")->applyFromArray($styleArray);
-        $alphabets_index = 0;
-        $row_number = 1;
-        foreach ($headers as $header) {
-            $cell_coordinate = $alphabets[$alphabets_index] . $row_number;
-            $excel_sheet->setCellValue($cell_coordinate, 
-            strtoupper(' ' . $header . ' '));
-            $alphabets_index = ($alphabets_index + 1);
-        }
-        foreach ($alphabets as $alphabet) {
-            $excel_sheet->getColumnDimension($alphabet)->setAutoSize(true);
-        }
-        $row_number = 2;
-        foreach ($data_to_export as $student_data) {
-            $index_to_get = 0;
-            foreach ($student_data as $info) {
-                if (empty($value)) {
-                    $value = 'NA';
-                }
-                $coordinate = $alphabets[$index_to_get];
-                $excel_sheet->setCellValue($coordinate . $row_number, 
-                ' ' . $info . ' ');
-                $index_to_get = ($index_to_get + 1);
-            }
-            $row_number += 1;
-        }
-        /* 
-         * 
-         * Does not work :-(
-         * /
-        /*$toCol = $excel_sheet->getColumnDimension(
-        $excel_sheet->getHighestColumn())
-            ->getColumnIndex();
-        for ($td = 'A'; $td != $toCol; $td ++) {
-            $calculatedWidth = $excel_sheet->getColumnDimension($td)->getWidth();
-            $excel_sheet->getColumnDimension($td)->setWidth(
-            (int) $calculatedWidth * 2);
-        }
-        $excel_sheet->calculateColumnWidths();*/
-        $php_excel->setActiveSheetIndex(0);
-        header("Content-Type: application/vnd.ms-excel");
-        header("Content-Disposition: attachment; filename=\"Student Data.xls\"");
-        header("Cache-Control: max-age=0");
-        $objWriter = PHPExcel_IOFactory::createWriter($php_excel, "Excel5");
-        $objWriter->save("php://output");
-        exit();
     }
     public function fetchemailidsAction ()
     {
@@ -1074,5 +1028,79 @@ class StudentController extends Zend_Controller_Action
             }
             return $info_to_export;
         }
+    }
+    private function export_to_excel ($headers, $data)
+    {
+        $data_to_export = array();
+        foreach ($data as $key => $row) {
+            foreach ($row as $col => $value) {
+                $data_to_export[$key][utf8_decode($col)] = utf8_decode($value);
+            }
+        }
+        $php_excel = new PHPExcel();
+        $php_excel->getProperties()
+            ->setCreator("AMRIT SINGH")
+            ->setLastModifiedBy("AMRIT SINGH")
+            ->setTitle("Office 2007 XLSX Test Document")
+            ->setSubject("Office 2007 XLSX Test Document")
+            ->setDescription("Contains crucial student data")
+            ->setKeywords("office 2007 openxml php")
+            ->setCategory("Test result file");
+        $excel_sheet = $php_excel->getActiveSheet();
+        $alphabets = range('A', 'P');
+        $styleArray = array('font' => array('bold' => true, 'size' => 12), 
+        'alignment' => array(
+        'center' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER), 
+        'borders' => array(
+        'top' => array('style' => PHPExcel_Style_Border::BORDER_THIN)), 
+        'fill' => array('type' => PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR, 
+        'rotation' => 90, 'startcolor' => array('argb' => 'FFA0A0A0'), 
+        'endcolor' => array('argb' => 'FFFFFFFF')));
+        $excel_sheet->getStyle("A1:P1")->applyFromArray($styleArray);
+        $alphabets_index = 0;
+        $row_number = 1;
+        foreach ($headers as $header) {
+            $cell_coordinate = $alphabets[$alphabets_index] . $row_number;
+            $excel_sheet->setCellValue($cell_coordinate, 
+            strtoupper(' ' . $header . ' '));
+            $alphabets_index = ($alphabets_index + 1);
+        }
+        foreach ($alphabets as $alphabet) {
+            $excel_sheet->getColumnDimension($alphabet)->setAutoSize(true);
+        }
+        $row_number = 2;
+        foreach ($data_to_export as $student_data) {
+            $index_to_get = 0;
+            foreach ($student_data as $info) {
+                if (empty($value)) {
+                    $value = 'NA';
+                }
+                $coordinate = $alphabets[$index_to_get];
+                $excel_sheet->setCellValue($coordinate . $row_number, 
+                ' ' . $info . ' ');
+                $index_to_get = ($index_to_get + 1);
+            }
+            $row_number += 1;
+        }
+        /* 
+         * 
+         * Does not work :-(
+         * /
+        /*$toCol = $excel_sheet->getColumnDimension(
+        $excel_sheet->getHighestColumn())
+            ->getColumnIndex();
+        for ($td = 'A'; $td != $toCol; $td ++) {
+            $calculatedWidth = $excel_sheet->getColumnDimension($td)->getWidth();
+            $excel_sheet->getColumnDimension($td)->setWidth(
+            (int) $calculatedWidth * 2);
+        }
+        $excel_sheet->calculateColumnWidths();*/
+        $php_excel->setActiveSheetIndex(0);
+        header("Content-Type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename=\"Student Data.xls\"");
+        header("Cache-Control: max-age=0");
+        $objWriter = PHPExcel_IOFactory::createWriter($php_excel, "Excel5");
+        $objWriter->save("php://output");
+        exit();
     }
 }

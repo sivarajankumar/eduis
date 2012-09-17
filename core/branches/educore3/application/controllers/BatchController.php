@@ -145,7 +145,7 @@ class BatchController extends Zend_Controller_Action
         Zend_Registry::get('logger')->debug($params);
         Zend_Registry::get('logger')->debug($batch_info);
         $httpClient = new Zend_Http_Client(
-        'http://' . ACADEMIC_SERVER . '/batch/savebatch');
+        'http://tnp.aceambala.com/batch/savebatch');
         $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
         $httpClient->setMethod('POST');
         $httpClient->setParameterPost(
@@ -156,7 +156,9 @@ class BatchController extends Zend_Controller_Action
              $response->getHeader('Message') . $response->getBody();
             throw new Zend_Exception($remoteErr, Zend_Log::ERR);
         } else {
-            $jsonContent = $response->getBody($response);
+            /*$jsonContent = $response->getBody($response);
+            $r = Zend_Json_Decoder::decode($jsonContent);
+            Zend_Registry::get('logger')->debug($r);*/
         }
     }
     public function viewbatchinfoAction ()
