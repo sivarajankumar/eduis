@@ -3,57 +3,99 @@
 	<input name="roll_no" id="roll_no" type="text" size="30">
 	<input type="submit" value="View Profile">
 </form>
+
+<div id="another_search">
+	<a href="javascript:window.location.reload()" onclick="window.location.reload()">Click here</a> to make another search.
+</div>
+
 <div id="student_profile_div">
 	<link rel="stylesheet" href="<?php echo 'http://'.CDN_SERVER.'/css/admission.css';?>">
 
-<div id="main">
-	<div id="sidebar" style="float:left">
-	<ul class="menu">
-		<li class="item1">
-			<a href="#">Class Information</a>
-			<ul class="sub_ul">
-				<li class="subitem1"><a href="http://core.aceambala.com/student/viewclassinfo" target="content_frame">View</a></li>
-			</ul>
-		</li>
+	<div id="main">
+		<div id="sidebar" style="float:left">
+		<ul class="menu">
+			<li class="item1">
+				<a href="http://core.aceambala.com/student/viewclassinfo" target="content_frame">Class Information</a>
+			</li>
+	
+			<li class="item2">
+				<a href="http://core.aceambala.com/student/viewpersonalinfo" target="content_frame">Personal Information</a>
+			</li>
+	
+			<li class="item3">
+				<a href="http://core.aceambala.com/student/viewcontactinfo" target="content_frame">Contact Information</a>
+			</li>
+	
+			<li class="item4">
+				<a href="http://core.aceambala.com/student/viewaddressinfo" target="content_frame">Address Information</a>
+			</li>
+	
+			<li class="item5">
+				<a href="http://core.aceambala.com/student/viewrelativesinfo" target="content_frame">Family Information</a>
+			</li>
+	
+			<li class="item6">
+				<a href="http://core.aceambala.com/student/viewunvregistrationinfo" target="content_frame">University Registration Information</a>
+			</li>
+			
+			<li class="item1">
+				<a href="http://academic.aceambala.com/student/viewmatricinfo" target="content_frame">Matric</a>
+			</li>
+			
+			<li class="item2">
+				<a href="http://academic.aceambala.com/student/viewtwelfthinfo" target="content_frame">Twelfth</a>
+			</li>
+			
+			<li class="item3">
+				<a href="http://academic.aceambala.com/student/viewaieeeinfo" target="content_frame">AIEEE</a>
+			</li>
+			
+			<li class="item4">
+				<a href="http://academic.aceambala.com/student/viewdiplomainfo" target="content_frame">Diploma</a>
+			</li>
+			
+			<li class="item5">
+				<a href="http://academic.aceambala.com/student/viewleetinfo" target="content_frame">LEET</a>
+			</li>
+			
+			<li class="item6">
+				<a href="http://academic.aceambala.com/student/viewbtechinfo" target="content_frame">Btech(Academic)</a>
+			</li>
+			
+			<li class="item6">
+				<a href="http://academic.aceambala.com/student/viewgateinfo" target="content_frame">Gate</a>
+			</li>
+			<li class="item1">
+				<a href="http://tnp.aceambala.com/student/viewemptestrecord" target="content_frame">Employability Test</a>
+			</li>
 
-		<li class="item2">
-			<a href="#">Personal Information</a>
-			<ul class="sub_ul">
-				<li class="subitem1"><a href="http://core.aceambala.com/student/viewpersonalinfo" target="content_frame">View</a></li>
-			</ul>
-		</li>
-
-		<li class="item3">
-			<a href="#">Contact Information</a>
-			<ul class="sub_ul">
-				<li class="subitem1"><a href="http://core.aceambala.com/student/viewcontactinfo" target="content_frame">View</a></li>
-			</ul>
-		</li>
-
-		<li class="item4">
-			<a href="#">Address Information</a>
-			<ul class="sub_ul">
-				<li class="subitem1"><a href="http://core.aceambala.com/student/viewaddressinfo" target="content_frame">View</a></li>
-			</ul>
-		</li>
-
-		<li class="item5">
-			<a href="#">Family Information</a>
-			<ul class="sub_ul">
-				<li class="subitem1"><a href="http://core.aceambala.com/student/viewrelativesinfo" target="content_frame">View</a></li>
-			</ul>
-		</li>
-
-		<li class="item6">
-			<a href="#">University Registration Information</a>
-			<ul class="sub_ul">
-				<li class="subitem1"><a href="http://core.aceambala.com/student/viewunvregistrationinfo" target="content_frame">View </a></li>
-			</ul>
-		</li>
-	</ul>
+			<li class="item2">
+				<a href="http://tnp.aceambala.com/student/viewcertificationinfo" target="content_frame">Certifications</a>
+			</li>
+	
+			<li class="item3">
+				<a href="http://tnp.aceambala.com/student/viewtraininginfo" target="content_frame">Training</a>
+			</li>
+	
+			<li class="item4">
+				<a href="http://tnp.aceambala.com/student/viewlanguagesknown" target="content_frame">Languages Known</a>
+			</li>
+	
+			<li class="item5">
+				<a href="http://tnp.aceambala.com/student/viewskillinfo" target="content_frame">Skills</a>
+			</li>
+	
+			<li class="item6">
+				<a href="http://tnp.aceambala.com/student/viewcocurricular" target="content_frame">Co Curricular</a>
+			</li>
+			
+			<li class="item6">
+				<a href="http://tnp.aceambala.com/student/viewjobpreferred" target="content_frame">Job Preferred</a>
+			</li>
+		</ul>
 	</div>
 	<div id="page_content">
-		<iframe id="content_frame" name="content_frame" width="100%" height="900" frameborder="0" scrolling="auto" onload="hide_top()"></iframe>
+		<iframe id="content_frame" name="content_frame" width="100%" height="900" frameborder="0" scrolling="auto"></iframe>
 	</div>
 </div>
 
@@ -63,6 +105,7 @@
 <script type="text/javascript">
 	$(function(){
 		$('#student_profile_div').hide();
+		$('#another_search').hide();
 	});
 	function getmemberid()
 	{
@@ -72,29 +115,32 @@
 		else
 		{
 			var roll_number = $('#roll_no').val(); 
-			var abc = new Array();
-			abc[0] = roll_number;
+			var roll_number_array = new Array();
+			roll_number_array[0] = roll_number;
 			$.ajax({
 				url : urlfetchmemberids,
 				dataType : 'jsonp',
 				data : {
-					myarray : {'roll_number':abc},
+					myarray : {'roll_number':roll_number_array},
 					format : 'jsonp'
 				},
 				success : function(jStatus){
 					if(jStatus[roll_number] == false)
 					{
 						alert("The student with this roll number doesn't exist in database. Please check the roll number and try again");
-						$('ul.sub_ul > li > a').each(function(){
-							var link = $(this).attr('href');
-							$(this).attr('href',link+'?member_id=3');
-						});
-						$('#student_profile_div').show();
-						make_sidebar();
 					}
 					else
 					{
+						$('#student_info').hide();
 						var member_id = jStatus[roll_number];
+						$('ul.sub_ul > li > a').each(function(){
+							var link = $(this).attr('href');
+							$(this).attr('href',link+'?member_id='+member_id);
+						});
+						$('#student_profile_div').show();
+						$('#another_search').show();
+						$('#another_search').prepend('<b>Roll Number: '+roll_number+'<b>.&nbsp;&nbsp;');
+						make_sidebar();
 					}
 				},
 				error : function(response){
@@ -111,7 +157,7 @@
         menu_ul.hide();
     
         menu_a.click(function(e) {
-			e.preventDefault();
+			//e.preventDefault();
             if(!$(this).hasClass('active')) {
                 menu_a.removeClass('active');
                 menu_ul.filter(':visible').slideUp('normal');
@@ -123,14 +169,9 @@
         });
 
         $('.menu > li > a:first').click();
-        var path = $('.subitem1 > a').attr('href');
+        var path = $('.menu > li > a:first').attr('href');
         $('#content_frame').attr('src',path);
     }
-
-	function hide_top()
-	{
-		$('iframe#content_frame').contents().find('div#topContent').hide();		
-	}
 
 </script>
 
@@ -139,4 +180,11 @@
     	float:left;
 		width:65%;
     }
+    #another_search{
+    	background-color:#F9F9F9;
+    	border:0.1em solid grey;
+    	padding: 2px 0 2px 10px;
+    	font-size: 1.1em;
+    	margin:5px 0 0 0;
+	}
 </style>
