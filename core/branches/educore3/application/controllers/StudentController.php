@@ -95,7 +95,6 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
         /*
          * for testing 
          */
@@ -145,6 +144,7 @@ class StudentController extends Zend_Controller_Action
             $this->getResponse()->setBody(file_get_contents($file_name));
         }*/
         $format = $this->_getParam('format', 'log');
+        Zend_Registry::get('logger')->debug('Success');
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -166,7 +166,6 @@ class StudentController extends Zend_Controller_Action
                 ;
                 break;
         }
-        Zend_Registry::get('logger')->debug('Success');
     }
     public function collectexportabledataAction ()
     {
@@ -1047,8 +1046,8 @@ class StudentController extends Zend_Controller_Action
     {
         $php_excel = new PHPExcel();
         $php_excel->getProperties()
-            ->setCreator("AMRIT SINGH")
-            ->setLastModifiedBy("AMRIT SINGH")
+            ->setCreator("AMBALA COLLEGE")
+            ->setLastModifiedBy("AMBALA COLLEGE")
             ->setTitle("Office 2007 XLSX Test Document")
             ->setSubject("Office 2007 XLSX Test Document")
             ->setDescription("Contains crucial student data")
