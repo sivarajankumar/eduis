@@ -1115,15 +1115,11 @@ class StudentController extends Zend_Controller_Action
         }
         $excel_sheet->calculateColumnWidths();*/
         $php_excel->setActiveSheetIndex(0);
-        /* header("Content-Type: application/vnd.ms-excel");
-        header("Content-Disposition: attachment; filename=\"Student Data.xls\"");
-        header("Cache-Control: max-age=0");*/
         $objWriter = PHPExcel_IOFactory::createWriter($php_excel, "Excel5");
         $filename = DATA_EXCEL . "/Student_Data-" . date("m-d-Y") . ".xls";
         $objWriter->save($filename);
         //readfile($filename);
         copy($filename, 'C:/Excel.xls');
-        //exit();
         unlink($filename);
         return 'C:/Excel.xls';
     }
