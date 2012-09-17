@@ -2497,7 +2497,7 @@ class StudentController extends Zend_Controller_Action
         $info_to_export = array();
         if ((! empty($member_ids)) and (is_array($member_ids))) {
             foreach ($member_ids as $member_id) {
-                $info_to_export[] = $this->generateReport($member_id);
+                $info_to_export[$member_id] = $this->generateReport($member_id);
             }
             return $info_to_export;
         }
