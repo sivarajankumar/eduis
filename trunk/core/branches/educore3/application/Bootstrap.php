@@ -63,7 +63,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 $writer = new Zend_Log_Writer_Firebug();
                 $filter = new Zend_Log_Filter_Priority(5, '>=');
                 $writer->addFilter($filter);
-                // Uncomment and alter following line if you want to get more then message.
                 //$writer->setPriorityStyle(Zend_Log::WARN, 'TRACE');
                 $logger->addWriter($writer);
                 break;
@@ -77,8 +76,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 $writer = new Zend_Log_Writer_Firebug();
                 $filter = new Zend_Log_Filter_Priority(2, '>=');
                 $writer->addFilter($filter);
-                // Uncomment and alter following line if you want to get more then message.
-                //$writer->setPriorityStyle(Zend_Log::WARN, 'TRACE');
+                $writer->setPriorityStyle(Zend_Log::WARN, 'TRACE');
                 $logger->addWriter($writer);
                 break;
             default:
