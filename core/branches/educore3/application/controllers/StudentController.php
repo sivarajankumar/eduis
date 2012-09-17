@@ -96,72 +96,66 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $core_data = $params['myarray']['core_data'];
-        $academic_data = $params['myarray']['academic_data'];
+        /*
+         * for testing 
+         */
         $final_data = array();
-        foreach ($core_data as $member_id_core => $info) {
-            if (! empty($academic_data[$member_id_core])) {
-                $member_data = array_merge($core_data[$member_id_core], 
-                $academic_data[$member_id_core]);
-                $final_data[$member_id_core] = $member_data;
-            }
-        }
+        $final_data = array(
+        3 => array('roll_number' => 2308011, 'registration_id' => '08-ECA-75', 
+        'first_name' => 'SUMIT', 'last_name' => 'DHIMAN', 
+        'middle_name' => 'null', 'dob' => '1990-05-19', 'gender' => 'MALE', 
+        'father_name' => 'mam chand', 'postal_code' => 134003, 
+        'city' => 'Ambala City', 'district' => 'Ambala', 'state' => 'Punjab', 
+        'address' => '192, AMBALA , CANAL COLONY', 'home_landline' => 0184567654, 
+        'home_mobile' => 9812996312, 'email' => 'sumit.dhiman91@gmail.com', 
+        'SEMESTER 1' => '88.8 % ', 'SEMESTER 2' => '87.5 % ', 
+        'SEMESTER 3' => '72.3 % ', 'SEMESTER 4' => 'null', 
+        'SEMESTER 5' => '67.9 % ', 'SEMESTER 6' => 'null', 
+        'SEMESTER 7' => '84.2 % ', 'SEMESTER 8' => '81.1 % ', 
+        'TENTH BOARD' => 'CBSE', 'TENTH MARKS' => 90, 'TENTH YEAR' => 2008, 
+        'TWELFTH BOARD' => 'ICSE', 'TWELFTH MARKS' => 490, 
+        'TWELFTH YEAR' => 2008, 'AIEEE RANK' => 30, 'LEET RANK' => 30768));
+        $exportable_data = $final_data;
         $headings = array_pop($final_data);
-        $headers = array_keys($headings);
-        foreach ($headers as $key => $header) {
-            $headers[$key] = strtoupper($header);
+        $column_headers = array_keys($headings);
+        $file_name = $this->exportToExcel($column_headers, $exportable_data);
+            /*if (file_exists($file_name)) {
+            $this->getResponse()
+                ->setHeader('Content-Description', 'File Transfer', true)
+                ->setHeader('Content-Type', 'application/vnd.ms-excel', true)
+                ->setHeader('Content-Disposition', 
+            'attachment; filename=' . basename($file_name), true)
+                ->setHeader('Content-Transfer-Encoding', 'binary', true)
+                ->setHeader('Expires', '0', true)
+                ->setHeader('Cache-Control', 
+            'must-revalidate, post-check=0, pre-check=0', true)
+                ->setHeader('Pragma', 'public', true)
+                ->setHeader('Content-Length: ', filesize($file_name), true);
+            $this->getResponse()->setBody(file_get_contents($file_name));
+        }*/
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('data', $file_name);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($file_name, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($file_name);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug($file_name);
+                break;
+            default:
+                ;
+                break;
         }
-        $this->export_to_excel($headers, $final_data);
-        /*set_time_limit(0);
-        define('TEMP_CORE', realpath(dirname(__FILE__) . '/../temp'));
-        $filename = TEMP_CORE . "/Student_Data-" . date("m-d-Y") . ".xls";
-        $realPath = realpath($filename);
-        if (false === $realPath) {
-            touch($filename);
-            chmod($filename, 0777);
-        }
-        $filename = realpath($filename);
-        $handle = fopen($filename, "w");
-        $finalData = array();
-        foreach ($data as $key => $row) {
-            foreach ($row as $col => $value) {
-                $finalData[$key][utf8_decode($col)] = utf8_decode($value);
-            }
-        }
-        $headings = array();
-        $copy = array();
-        $copy = $finalData;
-        $headings = array_pop($copy);
-        $headers = array();
-        $headers['headers'] = array_keys($headings);
-        foreach ($headers['headers'] as $key => $header) {
-            $headers['headers'][$key] = strtoupper($header);
-        }
-        Zend_Registry::get('logger')->debug($headers);
-        Zend_Registry::get('logger')->debug($finalData);
-        foreach ($headers as $header) {
-            fputcsv($handle, $header, "\t");
-        }
-        foreach ($finalData as $finalRow) {
-            fputcsv($handle, $finalRow, "\t");
-        }
-        fclose($handle);
-        $this->_helper->layout->disableLayout();
-        $this->_helper->viewRenderer->setNoRender();
-        $this->getResponse()
-            ->setRawHeader(
-        "Content-Type: application/vnd.ms-excel; charset=UTF-8")
-            ->setRawHeader(
-        "Content-Disposition: attachment; filename=Student_Data.xls")
-            ->setRawHeader("Content-Transfer-Encoding: binary")
-            ->setRawHeader("Expires: 0")
-            ->setRawHeader(
-        "Cache-Control: must-revalidate, post-check=0, pre-check=0")
-            ->setRawHeader("Pragma: public")
-            ->setRawHeader("Content-Length: " . filesize($filename))
-            ->sendResponse();
-        readfile($filename);
-        exit();*/
+        Zend_Registry::get('logger')->debug('Success');
     }
     public function collectexportabledataAction ()
     {
@@ -1038,14 +1032,8 @@ class StudentController extends Zend_Controller_Action
             return $info_to_export;
         }
     }
-    private function export_to_excel ($headers, $data)
+    private function exportToExcel ($headers, $data)
     {
-        $data_to_export = array();
-        foreach ($data as $key => $row) {
-            foreach ($row as $col => $value) {
-                $data_to_export[$key][utf8_decode($col)] = utf8_decode($value);
-            }
-        }
         $php_excel = new PHPExcel();
         $php_excel->getProperties()
             ->setCreator("AMRIT SINGH")
@@ -1056,7 +1044,12 @@ class StudentController extends Zend_Controller_Action
             ->setKeywords("office 2007 openxml php")
             ->setCategory("Test result file");
         $excel_sheet = $php_excel->getActiveSheet();
-        $alphabets = range('A', 'P');
+        $alphabets = range('A', 'Z');
+        $inc = 0;
+        for ($p = 26; $p < 50; $p ++) {
+            $alphabets[$p] = 'A' . $alphabets[$inc];
+            $inc ++;
+        }
         $styleArray = array('font' => array('bold' => true, 'size' => 12), 
         'alignment' => array(
         'center' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER), 
@@ -1065,7 +1058,8 @@ class StudentController extends Zend_Controller_Action
         'fill' => array('type' => PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR, 
         'rotation' => 90, 'startcolor' => array('argb' => 'FFA0A0A0'), 
         'endcolor' => array('argb' => 'FFFFFFFF')));
-        $excel_sheet->getStyle("A1:P1")->applyFromArray($styleArray);
+        $excel_sheet->getStyle("A1:Z1")->applyFromArray($styleArray);
+        $excel_sheet->getStyle("AA1:AF1")->applyFromArray($styleArray);
         $alphabets_index = 0;
         $row_number = 1;
         foreach ($headers as $header) {
@@ -1076,6 +1070,12 @@ class StudentController extends Zend_Controller_Action
         }
         foreach ($alphabets as $alphabet) {
             $excel_sheet->getColumnDimension($alphabet)->setAutoSize(true);
+        }
+        $data_to_export = array();
+        foreach ($data as $key => $row) {
+            foreach ($row as $col => $value) {
+                $data_to_export[$key][utf8_decode($col)] = utf8_decode($value);
+            }
         }
         $row_number = 2;
         foreach ($data_to_export as $student_data) {
@@ -1105,11 +1105,15 @@ class StudentController extends Zend_Controller_Action
         }
         $excel_sheet->calculateColumnWidths();*/
         $php_excel->setActiveSheetIndex(0);
-        header("Content-Type: application/vnd.ms-excel");
+        /* header("Content-Type: application/vnd.ms-excel");
         header("Content-Disposition: attachment; filename=\"Student Data.xls\"");
-        header("Cache-Control: max-age=0");
+        header("Cache-Control: max-age=0");*/
         $objWriter = PHPExcel_IOFactory::createWriter($php_excel, "Excel5");
-        $objWriter->save("php://output");
-        exit();
+        $filename = DATA_EXCEL . "/Student_Data-" . date("m-d-Y") . ".xls";
+        $objWriter->save($filename);
+        //readfile($filename);
+        copy($filename, 'C:/Excel.xls');
+        //exit();
+        return 'C:/Excel.xls';
     }
 }
