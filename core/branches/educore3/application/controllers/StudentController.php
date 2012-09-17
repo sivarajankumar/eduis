@@ -96,13 +96,22 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $data = $params['myarray']['data'];
-        $headings = array_pop($data);
+        $core_data = $params['myarray']['core_data'];
+        $academic_data = $params['myarray']['academic_data'];
+        $final_data = array();
+        foreach ($core_data as $member_id_core => $info) {
+            if (! empty($academic_data[$member_id_core])) {
+                $member_data = array_merge($core_data[$member_id_core], 
+                $academic_data[$member_id_core]);
+                $final_data[$member_id_core] = $member_data;
+            }
+        }
+        $headings = array_pop($final_data);
         $headers = array_keys($headings);
         foreach ($headers as $key => $header) {
             $headers[$key] = strtoupper($header);
         }
-        $this->export_to_excel($headers, $data);
+        $this->export_to_excel($headers, $final_data);
         /*set_time_limit(0);
         define('TEMP_CORE', realpath(dirname(__FILE__) . '/../temp'));
         $filename = TEMP_CORE . "/Student_Data-" . date("m-d-Y") . ".xls";
