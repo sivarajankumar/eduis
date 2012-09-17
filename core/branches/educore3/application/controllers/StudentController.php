@@ -99,7 +99,7 @@ class StudentController extends Zend_Controller_Action
         /*
          * for testing 
          */
-        $final_data = array();
+        /*$final_data = array();
         $final_data = array(
         3 => array('roll_number' => 2308011, 'registration_id' => '08-ECA-75', 
         'first_name' => 'SUMIT', 'last_name' => 'DHIMAN', 
@@ -114,12 +114,23 @@ class StudentController extends Zend_Controller_Action
         'SEMESTER 7' => '84.2 % ', 'SEMESTER 8' => '81.1 % ', 
         'TENTH BOARD' => 'CBSE', 'TENTH MARKS' => 90, 'TENTH YEAR' => 2008, 
         'TWELFTH BOARD' => 'ICSE', 'TWELFTH MARKS' => 490, 
-        'TWELFTH YEAR' => 2008, 'AIEEE RANK' => 30, 'LEET RANK' => 30768));
+        'TWELFTH YEAR' => 2008, 'AIEEE RANK' => 30, 'LEET RANK' => 30768));*/
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $core_data = $params['myarray']['core_data'];
+        $academic_data = $params['myarray']['academic_data'];
+        $final_data = array();
+        foreach ($core_data as $member_id_core => $info) {
+            if (! empty($academic_data[$member_id_core])) {
+                $member_data = array_merge($core_data[$member_id_core], 
+                $academic_data[$member_id_core]);
+                $final_data[$member_id_core] = $member_data;
+            }
+        }
         $exportable_data = $final_data;
         $headings = array_pop($final_data);
         $column_headers = array_keys($headings);
         $file_name = $this->exportToExcel($column_headers, $exportable_data);
-            /*if (file_exists($file_name)) {
+        /*if (file_exists($file_name)) {
             $this->getResponse()
                 ->setHeader('Content-Description', 'File Transfer', true)
                 ->setHeader('Content-Type', 'application/vnd.ms-excel', true)
