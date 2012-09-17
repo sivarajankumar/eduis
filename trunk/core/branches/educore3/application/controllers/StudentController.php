@@ -1125,6 +1125,7 @@ class StudentController extends Zend_Controller_Action
         //readfile($filename);
         copy($filename, 'C:/Excel.xls');
         //exit();
+        unlink($filename);
         return 'C:/Excel.xls';
     }
 }
