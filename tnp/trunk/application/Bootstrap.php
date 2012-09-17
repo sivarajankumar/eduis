@@ -26,10 +26,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         // Define path to Academics server.
         defined('ACCOUNT_SERVER') ||
          define('ACCOUNT_SERVER', 'account.aceambala.com');
-    }
-    public function _initDefines ()
-    {
-        define('DATA_EXCEL', $this->getOption('data_excel'));
+        defined('DATA_EXCEL') ||
+         define('DATA_EXCEL', $this->getOption('data_excel'));
     }
     protected function _initViewBase ()
     {
