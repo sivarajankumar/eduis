@@ -35,10 +35,49 @@ class AdminController extends Zend_Controller_Action
                 $final_data[$member_id_core] = $member_data;
             }
         }
+        /*$final_data = array();
+        $final_data = array(
+        3 => array('roll_number' => 2308011, 'registration_id' => '08-ECA-75', 
+        'first_name' => 'SUMIT', 'last_name' => 'DHIMAN', 
+        'middle_name' => 'null', 'dob' => '1990-05-19', 'gender' => 'MALE', 
+        'father_name' => 'mam chand', 'postal_code' => 134003, 
+        'city' => 'Ambala City', 'district' => 'Ambala', 'state' => 'Punjab', 
+        'address' => '192, AMBALA , CANAL COLONY', 'home_landline' => 0184567654, 
+        'home_mobile' => 9812996312, 'email' => 'sumit.dhiman91@gmail.com', 
+        'SEMESTER 1' => '88.8 % ', 'SEMESTER 2' => '87.5 % ', 
+        'SEMESTER 3' => '72.3 % ', 'SEMESTER 4' => 'null', 
+        'SEMESTER 5' => '67.9 % ', 'SEMESTER 6' => 'null', 
+        'SEMESTER 7' => '84.2 % ', 'SEMESTER 8' => '81.1 % ', 
+        'TENTH BOARD' => 'CBSE', 'TENTH MARKS' => 90, 'TENTH YEAR' => 2008, 
+        'TWELFTH BOARD' => 'ICSE', 'TWELFTH MARKS' => 490, 
+        'TWELFTH YEAR' => 2008, 'AIEEE RANK' => 30, 'LEET RANK' => 30768));*/
         $exportable_data = $final_data;
         $headings = array_pop($final_data);
         $column_headers = array_keys($headings);
+        $url = array(
+        'url' => DATA_EXCEL . "/Student_Data-" . date("m-d-Y") . ".xls");
+        $format = $this->_getParam('format', 'log');
         $this->exportToExcelOwn($column_headers, $exportable_data);
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('url', $url);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($url, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($url);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug($url);
+                break;
+            default:
+                ;
+                break;
+        }
     }
     private function exportToExcelOwn ($headers, $exportable_data)
     {
