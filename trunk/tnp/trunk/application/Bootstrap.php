@@ -27,6 +27,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         defined('ACCOUNT_SERVER') ||
          define('ACCOUNT_SERVER', 'account.aceambala.com');
     }
+    public function _initDefines ()
+    {
+        define('DATA_EXCEL', $this->getOption('data_excel'));
+    }
     protected function _initViewBase ()
     {
         $this->bootstrap('View');
