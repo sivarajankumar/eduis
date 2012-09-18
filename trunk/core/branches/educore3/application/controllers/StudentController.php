@@ -83,12 +83,12 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        /*$email_ids = $params['myarray']['email_ids'];
+        $email_ids = $params['myarray']['email_ids'];
         $subject = $params['myarray']['subject'];
-        $message = $params['myarray']['message'];*/
+        $message = $params['myarray']['message'];
         $mail = new Zend_Mail();
         $failed = array();
-        /*foreach ($email_ids as $email_id) {
+        foreach ($email_ids as $email_id) {
             $mail->addTo($email_id);
             $mail->setSubject($subject);
             $mail->setBodyText($message);
@@ -97,8 +97,8 @@ class StudentController extends Zend_Controller_Action
             } catch (Exception $e) {
                 $failed[] = $email_id;
             }
-        }*/
-        $email_id = 'amritsingh183@gmail.com';
+        }
+        /* $email_id = 'amritsingh183@gmail.com';
         $mail->addTo($email_id);
         $mail->setSubject('huhaa');
         $mail->setBodyText('OOPPS');
@@ -106,7 +106,7 @@ class StudentController extends Zend_Controller_Action
             $mail->send();
         } catch (Exception $e) {
             $failed[] = $email_id;
-        }
+        }*/
         $format = $this->_getParam('format', 'log');
         switch ($format) {
             case 'html':
