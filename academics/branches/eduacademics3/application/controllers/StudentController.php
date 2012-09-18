@@ -2225,9 +2225,10 @@ class StudentController extends Zend_Controller_Action
             $dmc_subject_marks['date'] = $info->getDate();
             return $dmc_subject_marks;
         } elseif ($info == false) {
-            throw new Exception(
-            'Subject Marks were not submitted for dmc_info_id : ' . $dmc_info_id .
-             ' and subject_id : ' . $subject_id, Zend_Log::WARN);
+            $message = 'Subject Marks were not submitted for dmc_info_id : ' .
+             $dmc_info_id . ' and subject_id : ' . $subject_id;
+            Zend_Registry::get('logger')->debug($message);
+            return false;
         }
     }
     private function fetchStudentSubjects ($class_id, $member_id)
