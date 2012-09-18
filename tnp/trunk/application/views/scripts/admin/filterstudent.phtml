@@ -4,6 +4,18 @@
 		.uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
 	</style>
 <![endif]-->
+
+<div id="tpo_navigation">
+	<img alt="TPO" id="tpo_img" src="http://site.cdn.aceambala.com/images/tpo/tpo.jpg" width="40" height="46">
+	<ul id="list">
+		<li id="index"><a href="/admin/index">Home</a></li>
+		<li id="filterstudents"><a href="/admin/filterstudent">Filter Students</a></li>
+		<li id="viewstudentprofile"><a href="/admin/viewstudentprofile">View Student Profile</a></li>
+		<li id="notifications"><a href="">Notifications</a></li>
+	</ul>
+</div>
+<br>
+
 <form action="javascipt:void(0)" id="search_criteria" style="width:60%;float:left;">
 <div class="main_div">
 	<div class="heading">
@@ -158,7 +170,7 @@
 <!-- <div id="career" class="main_div">
 	<div class="heading">
 		<h4>Career Information</h4>
-	</div>
+  	</div>
 </div>
  -->
 <br>
@@ -176,7 +188,8 @@
 	<input type="submit" value="Send Mail" onclick="javascript:show_dialog_box()">
 </div>
 
-<div id="dialog" title="Basic dialog">
+<div id="dialog" title="Send Mail">
+
 	<label for="subject">Subject</label>
 	<input name="subject" id="subject" size="40" maxlength="150" type="text" /><br><br>
 	
@@ -187,6 +200,12 @@
 </div>
 
 <script type="text/javascript">
+	$(function(){
+		$('#filterstudents').css('background-color','#b3cdd6');
+		$('#filterstudents').css('border','1px solid black');
+		$('#filterstudents').css('padding','5px 6px');
+	});
+
 	var personal_result = new Array();
 	var academic_result = new Array();
 
@@ -304,6 +323,7 @@
 		$.ajax({
     		url : urlsubmitpersonal,
     		dataType : 'jsonp',
+    		async : false,
     		data : {
         			myarray:personal_values,
 					format:'jsonp'
@@ -316,14 +336,15 @@
 						personal_result[i] = value;
 						i++;
         			});
+        			//alert(personal_result);
 				}
+    			submit_academic_values();
     		},
             error: function(response) {
 				//$('#errorBox').text(response.responseText).parent().show();
     			//console.log(response);
     		}
 		});
-		submit_academic_values();
 	}
 
 	function submit_academic_values()
@@ -371,6 +392,7 @@
 			$.ajax({
 	    		url : urlsubmitacademic,
 	    		dataType : 'jsonp',
+	    		async : 'false',
 	    		data : {
 	        			myarray : academic_values,
 						format : 'jsonp'
@@ -384,6 +406,7 @@
 							i++;
 	        			});
 					}
+					intersect_arrays();
 	    		},
 	            error: function(response) {
 					//$('#errorBox').text(response.responseText).parent().show();
@@ -391,17 +414,16 @@
 	    		}
 			});
 		}
-		intersect_arrays();
 	}
 
 	function intersect_arrays()
 	{
-		//alert('personal: '+personal_result);
-		//alert('academic: '+academic_result);
 		personal_result.sort();
 		academic_result.sort();
+		//alert('personal: '+personal_result);
+		//alert('academic: '+academic_result);
 		var i=j=0;
-		ret=[];
+		var ret = new Array();
 		while(i<personal_result.length && j<academic_result.length)
 		{
 			if(personal_result[i]<academic_result[j])
@@ -414,7 +436,6 @@
 				i++,j++;
 			}
 		}
-		//alert('intersect '+ret);
 		if(ret.length == 0)
 		{
 			alert('No students satisfy your criteria..Please try with some other options..');
@@ -466,7 +487,7 @@
 	
 	function send_mail()
 	{
-		$('#dialog').append('<center><img src = "http://site.cdn.aceambala.com/images/loading.gif" width="100" height="100"></center>');
+		$('#dialog').append('<center><img id="loading" src = "http://site.cdn.aceambala.com/images/loading.gif" width="100" height="100"></center>');
 		$('#send_button').hide();
 		var member_id_array = new Array();
 		$('.student_data > .student_info').each(function(){
@@ -494,11 +515,17 @@
 					data : { myarray : 
 							{'email_ids' : email_id_array,
 							'subject' : $('#subject').val(),
-							'message' : $('#message').val()}
+							'message' : $('#message').val()},
+
+							format : 'jsonp'
 					},
 					success : function(jStatus){
-						$('#dialog').hide();
-						alert("Your message has been sent");
+						if(jStatus == 'true')
+						{
+							$('#send_button').show();
+							$('#loading').hide();
+							$('#dialog').dialog('close');
+						}
 					},
 					error : function(response){
 						
@@ -567,7 +594,7 @@
 					format : 'jsonp',
 			},
 			success : function(jStatus){
-				alert('File saved at : '+jStatus);
+				window.location.replace('http://core.aceambala.com/student/saveexcelonclient?file_id='+jStatus);
 			},
 			error : function(response){
 				
@@ -607,5 +634,37 @@
 		background-color: white;
 		border-radius:3px;
 		border:0.1em solid grey;
+	}
+	div#tpo_navigation{
+		background-color:#d6ebf2;
+		border:0.1em solid #97afb7;
+		border-radius:2px;
+		margin:10px 0;
+		padding:11px;
+	}
+	ul#list{
+		padding:5px 5px 5px 5px;
+		list-style: none outside none;
+    	margin: 0;
+	}
+	ul#list>li{
+		display:inline;
+		padding:5px 6px 5px 6px;
+	}
+	ul#list>li:hover{
+		display:inline;
+		padding:5px 5px 5px 5px;
+		background-color:#b3cdd6;
+		border: 1px solid black;
+	}
+	ul#list>li>a{
+		text-decoration:none;
+		color:black;
+	}
+	#tpo_img{
+		float:left;
+		border:1px solid grey;
+		border-radius:2px;
+		margin: 0 10px 0 10px;
 	}
 </style>
