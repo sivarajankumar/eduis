@@ -122,38 +122,15 @@ class StudentController extends Zend_Controller_Action
                 break;
         }
     }
-    private function verifyCredentials ($username, $password)
+    /**
+     * @deprecated
+     * @desc for testing only
+     * Enter description here ...
+     */
+    public function testexAction ()
     {
-        $bootstrap = $this->getInvokeArg('bootstrap');
-        $app_config = $bootstrap->getOptions();
-        $auth = $app_config['resources']['mail']['transport']['auth'];
-        $host = $app_config['resources']['mail']['transport']['host'];
-        $config = array('auth' => $auth, 'username' => $username, 
-        'password' => $password);
-        $transport = new Zend_Mail_Transport_Smtp($host, $config);
-        $mail = new Zend_Mail();
-        $mail->addTo('amritsingh183@gmail.com');
-        try {
-            $mail->send();
-            $response = true;
-        } catch (Exception $e) {
-            /*$r = explode(' ', $e->getMessage());
-            if (is_int(array_search('not', $r)) and
-             is_int(array_search('accepted.', $r))) {
-                Zend_Registry::get('logger')->debug($r);
-            }*/
-            $response = false;
-        }
-        return $response;
-    }
-    public function exportexcelAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        /*
-         * for testing 
-         */
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
         /*$final_data = array();
         $final_data = array(
         3 => array('roll_number' => 2308011, 'registration_id' => '08-ECA-75', 
@@ -169,7 +146,41 @@ class StudentController extends Zend_Controller_Action
         'SEMESTER 7' => '84.2 % ', 'SEMESTER 8' => '81.1 % ', 
         'TENTH BOARD' => 'CBSE', 'TENTH MARKS' => 90, 'TENTH YEAR' => 2008, 
         'TWELFTH BOARD' => 'ICSE', 'TWELFTH MARKS' => 490, 
+        'TWELFTH YEAR' => 2008, 'AIEEE RANK' => 30, 'LEET RANK' => 30768), 
+        4 => array('roll_number' => 2308011, 'registration_id' => '08-ECA-75', 
+        'first_name' => 'SUMIT', 'last_name' => 'DHIMAN', 
+        'middle_name' => 'null', 'dob' => '1990-05-19', 'gender' => 'MALE', 
+        'father_name' => 'mam chand', 'postal_code' => 134003, 
+        'city' => 'Ambala City', 'district' => 'Ambala', 'state' => 'Punjab', 
+        'address' => '192, AMBALA , CANAL COLONY', 'home_landline' => 0184567654, 
+        'home_mobile' => 9812996312, 'email' => 'sumit.dhiman91@gmail.com', 
+        'SEMESTER 1' => '88.8 % ', 'SEMESTER 2' => '87.5 % ', 
+        'SEMESTER 3' => '72.3 % ', 'SEMESTER 4' => 'null', 
+        'SEMESTER 5' => '67.9 % ', 'SEMESTER 6' => 'null', 
+        'SEMESTER 7' => '84.2 % ', 'SEMESTER 8' => '81.1 % ', 
+        'TENTH BOARD' => 'CBSE', 'TENTH MARKS' => 90, 'TENTH YEAR' => 2008, 
+        'TWELFTH BOARD' => 'ICSE', 'TWELFTH MARKS' => 490, 
+        'TWELFTH YEAR' => 2008, 'AIEEE RANK' => 30, 'LEET RANK' => 30768), 
+        5 => array('roll_number' => 2308011, 'registration_id' => '08-ECA-75', 
+        'first_name' => 'SUMIT', 'last_name' => 'DHIMAN', 
+        'middle_name' => 'null', 'dob' => '1990-05-19', 'gender' => 'MALE', 
+        'father_name' => 'mam chand', 'postal_code' => 134003, 
+        'city' => 'Ambala City', 'district' => 'Ambala', 'state' => 'Punjab', 
+        'address' => '192, AMBALA , CANAL COLONY', 'home_landline' => 0184567654, 
+        'home_mobile' => 9812996312, 'email' => 'sumit.dhiman91@gmail.com', 
+        'SEMESTER 1' => '88.8 % ', 'SEMESTER 2' => '87.5 % ', 
+        'SEMESTER 3' => '72.3 % ', 'SEMESTER 4' => 'null', 
+        'SEMESTER 5' => '67.9 % ', 'SEMESTER 6' => 'null', 
+        'SEMESTER 7' => '84.2 % ', 'SEMESTER 8' => '81.1 % ', 
+        'TENTH BOARD' => 'CBSE', 'TENTH MARKS' => 90, 'TENTH YEAR' => 2008, 
+        'TWELFTH BOARD' => 'ICSE', 'TWELFTH MARKS' => 490, 
         'TWELFTH YEAR' => 2008, 'AIEEE RANK' => 30, 'LEET RANK' => 30768));*/
+    }
+    public function exportexcelAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $core_data = $params['myarray']['core_data'];
         $academic_data = $params['myarray']['academic_data'];
@@ -184,44 +195,44 @@ class StudentController extends Zend_Controller_Action
         $exportable_data = $final_data;
         $headings = array_pop($final_data);
         $column_headers = array_keys($headings);
-        $file_name = $this->exportToExcel($column_headers, $exportable_data);
-        /*if (file_exists($file_name)) {
-            $this->getResponse()
-                ->setHeader('Content-Description', 'File Transfer', true)
-                ->setHeader('Content-Type', 'application/vnd.ms-excel', true)
-                ->setHeader('Content-Disposition', 
-            'attachment; filename=' . basename($file_name), true)
-                ->setHeader('Content-Transfer-Encoding', 'binary', true)
-                ->setHeader('Expires', '0', true)
-                ->setHeader('Cache-Control', 
-            'must-revalidate, post-check=0, pre-check=0', true)
-                ->setHeader('Pragma', 'public', true)
-                ->setHeader('Content-Length: ', filesize($file_name), true);
-            $this->getResponse()->setBody(file_get_contents($file_name));
-        }*/
-        $format = $this->_getParam('format', 'log');
-        Zend_Registry::get('logger')->debug('Success');
-        switch ($format) {
-            case 'html':
-                $this->_helper->viewRenderer->setNoRender(false);
-                $this->_helper->layout()->enableLayout();
-                $this->view->assign('data', $file_name);
-                break;
-            case 'jsonp':
-                $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($file_name, false) .
-                 ')';
-                break;
-            case 'json':
-                $this->_helper->json($file_name);
-                break;
-            case 'log':
-                Zend_Registry::get('logger')->debug($file_name);
-                break;
-            default:
-                ;
-                break;
+        $file_id = time();
+        $this->exportToExcel($column_headers, $exportable_data, $file_id);
+        $this->_helper->json($file_id);
+    }
+    /**
+     * 
+     * Enter description here ...
+     */
+    public function saveexcelonclientAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $file_id = $params['file_id'];
+        $temp_file = DATA_EXCEL . "/temp" . $file_id . ".xlsx";
+        $realPath = realpath($temp_file);
+        if ($realPath == false) {
+            touch($temp_file);
+            chmod($temp_file, 0777);
         }
+        $handle = fopen($temp_file, "w");
+        $org_file = DATA_EXCEL . "/Student_Data-" . $file_id . ".xlsx";
+        $contents = @file_get_contents($org_file);
+        fputs($handle, $contents);
+        $this->getResponse()
+            ->setRawHeader(
+        "Content-Type: application/vnd.ms-excel; charset=UTF-8")
+            ->setRawHeader(
+        "Content-Disposition: attachment; filename=Student_Data.xlsx")
+            ->setRawHeader("Content-Transfer-Encoding: binary")
+            ->setRawHeader("Expires: 0")
+            ->setRawHeader(
+        "Cache-Control: must-revalidate, post-check=0, pre-check=0")
+            ->setRawHeader("Pragma: public")
+            ->setRawHeader("Content-Length: " . filesize($temp_file))
+            ->sendResponse();
+        readfile(realpath($temp_file));
     }
     public function collectexportabledataAction ()
     {
@@ -1092,7 +1103,7 @@ class StudentController extends Zend_Controller_Action
             return $info_to_export;
         }
     }
-    private function exportToExcel ($headers, $data)
+    private function exportToExcel ($headers, $data, $file_id)
     {
         $php_excel = new PHPExcel();
         $php_excel->getProperties()
@@ -1101,8 +1112,7 @@ class StudentController extends Zend_Controller_Action
             ->setTitle("Office 2007 XLSX Test Document")
             ->setSubject("Office 2007 XLSX Test Document")
             ->setDescription("Contains crucial student data")
-            ->setKeywords("office 2007 openxml php")
-            ->setCategory("Test result file");
+            ->setKeywords("office 2007 openxml php");
         $excel_sheet = $php_excel->getActiveSheet();
         $alphabets = range('A', 'Z');
         $inc = 0;
@@ -1151,26 +1161,20 @@ class StudentController extends Zend_Controller_Action
             }
             $row_number += 1;
         }
-        /* 
-         * 
-         * Does not work :-(
-         * /
-        /*$toCol = $excel_sheet->getColumnDimension(
-        $excel_sheet->getHighestColumn())
-            ->getColumnIndex();
-        for ($td = 'A'; $td != $toCol; $td ++) {
-            $calculatedWidth = $excel_sheet->getColumnDimension($td)->getWidth();
-            $excel_sheet->getColumnDimension($td)->setWidth(
-            (int) $calculatedWidth * 2);
-        }
-        $excel_sheet->calculateColumnWidths();*/
         $php_excel->setActiveSheetIndex(0);
-        $objWriter = PHPExcel_IOFactory::createWriter($php_excel, "Excel5");
-        $filename = DATA_EXCEL . "/Student_Data-" . date("m-d-Y") . ".xls";
+        $filename = DATA_EXCEL . "/Student_Data-" . $file_id . ".xlsx";
+        $objWriter = PHPExcel_IOFactory::createWriter($php_excel, 'Excel2007');
         $objWriter->save($filename);
-        //readfile($filename);
-        copy($filename, 'C:/Excel.xls');
-        unlink($filename);
-        return 'C:/Excel.xls';
+         //$objWriter->save('php://output');
+    /* $dup_file = DATA_EXCEL . "/StudentTemp.xlsx";
+        $realPath_d = realpath($dup_file);
+        if ($realPath_d == false) {
+            touch($dup_file);
+            chmod($dup_file, 0777);
+        }
+        $contents = @file_get_contents(realpath($filename));
+        $handle_d = fopen($dup_file, "w");
+        fputs($handle_d, $contents);*/
+    //unlink($filename);
     }
 }
