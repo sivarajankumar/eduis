@@ -85,39 +85,36 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $username = $params['myarray']['username'];
         $password = $params['myarray']['password'];
-        $response = $this->verifyCredentials($username, $password);
-        if ($response) {
-            $email_ids = $params['myarray']['email_ids'];
-            $subject = $params['myarray']['subject'];
-            $message = $params['myarray']['message'];
-            foreach ($email_ids as $email_id) {
-                $this->sendEmail('amritsingh183@gmail.com', '123456788990', 
-                $email_id, $subject, $message);
-            }
-        } else {
-            $format = $this->_getParam('format', 'log');
-            Zend_Registry::get('logger')->debug('Success');
-            switch ($format) {
-                case 'html':
-                    $this->_helper->viewRenderer->setNoRender(false);
-                    $this->_helper->layout()->enableLayout();
-                    $this->view->assign('data', $response);
-                    break;
-                case 'jsonp':
-                    $callback = $this->getRequest()->getParam('callback');
-                    echo $callback . '(' . $this->_helper->json($response, 
-                    false) . ')';
-                    break;
-                case 'json':
-                    $this->_helper->json($response);
-                    break;
-                case 'log':
-                    Zend_Registry::get('logger')->debug($response);
-                    break;
-                default:
-                    ;
-                    break;
-            }
+        $email_ids = $params['myarray']['email_ids'];
+        $subject = $params['myarray']['subject'];
+        $message = $params['myarray']['message'];
+        $mail = new Zend_Mail();
+        foreach ($email_ids as $email_id) {
+            $mail->addTo($email_id);
+            $mail->setSubject($subject);
+            $mail->setBodyText($message);
+            $mail->send();
+        }
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('data', 'true');
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json('true', false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json('true');
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug('true');
+                break;
+            default:
+                ;
+                break;
         }
     }
     private function verifyCredentials ($username, $password)
@@ -1001,21 +998,8 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
-    private function sendEmail ($username, $password, $email_id, $subject, 
-    $message)
-    {
-        //
-    /*$config = array('auth' => 'login', 'username' => 'myusername', 
-        'password' => 'password');
-        $transport = new Zend_Mail_Transport_Smtp('mail.server.com', $config);
-        $mail = new Zend_Mail();
-        $mail->setBodyText('This is the text of the mail.');
-        $mail->setFrom('sender@test.com', 'Some Sender');
-        $mail->addTo('recipient@test.com', 'Some Recipient');
-        $mail->setSubject('TestSubject');
-        $mail->send($transport);*/
-    //
-    }
+    private function sendEmail ($email_id, $subject, $message)
+    {}
     private function findRelationId ($relation_name)
     {
         $relations = new Core_Model_Relations();
