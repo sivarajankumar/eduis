@@ -695,12 +695,9 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $member_id = $this->getMember_id();
-        /*echo $_FILES['photoimg']['tmp_name'];
-        echo $_FILES['photoimg']['name'];*/
-        //$new_name = rand(0, 1000000) . '.png';
         $file_id = time();
-        $destination = IMAGE_DIR . '/' . $file_id;
         $valid_formats = array("jpg", "png", "gif", "bmp");
+        $destination = IMAGE_DIR . '/' . $member_id;
         if (isset($_POST) and $_SERVER['REQUEST_METHOD'] == "POST") {
             $name = $_FILES['photoimg']['name'];
             $size = $_FILES['photoimg']['size'];
@@ -708,11 +705,12 @@ class StudentController extends Zend_Controller_Action
                 list ($txt, $ext) = explode(".", $name);
                 if (in_array($ext, $valid_formats)) {
                     if ($size < (250 * 250)) {
+                        $destination = $destination . '.temp.' . $ext;
                         if (move_uploaded_file($_FILES['photoimg']['tmp_name'], 
                         $destination)) {
-                            echo 'Uploaded Sucessfully!';
                             $final_image = IMAGE_DIR . '/' . $member_id . '.' .
                              $ext;
+                            $member_image = $member_id . '.' . $ext;
                             $real_path_f = realpath($final_image);
                             if ($real_path_f == false) {
                                 touch($final_image);
@@ -721,6 +719,10 @@ class StudentController extends Zend_Controller_Action
                             $file_cont = @file_get_contents($destination);
                             $f_handle = fopen($final_image, "w");
                             fputs($f_handle, $file_cont);
+                            //unlink($destination);
+                            fclose($f_handle);
+                            $this->saveImageNo($member_id, $member_image);
+                            $this->moveToCdn($member_id);
                         } else
                             echo 'Abhi bhi ni hui yar...!! Dobara try kar...!!';
                     } else
@@ -730,6 +732,35 @@ class StudentController extends Zend_Controller_Action
             }
         } else
             echo "Please select image..!";
+    }
+    private function saveImageNo ($member_id, $member_image)
+    {
+        $data_to_save = array('image_no' => $member_image);
+        $student = new Core_Model_Member_Student();
+        $student->setMember_id($member_id);
+        $student->saveImageNo($data_to_save);
+    }
+    private function moveToCdn ($member_id)
+    {
+        $info = $this->findCriticalInfo($member_id);
+        $member_image = $info['image_no'];
+        $ar = explode('.', $member_image);
+        $ext = $ar[1];
+        $temp_image = IMAGE_DIR . '/' . $member_id . '.temp.' . $ext;
+        $org_image = IMAGE_DIR . '/' . $member_image;
+        $destination = 'D:/zend/Apache2/htdocs/zend/cdn/images/memberimages/' .
+         $member_image;
+        $real_path_f = realpath($destination);
+        if ($real_path_f == false) {
+            touch($destination);
+            chmod($destination, 0777);
+        }
+        $file_cont = @file_get_contents($org_image);
+        $f_handle = fopen($destination, "w");
+        fputs($f_handle, $file_cont);
+        fclose($f_handle);
+        unlink($temp_image);
+        echo 'Uploaded Sucessfully!';
     }
     /**
      * Checks if member is registered in the core,
@@ -867,6 +898,7 @@ class StudentController extends Zend_Controller_Action
                 $critical_data['blood_group'] = $info->getBlood_group();
                 $critical_data['dob'] = $info->getDob();
                 $critical_data['gender'] = $info->getGender();
+                $critical_data['image_no'] = $info->getImage_no();
                 foreach ($critical_data as $key => $value) {
                     if ($value == null) {
                         $critical_data[$key] = null;

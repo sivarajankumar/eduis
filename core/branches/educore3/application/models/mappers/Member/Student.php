@@ -97,6 +97,12 @@ class Core_Model_Mapper_Member_Student
         $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
         return $member_ids;
     }
+    public function saveImageNo ($member_id, $prepared_data)
+    {
+        $dbtable = $this->getDbTable();
+        $where = 'member_id = ' . $member_id;
+        return $dbtable->update($prepared_data, $where);
+    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();
