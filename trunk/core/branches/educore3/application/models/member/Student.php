@@ -591,6 +591,11 @@ class Core_Model_Member_Student extends Core_Model_Generic
             return $this->getMapper()->update($preparedData, $member_id);
         }
     }
+    public function saveImageNo ($data_to_save)
+    {
+        $member_id = $this->getMember_id(true);
+        $this->getMapper()->saveImageNo($member_id, $data_to_save);
+    }
     public function saveAdmissionInfo ($data_array)
     {
         $info = $this->fetchAdmissionInfo();
