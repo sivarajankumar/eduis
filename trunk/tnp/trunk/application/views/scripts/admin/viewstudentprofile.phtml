@@ -1,3 +1,21 @@
+<!--[if lte ie 7]>
+	<style type="text/css" media="screen">
+		/* Move these to your IE6/7 specific stylesheet if possible */
+		.uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+	</style>
+<![endif]-->
+
+<div id="tpo_navigation">
+	<img alt="TPO" id="tpo_img" src="http://site.cdn.aceambala.com/images/tpo/tpo.jpg" width="40" height="46">
+	<ul id="list">
+		<li id="index"><a href="/admin/index">Home</a></li>
+		<li id="filterstudents"><a href="/admin/filterstudent">Filter Students</a></li>
+		<li id="viewstudentprofile"><a href="/admin/viewstudentprofile">View Student Profile</a></li>
+		<li id="notifications"><a href="">Notifications</a></li>
+	</ul>
+</div>
+<br>
+
 <form id="student_info" action="javascript:getmemberid();">
 	<label for="roll_no">* Roll Number</label>
 	<input name="roll_no" id="roll_no" type="text" size="30">
@@ -106,6 +124,9 @@
 	$(function(){
 		$('#student_profile_div').hide();
 		$('#another_search').hide();
+		$('#viewstudentprofile').css('background-color','#b3cdd6');
+		$('#viewstudentprofile').css('border','1px solid black');
+		$('#viewstudentprofile').css('padding','5px');
 	});
 	function getmemberid()
 	{
@@ -186,5 +207,35 @@
     	padding: 2px 0 2px 10px;
     	font-size: 1.1em;
     	margin:5px 0 0 0;
+	}
+	div#tpo_navigation{
+		background-color:#d6ebf2;
+		border:0.1em solid #97afb7;
+		border-radius:2px;
+		margin:10px 0;
+		padding:11px;
+	}
+	ul#list{
+		padding:5px 5px 5px 5px;
+	}
+	ul#list>li{
+		display:inline;
+		padding:5px 6px 5px 6px;
+	}
+	ul#list>li:hover{
+		display:inline;
+		padding:5px 5px 5px 5px;
+		background-color:#b3cdd6;
+		border: 1px solid black;
+	}
+	ul#list>li>a{
+		text-decoration:none;
+		color:black;
+	}
+	#tpo_img{
+		float:left;
+		border:1px solid grey;
+		border-radius:2px;
+		margin: 0 10px 0 10px;
 	}
 </style>
