@@ -92,11 +92,7 @@ class StudentController extends Zend_Controller_Action
             $mail->addTo($email_id);
             $mail->setSubject($subject);
             $mail->setBodyText($message);
-            try {
-                $mail->send();
-            } catch (Exception $e) {
-                $failed[] = $email_id;
-            }
+            $mail->send();
         }
         /* $email_id = 'amritsingh183@gmail.com';
         $mail->addTo($email_id);
@@ -110,19 +106,16 @@ class StudentController extends Zend_Controller_Action
         $format = $this->_getParam('format', 'log');
         switch ($format) {
             case 'html':
-                $this->_helper->viewRenderer->setNoRender(false);
-                $this->_helper->layout()->enableLayout();
-                $this->view->assign($failed, 'true');
                 break;
             case 'jsonp':
                 $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($failed, false) . ')';
+                echo $callback . '(' . $this->_helper->json('true', false) . ')';
                 break;
             case 'json':
-                $this->_helper->json($failed);
+                $this->_helper->json('true');
                 break;
             case 'log':
-                Zend_Registry::get('logger')->debug($failed);
+                Zend_Registry::get('logger')->debug('true');
                 break;
             default:
                 ;
