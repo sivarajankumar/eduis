@@ -1,0 +1,42 @@
+<script type="text/javascript" src="http://site.cdn.aceambala.com/plugins/ajaximage/scripts/jquery.form.js"></script>
+
+<div style="width:600px">
+	<form id="imageform" method="post" enctype="multipart/form-data" action='/student/savephoto'>
+		The image should be in jpg or png format and size should be less than 1MB.
+		<br><br>Upload your image <input type="file" name="photoimg" id="photoimg" />
+	</form>
+	<div id='preview'>
+	
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#photoimg').live('change', function()
+		{ 
+			$("#preview").html('');
+			$("#preview").html('<img src="http://site.cdn.aceambala.com/images/loading.gif" height="50" width="50" alt="Uploading...."/>');
+			$("#imageform").ajaxForm(function(status){
+				$('#preview').html(status);
+			}).submit();
+		});
+	}); 
+</script>
+
+<style>
+    body
+    {
+    	font-family:arial;
+    }
+    .preview
+    {
+        width:200px;
+        border:solid 1px #dedede;
+        padding:10px;
+    }
+    #preview
+    {
+        color:#cc0000;
+        font-size:12px
+    }
+</style>
