@@ -77,6 +77,77 @@ class StudentController extends Zend_Controller_Action
             $this->setMember_id($authInfo['member_id']);
         }
     }
+    public function uploadphotoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function savephotoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $member_id = $this->getMember_id();
+        $file_id = time();
+        $valid_formats = array("jpg", "png", "gif", "bmp");
+        $destination = IMAGE_DIR . '/' . $member_id;
+        if (isset($_POST) and $_SERVER['REQUEST_METHOD'] == "POST") {
+            $name = $_FILES['photoimg']['name'];
+            $size = $_FILES['photoimg']['size'];
+            if (strlen($name)) {
+                list ($txt, $ext) = explode(".", $name);
+                if (in_array($ext, $valid_formats)) {
+                    if ($size < (250 * 250)) {
+                        $destination = $destination . '.temp.' . $ext;
+                        if (move_uploaded_file($_FILES['photoimg']['tmp_name'], 
+                        $destination)) {
+                            $final_image = IMAGE_DIR . '/' . $member_id . '.' .
+                             $ext;
+                            $member_image = $member_id . '.' . $ext;
+                            $real_path_f = realpath($final_image);
+                            if ($real_path_f == false) {
+                                touch($final_image);
+                                chmod($final_image, 0777);
+                            }
+                            $file_cont = @file_get_contents($destination);
+                            $f_handle = fopen($final_image, "w");
+                            fputs($f_handle, $file_cont);
+                            //unlink($destination);
+                            fclose($f_handle);
+                            $this->saveImageNo($member_id, $member_image);
+                            $this->moveToCdn($member_id);
+                            $this->_redirect('/student/viewimage');
+                        } else
+                            echo 'Abhi bhi ni hui yar...!! Dobara try kar...!!';
+                    } else
+                        echo "Image file size max 1 MB";
+                } else
+                    echo 'Invalid File format';
+            }
+        } else
+            echo "Please select image..!";
+    }
+    public function viewimageAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $member_id = $this->getMember_id();
+        $info = $this->findCriticalInfo($member_id);
+        $member_image = $info['image_no'];
+        $ar = explode('.', $member_image);
+        $ext = $ar[1];
+        $file = 'D:/zend/Apache2/htdocs/zend/cdn/images/memberimages/' .
+         $member_image;
+        $info = getimagesize($file);
+        $mimeType = $info['mime'];
+        $size = filesize($file);
+        $data = file_get_contents($file);
+        $response = $this->getResponse();
+        $response->setHeader('Content-Type', $mimeType, true);
+        $response->setHeader('Content-Length', $size, true);
+        $response->setBody($data);
+        $response->sendResponse();
+         //die();
+    }
     public function sendemailAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -684,54 +755,6 @@ class StudentController extends Zend_Controller_Action
             $relatives_info['relation_id'] = $relatives_type;
             $this->saveRelativeInfo($member_id, $relatives_info);
         }
-    }
-    public function uploadphotoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
-    }
-    public function savephotoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $member_id = $this->getMember_id();
-        $file_id = time();
-        $valid_formats = array("jpg", "png", "gif", "bmp");
-        $destination = IMAGE_DIR . '/' . $member_id;
-        if (isset($_POST) and $_SERVER['REQUEST_METHOD'] == "POST") {
-            $name = $_FILES['photoimg']['name'];
-            $size = $_FILES['photoimg']['size'];
-            if (strlen($name)) {
-                list ($txt, $ext) = explode(".", $name);
-                if (in_array($ext, $valid_formats)) {
-                    if ($size < (250 * 250)) {
-                        $destination = $destination . '.temp.' . $ext;
-                        if (move_uploaded_file($_FILES['photoimg']['tmp_name'], 
-                        $destination)) {
-                            $final_image = IMAGE_DIR . '/' . $member_id . '.' .
-                             $ext;
-                            $member_image = $member_id . '.' . $ext;
-                            $real_path_f = realpath($final_image);
-                            if ($real_path_f == false) {
-                                touch($final_image);
-                                chmod($final_image, 0777);
-                            }
-                            $file_cont = @file_get_contents($destination);
-                            $f_handle = fopen($final_image, "w");
-                            fputs($f_handle, $file_cont);
-                            //unlink($destination);
-                            fclose($f_handle);
-                            $this->saveImageNo($member_id, $member_image);
-                            $this->moveToCdn($member_id);
-                        } else
-                            echo 'Abhi bhi ni hui yar...!! Dobara try kar...!!';
-                    } else
-                        echo "Image file size max 1 MB";
-                } else
-                    echo 'Invalid File format';
-            }
-        } else
-            echo "Please select image..!";
     }
     private function saveImageNo ($member_id, $member_image)
     {
