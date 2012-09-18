@@ -1533,7 +1533,7 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        $dmc_info_id = 1; //$params['dmc_info_id'];
+        $params['dmc_info_id'];
         $member_id = null;
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
