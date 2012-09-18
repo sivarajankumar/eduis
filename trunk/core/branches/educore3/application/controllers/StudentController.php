@@ -685,6 +685,49 @@ class StudentController extends Zend_Controller_Action
             $this->saveRelativeInfo($member_id, $relatives_info);
         }
     }
+    public function uploadphotoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function savephotoAction ()
+    {
+        $new_name = rand(0, 1000000).'.png';
+        $destination = IMAGE_DIR.'/'.$new_name;
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        //echo 'name:'.$_FILES['photoimg']['name'].'<br>';
+        //echo 'size'.$_FILES['photoimg']['size'].'<br>';
+        //echo 'temp_name'.$_FILES['photoimg']['tmp_name'];
+        
+        $valid_formats = array("jpg", "png", "gif", "bmp");
+	    if(isset($_POST) and $_SERVER['REQUEST_METHOD'] == "POST")
+		{
+			$name = $_FILES['photoimg']['name'];
+			$size = $_FILES['photoimg']['size'];
+			
+			if(strlen($name))
+			{
+				list($txt, $ext) = explode(".", $name);
+				if(in_array($ext,$valid_formats))
+				{
+					if($size<(250*250))
+					{
+                        if(move_uploaded_file($_FILES['photoimg']['tmp_name'], $destination))
+                            echo 'Uploaded Sucessfully!';
+                        else
+                            echo 'Abhi bhi ni hui yar...!! Dobara try kar...!!';
+                    }
+					else
+						echo "Image file size max 1 MB";
+			    }
+			    else
+			        echo 'Invalid File format';
+			}
+		}
+		else
+			echo "Please select image..!";
+    }
     /**
      * Checks if member is registered in the core,
      * @return true if member_id is registered, false otherwise
