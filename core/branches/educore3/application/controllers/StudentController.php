@@ -83,34 +83,46 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $username = $params['myarray']['username'];
-        $password = $params['myarray']['password'];
-        $email_ids = $params['myarray']['email_ids'];
+        /*$email_ids = $params['myarray']['email_ids'];
         $subject = $params['myarray']['subject'];
-        $message = $params['myarray']['message'];
+        $message = $params['myarray']['message'];*/
         $mail = new Zend_Mail();
-        foreach ($email_ids as $email_id) {
+        $failed = array();
+        /*foreach ($email_ids as $email_id) {
             $mail->addTo($email_id);
             $mail->setSubject($subject);
             $mail->setBodyText($message);
+            try {
+                $mail->send();
+            } catch (Exception $e) {
+                $failed[] = $email_id;
+            }
+        }*/
+        $email_id = 'amritsingh183@gmail.com';
+        $mail->addTo($email_id);
+        $mail->setSubject('huhaa');
+        $mail->setBodyText('OOPPS');
+        try {
             $mail->send();
+        } catch (Exception $e) {
+            $failed[] = $email_id;
         }
         $format = $this->_getParam('format', 'log');
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
                 $this->_helper->layout()->enableLayout();
-                $this->view->assign('data', 'true');
+                $this->view->assign($failed, 'true');
                 break;
             case 'jsonp':
                 $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json('true', false) . ')';
+                echo $callback . '(' . $this->_helper->json($failed, false) . ')';
                 break;
             case 'json':
-                $this->_helper->json('true');
+                $this->_helper->json($failed);
                 break;
             case 'log':
-                Zend_Registry::get('logger')->debug('true');
+                Zend_Registry::get('logger')->debug($failed);
                 break;
             default:
                 ;
