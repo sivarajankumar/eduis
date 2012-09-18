@@ -197,7 +197,28 @@ class StudentController extends Zend_Controller_Action
         $column_headers = array_keys($headings);
         $file_id = time();
         $this->exportToExcel($column_headers, $exportable_data, $file_id);
-        $this->_helper->json($file_id);
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('data', $file_id);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($file_id, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($file_id);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug($file_id);
+                break;
+            default:
+                ;
+                break;
+        }
     }
     /**
      * 
