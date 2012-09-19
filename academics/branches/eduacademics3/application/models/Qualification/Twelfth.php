@@ -9,7 +9,7 @@ class Acad_Model_Qualification_Twelfth extends Acad_Model_Generic
     protected $_marks_obtained;
     protected $_total_marks;
     protected $_percentage;
-    protected $_pcm_percent;
+    protected $_pcm_percentage;
     protected $_passing_year;
     protected $_school_rank;
     protected $_remarks;
@@ -96,11 +96,11 @@ class Acad_Model_Qualification_Twelfth extends Acad_Model_Generic
         return $this->_percentage;
     }
     /**
-     * @return the $_pcm_percent
+     * @return the $_pcm_percentage
      */
-    public function getPcm_percent ()
+    public function getPcm_percentage ()
     {
-        return $this->_pcm_percent;
+        return $this->_pcm_percentage;
     }
     /**
      * @return the $_passing_year
@@ -208,11 +208,11 @@ class Acad_Model_Qualification_Twelfth extends Acad_Model_Generic
         $this->_percentage = $_percentage;
     }
     /**
-     * @param field_type $_pcm_percent
+     * @param field_type $_pcm_percentage
      */
-    public function setPcm_percent ($_pcm_percent)
+    public function setPcm_percentage ($_pcm_percentage)
     {
-        $this->_pcm_percent = $_pcm_percent;
+        $this->_pcm_percentage = $_pcm_percentage;
     }
     /**
      * @param field_type $_passing_year

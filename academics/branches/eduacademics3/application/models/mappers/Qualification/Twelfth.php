@@ -45,7 +45,7 @@ class Acad_Model_Mapper_Qualification_Twelfth
         $twelfth_table = $db_table->info('name');
         $required_cols = array('member_id', 'qualification_id', 'discipline_id', 
         'board', 'board_roll_no', 'marks_obtained', 'total_marks', 'percentage', 
-        'pcm_percent', 'passing_year', 'school_rank', 'remarks', 'institution', 
+        'pcm_percentage', 'passing_year', 'school_rank', 'remarks', 'institution', 
         'migration_date', 'city_name', 'state_name');
         $select = $adapter->select()
             ->from($twelfth_table, $required_cols)

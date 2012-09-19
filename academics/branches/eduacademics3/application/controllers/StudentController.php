@@ -281,8 +281,6 @@ class StudentController extends Zend_Controller_Action
         $class_ids = $student->fetchAllClassIds();
         $class = new Acad_Model_Class();
         foreach ($class_ids as $class_id) {
-            //for unsetting object properties
-            //$class->initsave();
             $class->setClass_id($class_id);
             $class->fetchInfo();
             $semester_id = $class->getSemester_id();
@@ -1103,8 +1101,7 @@ class StudentController extends Zend_Controller_Action
         $student_qualifications);
         if ($qualification_id) {
             $student_model = new Acad_Model_Member_Student();
-            $qualification_data = self::fetchTwelfthData($qualification_id, 
-            $member_id);
+            $qualification_data = self::fetchTwelfthData($member_id);
             switch ($format) {
                 case 'html':
                     $this->_helper->viewRenderer->setNoRender(false);
@@ -2039,7 +2036,7 @@ class StudentController extends Zend_Controller_Action
             $twelfth_data['state_name'] = $qualification_model->getState_name();
             $twelfth_data['total_marks'] = $qualification_model->getTotal_marks();
             $twelfth_data['discipline_id'] = $qualification_model->getDiscipline_id();
-            $twelfth_data['pcm_percentage'] = $qualification_model->getPcm_percent();
+            $twelfth_data['pcm_percentage'] = $qualification_model->getPcm_percentage();
         }
         return $twelfth_data;
     }
