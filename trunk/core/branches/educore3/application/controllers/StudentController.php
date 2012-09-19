@@ -105,7 +105,7 @@ class StudentController extends Zend_Controller_Action
             list ($txt, $ext) = explode(".", $name);
             if (! in_array($ext, $valid_formats)) {
                 $warn = 'format';
-            } else {}
+            }
             switch ($warn) {
                 case 'empty':
                     echo "Please select an Image";
