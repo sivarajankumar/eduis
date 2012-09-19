@@ -827,7 +827,7 @@ class StudentController extends Zend_Controller_Action
         fputs($f_handle, $file_cont);
         fclose($f_handle);
         unlink($org_image);
-        echo 'Uploaded Sucessfully!';
+        echo 'true';
     }
     /**
      * Checks if member is registered in the core,
