@@ -144,7 +144,7 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
-    public function getimagelocationAction ()
+    public function getimagenameAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
@@ -180,16 +180,9 @@ class StudentController extends Zend_Controller_Action
         $member_id = $this->getMember_id();
         $info = $this->findCriticalInfo($member_id);
         $member_image = $info['image_no'];
-        $ar = explode('.', $member_image);
-        $ext = $ar[1];
         echo "true";
-        /*$file = 'D:/zend/Apache2/htdocs/zend/cdn/images/memberimages/' .
-         $member_image;*/
-    /*$file_rel = IMAGE_DIR . '/' . $member_image;
-        $file = realpath($file_rel);
-        Zend_Registry::get('logger')->debug($member_image);
-        Zend_Registry::get('logger')->debug($file);
-        Zend_Registry::get('logger')->debug(realpath($file));
+        $file = 'D:/zend/Apache2/htdocs/zend/cdn/images/memberimages/' .
+         $member_image;
         $info = getimagesize(realpath($file));
         $mimeType = $info['mime'];
         $size = filesize($file);
@@ -200,8 +193,8 @@ class StudentController extends Zend_Controller_Action
         $response->setHeader('Content-Transfer-Encoding', 'binary');
         $response->setHeader('Expires', 0);
         $response->setBody($data);
-        $response->sendResponse();*/
-    //die();
+        $response->sendResponse();
+         //die();
     }
     public function sendemailAction ()
     {
