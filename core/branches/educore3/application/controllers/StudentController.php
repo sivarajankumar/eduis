@@ -135,7 +135,6 @@ class StudentController extends Zend_Controller_Action
                         $member_image = $member_id . '.' . $ext;
                         $this->saveImageNo($member_id, $member_image);
                         $this->moveToCdn($member_id);
-                         //$this->_redirect('/student/viewimage');
                     }
                     break;
                 default:
