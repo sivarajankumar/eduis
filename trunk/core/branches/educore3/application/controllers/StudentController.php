@@ -118,27 +118,25 @@ class StudentController extends Zend_Controller_Action
                     break;
                 case '':
                     $destination = IMAGE_DIR . '/' . $member_id;
-                    move_uploaded_file($_FILES['photoimg']['tmp_name'], 
-                    $destination);
-                    /*if (move_uploaded_file($_FILES['photoimg']['tmp_name'], 
-                    $destination));  {
-                        $final_image = IMAGE_DIR . '/' . $member_id . '.' . $ext;
+                    $file_moved = move_uploaded_file(
+                    $_FILES['photoimg']['tmp_name'], $destination);
+                    if ($file_moved) {
+                        $final_image = $destination . '.' . $ext;
                         $real_path_f = realpath($final_image);
                         if ($real_path_f == false) {
                             touch($final_image);
                             chmod($final_image, 0777);
                         }
-                        $destination = IMAGE_DIR . '/' . $member_id . '.' . $ext;
                         $file_cont = file_get_contents(realpath($destination));
                         $f_handle = fopen($final_image, "w");
                         fputs($f_handle, $file_cont);
-                        //unlink($destination);
                         fclose($f_handle);
+                        unlink($destination);
                         $member_image = $member_id . '.' . $ext;
                         $this->saveImageNo($member_id, $member_image);
-                         //$this->moveToCdn($member_id);
-                    //$this->_redirect('/student/viewimage');
-                    }*/
+                        $this->moveToCdn($member_id);
+                         //$this->_redirect('/student/viewimage');
+                    }
                     break;
                 default:
                     ;
@@ -824,9 +822,6 @@ class StudentController extends Zend_Controller_Action
     {
         $info = $this->findCriticalInfo($member_id);
         $member_image = $info['image_no'];
-        $ar = explode('.', $member_image);
-        $ext = $ar[1];
-        $temp_image = IMAGE_DIR . '/' . $member_id . '.temp.' . $ext;
         $org_image = IMAGE_DIR . '/' . $member_image;
         $destination = 'D:/zend/Apache2/htdocs/zend/cdn/images/memberimages/' .
          $member_image;
@@ -839,7 +834,7 @@ class StudentController extends Zend_Controller_Action
         $f_handle = fopen($destination, "w");
         fputs($f_handle, $file_cont);
         fclose($f_handle);
-        unlink($temp_image);
+        unlink($org_image);
         echo 'Uploaded Sucessfully!';
     }
     /**
