@@ -87,66 +87,123 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $member_id = $this->getMember_id();
-        $file_id = time();
-        $valid_formats = array("jpg", "png", "gif", "bmp");
-        $destination = IMAGE_DIR . '/' . $member_id;
+        $valid_formats = array("jpg");
         if (isset($_POST) and $_SERVER['REQUEST_METHOD'] == "POST") {
+            $temp_path = $_FILES['photoimg']['tmp_name'];
+            $size_info = getimagesize(realpath($temp_path));
+            $width = $size_info[0];
+            $height = $size_info[1];
+            $warn = '';
             $name = $_FILES['photoimg']['name'];
-            $size = $_FILES['photoimg']['size'];
-            if (strlen($name)) {
-                list ($txt, $ext) = explode(".", $name);
-                if (in_array($ext, $valid_formats)) {
-                    if ($size < (250 * 250)) {
-                        $destination = $destination . '.temp.' . $ext;
-                        if (move_uploaded_file($_FILES['photoimg']['tmp_name'], 
-                        $destination)) {
-                            $final_image = IMAGE_DIR . '/' . $member_id . '.' .
-                             $ext;
-                            $member_image = $member_id . '.' . $ext;
-                            $real_path_f = realpath($final_image);
-                            if ($real_path_f == false) {
-                                touch($final_image);
-                                chmod($final_image, 0777);
-                            }
-                            $file_cont = @file_get_contents($destination);
-                            $f_handle = fopen($final_image, "w");
-                            fputs($f_handle, $file_cont);
-                            //unlink($destination);
-                            fclose($f_handle);
-                            $this->saveImageNo($member_id, $member_image);
-                            $this->moveToCdn($member_id);
-                            $this->_redirect('/student/viewimage');
-                        } else
-                            echo 'Abhi bhi ni hui yar...!! Dobara try kar...!!';
-                    } else
-                        echo "Image file size max 1 MB";
-                } else
-                    echo 'Invalid File format';
+            if ($name == '' or empty($name)) {
+                $warn = 'empty';
             }
-        } else
-            echo "Please select image..!";
+            $size = $_FILES['photoimg']['size'];
+            if ($height > 300 or $width > 300) {
+                $warn = 'resolution';
+            }
+            list ($txt, $ext) = explode(".", $name);
+            if (! in_array($ext, $valid_formats)) {
+                $warn = 'format';
+            } else {}
+            switch ($warn) {
+                case 'empty':
+                    echo "Please select an Image";
+                    break;
+                case 'resolution':
+                    echo "The resolution must be less than 300*300";
+                    break;
+                case 'format':
+                    echo "The format must be 'jpg'";
+                    break;
+                case '':
+                    $destination = IMAGE_DIR . '/' . $member_id;
+                    move_uploaded_file($_FILES['photoimg']['tmp_name'], 
+                    $destination);
+                    /*if (move_uploaded_file($_FILES['photoimg']['tmp_name'], 
+                    $destination));  {
+                        $final_image = IMAGE_DIR . '/' . $member_id . '.' . $ext;
+                        $real_path_f = realpath($final_image);
+                        if ($real_path_f == false) {
+                            touch($final_image);
+                            chmod($final_image, 0777);
+                        }
+                        $destination = IMAGE_DIR . '/' . $member_id . '.' . $ext;
+                        $file_cont = file_get_contents(realpath($destination));
+                        $f_handle = fopen($final_image, "w");
+                        fputs($f_handle, $file_cont);
+                        //unlink($destination);
+                        fclose($f_handle);
+                        $member_image = $member_id . '.' . $ext;
+                        $this->saveImageNo($member_id, $member_image);
+                         //$this->moveToCdn($member_id);
+                    //$this->_redirect('/student/viewimage');
+                    }*/
+                    break;
+                default:
+                    ;
+                    break;
+            }
+        }
+    }
+    public function getimagelocationAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = $this->getMember_id();
+        $info = $this->findCriticalInfo($member_id);
+        $member_image = $info['image_no'];
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'html':
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($member_image, 
+                false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($member_image);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug($member_image);
+                break;
+            default:
+                ;
+                break;
+        }
     }
     public function viewimageAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->disableLayout();
         $member_id = $this->getMember_id();
         $info = $this->findCriticalInfo($member_id);
         $member_image = $info['image_no'];
         $ar = explode('.', $member_image);
         $ext = $ar[1];
-        $file = 'D:/zend/Apache2/htdocs/zend/cdn/images/memberimages/' .
-         $member_image;
-        $info = getimagesize($file);
+        echo "true";
+        /*$file = 'D:/zend/Apache2/htdocs/zend/cdn/images/memberimages/' .
+         $member_image;*/
+    /*$file_rel = IMAGE_DIR . '/' . $member_image;
+        $file = realpath($file_rel);
+        Zend_Registry::get('logger')->debug($member_image);
+        Zend_Registry::get('logger')->debug($file);
+        Zend_Registry::get('logger')->debug(realpath($file));
+        $info = getimagesize(realpath($file));
         $mimeType = $info['mime'];
         $size = filesize($file);
-        $data = file_get_contents($file);
+        $data = @file_get_contents($file);
         $response = $this->getResponse();
         $response->setHeader('Content-Type', $mimeType, true);
         $response->setHeader('Content-Length', $size, true);
+        $response->setHeader('Content-Transfer-Encoding', 'binary');
+        $response->setHeader('Expires', 0);
         $response->setBody($data);
-        $response->sendResponse();
-         //die();
+        $response->sendResponse();*/
+    //die();
     }
     public function sendemailAction ()
     {
