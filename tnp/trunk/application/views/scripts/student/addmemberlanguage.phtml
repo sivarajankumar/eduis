@@ -73,22 +73,53 @@ $("#language_id").change(function(){
 });
 
 function submit() {
-	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savelanguagesknown'))?>';
-    $.ajax({
-        url : urlSaveInfo,
-        data : {myarray : getValues()},
-        success: function(jStatus){
-			alert('Your information has been submitted sucessfully');
-			window.location.replace("/student/profile");
-        },
-            error: function(response) {
-          	  $('#errorBox').text(response.responseText).parent().show();
-                console.log(response);
-                }
-            });
+	var flag = 1;
+	var selected = 0;
+	if($('#language_id').val() == -999)
+	{
+		var new_language = $('input[name="language_name"]').val();
+		$('#language_id option').each(function(){
+			if($(this).html().toLowerCase() == new_language.toLowerCase())
+			{
+				alert("The language that you have entered is already present in the dropdown. Plese select it from the dropdown menu");
+				flag = 0;
+				return false;
+			}
+		});
+	}
+
+	$('input[name="proficiency"]').each(function(){
+		if($(this).is(':checked'))
+		{
+			selected++;
+		}
+	});
+
+	if(selected == 0)
+	{
+		alert("Please select atleast one of the Proficiency");
+		flag = 0;
+	}
+	
+	if(flag)
+	{
+		var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savelanguagesknown'))?>';
+	    $.ajax({
+	        url : urlSaveInfo,
+	        data : {myarray : getValues()},
+	        success: function(jStatus){
+				alert('Your information has been submitted sucessfully');
+				window.location.replace("/student/viewlanguagesknown");
+	        },
+			error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+				console.log(response);
+			}
+		});
+	}
 }
 
-  function getValues() {
+	function getValues() {
       var formData = {};
       var language_info = {};
       var proficiency_data = {}; 

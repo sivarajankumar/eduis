@@ -1,33 +1,51 @@
 <?php 
-	$cocurricular = $this->cocurricular;
+	$cocurricular = $this->co_curicular_info;
+	
+	if(Zend_Auth::getInstance()->hasIdentity()){
+		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
+		$usertype=$authInfo['userType'];
+	}
 ?>
 
 <div class="ui-state-hover"><center><H3>Certification Details</H3></center></div>
 <div id="certification_details">
 	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
 	<?php
-		foreach ($cocurricular as $key => $value) 
+		if($cocurricular == false)
 		{
-        	echo '<tr>';
-        		echo '<td><span id="heading">'.ucfirst(str_replace('_',' ',$key)).'</span></td>';
-        		$array = explode("\n",$value);
-        		echo '<td><ul style="list-style:none;">';
-        		foreach ($array as $key => $content )
-        		{
-        			echo '<li><span id="content">'.$content.'</span></li>';
-        		}
-        		echo '</td>';
-        	echo '</tr>';
+			echo "<h4>No information has been added yet.</h4>";
+		}
+		else
+		{
+			foreach ($cocurricular as $key => $value) 
+			{
+	        	echo '<tr>';
+	        		echo '<td><span id="heading">'.ucfirst(str_replace('_',' ',$key)).'</span></td>';
+	        		$array = explode("\n",$value);
+	        		echo '<td><ul style="list-style:none;">';
+	        		foreach ($array as $key => $content )
+	        		{
+	        			echo '<li><span id="content">'.$content.'</span></li>';
+	        		}
+	        		echo '</td>';
+	        	echo '</tr>';
+			}
 		}
 	?>
 	</table>
 </div>
+<?php 
+	if($usertype == 'STU')
+	{
+?>
+<input type="button" value="Edit" onclick="window.location.replace('/student/editcocurricular')">
+<?php }?>
 
-<!--<div id="edit_certification" class="ui-widget-content ui-corner-all">
-	<h3><center><a href="/student/profile">Go Back</a></center></h3>
-</div>-->
-<br>
-<input type="button" class="ui-button" value="Go Back" onclick="window.location.replace('/student/profile');">
+<script type="text/javascript">
+	$(function(){
+		$('div#topContent').hide();
+	});
+</script>
 
 <style type="text/css">
 	table {

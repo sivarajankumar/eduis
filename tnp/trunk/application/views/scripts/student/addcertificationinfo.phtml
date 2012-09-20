@@ -1,8 +1,6 @@
 <?php
 	$functional_areas = $this->functional_areas;
 	$certifications = $this->certifications;
-	$certification_info = $this->certification_info;
-	$functional_area_id = array_search($certification_info['functional_area_name'], $functional_areas);
 ?>
 
 <h2>Professional Certification</h2>
@@ -13,7 +11,10 @@
 			<label for="functional_area_id">Technical Field</label>
 			<select id="functional_area_id" name="functional_area_id" class="selectInput ">
 				<?php 
-            		echo '<option value="'.$functional_area_id.'">'.$certification_info['functional_area_name'].'</option>';
+					foreach ($functional_areas as $key => $value)
+            		{
+            			echo '<option value="'.$key.'">'.$value.'</option>';
+            		}
           		?>
 			</select>
 			<p class="formHint">Technical field in which training is done </p>
@@ -21,10 +22,14 @@
 
 		<div class="ctrlHolder">
 			<label for="certification_name"><em class="red">*</em>Certification Name</label>
-			<select id="certification_name" name="certification_name" class="selectInput">
+			<select id="certification_name" name="certification_name" class="selectInput ">
 				<?php
-            		echo '<option value="'.$certification_info['certification_name'].'">'.$certification_info['certification_name'].'</option>';
+            		foreach ($certifications as $value)
+            		{
+            			echo '<option value="'.$value.'">'.$value.'</option>';
+            		}
           		?>
+          		<option value="-999">Other</option>
 			</select>
 			<p class="formHint">Name of the Certification.</p>
 		</div>
@@ -33,19 +38,19 @@
 	 <fieldset id="student_certification">   
 		<div class="ctrlHolder">
 			<label for="start_date">Start Date</label>
-			<input name="start_date" id="start_date" data-default-value="2011-04-04" value="<?php echo $certification_info['start_date']?>"  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+			<input name="start_date" id="start_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
 			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of start</p>
 		</div>
         
         <div class="ctrlHolder">
 			<label for="complete_date">Complete Date</label>
-			<input name="complete_date" id="complete_date" data-default-value="2011-04-04" value="<?php echo $certification_info['complete_date']?>"  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+			<input name="complete_date" id="complete_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
 			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click completion date</p>
 		</div>  
 		
 		<div class="ctrlHolder">
 			<label for="description">Description </label>
-			<textarea rows="2" cols="20"  name="description" id="description" data-default-value="e.g. OCJP (Oracle Certified Java Programmer) Module 1" class="textInput"><?php echo $certification_info['description']?></textarea>
+			<textarea rows="2" cols="20"  name="description" id="description" data-default-value="e.g. OCJP (Oracle Certified Java Programmer) Module 1" class="textInput"></textarea>
 			<p class="formHint">A short description of training</p>
 		</div>
 	</fieldset>
@@ -171,3 +176,4 @@ $this->headLink()->prependStylesheet(
 $this->headLink()->prependStylesheet(
 'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
 ?>
+ 
