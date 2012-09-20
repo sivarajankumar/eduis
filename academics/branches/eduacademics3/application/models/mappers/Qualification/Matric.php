@@ -78,6 +78,7 @@ class Acad_Model_Mapper_Qualification_Matric
     }
     public function save ($prepared_data)
     {
+        Zend_Registry::get('logger')->debug($prepared_data);
         $dbtable = $this->getDbTable();
         try {
             $row_id = $dbtable->insert($prepared_data);
@@ -87,6 +88,7 @@ class Acad_Model_Mapper_Qualification_Matric
     }
     public function update ($prepared_data, $member_id, $qualification_id)
     {
+        Zend_Registry::get('logger')->debug($prepared_data);
         $dbtable = $this->getDbTable();
         $where1 = 'member_id = ' . $member_id;
         $where2 = 'qualification_id = ' . $qualification_id;

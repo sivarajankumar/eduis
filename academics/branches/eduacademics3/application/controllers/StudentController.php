@@ -2285,6 +2285,7 @@ class StudentController extends Zend_Controller_Action
         $dmc_subject_marks['is_pass'] = $marks_info['is_pass'];
         $dmc_subject_marks['is_verified'] = $marks_info['is_verified'];
         $dmc_subject_marks['date'] = $marks_info['date'];
+        Zend_Registry::get('logger')->debug($dmc_subject_marks);
         return $student->saveDmcMarks($dmc_subject_marks);
     }
     private function fetchAllDmcInfoIds ($member_id, $class_id)
