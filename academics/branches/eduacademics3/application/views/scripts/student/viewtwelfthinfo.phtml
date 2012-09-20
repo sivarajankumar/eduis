@@ -1,25 +1,48 @@
+<?php 
+    $twelfth = $this->twelfth;
+    if(Zend_Auth::getInstance()->hasIdentity()){
+		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
+		$usertype=$authInfo['userType'];
+	}
+?>
+
 <div class="ui-state-hover"><center><H3>Twelfth Details</H3></center></div>
 <div id="twelfth_details">
     	<table id="corner" cellspacing="10" cellpadding="10">
           
-        <?php 
-        	foreach ($this->twelfth as $key => $value) 
-        		{
-        		    echo '<tr>';
-    	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
-    	            if($value !=null){
-            	        echo '<td>'.ucfirst($value).'</td>';
-    	            }
-    	            else {
-    	                echo '<td><i>Not Mentioned</i></td>';
-    	            }
-    	            echo '</tr>';
-        		} 
-            ?>
+        <?php
+            if($twelfth == null)
+            {
+                echo '<h4>No information has been added yet.</h4>';
+            }
+            else
+            {
+            	echo '<tr><td>Roll Number</td><td>'.$twelfth['board_roll_no'].'</td></tr>';
+                echo '<tr><td>Marks Obtained</td><td>'.$twelfth['marks_obtained'].'</td></tr>';
+                echo '<tr><td>Total Marks</td><td>'.$twelfth['total_marks'].'</td></tr>';
+                echo '<tr><td>Percentage</td><td>'.$twelfth['percentage'].'</td></tr>';
+                echo '<tr><td>Discipline</td><td>'.$twelfth['discipline_id'].'</td></tr>';
+                echo '<tr><td>Passing Year</td><td>'.$twelfth['passing_year'].'</td></tr>';
+                echo '<tr><td>Board</td><td>'.$twelfth['board'].'</td></tr>';
+                echo '<tr><td>PCM Percentage</td><td>'.$twelfth['pcm_percentage'].'</td></tr>';
+                echo '<tr><td>Institute/School Name</td><td>'.$twelfth['institution'].'</td></tr>';
+                echo '<tr><td>City</td><td>'.$twelfth['city_name'].'</td></tr>';
+                echo '<tr><td>State</td><td>'.$twelfth['state_name'].'</td></tr>';
+                echo '<tr><td>School Rank</td><td>'.$twelfth['school_rank'].'</td></tr>';
+            } 
+        ?>
     	</table>
 </div>
+
+<?php if($usertype == 'STU'){?>
 <input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/edittwelfthinfo');">
-<!--<input type="button" class="ui-button" value="Go Back" onclick="window.location.replace('/student/profile');">-->
+<?php }?>
+
+<script type="text/javascript">
+	$(function(){
+		$('div#topContent').hide();
+	});
+</script>
 
 <style type="text/css">
 	table {
