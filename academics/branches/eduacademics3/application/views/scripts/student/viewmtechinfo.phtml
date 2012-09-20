@@ -1,3 +1,10 @@
+<?php 
+    if(Zend_Auth::getInstance()->hasIdentity()){
+		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
+		$usertype=$authInfo['userType'];
+	}
+?>
+
 <div class="ui-state-hover"><center><H3>MTECH Details</H3></center></div>
 <div id="mtech_details">
     	<table id="corner" cellspacing="10" cellpadding="10">
@@ -18,8 +25,16 @@
         	
     	</table>
 </div>
+
+<?php if($usertype == 'STU'){?>
 <input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editmtechinfo');">
-<!--<input type="button" class="ui-button" value="Go Back" onclick="window.location.replace('/student/profile');">-->
+<?php }?>
+
+<script type="text/javascript">
+	$(function(){
+		$('div#topContent').hide();
+	});
+</script>
 
 <style type="text/css">
 	table {

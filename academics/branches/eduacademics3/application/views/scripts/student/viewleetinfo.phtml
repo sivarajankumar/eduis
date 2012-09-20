@@ -1,10 +1,23 @@
-
+<?php 
+    $leet = $this->leet;
+    
+    if(Zend_Auth::getInstance()->hasIdentity()){
+		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
+		$usertype=$authInfo['userType'];
+	}
+?>
 <div class="ui-state-hover"><center><H3>LEET Details</H3></center></div>
 <div id="leet_details">
     	<table id="corner" cellspacing="10" cellpadding="10">
           
-        <?php 
-        	foreach ($this->leet as $key => $value) 
+        <?php
+            if($leet == null)
+            {
+                echo '<h4>No information has been added yet.</h4>';
+            }
+            else
+            { 
+            	foreach ($leet as $key => $value) 
         		{
         		    echo '<tr>';
     	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
@@ -15,13 +28,21 @@
     	                echo '<td><i>Not Mentioned</i></td>';
     	            }
     	            echo '</tr>';
-        		} 
+        		}
+            }
             ?>
         	
     	</table>
 </div>
+<?php if($usertype == 'STU'){?>
 <input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editleetinfo');">
-<!--<input type="button" class="ui-button" value="Go Back" onclick="window.location.replace('/student/profile');">-->
+<?php }?>
+
+<script type="text/javascript">
+	$(function(){
+		$('div#topContent').hide();
+	});
+</script>
 
 <style type="text/css">
 	table {

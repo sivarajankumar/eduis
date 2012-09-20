@@ -1,24 +1,39 @@
+<?php 
+    $gate = $this->gate;
+    
+    if(Zend_Auth::getInstance()->hasIdentity()){
+		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
+		$usertype=$authInfo['userType'];
+	}
+?>
+
 <div class="ui-state-hover"><center><H3>Gate Details</H3></center></div>
 <div id="gate_details">
     	<table id="corner" cellspacing="10" cellpadding="10">
-        <?php 
-        	foreach ($this->gate as $key => $value) 
-        		{
-        		    echo '<tr>';
-    	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
-    	            if($value !=null){
-            	        echo '<td>'.ucfirst($value).'</td>';
-    	            }
-    	            else {
-    	                echo '<td><i>Not Mentioned</i></td>';
-    	            }
-    	            echo '</tr>';
-        		} 
+        <?php
+            if($gate == null){ 
+                echo '<h4>No information has been added yet.</h4>';
+            }
+            else
+            { 
+            	echo '<tr><td>Roll Number</td><td>'.$gate['roll_no'].'</td></tr>';
+                echo '<tr><td>All India Rank</td><td>'.$gate['all_india_rank'].'</td></tr>';
+                echo '<tr><td>Score</td><td>'.$gate['total_score'].'</td></tr>';
+                echo '<tr><td>Date</td><td>'.$gate['date'].'</td></tr>';
+            }
         ?>
     	</table>
 </div>
+
+<?php if($usertype == 'STU'){?>
 <input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editgateinfo');">
-<!--<input type="button" class="ui-button" value="Go Back" onclick="window.location.replace('/student/profile');">-->
+<?php }?>
+
+<script type="text/javascript">
+	$(function(){
+		$('div#topContent').hide();
+	});
+</script>
 
 <style type="text/css">
 	table {

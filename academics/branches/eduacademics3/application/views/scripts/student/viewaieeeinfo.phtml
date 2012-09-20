@@ -1,24 +1,40 @@
+<?php 
+    $aieee = $this->aieee;
+    if(Zend_Auth::getInstance()->hasIdentity()){
+		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
+		$usertype=$authInfo['userType'];
+	}
+?>
+
 <div class="ui-state-hover"><center><H3>AIEEE Details</H3></center></div>
 <div id="Matric Details">
     	<table id="corner" cellspacing="10" cellpadding="10">
-        <?php 
-        	foreach ($this->aieee as $key => $value) 
-        		{
-                    echo '<tr>';
-    	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
-    	            if($value !=null){
-            	        echo '<td>'.ucfirst($value).'</td>';
-    	            }
-    	            else {
-    	                echo '<td><i>Not Mentioned</i></td>';
-    	            }
-    	            echo '</tr>';
-        		} 
+        <?php
+            if($aieee == null)
+            {
+                echo '<h4>No information has been added yet.</h4>';
+            }
+            else
+            {
+            	echo '<tr><td>Roll Number</td><td>'.$aieee['roll_no'].'</td></tr>';
+                echo '<tr><td>All India Rank</td><td>'.$aieee['all_india_rank'].'</td></tr>';
+                echo '<tr><td>Score</td><td>'.$aieee['total_score'].'</td></tr>';
+                echo '<tr><td>Date</td><td>'.$aieee['date'].'</td></tr>';
+            } 
         ?>
     	</table>
 </div>
+
+<?php if($usertype == 'STU'){?>
 <input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editaieeeinfo');">
-<!--<input type="button" class="ui-button" value="Go Back" onclick="window.location.replace('/student/profile');">-->
+<?php }?>
+
+<script type="text/javascript">
+	$(function(){
+		$('div#topContent').hide();
+	});
+</script>
+
 <style type="text/css">
 	table {
       	border-color: #c20f2e;
