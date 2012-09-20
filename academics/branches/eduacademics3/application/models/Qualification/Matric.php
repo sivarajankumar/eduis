@@ -269,6 +269,9 @@ class Acad_Model_Qualification_Matric extends Acad_Model_Generic
      */
     public function initInfo ()
     {}
+    public function save(){
+        
+    }
     /**
      * Fetches Matric information of a Member
      *
