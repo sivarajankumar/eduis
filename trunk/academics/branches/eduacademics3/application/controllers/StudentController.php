@@ -1659,33 +1659,41 @@ class StudentController extends Zend_Controller_Action
         Zend_Registry::get('logger')->debug('Student_class_ids : ');
         Zend_Registry::get('logger')->debug($student_class_ids);
         $class_enroll_check = array_keys($student_class_ids, $class_id);
+        $response = array();
         if (! empty($class_enroll_check)) {
             $response['class_info']['class_id'] = $class_id;
             $format = $this->_getParam('format', 'html');
             $dmc_info_ids = $this->fetchAllDmcInfoIds($member_id, $class_id);
-            foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
-                $response['dmc_info'][$dmc_info_id] = $dmc_id;
+            if (! empty($dmc_info_ids)) {
+                foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
+                    $response['dmc_info'][$dmc_info_id] = $dmc_id;
+                }
+            } else {
+                $response = false;
             }
-            Zend_Registry::get('logger')->debug('Response : ');
-            Zend_Registry::get('logger')->debug($response);
-            switch ($format) {
-                case 'html':
-                    $this->_helper->viewRenderer->setNoRender(false);
-                    $this->_helper->layout()->enableLayout();
-                    $this->view->assign('response', $response);
-                    break;
-                case 'jsonp':
-                    $callback = $this->getRequest()->getParam('callback');
-                    echo $callback . '(' . $this->_helper->json($response, 
-                    false) . ')';
-                    break;
-                case 'json':
-                    $this->_helper->json($response);
-                    break;
-                default:
-                    ;
-                    break;
-            }
+        }
+        if (empty($response)) {
+            $response = false;
+        }
+        Zend_Registry::get('logger')->debug('Response : ');
+        Zend_Registry::get('logger')->debug($response);
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('response', $response);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($response, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($response);
+                break;
+            default:
+                ;
+                break;
         }
     }
     /**
