@@ -2307,9 +2307,10 @@ class StudentController extends Zend_Controller_Action
             return $dmc_info_ids;
         } else {
             if ($dmc_info_ids == false) {
-                throw new Exception(
-                'Student with member_id : ' . $member_id .
-                 ' has no DMC information in database ', Zend_Log::WARN);
+                $message = 'Student with member_id : ' . $member_id .
+                 ' has no DMC information in database ';
+                Zend_Registry::get('logger')->debug($message);
+                return false;
             }
         }
     }
