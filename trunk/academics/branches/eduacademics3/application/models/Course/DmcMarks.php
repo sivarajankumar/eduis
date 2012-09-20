@@ -7,11 +7,26 @@ class Acad_Model_Course_DmcMarks extends Acad_Model_Generic
     protected $_internal;
     protected $_external;
     protected $_percentage;
+    protected $_max_marks;
     protected $_is_pass;
     protected $_is_considered;
     protected $_is_verified;
     protected $_date;
     protected $_mapper;
+    /**
+     * @return the $_max_marks
+     */
+    public function getMax_marks ()
+    {
+        return $this->_max_marks;
+    }
+    /**
+     * @param field_type $_max_marks
+     */
+    public function setMax_marks ($_max_marks)
+    {
+        $this->_max_marks = $_max_marks;
+    }
     /**
      * @return the $_dmc_marks_id
      */

@@ -47,7 +47,7 @@ class Acad_Model_Mapper_Course_DmcMarks
         $dmc_marks_table = $db_table->info('name');
         $required_cols = array('dmc_info_id', 'dmc_marks_id', 'internal', 
         'external', 'percentage', 'is_pass', 'is_verified', 'date', 
-        'student_subject_id');
+        'student_subject_id', 'max_marks');
         $select = $adapter->select()
             ->from($dmc_marks_table, $required_cols)
             ->where(' dmc_info_id= ?', $dmc_info_id)

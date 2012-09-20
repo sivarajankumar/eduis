@@ -711,22 +711,42 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
         switch ($qualifiaction_name) {
             case 'MATRIC':
                 $object = new Acad_Model_Qualification_Matric();
+                $marks_obtained = $data['marks_obtained'];
+                $total_marks = $data['total_marks'];
+                $percentage = (100 * ($marks_obtained / $total_marks));
+                $data['percentage'] = $percentage;
                 $info = $this->fetchQualificationInfo($qualification_id);
                 break;
             case 'TWELFTH':
                 $object = new Acad_Model_Qualification_Twelfth();
+                $marks_obtained = $data['marks_obtained'];
+                $total_marks = $data['total_marks'];
+                $percentage = (100 * ($marks_obtained / $total_marks));
+                $data['percentage'] = $percentage;
                 $info = $this->fetchQualificationInfo($qualification_id);
                 break;
             case 'DIPLOMA':
                 $object = new Acad_Model_Qualification_Diploma();
+                $marks_obtained = $data['marks_obtained'];
+                $total_marks = $data['total_marks'];
+                $percentage = (100 * ($marks_obtained / $total_marks));
+                $data['percentage'] = $percentage;
                 $info = $this->fetchQualificationInfo($qualification_id);
                 break;
             case 'BTECH':
                 $object = new Acad_Model_Qualification_Btech();
+                $marks_obtained = $data['marks_obtained'];
+                $total_marks = $data['total_marks'];
+                $percentage = (100 * ($marks_obtained / $total_marks));
+                $data['percentage'] = $percentage;
                 $info = $this->fetchQualificationInfo($qualification_id);
                 break;
             case 'MTECH':
                 $object = new Acad_Model_Qualification_Mtech();
+                $marks_obtained = $data['marks_obtained'];
+                $total_marks = $data['total_marks'];
+                $percentage = (100 * ($marks_obtained / $total_marks));
+                $data['percentage'] = $percentage;
                 $info = $this->fetchQualificationInfo($qualification_id);
                 break;
             default:
@@ -751,7 +771,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             $qualification_id);
         }
     }
-    protected function saveQualification ($qualification_id)
+    private function saveQualification ($qualification_id)
     {
         $qualification_obj = new Acad_Model_Member_Qualification();
         $member_id = $this->getMember_id();

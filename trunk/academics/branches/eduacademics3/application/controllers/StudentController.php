@@ -1523,6 +1523,16 @@ class StudentController extends Zend_Controller_Action
                 break;
         }
     }
+    /**
+     * 
+     * Enter description here ...
+     */
+    public function viewdmcinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        Zend_Registry::get('logger')->debug('viewdmcinfoACTION');
+    }
     public function viewdmcAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -1677,15 +1687,6 @@ class StudentController extends Zend_Controller_Action
                     break;
             }
         }
-    }
-    /**
-     * @deprecated
-     * Enter description here ...
-     */
-    public function viewdmcinfoAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
     }
     /**
      * @deprecated
@@ -2219,6 +2220,7 @@ class StudentController extends Zend_Controller_Action
             $dmc_subject_marks['internal'] = $info->getInternal();
             $dmc_subject_marks['percentage'] = $info->getPercentage();
             $dmc_subject_marks['is_pass'] = $info->getIs_pass();
+            $dmc_subject_marks['max_marks'] = $info->getMax_marks();
             $dmc_subject_marks['date'] = $info->getDate();
             return $dmc_subject_marks;
         } elseif ($info == false) {
@@ -2275,8 +2277,11 @@ class StudentController extends Zend_Controller_Action
         $internal = $marks_info['internal'];
         $dmc_subject_marks['external'] = $external;
         $dmc_subject_marks['internal'] = $internal;
+        $max_marks = $marks_info['max_marks'];
+        $dmc_subject_marks['max_marks'] = $max_marks;
         $marks_obtained = ($external + $internal);
-        $dmc_subject_marks['percentage'] = $marks_info['percentage'];
+        $percentage = (100 * ($marks_obtained / $max_marks));
+        $dmc_subject_marks['percentage'] = $percentage;
         $dmc_subject_marks['is_pass'] = $marks_info['is_pass'];
         $dmc_subject_marks['is_verified'] = $marks_info['is_verified'];
         $dmc_subject_marks['date'] = $marks_info['date'];
