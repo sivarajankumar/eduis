@@ -1,4 +1,4 @@
-<?php
+<?php 
 	if(Zend_Auth::getInstance()->hasIdentity()){
 		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
 		$usertype=$authInfo['userType'];
@@ -6,9 +6,9 @@
 ?>
 
 <div class="ui-state-hover"><center><H3>Basic Skills</H3></center></div>
-<div id="skill_details">
+<div id="language_details">
 	<?php 
-		if($this->skill_info == false)
+		if($this->language_info == false)
 		{
 			echo '<h4>No information has been added yet.</h4>';
 		}
@@ -22,14 +22,16 @@
 			<th></th>
 		</tr>
 		<?php
-			foreach ($this->skill_info as $skillId => $data)
+			foreach ($this->language_info as $languageId => $data)
 	        {
 				echo '<tr>';
-				echo '<td>'.ucfirst($data['skill_name']).'</td>';
+				echo '<td>'.ucfirst($data['language_name']).'</td>';
 				echo '<td>'.ucfirst($data['proficiency']).'</td>';
 				if($usertype == 'STU')
-					echo '<td><input type="button" value="Edit" onclick="javascript:change_location('."'".$skillId."'".')"></td>';
-				echo '<td><input type="button" value="Delete" onclick="javascript:delete_skill('."'".$skillId."'".')"></td>';
+				{
+					echo '<td><input type="button" value="Edit" onclick="javascript:change_location('."'".$languageId."'".')"></td>';
+					echo '<td><input type="button" value="Delete" onclick="javascript:delete_skill('."'".$languageId."'".')"></td>';
+				}
 				echo '</tr>'; 
 			}
 		}
@@ -62,17 +64,17 @@
 </style>
 
 <script type="text/javascript">
-	function change_location(skillId)
+	function change_location(languageId)
 	{
-		window.location.replace('/student/editskills?skill_id='+skillId);
+		window.location.replace('/student/editlanguageknown?language_id='+languageId);
 	}
 
-	function delete_skill(skillId)
+	function delete_skill(languageId)
 	{
-		var urlDeleteSkill = '<?php echo $this->url(array('controller' => 'student', 'action' => 'deleteskillinfo'))?>';
+		var urlDeleteSkill = '<?php echo $this->url(array('controller' => 'student', 'action' => 'deletelanguage'))?>';
 		$.ajax({
 			url : urlDeleteSkill,
-			data : {skill_id : skillId},
+			data : {language_id : languageId},
 			success : function(){
 				window.location.reload();
 			},

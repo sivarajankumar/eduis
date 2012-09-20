@@ -1,0 +1,151 @@
+<?php
+	$skills = $this->skills;
+?>
+
+<h2>Skill Set</h2>
+<form action="javascript:submit();" class="uniForm">
+<fieldset>
+	<?php
+	echo '<div class="ctrlHolder"><label for="skill_id"><em>*</em>Name</label>';
+		echo '<select id="skill_id" name="skill_id" class="selectInput required">';
+			foreach ($skills as $skill_id => $skill_data) {
+				echo '<option value="' . $skill_id . '">' . $skill_data .'</option>';
+			}
+		echo '<option value="-999">Other</option>';
+		echo '</select>';
+		echo '<p class="formHint">Name of the skill known by Candidate</p>';
+	echo '</div>';
+   	?>
+
+	<div class="ctrlHolder"><label for="profiency"><em>*</em>Proficiency</label>
+		<select id="proficiency" name="proficiency" class="selectInput required">
+			<option value="EXPERT">Expert</option>
+			<option value="INTERMEDIATE">Intermediate</option>
+			<option value="BASIC">Beginner</option>
+		</select>
+		<p class="formHint">Select the proficiency level</p>
+	</div>
+</fieldset>
+
+<div id="submitStatus" style="display: none; padding: 1em;"
+	class="ui-state-highlight ui-corner-all"></div>
+
+<div class="buttonHolder">
+	<button type="submit" class="secondaryAction">Cancel and go back</button>
+	<button type="submit" class="primaryAction">Next</button>
+</div>
+</form>
+
+<script>
+
+	$(function(){
+  		$('form.uniForm').uniform({
+    		prevent_submit : true
+ 		});
+	});
+
+	$("#skill_id").change(function(){
+		if($(this).val() == -999)
+		{
+			var html = '<div class="ctrlHolder" id="skill_name">'+
+						'<label for="skill_name"><em>*</em>Skill Name</label>'+
+						'<input name="skill_name" id="skill_name" value="" data-default-value="e.g. JAVA" size="35" maxlength="50" type="text" class="textInput required"/>'+
+						'<p class="formHint">Name of the Skill</p>'+
+						'</div>';
+			$(this).parent().after(html);
+		}
+		else
+		{
+			$('#skill_name').remove();
+		}
+	});
+
+	function submit() {
+		var flag = 1;
+		if($('#skill_id').val() == -999)
+		{
+			var new_skill = $('input[name="skill_name"]').val();
+			$('#skill_id option').each(function(){
+				if($(this).html().toLowerCase() == new_skill.toLowerCase())
+				{
+					alert("The skill that you have entered is already present in the dropdown. Plese select it from the dropdown menu");
+					flag = 0;
+					return false;
+				}
+			});
+		}
+
+		if(flag)
+		{
+			var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'saveskills'))?>';
+			$.ajax({
+				url : urlSaveInfo,
+				data : {myarray : getValues()},
+				success: function(jStatus){
+					alert("Your information has been submitted successfully");
+					window.location.replace("/student/viewskillinfo");
+				},
+				error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+					console.log(response);
+				}
+			});	
+		}
+	}
+	function getValues() {
+		var formData = {};
+		var skill_info = {};
+		formData['new_skill'] = false;
+		
+		if($('#skill_id').val() == -999)
+		{
+			var skill_name = $('input[name="skill_name"]').val();
+			skill_info['skill_name'] = skill_name;
+			formData['new_skill'] = true;
+		}
+		else
+		{
+			var skill_id = $('#skill_id').val();
+			skill_info['skill_id'] = skill_id;
+		}
+		skill_info['proficiency'] = $('#proficiency').val();
+		
+	    formData['skill_info'] = skill_info;
+	    
+		return formData;
+	}
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		width:auto;
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		font-size:17px;
+		font-weight:100;
+		margin-top:2px;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile(
+'http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER . '/plugins/uni-form/demos/css/demo.css');
+?>

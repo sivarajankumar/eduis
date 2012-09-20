@@ -1,0 +1,283 @@
+<?php 
+	$tests = $this->test_names;
+?>
+
+<h2>Employability Test</h2>
+<form action="javascript:submit_test_info();" id="test_info_form" class="uniForm">
+	Please fill the following details and click on next.<br><br>
+	<fieldset id="test_info">
+		<div class="ctrlHolder">
+			<label for="test_name"><em>*</em>Test Name</label>
+			<select id="test_name" name="test_name" class="selectInput required">
+			<option value="">Select</option>
+			<?php 
+				foreach ($tests as $key => $value)
+				{
+					echo '<option value="'.$value.'">'.$value.'</option>';
+				}
+			?>
+			<option value="-999">Other</option>
+			</select>
+			<p class="formHint">Select the name of the test</p>
+		</div>
+
+		<div class="ctrlHolder">
+			<label for="date_of_conduct"><em>*</em>Date Of Conduct</label>
+			<input name="date_of_conduct" id="date_of_conduct" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of test</p>
+		</div>
+	</fieldset>
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</form>
+
+<form action="javascript:submit_test_score();" id="test_score_form" class="uniForm">
+	<fieldset id="test_score">
+		<div class="ctrlHolder">
+			<label for="test_regn_no">Registration Number</label>
+			<input name="test_regn_no" id="test_regn_no" value="" data-default-value="e.g. 6687897987987" size="35" maxlength="50" type="text" class="textInput "/>
+			<p class="formHint">Enter registration number of test appeared</p>
+		</div>
+
+		<div class="ctrlHolder">
+			<label for="test_percentile">Percentile</label>
+			<input name="test_percentile" id="test_percentile" value="" data-default-value="e.g.Software Development" size="35" maxlength="50" type="text" class="textInput "/>
+			<p class="formHint">Percentile in test</p>
+		</div>
+
+		<div class="ctrlHolder">
+			<label for="test_total_score">Total Score</label>
+			<input name="test_total_score" id="test_total_score" value="" data-default-value="e.g.200" size="35" maxlength="50" type="text" class="textInput "/>
+			<p class="formHint"></p>
+		</div> 
+	</fieldset>
+	
+	<fieldset id="section_score">
+		<br>
+		<input type="button" class="" value="Add New Section" id="ui-button" onclick="javascript:add_section()"/>
+	</fieldset>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div>
+	<div class="buttonHolder">
+		<button type="submit" class="secondaryAction">Cancel and go back</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</form>
+
+<script>
+	var urlBasicInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'saveemptestrecord'))?>';
+	$(function(){
+		$('form#test_info_form').uniform({
+			prevent_submit : true
+		});
+	
+		serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+		$("#date_of_conduct").datepicker({
+	  	dateFormat: 'yy-mm-dd',
+	  	changeMonth: true,
+			changeYear: true,
+			yearRange: '-5:+5',
+			onClose : function(dateText, inst) {
+				this.focus();
+			}
+		});
+		$('#test_score_form').hide();
+	});
+	
+	$('#test_name').change(function(){
+		if($(this).val() == -999)
+		{
+			var div_html = '<div class="ctrlHolder" id="other"><label for="other_test_name"><em>*</em>Test Name</label><input name="other_test_name" id="other_test_name" value="" data-default-value="Section Name" size="35" maxlength="50" type="text" class="required textInput"/><p class="formHint">Select the name of the test</p></div>';
+			$(this).parent().after(div_html);
+		}
+		else
+		{
+			$('div#other').remove();
+		}
+	});
+	
+	function submit_test_info() {
+		var urlfetchemptestsections = '<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchemptestsections'))?>';
+		$.ajax({
+			url : urlfetchemptestsections,
+			dataType : 'json',
+			data : {
+				myarray : {test_info : get_test_info()},
+			},
+			success : function(jStatus){
+				$('#test_info_form').hide();
+				$('#test_score_form').show('fast');
+				if(jStatus == false)
+				{}
+				else
+				{
+					$.each(jStatus,function(test_section_id,name){
+						var html = '<fieldset id="'+test_section_id+'" class="section" title="'+name+'">'+
+						'<h2>'+name+'</h2>'+
+						'<div class="ctrlHolder"><label for="section_marks">Section Marks </label>'+
+							'<input name="section_marks" id="section_marks" value="" data-default-value="e.g. 29 " size="35" maxlength="50" type="text" class="textInput validateInteger"/>'+
+							'<p class="formHint">Marks obtained in above mentioned section</p>'+
+						'</div>'+
+				
+						'<div class="ctrlHolder">'+
+							'<label for="section_percentile">Section percentile </label>'+
+							'<input name="section_percentile" id="section_percentile" value="" data-default-value="e.g. 30" size="35" maxlength="50" type="text" class="textInput validateInteger"/>'+
+							'<p class="formHint">Percentile obtained in above mentioned section</p>'+
+						'</div>'+
+						'</fieldset>';
+
+						$('#section_score').prepend(html);
+					});
+				}
+			},
+			error : function(response){
+
+			}
+		});
+	}
+	function get_test_info()
+	{
+		var formData = {};
+		if($('#test_name').val() == -999)
+		{
+			formData['test_name'] = $('#other_test_name').val();
+		}
+		else
+		{
+			formData['test_name'] = $('#test_name').val();
+		}
+		formData['date_of_conduct'] = $('#date_of_conduct').val();
+		return formData;
+	}
+	function add_section()
+	{
+		var entered_value = prompt("Enter the name of the new section");
+		if(entered_value != '' & entered_value != null)
+		{
+			var fieldset_name = entered_value.toLowerCase().replace(' ','_');
+			var urladdsection = '<?php echo $this->url(array('controller' => 'student', 'action' => 'addemptestsection'))?>';
+			$.ajax({
+				url:urladdsection,
+				data:{
+					myarray:{'test_info':get_test_info(),'section_info':{'test_section_name':entered_value}},
+				},
+				success:function(jStatus){
+					if(jStatus == false)
+					{
+						alert("The section could not be added right now. Please try again later");
+					}
+					else
+					{
+						var html = '<fieldset id="'+jStatus['test_section_id']+'" class="section" title="'+jStatus['test_section_name']+'">'+
+						'<h2>'+jStatus['test_section_name']+'</h2>'+
+						'<div class="ctrlHolder"><label for="section_marks">Section Marks </label>'+
+							'<input name="section_marks" id="section_marks" value="" data-default-value="e.g. 29 " size="35" maxlength="50" type="text" class="textInput validateInteger"/>'+
+							'<p class="formHint">Marks obtained in above mentioned section</p>'+
+						'</div>'+
+				
+						'<div class="ctrlHolder">'+
+							'<label for="section_percentile">Section percentile </label>'+
+							'<input name="section_percentile" id="section_percentile" value="" data-default-value="e.g. 30" size="35" maxlength="50" type="text" class="textInput validateInteger"/>'+
+							'<p class="formHint">Percentile obtained in above mentioned section</p>'+
+						'</div>'+
+						'</fieldset>';
+
+						$('#section_score').prepend(html);
+					}
+				},
+				error:function(response){
+
+				}
+			});
+		}
+	}
+	function submit_test_score()
+	{
+		var urlsaveemtestrecord = '<?php echo $this->url(array('controller' => 'student', 'action' => 'saveemptestrecord'))?>';
+		$.ajax({
+	        url : urlsaveemtestrecord,
+	        data : {
+				myarray:getValues(),
+				format : 'json'
+			},
+	        success: function(jStatus){
+	        	alert("Your information has been submitted successfully.");
+	            window.location.replace("/student/viewemptestrecord");
+	        },
+			error: function(response) {
+				$('#errorBox').text(response.responseText).parent().show();
+				console.log(response);
+			}
+		});
+	}
+	function getValues() {
+		var data = {};
+		var test_info = {};
+		var test_record = {};
+		var test_section_record = {};
+		
+		$('fieldset#test_score :input')
+		.not('button,#e_mail_confirm,:input[value^="e.g."]')
+		.each(function(){ 
+			test_record[this.name] = this.value; 
+		});
+		
+		$('fieldset.section').each(function(){
+			var sub_data = {};
+			var div_id = $(this).attr('id');
+			var section_name = $(this).attr('title');
+			alert(div_id);
+			$('fieldset#section_score > fieldset#'+div_id+' :input').each(function(){
+				sub_data[this.name] = this.value;
+				alert(this.name+"  "+this.value);
+			})
+			sub_data['test_section_id'] = div_id;
+			sub_data['test_section_name'] = section_name;
+			test_section_record[div_id] = sub_data;
+			
+		});
+		data['test_info'] = get_test_info();
+		data['test_record'] = test_record;
+		data['test_section_record'] = test_section_record;
+		return data;
+	}
+</script>
+
+
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		width:auto;
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		font-size:17px;
+		font-weight:100;
+		margin-top:2px;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>

@@ -1,44 +1,27 @@
 <?php
-	$test_names = $this->test_names;
-	$technologies = $this->technologies;
+	$functional_areas = $this->functional_areas;
 ?>
 
 <h2>Training</h2>
 <form action="javascript:submit();" class="uniForm">
 
-	<fieldset id="technical_info">
+	<fieldset id="functional_area_info">
 		<div class="ctrlHolder">
-			<label for="technical_field_name">Technical Feild</label>
-			<select id="technical_field_name" name="technical_field_name" class="selectInput ">
+			<label for="functional_area_id">Technical Feild</label>
+			<select id="functional_area_id" name="functional_area_id" class="selectInput ">
 				<?php 
-					foreach ($test_names as $key => $value)
+					foreach ($functional_areas as $key => $value)
             		{
             			echo '<option value="'.$key.'">'.$value.'</option>';
             		}
           		?>
-          		<option value="other">Other</option>
 			</select>
 			<p class="formHint">Technical feild in which training is done </p>
 		</div>
 	</fieldset>
 	
 	<fieldset id="training_info">
-		<div class="ctrlHolder">
-			<label for="training_technology">Training Technology</label>
-			<select id="training_technology" name="training_technology" class="selectInput ">
-				<?php
-					foreach ($technologies as $key => $value)
-            		{
-            			echo '<option value="'.$key.'">'.$value.'</option>';
-            		}
-          		?>
-          		<option value="other">Other</option>
-			</select>
-			<p class="formHint">Technology in which training is done </p>
-		</div>
-     </fieldset>  
-      
-	<fieldset id="training_detail">
+		
 		<div class="ctrlHolder">
 			<label for="start_date">Start Date</label>
 			<input name="start_date" id="start_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
@@ -46,8 +29,8 @@
 		</div>
 		
         <div class="ctrlHolder">
-			<label for="complete_date">Complete Date</label>
-			<input name="complete_date" id="complete_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
+			<label for="completion_date">Complete Date</label>
+			<input name="completion_date" id="completion_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput "/>
 			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click end date</p>
 		</div>
 		
@@ -58,9 +41,21 @@
 		</div>
 		
 		<div class="ctrlHolder">
+			<label for="">Grade/Marks/Evaluation</label>
+			<input name="grade" id="grade" value="" data-default-value="A+" size="35" maxlength="50" type="text" class="textInput required"/>
+			<p class="formHint">Grade/Marks given by Organization/Institute</p>
+		</div>
+		
+		<div class="ctrlHolder">
 			<label for="">Training Semester</label>
 			<input name="training_semester" id="training_semester" value="" data-default-value="e.g. 3" size="35" maxlength="50" type="text" class="textInput required validateMax val-8"/>
 			<p class="formHint">Semester after which training is taken</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="description">Description </label>
+			<textarea rows="2" cols="20"  name="description" id="description" data-default-value="e.g. Training done in Core Java. Worked on project named EDUIS" class="textInput"></textarea>
+			<p class="formHint">A short description of training</p>
 		</div>
 	</fieldset>
 	
@@ -89,7 +84,7 @@ $(function(){
 			this.focus();
 		}
 	});
-	$("#complete_date").datepicker({
+	$("#completion_date").datepicker({
 	  	dateFormat: 'yy-mm-dd',
 	  	changeMonth: true,
 			changeYear: true,
@@ -98,43 +93,7 @@ $(function(){
 				this.focus();
 			}
 	  });
-});       
-
-var field_html = '<div class="ctrlHolder" id="technical_field_div">'+
-				'<label for="new_technical_field_name"><em class="red">*</em>Techical Field Name</label>'+
-				'<input name="new_technical_field_name" id="new_technical_field_name" value="" data-default-value="" size="35" maxlength="50" type="text" class="required textInput"/>'+
-				'<p class="formHint">Enter the name of the field</p>'+
-				'</div>'+
-				'<div class="ctrlHolder" id="technical_sector_div">'+
-				'<label for="new_technical_sector"><em class="red">*</em>Sector Name</label>'+
-				'<input name="new_technical_sector" id="new_technical_sector" value="" data-default-value="Technical Sector" size="35" maxlength="50" type="text" class="required textInput"/>'+
-				'<p class="formHint">Enter of the certification</p>'+
-				'</div>';
-$('#technical_field_name').change(function(){
-	if($('#technical_field_name').val() == 'other'){
-		$('fieldset#technical_info').append(field_html);
-	}
-	else {
-		$('div#other_field').remove();
-		$('div#other_sector').remove();
-	}
 });
-
-var technology_html = '<div class="ctrlHolder" id="technology_div">'+
-					'<label for="new_training_technology"><em class="red">*</em>Training Technology</label>'+
-					'<input name="new_training_technology" id="new_training_technology" value="" data-default-value="" size="35" maxlength="50" type="text" class="required textInput"/>'+
-					'<p class="formHint">Enter the name of the training Technology</p>'+
-					'</div>';
-$('#training_technology').change(function(){
-	if($('#training_technology').val() == 'other'){
-		$('fieldset#training_info').append(technology_html);
-	}
-	else {
-		$('div#technology_div').remove();
-	}
-});
-
-  
 
 function submit() {
 	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savetraining'))?>';
@@ -143,7 +102,7 @@ function submit() {
         data : {myarray:getValues()},
         success: function(jStatus){
             alert("Your information has been submitted successfully");
-            window.location.replace("/student/profile");
+            window.location.replace("/student/viewtraininginfo");
         },
 		error: function(response) {
 			$('#errorBox').text(response.responseText).parent().show();
@@ -154,32 +113,17 @@ function submit() {
 
 function getValues() {
 	var formData = {};
-	var technical_info = {};
 	var training_info = {};
-	var training_detail = {};
-
-	if($('#technical_field_name').val() == 'other') {
-		technical_info['technical_field_name'] = $('#new_technical_field_name').val();
-		technical_info['technical_sector'] = $('#new_technical_sector').val();
-	}
-	else {
-		technical_info['technical_field_id'] = $('#technical_field_name').val();
-	}
+	var functional_area_info = {};
 	
-	if($('#training_technology').val() == 'other') {
-		training_info['training_technology'] = $('#new_training_technology').val();
-	}
-	else {
-		training_info['training_technology'] = $('#training_technology').val();
-	}
-	
-	$('fieldset#training_detail :input')
-		.each(function(){
-			training_detail[this.name] = this.value; 
+	$('fieldset#training_info :input')
+	.each(function(){
+		training_info[this.name] = this.value; 
 	});
-	formData['technical_info'] = technical_info;
-	formData['training_info'] = training_info;
-	formData['training_detail'] = training_detail; 
+	functional_area_info['functional_area_id'] = $('#functional_area_id').val();
+	
+	formData['functional_area_info'] = functional_area_info;
+	formData['training_info'] = training_info; 
 	return formData;
 }
 </script>

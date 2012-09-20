@@ -1,26 +1,22 @@
-<?php 
-	$cocurricular = $this->cocurricular_info;
-?>
-
 <h2>Co-Curricular Activities</h2>
 <form action="javascript:submit();" class="uniForm">
 
     <fieldset>
 		<div class="ctrlHolder">
 			<label for="achievements">Achievements</label>
-			<textarea rows="2" cols="20" name="achievements" id="achievements" data-default-value="e.g. 1st prize in Paper Presentation at college level." class="textInput"><?php echo $cocurricular['achievements']?></textarea>
+			<textarea rows="2" cols="20" name="achievements" id="achievements" data-default-value="e.g. 1st prize in Paper Presentation at college level." class="textInput"></textarea>
 			<p class="formHint">Achievements of Student</p>
 		</div>
 
 		<div class="ctrlHolder">
 			<label for="activities">Activities </label>
-			<textarea rows="2" cols="20"  name="activities" id="activities" data-default-value="e.g. Sports" class="textInput"><?php echo $cocurricular['activities']?></textarea>
+			<textarea rows="2" cols="20"  name="activities" id="activities" data-default-value="e.g. Sports" class="textInput"></textarea>
 			<p class="formHint">Activities of Student</p>
 		</div>
 
 		<div class="ctrlHolder">
 			<label for="hobbies">Hobbies</label>
-			<textarea rows="2" cols="20" name="hobbies" id="hobbies" data-default-value="e.g. Reading" class="textInput "><?php echo $cocurricular['hobbies']?></textarea>
+			<textarea rows="2" cols="20" name="hobbies" id="hobbies" data-default-value="e.g. Reading" class="textInput "></textarea>
 			<p class="formHint">Hobbies of Student</p>
 		</div>
 	</fieldset>
@@ -87,16 +83,17 @@ function getValues() {
 		background-color:white;
 		padding:10px 10px 10px 25px;
 		border:1px solid #b4c1da;
-		margin:-5px 0 40px 0;
-		box-shadow:#e4e4e4 0px 0px 1px 1px; 
+		margin:-10px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		width:auto;
 	}
 	h2,h3{
 		padding:3px 3px 3px 10px;
 		background-color:#eceff4;
 		border:1px solid #b4c1da;
-		width:57%;
 		font-size:17px;
 		font-weight:100;
+		margin-top:2px;
 	}
 	#goback a{
 		float:right;

@@ -1,0 +1,134 @@
+<?php
+	$certification_info = $this->certification_info;
+	
+	if(Zend_Auth::getInstance()->hasIdentity()){
+		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
+		$usertype=$authInfo['userType'];
+	}
+?>
+<div class="ui-state-hover"><center><H3>Certification Information</H3></center></div>
+<div class="info" id="relative_info">
+	<?php
+	if($certification_info == false)
+	{
+		echo '<h4>No information has been added yet</h4>';
+	}
+	else 
+	{
+		$s_no = 1;
+		foreach ($certification_info as $certification_id => $certification_data)
+		{
+			echo '<div id='.$certification_id.' class="data">';
+				echo ''.$s_no.') ';
+				echo '<span class="red">Name: </span>'.$certification_data['certification_name'].'&nbsp;&nbsp;&nbsp;&nbsp;';
+				echo '<span class="red">Field/Area: </span>'.$certification_data['functional_area_name'].'<br>';
+				echo '<div id="details_div'.$certification_id.'" class="details_div">';
+					echo '<span class="red">Start Date: </span>'.$certification_data['start_date'].'<br>';
+					echo '<span class="red">End Date: </span>'.$certification_data['complete_date'].'<br>';
+					//echo '<span class="red">Grade: </span>'.$certification_data['grade'].'<br>';
+					echo '<span class="red">Details: </span>'.$certification_data['description'].'<br>';
+				echo '</div>';
+				echo '<input id="button_'.$certification_id.'" type="button" value="View Details" onclick="show_details('.$certification_id.')">&nbsp;&nbsp;';
+				
+				if($usertype == 'STU')
+				{
+					echo '<input type="button" value="Edit" onclick="change_location('.$certification_id.')">&nbsp;&nbsp;';
+					echo '<input type="button" value="Delete" onclick="delete_certification('.$certification_id.')">';
+				}
+				
+			echo '</div><br>';
+			$s_no++;
+		}
+	}
+	?>
+</div>
+
+<script type="text/javascript">
+
+	$(function(){
+		$('.details_div').hide();
+		$('div#topContent').hide();
+	});
+    function show_details(certification_id){
+        var div_id = '#details_div'+certification_id;
+    	if($('#button_'+certification_id).val() == 'Hide Details')
+		{
+			$(div_id).hide();
+			$('#button_'+certification_id).attr('value','Show Details');
+		}
+		else
+		{
+			$(div_id).show();
+			$('#button_'+certification_id).attr('value','Hide Details');
+		}
+    }
+    function change_location(certification_id)
+    {
+		window.location.replace('/student/editcertification?certification_id='+certification_id);
+    }
+    function delete_certification(certification_id)
+    {
+		var urlDeletecertification = "<?php echo $this->url(array('controller' => 'student', 'action' => 'deletestucertification'))?>";
+		$.ajax({
+			url : urlDeletecertification,
+			data : {certification_id : certification_id},
+			success : function(){
+				window.location.reload();
+			},
+			error : function(){
+				alert("The information was not deleted due to some problem. Please try again");
+			}, 
+		});
+    }
+    
+</script>
+
+<style type="text/css">
+
+	.info
+	{
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+		font-size: 14px;
+		margin: 15px;
+		text-align: left;
+		border-collapse: collapse;
+	}
+	.data{	
+		background-color:#F9F9F9;
+		border:0.1em solid #D1D1D1;
+		border-radius: 3px;
+		padding: 2px 0 5px 10px;
+		line-height: 25px;
+	}
+	span.red {
+		color:red;
+	}
+	.table-design1 {
+		border: 1px solid #DFDFDF;
+		background-color: white;
+		width: 100%;
+		-moz-border-radius: 3px;
+		-webkit-border-radius: 3px;
+		border-radius: 3px;
+		font-family: Arial,"Bitstream Vera Sans",Helvetica,Verdana,sans-serif;
+		color: #333;
+	}
+	.table-design1 td, .table-design1 th {
+		border-top-color: white;
+		color: #313131;
+	}
+	.table-design1 th {
+		text-shadow: rgba(255, 255, 255, 0.796875) 0px 1px 0px;
+		font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+		font-weight: normal;
+		padding: 7px 7px 8px;
+		text-align: left;
+		line-height: 1.3em;
+		font-size: 14px;
+		background-color:#F2F2F2;
+	}
+	.table-design1 td {
+		font-size: 12px;
+		padding: 4px 7px 2px;
+	}
+</style>
