@@ -1,0 +1,84 @@
+<?php 
+    if(Zend_Auth::getInstance()->hasIdentity()){
+		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
+		$usertype=$authInfo['userType'];
+	}
+?>
+<h3>Please click on semester number and select the DMC number to view its details.</h3>
+
+<div id="info">
+</div>
+
+<script type="text/javascript">
+	$(function(){
+		var urlfetchinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchacademicinfo'))?>";
+		$.ajax({
+			url : urlfetchinfo,
+			data : {
+				format : 'json'
+				},
+        	success: function(jStatus){
+        		if(jStatus){
+            		var html = '';
+            		$.each(jStatus['batch_display'],function(batch_id,data){
+						html += '<div class="batch_info" id="'+batch_id+'"><span class="heading">Department:</span> '+data['batch_info']['department_id']+' &nbsp;&nbsp;';
+						html += '<span class="heading">Programme: </span>'+data['batch_info']['programme_id']+' &nbsp;&nbsp;';
+						html += '<span class="heading">Batch: </span>'+data['batch_info']['batch_start']+' &nbsp;&nbsp;';
+						html += '<span class="heading">Roll Number: </span>'+jStatus['student_class_info'][batch_id]['roll_no']+' &nbsp;&nbsp;';
+						html += '<span class="heading">Group: </span>'+jStatus['student_class_info'][batch_id]['group_id'].toUpperCase()+' <br>';
+
+						$.each(data['class_ids'],function(class_id,semester){
+							html += '<span class="semesters" id="semester'+class_id+'" onclick="show_add_button('+class_id+')"><span class="heading">Semester: </span>'+semester+'</span><span id="button'+class_id+'"></span><br>';
+						});
+						html += '</div>';
+            		});
+            		
+            		$('#info').append(html);
+        		}
+            },
+            error: function(response) {
+        		//$('#errorBox').text(response.responseText).parent().show();
+        		//console.log(response);
+
+        		alert(response);
+        	}
+		});
+
+			$('div#topContent').hide();
+	});
+
+	function show_add_button(class_id,batch_id)
+	{
+		html = '&nbsp;&nbsp;<input type="button" value="Add DMC" onclick="change_location('+class_id+')">';
+        $('#button'+class_id).html(html);
+	}
+
+	function change_location(class_id)
+	{
+		var location = "/student/adddmc?class_id="+class_id;
+		window.location.replace(location);
+	}
+</script>
+
+<style type="text/css">
+	.batch_info{
+		background-color: #F2F2F2;
+		border: 1px solid #B2B2B2;
+		border-radius: 2px;
+		padding: 4px 4px 4px 10px;
+		margin: 0 0 10px 0;
+		font-size:1.1em;
+		line-height: 2.1em;
+	}
+	.batch_info > span.heading{
+		color:red;
+	}
+	.batch_info > .semesters:hover{
+		background-color: #D2D2D2;
+		cursor: pointer;
+	}
+	.batch_info > .semesters > span.heading{
+		color:red;
+	}
+	
+</style>
