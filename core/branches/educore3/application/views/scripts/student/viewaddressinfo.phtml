@@ -16,15 +16,24 @@
     		dataType : 'json',
             data : {format:'json'},
     		success: function(jStatus){
-    			var html = '';
-    			$.each(jStatus,function(address_type,data){
-        			html += '<tr class="heading"><td>'+address_type+' ADDRESS </td></tr>';
-    				$.each(data,function(key,value){
-        				html += '<tr class="row"><td><span id="heading">'+key.replace(/_/g," ").toUpperCase()+'</span><span id="content">'+value+'</span></td></tr>';
-		    		});
-		    		html += '<tr></tr>';
-    			});
-    			$('#info_table').append(html);
+        		if(jStatus == null)
+        		{
+        			$('#info_table').append('No information has been added yet.');
+        		}
+        		else
+        		{
+        			var html = '';
+        			$.each(jStatus,function(address_type,data){
+            			html += '<tr class="heading"><td>'+address_type+' ADDRESS </td></tr>';
+            			html += '<tr class="row"><td><span id="heading">Address</span><span id="content">'+data['address']+'</span></td></tr>';
+            			html += '<tr class="row"><td><span id="heading">City</span><span id="content">'+data['city']+'</span></td></tr>';
+            			html += '<tr class="row"><td><span id="heading">District</span><span id="content">'+data['district']+'</span></td></tr>';
+            			html += '<tr class="row"><td><span id="heading">State</span><span id="content">'+data['state']+'</span></td></tr>';
+            			html += '<tr class="row"><td><span id="heading">Pin Code</span><span id="content">'+data['postal_code']+'</span></td></tr>';
+    		    		html += '<tr></tr>';
+        			});
+        			$('#info_table').append(html);
+        		}
             },
             error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();

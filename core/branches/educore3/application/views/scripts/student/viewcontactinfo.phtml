@@ -16,11 +16,18 @@
             data : {format:'json'},
     		success: function(jStatus){
     			$.each(jStatus,function(contact_type_id,data){
-    				var html = '';
-    				$.each(data,function(key,value){
-        				html += '<tr class="row"><td><span id="heading">'+contact[contact_type_id]+'</span><span id="content">'+value+'</span></td></tr>';
-		    		});
-    				$('#info_table').append(html);	
+        			if(jStatus == null)
+        			{
+
+        			}
+        			else
+        			{
+        				var html = '';
+        				$.each(data,function(key,value){
+            				html += '<tr class="row"><td><span id="heading">'+contact[contact_type_id]+'</span><span id="content">'+value+'</span></td></tr>';
+    		    		});
+        				$('#info_table').append(html);	
+        			}
     			});
             },
             error: function(response) {
