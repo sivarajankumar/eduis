@@ -84,11 +84,11 @@
 		<p class="formHint">Scaled Marks</p>
 	</div>
 	
-	<div class="ctrlHolder">
+	<!-- <div class="ctrlHolder">
 		<label for="percentage"><em>*</em>Percentage</label>
 		<input name="percentage" id="percentage" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>
 		<p class="formHint">Percentage obtained by Candidate</p>
-	</div>
+	</div> -->
 	
 </fieldset>
 </form>
@@ -118,21 +118,21 @@
 
 					'<fieldset id="'+subject_data['name'].replace(/ /g,"_").toLowerCase()+'" class="subjects" title="'+subject_id+'" >'+
 						'<div class="ctrlHolder">'+
-							'<label for="internal"><em>*</em>Internal Marks</label>'+
-							'<input name="internal" id="internal" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>'+
+							'<label for="internal"><em>*</em>Internal Marks Obtained</label>'+
+							'<input name="internal" id="internal" value="" data-default-value="e.g. 45" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>'+
 							'<p class="formHint">Internal Marks of the Subject</p>'+
 						'</div>'+
 						
 						'<div class="ctrlHolder">'+
-							'<label for="external"><em>*</em>External Marks</label>'+
-							'<input name="external" id="external" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>'+
+							'<label for="external"><em>*</em>External Marks Obtained</label>'+
+							'<input name="external" id="external" value="" data-default-value="e.g. 65" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>'+
 							'<p class="formHint">External Marks of the subject</p>'+
 						'</div>'+
 						
 						'<div class="ctrlHolder">'+
-							'<label for=""><em>*</em>Percentage</label>'+
-							'<input name="percentage" id="percentage" value="" data-default-value="e.g. 90" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>'+
-							'<p class="formHint">Percentage obtained by Student in the subject</p>'+
+							'<label for="max_marks"><em>*</em>Maximum Marks(Internal+External)</label>'+
+							'<input name="max_marks" id="max_marks" value="" data-default-value="e.g. 150" size="35" maxlength="50" type="text" class="textInput required validateNumber  validateMax val-100"/>'+
+							'<p class="formHint">Maximum marks of the subject(Addition of External Maximum Marks + Internal Maximum Marks)</p>'+
 						'</div>'+
 						
 						'<div class="ctrlHolder">'+
