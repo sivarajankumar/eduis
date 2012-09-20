@@ -2,9 +2,9 @@
 
 <div style="width:600px">
 	<form id="imageform" method="post" enctype="multipart/form-data" action='/student/savephoto'>
-		The image should be in jpg or png format and size should be less than 1MB.
+		The image should be in jpg or png format and size should be less than 256KB.
 		<br><br>Upload your image <input type="file" name="photoimg" id="photoimg" />
-	</form>
+	</form><br>
 	<div id='preview'>
 	
 	</div>
@@ -14,10 +14,18 @@
 	$(document).ready(function() {
 		$('#photoimg').live('change', function()
 		{ 
-			$("#preview").html('');
-			$("#preview").html('<img src="http://site.cdn.aceambala.com/images/loading.gif" height="50" width="50" alt="Uploading...."/>');
+			//$("#preview").html('');
+			//$("#preview").html('<img src="http://site.cdn.aceambala.com/images/loading.gif" height="50" width="50" alt="Uploading...."/>');
 			$("#imageform").ajaxForm(function(status){
-				$('#preview').html(status);
+				if(status == 'true')
+				{
+					window.parent.location.reload();
+				}
+				else
+				{
+					$('#preview').html('');
+					$('#preview').html(status);
+				}
 			}).submit();
 		});
 	}); 

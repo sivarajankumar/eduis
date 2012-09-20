@@ -10,11 +10,14 @@
 		<tr>
 			<td><span id="heading">Department</span><span id="content"><?php echo $departments[$department_id]?></span></td>
 		</tr>
-		<?php 
-            foreach ($student_class_info as $key => $value) {
-                echo '<tr><td><span id="heading">Batch Year</span><span id="content">'.$key.'</span></td></tr>';
-                echo '<tr><td><span id="heading">Roll Number</span><span id="content">'.$value.'</span></td></tr>';
-            }
+		<?php
+		    if($student_class_info != false)
+		    {
+                foreach ($student_class_info as $key => $value) {
+                    echo '<tr><td><span id="heading">Batch Year</span><span id="content">'.$key.'</span></td></tr>';
+                    echo '<tr><td><span id="heading">Roll Number</span><span id="content">'.$value.'</span></td></tr>';
+                }
+		    }
         ?>
 	</table>
 </div>

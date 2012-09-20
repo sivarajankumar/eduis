@@ -1,0 +1,168 @@
+<div id="student_navigation">
+	<img alt="Student" id="student_img" width="40" height="46">
+	<ul id="list">
+		<li id="core_link"><a href="http://core.aceambala.com/student">Core Profile</a></li>
+		<li id="academic_link"><a href="http://academic.aceambala.com/student">Academic Profile</a></li>
+		<li id="tnp_link"><a href="http://tnp.aceambala.com/student">TNP Profile</a></li>
+	</ul>
+</div>
+<br>
+
+<link rel="stylesheet" href="<?php echo 'http://'. CDN_SERVER . '/css/admission.css';?>">
+
+<div id="main">
+	<div id="sidebar" style="float:left">
+	<ul class="menu">
+	
+		<li class="item2">
+			<a href="#">Personal Information</a>
+			<ul>
+				<li class="subitem1"><a href="/student/viewpersonalinfo" target="content_frame">View</a></li>
+				<li class="subitem1"><a href="/student/editpersonalinfo" target="content_frame">Add/Edit</a></li>
+			</ul>
+		</li>
+		
+		<li class="item1">
+			<a href="#">Class Information</a>
+			<ul>
+				<li class="subitem1"><a href="/student/viewclassinfo" target="content_frame">View</a></li>
+				<li class="subitem1"><a href="/student/editclassinfo" target="content_frame">Add/Edit</a></li>
+			</ul>
+		</li>
+
+		<li class="item3">
+			<a href="#">Contact Information</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editcontactinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewcontactinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item4">
+			<a href="#">Address Information</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editaddressinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewaddressinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item5">
+			<a href="#">Family Information</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editrelativesinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewrelativesinfo" target="content_frame">View</a></li>
+			</ul>
+		</li>
+
+		<li class="item6">
+			<a href="#">University Registration Information</a>
+			<ul>
+				<li class="subitem1"><a href="/student/editunvregistrationinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/student/viewunvregistrationinfo" target="content_frame">View </a></li>
+			</ul>
+		</li>
+		
+		<li class="item6">
+			<a href="#">Change Photograph</a>
+			<ul>
+				<li class="subitem1"><a href="/student/uploadphoto" target="content_frame">Add/Change</a></li>
+			</ul>
+		</li>
+	</ul>
+	</div>
+	<div id="page_content">
+		<iframe id="content_frame" name="content_frame" width="100%" height="900" frameborder="0" scrolling="auto" onload="hide_top()"></iframe>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(function() {
+
+		$('#topnav').hide();
+		$('#core_link').css('background-color','#b3cdd6');
+		$('#core_link').css('border','1px solid black');
+		$('#core_link').css('padding','5px 6px');
+		
+        var menu_ul = $('.menu > li > ul'),
+		menu_a  = $('.menu > li > a');
+
+        menu_ul.hide();
+    
+        menu_a.click(function(e) {
+			e.preventDefault();
+            if(!$(this).hasClass('active')) {
+                menu_a.removeClass('active');
+                menu_ul.filter(':visible').slideUp('normal');
+                $(this).addClass('active').next().stop(true,true).slideDown('normal');
+            } else {
+                $(this).removeClass('active');
+                $(this).next().stop(true,true).slideUp('normal');
+            }
+        });
+
+        $('.menu > li > a:first').click();
+        var path = $('.subitem1 > a').attr('href');
+        $('#content_frame').attr('src',path);
+
+        var urlfetchimagelocation = 'http://core.aceambala.com/student/getimagename';
+        $.ajax({
+			url : urlfetchimagelocation,
+			data : {format : 'jsonp'},
+			dataType : 'jsonp',
+			success : function(jStatus){
+				$('#student_img').attr('src','http://site.cdn.aceambala.com/images/memberimages/'+jStatus);
+			},
+			error : function(response){
+
+			}
+        });
+    });
+
+	function hide_top()
+	{
+		$('iframe#content_frame').contents().find('div#topContent').hide();		
+	}
+
+</script>
+
+<style type="text/css">
+	#page_content{
+    	float:left;
+		width:65%;
+    }
+	div#main{
+    	margin-top:10px;
+	}
+	div#student_navigation{
+		background-color:#d6ebf2;
+		border:0.1em solid #97afb7;
+		border-radius:2px;
+		margin:10px 0;
+		padding:11px;
+	}
+	ul#list{
+		padding:5px 5px 5px 5px;
+		list-style: none outside none;
+    	margin: 0;
+	}
+	ul#list>li{
+		display:inline;
+		padding:5px 6px 5px 6px;
+	}
+	ul#list>li:hover{
+		display:inline;
+		padding:5px 5px 5px 5px;
+		background-color:#b3cdd6;
+		border: 1px solid black;
+	}
+	ul#list>li>a{
+		text-decoration:none;
+		color:black;
+	}
+	#student_img{
+		float:left;
+		border:1px solid grey;
+		border-radius:2px;
+		margin: -5px 10px 0 -3px;
+	}
+</style>
