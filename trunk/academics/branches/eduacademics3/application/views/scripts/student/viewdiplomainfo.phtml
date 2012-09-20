@@ -1,9 +1,23 @@
+<?php 
+    $diploma = $this->diploma;
+    if(Zend_Auth::getInstance()->hasIdentity()){
+		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
+		$usertype=$authInfo['userType'];
+	}
+?>
+
 <div class="ui-state-hover"><center><H3>Diploma Details</H3></center></div>
 <div id="dip_details">
     	<table id="corner" cellspacing="10" cellpadding="10">
           
-        <?php 
-        	foreach ($this->diploma as $key => $value) 
+        <?php
+            if($diploma == null)
+            {
+                echo '<h4>No information has been added yet.</h4>';
+            }
+            else
+            {
+            	foreach ($diploma as $key => $value) 
         		{
         		    echo '<tr>';
     	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
@@ -14,13 +28,21 @@
     	                echo '<td><i>Not Mentioned</i></td>';
     	            }
     	            echo '</tr>';
-        		} 
+        		}
+            }
             ?>
         	
     	</table>
 </div>
+<?php if($usertype == 'STU'){?>
 <input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editdiplomainfo');">
-<!--<input type="button" class="ui-button" value="Go Back" onclick="window.location.replace('/student/profile');">-->
+<?php }?>
+
+<script type="text/javascript">
+	$(function(){
+		$('div#topContent').hide();
+	});
+</script>
 
 <style type="text/css">
 	table {

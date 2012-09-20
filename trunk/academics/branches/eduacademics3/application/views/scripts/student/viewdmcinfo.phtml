@@ -1,3 +1,11 @@
+<?php 
+    if(Zend_Auth::getInstance()->hasIdentity()){
+		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
+		$usertype=$authInfo['userType'];
+	}
+?>
+<h3>Please click on semester number and select the DMC number to view its details.</h3>
+
 <div id="info">
 </div>
 
@@ -18,9 +26,9 @@
 						html += '<span class="heading">Batch: </span>'+data['batch_info']['batch_start']+' &nbsp;&nbsp;';
 						html += '<span class="heading">Roll Number: </span>'+jStatus['student_class_info'][batch_id]['roll_no']+' &nbsp;&nbsp;';
 						html += '<span class="heading">Group: </span>'+jStatus['student_class_info'][batch_id]['group_id'].toUpperCase()+' <br>';
-						
+
 						$.each(data['class_ids'],function(class_id,semester){
-							html += '<span class="semesters" onclick="get_dmc_ids('+class_id+','+batch_id+')"><span class="heading">Semester: </span>'+semester+'</span><br>';
+							html += '<span class="semesters" id="semester'+class_id+'" onclick="get_dmc_ids('+class_id+','+batch_id+')"><span class="heading">Semester: </span>'+semester+'</span><br>';
 						});
 						html += '</div>';
             		});
@@ -35,6 +43,8 @@
         		alert(response);
         	}
 		});
+
+			$('div#topContent').hide();
 	});
 
 	function get_dmc_ids(class_id,batch_id)
@@ -47,15 +57,15 @@
 					format : 'json'
 				},
 			success: function(jStatus){
-        		var html = 'Please select the dmc. <select id="dmc_info_id" name="dmc_info_id">';
+        		var html = '&nbsp;&nbsp;Please select the dmc. <select id="dmc_for_class_id'+class_id+'" name="dmc_info_id">';
         		html += '<option value="">Serial Number</option>';
         		$.each(jStatus['dmc_info'],function(dmc_info_id,serial_no){
             		html += '<option value="'+dmc_info_id+'">'+serial_no+'</option>';
             	});
         		html += '</select> &nbsp;';
-        		html += '<input type="button" value="View Details" onclick="change_location()">';
+        		html += '<input type="button" value="View Details" onclick="change_location('+class_id+')">';
 
-        		$('#'+batch_id).append(html);
+        		$('#semester'+class_id).after(html);
             },
             error: function(response) {
         		$('#errorBox').text(response.responseText).parent().show();
@@ -64,13 +74,13 @@
 		});
 	}
 
-	function change_location()
+	function change_location(class_id)
 	{
-		if($('#dmc_info_id').val() == '')
+		if($('#dmc_for_class_id'+class_id).val() == '')
 			alert('You must select the serial number first');
 		else
 		{
-			var dmc_info_id = $('#dmc_info_id').val();
+			var dmc_info_id = $('#dmc_for_class_id'+class_id).val();
     		var location = "/student/viewdmc?dmc_info_id="+dmc_info_id;
     		window.location.replace(location);
 		}
@@ -85,7 +95,7 @@
 		padding: 4px 4px 4px 10px;
 		margin: 0 0 10px 0;
 		font-size:1.1em;
-		line-height: 1.4em;
+		line-height: 1.8em;
 	}
 	.batch_info > span.heading{
 		color:red;
