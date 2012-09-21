@@ -2187,6 +2187,7 @@ class StudentController extends Zend_Controller_Action
             $info['examination'] = $dmc_info->getExamination();
             $info['custody_date'] = $dmc_info->getCustody_date();
             $info['is_granted'] = $dmc_info->getIs_granted();
+            $info['grant_date'] = $dmc_info->getGrant_date();
             $info['is_copied'] = $dmc_info->getIs_copied();
             $info['dispatch_date'] = $dmc_info->getDispatch_date();
             $info['marks_obtained'] = $dmc_info->getMarks_obtained();
@@ -2495,6 +2496,7 @@ class StudentController extends Zend_Controller_Action
         $save_info['custody_date'] = $dmc_info['custody_date'];
         $save_info['is_granted'] = $dmc_info['is_granted'];
         $save_info['receiving_date'] = $dmc_info['receiving_date'];
+        $save_info['grant_date'] = $dmc_info['grant_date'];
         $save_info['is_copied'] = $dmc_info['is_copied'];
         $save_info['dispatch_date'] = $dmc_info['dispatch_date'];
         $marks_obtained = $dmc_info['marks_obtained'];
