@@ -30,6 +30,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         // Define path to Accounts server.
         defined('ACCOUNT_SERVER') ||
          define('ACCOUNT_SERVER', 'account.aceambala.com');
+        defined('TNP_SERVER') ||
+         define('TNP_SERVER', 'tnp.aceambala.com');
         defined('DATA_EXCEL') ||
          define('DATA_EXCEL', $this->getOption('data_excel'));
         defined('IMAGE_DIR') ||
