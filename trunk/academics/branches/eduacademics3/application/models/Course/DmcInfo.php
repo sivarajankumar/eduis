@@ -10,6 +10,7 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     protected $_examination;
     protected $_custody_date;
     protected $_is_granted;
+    protected $_grant_date;
     protected $_receiving_date;
     protected $_is_copied;
     protected $_dispatch_date;
@@ -19,6 +20,20 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     protected $_percentage;
     protected $_mapper;
     /**
+	 * @return the $_grant_date
+	 */
+	public function getGrant_date() {
+		return $this->_grant_date;
+	}
+
+	/**
+	 * @param field_type $_grant_date
+	 */
+	public function setGrant_date($_grant_date) {
+		$this->_grant_date = $_grant_date;
+	}
+
+	/**
      * @return the $_is_considered
      */
     public function getIs_considered ($throw_exception = null)
