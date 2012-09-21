@@ -1,338 +1,171 @@
 <?php
-class Tnp_Model_Class extends Tnp_Model_Generic
+class ClassController extends Zend_Controller_Action
 {
-    protected $_class_id;
-    protected $_batch_id;
-    protected $_semester_id;
-    protected $_semester_type;
-    protected $_semester_duration;
-    protected $_handled_by_dept;
-    protected $_start_date;
-    protected $_completion_date;
-    protected $_is_active;
-    protected $_mapper;
-    /**
-     * @return the $_class_id
-     */
-    public function getClass_id ($throw_exception = null)
-    {
-        $class_id = $this->_class_id;
-        if (empty($class_id) and $throw_exception == true) {
-            $message = '_class_id is not set';
-            $code = Zend_Log::ERR;
-            throw new Exception($message, $code);
-        } else {
-            return $class_id;
-        }
-    }
-    /**
-     * @return the $_batch_id
-     */
-    public function getBatch_id ($throw_exception = null)
-    {
-        $batch_id = $this->_batch_id;
-        if (empty($batch_id) and $throw_exception == true) {
-            $message = '_batch_id is not set';
-            $code = Zend_Log::ERR;
-            throw new Exception($message, $code);
-        } else {
-            return $batch_id;
-        }
-    }
-    /**
-     * @return the $_semester_id
-     */
-    public function getSemester_id ($throw_exception = null)
-    {
-        $semester_id = $this->_semester_id;
-        if (empty($semester_id) and $throw_exception == true) {
-            $message = '_semester_id is not set';
-            $code = Zend_Log::ERR;
-            throw new Exception($message, $code);
-        } else {
-            return $semester_id;
-        }
-    }
-    /**
-     * @return the $_semester_type
-     */
-    public function getSemester_type ()
-    {
-        return $this->_semester_type;
-    }
-    /**
-     * @return the $_semester_duration
-     */
-    public function getSemester_duration ()
-    {
-        return $this->_semester_duration;
-    }
-    /**
-     * @return the $_handled_by_dept
-     */
-    public function getHandled_by_dept ($throw_exception = null)
-    {
-        $handled_by_dept = $this->_handled_by_dept;
-        if (empty($handled_by_dept) and $throw_exception == true) {
-            $message = '_handled_by_dept is not set';
-            $code = Zend_Log::ERR;
-            throw new Exception($message, $code);
-        } else {
-            return $handled_by_dept;
-        }
-    }
-    /**
-     * @return the $_start_date
-     */
-    public function getStart_date ()
-    {
-        return $this->_start_date;
-    }
-    /**
-     * @return the $_completion_date
-     */
-    public function getCompletion_date ()
-    {
-        return $this->_completion_date;
-    }
-    /**
-     * @return the $_is_active
-     */
-    public function getIs_active ($throw_exception = null)
-    {
-        $is_active = $this->_is_active;
-        if (empty($is_active) and $throw_exception == true) {
-            $message = '_is_active is not set';
-            $code = Zend_Log::ERR;
-            throw new Exception($message, $code);
-        } else {
-            return $is_active;
-        }
-    }
-    /**
-     * @param field_type $_class_id
-     */
-    public function setClass_id ($_class_id)
-    {
-        $this->_class_id = $_class_id;
-    }
-    /**
-     * @param field_type $_batch_id
-     */
-    public function setBatch_id ($_batch_id)
-    {
-        $this->_batch_id = $_batch_id;
-    }
-    /**
-     * @param field_type $_semester_id
-     */
-    public function setSemester_id ($_semester_id)
-    {
-        $this->_semester_id = $_semester_id;
-    }
-    /**
-     * @param field_type $_semester_type
-     */
-    public function setSemester_type ($_semester_type)
-    {
-        $this->_semester_type = $_semester_type;
-    }
-    /**
-     * @param field_type $_semester_duration
-     */
-    public function setSemester_duration ($_semester_duration)
-    {
-        $this->_semester_duration = $_semester_duration;
-    }
-    /**
-     * @param field_type $_handled_by_dept
-     */
-    public function setHandled_by_dept ($_handled_by_dept)
-    {
-        $this->_handled_by_dept = $_handled_by_dept;
-    }
-    /**
-     * @param field_type $_start_date
-     */
-    public function setStart_date ($_start_date)
-    {
-        $this->_start_date = $_start_date;
-    }
-    /**
-     * @param field_type $_completion_date
-     */
-    public function setCompletion_date ($_completion_date)
-    {
-        $this->_completion_date = $_completion_date;
-    }
-    /**
-     * @param field_type $_is_active
-     */
-    public function setIs_active ($_is_active)
-    {
-        $this->_is_active = $_is_active;
-    }
-    /**
-     * Sets Mapper
-     * @param Tnp_Model_Mapper_Class $mapper
-     * @return Tnp_Model_Class
-     */
-    public function setMapper ($mapper)
-    {
-        $this->_mapper = $mapper;
-        return $this;
-    }
-    /**
-     * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_Class
-     */
-    public function getMapper ()
-    {
-        if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_Class());
-        }
-        return $this->_mapper;
-    }
-    /**
-     * Provides correct db column names corresponding to model properties
-     * @todo add correct names where required
-     * @param string $key
-     */
-    protected function correctDbKeys ($key)
-    {
-        switch ($key) {
-            /*case 'nationalit':
-                return 'nationality';
-                break;*/
-            default:
-                return $key;
-                break;
-        }
-    }
-    /**
-     * Provides correct model property names corresponding to db column names
-     * @todo add correct names where required
-     * @param string $key
-     */
-    protected function correctModelKeys ($key)
-    {
-        switch ($key) {
-            /*case 'nationality':
-                return 'nationalit';
-                break;*/
-            default:
-                return $key;
-                break;
-        }
-    }
-    /**
-     * 
-     */
-    public function initInfo ()
+    public function init ()
+    {}
+    public function indexAction ()
     {}
     /**
-     * Fetches information regarding class
-     *
+     * Fetches information about a class on the basis of Class_id
+     * 
+     * @param int $class_id
      */
-    public function fetchInfo ()
+    private function findClassInfo ($class_id)
     {
-        $class_id = $this->getClass_id(true);
-        $info = $this->getMapper()->fetchInfo($class_id);
-        if (empty($info)) {
-            return false;
+        $class = new Tnp_Model_Class();
+        $class->setClass_id($class_id);
+        $info = $class->fetchInfo();
+        if ($info instanceof Tnp_Model_Class) {
+            $class_info = array();
+            $class_info['class_id'] = $info->getClass_id();
+            $class_info['batch_id'] = $info->getBatch_id();
+            $class_info['semester_id'] = $info->getSemester_id();
+            $class_info['semester_type'] = $info->getSemester_type();
+            $class_info['semester_duration'] = $info->getSemester_duration();
+            $class_info['handled_by_dept'] = $info->getHandled_by_dept();
+            $class_info['start_date'] = $info->getStart_date();
+            $class_info['completion_date'] = $info->getCompletion_date();
+            $class_info['is_active'] = $info->getIs_active();
+            return $class_info;
         } else {
-            $this->setOptions($info);
-            return $this;
+            return false;
         }
     }
     /**
-     * 
-     * fetches the Class Ids of a batch
-     * @param bool $batch_specific optional
-     * @param bool $semester_specific optional 
-     * @param bool $active optional
-     * @return array|int|false
+     * fetches $class_id on the basis of class info given
+     * Enter description here ...
+     * @param int $class_id
+     * @param int $semester_id
+     * @param bool $is_active
      */
-    public function fetchClassIds ($batch_specific = null, $semester_specific = null, 
-    $active = null)
+    private function findClassIds ($class_id = null, $semester_id = null, 
+    $is_active = null)
     {
-        $department_id = null;
-        $programme_id = null;
-        $batch_id = null;
-        $semester_id = null;
-        $is_active = null;
-        if ($semester_specific == true) {
-            $semester_id = $this->getSemester_id(true);
+        $class_id_basis = null;
+        $semester_id_basis = null;
+        $is_active_basis = null;
+        $class = new Tnp_Model_Class();
+        if ($class_id) {
+            $class_id_basis = true;
+            $class->setBatch_id($class_id);
         }
-        if (isset($batch_specific)) {
-            $batch_id = $this->getBatch_id(true);
+        if ($semester_id) {
+            $semester_id_basis = true;
+            $class->setSemester_id($semester_id);
         }
-        if ($active == true) {
-            $is_active = $this->getIs_active(true);
+        if ($is_active) {
+            $is_active_basis = true;
+            $class->setIs_active($is_active);
         }
-        $class_ids = array();
-        $class_ids = $this->getMapper()->fetchClassIds($department_id, 
-        $programme_id, $batch_id, $semester_id, $is_active);
-        if (empty($class_ids)) {
-            return false;
-        } else {
+        $class_ids = $class->fetchClassIds($class_id_basis, $semester_id_basis, 
+        $is_active_basis);
+        if (is_array($class_ids)) {
             return $class_ids;
-        }
-    }
-    public function fetchStudents ()
-    {}
-    /**
-     * class id must be set
-     * 
-     */
-    public function classExistCheck ()
-    {
-        $class_id = $this->getClass_id(true);
-        return $this->getMapper()->classExistCheck($class_id);
-    }
-    /**
-     * Fetches semesters covered by a batch 
-     * @return array with class_id as key and semesters as value
-     */
-    public function fetchBatchSemesters ()
-    {
-        $batch_id = $this->getBatch_id(true);
-        $sems = $this->getMapper()->fetchBatchSemesters($batch_id);
-        if (empty($sems)) {
+        } else {
             return false;
-        } else {
-            return $sems;
         }
     }
-    public function saveInfo ($class_info)
+    private function saveClassInfo ($class_info)
     {
-        Zend_Registry::get('logger')->debug($class_info);
-        $batch_id = $class_info['batch_id'];
-        $semester_id = $class_info['semester_id'];
-        $is_active = $class_info['is_active'];
-        $this->setBatch_id($batch_id);
-        $this->setSemester_id($semester_id);
-        $this->setIs_active($is_active);
-        $class_id = $this->fetchClassIds(true, true, true);
-        if (empty($class_id)) {
-            Zend_Registry::get('logger')->debug('saving class info');
-            return $this->save($class_info);
+        $class = new Tnp_Model_Class();
+        $class_id = $class->saveInfo($class_info);
+    }
+    public function addclassAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $departments = $this->findDepartments();
+        $programmes = $this->findProgrammes();
+        if (empty($departments)) {
+            $this->view->assign('departments', false);
         } else {
-            Zend_Registry::get('logger')->debug('updating class info');
-            $this->update($class_info, $class_id[0]);
-            return $class_id[0];
+            $this->view->assign('departments', $departments);
+        }
+        if (empty($programmes)) {
+            $this->view->assign('programmes', false);
+        } else {
+            $this->view->assign('programmes', $programmes);
         }
     }
-    protected function save ($class_info)
+    public function saveclassAction ()
     {
-        $this->initSave();
-        $prepared_data = $this->prepareDataForSaveProcess($class_info);
-        return $this->getMapper()->save($prepared_data);
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $my_array = $params['myarray'];
+        $class_info = $my_array['class_info'];
+        $save['batch_id'] = $class_info['batch_id'];
+        $save['semester_id'] = $class_info['semester_id'];
+        $save['semester_type'] = $class_info['semester_type'];
+        $save['semester_duration'] = $class_info['semester_duration'];
+        $save['handled_by_dept'] = $class_info['handled_by_dept'];
+        $save['completion_date'] = $class_info['completion_date'];
+        $save['start_date'] = $class_info['start_date'];
+        $save['is_active'] = $class_info['is_active'];
+        $this->saveClassInfo($save);
     }
-    protected function update ($class_info, $class_id)
+    public function viewclassinfoAction ()
     {
-        $this->initSave();
-        $prepared_data = $this->prepareDataForSaveProcess($class_info);
-        return $this->getMapper()->update($prepared_data, $class_id);
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function getclassidsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $request_object = $this->getRequest();
+        $params = array_diff($request_object->getParams(), 
+        $request_object->getUserParams());
+        $my_array = $params['myarray'];
+        $class_finder = $my_array['class_finder'];
+        if (! empty($class_finder)) {
+            $batch_id = $class_finder['batch_id'];
+            $semester_id = $class_finder['semester_id'];
+            $class_ids = $this->findClassIds($batch_id, $semester_id);
+            $this->_helper->json($class_ids);
+        }
+    }
+    public function getclassinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request_object = $this->getRequest();
+        $params = array_diff($request_object->getParams(), 
+        $request_object->getUserParams());
+        $class_id = null;
+        if (! empty($params['myarray'])) {
+            $my_array = $params['myarray'];
+            $class_id = $my_array['class_id'];
+        } else {
+            $class_id = $request_object->getParam('class_id');
+        }
+        if ($class_id != null) {
+            $class_info = $this->findClassInfo($class_id);
+            $response['class_info'] = $class_info;
+            $format = $this->_getParam('format', 'html');
+            switch ($format) {
+                case 'html':
+                    $this->_helper->viewRenderer->setNoRender(false);
+                    $this->_helper->layout()->enableLayout();
+                    if (! empty($class_info)) {
+                        $this->view->assign('response', $response);
+                    } else {
+                        $this->view->assign('response', false);
+                    }
+                    break;
+                case 'jsonp':
+                    $callback = $this->getRequest()->getParam('callback');
+                    echo $callback . '(' . $this->_helper->json($response, 
+                    false) . ')';
+                    break;
+                case 'json':
+                    $this->_helper->json($response);
+                    break;
+                default:
+                    ;
+                    break;
+            }
+        }
     }
 }
