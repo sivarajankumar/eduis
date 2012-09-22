@@ -61,7 +61,7 @@ function submit() {
         data : {myarray : getValues()},
         success: function(jStatus){
             alert("Your information has been saved successfully");
-            window.location.replace("/student/");
+            window.location.replace("/student/viewcocurricular");
         },
             error: function(response) {
           	  $('#errorBox').text(response.responseText).parent().show();
