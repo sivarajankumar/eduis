@@ -923,7 +923,7 @@ class StudentController extends Zend_Controller_Action
         }
         $is_new_language = $params['myarray']['new_language'];
         $language_info = $params['myarray']['language_info'];
-        $member_proficiency = $language_info['proficiency'];
+        $member_proficiency = $params['myarray']['member_proficiency'];
         /*
          * language id sent by user
          */
