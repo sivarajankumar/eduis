@@ -131,10 +131,10 @@ class StudentController extends Zend_Controller_Action
                         $f_handle = fopen($final_image, "w");
                         fputs($f_handle, $file_cont);
                         fclose($f_handle);
-                        unlink($destination);
                         $member_image = $member_id . '.' . $ext;
                         $this->saveImageNo($member_id, $member_image);
                         $this->moveToCdn($member_id);
+                        unlink($destination);
                     }
                     break;
                 default:
