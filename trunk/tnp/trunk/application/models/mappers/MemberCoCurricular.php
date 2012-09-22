@@ -86,10 +86,10 @@ class Tnp_Model_Mapper_MemberCoCurricular
         $where = 'member_id = ' . $member_id;
         return $dbtable->delete($where);
     }
-    public function update ($prepared_data, $training_id)
+    public function update ($prepared_data, $member_id)
     {
         $dbtable = $this->getDbTable();
-        $where = 'training_id = ' . $training_id;
+        $where = 'member_id = ' . $member_id;
         return $dbtable->update($prepared_data, $where);
     }
 }
