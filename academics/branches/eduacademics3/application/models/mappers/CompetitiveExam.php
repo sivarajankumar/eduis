@@ -35,10 +35,10 @@ class Acad_Model_Mapper_CompetitiveExam
     }
     public function fetchInfo ($exam_id)
     {
-       $adapter = $this->getDbTable()->getAdapter();
+        $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $comp_table = $db_table->info('name');
-        $required_cols = array('exam_id','name','abbreviation');
+        $required_cols = array('exam_id', 'name', 'abbreviation');
         $select = $adapter->select()
             ->from($comp_table, $required_cols)
             ->where('exam_id = ?', $exam_id);
@@ -46,7 +46,7 @@ class Acad_Model_Mapper_CompetitiveExam
         $exam_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         return $exam_info[$exam_id];
     }
-    public function fetchExams()
+    public function fetchExams ()
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
@@ -55,13 +55,16 @@ class Acad_Model_Mapper_CompetitiveExam
         $select = $adapter->select()->from($comp_table, $required_cols);
         $comp_exams = array();
         $comp_exams = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        $info = array();
-        foreach ($comp_exams as $exam_id => $abbrr_array) {
-            foreach ($abbrr_array as $abbrr) {
-                $comp_exams[$exam_id] = $abbrr;
+        if (empty($comp_exams)) {
+            return false;
+        } else {
+            foreach ($comp_exams as $exam_id => $abbrr_array) {
+                foreach ($abbrr_array as $abbrr) {
+                    $comp_exams[$exam_id] = $abbrr;
+                }
             }
+            return $comp_exams;
         }
-        return $comp_exams;
     }
     public function save ($prepared_data)
     {

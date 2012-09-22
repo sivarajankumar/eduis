@@ -1968,6 +1968,7 @@ class StudentController extends Zend_Controller_Action
         $qualification_model = $student_model->fetchQualificationInfo(
         $qualification_id);
         if ($qualification_model instanceof Acad_Model_Qualification_Matric) {
+            $matric_data = array();
             $matric_data['board'] = $qualification_model->getBoard();
             $matric_data['board_roll_no'] = $qualification_model->getBoard_roll_no();
             $matric_data['city_name'] = $qualification_model->getCity_name();
@@ -1978,6 +1979,8 @@ class StudentController extends Zend_Controller_Action
             $matric_data['school_rank'] = $qualification_model->getSchool_rank();
             $matric_data['state_name'] = $qualification_model->getState_name();
             $matric_data['total_marks'] = $qualification_model->getTotal_marks();
+        } else {
+            $matric_data = false;
         }
         return $matric_data;
     }
@@ -2073,6 +2076,7 @@ class StudentController extends Zend_Controller_Action
         $qualification_model = $student_model->fetchQualificationInfo(
         $qualification_id);
         if ($qualification_model instanceof Acad_Model_Qualification_Twelfth) {
+            $twelfth_data = array();
             $twelfth_data['board'] = $qualification_model->getBoard();
             $twelfth_data['board_roll_no'] = $qualification_model->getBoard_roll_no();
             $twelfth_data['city_name'] = $qualification_model->getCity_name();
@@ -2085,6 +2089,8 @@ class StudentController extends Zend_Controller_Action
             $twelfth_data['total_marks'] = $qualification_model->getTotal_marks();
             $twelfth_data['discipline_id'] = $qualification_model->getDiscipline_id();
             $twelfth_data['pcm_percentage'] = $qualification_model->getPcm_percentage();
+        } else {
+            $twelfth_data = false;
         }
         return $twelfth_data;
     }
@@ -2095,6 +2101,7 @@ class StudentController extends Zend_Controller_Action
         $qualification_model = $student_model->fetchQualificationInfo(
         $qualification_id);
         if ($qualification_model instanceof Acad_Model_Qualification_Diploma) {
+            $diploma_data = array();
             $diploma_data['university'] = $qualification_model->getUniversity();
             $diploma_data['board_roll_no'] = $qualification_model->getBoard_roll_no();
             $diploma_data['city_name'] = $qualification_model->getCity_name();
@@ -2107,6 +2114,8 @@ class StudentController extends Zend_Controller_Action
             $diploma_data['total_marks'] = $qualification_model->getTotal_marks();
             $diploma_data['discipline_id'] = $qualification_model->getDiscipline_id();
             $diploma_data['migration_date'] = $qualification_model->getMigration_date();
+        } else {
+            $diploma_data = false;
         }
         return $diploma_data;
     }
@@ -2117,17 +2126,29 @@ class StudentController extends Zend_Controller_Action
             case 'LEET':
                 $exam_model = new Acad_Model_CompetitiveExam();
                 $exams = $exam_model->fetchExams();
-                $exam_id = array_search('LEET', $exams);
+                if (empty($exams)) {
+                    return false;
+                } else {
+                    $exam_id = array_search('LEET', $exams);
+                }
                 break;
             case 'AIEEE':
                 $exam_model = new Acad_Model_CompetitiveExam();
                 $exams = $exam_model->fetchExams();
-                $exam_id = array_search('AIEEE', $exams);
+                if (empty($exams)) {
+                    return false;
+                } else {
+                    $exam_id = array_search('AIEEE', $exams);
+                }
                 break;
             case 'GATE':
                 $exam_model = new Acad_Model_CompetitiveExam();
                 $exams = $exam_model->fetchExams();
-                $exam_id = array_search('GATE', $exams);
+                if (empty($exams)) {
+                    return false;
+                } else {
+                    $exam_id = array_search('GATE', $exams);
+                }
                 break;
             default:
                 ;

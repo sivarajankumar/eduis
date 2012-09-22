@@ -51,7 +51,11 @@ class Acad_Model_Mapper_Qualification_Btech
             ->where('member_id = ?', $member_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $student_info[$member_id];
+        if (empty($student_info)) {
+            return false;
+        } else {
+            return $student_info[$member_id];
+        }
     }
     public function fetchStudents ($exact_property, $property_range)
     {
