@@ -211,8 +211,8 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $co_curicular_info = $this->findCocurricularInfo($member_id);
-        $this->view->assign('co_curicular_info', $co_curicular_info);
         Zend_Registry::get('logger')->debug($co_curicular_info);
+        $this->view->assign('co_curicular_info', $co_curicular_info);
     }
     public function viewjobpreferredAction ()
     {
@@ -618,6 +618,19 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $co_curicular_info = $this->findCocurricularInfo($member_id);
+        Zend_Registry::get('logger')->debug($co_curicular_info);
+        $this->view->assign('co_curicular_info', $co_curicular_info);
     }
     public function addskillAction ()
     {
@@ -1033,7 +1046,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $job_preference = $params['myarray']['job_area_name'];
-        $this->saveJobPreferred($job_preference);
+        $info['job_area'] = $job_preference;
+        $this->saveJobPreferred($info);
     }
     /* ------------------------------------------------------------------------------------------- */
     /*********************************************************************************************/
@@ -1343,7 +1357,7 @@ class StudentController extends Zend_Controller_Action
         $student_co_curr = new Tnp_Model_MemberInfo_CoCurricular();
         $student_co_curr->setMember_id($this->getMember_id());
         $info = $student_co_curr->fetchInfo();
-        if (! empty($info)) {
+        if ($info instanceof Tnp_Model_MemberInfo_CoCurricular) {
             $co_curr_array['achievements'] = $student_co_curr->getAchievements();
             $co_curr_array['activities'] = $student_co_curr->getActivities();
             $co_curr_array['hobbies'] = $student_co_curr->getHobbies();
@@ -1546,7 +1560,7 @@ class StudentController extends Zend_Controller_Action
     {
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($this->getMember_id());
-        $job_preferred['job_area'] = $info['job_area'];
+        $job_preferred = $info['job_area'];
         return $student->saveJobAreaPreferred($job_preferred);
     }
     private function saveCourricularInfo ($info)
