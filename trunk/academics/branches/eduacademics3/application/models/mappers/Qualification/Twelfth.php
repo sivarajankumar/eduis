@@ -45,14 +45,18 @@ class Acad_Model_Mapper_Qualification_Twelfth
         $twelfth_table = $db_table->info('name');
         $required_cols = array('member_id', 'qualification_id', 'discipline_id', 
         'board', 'board_roll_no', 'marks_obtained', 'total_marks', 'percentage', 
-        'pcm_percentage', 'passing_year', 'school_rank', 'remarks', 'institution', 
-        'migration_date', 'city_name', 'state_name');
+        'pcm_percentage', 'passing_year', 'school_rank', 'remarks', 
+        'institution', 'migration_date', 'city_name', 'state_name');
         $select = $adapter->select()
             ->from($twelfth_table, $required_cols)
             ->where('member_id = ?', $member_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $student_info[$member_id];
+        if (empty($student_info)) {
+            return false;
+        } else {
+            return $student_info[$member_id];
+        }
     }
     public function fetchStudents ($exact_property, $property_range)
     {
