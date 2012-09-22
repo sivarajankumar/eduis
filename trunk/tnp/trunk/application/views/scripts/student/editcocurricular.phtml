@@ -55,13 +55,13 @@ $(function(){
   
 
 function submit() {
-	var saveCocurricular = '<?php echo $this->url(array('controller' => 'student', 'action' => 'updatecocurricular'))?>';
+	var saveCocurricular = '<?php echo $this->url(array('controller' => 'student', 'action' => 'savecocurricular'))?>';
     $.ajax({
         url : saveCocurricular,
         data : {myarray : getValues()},
         success: function(jStatus){
             alert("Your information has been saved successfully");
-            window.location.replace("/student/profile");
+            window.location.replace("/student/");
         },
             error: function(response) {
           	  $('#errorBox').text(response.responseText).parent().show();
