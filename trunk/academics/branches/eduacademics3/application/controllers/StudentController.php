@@ -2641,9 +2641,18 @@ class StudentController extends Zend_Controller_Action
             $member_data['TWELFTH MARKS'] = $twelfth_data['marks_obtained'];
             $member_data['TWELFTH YEAR'] = $twelfth_data['passing_year'];
             $aieee_data = $this->fetchCompetitiveExamData('AIEEE', $member_id);
+            if (empty($aieee_data['all_india_rank'])) {
+                $member_data['AIEEE RANK'] = null;
+            } else {
+                $member_data['AIEEE RANK'] = $aieee_data['all_india_rank'];
+            }
             $member_data['AIEEE RANK'] = $aieee_data['all_india_rank'];
             $leet_data = $this->fetchCompetitiveExamData('LEET', $member_id);
-            $member_data['LEET RANK'] = $leet_data['all_india_rank'];
+            if (empty($leet_data['all_india_rank'])) {
+                $member_data['LEET RANK'] = null;
+            } else {
+                $member_data['LEET RANK'] = $leet_data['all_india_rank'];
+            }
             return $member_data;
         }
     }
