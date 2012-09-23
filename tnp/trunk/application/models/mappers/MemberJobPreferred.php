@@ -48,7 +48,11 @@ class Tnp_Model_Mapper_MemberJobPreferred
             ->where('member_id = ?', $member_id);
         $job_area_preferred = array();
         $job_area_preferred = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $job_area_preferred;
+        if (empty($job_area_preferred)) {
+            return false;
+        } else {
+            return $job_area_preferred;
+        }
     }
     /**
      * 
@@ -83,6 +87,7 @@ class Tnp_Model_Mapper_MemberJobPreferred
     }
     public function save ($prepared_data)
     {
+        Zend_Registry::get('logger')->debug($prepared_data);
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
