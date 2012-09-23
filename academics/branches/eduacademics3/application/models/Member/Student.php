@@ -911,7 +911,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
      * Total backlogs active currently(considering all semesters)
      * ..
      */
-    public function fetchCurrentBacklogCount ($class_id)
+    public function fetchCurrentBacklogCount ()
     {
         $member_id = $this->getMember_id(true);
         $class_ids = $this->fetchAllClassIds();
