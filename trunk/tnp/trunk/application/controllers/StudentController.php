@@ -229,8 +229,8 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $job_preferred = $this->findJobPreferred($member_id);
-        $this->view->assign('job_preferred', $job_preferred);
         Zend_Registry::get('logger')->debug($job_preferred);
+        $this->view->assign('job_preferred', $job_preferred);
     }
     public function viewtraininginfoAction ()
     {
