@@ -71,10 +71,11 @@ class BatchController extends Zend_Controller_Action
             Zend_Registry::get('logger')->debug('batch id = ' . $batch_id);
             return $batch_id;
         } catch (Exception $e) {
-            Zend_Registry::get('logger')->debug($e);
+            /*Zend_Registry::get('logger')->debug($e);
             throw new Exception(
             'There was some error saving batch information in core. Please try again', 
-            Zend_Log::WARN);
+            Zend_Log::WARN);*/
+            return false;
         }
     }
     private function findDepartments ()
@@ -141,9 +142,44 @@ class BatchController extends Zend_Controller_Action
         $save['batch_number'] = $batch_info['batch_number'];
         $save['is_active'] = $batch_info['is_active'];
         $batch_id = $this->saveBatchInfo($save);
-        $batch_info['batch_id'] = $batch_id;
-        Zend_Registry::get('logger')->debug($params);
-        Zend_Registry::get('logger')->debug($batch_info);
+        if (empty($batch_id)) {
+            Zend_Registry::get('logger')->debug(
+            'Batch saving process failed..Pls Try Again');
+            $core_save_status = false;
+            return;
+        } else {
+            $core_save_status = true;
+        }
+        $save['batch_id'] = $batch_id;
+        $acad_save_status = $this->saveBatchToAcademics($save);
+        $tnp_save_status = $this->saveBatchToTnp($save);
+        $status = array('core_save_status' => $core_save_status, 
+        'acad_save_status' => $acad_save_status, 
+        'tnp_save_status' => $tnp_save_status);
+        $this->_helper->json($status);
+    }
+    private function saveToAcademics ($batch_info)
+    {
+        $httpClient = new Zend_Http_Client(
+        'http://academic.aceambala.com/batch/savebatch');
+        $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+        $httpClient->setMethod('POST');
+        $httpClient->setParameterPost(
+        array('myarray' => array('batch_info' => $batch_info)));
+        $response = $httpClient->request();
+        if ($response->isError()) {
+            /*$response->getStatus();
+            $response->getHeader('Message');
+            $response->getBody();
+            throw new Zend_Exception(, Zend_Log::ERR);*/
+            return false;
+        } else {
+            Zend_Registry::get('logger')->debug('Batch Registered in Academics');
+            return true;
+        }
+    }
+    private function saveToTnp ($batch_info)
+    {
         $httpClient = new Zend_Http_Client(
         'http://tnp.aceambala.com/batch/savebatch');
         $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
@@ -152,13 +188,10 @@ class BatchController extends Zend_Controller_Action
         array('myarray' => array('batch_info' => $batch_info)));
         $response = $httpClient->request();
         if ($response->isError()) {
-            $remoteErr = 'REMOTE ERROR: (' . $response->getStatus() . ') ' .
-             $response->getHeader('Message') . $response->getBody();
-            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+            return false;
         } else {
-            /*$jsonContent = $response->getBody($response);
-            $r = Zend_Json_Decoder::decode($jsonContent);
-            Zend_Registry::get('logger')->debug($r);*/
+            Zend_Registry::get('logger')->debug('Batch Registered in Tnp');
+            return true;
         }
     }
     public function viewbatchinfoAction ()

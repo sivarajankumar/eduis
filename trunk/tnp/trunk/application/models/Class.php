@@ -246,8 +246,6 @@ class Tnp_Model_Class extends Tnp_Model_Generic
         }
     }
     /**
-     * Fetches Subjects of a class
-     **
      * 
      * fetches the Class Ids of a batch
      * @param bool $batch_specific optional
@@ -283,4 +281,58 @@ class Tnp_Model_Class extends Tnp_Model_Generic
     }
     public function fetchStudents ()
     {}
+    /**
+     * class id must be set
+     * 
+     */
+    public function classExistCheck ()
+    {
+        $class_id = $this->getClass_id(true);
+        return $this->getMapper()->classExistCheck($class_id);
+    }
+    /**
+     * Fetches semesters covered by a batch 
+     * @return array with class_id as key and semesters as value
+     */
+    public function fetchBatchSemesters ()
+    {
+        $batch_id = $this->getBatch_id(true);
+        $sems = $this->getMapper()->fetchBatchSemesters($batch_id);
+        if (empty($sems)) {
+            return false;
+        } else {
+            return $sems;
+        }
+    }
+    public function saveInfo ($class_info)
+    {
+        Zend_Registry::get('logger')->debug($class_info);
+        $batch_id = $class_info['batch_id'];
+        $semester_id = $class_info['semester_id'];
+        $is_active = $class_info['is_active'];
+        $this->setBatch_id($batch_id);
+        $this->setSemester_id($semester_id);
+        $this->setIs_active($is_active);
+        $class_id = $this->fetchClassIds(true, true, true);
+        if (empty($class_id)) {
+            Zend_Registry::get('logger')->debug('saving class info');
+            return $this->save($class_info);
+        } else {
+            Zend_Registry::get('logger')->debug('updating class info');
+            $this->update($class_info, $class_id[0]);
+            return $class_id[0];
+        }
+    }
+    protected function save ($class_info)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($class_info);
+        return $this->getMapper()->save($prepared_data);
+    }
+    protected function update ($class_info, $class_id)
+    {
+        $this->initSave();
+        $prepared_data = $this->prepareDataForSaveProcess($class_info);
+        return $this->getMapper()->update($prepared_data, $class_id);
+    }
 }

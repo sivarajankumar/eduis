@@ -72,26 +72,41 @@ class ClassController extends Zend_Controller_Action
             $class_id = $class->saveInfo($class_info);
             Zend_Registry::get('logger')->debug(
             'New class added,$class_id = ' . $class_id);
+            return $class_id;
         } catch (Exception $e) {
-            Zend_Registry::get('logger')->debug($e);
-            throw new Exception(
-            'There was some error saving Class information in core server. Please try again', 
-            Zend_Log::WARN);
+            return false;
         }
-        $class_info['class_id'] = $class_id;
+    }
+    private function saveToAcademics ($class_info)
+    {
         $httpClient = new Zend_Http_Client(
-        'http://' . ACADEMIC_SERVER . '/class/saveclass', array('timeout' => 30));
+        'http://' . ACADEMIC_SERVER . '/class/saveclass');
+        $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
         $httpClient->setMethod('POST');
         $httpClient->setParameterPost(
         array('myarray' => array('class_info' => $class_info)));
-        try {
-            $response = $httpClient->request();
-        } catch (Exception $e) {}
         $response = $httpClient->request();
         if ($response->isError()) {
-            $remoteErr = 'ERROR from ' . ACADEMIC_SERVER . ' : (' .
-             $response->getStatus() . ') ' . $response->getMessage();
-            throw new Zend_Exception($remoteErr, Zend_Log::WARN);
+            return false;
+        } else {
+            Zend_Registry::get('logger')->debug('Class Registered in Academics');
+            return true;
+        }
+    }
+    private function saveToTnp ($class_info)
+    {
+        $httpClient = new Zend_Http_Client(
+        'http://' . TNP_SERVER . '/class/saveclass');
+        $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+        $httpClient->setMethod('POST');
+        $httpClient->setParameterPost(
+        array('myarray' => array('class_info' => $class_info)));
+        $response = $httpClient->request();
+        if ($response->isError()) {
+            return false;
+        } else {
+            Zend_Registry::get('logger')->debug('Class Registered in Tnp');
+            return true;
         }
     }
     private function findDepartments ()
@@ -160,7 +175,22 @@ class ClassController extends Zend_Controller_Action
         $save['completion_date'] = $class_info['completion_date'];
         $save['start_date'] = $class_info['start_date'];
         $save['is_active'] = $class_info['is_active'];
-        $this->saveClassInfo($save);
+        $class_id = $this->saveClassInfo($save);
+        if (empty($class_id)) {
+            Zend_Registry::get('logger')->debug(
+            'Class saving process failed..Pls Try Again');
+            $core_save_status = false;
+            return;
+        } else {
+            $core_save_status = true;
+        }
+        $save['class_id'] = $class_id;
+        $acad_save_status = $this->saveToAcademics($save);
+        $tnp_save_status = $this->saveToTnp($save);
+        $status = array('core_save_status' => $core_save_status, 
+        'acad_save_status' => $acad_save_status, 
+        'tnp_save_status' => $tnp_save_status);
+        $this->_helper->json($status);
     }
     public function viewclassinfoAction ()
     {
