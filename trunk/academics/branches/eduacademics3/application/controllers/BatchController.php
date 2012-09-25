@@ -66,7 +66,13 @@ class BatchController extends Zend_Controller_Action
     private function saveBatchInfo ($batch_info)
     {
         $batch = new Acad_Model_Batch();
-        $batch->saveInfo($batch_info);
+        try {
+            $batch_id = $batch->saveInfo($batch_info);
+            Zend_Registry::get('logger')->debug('batch id = ' . $batch_id);
+            return $batch_id;
+        } catch (Exception $e) {
+            return false;
+        }
     }
     public function savebatchAction ()
     {
@@ -76,12 +82,12 @@ class BatchController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $my_array = $params['myarray'];
         $batch_info = $my_array['batch_info'];
-        $save['batch_id'] = $batch_info['batch_id'];
         $save['department_id'] = $batch_info['department_id'];
         $save['programme_id'] = $batch_info['programme_id'];
         $save['batch_start'] = $batch_info['batch_start'];
         $save['batch_number'] = $batch_info['batch_number'];
         $save['is_active'] = $batch_info['is_active'];
+        $save['batch_id'] = $batch_info['batch_id'];
         $this->saveBatchInfo($save);
     }
     public function viewbatchinfoAction ()
@@ -107,7 +113,31 @@ class BatchController extends Zend_Controller_Action
              ($batch_start = $batch_params['batch_start']);
             $batch_ids = $this->findBatchIds($batch_start, $department_id, 
             $programme_id);
-            $this->_helper->json($batch_ids);
+        } else {
+            $batch_ids = false;
+        }
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('batch_ids', $batch_ids);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($batch_ids, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($batch_ids);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug('No format was provided..');
+                Zend_Registry::get('logger')->debug($batch_ids);
+                break;
+            default:
+                ;
+                break;
         }
     }
     public function getbatchinfoAction ()
@@ -127,29 +157,31 @@ class BatchController extends Zend_Controller_Action
         if ($batch_id != null) {
             $batch_info = $this->findBatchInfo($batch_id);
             $response['batch_info'] = $batch_info;
-            $format = $this->_getParam('format', 'html');
-            switch ($format) {
-                case 'html':
-                    $this->_helper->viewRenderer->setNoRender(false);
-                    $this->_helper->layout()->enableLayout();
-                    if (! empty($batch_info)) {
-                        $this->view->assign('response', $response);
-                    } else {
-                        $this->view->assign('response', false);
-                    }
-                    break;
-                case 'jsonp':
-                    $callback = $this->getRequest()->getParam('callback');
-                    echo $callback . '(' . $this->_helper->json($response, 
-                    false) . ')';
-                    break;
-                case 'json':
-                    $this->_helper->json($response);
-                    break;
-                default:
-                    ;
-                    break;
-            }
+        } else {
+            $response['batch_info'] = false;
+        }
+        $format = $this->_getParam('format', 'html');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                if (! empty($batch_info)) {
+                    $this->view->assign('response', $response);
+                } else {
+                    $this->view->assign('response', false);
+                }
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($response, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($response);
+                break;
+            default:
+                ;
+                break;
         }
     }
 }
