@@ -43,8 +43,16 @@
         				data : {format : 'jsonp'},
         				dataType : 'jsonp',
         				success : function(jStatus){
-            				var html = '<tr class="row"><td><img src="http://site.cdn.aceambala.com/images/memberimages/'+jStatus+'" height = "100" width = "85"></td></tr>';
-        					$('#info_table').prepend(html);
+        					if((jStatus == null) || (jStatus == false)|| (jStatus == undefined))
+        					{
+        						var html = '<tr class="row"><td><img src="http://site.cdn.aceambala.com/images/memberimages/dummy.jpg" height = "100" width = "85"></td></tr>';
+            					$('#info_table').prepend(html);
+        					}
+        					else
+        					{
+                				var html = '<tr class="row"><td><img src="http://site.cdn.aceambala.com/images/memberimages/'+jStatus+'" height = "100" width = "85"></td></tr>';
+            					$('#info_table').prepend(html);
+        					}
         				},
         				error : function(response){
 
