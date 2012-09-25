@@ -1,5 +1,4 @@
 <?php
-
 class IndexController extends Zend_Controller_Action
 {
     /**
@@ -80,14 +79,7 @@ class IndexController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->disableLayout();
-        Zend_Registry::get('logger')->debug($this->_department_id);
-        if ($this->_department_id == 'MGMT' or $this->_department_id == 'mgmt') {
-            $this->_redirect('http://' . TNP_SERVER . '/admin');
-        }
-        if ($this->_user_type == 'stu' or $this->_user_type == 'STU') {
-            $this->_redirect('/student/');
-        }
+        $this->_redirect('/member/');
     }
 }
 ?>
-

@@ -157,6 +157,53 @@ class ClassController extends Zend_Controller_Action
                 break;
         }
     }
+    public function getclasssubjectsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request_object = $this->getRequest();
+        $params = array_diff($request_object->getParams(), 
+        $request_object->getUserParams());
+        $class_id = null;
+        if (! empty($params['myarray'])) {
+            $my_array = $params['myarray'];
+            $class_id = $my_array['class_id'];
+        } else {
+            $class_id = $request_object->getParam('class_id');
+        }
+        $class_subjects = false;
+        if ($class_id != null) {
+            $class_subjects = array();
+            $subject_ids = $this->findClassSubjects($class_id);
+            foreach ($subject_ids as $subject_id) {
+                $class_subjects[$subject_id] = $this->findSubjectDetails(
+                $subject_id);
+            }
+        }
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('class_subjects', $class_subjects);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' .
+                 $this->_helper->json($class_subjects, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($class_subjects);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug('No format was provided..');
+                Zend_Registry::get('logger')->debug($class_subjects);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
     /**
      * Fetches information about a class on the basis of Class_id
      * 
@@ -179,6 +226,34 @@ class ClassController extends Zend_Controller_Action
             $class_info['completion_date'] = $info->getCompletion_date();
             $class_info['is_active'] = $info->getIs_active();
             return $class_info;
+        } else {
+            return false;
+        }
+    }
+    private function findClassSubjects ($class_id)
+    {
+        $class_subj = new Acad_Model_ClassSubject();
+        $class_subj->setClass_id($class_id);
+        $subject_ids = $class_subj->fetchClassSubjects();
+        return $subject_ids;
+    }
+    private function findSubjectDetails ($subject_id)
+    {
+        $subject = new Acad_Model_Subject();
+        $subject->setSubject_id($subject_id);
+        $info = $subject->fetchInfo();
+        if ($info instanceof Acad_Model_Subject) {
+            $subject_info = array();
+            $subject_info['subject_code'] = $info->getSubject_code();
+            $subject_info['abbr'] = $info->getAbbr();
+            $subject_info['subject_name'] = $info->getSubject_name();
+            $subject_info['subject_type_id'] = $info->getSubject_type_id();
+            $subject_info['is_optional'] = $info->getIs_optional();
+            $subject_info['lecture_per_week'] = $info->getLecture_per_week();
+            $subject_info['tutorial_per_week'] = $info->getTutorial_per_week();
+            $subject_info['practical_per_week'] = $info->getPractical_per_week();
+            $subject_info['suggested_duration'] = $info->getSuggested_duration();
+            return $subject_info;
         } else {
             return false;
         }

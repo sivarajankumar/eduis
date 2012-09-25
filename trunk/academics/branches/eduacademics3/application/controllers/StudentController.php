@@ -83,9 +83,8 @@ class StudentController extends Zend_Controller_Action
     }
     public function indexAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $this->_redirect('/student/memberidcheck');
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
     }
     public function memberidcheckAction ()
     {

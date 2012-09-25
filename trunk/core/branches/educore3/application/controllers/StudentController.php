@@ -66,7 +66,48 @@ class StudentController extends Zend_Controller_Action
         $this->_department_id = $_department_id;
     }
     public function indexAction ()
-    {}
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function memberidcheckAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        if (! empty($member_id)) {
+            $member_id_exists = $this->memberIdCheck($member_id);
+            $format = $this->_getParam('format', 'log');
+            switch ($format) {
+                case 'html':
+                    $this->_helper->viewRenderer->setNoRender(false);
+                    $this->_helper->layout()->enableLayout();
+                    $this->view->assign('member_id_exists', $member_id_exists);
+                    break;
+                case 'jsonp':
+                    $callback = $this->getRequest()->getParam('callback');
+                    echo $callback . '(' . $this->_helper->json(
+                    $member_id_exists, false) . ')';
+                    break;
+                case 'json':
+                    $this->_helper->json($member_id_exists);
+                    break;
+                case 'log':
+                    Zend_Registry::get('logger')->debug($member_id_exists);
+                    break;
+                default:
+                    ;
+                    break;
+            }
+        }
+    }
     public function init ()
     {
         if (Zend_Auth::getInstance()->hasIdentity()) {
@@ -151,7 +192,12 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = $this->getMember_id();
         $info = $this->findCriticalInfo($member_id);
-        $member_image = $info['image_no'];
+        if (empty($info)) {
+            $member_image = 'dummy.jpg';
+        } else {
+            $member_image = $info['image_no'];
+        }
+        Zend_Registry::get('logger')->debug($member_image);
         $format = $this->_getParam('format', 'log');
         switch ($format) {
             case 'html':
@@ -444,23 +490,6 @@ class StudentController extends Zend_Controller_Action
                     break;
             }
         }
-    }
-    public function memberidcheckAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $request = $this->getRequest();
-        $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
-        }
-        $member_id_exists = $this->memberIdCheck($member_id);
-        $this->_helper->json($member_id_exists);
     }
     /**
      * All links are here
