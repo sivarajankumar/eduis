@@ -15,11 +15,18 @@
     		dataType : 'json',
             data : {format:'json'},
     		success: function(jStatus){
-    			var html = '';
-    			$.each(jStatus,function(key,value){
-        			html += '<tr class="row"><td><span id="heading">'+key.replace(/_/g," ").toUpperCase()+'</span><span id="content">'+value+'</span></td></tr>';
-    			});
-    			$('#info_table').append(html);
+    			if((jStatus == null) || (jStatus == false)|| (jStatus == undefined))
+    			{
+    				$('#info_table').append('No information has been added yet.');
+    			}
+    			else
+    			{
+        			var html = '';
+        			$.each(jStatus,function(key,value){
+            			html += '<tr class="row"><td><span id="heading">'+key.replace(/_/g," ").toUpperCase()+'</span><span id="content">'+value+'</span></td></tr>';
+        			});
+        			$('#info_table').append(html);
+    			}
             },
             error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
