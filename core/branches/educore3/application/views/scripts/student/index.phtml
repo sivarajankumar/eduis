@@ -110,7 +110,10 @@
 			data : {format : 'jsonp'},
 			dataType : 'jsonp',
 			success : function(jStatus){
-				$('#student_img').attr('src','http://site.cdn.aceambala.com/images/memberimages/'+jStatus);
+				if((jStatus == null) || (jStatus == false)|| (jStatus == undefined))
+					$('#student_img').attr('src','http://site.cdn.aceambala.com/images/memberimages/dummy.jpg');
+				else
+					$('#student_img').attr('src','http://site.cdn.aceambala.com/images/memberimages/'+jStatus);
 			},
 			error : function(response){
 
