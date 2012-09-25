@@ -28,7 +28,7 @@ class ClassController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-         /* $my_array = $params['myarray'];
+        $my_array = $params['myarray'];
         $class_info = $my_array['class_info'];
         $save['batch_id'] = $class_info['batch_id'];
         $save['semester_id'] = $class_info['semester_id'];
@@ -39,17 +39,7 @@ class ClassController extends Zend_Controller_Action
         $save['start_date'] = $class_info['start_date'];
         $save['is_active'] = $class_info['is_active'];
         $save['class_id'] = $class_info['class_id'];
-        $class_id = $this->saveClassInfo($save);*/
-        
-        $save['batch_id'] = 41;
-        $save['semester_id'] = 8;
-        $save['semester_type'] = 'EVEN';
-        $save['semester_duration'] = 5;
-        $save['handled_by_dept'] = 'CSE';
-        $save['completion_date'] = '2000-02-02';
-        $save['start_date'] = '2000-02-02';
-        $save['is_active'] = 1;
-        $save['class_id'] = 328;
+        $class_id = $this->saveClassInfo($save);
         $class_id = $this->saveClassInfo($save);
         $format = $this->_getParam('format', 'log');
         switch ($format) {
