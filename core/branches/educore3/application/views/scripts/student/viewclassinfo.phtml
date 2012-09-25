@@ -32,10 +32,17 @@
     		dataType : 'jsonp',
             data : {format:'jsonp'},
     		success: function(jStatus){
-    			$.each(jStatus['programmes'],function(programme_id,programme_name){
-					html_text = '<option value="'+programme_id+'">'+programme_name+'</option>';
-					$('#programme_id').append(html_text);
-    			});
+    			if((jStatus == null) || (jStatus == false)|| (jStatus == undefined))
+    			{
+    				$('#info_table').append('No information has been added yet.');
+    			}
+    			else
+    			{
+        			$.each(jStatus['programmes'],function(programme_id,programme_name){
+    					html_text = '<option value="'+programme_id+'">'+programme_name+'</option>';
+    					$('#programme_id').append(html_text);
+        			});
+    			}
             },
             error: function(response) {
 				$('#errorBox').text(response.responseText).parent().show();

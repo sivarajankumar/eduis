@@ -16,7 +16,7 @@
     		dataType : 'json',
             data : {format:'json'},
     		success: function(jStatus){
-        		if(jStatus == null)
+        		if((jStatus == null) || (jStatus == false)|| (jStatus == undefined))
         		{
         			$('#info_table').append('No information has been added yet.');
         		}

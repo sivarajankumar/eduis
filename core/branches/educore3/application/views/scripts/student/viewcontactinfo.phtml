@@ -16,9 +16,9 @@
             data : {format:'json'},
     		success: function(jStatus){
     			$.each(jStatus,function(contact_type_id,data){
-        			if(jStatus == null)
+    				if((jStatus == null) || (jStatus == false)|| (jStatus == undefined))
         			{
-
+        				$('#info_table').append('No information has been added yet.');
         			}
         			else
         			{
