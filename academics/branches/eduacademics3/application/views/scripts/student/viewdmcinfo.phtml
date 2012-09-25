@@ -57,19 +57,22 @@
 					format : 'json'
 				},
 			success: function(jStatus){
-        		var html = '&nbsp;&nbsp;Please select the dmc. <select id="dmc_for_class_id'+class_id+'" name="dmc_info_id">';
-        		html += '<option value="">Serial Number</option>';
-        		$.each(jStatus['dmc_info'],function(dmc_info_id,serial_no){
-            		html += '<option value="'+dmc_info_id+'">'+serial_no+'</option>';
-            	});
-        		html += '</select> &nbsp;';
-        		html += '<input type="button" value="View Details" onclick="change_location('+class_id+')">';
-
-        		$('#semester'+class_id).after(html);
+				if(jStatus!=false){
+            		var html = '&nbsp;&nbsp;Please select the dmc. <select id="dmc_for_class_id'+class_id+'" name="dmc_info_id">';
+            		html += '<option value="">Serial Number</option>';
+            		$.each(jStatus['dmc_info'],function(dmc_info_id,serial_no){
+                		html += '<option value="'+dmc_info_id+'">'+serial_no+'</option>';
+                	});
+            		html += '</select> &nbsp;';
+            		html += '<input type="button" value="View Details" onclick="change_location('+class_id+')">';
+    
+            		$('#semester'+class_id).after(html);
+				}
+				else
+					$('#semester'+class_id).after('&nbsp;&nbsp;No dmc exist for this semester');
             },
             error: function(response) {
-        		$('#errorBox').text(response.responseText).parent().show();
-        			console.log(response);
+        		
         	}
 		});
 	}
