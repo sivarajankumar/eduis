@@ -82,7 +82,11 @@ class StudentController extends Zend_Controller_Action
         }
     }
     public function indexAction ()
-    {}
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $this->_redirect('/student/memberidcheck');
+    }
     public function memberidcheckAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -97,7 +101,7 @@ class StudentController extends Zend_Controller_Action
         }
         if (! empty($member_id)) {
             $member_id_exists = $this->memberIdCheck($member_id);
-            $format = $this->_getParam('format', 'html');
+            $format = $this->_getParam('format', 'log');
             switch ($format) {
                 case 'html':
                     $this->_helper->viewRenderer->setNoRender(false);
@@ -112,16 +116,22 @@ class StudentController extends Zend_Controller_Action
                 case 'json':
                     $this->_helper->json($member_id_exists);
                     break;
+                case 'log':
+                    Zend_Registry::get('logger')->debug($member_id_exists);
+                    break;
                 default:
                     ;
                     break;
             }
         }
     }
+    public function academicbaseAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
     public function collectexportabledataAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
@@ -2670,7 +2680,7 @@ class StudentController extends Zend_Controller_Action
     }
     private function backLogSearch ($back_log_limit, $member_ids)
     {
-        /*$backlog_filter = array();
+        $backlog_filter = array();
         $backlog_filtered = array();
         foreach ($member_ids as $member_id)
             $backlog_filter[$member_id] = $this->getCurrentBackLogCount(
@@ -2678,11 +2688,11 @@ class StudentController extends Zend_Controller_Action
         foreach ($backlog_filter as $member_id => $backlog_count)
             if ($backlog_count <= $back_log_limit)
                 $backlog_filtered[] = $member_id;
-        return $backlog_filtered;*/
+        return $backlog_filtered;
     }
     private function neverbackLogSearch ($member_ids)
     {
-        /* $student = new Acad_Model_Member_Student();
+        $student = new Acad_Model_Member_Student();
         $backlog_filter = array();
         $backlog_filtered = array();
         foreach ($member_ids as $member_id) {
@@ -2691,6 +2701,6 @@ class StudentController extends Zend_Controller_Action
             if ($has_backlog)
                 $backlog_filtered[] = $member_id;
         }
-        return $backlog_filtered;*/
+        return $backlog_filtered;
     }
 }
