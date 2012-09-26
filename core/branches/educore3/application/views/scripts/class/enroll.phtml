@@ -1,0 +1,295 @@
+<form id="batch" class="uniForm" action="javascript:check_values()">
+<h3>Add Roll Numbers</h3>
+<fieldset id="batch_info">
+	<h5>Please fill this form and click on next to add Roll Numbers.</h5>
+	<div class="ctrlHolder">
+		<label for="department_id"><em>*</em>Department</label>
+		<select id="department_id" name="department_id" class="required">
+			<option value="">Select the department</option>
+		</select>
+		<p class="formHint">Select Department</p>
+	</div>
+
+	<div class="ctrlHolder">
+		<label for="programme_id"><em>*</em>Programme</label>
+		<select id="programme_id" name="programme_id" class="required">
+			<option value="">Select the programme</option>
+			<option value="BTECH">B.TECH</option>
+		</select>
+		<p class="formHint">Select the programme</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="batch_start"><em>*</em>Batch Start</label>
+		<select id="batch_start" name="batch_start" class="required">
+			<option value="">Select the year</option>
+			<?php
+			    $current_year = intval(date('Y'));
+			    for($i=2002;$i<=$current_year;$i++)
+			    {
+			        echo '<option value="'.$i.'">'.$i.'</option>';
+			    }
+			?>
+		</select>
+		<p class="formHint">Select the starting year of the batch</p>
+	</div>
+    
+    <div class="ctrlHolder">
+		<label for="semester"><em>*</em>Semester</label>
+		<select id="semester" name="semester" class="required">
+			<option value="">Select the semester</option>
+			<?php
+			    for($i=1;$i<=8;$i++)
+			    {
+			        echo '<option value="'.$i.'">'.$i.'</option>';
+			    }
+			?>
+		</select>
+		<p class="formHint">Select the Semster</p>
+	</div>
+	
+	<!-- <div class="ctrlHolder" id="type">
+		<label for="type"><em>*</em>Select how to you want to register students</label>
+			Specify roll number(s) : <input type="radio" name="type" value="by_roll_no" onchange="javascript:show_option('roll_no')"><br>
+			Specify range : <input type="radio" name="type" value="by_range" onchange="javascript:show_option('range')">
+	</div> -->
+	
+	<div class="ctrlHolder" id="type">
+          <p class="label"><em>*</em>Select how to you want to register students</p>
+          <ul class="blockLabels alternate">
+            <li><label for="gender"><input name="type" type="radio" value="by_roll_no" title="Roll Numbers" onchange="javascript:show_option('roll_no')">Specify roll number(s) </label></li>
+            <li><label for=""><input name="type" type="radio" value="by_range" title="range" onchange="javascript:show_option('range')">Specify range </label></li>
+          </ul>
+          <p class="formHint">Select how you want to enter the roll numbers of students</p>
+        </div>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</fieldset>
+</form>
+
+<script>
+$(function(){
+	$('form.uniForm').uniform({
+		prevent_submit : true
+	});
+	
+	var urlSaveInfo = 'http://core.aceambala.com/class/fetchdepartments';
+    $.ajax({
+        url : urlSaveInfo,
+        dataType : 'jsonp',
+        data : {
+            	myarray:getBatchValues(),
+            	format : 'jsonp'
+            },
+        async : 'false',
+        success: function(jStatus){
+            if(jStatus != 'false')
+            {
+                $.each(jStatus['departments'],function(department_id,department){
+    				$('#department_id').append('<option value="'+department_id+'">'+department+'</option>');
+                });
+            }
+        },
+        error: function(response) {
+          $('#errorBox').text(response.responseText).parent().show();
+             console.log(response);
+        }
+    });
+});
+
+function check_values() {
+	var data = {};
+	data['myarray'] = {};
+	if($('input[value="by_roll_no"]').is(':checked'))
+	{
+		var roll_no_string = $('#roll_numbers').val();
+		data['myarray']['rollnumbers'] = roll_no_string.replace(/ /g,"").split(',');
+		data['myarray']['range_specified'] = false;
+		data['myarray']['format'] = 'jsonp';
+		submit_batch(data);
+	}
+	else if($('input[value="by_range"]').is(':checked'))
+	{
+		var upper = $('#upper_range').val();
+		var lower = $('#lower_range').val();
+
+		if(upper < lower)
+			alert("The value in the 'To' field should be greater than the value in 'From' field.");
+		else
+		{
+			var excluded_string = $('#excluded').val();
+			data['myarray']['excluded'] = excluded_string.replace(/ /g,"").split(',');
+			
+			data['myarray']['rollnumbers'] = {'upper' : upper, 'lower' : lower};
+			data['myarray']['range_specified'] = true;
+			data['myarray']['format'] = 'jsonp';
+			submit_batch(data);
+		}
+	}
+	else
+		alert("Please fill all the columns");
+}
+
+function submit_batch(data) {
+	var urlSaveInfo = 'http://academic.aceambala.com/batch/getbatchids';
+    $.ajax({
+        url : urlSaveInfo,
+        dataType : 'jsonp',
+        data : {
+            	myarray:getBatchValues(),
+            	format : 'jsonp'
+            },
+        async : 'false',
+        success: function(jStatus){
+            var batch_id = jStatus[0];
+            submit_semester(batch_id,data);
+        },
+        error: function(response) {
+          $('#errorBox').text(response.responseText).parent().show();
+             console.log(response);
+        }
+    });
+}
+
+function getBatchValues() {
+	var formData = {};
+	var batch_params = {};
+	
+	batch_params['department_id'] = $('#department_id').val();
+	batch_params['programme_id'] = $('#programme_id').val();
+	batch_params['batch_start'] = $('#batch_start').val();
+
+	formData['batch_params'] = batch_params;
+	
+	return formData;
+}
+
+function submit_semester(batch_id,data) {
+	var urlSaveInfo = 'http://academic.aceambala.com/class/getclassids';
+	var semester = $('#semester').val();
+    $.ajax({
+        url : urlSaveInfo,
+        dataType : 'jsonp',
+        data : {
+            	myarray: {
+                	class_finder : {
+                		semester_id : semester,
+                		batch_id : batch_id
+                	}
+                },
+            	format : 'jsonp'
+            },
+        async : 'false',
+        success: function(jStatus){
+            var class_id = jStatus[0];
+            submit_roll_numbers(class_id,data);
+        },
+        error: function(response) {
+          $('#errorBox').text(response.responseText).parent().show();
+             console.log(response);
+        }
+    });
+}
+
+function submit_roll_numbers(class_id,data) {
+	var urlSaveInfo = 'http://academic.aceambala.com/class/saveevr';
+    $.ajax({
+        url : urlSaveInfo,
+        dataType : 'jsonp',
+        data : data,
+        async : 'false',
+        success: function(jStatus){
+            
+        },
+        error: function(response) {
+          $('#errorBox').text(response.responseText).parent().show();
+             console.log(response);
+        }
+    });
+}
+
+function show_option(method)
+{
+	if(method == 'roll_no')
+	{
+		var html = '<div class="ctrlHolder" id="roll_numbers_div">'+
+				'<label for="roll_numbers">Enter Roll Numbers</label>'+
+				'<input name="roll_numbers" id="roll_numbers" value="" data-default-value="2308017,2308019,2308060" size="35" maxlength="100" type="text" class="textInput required"/>'+
+				'<p class="formHint">Enter roll numbers sepreated by commas without any space. Please double check the values before submitting.</p>'+
+				'</div>';
+
+		$('#type').after(html);
+		$('#range_div,#excluded_div').remove();
+	}
+	else
+	{
+		var html = '<div class="ctrlHolder noLabel" id="range_div">'+
+		'<ul class="alternate">'+
+           	'<li><label for="upper_range"><em>*</em>From</label>'+
+         		'<input name="lower_range" id="lower_range" data-default-value="e.g. 2308001" value="" size="10" maxlength="50" type="text" class="textInput required validateNumber"/></li>'+
+           	'<li><label for="lower_range"> To</label>'+
+         		'<input name="upper_range" id="upper_range" data-default-value="e.g. 2308060" value=""  size="10" maxlength="50" type="text" class="textInput required validateNumber"/></li>'+
+		'</ul>'+
+		'<p class="formHint">Enter roll numbers range. Please double check the values before submitting.</p>'+
+	'</div>'+
+
+	'<div class="ctrlHolder" id="excluded_div">'+
+	'<label for="excluded">Enter Excluded Roll Numbers</label>'+
+	'<input name="excluded" id="excluded" value="" data-default-value="2308017,2308019,2308060" size="35" maxlength="100" type="text" class="textInput required"/>'+
+	'<p class="formHint">Enter roll numbers to be excluded sepreated by commas without any space. Please double check the values before submitting.</p>'+
+	'</div>';
+
+		$('#type').after(html);
+		$('#roll_numbers_div').remove();
+	}
+}
+</script>
+
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:0 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		width:auto;
+	}
+	h3{
+    	color: #343434;
+    	line-height: 1;
+    	margin: 1.5em -28px;
+    	padding: 14px 28px;
+		background-color: #ECEFF4;
+    	border: 1px solid #B4C1DA;
+    	font-size: 17px;
+    	font-weight: 100;
+    	width: 57%;
+	}
+	h4{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		width:57%;
+		font-size:17px;
+		font-weight:100;
+	}
+	h5{
+		font-size: 14px;
+		font-weight:400;
+		margin: 0 0 15px 0;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
