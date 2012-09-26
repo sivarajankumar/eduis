@@ -47,7 +47,11 @@ class Tnp_Model_Mapper_MemberTraining
         $student_training_table_info = array();
         $student_training_table_info = $select->query()->fetchAll(
         Zend_Db::FETCH_UNIQUE);
-        return $student_training_table_info[$member_id];
+        if (empty($student_training_table_info)) {
+            return false;
+        } else {
+            return $student_training_table_info[$member_id];
+        }
     }
     public function fetchTrainingIds ($member_id)
     {

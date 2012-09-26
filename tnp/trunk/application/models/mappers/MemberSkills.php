@@ -49,7 +49,11 @@ class Tnp_Model_Mapper_MemberSkills
             ->where('skill_id = ?', $skill_id);
         $skill_info = array();
         $skill_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $skill_info[$member_id];
+        if (empty($skill_info)) {
+            return false;
+        } else {
+            return $skill_info[$member_id];
+        }
     }
     /**
      * 

@@ -49,7 +49,11 @@ class Tnp_Model_Mapper_EmployabilityTest
             ->where('employability_test_id = ?', $employability_test_id);
         $emp_test_info = array();
         $emp_test_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $emp_test_info[$employability_test_id];
+        if (empty($emp_test_info)) {
+            return false;
+        } else {
+            return $emp_test_info[$employability_test_id];
+        }
     }
     public function fetchTests ()
     {

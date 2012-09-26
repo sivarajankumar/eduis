@@ -49,7 +49,11 @@ class Tnp_Model_Mapper_FunctionalArea
         $functional_area_info = array();
         $functional_area_info = $select->query()->fetchAll(
         Zend_Db::FETCH_UNIQUE);
-        return $functional_area_info[$functional_area_id];
+        if (empty($functional_area_info)) {
+            return false;
+        } else {
+            return $functional_area_info[$functional_area_id];
+        }
     }
     public function fetchFunctionalAreas ()
     {

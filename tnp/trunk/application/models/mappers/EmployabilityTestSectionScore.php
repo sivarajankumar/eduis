@@ -51,7 +51,11 @@ class Tnp_Model_Mapper_EmployabilityTestSectionScore
         $emp_test_section_score_info = array();
         $emp_test_section_score_info = $select->query()->fetchAll(
         Zend_Db::FETCH_UNIQUE);
-        return $emp_test_section_score_info[$section_score_id];
+        if (empty($emp_test_section_score_info)) {
+            return false;
+        } else {
+            return $emp_test_section_score_info[$section_score_id];
+        }
     }
     /*
      * @todo

@@ -582,7 +582,69 @@ class StudentController extends Zend_Controller_Action
         }
         $my_array = $params['myarray'];
         $student_class_info = $my_array['class_info'];
-        return $this->saveClassInfo($member_id, $student_class_info);
+        $core_save_status = $this->saveClassInfo($member_id, 
+        $student_class_info);
+        $acad_save_status = $this->saveClassInfoAcad($member_id, 
+        $student_class_info);
+        $tnp_save_status = $this->saveClassInfoTnp($member_id, 
+        $student_class_info);
+        $status = array('core_save_status' => $core_save_status, 
+        'acad_save_status' => $acad_save_status, 
+        'tnp_save_status' => $tnp_save_status);
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('status', $status);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($status, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($status);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug('No format was provided..');
+                Zend_Registry::get('logger')->debug($status);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    private function saveClassInfoAcad ($member_id, $class_info)
+    {
+        $httpClient = new Zend_Http_Client(
+        'http://' . ACADEMIC_SERVER . '/student/saveclassinfo');
+        $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+        $httpClient->setMethod('POST');
+        $httpClient->setParameterPost(
+        array('myarray' => array('class_info' => $class_info), 
+        'member_id' => $member_id));
+        $response = $httpClient->request();
+        if ($response->isError()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    private function saveClassInfoTnp ($member_id, $class_info)
+    {
+        $httpClient = new Zend_Http_Client(
+        'http://' . TNP_SERVER . '/student/saveclassinfo');
+        $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+        $httpClient->setMethod('POST');
+        $httpClient->setParameterPost(
+        array('myarray' => array('class_info' => $class_info), 
+        'member_id' => $member_id));
+        $response = $httpClient->request();
+        if ($response->isError()) {
+            return false;
+        } else {
+            return true;
+        }
     }
     public function fetchunvregistrationinfoAction ()
     {
@@ -875,9 +937,9 @@ class StudentController extends Zend_Controller_Action
         return $member_id_exists;
     }
     /**
-     * @todo view changes no class finder
+     * 
      * Enter description here ...
-     * @param unknown_type $data_to_save
+     * @param array $data_to_save
      */
     private function saveClassInfo ($member_id, $class_info)
     {

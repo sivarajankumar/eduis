@@ -60,7 +60,11 @@ class Tnp_Model_Mapper_Member_Student
             ->where('member_id = ?', $member_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $student_info[$member_id];
+        if (empty($student_info)) {
+            return false;
+        } else {
+            return $student_info[$member_id];
+        }
     }
     public function save ($prepared_data)
     {

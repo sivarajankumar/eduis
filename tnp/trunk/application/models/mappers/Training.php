@@ -45,7 +45,11 @@ class Tnp_Model_Mapper_Training
             ->where('training_id = ?', $training_id);
         $training_info = array();
         $training_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $training_info[$training_id];
+        if (empty($training_info)) {
+            return false;
+        } else {
+            return $training_info[$training_id];
+        }
     }
     public function fetchTechnologies ()
     {

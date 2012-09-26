@@ -53,7 +53,11 @@ class Tnp_Model_Mapper_MemberExperience
         $student_experience_info = array();
         $student_experience_info = $select->query()->fetchAll(
         Zend_Db::FETCH_UNIQUE);
-        return $student_experience_info[$student_experience_id];
+        if (empty($student_experience_info)) {
+            return false;
+        } else {
+            return $student_experience_info[$student_experience_id];
+        }
     }
     public function fetchStudentExperienceIds ($member_id)
     {

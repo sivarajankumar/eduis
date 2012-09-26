@@ -50,7 +50,11 @@ class Tnp_Model_Mapper_EmployabilityTestSection
         $emp_test_section_info = array();
         $emp_test_section_info = $select->query()->fetchAll(
         Zend_Db::FETCH_UNIQUE);
-        return $emp_test_section_info[$test_section_id];
+        if (empty($emp_test_section_info)) {
+            return false;
+        } else {
+            return $emp_test_section_info[$test_section_id];
+        }
     }
     public function fetchTestSectionIds ($employability_test_id = null, 
     $test_section_name = null)

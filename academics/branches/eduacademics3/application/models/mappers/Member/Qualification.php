@@ -49,7 +49,11 @@ class Acad_Model_Mapper_Member_Qualification
             ->where('member_id = ?', $member_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $student_info;
+        if (empty($student_info)) {
+            return false;
+        } else {
+            return $student_info;
+        }
     }
     public function save ($data)
     {

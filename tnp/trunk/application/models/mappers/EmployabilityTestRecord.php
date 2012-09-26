@@ -51,7 +51,11 @@ class Tnp_Model_Mapper_EmployabilityTestRecord
         $emp_test_record_info = array();
         $emp_test_record_info = $select->query()->fetchAll(
         Zend_Db::FETCH_UNIQUE);
-        return $emp_test_record_info[$test_record_id];
+        if (empty($emp_test_record_info)) {
+            return false;
+        } else {
+            return $emp_test_record_info[$test_record_id];
+        }
     }
     public function fetchTestRecordIds ($member_id = null, 
     $employability_test_id = null, $test_regn_no = null, $test_total_score = null, 

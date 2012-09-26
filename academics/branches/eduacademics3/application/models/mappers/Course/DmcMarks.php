@@ -54,7 +54,11 @@ class Acad_Model_Mapper_Course_DmcMarks
             ->where(' student_subject_id= ?', $student_subject_id);
         $dmc_marks = array();
         $dmc_marks = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $dmc_marks[$dmc_info_id];
+        if (empty($dmc_marks)) {
+            return false;
+        } else {
+            return $dmc_marks[$dmc_info_id];
+        }
     }
     public function save ($prepared_data)
     {

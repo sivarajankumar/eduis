@@ -48,7 +48,11 @@ class Tnp_Model_Mapper_Language
             ->where('language_id = ?', $language_id);
         $language_info = array();
         $language_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $language_info[$language_id];
+        if (empty($language_info)) {
+            return false;
+        } else {
+            return $language_info[$language_id];
+        }
     }
     public function fetchLanguages ()
     {

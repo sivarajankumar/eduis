@@ -48,7 +48,11 @@ class Tnp_Model_Mapper_Industry
             ->where('industry_id = ?', $industry_id);
         $industry_info = array();
         $industry_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $industry_info[$industry_id];
+        if (empty($industry_info)) {
+            return false;
+        } else {
+            return $industry_info[$industry_id];
+        }
     }
     public function fetchIndustries ()
     {

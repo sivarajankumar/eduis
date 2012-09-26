@@ -118,6 +118,17 @@ class StudentController extends Zend_Controller_Action
             $this->setMember_id($authInfo['member_id']);
         }
     }
+    public function saveclassinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = $params['member_id'];
+        $my_array = $params['myarray'];
+        $student_class_info = $my_array['class_info'];
+        $this->saveClassInfo($member_id, $student_class_info);
+    }
     public function fetchcriticalinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(TRUE);
@@ -1672,6 +1683,18 @@ class StudentController extends Zend_Controller_Action
     {
         $certification = new Tnp_Model_Certification();
         return $certification->fetchCertifications();
+    }
+    /**
+     * 
+     * Enter description here ...
+     * @param array $data_to_save
+     */
+    private function saveClassInfo ($member_id, $class_info)
+    {
+        $class_info['member_id'] = $member_id;
+        $student = new Tnp_Model_Member_Student();
+        $student->setMember_id($member_id);
+        return $student->saveClassInfo($class_info);
     }
 }
 ?>

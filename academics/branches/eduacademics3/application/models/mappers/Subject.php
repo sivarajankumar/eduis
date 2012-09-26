@@ -51,7 +51,11 @@ class Acad_Model_Mapper_Subject
             ->where('subject_id = ?', $subject_id);
         $subject_info = array();
         $subject_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $subject_info[$subject_id];
+        if (empty($subject_info)) {
+            return false;
+        } else {
+            return $subject_info[$subject_id];
+        }
     }
     public function save ($prepared_data)
     {
