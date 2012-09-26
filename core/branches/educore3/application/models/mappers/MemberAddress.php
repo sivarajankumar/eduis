@@ -51,7 +51,11 @@ class Core_Model_Mapper_MemberAddress
             ->where('address_type=?', $address_type);
         $address_info = array();
         $address_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $address_info[$member_id];
+        if (empty($address_info)) {
+            return false;
+        } else {
+            return $address_info[$member_id];
+        }
     }
     /**
      * Fetches Address Types of a Member
@@ -79,7 +83,8 @@ class Core_Model_Mapper_MemberAddress
     public function update ($prepared_data, $member_id, $address_type)
     {
         $dbtable = $this->getDbTable();
-        $where1 = 'member_id = ' . $member_id. ' AND address_type ="' . $address_type.'"';
+        $where1 = 'member_id = ' . $member_id . ' AND address_type ="' .
+         $address_type . '"';
         return $dbtable->update($prepared_data, array($where1));
     }
 }
