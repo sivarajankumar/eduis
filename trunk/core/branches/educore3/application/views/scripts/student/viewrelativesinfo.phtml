@@ -19,19 +19,23 @@
             	if((jStatus == null) || (jStatus == false)|| (jStatus == undefined))
     			{
     				$('#info_table').append('No information has been added yet.');
-    			}
-                else
-                {
-        			var html = '';
-        			$.each(jStatus,function(relation_type,data){
-            			html += '<tr class="heading"><td>'+relations[relation_type]+'</td></tr>';
-            			html += '<tr class="row"><td><span id="heading">Name</span><span id="content">'+data['name']+'</span></td></tr>';
-            			html += '<tr class="row"><td><span id="heading">Contact Number</span><span id="content">'+data['contact']+'</span></td></tr>';
-            			html += '<tr class="row"><td><span id="heading">Occupation</span><span id="content">'+data['occupation']+'</span></td></tr>';
-            			if(data['designation'] != undefined)
-            				html += '<tr class="row"><td><span id="heading">Designation</span><span id="content">'+data['designation']+'</span></td></tr>';
-            			html += '<tr class="row"><td><span id="heading">Office Address</span><span id="content">'+data['office_add']+'</span></td></tr>';
-            			html += '<tr class="row"><td><span id="heading">Landline Number</span><span id="content">'+data['landline_no']+'</span></td></tr>';
+				}
+				else
+				{
+					var html = '';
+					$.each(jStatus,function(relation_type,data){
+						if((data != null) || (data != false)|| (data != undefined))
+		    			{
+    						html += '<tr class="heading"><td>'+relations[relation_type]+'</td></tr>';
+    						html += '<tr class="row"><td><span id="heading">Name</span><span id="content">'+data['name']+'</span></td></tr>';
+    						html += '<tr class="row"><td><span id="heading">Contact Number</span><span id="content">'+data['contact']+'</span></td></tr>';
+    						html += '<tr class="row"><td><span id="heading">Occupation</span><span id="content">'+data['occupation']+'</span></td></tr>';
+    						if(data['designation'] != undefined)
+    							html += '<tr class="row"><td><span id="heading">Designation</span><span id="content">'+data['designation']+'</span></td></tr>';
+    						html += '<tr class="row"><td><span id="heading">Office Address</span><span id="content">'+data['office_add']+'</span></td></tr>';
+    						html += '<tr class="row"><td><span id="heading">Landline Number</span><span id="content">'+data['landline_no']+'</span></td></tr>';
+    						html += '<tr class="row"><td><span id="heading">Annual Income</span><span id="content">'+data['annual_income']+'</span></td></tr>';
+		    			}
         			});
         			$('#info_table').append(html);
                 }
