@@ -46,6 +46,7 @@ class AuthenticateController extends Zend_Controller_Action
         switch ($result->getCode()) {
             case Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND:
             case Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID:
+            	echo 'Incorrect User Name or Password.';
                 break;
             case Zend_Auth_Result::SUCCESS:
                 Zend_Session::regenerateId();
