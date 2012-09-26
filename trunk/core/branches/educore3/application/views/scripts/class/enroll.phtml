@@ -122,7 +122,8 @@ function check_values() {
 		else
 		{
 			var excluded_string = $('#excluded').val();
-			data['myarray']['excluded'] = excluded_string.replace(/ /g,"").split(',');
+			if($('#excluded').val() != '')
+				data['myarray']['excluded'] = excluded_string.replace(/ /g,"").split(',');
 			
 			data['myarray']['rollnumbers'] = {'upper' : upper, 'lower' : lower};
 			data['myarray']['range_specified'] = true;
@@ -196,7 +197,7 @@ function submit_semester(batch_id,data) {
 }
 
 function submit_roll_numbers(class_id,data) {
-	var urlSaveInfo = 'http://academic.aceambala.com/class/saveevr';
+	var urlSaveInfo = 'http://core.aceambala.com/class/prepareclass';
     $.ajax({
         url : urlSaveInfo,
         dataType : 'jsonp',
@@ -232,15 +233,15 @@ function show_option(method)
            	'<li><label for="upper_range"><em>*</em>From</label>'+
          		'<input name="lower_range" id="lower_range" data-default-value="e.g. 2308001" value="" size="10" maxlength="50" type="text" class="textInput required validateNumber"/></li>'+
            	'<li><label for="lower_range"> To</label>'+
-         		'<input name="upper_range" id="upper_range" data-default-value="e.g. 2308060" value=""  size="10" maxlength="50" type="text" class="textInput required validateNumber"/></li>'+
+				'<input name="upper_range" id="upper_range" data-default-value="e.g. 2308060" value=""  size="10" maxlength="50" type="text" class="textInput required validateNumber"/></li>'+
 		'</ul>'+
 		'<p class="formHint">Enter roll numbers range. Please double check the values before submitting.</p>'+
 	'</div>'+
 
 	'<div class="ctrlHolder" id="excluded_div">'+
-	'<label for="excluded">Enter Excluded Roll Numbers</label>'+
-	'<input name="excluded" id="excluded" value="" data-default-value="2308017,2308019,2308060" size="35" maxlength="100" type="text" class="textInput required"/>'+
-	'<p class="formHint">Enter roll numbers to be excluded sepreated by commas without any space. Please double check the values before submitting.</p>'+
+		'<label for="excluded">Enter Excluded Roll Numbers</label>'+
+		'<input name="excluded" id="excluded" value="" data-default-value="2308017,2308019,2308060" size="35" maxlength="100" type="text" class="textInput"/>'+
+		'<p class="formHint">Enter roll numbers to be excluded sepreated by commas without any space. Please double check the values before submitting.</p>'+
 	'</div>';
 
 		$('#type').after(html);
