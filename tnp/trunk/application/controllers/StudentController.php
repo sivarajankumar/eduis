@@ -118,14 +118,6 @@ class StudentController extends Zend_Controller_Action
             $this->setMember_id($authInfo['member_id']);
         }
     }
-    public function testAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        //$this->deleteSkill(3, 1);
-        Zend_Registry::get('logger')->debug(
-        $this->deleteCoCurricular(3));
-    }
     public function fetchcriticalinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(TRUE);
@@ -133,40 +125,6 @@ class StudentController extends Zend_Controller_Action
         $member_id = $this->getMember_id();
         $critical_data = self::findCriticalInfo($member_id);
         $this->_helper->json($critical_data);
-    }
-    public function registerAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $student_model = new Tnp_Model_Member_Student();
-        $member_id_to_check = $this->getMember_id();
-        $member_exists_in_acad = $this->memberIdCheck($member_id_to_check);
-        /*
-         * dont use this if statement because user may have updated the data in core
-         * and the old data may still exist in academics database .thus in the case
-         * of old data member_id still exists that is member_id_check will return true.
-         * so drop the if statement
-         */
-        //if ($member_exists_in_acad == false) {
-        $client = new Zend_Http_Client();
-        $client->setUri('http://' . CORE_SERVER . '/student/fetchpersonalinfo');
-        $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
-        $response = $client->request();
-        if ($response->isError()) {
-            $remoteWARN = 'REMOTE WARNOR: (' . $response->getStatus() . ') ' .
-             $response->getMessage() . $response->getBody();
-            throw new Zend_Exception($remoteWARN, Zend_Log::WARN);
-        }
-        $critical_data = Zend_Json::decode($response->getBody());
-        Zend_Registry::get('logger')->debug($response);
-        Zend_Registry::get('logger')->debug($critical_data);
-        /*if ($critical_data) {
-            $student_model->saveCriticalInfo($critical_data);
-        } else {
-            $msg = 'PLEASE REGISTER IN CORE MODULE....GOTO core.aceambala.com';
-            throw new Exception('$msg');
-        }
-        $this->_redirect('student/profile');*/
     }
     public function viewemptestAction ()
     {

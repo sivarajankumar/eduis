@@ -81,6 +81,37 @@ class MemberController extends Zend_Controller_Action
             $this->setMember_id($authInfo['member_id']);
         }
     }
+    public function profileAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $member_id = $this->getMember_id();
+        $profile_status = $this->findProfileStatus($member_id);
+        if (empty($profile_status)) {
+            $this->_helper->viewRenderer->setNoRender(false);
+            $this->_helper->layout()->enableLayout();
+        } else {
+            $this->_redirect('/student');
+        }
+    }
+    public function saveprofileAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $my_array = $params['myarray'];
+        $profile_info = $my_array['profile_info'];
+        Zend_Registry::get('logger')->debug($params);
+        $this->saveProfile($member_id, $profile_info);
+        $this->activateProfile($member_id, true);
+    }
     public function registerAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -97,7 +128,7 @@ class MemberController extends Zend_Controller_Action
             $this->_redirect('http://' . TNP_SERVER . '/admin');
         }
         if ($this->_user_type == 'stu' or $this->_user_type == 'STU') {
-            $this->_redirect('/student/');
+            $this->_redirect('/member/profile');
         }
     }
     public function memberidcheckAction ()
@@ -220,5 +251,34 @@ class MemberController extends Zend_Controller_Action
             $member_info = false;
         }
         return $member_info;
+    }
+    private function saveProfile ($member_id, $profile_info)
+    {
+        $member_types = array(1 => 'STU', 2 => 'STAFF', 3 => 'MANAGEMENT', 
+        4 => 'OUTSIDER');
+        $profile_info['member_id'] = $member_id;
+        $member_type = $this->getUser_type();
+        $profile_info['member_type_id'] = array_search($member_type, 
+        $member_types);
+        $member = new Tnp_Model_Member_Member();
+        $member->setMember_id($member_id);
+        return $member->saveInfo($profile_info);
+    }
+    private function activateProfile ($member_id, $status)
+    {
+        $member = new Tnp_Model_Member_Member();
+        $member->setMember_id($member_id);
+        return $member->activateProfile(array('exists' => $status));
+    }
+    private function findProfileStatus ($member_id)
+    {
+        $profile = new Tnp_Model_Member_ProfileStatus();
+        $profile->setMember_id($member_id);
+        $info = $profile->fetchInfo();
+        if ($info instanceof Tnp_Model_Member_ProfileStatus) {
+            return $info->getExists();
+        } else {
+            return false;
+        }
     }
 }

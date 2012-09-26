@@ -579,17 +579,10 @@ class Core_Model_Member_Student extends Core_Model_Generic
     {
         $member_id = $this->getMember_id(true);
         $data_array['member_id'] = $member_id;
-        $info = $this->fetchCriticalInfo();
-        if ($info == false) {
-            $this->initSave();
-            $preparedData = $this->prepareDataForSaveProcess($data_array);
-            return $this->getMapper()->save($preparedData);
-        } else {
-            $this->initSave();
-            unset($data_array['member_id']);
-            $preparedData = $this->prepareDataForSaveProcess($data_array);
-            return $this->getMapper()->update($preparedData, $member_id);
-        }
+        $this->initSave();
+        unset($data_array['member_id']);
+        $preparedData = $this->prepareDataForSaveProcess($data_array);
+        return $this->getMapper()->update($preparedData, $member_id);
     }
     public function saveImageNo ($data_to_save)
     {
@@ -684,24 +677,31 @@ class Core_Model_Member_Student extends Core_Model_Generic
     }
     public function saveRelativesInfo ($data_array)
     {
-        $member_id = $this->getMember_id();
-        $relation_id = $data_array['relation_id'];
-        $info = $this->fetchRelativeInfo($relation_id);
-        $data_array['member_id'] = $member_id;
-        if ($info == false) {
-            $relatives_object = new Core_Model_MemberRelatives();
-            $relatives_object->initSave();
-            $preparedData = $relatives_object->prepareDataForSaveProcess(
-            $data_array);
-            return $relatives_object->getMapper()->save($preparedData);
-        } else {
-            $relatives_object = new Core_Model_MemberRelatives();
-            $relatives_object->initSave();
-            unset($data_array['member_id']);
-            $prepared_data = $relatives_object->prepareDataForSaveProcess(
-            $data_array);
-            return $relatives_object->getMapper()->update($prepared_data, 
-            $member_id, $relation_id);
+        foreach ($data_array as $key => $value) {
+            if (empty($value)) {
+                unset($data_array[$key]);
+            }
+        }
+        if (! empty($data_array)) {
+            $member_id = $this->getMember_id();
+            $relation_id = $data_array['relation_id'];
+            $info = $this->fetchRelativeInfo($relation_id);
+            $data_array['member_id'] = $member_id;
+            if ($info == false) {
+                $relatives_object = new Core_Model_MemberRelatives();
+                $relatives_object->initSave();
+                $preparedData = $relatives_object->prepareDataForSaveProcess(
+                $data_array);
+                return $relatives_object->getMapper()->save($preparedData);
+            } else {
+                $relatives_object = new Core_Model_MemberRelatives();
+                $relatives_object->initSave();
+                unset($data_array['member_id']);
+                $prepared_data = $relatives_object->prepareDataForSaveProcess(
+                $data_array);
+                return $relatives_object->getMapper()->update($prepared_data, 
+                $member_id, $relation_id);
+            }
         }
     }
     public function saveClassInfo ($data_array)

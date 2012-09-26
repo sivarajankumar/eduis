@@ -655,17 +655,10 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
     {
         $member_id = $this->getMember_id(true);
         $data_array['member_id'] = $member_id;
-        $info = $this->fetchCriticalInfo();
-        if ($info == false) {
-            $this->initSave();
-            $preparedData = $this->prepareDataForSaveProcess($data_array);
-            return $this->getMapper()->save($preparedData);
-        } else {
-            $this->initSave();
-            $preparedData = $this->prepareDataForSaveProcess($data_array);
-            $data_array['member_id'] = null;
-            return $this->getMapper()->update($preparedData, $member_id);
-        }
+        $this->initSave();
+        $preparedData = $this->prepareDataForSaveProcess($data_array);
+        unset($data_array['member_id']);
+        return $this->getMapper()->update($preparedData, $member_id);
     }
     /**
      * 
