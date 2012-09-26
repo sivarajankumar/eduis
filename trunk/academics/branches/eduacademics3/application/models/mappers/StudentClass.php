@@ -44,14 +44,18 @@ class Acad_Model_Mapper_StudentClass
         $db_table = $this->getDbTable();
         $stu_class_table = $db_table->info('name');
         $required_cols = array('member_id', 'class_id', 'group_id', 'roll_no', 
-        'start_date', 'completion_date', 'is_initial_batch_identifier');
+        'start_date', 'completion_date', 'group_id');
         $select = $adapter->select()
             ->from($stu_class_table, $required_cols)
             ->where('member_id = ?', $member_id)
             ->where('class_id = ?', $class_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $student_info[$member_id];
+        if (empty($student_info)) {
+            return false;
+        } else {
+            return $student_info[$member_id];
+        }
     }
     /**
      * Fetches all Classes in which a student has/had enrolled
@@ -86,7 +90,11 @@ class Acad_Model_Mapper_StudentClass
             ->where('is_initial_batch_identifier = ?', 1);
         $class_id = array();
         $class_id = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $class_id[0];
+        if (empty($class_id)) {
+            return false;
+        } else {
+            return $class_id[0];
+        }
     }
     public function save ($prepared_data)
     {

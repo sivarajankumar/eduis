@@ -50,7 +50,11 @@ class Tnp_Model_Mapper_TechnicalField
         $technical_field_info = array();
         $technical_field_info = $select->query()->fetchAll(
         Zend_Db::FETCH_UNIQUE);
-        return $technical_field_info[$technical_field_id];
+        if (empty($technical_field_info)) {
+            return false;
+        } else {
+            return $technical_field_info[$technical_field_id];
+        }
     }
     public function fetchTechnicalFields ()
     {
@@ -63,10 +67,14 @@ class Tnp_Model_Mapper_TechnicalField
         $technical_fields = array();
         $result = array();
         $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        foreach ($result as $tech_field_id => $tech_field_name_array) {
-            $technical_fields[$tech_field_id] = $tech_field_name_array['technical_field_name'];
+        if (empty($result)) {
+            return false;
+        } else {
+            foreach ($result as $tech_field_id => $tech_field_name_array) {
+                $technical_fields[$tech_field_id] = $tech_field_name_array['technical_field_name'];
+            }
+            return $technical_fields;
         }
-        return $technical_fields;
     }
     public function fetchTechnicalFieldIds ($technical_field_name = null, 
     $technical_sector = null)

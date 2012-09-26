@@ -124,6 +124,27 @@ class StudentController extends Zend_Controller_Action
             }
         }
     }
+    public function saveclassinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        //$member_id = $params['member_id'];
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        //$my_array = $params['myarray'];
+        //$student_class_info = $my_array['class_info'];
+        $student_class_info = array();
+        $student_class_info['member_id'] = $member_id;
+        $student_class_info['class_id'] = 154;
+        $student_class_info['roll_no'] = 23054522;
+        $student_class_info['group_id'] = 'A1';
+        $this->saveClassInfo($member_id, $student_class_info);
+    }
     public function academicbaseAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -2701,5 +2722,17 @@ class StudentController extends Zend_Controller_Action
                 $backlog_filtered[] = $member_id;
         }
         return $backlog_filtered;
+    }
+    /**
+     * 
+     * Enter description here ...
+     * @param array $data_to_save
+     */
+    private function saveClassInfo ($member_id, $class_info)
+    {
+        $class_info['member_id'] = $member_id;
+        $student = new Acad_Model_Member_Student();
+        $student->setMember_id($member_id);
+        return $student->saveClassInfo($class_info);
     }
 }

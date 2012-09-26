@@ -77,7 +77,11 @@ class Acad_Model_Mapper_StudentSubject
             ->where('subject_id = ?', $subject_id);
         $stu_subject_id = array();
         $stu_subject_id = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $stu_subject_id[$member_id];
+        if (empty($stu_subject_id)) {
+            return false;
+        } else {
+            return $stu_subject_id[$member_id];
+        }
     }
     /**
      * Fetches Class in which a student Studied the given Subject

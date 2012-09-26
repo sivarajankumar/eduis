@@ -48,7 +48,11 @@ class Tnp_Model_Mapper_Role
             ->where('role_id = ?', $role_id);
         $role_info = array();
         $role_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $role_info[$role_id];
+        if (empty($role_info)) {
+            return false;
+        } else {
+            return $role_info[$role_id];
+        }
     }
     public function fetchRoles ()
     {
@@ -60,10 +64,14 @@ class Tnp_Model_Mapper_Role
         $roles = array();
         $result = array();
         $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        foreach ($result as $role_id => $role_info_array) {
-            $roles[$role_id] = $role_info_array['role_name'];
+        if (empty($result)) {
+            return false;
+        } else {
+            foreach ($result as $role_id => $role_info_array) {
+                $roles[$role_id] = $role_info_array['role_name'];
+            }
+            return $roles;
         }
-        return $roles;
     }
     public function save ($prepared_data)
     {

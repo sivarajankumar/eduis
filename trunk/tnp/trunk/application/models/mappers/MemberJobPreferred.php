@@ -80,10 +80,14 @@ class Tnp_Model_Mapper_MemberJobPreferred
         $member_job_preferred = array();
         $result = array();
         $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        foreach ($result as $member_id => $job_preferred_array) {
-            $member_job_preferred[$member_id] = $job_preferred_array['job_area'];
+        if (empty($result)) {
+            return false;
+        } else {
+            foreach ($result as $member_id => $job_preferred_array) {
+                $member_job_preferred[$member_id] = $job_preferred_array['job_area'];
+            }
+            return $member_job_preferred;
         }
-        return $member_job_preferred;
     }
     public function save ($prepared_data)
     {

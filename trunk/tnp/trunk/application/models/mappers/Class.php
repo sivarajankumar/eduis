@@ -69,7 +69,11 @@ class Tnp_Model_Mapper_Class
             ->where('class_id = ?', $class_id);
         $class_info = array();
         $class_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $class_info[$class_id];
+        if (empty($class_info)) {
+            return false;
+        } else {
+            return $class_info[$class_id];
+        }
     }
     /**
      * Fetches Class Id

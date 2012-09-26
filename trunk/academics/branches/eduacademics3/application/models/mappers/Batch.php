@@ -50,7 +50,11 @@ class Acad_Model_Mapper_Batch
             ->where('batch_id = ?', $batch_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $student_info[$batch_id];
+        if (empty($student_info)) {
+            return false;
+        } else {
+            return $student_info[$batch_id];
+        }
     }
     /**
      * 

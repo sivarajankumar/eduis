@@ -44,7 +44,11 @@ class Acad_Model_Mapper_CompetitiveExam
             ->where('exam_id = ?', $exam_id);
         $exam_info = array();
         $exam_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $exam_info[$exam_id];
+        if (empty($exam_info)) {
+            return false;
+        } else {
+            return $exam_info[$exam_id];
+        }
     }
     public function fetchExams ()
     {

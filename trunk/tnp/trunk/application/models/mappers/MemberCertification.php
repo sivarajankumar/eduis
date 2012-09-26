@@ -46,7 +46,11 @@ class Tnp_Model_Mapper_MemberCertification
             ->where('certification_id = ?', $certification_id);
         $certification_info = array();
         $certification_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $certification_info[$member_id];
+        if (empty($certification_info)) {
+            return false;
+        } else {
+            return $certification_info[$member_id];
+        }
     }
     public function fetchCertificationIds ($member_id)
     {

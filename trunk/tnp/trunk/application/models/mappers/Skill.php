@@ -48,7 +48,11 @@ class Tnp_Model_Mapper_Skill
             ->where('skill_id = ?', $skill_id);
         $skill_info = array();
         $skill_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $skill_info[$skill_id];
+        if (empty($skill_info)) {
+            return false;
+        } else {
+            return $skill_info[$skill_id];
+        }
     }
     public function fetchSkillids ($skill_name = null)
     {
@@ -77,10 +81,14 @@ class Tnp_Model_Mapper_Skill
         $skills = array();
         $result = array();
         $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        foreach ($result as $skill_id => $skill_name_array) {
-            $skills[$skill_id] = $skill_name_array['skill_name'];
+        if (empty($result)) {
+            return false;
+        } else {
+            foreach ($result as $skill_id => $skill_name_array) {
+                $skills[$skill_id] = $skill_name_array['skill_name'];
+            }
+            return $skills;
         }
-        return $skills;
     }
     public function save ($prepared_data)
     {

@@ -54,13 +54,22 @@ class Acad_Model_Mapper_Course_DmcInfo
             'dmc_info_id = ?', $dmc_info_id);
             $dmc_info = array();
             $dmc_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-            return $dmc_info[$dmc_info_id];
+            if (empty($dmc_info)) {
+                return false;
+            } else {
+                return $dmc_info[$dmc_info_id];
+            }
         }
         if (isset($dmc_id)) {
             $required_cols = array('dmc_info_id');
             $select->from($dmc_info_table, $required_cols)->where('dmc_id = ?', 
             $dmc_id);
-            return $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+            $result = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+            if (empty($result)) {
+                return false;
+            } else {
+                return $result;
+            }
         }
     }
     /**

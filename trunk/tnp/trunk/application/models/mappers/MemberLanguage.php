@@ -57,10 +57,14 @@ class Tnp_Model_Mapper_MemberLanguage
         $result = array();
         $language_info = array();
         $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        foreach ($result as $language_id => $proficiency_array) {
-            $language_info[$language_id] = $proficiency_array['proficiency'];
+        if (empty($language_info)) {
+            return false;
+        } else {
+            foreach ($result as $language_id => $proficiency_array) {
+                $language_info[$language_id] = $proficiency_array['proficiency'];
+            }
+            return $language_info;
         }
-        return $language_info;
     }
     public function save ($prepared_data)
     {

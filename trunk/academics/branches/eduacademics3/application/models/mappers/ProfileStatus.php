@@ -49,7 +49,11 @@ class Acad_Model_Mapper_ProfileStatus
             ->where('member_id = ?', $member_id);
         $member_profile_info = array();
         $member_profile_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $member_profile_info[$member_id];
+        if (empty($member_profile_info)) {
+            return false;
+        } else {
+            return $member_profile_info[$member_id];
+        }
     }
     /**
      * 

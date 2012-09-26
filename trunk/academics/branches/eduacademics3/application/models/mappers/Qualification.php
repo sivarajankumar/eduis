@@ -49,7 +49,11 @@ class Acad_Model_Mapper_Qualification
             ->where('qualification_id = ?', $qualification_id);
         $qualification_info = array();
         $qualification_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $qualification_info[$qualification_id];
+        if (empty($qualification_info)) {
+            return false;
+        } else {
+            return $qualification_info[$qualification_id];
+        }
     }
     /**
      * Fetches All Qualifications stored in db
