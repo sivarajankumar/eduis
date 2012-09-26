@@ -379,7 +379,7 @@ class Core_Model_Member_Member extends Core_Model_Generic
     {
         $member_id = $this->getMember_id(true);
         $data_array['member_id'] = $member_id;
-        $info = $this->fetchCriticalInfo();
+        $info = $this->fetchInfo();
         if ($info == false) {
             $this->initSave();
             $preparedData = $this->prepareDataForSaveProcess($data_array);

@@ -57,7 +57,11 @@ class Core_Model_Mapper_Programme
         $select = $adapter->select()->from($programme_table, $required_cols);
         $info = array();
         $info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $info[$programme_id];
+        if (empty($info)) {
+            return false;
+        } else {
+            return $info[$programme_id];
+        }
     }
     public function save ($prepared_data)
     {

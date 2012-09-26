@@ -48,9 +48,13 @@ class Core_Model_Mapper_Batch
         $select = $adapter->select()
             ->from($batch_table, $required_cols)
             ->where('batch_id = ?', $batch_id);
-        $student_info = array();
-        $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $student_info[$batch_id];
+        $batch_info = array();
+        $batch_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        if (empty($batch_info)) {
+            return false;
+        } else {
+            return $batch_info[$batch_id];
+        }
     }
     /**
      * 

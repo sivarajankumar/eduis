@@ -49,7 +49,12 @@ class Core_Model_Mapper_Nationality
             ->where('nationality_id = ?', $nationality_id);
         $nationality_info = array();
         $nationality_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $nationality_info[$nationality_id];
+        $nationality_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        if (empty($nationality_info)) {
+            return false;
+        } else {
+            return $nationality_info[$nationality_id];
+        }
     }
     public function fetchNationalities ()
     {

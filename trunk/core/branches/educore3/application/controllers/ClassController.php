@@ -77,10 +77,47 @@ class ClassController extends Zend_Controller_Action
                 break;
         }
     }
+    public function enrollAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function prepareclassAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request_object = $this->getRequest();
+        $params = array_diff($request_object->getParams(), 
+        $request_object->getUserParams());
+        $my_array = $params['myarray'];
+        $class_id = $my_array['class_id'];
+        $roll_numbers = $params['myarray']['rollnumbers'];
+        $students_given = array();
+        $selected_students = array();
+        if ($my_array['range_specified'] == 'true') {
+            $from = $roll_numbers['lower'];
+            $to = $roll_numbers['upper'];
+            $students_given = range($from, $to);
+        } else {
+            $students_given = $roll_numbers;
+        }
+        if (! empty($students_given) and ! empty($my_array['excluded'])) {
+            $selected_students = array_diff($students_given, 
+            $my_array['excluded']);
+        } else {
+            $selected_students = $students_given;
+        }
+        Zend_Registry::get('logger')->debug(193);
+        Zend_Registry::get('logger')->debug($selected_students);
+        
+    }
     public function viewclassinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+    }
+    private function enrollStudents($class_id,$roll_numbers){
+        
     }
     public function getclassidsAction ()
     {

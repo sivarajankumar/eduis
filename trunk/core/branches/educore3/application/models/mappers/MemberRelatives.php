@@ -56,12 +56,12 @@ class Core_Model_Mapper_MemberRelatives
             ->joinInner($relations_table, $cond, $relations_cols)
             ->where('member_id = ?', $member_id)
             ->where(strval($relatives_table . '.relation_id = ?'), $relation_id);
-        $student_info = array();
-        $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        if (empty($student_info)) {
+        $relative_info = array();
+        $relative_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        if (empty($relative_info)) {
             return false;
         } else {
-            return $student_info[$member_id];
+            return $relative_info[$member_id];
         }
     }
     /**

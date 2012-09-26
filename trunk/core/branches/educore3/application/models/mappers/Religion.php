@@ -49,7 +49,11 @@ class Core_Model_Mapper_Religion
             ->where('religion_id = ?', $religion_id);
         $religion_info = array();
         $religion_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $religion_info[$religion_id];
+        if (empty($religion_info)) {
+            return false;
+        } else {
+            return $religion_info[$religion_id];
+        }
     }
     public function fetchReligions ()
     {

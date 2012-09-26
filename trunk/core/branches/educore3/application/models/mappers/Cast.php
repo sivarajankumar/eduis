@@ -49,7 +49,11 @@ class Core_Model_Mapper_Cast
             ->where('cast_id = ?', $cast_id);
         $cast_info = array();
         $cast_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        return $cast_info[$cast_id];
+        if (empty($cast_info)) {
+            return false;
+        } else {
+            return $cast_info[$cast_id];
+        }
     }
     public function fetchCasts ()
     {

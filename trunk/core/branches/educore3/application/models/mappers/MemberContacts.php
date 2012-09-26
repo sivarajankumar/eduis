@@ -56,12 +56,12 @@ class Core_Model_Mapper_MemberContacts
             ->where('member_id = ?', $member_id)
             ->where(strval($member_contacts_table . '.contact_type_id = ?'), 
         $contact_type_id);
-        $student_info = array();
-        $student_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        if (empty($student_info)) {
+        $contact_info = array();
+        $contact_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        if (empty($contact_info)) {
             return false;
         } else {
-            return $student_info[$member_id];
+            return $contact_info[$member_id];
         }
     }
     /**
