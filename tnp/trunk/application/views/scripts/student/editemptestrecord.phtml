@@ -28,14 +28,14 @@
 
 		<div class="ctrlHolder">
 			<label for="test_percentile">Percentile</label>
-			<input name="test_percentile" id="test_percentile" value="" data-default-value="e.g.Software Development" size="35" maxlength="50" type="text" class="textInput "/>
+			<input name="test_percentile" id="test_percentile" value="" data-default-value="e.g.Software Development" size="35" maxlength="50" type="text" class="textInput validateNumber"/>
 			<p class="formHint">Percentile in test</p>
 		</div>
 
 		<div class="ctrlHolder">
 			<label for="test_total_score">Total Score</label>
-			<input name="test_total_score" id="test_total_score" value="" data-default-value="e.g.200" size="35" maxlength="50" type="text" class="textInput "/>
-			<p class="formHint"></p>
+			<input name="test_total_score" id="test_total_score" value="" data-default-value="e.g.200" size="35" maxlength="50" type="text" class="textInput validateNumber"/>
+			<p class="formHint">Total Score in the test</p>
 		</div> 
 	</fieldset>
 	
@@ -44,12 +44,12 @@
 			echo '<fieldset id="'.$test_section_id.'" class="section" title="'.$data['test_section_name'].'">'.
 					'<h2>'.ucfirst($data['test_section_name']).'</h2>'.
 					'<div class="ctrlHolder"><label for="section_marks">Section Marks </label>'.
-						'<input name="section_marks" id="section_marks" value="'.$data['section_marks'].'" data-default-value="e.g. 29 " size="35" maxlength="50" type="text" class="textInput validateInteger"/>'.
+						'<input name="section_marks" id="section_marks" value="'.$data['section_marks'].'" data-default-value="e.g. 29 " size="35" maxlength="50" type="text" class="textInput validateNumber"/>'.
 						'<p class="formHint">Marks obtained in above mentioned section</p>'.
 					'</div>'.
 					'<div class="ctrlHolder">'.
 						'<label for="section_percentile">Section percentile </label>'.
-						'<input name="section_percentile" id="section_percentile" value="'.$data['section_percentile'].'" data-default-value="e.g. 30" size="35" maxlength="50" type="text" class="textInput validateInteger"/>'.
+						'<input name="section_percentile" id="section_percentile" value="'.$data['section_percentile'].'" data-default-value="e.g. 30" size="35" maxlength="50" type="text" class="textInput validateNumber"/>'.
 						'<p class="formHint">Percentile obtained in above mentioned section</p>'.
 					'</div>'.
 				'</fieldset>';
