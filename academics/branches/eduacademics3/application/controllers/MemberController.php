@@ -103,15 +103,6 @@ class MemberController extends Zend_Controller_Action
         $member_id = null;
         $personal_info = $params['personal_info'];
         $member_id = $personal_info['member_id'];
-        /*$personal_info['blood_group'] = 'A-';
-        $personal_info['cast_id'] = 1;
-        $personal_info['dob'] = '1990-05-09';
-        $personal_info['first_name'] = 'AMRIT';
-        $personal_info['gender'] = 'MALE';
-        $personal_info['last_name'] = 'SINGH';
-        $personal_info['nationality_id'] = 1;
-        $personal_info['religion_id'] = 3;
-        $member_id = 3;*/
         $this->savePersonalInfo($member_id, $personal_info);
         $this->activateProfile($member_id, true);
     }
