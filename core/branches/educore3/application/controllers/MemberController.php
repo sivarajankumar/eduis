@@ -323,7 +323,7 @@ class MemberController extends Zend_Controller_Action
     }
     private function activateProfile ($member_id, $status)
     {
-        $member = new Core_Model_Member_Member();
+        $member = new Core_Model_Member_ProfileStatus();
         $member->setMember_id($member_id);
         return $member->activateProfile(array('exists' => $status));
     }
