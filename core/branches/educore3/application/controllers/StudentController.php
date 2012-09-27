@@ -69,6 +69,15 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $member_id = null;
+        $member_id = $this->getMember_id();
+        $class_ids = $this->getAllClassIds($member_id);
+        if (empty($class_ids)) {
+            $class_info = false;
+        } else {
+            $class_info = true;
+        }
+        $this->view->assign('class_info_exists', $class_info);
     }
     public function memberidcheckAction ()
     {
@@ -1212,16 +1221,7 @@ class StudentController extends Zend_Controller_Action
         $student = new Core_Model_Member_Student();
         $student->setMember_id($member_id);
         $class_ids = $student->fetchAllClassIds();
-        //if (is_array($class_ids)) {
         return $class_ids;
-        /*  } else {
-            if ($class_ids == false) {
-                throw new Exception(
-                'Student with member_id : ' . $member_id .
-                 ' has not been registered in any Acdemic Class ', 
-                Zend_Log::WARN);
-            }
-        }*/
     }
     private function findClassInfo ($class_id)
     {
@@ -1233,9 +1233,6 @@ class StudentController extends Zend_Controller_Action
         $response = $httpClient->request();
         if ($response->isError()) {
             $class_info = false;
-            /*$error = 'ERROR: (' . $response->getStatus() . ') ' .
-             $response->getHeader('Message');
-            throw new Zend_Exception($error, Zend_Log::ERR);*/
         } else {
             $jsonContent = $response->getBody($response);
             $class_info = Zend_Json::decode($jsonContent);
@@ -1252,9 +1249,6 @@ class StudentController extends Zend_Controller_Action
         $response = $httpClient->request();
         if ($response->isError()) {
             $batch_info = false;
-            /*$error = 'ERROR: (' . $response->getStatus() . ') ' .
-             $response->getHeader('Message');
-            throw new Zend_Exception($error, Zend_Log::ERR);*/
         } else {
             $jsonContent = $response->getBody($response);
             $batch_info = Zend_Json::decode($jsonContent);
