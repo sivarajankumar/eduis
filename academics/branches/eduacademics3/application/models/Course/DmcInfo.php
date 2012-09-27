@@ -10,30 +10,15 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     protected $_examination;
     protected $_custody_date;
     protected $_is_granted;
-    protected $_grant_date;
     protected $_receiving_date;
     protected $_is_copied;
     protected $_dispatch_date;
     protected $_marks_obtained;
-    protected $_total_marks;
+    protected $_max_marks;
     protected $_scaled_marks;
     protected $_percentage;
     protected $_mapper;
     /**
-	 * @return the $_grant_date
-	 */
-	public function getGrant_date() {
-		return $this->_grant_date;
-	}
-
-	/**
-	 * @param field_type $_grant_date
-	 */
-	public function setGrant_date($_grant_date) {
-		$this->_grant_date = $_grant_date;
-	}
-
-	/**
      * @return the $_is_considered
      */
     public function getIs_considered ($throw_exception = null)
@@ -174,13 +159,6 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
         return $this->_marks_obtained;
     }
     /**
-     * @return the $_total_marks
-     */
-    public function getTotal_marks ()
-    {
-        return $this->_total_marks;
-    }
-    /**
      * @return the $_scaled_marks
      */
     public function getScaled_marks ()
@@ -279,13 +257,20 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
         $this->_marks_obtained = $_marks_obtained;
     }
     /**
-     * @param field_type $_total_marks
-     */
-    public function setTotal_marks ($_total_marks)
-    {
-        $this->_total_marks = $_total_marks;
-    }
-    /**
+	 * @return the $_max_marks
+	 */
+	public function getMax_marks() {
+		return $this->_max_marks;
+	}
+
+	/**
+	 * @param field_type $_max_marks
+	 */
+	public function setMax_marks($_max_marks) {
+		$this->_max_marks = $_max_marks;
+	}
+
+	/**
      * @param field_type $_scaled_marks
      */
     public function setScaled_marks ($_scaled_marks)
@@ -328,9 +313,9 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     protected function correctDbKeys ($key)
     {
         switch ($key) {
-            /*case 'nationalit':
-                return 'nationality';
-                break;*/
+            case 'total_marks':
+                return 'max_marks';
+                break;
             default:
                 return $key;
                 break;
@@ -344,9 +329,9 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
     protected function correctModelKeys ($key)
     {
         switch ($key) {
-            /*case 'nationality':
-                return 'nationalit';
-                break;*/
+            case 'max_marks':
+                return 'total_marks';
+                break;
             default:
                 return $key;
                 break;
@@ -378,6 +363,7 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
         $dmc_id = $this->getDmc_id(true);
         $dmc_info_id = $this->getMapper()->fetchDmcInfoIds(null, null, null, 
         null, null, null, $dmc_id);
+        Zend_Registry::get('logger')->debug($dmc_info_id);
         if (empty($dmc_info_id)) {
             return false;
         } else {

@@ -812,6 +812,7 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             $dmc_info_object->initSave();
             $preparedData = $dmc_info_object->prepareDataForSaveProcess(
             $data_array);
+            Zend_Registry::get('logger')->debug($preparedData);
             try {
                 $dmc_info_id = $dmc_info_object->getMapper()->save(
                 $preparedData);
