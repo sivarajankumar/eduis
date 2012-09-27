@@ -634,15 +634,8 @@ class StudentController extends Zend_Controller_Action
         'member_id' => $member_id));
         $response = $httpClient->request();
         if ($response->isError()) {
-            $remoteErr = 'ERROR from ' . ACADEMIC_SERVER . ' : (' .
-             $response->getStatus() . ') ' . $response->getMessage() . ', i.e. ' .
-             $response->getHeader('Message') . $response->getBody();
-            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+            return false;
         } else {
-            $jsonContent = $response->getBody();
-            print_r($jsonContent);
-            /*$data_returned = Zend_Json_Decoder::decode($jsonContent);
-            Zend_Registry::get('logger')->debug($jsonContent);*/
             return true;
         }
     }
@@ -657,15 +650,8 @@ class StudentController extends Zend_Controller_Action
         'member_id' => $member_id));
         $response = $httpClient->request();
         if ($response->isError()) {
-            $remoteErr = 'ERROR from ' . ACADEMIC_SERVER . ' : (' .
-             $response->getStatus() . ') ' . $response->getMessage() . ', i.e. ' .
-             $response->getHeader('Message') . $response->getBody();
-            throw new Zend_Exception($remoteErr, Zend_Log::ERR);
+            return false;
         } else {
-            $jsonContent = $response->getBody();
-            print_r($jsonContent);
-            /*$data_returned = Zend_Json_Decoder::decode($jsonContent);
-            Zend_Registry::get('logger')->debug($jsonContent);*/
             return true;
         }
     }
