@@ -119,7 +119,7 @@ class MemberController extends Zend_Controller_Action
         $my_array = $params['myarray'];
         $personal_info = $my_array['personal_info'];
         Zend_Registry::get('logger')->debug($params);
-        $this->savePersonalInfo($member_id, $profile_info);
+        $this->savePersonalInfo($member_id, $personal_info);
         $this->activateProfile($member_id, true);
     }
     public function registerAction ()
