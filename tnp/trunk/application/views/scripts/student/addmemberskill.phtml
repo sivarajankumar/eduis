@@ -8,6 +8,7 @@
 	<?php
 	echo '<div class="ctrlHolder"><label for="skill_id"><em>*</em>Name</label>';
 		echo '<select id="skill_id" name="skill_id" class="selectInput required">';
+			echo '<option value="">Please select a skill</option>';
 			foreach ($skills as $skill_id => $skill_data) {
 				echo '<option value="' . $skill_id . '">' . $skill_data .'</option>';
 			}
