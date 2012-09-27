@@ -8,6 +8,7 @@
  * Blocks/Buildings in infrastructure.
  *
  */
+
 class BlockController extends Corez_Base_BaseController
 {
     /*
