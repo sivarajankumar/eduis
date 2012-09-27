@@ -179,29 +179,21 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
         $member_id = $this->getMember_id(true);
         $subject_id = $this->getSubject_id(true);
         $class_id = $this->getClass_id(true);
-        if (empty($result_type_id)) {
-            $error = 'Insufficient params supplied to fetchDMC() function .Result_type_id Required';
-            throw new Exception($error, Zend_Log::ERR);
-            return;
+        $student_subject_id = $this->fetchStudentSubjectId();
+        if (empty($student_subject_id)) {
+            return false;
         } else {
-            $student_subject_id = $this->fetchStudentSubjectId();
-            if (! $student_subject_id) {
-                $error = 'The Subject with subject id - ' . $subject_id .
-                 'was not studied by member_id -' . $member_id;
-                throw new Exception($error, Zend_Log::ERR);
+            $dmc_marks_obj = new Acad_Model_Course_DmcMarks();
+            $dmc_marks_obj->setStudent_subject_id($student_subject_id);
+            $dmc_marks_obj->setResult_type_id($result_type_id);
+            if (isset($considered)) {
+                $dmc_marks_obj->setIs_considered($considered);
+            }
+            $marks = $dmc_marks_obj->fetchInfo();
+            if ($marks instanceof Acad_Model_Course_DmcMarks) {
+                return $marks;
             } else {
-                $dmc_marks_obj = new Acad_Model_Course_DmcMarks();
-                $dmc_marks_obj->setStudent_subject_id($student_subject_id);
-                $dmc_marks_obj->setResult_type_id($result_type_id);
-                if (isset($considered)) {
-                    $dmc_marks_obj->setIs_considered($considered);
-                }
-                $marks = $dmc_marks_obj->fetchInfo();
-                if ($marks instanceof Acad_Model_Course_DmcMarks) {
-                    return $marks;
-                } else {
-                    return false;
-                }
+                return false;
             }
         }
     }
@@ -243,6 +235,21 @@ class Acad_Model_StudentSubject extends Acad_Model_Generic
             return false;
         } else {
             return $student_subjects;
+        }
+    }
+    /**
+     * 
+     * Enter description here ...
+     * @param array $subject_ids
+     */
+    public function assignSubjects (array $subject_ids)
+    {
+        $member_id = $this->getMember_id(true);
+        $class_id = $this->getClass_id(true);
+        foreach ($subject_ids as $subject_id) {
+            $data = array('member_id' => $member_id, 'class_id' => $class_id, 
+            'subject_id' => $subject_id);
+            $this->getMapper()->save($data);
         }
     }
 }

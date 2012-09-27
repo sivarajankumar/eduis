@@ -133,7 +133,10 @@ class StudentController extends Zend_Controller_Action
         $my_array = $params['myarray'];
         $member_id = $params['member_id'];
         $student_class_info = $my_array['class_info'];
+        $class_id = $student_class_info['class_id'];
         $status = $this->saveClassInfo($member_id, $student_class_info);
+        $subject_ids = $this->findClassSubjects($class_id);
+        $this->assignSubjects($member_id, $class_id, $subject_ids);
         $format = $this->_getParam('format', 'log');
         switch ($format) {
             case 'jsonp':
@@ -2740,5 +2743,30 @@ class StudentController extends Zend_Controller_Action
         $student = new Acad_Model_Member_Student();
         $student->setMember_id($member_id);
         return $student->saveClassInfo($class_info);
+    }
+    private function findClassSubjects ($class_id)
+    {
+        Zend_Registry::get('logger')->debug($class_id);
+        $httpClient = new Zend_Http_Client(
+        'http://' . ACADEMIC_SERVER . '/class/getclasssubjects');
+        $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+        $httpClient->setMethod('POST');
+        $httpClient->setParameterPost(
+        array('class_id' => $class_id, 'format' => 'json'));
+        $response = $httpClient->request();
+        if ($response->isError()) {
+            return false;
+        } else {
+            $json_response = $response->getBody($response);
+            $class_subjects = Zend_Json::decode($json_response);
+            $subject_ids = array_keys($class_subjects);
+            return $subject_ids;
+        }
+    }
+    private function assignSubjects ($member_id, $class_id, $subject_ids)
+    {
+        $student = new Acad_Model_Member_Student();
+        $student->setMember_id($member_id);
+        $student->assignSubjects($class_id, $subject_ids);
     }
 }
