@@ -94,7 +94,17 @@ class MemberController extends Zend_Controller_Action
             $this->_redirect('/student');
         }
     }
-    public function saveprofileAction ()
+    public function editpersonalinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function viewpersonalinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function savepersonalinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
@@ -109,7 +119,7 @@ class MemberController extends Zend_Controller_Action
         $my_array = $params['myarray'];
         $profile_info = $my_array['profile_info'];
         Zend_Registry::get('logger')->debug($params);
-        $this->saveProfile($member_id, $profile_info);
+        $this->savePersonalInfo($member_id, $profile_info);
         $this->activateProfile($member_id, true);
     }
     public function registerAction ()
@@ -252,7 +262,7 @@ class MemberController extends Zend_Controller_Action
         }
         return $member_info;
     }
-    private function saveProfile ($member_id, $profile_info)
+    private function savePersonalInfo ($member_id, $profile_info)
     {
         $member_types = array(1 => 'STU', 2 => 'STAFF', 3 => 'MANAGEMENT', 
         4 => 'OUTSIDER');

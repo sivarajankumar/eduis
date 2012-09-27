@@ -634,7 +634,7 @@ class StudentController extends Zend_Controller_Action
             print_r($jsonContent);
             /*$data_returned = Zend_Json_Decoder::decode($jsonContent);
             Zend_Registry::get('logger')->debug($jsonContent);*/
-             return true;
+            return true;
         }
     }
     private function saveClassInfoTnp ($member_id, $class_info)
@@ -653,7 +653,7 @@ class StudentController extends Zend_Controller_Action
              $response->getHeader('Message') . $response->getBody();
             throw new Zend_Exception($remoteErr, Zend_Log::ERR);
         } else {
-             $jsonContent = $response->getBody();
+            $jsonContent = $response->getBody();
             print_r($jsonContent);
             /*$data_returned = Zend_Json_Decoder::decode($jsonContent);
             Zend_Registry::get('logger')->debug($jsonContent);*/
