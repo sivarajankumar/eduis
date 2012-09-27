@@ -108,7 +108,7 @@
 				}
         });
         
-        var urlgetinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchpersonalinfo'))?>";
+        var urlgetinfo = "<?php echo $this->url(array('controller' => 'member', 'action' => 'fetchpersonalinfo'))?>";
         $.ajax({
     		url : urlgetinfo,
     		dataType : 'json',
@@ -124,42 +124,6 @@
     			$('#errorBox').text(response.responseText).parent().show();
     			console.log(response);
     		}
-    	});
-
-    	$('#image').change(function(){
-        	//var img = $(this).
-			var size = parseInt(this.files[0].size, 10);
-			if(size < 50000 && size > 10000)
-			{
-				alert('ok' + size);
-				var name = this.files[0].name;
-				if(name.match(/.jpg/g) || name.match(/.png/g) || name.match(/.gif/g))
-				{
-					alert('file type ok');
-					var image = $('#image').attr('value');
-					alert(image);
-					var urlsaveimage = "<?php echo $this->url(array('controller' => 'student', 'action' => 'saveimage'))?>";
-		            $.ajax({
-		        		url : urlsaveimage,
-		                data : {image:image},
-		        		success: function(jStatus){
-		        			
-		                },
-		                error: function(response) {
-		        			$('#errorBox').text(response.responseText).parent().show();
-		        			console.log(response);
-		        		}
-		        	});
-				}
-				else
-				{
-					alert('not ok');
-				}
-			}
-			else
-			{
-				alert('not ok' + size);
-			}
     	});
     });
     

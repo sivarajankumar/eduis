@@ -17,8 +17,9 @@
 		<li class="item2">
 			<a href="#">Personal Information</a>
 			<ul>
-				<li class="subitem1"><a href="/student/viewpersonalinfo" target="content_frame">View</a></li>
-				<li class="subitem1"><a href="/student/editpersonalinfo" target="content_frame">Add/Edit</a></li>
+				<li class="subitem1"><a href="/member/viewpersonalinfo" target="content_frame">View</a></li>
+				<!-- Student can only update his personal information -->
+				<li class="subitem1"><a href="/student/editpersonalinfo" target="content_frame">Update</a></li>
 			</ul>
 		</li>
 		
@@ -30,6 +31,7 @@
 			</ul>
 		</li>
 
+		<?php if($this->class_info) {?>
 		<li class="item3">
 			<a href="#">Contact Information</a>
 			<ul>
@@ -68,6 +70,7 @@
 				<li class="subitem1"><a href="/student/uploadphoto" target="content_frame">Add/Change</a></li>
 			</ul>
 		</li>
+		<?php }?>
 	</ul>
 	</div>
 	<div id="page_content">
