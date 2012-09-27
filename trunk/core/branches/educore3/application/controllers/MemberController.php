@@ -122,6 +122,24 @@ class MemberController extends Zend_Controller_Action
         $this->savePersonalInfo($member_id, $personal_info);
         $this->activateProfile($member_id, true);
     }
+    public function fetchpersonalinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $member_id = null;
+        Zend_Registry::get('logger')->debug(
+        'member_id may be sent in as parameter');
+        if (empty($params['member_id'])) {
+            $member_id = $this->getMember_id();
+        } else {
+            $member_id = $params['member_id'];
+        }
+        $personal_info = $this->findPersonalInfo($member_id);
+        Zend_Registry::get('logger')->debug($personal_info);
+        $this->_helper->json($personal_info);
+    }
     public function registerAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -273,6 +291,35 @@ class MemberController extends Zend_Controller_Action
         $member = new Core_Model_Member_Member();
         $member->setMember_id($member_id);
         return $member->saveInfo($profile_info);
+    }
+    private function findPersonalInfo ($member_id)
+    {
+        $member_id_exists = $this->memberIdCheck($member_id);
+        if ($member_id_exists) {
+            $member = new Core_Model_Member_Member();
+            $member->setMember_id($member_id);
+            $info = $member->fetchInfo();
+            if ($info instanceof Core_Model_Member_Member) {
+                $personal_data['first_name'] = $info->getFirst_name();
+                $personal_data['middle_name'] = $info->getMiddle_name();
+                $personal_data['last_name'] = $info->getLast_name();
+                $personal_data['cast_id'] = $info->getCast_id();
+                $personal_data['nationality_id'] = $info->getNationality_id();
+                $personal_data['religion_id'] = $info->getReligion_id();
+                $personal_data['blood_group'] = $info->getBlood_group();
+                $personal_data['dob'] = $info->getDob();
+                $personal_data['gender'] = $info->getGender();
+                $personal_data['image_no'] = $info->getImage_no();
+                foreach ($personal_data as $key => $value) {
+                    if ($value == null) {
+                        $personal_data[$key] = null;
+                    }
+                }
+            } else {
+                $personal_data = false;
+            }
+            return $personal_data;
+        }
     }
     private function activateProfile ($member_id, $status)
     {
