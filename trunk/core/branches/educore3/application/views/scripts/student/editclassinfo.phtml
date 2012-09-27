@@ -237,7 +237,7 @@
                 	},
             success: function(jStatus){
                 alert('Your information has been saved sucessfully');
-                //window.location.replace('/student/viewclassinfo');
+                window.location.replace('/student/viewclassinfo');
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
