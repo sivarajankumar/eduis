@@ -127,7 +127,23 @@ class StudentController extends Zend_Controller_Action
         $member_id = $params['member_id'];
         $my_array = $params['myarray'];
         $student_class_info = $my_array['class_info'];
-        $this->saveClassInfo($member_id, $student_class_info);
+        $status = $this->saveClassInfo($member_id, $student_class_info);
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($status, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($status);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug($status);
+                break;
+            default:
+                ;
+                break;
+        }
     }
     public function fetchcriticalinfoAction ()
     {

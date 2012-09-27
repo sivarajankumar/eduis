@@ -44,7 +44,7 @@ class Acad_Model_Mapper_StudentClass
         $db_table = $this->getDbTable();
         $stu_class_table = $db_table->info('name');
         $required_cols = array('member_id', 'class_id', 'group_id', 'roll_no', 
-        'start_date', 'completion_date', 'group_id');
+        'start_date', 'completion_date');
         $select = $adapter->select()
             ->from($stu_class_table, $required_cols)
             ->where('member_id = ?', $member_id)
