@@ -48,8 +48,8 @@ class Acad_Model_Mapper_Course_DmcInfo
             $required_cols = array('dmc_info_id', 'dmc_id', 'is_considered', 
             'result_type_id', 'class_id', 'member_id', 'examination', 
             'custody_date', 'is_granted', 'receiving_date', 'is_copied', 
-            'dispatch_date', 'marks_obtained', 'total_marks', 'scaled_marks', 
-            'percentage', 'grant_date');
+            'dispatch_date', 'marks_obtained', 'max_marks', 'scaled_marks', 
+            'percentage');
             $select->from($dmc_info_table, $required_cols)->where(
             'dmc_info_id = ?', $dmc_info_id);
             $dmc_info = array();
@@ -179,10 +179,14 @@ class Acad_Model_Mapper_Course_DmcInfo
             $select->order('dispatch_date DESC')->limit(1);
         }
         $dmc_info_ids = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        foreach ($dmc_info_ids as $dmc_info_id => $dmc_id_array) {
-            $info[$dmc_info_id] = $dmc_id_array['dmc_id'];
+        if (empty($dmc_info_ids)) {
+            return false;
+        } else {
+            foreach ($dmc_info_ids as $dmc_info_id => $dmc_id_array) {
+                $info[$dmc_info_id] = $dmc_id_array['dmc_id'];
+            }
+            return $info;
         }
-        return $info;
     }
     /**
      * 

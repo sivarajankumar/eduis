@@ -1706,9 +1706,11 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $dmc_info_data = $params['myarray']['dmc_info_data'];
+        $dmc_info_data['max_marks'] = $dmc_info_data['total_marks'];
+        unset($dmc_info_data['total_marks']);
         $dmc_subject_marks = $params['myarray']['dmc_subject_marks'];
         $dmc_info_id = $this->saveDmcInfo($member_id, $dmc_info_data);
-        Zend_Registry::get('logger')->debug($params);
+        Zend_Registry::get('logger')->debug($dmc_info_id);
         foreach ($dmc_subject_marks as $stu_subj_id => $marks_info) {
             $marks_info['student_subject_id'] = $stu_subj_id;
             $marks_info['dmc_info_id'] = $dmc_info_id;
@@ -2017,7 +2019,7 @@ class StudentController extends Zend_Controller_Action
             $matric_data['percentage'] = $qualification_model->getPercentage();
             $matric_data['school_rank'] = $qualification_model->getSchool_rank();
             $matric_data['state_name'] = $qualification_model->getState_name();
-            $matric_data['total_marks'] = $qualification_model->getTotal_marks();
+            $matric_data['max_marks'] = $qualification_model->getMax_marks();
         } else {
             $matric_data = false;
         }
@@ -2046,7 +2048,7 @@ class StudentController extends Zend_Controller_Action
             $btech_data['passing_year'] = $qualification_model->getPassing_year();
             $btech_data['percentage'] = $qualification_model->getPercentage();
             $btech_data['state_name'] = $qualification_model->getState_name();
-            $btech_data['total_marks'] = $qualification_model->getTotal_marks();
+            $btech_data['max_marks'] = $qualification_model->getMax_marks();
             $btech_data['discipline_id'] = $qualification_model->getDiscipline_id();
             $btech_data['institution'] = $qualification_model->getInstitution();
             $btech_data['roll_no'] = $qualification_model->getRoll_no();
@@ -2076,7 +2078,7 @@ class StudentController extends Zend_Controller_Action
             $mtech_data['passing_year'] = $qualification->getPassing_year();
             $mtech_data['percentage'] = $qualification->getPercentage();
             $mtech_data['state_name'] = $qualification->getState_name();
-            $mtech_data['total_marks'] = $qualification->getTotal_marks();
+            $mtech_data['max_marks'] = $qualification->getMax_marks();
             $mtech_data['discipline_id'] = $qualification->getDiscipline_id();
             $mtech_data['institution'] = $qualification->getInstitution();
             $mtech_data['roll_no'] = $qualification->getRoll_no();
@@ -2125,7 +2127,7 @@ class StudentController extends Zend_Controller_Action
             $twelfth_data['percentage'] = $qualification_model->getPercentage();
             $twelfth_data['school_rank'] = $qualification_model->getSchool_rank();
             $twelfth_data['state_name'] = $qualification_model->getState_name();
-            $twelfth_data['total_marks'] = $qualification_model->getTotal_marks();
+            $twelfth_data['max_marks'] = $qualification_model->getMax_marks();
             $twelfth_data['discipline_id'] = $qualification_model->getDiscipline_id();
             $twelfth_data['pcm_percentage'] = $qualification_model->getPcm_percentage();
         } else {
@@ -2150,7 +2152,7 @@ class StudentController extends Zend_Controller_Action
             $diploma_data['percentage'] = $qualification_model->getPercentage();
             $diploma_data['remarks'] = $qualification_model->getRemarks();
             $diploma_data['state_name'] = $qualification_model->getState_name();
-            $diploma_data['total_marks'] = $qualification_model->getTotal_marks();
+            $diploma_data['max_marks'] = $qualification_model->getMax_marks();
             $diploma_data['discipline_id'] = $qualification_model->getDiscipline_id();
             $diploma_data['migration_date'] = $qualification_model->getMigration_date();
         } else {
@@ -2286,11 +2288,10 @@ class StudentController extends Zend_Controller_Action
             $info['examination'] = $dmc_info->getExamination();
             $info['custody_date'] = $dmc_info->getCustody_date();
             $info['is_granted'] = $dmc_info->getIs_granted();
-            $info['grant_date'] = $dmc_info->getGrant_date();
             $info['is_copied'] = $dmc_info->getIs_copied();
             $info['dispatch_date'] = $dmc_info->getDispatch_date();
             $info['marks_obtained'] = $dmc_info->getMarks_obtained();
-            $info['total_marks'] = $dmc_info->getTotal_marks();
+            $info['max_marks'] = $dmc_info->getMax_marks();
             $info['scaled_marks'] = $dmc_info->getScaled_marks();
             $info['percentage'] = $dmc_info->getPercentage();
             return $info;
@@ -2301,6 +2302,7 @@ class StudentController extends Zend_Controller_Action
     private function fetchDmcSubjectMarks ($member_id, $dmc_info_id, 
     $subject_ids)
     {
+        Zend_Registry::get('logger')->debug($subject_ids);
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($member_id);
         $dmc_subject_marks = array();
@@ -2313,6 +2315,7 @@ class StudentController extends Zend_Controller_Action
             $dmc_subject_marks = $this->getDmcSubjectMarks($member_id, 
             $dmc_info_id, $subject_id);
         }
+        Zend_Registry::get('logger')->debug($dmc_subject_marks);
         return $dmc_subject_marks;
     }
     private function getDmcSubjectMarks ($member_id, $dmc_info_id, $subject_id)
@@ -2328,6 +2331,7 @@ class StudentController extends Zend_Controller_Action
             $dmc_subject_marks['internal'] = $info->getInternal();
             $dmc_subject_marks['percentage'] = $info->getPercentage();
             $dmc_subject_marks['is_pass'] = $info->getIs_pass();
+            $dmc_subject_marks['is_verified'] = $info->getIs_verified();
             $dmc_subject_marks['max_marks'] = $info->getMax_marks();
             $dmc_subject_marks['date'] = $info->getDate();
             return $dmc_subject_marks;
@@ -2430,7 +2434,8 @@ class StudentController extends Zend_Controller_Action
         $dmc_info_data = array_pop($dmc_info_raw);
         $class_id = $dmc_info_data['class_id'];
         $student_subject->setClass_id($class_id);
-        $student_subject_ids = $student_subject->fetchSubjects();
+        $subject_ids = $student_subject->fetchSubjects();
+        $student_subject_ids = array_keys($subject_ids);
         $dmc_subject_data = self::fetchDmcSubjectMarks($member_id, $dmc_info_id, 
         $student_subject_ids);
         $subject_data = $this->fetchStudentSubjects($class_id, $member_id);
@@ -2595,16 +2600,16 @@ class StudentController extends Zend_Controller_Action
         $save_info['custody_date'] = $dmc_info['custody_date'];
         $save_info['is_granted'] = $dmc_info['is_granted'];
         $save_info['receiving_date'] = $dmc_info['receiving_date'];
-        $save_info['grant_date'] = $dmc_info['grant_date'];
         $save_info['is_copied'] = $dmc_info['is_copied'];
         $save_info['dispatch_date'] = $dmc_info['dispatch_date'];
         $marks_obtained = $dmc_info['marks_obtained'];
         $save_info['marks_obtained'] = $marks_obtained;
-        $total_marks = $dmc_info['total_marks'];
-        $save_info['total_marks'] = $total_marks;
+        $total_marks = $dmc_info['max_marks'];
+        $save_info['max_marks'] = $total_marks;
         $save_info['scaled_marks'] = $dmc_info['scaled_marks'];
         $save_info['percentage'] = (100 * ($marks_obtained / $total_marks));
-        return $student->saveDmcInfo($save_info);
+        $result = $student->saveDmcInfo($save_info);
+        return $result;
     }
     private function prepareDataForExport ($member_ids)
     {
@@ -2655,7 +2660,7 @@ class StudentController extends Zend_Controller_Action
                         $dmc_info->setDmc_info_id($dmc_info_id);
                         $info = $dmc_info->fetchInfo();
                         if ($info instanceof Acad_Model_Course_DmcInfo) {
-                            $total_marks = $info->getTotal_marks();
+                            $total_marks = $info->getMax_marks();
                             $marks_obtained = $info->getMarks_obtained();
                         }
                         $percentage = (100 * ($marks_obtained / $total_marks));
