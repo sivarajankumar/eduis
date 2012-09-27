@@ -1,0 +1,201 @@
+<h2>Personal Information</h2>
+
+<form id="personal_info" action="javascript:submit()" class="uniForm" enctype="multipart/form-data">
+   	
+   	<fieldset>
+   	<h5>Please enter the following information</h5>
+	
+	<div class="ctrlHolder noLabel">
+		<ul class="alternate">
+           	<li><label for="first_name"><em>*</em> First Name</label>
+         		<input name="first_name" id="first_name" data-default-value="e.g. Ravi" value="" size="10" maxlength="50" type="text" class="textInput required validateAlpha"/></li>
+           	<li><label for="middle_name"> Middle Name</label>
+         		<input name="middle_name" id="middle_name" data-default-value="e.g. Kumar" value=""  size="10" maxlength="50" type="text" class="textInput validateAlpha"/></li>
+           	<li><label for="last_name"> Last Name</label>
+         		<input name="last_name" id="last_name" data-default-value="e.g. Gupta" value=""  size="10" maxlength="50" type="text" class="textInput validateAlpha"/></li>
+		</ul>
+		<p class="formHint">Full Name of candidate</p>
+	</div>
+       
+    <div class="ctrlHolder">
+		<label for="dob"><em>*</em>Date of Birth</label>
+		<input name="dob" id="dob" data-default-value="1990-12-31" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of birthday</p>
+    </div>
+
+	<div class="ctrlHolder">
+		<p class="label"><em>*</em>Gender</p>
+		<select id="gender" name="gender" class="selectInput required">
+			<option value="MALE">MALE</option>
+         	<option value="FEMALE">FEMALE</option>
+		</select>
+		<p class="formHint">Nationality</p>
+	</div>
+     
+	<div class="ctrlHolder">
+		<label for="nationality_id">Nationality</label>
+		<select id="nationality_id" name="nationality_id" class="selectInput required">
+			<option value="1">INDIAN</option>
+         	<option value="2">AMERICAN</option>
+         	<option value="3">BRITISH</option>
+         	<option value="4">AUSTRAILIAN</option>
+		</select>
+		<p class="formHint">Nationality</p>
+	</div>
+     
+	<div class="ctrlHolder">
+		<label for="blood_group">Blood Group</label>
+		<select id="blood_group" name="blood_group" class="selectInput">
+       		<option value="A+">A+</option>
+      		<option value="A-">A-</option>
+      		<option value="B+">B+</option>
+       		<option value="B-">B-</option>
+       		<option value="AB+">AB+</option>
+      		<option value="AB-">AB-</option>
+       		<option value="O+">O+</option>
+       		<option value="O-">O-</option>
+		</select>
+		<p class="formHint">Blood group of Candidate</p>
+	</div>
+        
+    <div class="ctrlHolder">
+		<label for="religion_id">Religion</label>
+		<select id="religion_id" name="religion_id" class="selectInput required">
+       		<option value="1">Hindu</option>
+       		<option value="2">Muslim</option>
+       		<option value="3">Sikh</option>
+       		<option value="4">Christian</option>
+		</select>
+		<p class="formHint">Religion of Candidate</p>
+	</div>
+       
+    <div class="ctrlHolder">
+		<label for="cast_id">Cast</label>
+		<select id="cast_id" name="cast_id" class="selectInput required">
+       		<option value="1">GEN</option>
+       		<option value="2">BC</option>
+       		<option value="3">SC</option>
+       		<option value="4">ST</option>
+		</select>
+		<p class="formHint">Cast of Candidate</p>
+	</div>
+	
+	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+	<div class="buttonHolder">
+		<button type="reset" class="secondaryAction">Reset</button>
+		<button type="submit" class="primaryAction">Next</button>
+	</div>
+</fieldset>
+</form>
+
+<script type="text/javascript">
+
+    $(function(){
+    	$('form.uniForm').uniform({
+    		prevent_submit : true
+    	});
+
+    	$('#topContent').hide();
+    	
+    	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+        $("#dob").datepicker({
+        	dateFormat: 'yy-mm-dd',
+        	changeMonth: true,
+			changeYear: true,
+			yearRange: '-25:-15',
+			onClose : function(dateText, inst) {
+				this.focus();
+				}
+        });
+        
+        var urlgetinfo = "<?php echo $this->url(array('controller' => 'member', 'action' => 'fetchpersonalinfo'))?>";
+        $.ajax({
+    		url : urlgetinfo,
+    		dataType : 'json',
+            data : {format:'json'},
+    		success: function(jStatus){
+    			$.each(jStatus,function(key,value){
+    				var field = '#'+key; 
+					$(field).val(value);
+    			});
+    			$('input:first').focus();
+            },
+            error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    });
+    
+	function get_params()
+	{
+		formData = {};
+		personal_info = {};
+		$('form#personal_info :input')
+		.not('button')
+		.each(function(){
+			personal_info[this.name] = this.value;
+		});
+
+		formData['personal_info'] = personal_info;
+		return formData;
+	}
+    
+    function submit()
+    {
+    	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'member', 'action' => 'savepersonalinfo'))?>';
+        $.ajax({
+            url : urlSaveInfo,
+            data : {
+                	myarray : get_params(),
+					format : 'json'
+                	},
+            success: function(jStatus){
+                alert('Your information has been saved sucessfully');
+                window.location.replace('/member/viewpersonalinfo');
+            },
+    		error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    }
+
+</script>
+
+<style type="text/css">
+.uniForm{
+	background-color:white;
+	padding:10px 10px 10px 25px;
+	border:1px solid #b4c1da;
+	margin:-5px 0 40px 0;
+	box-shadow:#e4e4e4 0px 0px 1px 1px;
+	width:auto;
+}
+h2{
+	padding:3px 3px 3px 10px;
+	background-color:#eceff4;
+	border:1px solid #b4c1da;
+	font-size:17px;
+	font-weight:100;
+	margin-top:2px;	
+}
+span{
+	float:right;
+	font-size:14px;
+	font-weight:100;	
+}
+</style>
+    
+    
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form.jquery.js');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
