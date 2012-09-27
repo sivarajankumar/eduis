@@ -130,20 +130,26 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        //$member_id = $params['member_id'];
-        if (empty($params['member_id'])) {
-            $member_id = $this->getMember_id();
-        } else {
-            $member_id = $params['member_id'];
+        $my_array = $params['myarray'];
+        $member_id = $params['member_id'];
+        $student_class_info = $my_array['class_info'];
+        $status = $this->saveClassInfo($member_id, $student_class_info);
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($status, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($status);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug($status);
+                break;
+            default:
+                ;
+                break;
         }
-        //$my_array = $params['myarray'];
-        //$student_class_info = $my_array['class_info'];
-        $student_class_info = array();
-        $student_class_info['member_id'] = $member_id;
-        $student_class_info['class_id'] = 154;
-        $student_class_info['roll_no'] = 23054522;
-        $student_class_info['group_id'] = 'A1';
-        $this->saveClassInfo($member_id, $student_class_info);
     }
     public function academicbaseAction ()
     {
