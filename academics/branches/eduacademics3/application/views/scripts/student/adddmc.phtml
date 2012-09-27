@@ -73,8 +73,8 @@
 	</div>
 	
 	<div class="ctrlHolder">
-		<label for="total_marks"><em>*</em>Total Marks</label>
-		<input name="total_marks" id="total_marks" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<label for="max_marks"><em>*</em>Total Marks</label>
+		<input name="max_marks" id="max_marks" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
 		<p class="formHint">Total Marks</p>
 	</div>
 	
@@ -236,7 +236,7 @@
             		//$('#dmc_info_div').hide();
         			//show_subject_div();
         			alert('Your data has been saved sucessfully');
-        			window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'profile'))?>';
+        			window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'viewdmcinfo'))?>';
         		}
             },
             error: function(response) {
