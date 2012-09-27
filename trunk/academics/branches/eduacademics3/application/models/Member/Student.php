@@ -957,4 +957,24 @@ class Acad_Model_Member_Student extends Acad_Model_Generic
             return $all_members;
         }
     }
+    /**
+     * 
+     * @desc assigns subjects to a student 
+     * @desc (i-e the subjects that the student is supposed to studty)
+     * @param int $class_id
+     * @param array $subject_ids
+     */
+    public function assignSubjects ($class_id, $subject_ids)
+    {
+        $student_subject = new Acad_Model_StudentSubject();
+        $member_id = $this->getMember_id(true);
+        $student_subject->setMember_id($member_id);
+        $all_class_ids = $this->fetchAllClassIds();
+        if (in_array($class_id, $all_class_ids)) {
+            $student_subject->setClass_id($class_id);
+            return $student_subject->assignSubjects($subject_ids);
+        } else {
+            return false;
+        }
+    }
 }
