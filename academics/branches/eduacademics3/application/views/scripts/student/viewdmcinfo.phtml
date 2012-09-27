@@ -28,7 +28,7 @@
 						html += '<span class="heading">Group: </span>'+jStatus['student_class_info'][batch_id]['group_id'].toUpperCase()+' <br>';
 
 						$.each(data['class_ids'],function(class_id,semester){
-							html += '<span class="semesters" id="semester'+class_id+'" onclick="get_dmc_ids('+class_id+','+batch_id+')"><span class="heading">Semester: </span>'+semester+'</span><br>';
+							html += '<span class="semesters" id="semester'+class_id+'" onclick="get_dmc_ids('+class_id+','+batch_id+')"><span class="heading">Semester: </span>'+semester+'</span><span id="message'+class_id+'"></span><br>';
 						});
 						html += '</div>';
             		});
@@ -65,11 +65,16 @@
                 	});
             		html += '</select> &nbsp;';
             		html += '<input type="button" value="View Details" onclick="change_location('+class_id+')">';
+            		html += '&nbsp;&nbsp;<input type="button" value="Add New" onclick="window.location.replace('+"'student/adddmc?class_id="+class_id+"'"+')">';
     
-            		$('#semester'+class_id).after(html);
+            		$('#message'+class_id).html(html);
 				}
 				else
-					$('#semester'+class_id).after('&nbsp;&nbsp;No dmc exist for this semester');
+				{
+					var html = '&nbsp;&nbsp;No dmc exist for this semester';
+					html += '&nbsp;&nbsp;<input type="button" value="Add New" onclick="window.location.replace('+"'/student/adddmc?class_id="+class_id+"'"+')">';
+					$('#message'+class_id).html(html);
+				}
             },
             error: function(response) {
         		
