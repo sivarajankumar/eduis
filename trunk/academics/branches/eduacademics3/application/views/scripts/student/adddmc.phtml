@@ -236,7 +236,7 @@
             		//$('#dmc_info_div').hide();
         			//show_subject_div();
         			alert('Your data has been saved sucessfully');
-        			window.location = '<?php echo $this->url(array('controller' => 'student', 'action' => 'viewdmcinfo'))?>';
+        			window.location.replace('/student/viewdmcinfo');
         		}
             },
             error: function(response) {
