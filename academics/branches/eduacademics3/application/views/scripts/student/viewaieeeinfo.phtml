@@ -20,14 +20,14 @@
                 echo '<tr><td>All India Rank</td><td>'.$aieee['all_india_rank'].'</td></tr>';
                 echo '<tr><td>Score</td><td>'.$aieee['total_score'].'</td></tr>';
                 echo '<tr><td>Date</td><td>'.$aieee['date'].'</td></tr>';
+                
+                if($usertype == 'STU'){
+                    echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editaieeeinfo'."'".');">';
+                }
             } 
         ?>
     	</table>
 </div>
-
-<?php if($usertype == 'STU'){?>
-<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editaieeeinfo');">
-<?php }?>
 
 <script type="text/javascript">
 	$(function(){
