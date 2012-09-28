@@ -8,13 +8,13 @@
 ?>
 <div  class="ui-state-hover"><center><H3>Matric Details</H3></center></div>
 <div id="Matric Details">
-    <table id="corner" cellspacing="10" cellpadding="10">
     <?php
         if($matric == null){ 
             echo '<h4>No information has been added yet.</h4>';
         }
         else
         {
+            echo '<table id="corner" cellspacing="10" cellpadding="10">';
             echo '<tr><td>Roll Number</td><td>'.$matric['board_roll_no'].'</td></tr>';
             echo '<tr><td>Marks Obtained</td><td>'.$matric['marks_obtained'].'</td></tr>';
             echo '<tr><td>Total Marks</td><td>'.$matric['total_marks'].'</td></tr>';
@@ -25,14 +25,13 @@
             echo '<tr><td>City</td><td>'.$matric['city_name'].'</td></tr>';
             echo '<tr><td>State</td><td>'.$matric['state_name'].'</td></tr>';
             echo '<tr><td>School Rank</td><td>'.$matric['school_rank'].'</td></tr>';
+            echo '</table>';
             
             if($usertype == 'STU'){
                 echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editmatricinfo'."'".');">';
             }
         }
     ?>
-        	
-	</table>
 </div>
 
 

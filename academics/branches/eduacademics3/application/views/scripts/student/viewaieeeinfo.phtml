@@ -8,25 +8,25 @@
 
 <div class="ui-state-hover"><center><H3>AIEEE Details</H3></center></div>
 <div id="Matric Details">
-    	<table id="corner" cellspacing="10" cellpadding="10">
-        <?php
-            if($aieee == null)
-            {
-                echo '<h4>No information has been added yet.</h4>';
+    <?php
+        if($aieee == null)
+        {
+            echo '<h4>No information has been added yet.</h4>';
+        }
+        else
+        {
+            echo '<table id="corner" cellspacing="10" cellpadding="10">';
+        	echo '<tr><td>Roll Number</td><td>'.$aieee['roll_no'].'</td></tr>';
+            echo '<tr><td>All India Rank</td><td>'.$aieee['all_india_rank'].'</td></tr>';
+            echo '<tr><td>Score</td><td>'.$aieee['total_score'].'</td></tr>';
+            echo '<tr><td>Date</td><td>'.$aieee['date'].'</td></tr>';
+            echo '</table>';
+            
+            if($usertype == 'STU'){
+                echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editaieeeinfo'."'".');">';
             }
-            else
-            {
-            	echo '<tr><td>Roll Number</td><td>'.$aieee['roll_no'].'</td></tr>';
-                echo '<tr><td>All India Rank</td><td>'.$aieee['all_india_rank'].'</td></tr>';
-                echo '<tr><td>Score</td><td>'.$aieee['total_score'].'</td></tr>';
-                echo '<tr><td>Date</td><td>'.$aieee['date'].'</td></tr>';
-                
-                if($usertype == 'STU'){
-                    echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editaieeeinfo'."'".');">';
-                }
-            } 
-        ?>
-    	</table>
+        } 
+    ?>
 </div>
 
 <script type="text/javascript">
@@ -50,10 +50,6 @@
 		margin: 15px;
 		text-align: left;
 		border-collapse: collapse;
-	}
-	#edit_btn {
-		width:48%;
-		float:left;
 	}
 	#goback_btn { 
 		width:48%;

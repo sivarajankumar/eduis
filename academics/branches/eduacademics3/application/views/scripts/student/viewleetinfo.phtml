@@ -8,34 +8,35 @@
 ?>
 <div class="ui-state-hover"><center><H3>LEET Details</H3></center></div>
 <div id="leet_details">
-    	<table id="corner" cellspacing="10" cellpadding="10">
           
-        <?php
-            if($leet == null)
-            {
-                echo '<h4>No information has been added yet.</h4>';
+    <?php
+        if($leet == null)
+        {
+            echo '<h4>No information has been added yet.</h4>';
+        }
+        else
+        {
+            echo '<table id="corner" cellspacing="10" cellpadding="10">';
+        	foreach ($leet as $key => $value) 
+    		{
+    		    echo '<tr>';
+	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
+	            if($value !=null){
+        	        echo '<td>'.ucfirst($value).'</td>';
+	            }
+	            else {
+	                echo '<td><i>Not Mentioned</i></td>';
+	            }
+	            echo '</tr>';
+    		}
+    		echo '</table>';
+    		
+            if($usertype == 'STU'){
+                echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editleetinfo'."'".');">';
             }
-            else
-            { 
-            	foreach ($leet as $key => $value) 
-        		{
-        		    echo '<tr>';
-    	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
-    	            if($value !=null){
-            	        echo '<td>'.ucfirst($value).'</td>';
-    	            }
-    	            else {
-    	                echo '<td><i>Not Mentioned</i></td>';
-    	            }
-    	            echo '</tr>';
-        		}
-                if($usertype == 'STU'){
-                    echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editleetinfo'."'".');">';
-                }
-            }
-            ?>
+        }
+    ?>
         	
-    	</table>
 </div>
 
 <script type="text/javascript">

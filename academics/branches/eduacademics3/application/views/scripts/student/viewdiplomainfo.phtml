@@ -8,34 +8,34 @@
 
 <div class="ui-state-hover"><center><H3>Diploma Details</H3></center></div>
 <div id="dip_details">
-    	<table id="corner" cellspacing="10" cellpadding="10">
-          
-        <?php
-            if($diploma == null)
-            {
-                echo '<h4>No information has been added yet.</h4>';
+    	
+    <?php
+        if($diploma == null)
+        {
+            echo '<h4>No information has been added yet.</h4>';
+        }
+        else
+        {
+            echo '<table id="corner" cellspacing="10" cellpadding="10">';
+        	foreach ($diploma as $key => $value) 
+    		{
+    		    echo '<tr>';
+	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
+	            if($value !=null){
+        	        echo '<td>'.ucfirst($value).'</td>';
+	            }
+	            else {
+	                echo '<td><i>Not Mentioned</i></td>';
+	            }
+	            echo '</tr>';
+    		}
+    		echo '</table>';
+            if($usertype == 'STU'){
+                echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editdiplomainfo'."'".');">';
             }
-            else
-            {
-            	foreach ($diploma as $key => $value) 
-        		{
-        		    echo '<tr>';
-    	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
-    	            if($value !=null){
-            	        echo '<td>'.ucfirst($value).'</td>';
-    	            }
-    	            else {
-    	                echo '<td><i>Not Mentioned</i></td>';
-    	            }
-    	            echo '</tr>';
-        		}
-                if($usertype == 'STU'){
-                    echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editdiplomainfo'."'".');">';
-                }
-            }
-            ?>
+        }
+    ?>
         	
-    	</table>
 </div>
 
 <script type="text/javascript">
