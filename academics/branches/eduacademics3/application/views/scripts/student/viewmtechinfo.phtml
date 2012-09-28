@@ -10,25 +10,24 @@
     	<table id="corner" cellspacing="10" cellpadding="10">
         <?php 
         	foreach ($this->mtech as $key => $value) 
-        		{
-        		    echo '<tr>';
-    	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
-    	            if($value !=null){
-            	        echo '<td>'.ucfirst($value).'</td>';
-    	            }
-    	            else {
-    	                echo '<td><i>Not Mentioned</i></td>';
-    	            }
-    	            echo '</tr>';
-        		} 
-            ?>
+    		{
+    		    echo '<tr>';
+	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
+	            if($value !=null){
+        	        echo '<td>'.ucfirst($value).'</td>';
+	            }
+	            else {
+	                echo '<td><i>Not Mentioned</i></td>';
+	            }
+	            echo '</tr>';
+    		}
+    		if($usertype == 'STU'){
+                echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editmtechinfo'."'".');">';
+            }
+        ?>
         	
     	</table>
 </div>
-
-<?php if($usertype == 'STU'){?>
-<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editmtechinfo');">
-<?php }?>
 
 <script type="text/javascript">
 	$(function(){
