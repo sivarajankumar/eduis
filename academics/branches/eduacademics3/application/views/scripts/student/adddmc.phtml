@@ -94,7 +94,6 @@
 </form>
 
 <script>
-    var dmc_info_data = {};
     var class_id = '<?php echo $_GET['class_id']?>';
 	var urlSaveRegistrationInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmcinfo'))?>";
 	$(function(){
@@ -116,7 +115,7 @@
 	    			
     				var html = '<h4>'+subject_data['name']+' ('+subject_data['code']+')</h4>'+
 
-					'<fieldset id="'+subject_data['name'].replace(/ /g,"_").toLowerCase()+'" class="subjects" title="'+subject_id+'" >'+
+					'<fieldset id="subject_number_'+subject_id+'" class="subjects" title="'+subject_id+'" >'+
 						'<div class="ctrlHolder">'+
 							'<label for="internal"><em>*</em>Internal Marks Obtained</label>'+
 							'<input name="internal" id="internal" value="" data-default-value="e.g. 45" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>'+
@@ -196,6 +195,7 @@
 	});
 
     function submit(){
+        var dmc_info_data = {};
         var data = {};
         var dmc_data = {};
         var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmc'))?>";
