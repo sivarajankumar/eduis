@@ -7,26 +7,25 @@
 
 <div class="ui-state-hover"><center><H3>MTECH Details</H3></center></div>
 <div id="mtech_details">
-    	<table id="corner" cellspacing="10" cellpadding="10">
-        <?php 
-        	foreach ($this->mtech as $key => $value) 
-    		{
-    		    echo '<tr>';
-	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
-	            if($value !=null){
-        	        echo '<td>'.ucfirst($value).'</td>';
-	            }
-	            else {
-	                echo '<td><i>Not Mentioned</i></td>';
-	            }
-	            echo '</tr>';
-    		}
-    		if($usertype == 'STU'){
-                echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editmtechinfo'."'".');">';
+    <?php
+        echo '<table id="corner" cellspacing="10" cellpadding="10">';
+    	foreach ($this->mtech as $key => $value) 
+		{
+		    echo '<tr>';
+            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
+            if($value !=null){
+    	        echo '<td>'.ucfirst($value).'</td>';
             }
-        ?>
-        	
-    	</table>
+            else {
+                echo '<td><i>Not Mentioned</i></td>';
+            }
+            echo '</tr>';
+		}
+		echo '</table>';
+		if($usertype == 'STU'){
+            echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editmtechinfo'."'".');">';
+        }
+    ?>
 </div>
 
 <script type="text/javascript">
