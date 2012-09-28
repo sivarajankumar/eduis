@@ -29,14 +29,14 @@
                 echo '<tr><td>City</td><td>'.$twelfth['city_name'].'</td></tr>';
                 echo '<tr><td>State</td><td>'.$twelfth['state_name'].'</td></tr>';
                 echo '<tr><td>School Rank</td><td>'.$twelfth['school_rank'].'</td></tr>';
+                
+                if($usertype == 'STU'){
+                    echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/edittwelfthinfo'."'".');">';
+                }
             } 
         ?>
     	</table>
 </div>
-
-<?php if($usertype == 'STU'){?>
-<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/edittwelfthinfo');">
-<?php }?>
 
 <script type="text/javascript">
 	$(function(){

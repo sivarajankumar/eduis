@@ -25,15 +25,17 @@
             echo '<tr><td>City</td><td>'.$matric['city_name'].'</td></tr>';
             echo '<tr><td>State</td><td>'.$matric['state_name'].'</td></tr>';
             echo '<tr><td>School Rank</td><td>'.$matric['school_rank'].'</td></tr>';
+            
+            if($usertype == 'STU'){
+                echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editmatricinfo'."'".');">';
+            }
         }
     ?>
         	
 	</table>
 </div>
 
-<?php if($usertype == 'STU'){?>
-<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editmatricinfo');">
-<?php }?>
+
 
 <script type="text/javascript">
 	$(function(){
