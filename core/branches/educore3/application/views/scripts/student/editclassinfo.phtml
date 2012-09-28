@@ -1,5 +1,9 @@
 <?php
     $department_id = $this->department_id;
+    $CSE = array('A1','A2','A3');
+    $ECE = array('B1','B2','B3');
+    $BT = array('C1','C2','C3');
+    $MECH = array('D1','D2','D3');
 ?>
 
 <h2>Class Information:</h2>
@@ -62,9 +66,11 @@
 	<div class="ctrlHolder">
 		<label for="group_id"><em>*</em>Group</label>
 		<select id="group_id" name="group_id" class="selectInput required">
-			<option value='A1'>A1</option>
-			<option value='A2'>A2</option>
-			<option value='A3'>A3</option>
+			<?php 
+			    foreach ($$department_id as $value) {
+			        echo '<option value="'.$value.'">'.$value.'</option>';
+			    }
+			?>
 		</select>
 		<p class="formHint">Select Your Group</p>
 	</div>
