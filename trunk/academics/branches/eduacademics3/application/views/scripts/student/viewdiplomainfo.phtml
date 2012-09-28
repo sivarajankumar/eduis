@@ -29,14 +29,14 @@
     	            }
     	            echo '</tr>';
         		}
+                if($usertype == 'STU'){
+                    echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editdiplomainfo'."'".');">';
+                }
             }
             ?>
         	
     	</table>
 </div>
-<?php if($usertype == 'STU'){?>
-<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editdiplomainfo');">
-<?php }?>
 
 <script type="text/javascript">
 	$(function(){
