@@ -20,11 +20,14 @@
         			{
         				$('#info_table').append('No information has been added yet.');
         			}
-        			else
+    				else
         			{
         				var html = '';
         				$.each(data,function(key,value){
-            				html += '<tr class="row"><td><span id="heading">'+contact[contact_type_id]+'</span><span id="content">'+value+'</span></td></tr>';
+            				if((value == null) || (value == false)|| (value == undefined))
+            					html += '<tr class="row"><td><span id="heading">'+contact[contact_type_id]+'</span><span id="content"><i>Not Mentioned</i></span></td></tr>';
+            				else
+            					html += '<tr class="row"><td><span id="heading">'+contact[contact_type_id]+'</span><span id="content">'+value+'</span></td></tr>';
     		    		});
         				$('#info_table').append(html);	
         			}
