@@ -17,18 +17,10 @@
         else
         {
             echo '<table id="corner" cellspacing="10" cellpadding="10">';
-        	foreach ($leet as $key => $value) 
-    		{
-    		    echo '<tr>';
-	            echo '<td>'.ucfirst(str_replace('_', ' ',$key)).'</td>';
-	            if($value !=null){
-        	        echo '<td>'.ucfirst($value).'</td>';
-	            }
-	            else {
-	                echo '<td><i>Not Mentioned</i></td>';
-	            }
-	            echo '</tr>';
-    		}
+        	echo '<tr><td>Roll Number</td><td>'.$leet['roll_no'].'</td></tr>';
+            echo '<tr><td>All India Rank</td><td>'.$leet['all_india_rank'].'</td></tr>';
+            echo '<tr><td>Score</td><td>'.$leet['total_score'].'</td></tr>';
+            echo '<tr><td>Date</td><td>'.$leet['date'].'</td></tr>';
     		echo '</table>';
     		
             if($usertype == 'STU'){
