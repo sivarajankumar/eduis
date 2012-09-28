@@ -24,7 +24,7 @@
 				{
 					var html = '';
 					$.each(jStatus,function(relation_type,data){
-						if((data != null) || (data != false)|| (data != undefined))
+						if(data.length != 0)
 		    			{
     						html += '<tr class="heading"><td>'+relations[relation_type]+'</td></tr>';
     						html += '<tr class="row"><td><span id="heading">Name</span><span id="content">'+data['name']+'</span></td></tr>';
