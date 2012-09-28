@@ -21,13 +21,12 @@
                 echo '<tr><td>Score</td><td>'.$gate['total_score'].'</td></tr>';
                 echo '<tr><td>Date</td><td>'.$gate['date'].'</td></tr>';
             }
+            if($usertype == 'STU'){
+                echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editgateinfo'."'".');">';
+            }
         ?>
     	</table>
 </div>
-
-<?php if($usertype == 'STU'){?>
-<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editgateinfo');">
-<?php }?>
 
 <script type="text/javascript">
 	$(function(){
