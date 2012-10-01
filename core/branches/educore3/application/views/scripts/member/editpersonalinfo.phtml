@@ -152,7 +152,7 @@
                 	},
             success: function(jStatus){
                 alert('Your information has been saved sucessfully');
-                window.location.replace('/member/viewpersonalinfo');
+                window.parent.location.replace('/student/');
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
