@@ -124,21 +124,21 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $member_id = $params['member_id'];
-        $my_array = $params['myarray'];
-        $student_class_info = $my_array['class_info'];
-        $status = $this->saveClassInfo($member_id, $student_class_info);
+        $class_info = $params['class_info'];
+        $class_id = $class_info['class_id'];
+        $member_id = $class_info['member_id'];
+        $this->saveClassInfo($member_id, $class_info);
         $format = $this->_getParam('format', 'log');
         switch ($format) {
             case 'jsonp':
                 $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($status, false) . ')';
+                echo $callback . '(' . $this->_helper->json(true, false) . ')';
                 break;
             case 'json':
-                $this->_helper->json($status);
+                $this->_helper->json(true);
                 break;
             case 'log':
-                Zend_Registry::get('logger')->debug($status);
+                Zend_Registry::get('logger')->debug(true);
                 break;
             default:
                 ;
