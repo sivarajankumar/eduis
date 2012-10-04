@@ -234,16 +234,59 @@
     
     function submit_other_info()
     {
+        var data = get_other_params();
     	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'student', 'action' => 'saveclassinfo'))?>';
         $.ajax({
             url : urlSaveInfo,
+            async : false,
             data : {
-                	myarray : get_other_params(),
+                	myarray : data,
 					format : 'json'
                 	},
             success: function(jStatus){
-                alert('Your information has been saved sucessfully');
-                window.location.replace('/student/viewclassinfo');
+                submit_in_acad(data);
+            },
+    		error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    }
+
+    function submit_in_acad(data)
+    {
+    	var urlSaveInfo = 'http://academic.aceambala.com/student/saveclassinfo';
+        $.ajax({
+            url : urlSaveInfo,
+            async : false,
+            dataType : 'jsonp',
+            data : {
+                	myarray : data,
+					format : 'jsonp'
+                	},
+            success: function(jStatus){
+                submit_in_tnp(data);
+            },
+    		error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    }
+
+    function submit_in_tnp(data)
+    {
+    	var urlSaveInfo = 'http://tnp.aceambala.com/student/saveclassinfo';
+        $.ajax({
+            url : urlSaveInfo,
+            async : false,
+            dataType : 'jsonp',
+            data : {
+                	myarray : data,
+					format : 'jsonp'
+                	},
+            success: function(jStatus){
+				window.location.replace('/student/viewclassinfo');
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
