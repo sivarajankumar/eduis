@@ -63,25 +63,28 @@ class SearchController extends Zend_Controller_Action
                     return $this->returnResult($format, false);
                 }
             }
-            $member_ids = $this->combineResult($member_ids, $twelfth_matches);
+            /*
+             * DONT COMBINE THE RESULT HERE BECAUSE TWELFTH AND DIPLOMA
+             * SEARCH CASE IS NON INTERSECTING
+             */
             if (! empty($diploma_fields)) {
                 $diploma_matches = $this->DiplomaSearch($diploma_fields);
                 if (empty($diploma_matches)) {
                     return $this->returnResult($format, false);
                 }
             }
+            $member_ids = $this->combineResult($member_ids, $twelfth_matches);
             $member_ids = $this->combineResult($member_ids, $diploma_matches);
         }
         if (! empty($params['backlogs'])) {
             $back_logs = $params['backlogs'];
             if ($back_logs == 'never') {
                 $backlog_filtered = $this->neverbackLogSearch($member_ids);
+                Zend_Registry::get('logger')->debug($backlog_filtered);
             } else {
-                //if (is_int($back_logs)) {
                 $back_log_limit = $back_logs;
                 $backlog_filtered = $this->backLogSearch($back_log_limit, 
                 $member_ids);
-                 //}
             }
             if (empty($backlog_filtered)) {
                 return $this->returnResult($format, false);
@@ -128,7 +131,7 @@ class SearchController extends Zend_Controller_Action
         foreach ($member_ids as $member_id) {
             $student->setMember_id($member_id);
             $has_backlog = $student->hasBacklogCheck();
-            if ($has_backlog) {
+            if (! $has_backlog) {
                 $backlog_filtered[] = $member_id;
             }
         }

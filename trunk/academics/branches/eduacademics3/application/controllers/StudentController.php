@@ -130,24 +130,23 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        $my_array = $params['myarray'];
-        $member_id = $params['member_id'];
-        $student_class_info = $my_array['class_info'];
-        $class_id = $student_class_info['class_id'];
-        $status = $this->saveClassInfo($member_id, $student_class_info);
+        $class_info = $params['class_info'];
+        $class_id = $class_info['class_id'];
+        $member_id = $class_info['member_id'];
+        $this->saveClassInfo($member_id, $class_info);
         $subject_ids = $this->findClassSubjects($class_id);
         $this->assignSubjects($member_id, $class_id, $subject_ids);
         $format = $this->_getParam('format', 'log');
         switch ($format) {
             case 'jsonp':
                 $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($status, false) . ')';
+                echo $callback . '(' . $this->_helper->json(true, false) . ')';
                 break;
             case 'json':
-                $this->_helper->json($status);
+                $this->_helper->json(true);
                 break;
             case 'log':
-                Zend_Registry::get('logger')->debug($status);
+                Zend_Registry::get('logger')->debug(true);
                 break;
             default:
                 ;
@@ -1411,8 +1410,7 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $format = $this->_getParam('format', 'html');
-        $qualification_data = self::fetchCompetitiveExamData('LEET', 
-        $member_id);
+        $qualification_data = self::fetchCompetitiveExamData('LEET', $member_id);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -1708,8 +1706,6 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $dmc_info_data = $params['myarray']['dmc_info_data'];
-        $dmc_info_data['max_marks'] = $dmc_info_data['total_marks'];
-        unset($dmc_info_data['total_marks']);
         $dmc_subject_marks = $params['myarray']['dmc_subject_marks'];
         $dmc_info_id = $this->saveDmcInfo($member_id, $dmc_info_data);
         Zend_Registry::get('logger')->debug($dmc_info_id);
@@ -2021,7 +2017,7 @@ class StudentController extends Zend_Controller_Action
             $matric_data['percentage'] = $qualification_model->getPercentage();
             $matric_data['school_rank'] = $qualification_model->getSchool_rank();
             $matric_data['state_name'] = $qualification_model->getState_name();
-            $matric_data['max_marks'] = $qualification_model->getMax_marks();
+            $matric_data['total_marks'] = $qualification_model->getTotal_marks();
         } else {
             $matric_data = false;
         }
@@ -2050,7 +2046,7 @@ class StudentController extends Zend_Controller_Action
             $btech_data['passing_year'] = $qualification_model->getPassing_year();
             $btech_data['percentage'] = $qualification_model->getPercentage();
             $btech_data['state_name'] = $qualification_model->getState_name();
-            $btech_data['max_marks'] = $qualification_model->getMax_marks();
+            $btech_data['total_marks'] = $qualification_model->getTotal_marks();
             $btech_data['discipline_id'] = $qualification_model->getDiscipline_id();
             $btech_data['institution'] = $qualification_model->getInstitution();
             $btech_data['roll_no'] = $qualification_model->getRoll_no();
@@ -2080,7 +2076,7 @@ class StudentController extends Zend_Controller_Action
             $mtech_data['passing_year'] = $qualification->getPassing_year();
             $mtech_data['percentage'] = $qualification->getPercentage();
             $mtech_data['state_name'] = $qualification->getState_name();
-            $mtech_data['max_marks'] = $qualification->getMax_marks();
+            $mtech_data['total_marks'] = $qualification->getTotal_marks();
             $mtech_data['discipline_id'] = $qualification->getDiscipline_id();
             $mtech_data['institution'] = $qualification->getInstitution();
             $mtech_data['roll_no'] = $qualification->getRoll_no();
@@ -2129,7 +2125,7 @@ class StudentController extends Zend_Controller_Action
             $twelfth_data['percentage'] = $qualification_model->getPercentage();
             $twelfth_data['school_rank'] = $qualification_model->getSchool_rank();
             $twelfth_data['state_name'] = $qualification_model->getState_name();
-            $twelfth_data['max_marks'] = $qualification_model->getMax_marks();
+            $twelfth_data['total_marks'] = $qualification_model->getTotal_marks();
             $twelfth_data['discipline_id'] = $qualification_model->getDiscipline_id();
             $twelfth_data['pcm_percentage'] = $qualification_model->getPcm_percentage();
         } else {
@@ -2154,7 +2150,7 @@ class StudentController extends Zend_Controller_Action
             $diploma_data['percentage'] = $qualification_model->getPercentage();
             $diploma_data['remarks'] = $qualification_model->getRemarks();
             $diploma_data['state_name'] = $qualification_model->getState_name();
-            $diploma_data['max_marks'] = $qualification_model->getMax_marks();
+            $diploma_data['total_marks'] = $qualification_model->getTotal_marks();
             $diploma_data['discipline_id'] = $qualification_model->getDiscipline_id();
             $diploma_data['migration_date'] = $qualification_model->getMigration_date();
         } else {

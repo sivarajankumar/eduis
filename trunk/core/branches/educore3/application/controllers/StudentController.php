@@ -591,68 +591,30 @@ class StudentController extends Zend_Controller_Action
         }
         $my_array = $params['myarray'];
         $student_class_info = $my_array['class_info'];
-        $core_save_status = $this->saveClassInfo($member_id, 
-        $student_class_info);
-        $acad_save_status = $this->saveClassInfoAcad($member_id, 
-        $student_class_info);
-        $tnp_save_status = $this->saveClassInfoTnp($member_id, 
-        $student_class_info);
-        $status = array('core_save_status' => $core_save_status, 
-        'acad_save_status' => $acad_save_status, 
-        'tnp_save_status' => $tnp_save_status);
+        $this->saveClassInfo($member_id, $student_class_info);
         $format = $this->_getParam('format', 'log');
+        $student_class_info['member_id'] = $member_id;
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
                 $this->_helper->layout()->enableLayout();
-                $this->view->assign('status', $status);
+                $this->view->assign('class_info', $student_class_info);
                 break;
             case 'jsonp':
                 $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($status, false) . ')';
+                echo $callback . '(' .
+                 $this->_helper->json($student_class_info, false) . ')';
                 break;
             case 'json':
-                $this->_helper->json($status);
+                $this->_helper->json($student_class_info);
                 break;
             case 'log':
                 Zend_Registry::get('logger')->debug('No format was provided..');
-                Zend_Registry::get('logger')->debug($status);
+                Zend_Registry::get('logger')->debug($student_class_info);
                 break;
             default:
                 ;
                 break;
-        }
-    }
-    private function saveClassInfoAcad ($member_id, $class_info)
-    {
-        $httpClient = new Zend_Http_Client(
-        'http://' . ACADEMIC_SERVER . '/student/saveclassinfo');
-        $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
-        $httpClient->setMethod('POST');
-        $httpClient->setParameterPost(
-        array('myarray' => array('class_info' => $class_info), 
-        'member_id' => $member_id));
-        $response = $httpClient->request();
-        if ($response->isError()) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-    private function saveClassInfoTnp ($member_id, $class_info)
-    {
-        $httpClient = new Zend_Http_Client(
-        'http://' . TNP_SERVER . '/student/saveclassinfo');
-        $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
-        $httpClient->setMethod('POST');
-        $httpClient->setParameterPost(
-        array('myarray' => array('class_info' => $class_info), 
-        'member_id' => $member_id));
-        $response = $httpClient->request();
-        if ($response->isError()) {
-            return false;
-        } else {
-            return true;
         }
     }
     public function fetchunvregistrationinfoAction ()
@@ -1352,12 +1314,20 @@ class StudentController extends Zend_Controller_Action
                  * Address info
                  */
                 $address_info = $this->findAddressInfo($member_id);
-                $address_req = $address_info['MAILING'];
-                $info_to_export[$member_id]['postal_code'] = $address_req['postal_code'];
-                $info_to_export[$member_id]['city'] = $address_req['city'];
-                $info_to_export[$member_id]['district'] = $address_req['district'];
-                $info_to_export[$member_id]['state'] = $address_req['state'];
-                $info_to_export[$member_id]['address'] = $address_req['address'];
+                if (! empty($address_info['MAILING'])) {
+                    $address_req = $address_info['MAILING'];
+                    $info_to_export[$member_id]['postal_code'] = $address_req['postal_code'];
+                    $info_to_export[$member_id]['city'] = $address_req['city'];
+                    $info_to_export[$member_id]['district'] = $address_req['district'];
+                    $info_to_export[$member_id]['state'] = $address_req['state'];
+                    $info_to_export[$member_id]['address'] = $address_req['address'];
+                } else {
+                    $info_to_export[$member_id]['postal_code'] = null;
+                    $info_to_export[$member_id]['city'] = null;
+                    $info_to_export[$member_id]['district'] = null;
+                    $info_to_export[$member_id]['state'] = null;
+                    $info_to_export[$member_id]['address'] = null;
+                }
                 /*
                  * Contact Info
                  */
