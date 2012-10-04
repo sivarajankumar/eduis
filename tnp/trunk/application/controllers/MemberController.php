@@ -105,6 +105,37 @@ class MemberController extends Zend_Controller_Action
         $member_id = $personal_info['member_id'];
         $this->savePersonalInfo($member_id, $personal_info);
         $this->activateProfile($member_id, true);
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug($params);
+        $member_id = null;
+        $personal_info = $params['personal_info'];
+        $member_id = $personal_info['member_id'];
+        $this->savePersonalInfo($member_id, $personal_info);
+        $this->activateProfile($member_id, true);
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('status', true);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json(true, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json(true);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug(true);
+                break;
+            default:
+                ;
+                break;
+        }
     }
     public function registerAction ()
     {
