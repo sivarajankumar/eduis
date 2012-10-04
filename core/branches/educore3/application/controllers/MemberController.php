@@ -119,12 +119,29 @@ class MemberController extends Zend_Controller_Action
         $my_array = $params['myarray'];
         $personal_info = $my_array['personal_info'];
         Zend_Registry::get('logger')->debug($params);
-        $this->savePersonalInfo($member_id, $personal_info);
-        $profile_info['member_id'] = $member_id;
-        $this->activateProfile($member_id, true);
-        $personal_info['member_id'] = $member_id;
-        $this->savePersonalInfoAcad($personal_info);
-        $this->savePersonalInfoTnp($personal_info);
+        $member_id = $this->savePersonalInfo($member_id, $personal_info);
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('member_id', $member_id);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($member_id, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($member_id);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug($member_id);
+                break;
+            default:
+                ;
+                break;
+        }
     }
     public function fetchpersonalinfoAction ()
     {
@@ -248,15 +265,15 @@ class MemberController extends Zend_Controller_Action
     {
         $member_types = array(1 => 'STU', 2 => 'STAFF', 3 => 'MANAGEMENT', 
         4 => 'OUTSIDER');
-        $profile_info['member_id'] = $member_id;
         $member_type = $this->getUser_type();
         $profile_info['member_type_id'] = array_search($member_type, 
         $member_types);
         $member = new Core_Model_Member_Member();
         $member->setMember_id($member_id);
         $member->saveInfo($profile_info);
-        $this->savePersonalInfoAcad($member_id, $profile_info);
-        $this->savePersonalInfoTnp($member_id, $profile_info);
+        $profile_info['member_id'] = $member_id;
+        $this->activateProfile($member_id, true);
+        return $member_id;
     }
     private function savePersonalInfoAcad ($personal_info)
     {
