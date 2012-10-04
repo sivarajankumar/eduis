@@ -114,11 +114,15 @@
     		dataType : 'json',
             data : {format:'json'},
     		success: function(jStatus){
-    			$.each(jStatus,function(key,value){
-    				var field = '#'+key; 
-					$(field).val(value);
-    			});
-    			$('input:first').focus();
+        		if(jStatus == null){}
+        		else
+        		{
+        			$.each(jStatus,function(key,value){
+        				var field = '#'+key; 
+    					$(field).val(value);
+        			});
+    				$('input:first').focus();
+        		}
             },
             error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
@@ -143,16 +147,56 @@
     
     function submit()
     {
+        var data = get_params();
     	var urlSaveInfo = '<?php echo $this->url(array('controller' => 'member', 'action' => 'savepersonalinfo'))?>';
         $.ajax({
             url : urlSaveInfo,
+            async : false,
             data : {
-                	myarray : get_params(),
+                	myarray : data,
 					format : 'json'
                 	},
             success: function(jStatus){
-                alert('Your information has been saved sucessfully');
-                window.parent.location.replace('/student/');
+                var member_id = parseInt(jStatus);
+                submit_in_acad(data,member_id);
+            },
+    		error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    }
+
+    function submit_in_acad(data,member_id)
+    {
+        data['personal_info']['member_id'] = member_id;
+    	var urlSaveInfo = 'http://academic.aceambala.com/member/savepersonalinfo';
+        $.ajax({
+            url : urlSaveInfo,
+            async : false,
+            dataType : 'jsonp',
+            data : data,
+            success: function(jStatus){
+                submit_in_tnp(data);
+            },
+    		error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    }
+
+    function submit_in_tnp(data)
+    {
+    	var urlSaveInfo = 'http://tnp.aceambala.com/member/savepersonalinfo';
+        $.ajax({
+            url : urlSaveInfo,
+            async : false,
+            dataType : 'jsonp',
+            data : data,
+            success: function(jStatus){
+                alert('Your informaion has been saved sucessfully.');
+                window.parent.location.replace('http://core.aceambala.com');
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
