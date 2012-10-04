@@ -170,6 +170,7 @@
     function submit_in_acad(data,member_id)
     {
         data['personal_info']['member_id'] = member_id;
+        data['format'] = 'jsonp';
     	var urlSaveInfo = 'http://academic.aceambala.com/member/savepersonalinfo';
         $.ajax({
             url : urlSaveInfo,
@@ -177,6 +178,7 @@
             dataType : 'jsonp',
             data : data,
             success: function(jStatus){
+                alert('saved in acad');
                 submit_in_tnp(data);
             },
     		error: function(response) {
@@ -188,6 +190,7 @@
 
     function submit_in_tnp(data)
     {
+        data['format'] = 'jsonp';
     	var urlSaveInfo = 'http://tnp.aceambala.com/member/savepersonalinfo';
         $.ajax({
             url : urlSaveInfo,
