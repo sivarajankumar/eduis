@@ -379,10 +379,18 @@ class Tnp_Model_Member_Member extends Tnp_Model_Generic
     {
         $member_id = $this->getMember_id(true);
         $data_array['member_id'] = $member_id;
-        $this->initSave();
-        unset($data_array['member_id']);
-        $preparedData = $this->prepareDataForSaveProcess($data_array);
-        return $this->getMapper()->update($preparedData, $member_id);
+        $check = $this->getMapper()->memberIdCheck($member_id);
+        if ($check) {
+            $this->initSave();
+            unset($data_array['member_id']);
+            $preparedData = $this->prepareDataForSaveProcess($data_array);
+            return $this->getMapper()->update($preparedData, $member_id);
+        } else {
+            $this->initSave();
+            $data_array['member_id'];
+            $preparedData = $this->prepareDataForSaveProcess($data_array);
+            return $this->getMapper()->save($preparedData);
+        }
     }
     public function register ($registration_info)
     {

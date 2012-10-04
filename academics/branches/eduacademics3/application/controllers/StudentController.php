@@ -1411,7 +1411,7 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $format = $this->_getParam('format', 'html');
-        $qualification_data = self::fetchCompetitiveExamData('AIEEE', 
+        $qualification_data = self::fetchCompetitiveExamData('LEET', 
         $member_id);
         switch ($format) {
             case 'html':
@@ -1630,6 +1630,7 @@ class StudentController extends Zend_Controller_Action
             case 'html':
                 if (! empty($response)) {
                     $this->view->assign('response', $response);
+                    Zend_Registry::get('logger')->debug($response);
                 }
                 break;
             case 'jsonp':
@@ -1697,6 +1698,7 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
+        Zend_Registry::get('logger')->debug($params);
         $format = $this->_getParam('format', 'html');
         Zend_Registry::get('logger')->debug(
         'member_id may be sent in as parameter');
@@ -2396,8 +2398,7 @@ class StudentController extends Zend_Controller_Action
         $dmc_subject_marks['percentage'] = $percentage;
         $dmc_subject_marks['is_pass'] = $marks_info['is_pass'];
         $dmc_subject_marks['is_verified'] = $marks_info['is_verified'];
-        $dmc_subject_marks['date'] = $marks_info['date'];
-        Zend_Registry::get('logger')->debug($dmc_subject_marks);
+        $dmc_subject_marks['date'] = date("Y-m-d");
         return $student->saveDmcMarks($dmc_subject_marks);
     }
     private function fetchAllDmcInfoIds ($member_id, $class_id)
