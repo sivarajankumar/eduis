@@ -375,14 +375,21 @@ class Core_Model_Member_Member extends Core_Model_Generic
             return $this->setOptions($info);
         }
     }
-    public function saveInfo ($data_array)
+    public function saveInfo ($data)
     {
         $member_id = $this->getMember_id(true);
-        $data_array['member_id'] = $member_id;
-        $this->initSave();
-        unset($data_array['member_id']);
-        $preparedData = $this->prepareDataForSaveProcess($data_array);
-        return $this->getMapper()->update($preparedData, $member_id);
+        $exists = $this->memberIdCheck();
+        if ($exists) {
+            unset($data['member_id']);
+            $this->initSave();
+            $preparedData = $this->prepareDataForSaveProcess($data);
+            return $this->getMapper()->update($preparedData, $member_id);
+        } else {
+            unset($data['member_id']);
+            $this->initSave();
+            $preparedData = $this->prepareDataForSaveProcess($data);
+            return $this->getMapper()->update($preparedData, $member_id);
+        }
     }
     public function register ($registration_info)
     {
