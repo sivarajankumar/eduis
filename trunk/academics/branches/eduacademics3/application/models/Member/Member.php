@@ -387,7 +387,6 @@ class Acad_Model_Member_Member extends Acad_Model_Generic
             return $this->getMapper()->update($preparedData, $member_id);
         } else {
             $this->initSave();
-            $data_array['member_id'];
             $preparedData = $this->prepareDataForSaveProcess($data_array);
             return $this->getMapper()->save($preparedData);
         }

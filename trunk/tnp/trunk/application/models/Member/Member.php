@@ -381,13 +381,13 @@ class Tnp_Model_Member_Member extends Tnp_Model_Generic
         $data_array['member_id'] = $member_id;
         $check = $this->getMapper()->memberIdCheck($member_id);
         if ($check) {
-            $this->initSave();
             unset($data_array['member_id']);
+            $this->initSave();
             $preparedData = $this->prepareDataForSaveProcess($data_array);
             return $this->getMapper()->update($preparedData, $member_id);
         } else {
-            $this->initSave();
             $data_array['member_id'];
+            $this->initSave();
             $preparedData = $this->prepareDataForSaveProcess($data_array);
             return $this->getMapper()->save($preparedData);
         }

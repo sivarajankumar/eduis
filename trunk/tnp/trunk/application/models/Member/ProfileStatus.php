@@ -160,7 +160,13 @@ class Tnp_Model_Member_ProfileStatus extends Tnp_Model_Generic
         $member_id = $this->getMember_id(true);
         $data = array('member_id' => $member_id, 'exists' => true, 
         'last_updated_on' => date("Y-m-d"));
-        $this->getMapper()->save($data);
+        $exists = $this->getMapper()->memberIdCheck($member_id);
+        if ($exists) {
+            unset($data['member_id']);
+            $this->getMapper()->update($data, $member_id);
+        } else {
+            $this->getMapper()->save($data);
+        }
     }
     /**
      * 

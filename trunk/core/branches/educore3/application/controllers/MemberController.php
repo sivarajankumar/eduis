@@ -275,42 +275,6 @@ class MemberController extends Zend_Controller_Action
         $this->activateProfile($member_id, true);
         return $member_id;
     }
-    private function savePersonalInfoAcad ($personal_info)
-    {
-        $httpClient = new Zend_Http_Client(
-        'http://' . ACADEMIC_SERVER . '/member/savepersonalinfo');
-        $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
-        $httpClient->setMethod('POST');
-        $httpClient->setParameterPost(array('personal_info' => $personal_info));
-        $response = $httpClient->request();
-        if ($response->isError()) {
-            /* $remoteErr = 'ERROR from ' . ACADEMIC_SERVER . ' : (' .
-             $response->getStatus() . ') ' . $response->getMessage() . ', i.e. ' .
-             $response->getHeader('Message') . $response->getBody();
-            throw new Zend_Exception($remoteErr, Zend_Log::ERR);*/
-            return false;
-        } else {
-            /*$jsonContent = $response->getBody();
-            print_r($jsonContent);*/
-            /*$data_returned = Zend_Json_Decoder::decode($jsonContent);
-            Zend_Registry::get('logger')->debug($jsonContent);*/
-            return true;
-        }
-    }
-    private function savePersonalInfoTnp ($personal_info)
-    {
-        $httpClient = new Zend_Http_Client(
-        'http://' . TNP_SERVER . '/member/savepersonalinfo');
-        $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
-        $httpClient->setMethod('POST');
-        $httpClient->setParameterPost(array('personal_info' => $personal_info));
-        $response = $httpClient->request();
-        if ($response->isError()) {
-            return false;
-        } else {
-            return true;
-        }
-    }
     private function findPersonalInfo ($member_id)
     {
         $member_id_exists = $this->memberIdCheck($member_id);
