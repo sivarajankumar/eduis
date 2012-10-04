@@ -757,7 +757,29 @@ class StudentController extends Zend_Controller_Action
         $my_array = $params['myarray'];
         $critical_info = $my_array['personal_info'];
         Zend_Registry::get('logger')->debug($params);
-        return $this->saveCriticalData($member_id, $critical_info);
+        $this->saveCriticalData($member_id, $critical_info);
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('member_id', $member_id);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($member_id, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($member_id);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug($member_id);
+                break;
+            default:
+                ;
+                break;
+        }
     }
     public function fetchaddressinfoAction ()
     {
