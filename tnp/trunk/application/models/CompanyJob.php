@@ -223,7 +223,7 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
         $company_id = $this->getCompany_job_id(true);
         return $this->getMapper()->companyJobExistCheck($company_id);
     }
-    public function findJobId ($company_spec = null, $job_spec = null, $date_spec = null)
+    public function findJobIds ($company_spec = null, $job_spec = null, $date_spec = null)
     {
         $company_id = null;
         $job = null;
@@ -238,7 +238,7 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
             $date_of_announcement = $this->getDate_of_announcement(true);
         }
         $job_ids = array();
-        $job_ids = $this->getMapper()->fetchClassIds($company_id, $job, 
+        $job_ids = $this->getMapper()->findJobIds($company_id, $job, 
         $date_of_announcement);
         if (empty($job_ids)) {
             return false;
@@ -254,7 +254,7 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
         $this->setCompany_id($company_id);
         $this->setJob($job);
         $this->setDate_of_announcement($date_of_announcement);
-        $job_id = $this->findJobId(true, true, true);
+        $job_id = $this->findJobIds(true, true, true);
         if (empty($job_id)) {
             $this->initSave();
             $prepared_data = $this->prepareDataForSaveProcess($company_job_info);
