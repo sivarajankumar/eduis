@@ -132,18 +132,19 @@ class CareerController extends Zend_Controller_Action
         $save['description'] = $company_info['description'];
         $save['verified'] = $company_info['verified'];
         $format = $this->_getParam('format', 'log');
-        $this->saveCompany($company_info);
+        $company_id_gen = $this->saveCompany($company_info);
         switch ($format) {
             case 'jsonp':
                 $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json(true, false) . ')';
+                echo $callback . '(' .
+                 $this->_helper->json($company_id_gen, false) . ')';
                 break;
             case 'json':
-                $this->_helper->json(true);
+                $this->_helper->json($company_id_gen);
                 break;
             case 'log':
                 Zend_Registry::get('logger')->debug('No format was provided..');
-                Zend_Registry::get('logger')->debug(true);
+                Zend_Registry::get('logger')->debug($company_id_gen);
                 break;
             default:
                 ;
