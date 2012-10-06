@@ -1,6 +1,43 @@
 <?php
 class CareerController extends Zend_Controller_Action
 {
+    public function aclconfigAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $methods = get_class_methods('CareerController');
+        $actions = array();
+        foreach ($methods as $value) {
+            $actions[] = substr("$value", 0, strpos($value, 'Action'));
+        }
+        foreach ($actions as $key => $value) {
+            if ($value == null) {
+                unset($actions[$key]);
+            }
+        }
+        $db = new Zend_Db_Table();
+        $delete2 = 'DELETE FROM `tnp`.`mod_role_resource` WHERE `module_id`=? AND `controller_id`=?';
+        $db->getAdapter()->query($delete2, array('tnp', 'career'));
+        $delete1 = 'DELETE FROM `tnp`.`mod_action` WHERE `module_id`=? AND `controller_id`=?';
+        $db->getAdapter()->query($delete1, array('tnp', 'career'));
+        print_r(sizeof($actions));
+        $sql = 'INSERT INTO `tnp`.`mod_action`(`module_id`,`controller_id`,`action_id`) VALUES (?,?,?)';
+        foreach ($actions as $action) {
+            $bind = array('tnp', 'career', $action);
+            $db->getAdapter()->query($sql, $bind);
+        }
+        $sql = 'INSERT INTO `tnp`.`mod_role_resource`(`role_id`,`module_id`,`controller_id`,`action_id`) VALUES (?,?,?,?)';
+        foreach ($actions as $action) {
+            $bind = array('student', 'tnp', 'career', $action);
+            $db->getAdapter()->query($sql, $bind);
+        }
+        /*foreach ($actions as $action) {
+            echo '<pre>';
+            print_r($action);
+            echo '</pre>';
+        }
+        Zend_Registry::get('logger')->debug($actions);*/
+    }
     /**
      * 
      * @var int
