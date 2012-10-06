@@ -40,9 +40,16 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
     /**
      * @return the $_job
      */
-    public function getJob ()
+    public function getJob ($throw_exception = null)
     {
-        return $this->_job;
+        $job = $this->_job;
+        if (empty($job) and $throw_exception == true) {
+            $message = '_job is not set in ' . get_class($this);
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $job;
+        }
     }
     /**
      * @return the $_eligibility_criteria
@@ -61,9 +68,16 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
     /**
      * @return the $_date_of_announcement
      */
-    public function getDate_of_announcement ()
+    public function getDate_of_announcement ($throw_exception = null)
     {
-        return $this->_date_of_announcement;
+        $date_of_announcement = $this->_date_of_announcement;
+        if (empty($date_of_announcement) and $throw_exception == true) {
+            $message = '_date_of_announcement is not set in ' . get_class($this);
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $date_of_announcement;
+        }
     }
     /**
      * @return the $_external
@@ -209,9 +223,39 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
         $company_id = $this->getCompany_job_id(true);
         return $this->getMapper()->companyJobExistCheck($company_id);
     }
+    public function findJobId ($company_spec = null, $job_spec = null, $date_spec = null)
+    {
+        $company_id = null;
+        $job = null;
+        $date_of_announcement = null;
+        if ($company_spec == true) {
+            $company_id = $this->getCompany_id(true);
+        }
+        if (isset($job_spec)) {
+            $job = $this->getJob(true);
+        }
+        if ($date_spec == true) {
+            $date_of_announcement = $this->getDate_of_announcement(true);
+        }
+        $job_ids = array();
+        $job_ids = $this->getMapper()->fetchClassIds($company_id, $job, 
+        $date_of_announcement);
+        if (empty($job_ids)) {
+            return false;
+        } else {
+            return $job_ids;
+        }
+    }
     public function saveInfo ($company_job_info)
     {
-        if (empty($company_job_info['company_job_id'])) {
+        $company_id = $company_job_info['company_id'];
+        $job = $company_job_info['job'];
+        $date_of_announcement = $company_job_info['date_of_announcement'];
+        $this->setCompany_id($company_id);
+        $this->setJob($job);
+        $this->setDate_of_announcement($date_of_announcement);
+        $job_id = $this->findJobId(true, true, true);
+        if (empty($job_id)) {
             $this->initSave();
             $prepared_data = $this->prepareDataForSaveProcess($company_job_info);
             Zend_Registry::get('logger')->debug('saving JoB info');
