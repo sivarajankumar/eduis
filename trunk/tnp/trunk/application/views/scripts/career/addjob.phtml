@@ -1,0 +1,166 @@
+<h2>Add a new Job</h2>
+<form id="job_form" class="uniForm" action="javascript:submit_job_info()">
+	<fieldset id="job_info">
+		
+		<div class="ctrlHolder">
+			<label for="company_id"><em>*</em>Company Name</label>
+			<select id="company_id" name="company_id">
+			
+			</select>
+			<p class="formHint">Name of the company conducting the recruitment</p>
+		</div>
+			
+		<div class="ctrlHolder">
+			<label for="job"><em>*</em>Job Profile</label>
+			<input name="job" id="job" value="" data-default-value="e.g. System Enginneer Trainee." size="35" maxlength="50" type="text" class="textInput required"/>
+			<p class="formHint">Job Profile</p>
+		</div>
+	
+		<div class="ctrlHolder">
+			<label for="description"><em>*</em>Description</label>
+			<textarea rows="2" cols="20" name="description" id="description" data-default-value="e.g. Needs to work on Web Technologies like PHP, Javascript, HTML."></textarea>
+			<p class="formHint">Details of the job</p>
+		</div>
+	
+		<div class="ctrlHolder">
+			<label for="eligibility_criteria"><em>*</em>Eligibility Criteria</label>
+			<textarea rows="2" cols="20" name="eligibility_criteria" id="eligibility_criteria" data-default-value="e.g. B.Tech Percentage - 65%, Twelfth percentage - 65% "></textarea>
+			<p class="formHint">Eligibility Criteria of the job</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="date_of_announcement"><em>*</em>Date of Selection</label>
+			<input name="date_of_announcement" id="date_of_announcement" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of start</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="external">Offcampus</label>
+			<input type="checkbox" name="external"><br>
+			<p class="formHint">Whether the drive was offcampus or oncampus</p>
+		</div>
+		
+		<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+		<div class="buttonHolder">
+			<button type="reset" class="secondaryAction">Reset</button>
+			<button type="submit" class="primaryAction">Next</button>
+		</div>				
+</fieldset>
+</form>
+
+<script type="text/javascript">
+
+    $(function(){
+    	$('#topContent').hide();
+
+    	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+	    $("#date_of_announcement").datepicker({
+	    	dateFormat: 'yy-mm-dd',
+	    	changeMonth: true,
+			changeYear: true,
+			yearRange: '-5:+5',
+			onClose : function(dateText, inst) {
+				this.focus();
+			}
+		});
+    	
+    	var urlfetchcompanies = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanies'))?>";
+    	$.ajax({
+        	url : urlfetchcompanies,
+        	dataType : 'json',
+        	async : false,
+        	data : {format : 'json'},
+        	success : function(jStatus){
+				if(jStatus == false)
+				{
+					
+				}
+				else
+				{
+					var html = '<option value="-999">Please select company</option>';
+					
+					$.each(jStatus,function(company_id,company_name){
+						html += '<option value='+company_id+'>'+company_name+'</option>';
+					});
+					
+					$('select#company_id').append(html);
+				}
+        	},
+        	error : function(response){
+
+        	}
+        });
+    	
+    	$('form.uniForm').uniform({
+    		prevent_submit : false
+    	});
+		
+    });
+
+    function submit_job_info(){
+        var data = {};
+    	var job_info = {};
+    	var urlSaveJobInfo = "<?php echo $this->url(array('controller' => 'career', 'action' => 'savejob'))?>";
+	
+		$('fieldset#job_info :input')
+		.not('button')
+		.each(function(){
+			job_info[this.name] = this.value;
+		});
+    	
+    	data['job_info'] = job_info;
+
+    	if($('input[name="external"]').is(':checked'))
+    		job_info['external'] = 1;
+		else
+			job_info['external'] = 0;
+    	
+    	$.ajax({
+    		url : urlSaveJobInfo,
+    		data : {myarray:data},
+    		success: function(jStatus){
+        		if(jStatus){
+            		alert(jStatus);
+        		}
+            },
+            error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+    	});
+    }
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		width:auto;
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		font-size:17px;
+		font-weight:100;
+		margin-top:2px;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
