@@ -223,7 +223,8 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
         $company_id = $this->getCompany_job_id(true);
         return $this->getMapper()->companyJobExistCheck($company_id);
     }
-    public function findJobIds ($company_spec = null, $job_spec = null, $date_spec = null)
+    public function findJobIds ($company_spec = null, $job_spec = null, 
+    $date_spec = null)
     {
         $company_id = null;
         $job = null;
@@ -254,20 +255,18 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
         $this->setCompany_id($company_id);
         $this->setJob($job);
         $this->setDate_of_announcement($date_of_announcement);
-        $job_id = $this->findJobIds(true, true, true);
-        if (empty($job_id)) {
+        $company_job_id = $this->findJobIds(true, true, true);
+        if (empty($company_job_id)) {
             $this->initSave();
             $prepared_data = $this->prepareDataForSaveProcess($company_job_info);
             Zend_Registry::get('logger')->debug('saving JoB info');
             return $this->save($company_job_info);
         } else {
-            $company_job_id = $company_job_info['company_job_id'];
             $this->initSave();
             $prepared_data = $this->prepareDataForSaveProcess($company_job_info);
-            unset($prepared_data['company_job_id']);
             Zend_Registry::get('logger')->debug('updating JoB info');
-            $this->update($company_job_info, $company_job_id);
-            return $company_job_id;
+            $this->update($company_job_info, $company_job_id[0]);
+            return $company_job_id[0];
         }
     }
     private function save ($company_job_info)
