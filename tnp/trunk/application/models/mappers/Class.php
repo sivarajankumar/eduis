@@ -49,7 +49,11 @@ class Tnp_Model_Mapper_Class
             ->where('batch_id = ?', $batch_id);
         $student_info = array();
         $student_info = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $student_info;
+        if (empty($student_info)) {
+            return false;
+        } else {
+            return $student_info;
+        }
     }
     /**
      * Fetches Class details
@@ -109,7 +113,11 @@ class Tnp_Model_Mapper_Class
         }
         $class_ids = array();
         $class_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $class_ids;
+        if (empty($class_ids)) {
+            return false;
+        } else {
+            return $class_ids;
+        }
     }
     public function classExistCheck ($class_id)
     {
