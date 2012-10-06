@@ -14,108 +14,75 @@
 			echo "<h4>No information has been added yet.</h4>";
 		}
 		else {
-			$s_no = 1;
+			echo '<label for="company_id">Company: </label>
+					<select id="company_id" name="company_id">
+					<option value="-999">Select Company</option>';
+			
 			foreach ($company_info as $company_id => $company_name) {
-				echo '<div id='.$company_id.' class="data">';
-					echo ''.$s_no.') ';
-					echo '<span class="red">Company Name: </span>'.$company_name.'<br>';
-					echo '<input id="button_'.$company_id.'" type="button" value="View Details" onclick="show_details('.$company_id.')">&nbsp;&nbsp;';
-					$p = "'/career/editcompany?company_id=".$company_id."'";
-					echo '<input type="button" value="Edit" onclick="window.location.replace('.$p.')"></td>&nbsp;&nbsp;';
-					//echo '<td><input type="button" value="Delete" onclick="javascript:delete_company_info('."'".$company_id."'".')"></td>';
-				echo '</div>';
-				
-				
-				echo '<table class="table-design1" id="table_record'.$company_id.'" border="0">';
-					echo '<tr>
-						<th>Name</th>
-						<th>Field</th>
-						<th>Description</th>
-						<th>Verified</th>
-						</tr>';
-					echo '</tr>';
-				echo '</table>';
-				
-				echo '<br>';
-				$s_no++;
+				echo '<option value='.$company_id.'>'.$company_name.'</option>';
 			}
+			
+			echo '</select> &nbsp;&nbsp;';
+			
+			echo '<input type="button" value="View Details" onclick="view_details()">';
 		}
 		
 	?>
-
 </div>
+<table class="table-design1" border="0">
+	
+</table>
 
 <script type="text/javascript">
-	<?php
-		/*if($company_info != false)
-		{
-			$js_array = json_encode($t);
-			echo "var j_array = ". $js_array . ";\n";
-		}*/
-	?>
+
 	$(function(){
 		$('.table-design1').hide();
 		$('div#topContent').hide();
 	});
-    function show_details(company_id){
-        var urlgetinfo = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanyinfo'))?>";
-		$.ajax({
-			url : urlgetinfo,
-			dataType : 'json',
-			data : {
-					format:'json',
-					company_id : company_id
-				},
-			success: function(jStatus){
-				if(jStatus != false || jStatus != null || jStatus != undefined)
-				{
-					var html = '';
-						html += '<tr><td>'+jStatus['company_name'].toUpperCase()+'</td>';
-						html += '<td>'+jStatus['field_name']+'</td>';
-						html += '<td>'+jStatus['description']+'</td>';
-						if(jStatus['verified'] == 1)
-							html += '<td>Yes</td></tr>';
-						else
-							html += '<td>No</td></tr>';
+	
+    function view_details(){
+        var company_id = $('#company_id').val();
+        if(company_id != -999)
+        {
+	        var urlgetinfo = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanyinfo'))?>";
+			$.ajax({
+				url : urlgetinfo,
+				dataType : 'json',
+				data : {
+						format:'json',
+						company_id : company_id
+					},
+				success: function(jStatus){
+					if(jStatus != false || jStatus != null || jStatus != undefined)
+					{
+						var html = '<tr>'+
+									'<th>Name</th>'+
+									'<th>Field</th>'+
+									'<th>Description</th>'+
+									'<th>Verified</th>'+
+									'</tr>';
 						
-	    			var table_id = '#table_record'+company_id;
-	    			$(table_id).append(html).show();
-	    			$('#button_'+company_id).attr('onclick','');
-	    			$('#button_'+company_id).attr('value','Hide Details');
-	    			$('#button_'+company_id).bind('click',function(){
-						if($(this).val() == 'Hide Details')
-						{
-							$(table_id).hide();
-							$('#button_'+company_id).attr('value','Show Details');
-						}
-						else
-						{
-							$(table_id).show();
-							$('#button_'+company_id).attr('value','Hide Details');
-						}
-	    			});
-				}
-			},
-            error: function(response) {
-    			$('#errorBox').text(response.responseText).parent().show();
-    			console.log(response);
-    		}
-    	});
+							html += '<tr><td>'+jStatus['company_name'].toUpperCase()+'</td>';
+							html += '<td>'+jStatus['field_name']+'</td>';
+							html += '<td>'+jStatus['description']+'</td>';
+							if(jStatus['verified'] == 1)
+								html += '<td>Yes</td></tr>';
+							else
+								html += '<td>No</td></tr>';
+						
+		    			$('.table-design1').html(html).show();
+		    			
+					}
+				},
+	            error: function(response) {
+	    			$('#errorBox').text(response.responseText).parent().show();
+	    			console.log(response);
+	    		}
+    		});
+        }
+        else
+            alert('dhjhj');
     }
-    function delete_company_info(company_id)
-	{
-		var urlDeleteTestRecord = '<?php echo $this->url(array('controller' => 'student', 'action' => 'deletetestrecord'))?>';
-		$.ajax({
-			url : urlDeleteTestRecord,
-			data : {company_id : company_id},
-			success : function(){
-				window.location.reload();
-			},
-			error : function(){
-				alert("The information was not deleted due to some problem. Please try again");
-			}, 
-		});
-	}
 </script>
 
 <style type="text/css">
