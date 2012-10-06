@@ -89,6 +89,15 @@ class CareerController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $my_array = $params['myarray'];
+        $stu_job_info = $my_array['student_job_info'];
+        $member_ids = $my_array['member_ids'];
+        foreach ($member_ids as $member_id) {
+            $stu_job_info['member_id'] = $member_id;
+            $this->saveStudentJob($stu_job_info);
+        }
     }
     public function fetchcompaniesAction ()
     {
@@ -446,6 +455,11 @@ class CareerController extends Zend_Controller_Action
     {
         $company = new Tnp_Model_Company();
         return $company->saveInfo($company_info);
+    }
+    private function saveStudentJob ($info)
+    {
+        $company = new Tnp_Model_JobRecord();
+        return $company->saveInfo($info);
     }
     private function saveJob ($company_job_info)
     {
