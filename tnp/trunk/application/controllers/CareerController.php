@@ -146,6 +146,38 @@ class CareerController extends Zend_Controller_Action
                 break;
         }
     }
+    public function fetchcompanyjobsAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $company_id = $params['company_id'];
+        $format = $this->_getParam('format', 'log');
+        $company_jobs = $this->fetchCompanyJobs($company_id);
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('company_jobs', $company_jobs);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($company_jobs, 
+                false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($company_jobs);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug('No format was provided..');
+                Zend_Registry::get('logger')->debug($company_jobs);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
     public function addcompanyAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
@@ -227,10 +259,79 @@ class CareerController extends Zend_Controller_Action
                 break;
         }
     }
-    private function fetchCompanyInfo ($company_id)
+    public function savejobAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $my_array = $params['myarray'];
+        $job_info = $my_array['job_info'];
+        $company_id = null;
+        if (! empty($job_info['company_id'])) {
+            $company_id = $job_info['company_id'];
+            $save['company_id'] = $company_id;
+        }
+        $save['company_name'] = $job_info['company_name'];
+        $save['field'] = $job_info['field'];
+        $save['description'] = $job_info['description'];
+        $save['verified'] = $job_info['verified'];
+        $format = $this->_getParam('format', 'log');
+        $company_id_gen = $this->save($save);
+        switch ($format) {
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' .
+                 $this->_helper->json($company_id_gen, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($company_id_gen);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug('No format was provided..');
+                Zend_Registry::get('logger')->debug($company_id_gen);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    public function editjobAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $company_job_id = $params['company_job_id'];
+        $job_info = $this->fetchJobInfo($company_job_id);
+        $format = $this->_getParam('format', 'html');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('job_info', $job_info);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($job_info, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($job_info);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug('No format was provided..');
+                Zend_Registry::get('logger')->debug($job_info);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    private function fetchCompanyInfo ($company_job_id)
     {
         $company = new Tnp_Model_Company();
-        $company->setCompany_id($company_id);
+        $company->setCompany_job_id($company_job_id);
         $info = $company->fetchInfo();
         if ($info instanceof Tnp_Model_Company) {
             $company_info = array();
@@ -238,10 +339,65 @@ class CareerController extends Zend_Controller_Action
             $company_info['field'] = $info->getField();
             $company_info['description'] = $info->getDescription();
             $company_info['verified'] = $info->getVerified();
+            return $company_info;
         } else {
-            if (empty($info)) {
-                return false;
+            return false;
+        }
+    }
+    private function fetchJobInfo ($company_job_id)
+    {
+        $job = new Tnp_Model_CompanyJob();
+        $job->setCompany_job_id($company_job_id);
+        $info = $job->fetchInfo();
+        if ($info instanceof Tnp_Model_CompanyJob) {
+            $job_info = array();
+            $job_info['company_id'] = $info->getCompany_id();
+            $job_info['job'] = $info->getJob();
+            $job_info['eligibility_criteria'] = $info->getEligibility_criteria();
+            $job_info['description'] = $info->getDescription();
+            $job_info['date_of_announcement'] = $info->getDate_of_announcement();
+            $job_info['external'] = $info->getExternal();
+            return $job_info;
+        } else {
+            return false;
+        }
+    }
+    private function fetchCompanyJobs ($company_id)
+    {
+        $company_job = new Tnp_Model_CompanyJob();
+        $company_job->setCompany_id($company_id);
+        $company_job_ids = $company_job->fetchCompanyJobIds();
+        if (empty($company_job_ids)) {
+            return false;
+        } else {
+            $jobs = array();
+            foreach ($company_job_ids as $company_job_id) {
+                $jobs[$company_job_id] = $this->fetchJobInfo($company_job_id);
             }
+            return $jobs;
+        }
+    }
+    private function fetchStudents ($company_job_id)
+    {
+        $company_job = new Tnp_Model_CompanyJob();
+        $company_job->setCompany_job_id($company_job_id);
+        $company_job_ids = $company_job->fetchCompanyJobIds();
+        if (empty($company_job_ids)) {
+            return false;
+        } else {
+            $jobs = array();
+            foreach ($company_job_ids as $company_job_id) {
+                $company_job->setCompany_job_id($company_job_id);
+                $job_info = $company_job->fetchInfo();
+                if ($job_info instanceof Tnp_Model_CompanyJob) {
+                    $jobs[$company_job_id]['job'] = $job_info->getJob();
+                    $jobs[$company_job_id]['eligibility_criteria'] = $job_info->getEligibility_criteria();
+                    $jobs[$company_job_id]['description'] = $job_info->getDescription();
+                    $jobs[$company_job_id]['date_of_announcement'] = $job_info->getDate_of_announcement();
+                    $jobs[$company_job_id]['external'] = $job_info->getExternal();
+                }
+            }
+            return $jobs;
         }
     }
     private function fetchCompanies ()
