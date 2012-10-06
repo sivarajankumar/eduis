@@ -175,18 +175,13 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
         }
     }
     /**
-     * 
-     */
-    public function initInfo ()
-    {}
-    /**
      * Fetches information regarding Company
      *
      */
     public function fetchInfo ()
     {
-        $company_id = $this->getCompany_job_id(true);
-        $info = $this->getMapper()->fetchInfo($company_id);
+        $company_job_id = $this->getCompany_job_id(true);
+        $info = $this->getMapper()->fetchInfo($company_job_id);
         if (empty($info)) {
             return false;
         } else {
@@ -194,48 +189,53 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
             return $this;
         }
     }
-    /**
-     * 
-     * @desc fetches the names of all companies
-     * @return array|false
-     */
-    public function fetchCompanies ()
+    public function fetchStudents ()
     {
-        $companies = array();
-        return $this->getMapper()->fetchCompanies();
-    }
-    public function companyExistCheck ()
-    {
-        $company_id = $this->getCompany_job_id(true);
-        return $this->getMapper()->companyExistCheck($company_id);
-    }
-    public function saveInfo ($company_info)
-    {
-        if (empty($company_info['company_id'])) {
-            $this->initSave();
-            $prepared_data = $this->prepareDataForSaveProcess($company_info);
-            Zend_Registry::get('logger')->debug('saving class info');
-            return $this->save($company_info);
+        $company_job_id = $this->getCompany_job_id(true);
+        $members = $this->getMapper()->fetchStudents($company_job_id);
+        if (empty($members)) {
+            return false;
         } else {
-            Zend_Registry::get('logger')->debug('updating class info');
-            $company_id = $company_info['company_id'];
-            $this->initSave();
-            $prepared_data = $this->prepareDataForSaveProcess($company_info);
-            unset($prepared_data['company_id']);
-            $this->update($company_info, $company_id);
-            return $company_id;
+            return $members;
         }
     }
-    private function save ($class_info)
+    public function fetchCompanyJobIds ()
+    {
+        $company_id = $this->getCompany_job_id(true);
+        return $this->getMapper()->fetchCompanyJobIds($company_id);
+    }
+    public function companyJobExistCheck ()
+    {
+        $company_id = $this->getCompany_job_id(true);
+        return $this->getMapper()->companyJobExistCheck($company_id);
+    }
+    public function saveInfo ($company_job_info)
+    {
+        if (empty($company_job_info['company_job_id'])) {
+            $this->initSave();
+            $prepared_data = $this->prepareDataForSaveProcess($company_job_info);
+            Zend_Registry::get('logger')->debug('saving JoB info');
+            return $this->save($company_job_info);
+        } else {
+            Zend_Registry::get('logger')->debug('updating JoB info');
+            $company_job_id = $company_job_info['company_job_id'];
+            $this->initSave();
+            $prepared_data = $this->prepareDataForSaveProcess($company_job_info);
+            unset($prepared_data['company_job_id']);
+            $this->update($company_job_info, $company_job_id);
+            return $company_job_id;
+        }
+    }
+    private function save ($company_job_info)
     {
         $this->initSave();
-        $prepared_data = $this->prepareDataForSaveProcess($class_info);
+        $prepared_data = $this->prepareDataForSaveProcess($company_job_info);
         return $this->getMapper()->save($prepared_data);
     }
-    private function update ($class_info, $company_id)
+    private function update ($company_job_info, $company_job_id)
     {
         $this->initSave();
-        $prepared_data = $this->prepareDataForSaveProcess($class_info);
-        return $this->getMapper()->update($prepared_data, $company_id);
+        $prepared_data = $this->prepareDataForSaveProcess($company_job_info);
+        return $this->getMapper()->update($prepared_data, $company_job_id);
     }
 }

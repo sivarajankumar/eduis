@@ -34,55 +34,71 @@ class Tnp_Model_Mapper_CompanyJob
         return $this->_dbTable;
     }
     /**
-     * Fetches Company details
+     * Fetches company_job details
      * 
-     * @param integer $company_id
+     * @param integer $company_job_id
      */
     public function fetchInfo ($company_job_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
-        $company_table = $db_table->info('name');
-        $required_cols = array('company_id', 'company_name', 'field', 
-        'description', 'verified');
+        $table = $db_table->info('name');
+        $required_cols = array('company_job_id', 'company_id', 'job', 
+        'eligibility_criteria', 'description', 'date_of_announcement', 
+        'external');
         $select = $adapter->select()
-            ->from($company_table, $required_cols)
-            ->where('company_id = ?', $company_id);
-        $company_info = array();
+            ->from($table, $required_cols)
+            ->where('company_job_id = ?', $company_job_id);
+        $info = array();
         $company_info = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
         if (empty($company_info)) {
             return false;
         } else {
-            return $company_info[$company_id];
+            return $company_info[$company_job_id];
         }
     }
     /**
-     * @desc Fetches All Companies Id
+     * @desc Fetches All Jobs in a company
      *
      */
-    public function fetchCompanies ()
+    public function fetchCompanyJobIds ($company_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
-        $company_dbtable = $this->getDbTable();
-        $company_table = $company_dbtable->info('name');
-        $company_cols = array('company_id', 'company_name');
-        $select = $adapter->select()->from($company_table, $company_cols);
-        $result = array();
-        $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
-        if (empty($result)) {
+        $db_table = $this->getDbTable();
+        $table = $db_table->info('name');
+        $required_cols = array('company_job_id');
+        $select = $adapter->select()
+            ->from($table, $required_cols)
+            ->where('company_id = ?', $company_id);
+        $company_jobs = array();
+        $company_jobs = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        if (empty($company_jobs)) {
             return false;
         } else {
-            $companies = array();
-            foreach ($result as $company_id => $company_name_array) {
-                $companies[$company_id] = $company_name_array['role_name'];
-            }
-            return $companies;
+            return $company_jobs;
         }
     }
-    public function companyExistCheck ($company_id)
+    public function fetchStudents ($company_job_id)
     {
-        $companies = $this->getDbTable()->find($company_id);
-        if (0 == count($companies)) {
+        $adapter = $this->getDbTable()->getAdapter();
+        $db_table = $this->getDbTable();
+        $table = $db_table->info('name');
+        $required_cols = array('member_id');
+        $select = $adapter->select()
+            ->from($table, $required_cols)
+            ->where('company_job_id = ?', $company_job_id);
+        $members = array();
+        $members = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+        if (empty($members)) {
+            return false;
+        } else {
+            return $members;
+        }
+    }
+    public function companyJobExistCheck ($company_job_id)
+    {
+        $company_jobs = $this->getDbTable()->find($company_job_id);
+        if (0 == count($company_jobs)) {
             return false;
         } else {
             return true;
@@ -93,10 +109,10 @@ class Tnp_Model_Mapper_CompanyJob
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
-    public function update ($prepared_data, $company_id)
+    public function update ($prepared_data, $company_job_id)
     {
         $dbtable = $this->getDbTable();
-        $where = 'company_id = ' . $company_id;
+        $where = 'company_job_id = ' . $company_job_id;
         return $dbtable->update($prepared_data, $where);
     }
 }
