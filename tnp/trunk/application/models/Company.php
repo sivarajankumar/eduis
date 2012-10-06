@@ -177,10 +177,10 @@ class Tnp_Model_Company extends Tnp_Model_Generic
         if (empty($company_info['company_id'])) {
             $this->initSave();
             $prepared_data = $this->prepareDataForSaveProcess($company_info);
-            Zend_Registry::get('logger')->debug('saving class info');
+            Zend_Registry::get('logger')->debug('saving company info');
             return $this->save($company_info);
         } else {
-            Zend_Registry::get('logger')->debug('updating class info');
+            Zend_Registry::get('logger')->debug('updating company info');
             $company_id = $company_info['company_id'];
             $this->initSave();
             $prepared_data = $this->prepareDataForSaveProcess($company_info);

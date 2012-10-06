@@ -114,10 +114,51 @@ class CareerController extends Zend_Controller_Action
                 break;
         }
     }
+    public function savecompanyAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $my_array = $params['myarray'];
+        $company_info = $my_array['company_info'];
+        $company_id = null;
+        if (! empty($company_info['company_id'])) {
+            $company_id = $company_info['company_id'];
+            $save['company_id'] = $company_id;
+        }
+        $save['company_name'] = $company_info['company_name'];
+        $save['field'] = $company_info['field'];
+        $save['description'] = $company_info['description'];
+        $save['verified'] = $company_info['verified'];
+        $format = $this->_getParam('format', 'log');
+        $this->saveCompany($company_info);
+        switch ($format) {
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json(true, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json(true);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug('No format was provided..');
+                Zend_Registry::get('logger')->debug(true);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
     private function fetchCompanies ()
     {
         $company = new Tnp_Model_Company();
         return $company->fetchCompanies();
+    }
+    private function saveCompany ($company_info)
+    {
+        $company = new Tnp_Model_Company();
+        return $company->saveInfo($company_info);
     }
 }
 
