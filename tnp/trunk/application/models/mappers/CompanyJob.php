@@ -57,6 +57,7 @@ class Tnp_Model_Mapper_CompanyJob
             return $company_info[$company_job_id];
         }
     }
+    
     /**
      * @desc Fetches All Jobs in a company
      *
