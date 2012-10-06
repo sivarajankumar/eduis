@@ -69,7 +69,7 @@
 	</div>
 	<div class="search_field_div">
 	
-		<fieldset id="btech">
+		<fieldset id="btech_info">
 
 			<label for="discipline_id">Discipline</label>
 			<select id="discipline_id" name="discipline_id" class="selectInput required">
@@ -91,6 +91,14 @@
 			    	}
 				?>
 			</select><br>
+		</fieldset>
+		
+		<div class="ctrlHolder">
+			<label for="btech_filter">&nbsp;&nbsp;Is Btech Required</label>
+			<input name="btech_filter" id="btech_filter" onclick="javascript:show_fieldset('btech')" size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		</div>
+		
+		<fieldset id="btech">
 			
 			<label for="percentage">B.Tech Percentage</label>
 			<input type="text" id="percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
@@ -108,6 +116,11 @@
 		
 		</fieldset>
 		
+		<div class="ctrlHolder">
+			<label for="twelfth_filter">&nbsp;&nbsp;Is Twelfth Required</label>
+			<input name="twelfth_filter" id="twelfth_filter" onclick="javascript:show_fieldset('twelfth')" size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		</div>
+	
 		<fieldset id="twelfth">
 			<label for="percentage">10+2 Percentage</label>
 			<input type="text" id="percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
@@ -126,6 +139,11 @@
 			</select>
 		</fieldset>
 		
+		<div class="ctrlHolder">
+			<label for="diploma_filter">&nbsp;&nbsp;Is Diploma Required</label>
+			<input name="diploma_filter" id="diploma_filter" onclick="javascript:show_fieldset('diploma')" size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		</div>
+		
 		<fieldset id="diploma">
 			<label for="percentage">Diploma Percentage</label>
 			<input type="text" id="percentage" readonly="readonly" style="border:0; color:#f6931f; font-weight:bold;" />
@@ -143,6 +161,11 @@
 				?>
 			</select>
 		</fieldset>
+		
+		<div class="ctrlHolder">
+			<label for="tenth_filter">&nbsp;&nbsp;Is Tenth Required</label>
+			<input name="tenth_filter" id="tenth_filter" onclick="javascript:show_fieldset('tenth')" size="35" maxlength="50" type="checkbox" class="checkbox"/>
+		</div>
 		
 		<fieldset id="tenth">
 			<label for="percentage">Tenth Percentage</label>
@@ -202,6 +225,10 @@
 <script type="text/javascript">
 	$(function(){
 		$('#topnav').hide();
+		$('fieldset#tenth').hide();
+		$('fieldset#twelfth').hide();
+		$('fieldset#diploma').hide();
+		$('fieldset#btech').hide();
 		
 		$('#filterstudents').css('background-color','#b3cdd6');
 		$('#filterstudents').css('border','1px solid black');
@@ -239,7 +266,7 @@
 		range: true,
 		min: 0,
 		max: 100,
-		values: [ 40, 100 ],
+		values: [ 0, 100 ],
 		slide: function( event, ui ) {
 			$("fieldset#tenth > #percentage").val( ui.values[ 0 ] + "-" + ui.values[ 1 ] );
 		}
@@ -251,7 +278,7 @@
 		range: true,
 		min: 0,
 		max: 100,
-		values: [ 40, 100 ],
+		values: [ 0, 100 ],
 		slide: function( event, ui ) {
 			$( "fieldset#twelfth > #percentage" ).val( ui.values[ 0 ] + "-" + ui.values[ 1 ] );
 		}
@@ -263,7 +290,7 @@
 		range: true,
 		min: 0,
 		max: 100,
-		values: [ 40, 100 ],
+		values: [ 0, 100 ],
 		slide: function( event, ui ) {
 			$( "fieldset#btech > #percentage" ).val( ui.values[ 0 ] + "-" + ui.values[ 1 ] );
 		}
@@ -275,7 +302,7 @@
 		range: true,
 		min: 0,
 		max: 100,
-		values: [ 40, 100 ],
+		values: [ 0, 100 ],
 		slide: function( event, ui ) {
 			$( "fieldset#diploma > #percentage" ).val( ui.values[ 0 ] + "-" + ui.values[ 1 ] );
 		}
@@ -283,6 +310,18 @@
 	$( "fieldset#diploma > #percentage" ).val( $( "#diploma_slider-range" ).slider( "values", 0 ) +
 		"-" + $( "#diploma_slider-range" ).slider( "values", 1 ) );
 
+	function show_fieldset(fieldset_id)
+	{
+		if($(':input[name="'+fieldset_id+'_filter"]').is(':checked'))
+		{
+			$('fieldset#'+fieldset_id).show();
+		}
+		else
+		{
+			$('fieldset#'+fieldset_id).hide();
+		}
+	}
+	
 	function isEmpty(ob){
 		for(var i in ob){ return false;}
 			return true;
@@ -314,11 +353,11 @@
 		if(annual_income['from']!=null || annual_income['to']!=null)
 			personal_values['1annual_income'] = annual_income;
 
-		if($('fieldset#btech > #discipline_id').val() != 'Any')
-			personal_values['discipline_id'] = $('fieldset#btech > #discipline_id').val();
+		if($('fieldset#btech_info > #discipline_id').val() != 'Any')
+			personal_values['discipline_id'] = $('fieldset#btech_info > #discipline_id').val();
 
-		if($('fieldset#btech > #passing_year').val() != 'Any')
-			personal_values['batch_start'] = $('fieldset#btech > #passing_year').val();
+		if($('fieldset#btech_info > #passing_year').val() != 'Any')
+			personal_values['batch_start'] = $('fieldset#btech_info > #passing_year').val();
 
 		personal_values['programme_id'] = 'BTECH';
 		var urlsubmitpersonal = "http://core.aceambala.com/search/search";
@@ -352,41 +391,53 @@
 	function submit_academic_values()
 	{
 		var academic_values = {};
-		
-		if($('fieldset#tenth > #passing_year').val() != 'Any')
-			academic_values['0passing_year'] = $('fieldset#tenth > #passing_year').val();
-		
-		var tenth_percentage = $('fieldset#tenth > #percentage').val();
-		var tenth_l = tenth_percentage.substring(0,tenth_percentage.search('-'));
-		var tenth_u = tenth_percentage.substring(tenth_percentage.search('-')+1,tenth_percentage.length);
 
-		academic_values['0percentage'] = {'from':tenth_l, 'to':tenth_u};
+		if($(':input[name="tenth_filter"]').is(':checked'))
+		{
+			if($('fieldset#tenth > #passing_year').val() != 'Any')
+				academic_values['0passing_year'] = $('fieldset#tenth > #passing_year').val();
+			
+			var tenth_percentage = $('fieldset#tenth > #percentage').val();
+			var tenth_l = tenth_percentage.substring(0,tenth_percentage.search('-'));
+			var tenth_u = tenth_percentage.substring(tenth_percentage.search('-')+1,tenth_percentage.length);
+	
+			academic_values['0percentage'] = {'from':tenth_l, 'to':tenth_u};
+		}
 
-		if($('fieldset#twelfth > #passing_year').val() != 'Any')
-			academic_values['1passing_year'] = $('fieldset#twelfth > #passing_year').val();
-		
-		var twelfth_percentage = $('fieldset#twelfth > #percentage').val();
-		var twelfth_l = twelfth_percentage.substring(0,twelfth_percentage.search('-'));
-		var twelfth_u = twelfth_percentage.substring(twelfth_percentage.search('-')+1,twelfth_percentage.length);
+		if($(':input[name="twelfth_filter"]').is(':checked'))
+		{
+			if($('fieldset#twelfth > #passing_year').val() != 'Any')
+				academic_values['1passing_year'] = $('fieldset#twelfth > #passing_year').val();
+			
+			var twelfth_percentage = $('fieldset#twelfth > #percentage').val();
+			var twelfth_l = twelfth_percentage.substring(0,twelfth_percentage.search('-'));
+			var twelfth_u = twelfth_percentage.substring(twelfth_percentage.search('-')+1,twelfth_percentage.length);
+	
+			academic_values['1percentage'] = {'from':twelfth_l, 'to':twelfth_u};
+		}
 
-		academic_values['1percentage'] = {'from':twelfth_l, 'to':twelfth_u};
+		if($(':input[name="diploma_filter"]').is(':checked'))
+		{
+			if($('fieldset#diploma > #passing_year').val() != 'Any')
+				academic_values['2passing_year'] = $('fieldset#diploma > #passing_year').val();
+			
+			var diploma_percentage = $('fieldset#diploma > #percentage').val();
+			var diploma_l = diploma_percentage.substring(0,diploma_percentage.search('-'));
+			var diploma_u = diploma_percentage.substring(diploma_percentage.search('-')+1,diploma_percentage.length);
+	
+			academic_values['2percentage'] = {'from':diploma_l, 'to':diploma_u};
+		}
 
-		if($('fieldset#diploma > #passing_year').val() != 'Any')
-			academic_values['2passing_year'] = $('fieldset#diploma > #passing_year').val();
-		
-		var diploma_percentage = $('fieldset#diploma > #percentage').val();
-		var diploma_l = diploma_percentage.substring(0,diploma_percentage.search('-'));
-		var diploma_u = diploma_percentage.substring(diploma_percentage.search('-')+1,diploma_percentage.length);
-
-		academic_values['2percentage'] = {'from':diploma_l, 'to':diploma_u};
-		
-		var btech_percentage = $('fieldset#btech > #percentage').val();
-		var btech_l = btech_percentage.substring(0,btech_percentage.search('-'));
-		var btech_u = btech_percentage.substring(btech_percentage.search('-')+1,btech_percentage.length);
-
-		academic_values['3percentage'] = {'from':btech_l, 'to':btech_u};
-
-		academic_values['backlogs'] = $('#backlogs').val();
+		if($(':input[name="btech_filter"]').is(':checked'))
+		{
+			var btech_percentage = $('fieldset#btech > #percentage').val();
+			var btech_l = btech_percentage.substring(0,btech_percentage.search('-'));
+			var btech_u = btech_percentage.substring(btech_percentage.search('-')+1,btech_percentage.length);
+	
+			academic_values['3percentage'] = {'from':btech_l, 'to':btech_u};
+	
+			academic_values['backlogs'] = $('#backlogs').val();
+		}
 
 		if(!isEmpty(academic_values))
 		{
@@ -502,7 +553,7 @@
 			dataType : 'jsonp',
 			data : {
 				member_ids : member_id_array,
-				format : 'jsonp',
+				format : 'jsonp'
 			},
 			success : function(jStatus){
 				var email_id_array = new Array();
@@ -549,8 +600,8 @@
 			url : urlsendmail,
 			dataType : 'jsonp',
 			data : { myarray :{
-				member_ids : collect_member_ids(), },
-				format : 'jsonp',
+				member_ids : collect_member_ids() },
+				format : 'jsonp'
 			},
 			success : function(jStatus){
 				core_data = jStatus;
@@ -570,8 +621,8 @@
 			url : urlsendmail,
 			dataType : 'jsonp',
 			data : { myarray :{
-				member_ids : collect_member_ids(), },
-				format : 'jsonp',
+				member_ids : collect_member_ids() },
+				format : 'jsonp'
 			},
 			success : function(jStatus){
 				academic_data = jStatus;
@@ -593,7 +644,7 @@
 					'core_data' : core_data,
 					'academic_data' : academic_data 
 					},
-					format : 'jsonp',
+					format : 'jsonp'
 			},
 			success : function(jStatus){
 				window.location.replace('http://core.aceambala.com/student/saveexcelonclient?file_id='+jStatus);
