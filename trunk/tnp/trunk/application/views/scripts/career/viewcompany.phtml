@@ -1,0 +1,169 @@
+<?php
+	$company_info = $this->company_names;
+	
+	if(Zend_Auth::getInstance()->hasIdentity()){
+		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
+		$usertype=$authInfo['userType'];
+	}
+?>
+<div class="ui-state-hover"><center><H3>Company Information</H3></center></div>
+<div class="info" id="relative_info">
+	<?php
+		if($company_info == false)
+		{
+			echo "<h4>No information has been added yet.</h4>";
+		}
+		else {
+			$s_no = 1;
+			foreach ($company_info as $company_id => $company_name) {
+				echo '<div id='.$company_id.' class="data">';
+					echo ''.$s_no.') ';
+					echo '<span class="red">Company Name: </span>'.$company_name.'<br>';
+					echo '<input id="button_'.$company_id.'" type="button" value="View Details" onclick="show_details('.$company_id.')">&nbsp;&nbsp;';
+					$p = "'/career/editcompany?company_id=".$company_id."'";
+					echo '<input type="button" value="Edit" onclick="window.location.replace('.$p.')"></td>&nbsp;&nbsp;';
+					//echo '<td><input type="button" value="Delete" onclick="javascript:delete_company_info('."'".$company_id."'".')"></td>';
+				echo '</div>';
+				
+				
+				echo '<table class="table-design1" id="table_record'.$company_id.'" border="0">';
+					echo '<tr>
+						<th>Name</th>
+						<th>Field</th>
+						<th>Description</th>
+						<th>Verified</th>
+						</tr>';
+					echo '</tr>';
+				echo '</table>';
+				
+				echo '<br>';
+				$s_no++;
+			}
+		}
+		
+	?>
+
+</div>
+
+<script type="text/javascript">
+	<?php
+		/*if($company_info != false)
+		{
+			$js_array = json_encode($t);
+			echo "var j_array = ". $js_array . ";\n";
+		}*/
+	?>
+	$(function(){
+		$('.table-design1').hide();
+		$('div#topContent').hide();
+	});
+    function show_details(company_id){
+        var urlgetinfo = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanyinfo'))?>";
+		$.ajax({
+			url : urlgetinfo,
+			dataType : 'json',
+			data : {
+					format:'json',
+					company_id : company_id
+				},
+			success: function(jStatus){
+				if(jStatus != false || jStatus != null || jStatus != undefined)
+				{
+					var html = '';
+						html += '<tr><td>'+jStatus['company_name'].toUpperCase()+'</td>';
+						html += '<td>'+jStatus['field_name']+'</td>';
+						html += '<td>'+jStatus['description']+'</td>';
+						if(jStatus['verified'] == 1)
+							html += '<td>Yes</td></tr>';
+						else
+							html += '<td>No</td></tr>';
+						
+	    			var table_id = '#table_record'+company_id;
+	    			$(table_id).append(html).show();
+	    			$('#button_'+company_id).attr('onclick','');
+	    			$('#button_'+company_id).attr('value','Hide Details');
+	    			$('#button_'+company_id).bind('click',function(){
+						if($(this).val() == 'Hide Details')
+						{
+							$(table_id).hide();
+							$('#button_'+company_id).attr('value','Show Details');
+						}
+						else
+						{
+							$(table_id).show();
+							$('#button_'+company_id).attr('value','Hide Details');
+						}
+	    			});
+				}
+			},
+            error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    			console.log(response);
+    		}
+    	});
+    }
+    function delete_company_info(company_id)
+	{
+		var urlDeleteTestRecord = '<?php echo $this->url(array('controller' => 'student', 'action' => 'deletetestrecord'))?>';
+		$.ajax({
+			url : urlDeleteTestRecord,
+			data : {company_id : company_id},
+			success : function(){
+				window.location.reload();
+			},
+			error : function(){
+				alert("The information was not deleted due to some problem. Please try again");
+			}, 
+		});
+	}
+</script>
+
+<style type="text/css">
+
+	.info
+	{
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+		font-size: 14px;
+		margin: 15px;
+		text-align: left;
+		border-collapse: collapse;
+	}
+	.data{	
+		background-color:#F9F9F9;
+		border:0.1em solid #D1D1D1;
+		border-radius: 3px;
+		padding: 2px 0 5px 10px;
+		line-height: 25px;
+	}
+	span.red {
+		color:red;
+	}
+	.table-design1 {
+		border: 1px solid #DFDFDF;
+		background-color: white;
+		width: 100%;
+		-moz-border-radius: 3px;
+		-webkit-border-radius: 3px;
+		border-radius: 3px;
+		font-family: Arial,"Bitstream Vera Sans",Helvetica,Verdana,sans-serif;
+		color: #333;
+	}
+	.table-design1 td, .table-design1 th {
+		border-top-color: white;
+		color: #313131;
+	}
+	.table-design1 th {
+		text-shadow: rgba(255, 255, 255, 0.796875) 0px 1px 0px;
+		font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+		font-weight: normal;
+		padding: 7px 7px 8px;
+		text-align: left;
+		line-height: 1.3em;
+		font-size: 14px;
+		background-color:#F2F2F2;
+	}
+	.table-design1 td {
+		font-size: 12px;
+		padding: 4px 7px 2px;
+	}
+</style>
