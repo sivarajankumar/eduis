@@ -65,7 +65,7 @@ class Tnp_Model_Mapper_Company
         $adapter = $this->getDbTable()->getAdapter();
         $company_dbtable = $this->getDbTable();
         $company_table = $company_dbtable->info('name');
-        $company_cols = array('class_id', 'company_name');
+        $company_cols = array('company_id', 'company_name');
         $select = $adapter->select()->from($company_table, $company_cols);
         $result = array();
         $result = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
@@ -81,8 +81,8 @@ class Tnp_Model_Mapper_Company
     }
     public function companyExistCheck ($company_id)
     {
-        $classes = $this->getDbTable()->find($company_id);
-        if (0 == count($classes)) {
+        $companies = $this->getDbTable()->find($company_id);
+        if (0 == count($companies)) {
             return false;
         } else {
             return true;
