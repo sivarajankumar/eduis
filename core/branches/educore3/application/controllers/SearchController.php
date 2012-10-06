@@ -222,11 +222,32 @@ class SearchController extends Zend_Controller_Action
         $request = $this->getRequest();
         $param_view = array_diff($request->getParams(), 
         $request->getUserParams());
-        $roll_numbers = $param_view['myarray']['roll_number'];
+        $my_array = $param_view['myarray'];
+        if (! empty($my_array['roll_number'])) {
+            $roll_numbers = $my_array['roll_number'];
+        }
+        if (! empty($my_array['roll_numbers'])) {
+            $roll_numbers = $my_array['roll_numbers'];
+        }
+        $students_given = array();
+        $selected_students = array();
+        if ($my_array['range_specified'] == 'true') {
+            $from = $roll_numbers['lower'];
+            $to = $roll_numbers['upper'];
+            $students_given = range($from, $to);
+        } else {
+            $students_given = $roll_numbers;
+        }
+        if (! empty($students_given) and ! empty($my_array['excluded'])) {
+            $selected_students = array_diff($students_given, 
+            $my_array['excluded']);
+        } else {
+            $selected_students = $students_given;
+        }
         $format = $this->_getParam('format', 'log');
         $student = new Core_Model_StudentClass();
         $rolls = array();
-        foreach ($roll_numbers as $roll_number) {
+        foreach ($selected_students as $roll_number) {
             $student->setRoll_no($roll_number);
             $member_id = $student->fetchMemberId();
             $rolls[$roll_number] = $member_id;
