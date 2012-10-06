@@ -114,6 +114,82 @@ class CareerController extends Zend_Controller_Action
                 break;
         }
     }
+    public function fetchcompanyinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $company_id = $params['company_id'];
+        $format = $this->_getParam('format', 'log');
+        $company_info = $this->fetchCompanyInfo($company_id);
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('company_info', $company_info);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($company_info, 
+                false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($company_info);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug('No format was provided..');
+                Zend_Registry::get('logger')->debug($company_info);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    public function addcompanyAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function viewcompanyAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+        $company_names = $this->fetchCompanies();
+        $this->view->assign('company_names', $company_names);
+    }
+    public function editcompanyAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $company_id = $params['company_id'];
+        $company_info = $this->fetchCompanyInfo($company_id);
+        $format = $this->_getParam('format', 'html');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('company_info', $company_info);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($company_info, 
+                false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($company_info);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug('No format was provided..');
+                Zend_Registry::get('logger')->debug($company_info);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
     public function savecompanyAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -149,6 +225,23 @@ class CareerController extends Zend_Controller_Action
             default:
                 ;
                 break;
+        }
+    }
+    private function fetchCompanyInfo ($company_id)
+    {
+        $company = new Tnp_Model_Company();
+        $company->setCompany_id($company_id);
+        $info = $company->fetchInfo();
+        if ($info instanceof Tnp_Model_Company) {
+            $company_info = array();
+            $company_info['company_name'] = $info->getCompany_name();
+            $company_info['field'] = $info->getField();
+            $company_info['description'] = $info->getDescription();
+            $company_info['verified'] = $info->getVerified();
+        } else {
+            if (empty($info)) {
+                return false;
+            }
         }
     }
     private function fetchCompanies ()
