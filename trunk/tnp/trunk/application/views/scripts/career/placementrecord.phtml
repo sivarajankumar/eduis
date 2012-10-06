@@ -1,17 +1,11 @@
 <h2>Student Placement Record</h2>
 <form id="student_placement" class="uniForm" action="javascript:submit()">
 <fieldset id="company_info">
-				
-	<div class="ctrlHolder">
-		<label for="company_name"><em>*</em>Company Name</label>
-		<input name="company_name" id="company_name" value="" data-default-value="e.g. Infosys Ltd." size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-		<p class="formHint">Name of the company</p>
-	</div>
 					
 	<div class="ctrlHolder">
-		<label for="field">Field</label>
+		<label for="field"><em>*</em>Company Field</label>
 		<select>
-			<option value="-1">Select</option>
+			<option value="">Select the field</option>
 			<option value="1">Accounting/Finance</option>
 			<option value="2">Advertising/PR/MR/Events</option>
 			<option value="3">Agriculture/Dairy</option>
@@ -71,20 +65,18 @@
 			<option value="57">Wellness/Fitness/Sports</option>
 			<option value="58">Other</option>
 		</select>
-		<input name="field" id="field" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput"/>
 		<p class="formHint">Field of the company</p>
 	</div>
-        
-					
+
 	<div class="ctrlHolder">
 		<label for="description"><em>*</em>Description</label>
-		<input name="description" id="description" value="" data-default-value="e.g. " size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-		<p class="formHint">All India Rank of Candidate</p>
+		<textarea rows="2" cols="20" name="description" id="description" data-default-value="e.g. CMMI Level 5 Company with more than 80,000 employees." class="textInput"></textarea>
+		<p class="formHint">Details of the company</p>
 	</div>
 					
 	<div class="ctrlHolder">
 		<label for="is_verified">Is Verified</label>
-		Is Verified: <input type="checkbox" name="is_verified" value="TRUE" ><br>
+		<input type="checkbox" name="is_verified" value="TRUE" ><br>
 		<p class="formHint">Select if the company is verified</p>
 	</div>
 	
@@ -99,20 +91,32 @@
 				
 	<div class="ctrlHolder">
 		<label for="job"><em>*</em>Job</label>
-		<input name="job" id="job" value="" data-default-value="e.g. " size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<input name="job" id="job" value="" data-default-value="e.g. System Enginneer Trainee." size="35" maxlength="50" type="text" class="textInput required"/>
 		<p class="formHint">Name of the company</p>
 	</div>
-					
+
 	<div class="ctrlHolder">
 		<label for="description"><em>*</em>Description</label>
-		<input name="description" id="description" value="" data-default-value="e.g. " size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-		<p class="formHint">All India Rank of Candidate</p>
+		<textarea rows="2" cols="20" name="description" id="description" data-default-value="e.g. Needs to work on Web Technologies like PHP, Javascript, HTML."></textarea>
+		<p class="formHint">Details of the job</p>
 	</div>
-					
+
 	<div class="ctrlHolder">
-		<label for="is_verified">Is Verified</label>
-		Is Verified: <input type="checkbox" name="is_verified" value="TRUE" ><br>
-		<p class="formHint">Select if the company is verified</p>
+		<label for="package">P<em>*</em>ackage offered for the job</label>
+		<input name="package" id="package" value="" data-default-value="e.g. 300000" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">Package offered for the job</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="campus_name"><em>*</em>Campus Name</label>
+		<input name="campus_name" id="campus_name" value="" data-default-value="e.g. MM University, Mullana" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+		<p class="formHint">name of the campus in which the company visited</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="date_of_selection"><em>*</em>Start Date</label>
+		<input name="date_of_selection" id="date_of_selection" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of start</p>
 	</div>
 	
 	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
@@ -124,24 +128,52 @@
 </form>
 
 <script type="text/javascript">
-<?php
-    if(isset($this->exam_data)){
-        foreach ($this->exam_data as $key => $value){
-            $divname = $key;
-            echo '$("#'.$key.'").val("'.$value.'");';
-        }
-    }
-?>
 
     $(function(){
+    	$('#topContent').hide();
+
+    	var urlfetchcompanies = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanies'))?>";
+    	$.ajax({
+        	url : urlfetchcompanies,
+        	dataType : 'json',
+        	async : false,
+        	data : {format : 'json'},
+        	success : function(jStatus){
+				if(jStatus == false)
+				{
+					var html = '<div class="ctrlHolder">'+
+								'<label for="company_name"><em>*</em>Company Name</label>'+
+								'<input name="company_name" id="company_name" value="" data-default-value="e.g. Infosys Ltd." size="35" maxlength="50" type="text" class="textInput required validateInteger"/>'+
+								'<p class="formHint">Name of the company</p>'+
+								'</div>';
+					$('#company_info').prepend(html);
+				}
+				else
+				{
+					var html = '<div class="ctrlHolder">'+
+								'<label for="company_name"><em>*</em>Company Name</label>'+
+								
+					$.each(jStatus,function(company_id,company_name){
+						html += '<option value='+company_id+'>'+company_name+'</option>';
+					});
+					
+					html += '<select>'+
+							'<p class="formHint">Name of the company</p>'+
+							'</div>';
+					
+					$('#company_info').prepend(html);
+				}
+        	},
+        	error : function(response){
+
+        	}
+        });
     	$('form.uniForm').uniform({
     		prevent_submit : true
     	});
-
-    	$('#topContent').hide();
     });
     serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
-    $("#date").datepicker({
+    $("#date_of_selection").datepicker({
     	dateFormat: 'yy-mm-dd',
     	changeMonth: true,
 		changeYear: true,
