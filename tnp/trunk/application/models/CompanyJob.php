@@ -1,12 +1,28 @@
 <?php
-class Tnp_Model_Company extends Tnp_Model_Generic
+class Tnp_Model_CompanyJob extends Tnp_Model_Generic
 {
+    protected $_company_job_id;
     protected $_company_id;
-    protected $_company_name;
-    protected $_field;
+    protected $_job;
+    protected $_eligibility_criteria;
     protected $_description;
-    protected $_verified;
+    protected $_date_of_announcement;
+    protected $_external;
     protected $_mapper;
+    /**
+     * @return the $_company_job_id
+     */
+    public function getCompany_job_id ($throw_exception = null)
+    {
+        $company_id = $this->_company_job_id;
+        if (empty($company_id) and $throw_exception == true) {
+            $message = '_company_job_id is not set in ' . get_class($this);
+            $code = Zend_Log::ERR;
+            throw new Exception($message, $code);
+        } else {
+            return $company_id;
+        }
+    }
     /**
      * @return the $_company_id
      */
@@ -20,13 +36,6 @@ class Tnp_Model_Company extends Tnp_Model_Generic
         } else {
             return $company_id;
         }
-    }
-    /**
-     * @return the $_company_name
-     */
-    public function getCompany_name ()
-    {
-        return $this->_company_name;
     }
     /**
      * @return the $_field
@@ -50,11 +59,11 @@ class Tnp_Model_Company extends Tnp_Model_Generic
         return $this->_verified;
     }
     /**
-     * @param field_type $_company_id
+     * @param field_type $_company_job_id
      */
-    public function setCompany_id ($_company_id)
+    public function setCompany_job_id ($_company_job_id)
     {
-        $this->_company_id = $_company_id;
+        $this->_company_job_id = $_company_job_id;
     }
     /**
      * @param field_type $_company_name
@@ -86,8 +95,8 @@ class Tnp_Model_Company extends Tnp_Model_Generic
     }
     /**
      * Sets Mapper
-     * @param Tnp_Model_Mapper_Company $mapper
-     * @return Tnp_Model_Company
+     * @param Tnp_Model_Mapper_CompanyJob $mapper
+     * @return Tnp_Model_CompanyJob
      */
     public function setMapper ($mapper)
     {
@@ -96,12 +105,12 @@ class Tnp_Model_Company extends Tnp_Model_Generic
     }
     /**
      * gets the mapper from the object class
-     * @return Tnp_Model_Mapper_Company
+     * @return Tnp_Model_Mapper_CompanyJob
      */
     public function getMapper ()
     {
         if (null === $this->_mapper) {
-            $this->setMapper(new Tnp_Model_Mapper_Company());
+            $this->setMapper(new Tnp_Model_Mapper_CompanyJob());
         }
         return $this->_mapper;
     }
@@ -148,7 +157,7 @@ class Tnp_Model_Company extends Tnp_Model_Generic
      */
     public function fetchInfo ()
     {
-        $company_id = $this->getCompany_id(true);
+        $company_id = $this->getCompany_job_id(true);
         $info = $this->getMapper()->fetchInfo($company_id);
         if (empty($info)) {
             return false;
@@ -169,7 +178,7 @@ class Tnp_Model_Company extends Tnp_Model_Generic
     }
     public function companyExistCheck ()
     {
-        $company_id = $this->getCompany_id(true);
+        $company_id = $this->getCompany_job_id(true);
         return $this->getMapper()->companyExistCheck($company_id);
     }
     public function saveInfo ($company_info)
