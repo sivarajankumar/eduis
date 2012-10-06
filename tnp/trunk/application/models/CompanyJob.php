@@ -203,16 +203,6 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
             return $this;
         }
     }
-    public function fetchStudents ()
-    {
-        $company_job_id = $this->getCompany_job_id(true);
-        $members = $this->getMapper()->fetchStudents($company_job_id);
-        if (empty($members)) {
-            return false;
-        } else {
-            return $members;
-        }
-    }
     public function fetchCompanyJobIds ()
     {
         $company_id = $this->getCompany_job_id(true);
@@ -257,14 +247,8 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
         $this->setDate_of_announcement($date_of_announcement);
         $company_job_id = $this->findJobIds(true, true, true);
         if (empty($company_job_id)) {
-            $this->initSave();
-            $prepared_data = $this->prepareDataForSaveProcess($company_job_info);
-            Zend_Registry::get('logger')->debug('saving JoB info');
             return $this->save($company_job_info);
         } else {
-            $this->initSave();
-            $prepared_data = $this->prepareDataForSaveProcess($company_job_info);
-            Zend_Registry::get('logger')->debug('updating JoB info');
             $this->update($company_job_info, $company_job_id[0]);
             return $company_job_id[0];
         }
@@ -273,12 +257,15 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
     {
         $this->initSave();
         $prepared_data = $this->prepareDataForSaveProcess($company_job_info);
+        Zend_Registry::get('logger')->debug('saving JoB info');
         return $this->getMapper()->save($prepared_data);
     }
     private function update ($company_job_info, $company_job_id)
     {
         $this->initSave();
         $prepared_data = $this->prepareDataForSaveProcess($company_job_info);
+        Zend_Registry::get('logger')->debug('updating JoB info');
+        unset($prepared_data['company_job_id']);
         return $this->getMapper()->update($prepared_data, $company_job_id);
     }
 }
