@@ -103,23 +103,6 @@ class Tnp_Model_Mapper_CompanyJob
             return $job_ids;
         }
     }
-    public function fetchStudents ($company_job_id)
-    {
-        $adapter = $this->getDbTable()->getAdapter();
-        $db_table = $this->getDbTable();
-        $table = $db_table->info('name');
-        $required_cols = array('member_id');
-        $select = $adapter->select()
-            ->from($table, $required_cols)
-            ->where('company_job_id = ?', $company_job_id);
-        $members = array();
-        $members = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        if (empty($members)) {
-            return false;
-        } else {
-            return $members;
-        }
-    }
     public function companyJobExistCheck ($company_job_id)
     {
         $company_jobs = $this->getDbTable()->find($company_job_id);

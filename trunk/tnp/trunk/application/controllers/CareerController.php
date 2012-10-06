@@ -85,6 +85,11 @@ class CareerController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
     }
+    public function saverecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
     public function fetchcompaniesAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
