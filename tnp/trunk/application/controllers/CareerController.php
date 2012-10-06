@@ -377,10 +377,10 @@ class CareerController extends Zend_Controller_Action
                 break;
         }
     }
-    private function fetchCompanyInfo ($company_job_id)
+    private function fetchCompanyInfo ($company_id)
     {
         $company = new Tnp_Model_Company();
-        $company->setCompany_job_id($company_job_id);
+        $company->setCompany_id($company_id);
         $info = $company->fetchInfo();
         if ($info instanceof Tnp_Model_Company) {
             $company_info = array();
