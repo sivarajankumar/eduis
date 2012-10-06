@@ -70,6 +70,16 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
     }
+    public function init ()
+    {
+        if (Zend_Auth::getInstance()->hasIdentity()) {
+            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+            $this->setDepartment_id($authInfo['department_id']);
+            $this->setUser_name($authInfo['identity']);
+            $this->setUser_type($authInfo['userType']);
+            $this->setMember_id($authInfo['member_id']);
+        }
+    }
     public function memberidcheckAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -106,16 +116,6 @@ class StudentController extends Zend_Controller_Action
                     ;
                     break;
             }
-        }
-    }
-    public function init ()
-    {
-        if (Zend_Auth::getInstance()->hasIdentity()) {
-            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
-            $this->setDepartment_id($authInfo['department_id']);
-            $this->setUser_name($authInfo['identity']);
-            $this->setUser_type($authInfo['userType']);
-            $this->setMember_id($authInfo['member_id']);
         }
     }
     public function saveclassinfoAction ()
