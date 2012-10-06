@@ -497,7 +497,7 @@ class CareerController extends Zend_Controller_Action
     {
         $company_job = new Tnp_Model_JobRecord();
         $company_job->setCompany_job_id($company_job_id);
-        $students = $company_job->fetchStudents();
+        return $company_job->fetchStudents();
     }
     private function fetchCompanies ()
     {
