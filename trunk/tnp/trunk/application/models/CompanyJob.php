@@ -217,11 +217,11 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
             Zend_Registry::get('logger')->debug('saving JoB info');
             return $this->save($company_job_info);
         } else {
-            Zend_Registry::get('logger')->debug('updating JoB info');
             $company_job_id = $company_job_info['company_job_id'];
             $this->initSave();
             $prepared_data = $this->prepareDataForSaveProcess($company_job_info);
             unset($prepared_data['company_job_id']);
+            Zend_Registry::get('logger')->debug('updating JoB info');
             $this->update($company_job_info, $company_job_id);
             return $company_job_id;
         }
