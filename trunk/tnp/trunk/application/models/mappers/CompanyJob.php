@@ -1,5 +1,5 @@
 <?php
-class Tnp_Model_Mapper_Company
+class Tnp_Model_Mapper_CompanyJob
 {
     /**
      * @var Zend_Db_Table_Abstract
@@ -9,7 +9,7 @@ class Tnp_Model_Mapper_Company
      * Specify Zend_Db_Table instance to use for data operations
      * 
      * @param  Zend_Db_Table_Abstract $dbTable 
-     * @return Tnp_Model_Mapper_Company
+     * @return Tnp_Model_Mapper_CompanyJob
      */
     public function setDbTable ($dbTable)
     {
@@ -29,7 +29,7 @@ class Tnp_Model_Mapper_Company
     public function getDbTable ()
     {
         if (null === $this->_dbTable) {
-            $this->setDbTable('Tnp_Model_DbTable_Company');
+            $this->setDbTable('Tnp_Model_DbTable_CompanyJob');
         }
         return $this->_dbTable;
     }
@@ -38,7 +38,7 @@ class Tnp_Model_Mapper_Company
      * 
      * @param integer $company_id
      */
-    public function fetchInfo ($company_id)
+    public function fetchInfo ($company_job_id)
     {
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
@@ -74,7 +74,7 @@ class Tnp_Model_Mapper_Company
         } else {
             $companies = array();
             foreach ($result as $company_id => $company_name_array) {
-                $companies[$company_id] = $company_name_array['company_name'];
+                $companies[$company_id] = $company_name_array['role_name'];
             }
             return $companies;
         }

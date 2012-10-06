@@ -38,11 +38,18 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
         }
     }
     /**
-     * @return the $_field
+     * @return the $_job
      */
-    public function getField ()
+    public function getJob ()
     {
-        return $this->_field;
+        return $this->_job;
+    }
+    /**
+     * @return the $_eligibility_criteria
+     */
+    public function getEligibility_criteria ()
+    {
+        return $this->_eligibility_criteria;
     }
     /**
      * @return the $_description
@@ -52,11 +59,18 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
         return $this->_description;
     }
     /**
-     * @return the $_verified
+     * @return the $_date_of_announcement
      */
-    public function getVerified ()
+    public function getDate_of_announcement ()
     {
-        return $this->_verified;
+        return $this->_date_of_announcement;
+    }
+    /**
+     * @return the $_external
+     */
+    public function getExternal ()
+    {
+        return $this->_external;
     }
     /**
      * @param field_type $_company_job_id
@@ -66,18 +80,25 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
         $this->_company_job_id = $_company_job_id;
     }
     /**
-     * @param field_type $_company_name
+     * @param field_type $_company_id
      */
-    public function setCompany_name ($_company_name)
+    public function setCompany_id ($_company_id)
     {
-        $this->_company_name = $_company_name;
+        $this->_company_id = $_company_id;
     }
     /**
-     * @param field_type $_field
+     * @param field_type $_job
      */
-    public function setField ($_field)
+    public function setJob ($_job)
     {
-        $this->_field = $_field;
+        $this->_job = $_job;
+    }
+    /**
+     * @param field_type $_eligibility_criteria
+     */
+    public function setEligibility_criteria ($_eligibility_criteria)
+    {
+        $this->_eligibility_criteria = $_eligibility_criteria;
     }
     /**
      * @param field_type $_description
@@ -87,11 +108,18 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
         $this->_description = $_description;
     }
     /**
-     * @param field_type $_verified
+     * @param field_type $_date_of_announcement
      */
-    public function setVerified ($_verified)
+    public function setDate_of_announcement ($_date_of_announcement)
     {
-        $this->_verified = $_verified;
+        $this->_date_of_announcement = $_date_of_announcement;
+    }
+    /**
+     * @param field_type $_external
+     */
+    public function setExternal ($_external)
+    {
+        $this->_external = $_external;
     }
     /**
      * Sets Mapper
