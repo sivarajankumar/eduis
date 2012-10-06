@@ -4,7 +4,7 @@
 		
 		<div class="ctrlHolder">
 			<label for="company_id"><em>*</em>Company Name</label>
-			<select id="company_id" name="company_id">
+			<select id="company_id" name="company_id" class="selectInput required">
 			
 			</select>
 			<p class="formHint">Name of the company conducting the recruitment</p>
@@ -77,7 +77,7 @@
 				}
 				else
 				{
-					var html = '<option value="-999">Please select company</option>';
+					var html = '<option value="">Please select company</option>';
 					
 					$.each(jStatus,function(company_id,company_name){
 						html += '<option value='+company_id+'>'+company_name+'</option>';
