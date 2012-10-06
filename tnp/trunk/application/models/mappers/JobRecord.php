@@ -64,7 +64,7 @@ class Tnp_Model_Mapper_JobRecord
         $adapter = $this->getDbTable()->getAdapter();
         $db_table = $this->getDbTable();
         $table = $db_table->info('name');
-        $required_cols = array('company_id');
+        $required_cols = array('member_id');
         $select = $adapter->select()
             ->from($table, $required_cols)
             ->where('member_id = ?', $member_id)
