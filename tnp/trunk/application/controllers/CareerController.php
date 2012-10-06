@@ -140,10 +140,49 @@ class CareerController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $my_array = $params['myarray'];
         $stu_job_info = $my_array['student_job_info'];
+        $record['appeared'] = $stu_job_info['appeared'];
+        $record['selected'] = $stu_job_info['selected'];
+        $record['package'] = $stu_job_info['package'];
+        $record['date_of_selection'] = $stu_job_info['date_of_selection'];
+        $record['drive_location'] = $stu_job_info['drive_location'];
+        $record['registered'] = $stu_job_info['registered'];
         $member_ids = $my_array['member_ids'];
         foreach ($member_ids as $member_id) {
             $stu_job_info['member_id'] = $member_id;
             $this->saveStudentJob($stu_job_info);
+        }
+    }
+    public function fetchrecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $my_array = $params['myarray'];
+        $company_job_id = $my_array['company_job_id'];
+        $member_id = $my_array['member_id'];
+        $format = $this->_getParam('format', 'log');
+        $record = $this->fetchRecord($company_job_id, $member_id);
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('record', $record);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($record, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($record);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug('No format was provided..');
+                Zend_Registry::get('logger')->debug($record);
+                break;
+            default:
+                ;
+                break;
         }
     }
     public function fetchcompaniesAction ()
@@ -508,6 +547,25 @@ class CareerController extends Zend_Controller_Action
     {
         $company = new Tnp_Model_Company();
         return $company->saveInfo($company_info);
+    }
+    private function fetchRecord ($company_job_id, $member_id)
+    {
+        $company = new Tnp_Model_JobRecord();
+        $company->setMember_id($member_id);
+        $company->setCompany_job_id($company_job_id);
+        $info = $company->fetchInfo();
+        if ($info instanceof Tnp_Model_JobRecord) {
+            $record = array();
+            $record['appeared'] = $info->getAppeared();
+            $record['selected'] = $info->getSelected();
+            $record['package'] = $info->getPackage();
+            $record['date_of_selection'] = $info->getDate_of_selection();
+            $record['drive_location'] = $info->getDrive_location();
+            $record['registered'] = $info->getRegistered();
+            return $record;
+        } else {
+            return false;
+        }
     }
     private function saveStudentJob ($info)
     {
