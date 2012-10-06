@@ -1,0 +1,185 @@
+<div class="ui-state-hover"><center><H3>Company Information</H3></center></div>
+<br>
+<div class="ctrlHolder">
+	<label for="company_id">Company Name</label>
+	<select id="company_id" name="company_id" class="selectInput required" onchange="">
+			
+	</select>
+</div>
+
+<div class="info" id="job_info">
+	
+</div>
+
+<script type="text/javascript">
+
+	$(function(){
+		$('.table-design1').hide();
+		$('div#topContent').hide();
+
+		var urlfetchcompanies = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanies'))?>";
+    	$.ajax({
+        	url : urlfetchcompanies,
+        	dataType : 'json',
+        	async : false,
+        	data : {format : 'json'},
+        	success : function(jStatus){
+				if(jStatus == false)
+				{}
+				else
+				{
+					var html = '<option value="">Please select company</option>';
+					
+					$.each(jStatus,function(company_id,company_name){
+						html += '<option value='+company_id+'>'+company_name+'</option>';
+					});
+					
+					$('select#company_id').append(html);
+				}
+        	},
+        	error : function(response){}
+        });
+
+    	$('select#company_id').change(function(){
+			if($('select#company_id').val() != '')
+			{
+				var urlfetchjobs = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanyjobs'))?>";
+		    	$.ajax({
+		        	url : urlfetchjobs,
+		        	dataType : 'json',
+		        	async : false,
+		        	data : {
+						company_id : $('select#company_id').val(),
+			        	format : 'json'
+					},
+		        	success : function(jStatus){
+						if(jStatus == false)
+						{
+							alert("No job has been registered with this company. Click on Add Job option in the sidebar");
+						}
+						else
+						{
+							$.each(jStatus,function(job_id,job_details){
+								html = '<div id=job_"'+job_id+' class="data">';
+								html += '<span class="red">Job Profile : </span>'+job_details['job']+'&nbsp;&nbsp;&nbsp;';
+								html += '<span class="red">Eligibility Criteria : </span>'+job_details['eligibility_criteria']+'&nbsp;&nbsp;&nbsp;';
+								html += '<span class="red">Description : </span>'+job_details['description']+'&nbsp;&nbsp;&nbsp;';
+								html += '<span class="red">Date of Announcement : </span>'+job_details['date_of_announcement']+'&nbsp;&nbsp;&nbsp;';
+								if(job_details['external'] == 1)
+									html += '<span class="red">Offcampus : </span>'+'Yes';
+								else
+									html += '<span class="red">Offcampus : </span>'+'No';
+								html += '<br><input type="button" value="Edit Job" onclick="change_location('+job_id+')">';
+							});
+							
+							$('div#job_info').append(html);
+						}
+		        	},
+		        	error : function(response){}
+		        });
+			}
+			else{}
+    	});
+
+    	
+	});
+
+	function change_location(company_job_id)
+	{
+		window.location.replace('/career/editjob?company_job_id='+company_job_id);
+	}
+	
+    function view_details(){
+        var company_id = $('#company_id').val();
+        if(company_id != -999)
+        {
+	        var urlgetinfo = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanyinfo'))?>";
+			$.ajax({
+				url : urlgetinfo,
+				dataType : 'json',
+				data : {
+						format:'json',
+						company_id : company_id
+					},
+				success: function(jStatus){
+					if(jStatus != false || jStatus != null || jStatus != undefined)
+					{
+						var html = '<tr>'+
+									'<th>Name</th>'+
+									'<th>Field</th>'+
+									'<th>Description</th>'+
+									'<th>Verified</th>'+
+									'</tr>';
+						
+							html += '<tr><td>'+jStatus['company_name'].toUpperCase()+'</td>';
+							html += '<td>'+jStatus['field_name']+'</td>';
+							html += '<td>'+jStatus['description']+'</td>';
+							if(jStatus['verified'] == 1)
+								html += '<td>Yes</td></tr>';
+							else
+								html += '<td>No</td></tr>';
+						
+		    			$('.table-design1').html(html).show();
+		    			
+					}
+				},
+	            error: function(response) {
+	    			$('#errorBox').text(response.responseText).parent().show();
+	    			console.log(response);
+	    		}
+    		});
+        }
+        else
+            alert('dhjhj');
+    }
+</script>
+
+<style type="text/css">
+
+	.info
+	{
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+		font-size: 14px;
+		margin: 15px;
+		text-align: left;
+		border-collapse: collapse;
+	}
+	.data{	
+		background-color:#F9F9F9;
+		border:0.1em solid #D1D1D1;
+		border-radius: 3px;
+		padding: 2px 0 5px 10px;
+		line-height: 25px;
+	}
+	span.red {
+		color:red;
+	}
+	.table-design1 {
+		border: 1px solid #DFDFDF;
+		background-color: white;
+		width: 100%;
+		-moz-border-radius: 3px;
+		-webkit-border-radius: 3px;
+		border-radius: 3px;
+		font-family: Arial,"Bitstream Vera Sans",Helvetica,Verdana,sans-serif;
+		color: #333;
+	}
+	.table-design1 td, .table-design1 th {
+		border-top-color: white;
+		color: #313131;
+	}
+	.table-design1 th {
+		text-shadow: rgba(255, 255, 255, 0.796875) 0px 1px 0px;
+		font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+		font-weight: normal;
+		padding: 7px 7px 8px;
+		text-align: left;
+		line-height: 1.3em;
+		font-size: 14px;
+		background-color:#F2F2F2;
+	}
+	.table-design1 td {
+		font-size: 12px;
+		padding: 4px 7px 2px;
+	}
+</style>
