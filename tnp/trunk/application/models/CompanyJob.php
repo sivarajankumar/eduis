@@ -205,7 +205,7 @@ class Tnp_Model_CompanyJob extends Tnp_Model_Generic
     }
     public function fetchCompanyJobIds ()
     {
-        $company_id = $this->getCompany_job_id(true);
+        $company_id = $this->getCompany_id(true);
         return $this->getMapper()->fetchCompanyJobIds($company_id);
     }
     public function companyJobExistCheck ()
