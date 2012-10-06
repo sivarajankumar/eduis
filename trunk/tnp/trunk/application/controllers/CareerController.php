@@ -117,7 +117,17 @@ class CareerController extends Zend_Controller_Action
             $this->setMember_id($authInfo['member_id']);
         }
     }
-    public function placementrecordAction ()
+    public function addrecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function viewrecordAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function editrecordAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
