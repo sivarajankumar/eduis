@@ -90,7 +90,7 @@
 						html += '<option value='+company_id+'>'+company_name+'</option>';
 					});
 					
-					$('select#company_id').append(html);
+					$('select#company_id').html(html);
 				}
         	},
         	error : function(response){
@@ -127,7 +127,7 @@
 								html += '<option value='+job_id+'>'+job_details['job']+' ('+job_details['date_of_announcement']+')'+'</option>';
 							});
 							
-							$('select#company_job_id').append(html);
+							$('select#company_job_id').html(html);
 						}
 		        	},
 		        	error : function(response){
