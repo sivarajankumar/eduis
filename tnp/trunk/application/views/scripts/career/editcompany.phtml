@@ -1,7 +1,17 @@
+<?php 
+	$company_info = $this->company_info;
+?>
+
 <h2>Student Placement Record</h2>
 <form id="student_placement" class="uniForm" action="javascript:submit_company_info()">
 <fieldset id="company_info">
-					
+
+	<div class="ctrlHolder">
+		<label for="company_name"><em>*</em>Company Name</label>
+		<input name="company_name" id="company_name" value="<?php echo $company_info['company_name']?>" data-default-value="e.g. Infosys Ltd." size="35" maxlength="50" type="text" class="textInput required"/>
+		<p class="formHint">Name of the company</p>
+	</div>
+	
 	<div class="ctrlHolder">
 		<label for="field"><em>*</em>Company Field</label>
 		<select id="field" name="field">
@@ -70,54 +80,14 @@
 
 	<div class="ctrlHolder">
 		<label for="description"><em>*</em>Description</label>
-		<textarea rows="2" cols="20" name="description" id="description" data-default-value="e.g. CMMI Level 5 Company with more than 80,000 employees." class="textInput"></textarea>
+		<textarea rows="2" cols="20" name="description" id="description" data-default-value="e.g. CMMI Level 5 Company with more than 80,000 employees." class="textInput"><?php echo $company_info['description']?></textarea>
 		<p class="formHint">Details of the company</p>
 	</div>
 					
 	<div class="ctrlHolder">
-		<label for="is_verified">Is Verified</label>
-		<input type="checkbox" name="is_verified" value="TRUE" ><br>
+		<label for="verified">Is Verified</label>
+		<input type="checkbox" name="verified" id="verified"><br>
 		<p class="formHint">Select if the company is verified</p>
-	</div>
-	
-	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
-	<div class="buttonHolder">
-		<button type="reset" class="secondaryAction">Reset</button>
-		<button type="submit" class="primaryAction">Next</button>
-	</div>				
-</fieldset>
-</form>
-<form>
-<fieldset id="job_info">
-				
-	<div class="ctrlHolder">
-		<label for="job"><em>*</em>Job</label>
-		<input name="job" id="job" value="" data-default-value="e.g. System Enginneer Trainee." size="35" maxlength="50" type="text" class="textInput required"/>
-		<p class="formHint">Name of the company</p>
-	</div>
-
-	<div class="ctrlHolder">
-		<label for="description"><em>*</em>Description</label>
-		<textarea rows="2" cols="20" name="description" id="description" data-default-value="e.g. Needs to work on Web Technologies like PHP, Javascript, HTML."></textarea>
-		<p class="formHint">Details of the job</p>
-	</div>
-
-	<div class="ctrlHolder">
-		<label for="package">P<em>*</em>ackage offered for the job</label>
-		<input name="package" id="package" value="" data-default-value="e.g. 300000" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-		<p class="formHint">Package offered for the job</p>
-	</div>
-	
-	<div class="ctrlHolder">
-		<label for="campus_name"><em>*</em>Campus Name</label>
-		<input name="campus_name" id="campus_name" value="" data-default-value="e.g. MM University, Mullana" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-		<p class="formHint">name of the campus in which the company visited</p>
-	</div>
-	
-	<div class="ctrlHolder">
-		<label for="date_of_selection"><em>*</em>Start Date</label>
-		<input name="date_of_selection" id="date_of_selection" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
-		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of start</p>
 	</div>
 	
 	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
@@ -133,79 +103,23 @@
     $(function(){
     	$('#topContent').hide();
 
-    	var urlfetchcompanies = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanies'))?>";
-    	$.ajax({
-        	url : urlfetchcompanies,
-        	dataType : 'json',
-        	async : false,
-        	data : {format : 'json'},
-        	success : function(jStatus){
-				if(jStatus == false)
-				{
-					var html = '<div class="ctrlHolder">'+
-								'<label for="company_name"><em>*</em>Company Name</label>'+
-								'<input name="company_name" id="company_name" value="" data-default-value="e.g. Infosys Ltd." size="35" maxlength="50" type="text" class="textInput required"/>'+
-								'<p class="formHint">Name of the company</p>'+
-								'</div>';
-					$('#company_info').prepend(html);
-				}
-				else
-				{
-					var html = '<div class="ctrlHolder">'+
-								'<label for="company_id"><em>*</em>Company Name</label>'+
-								'<select id="company_id" name="company_id">';
-					
-					$.each(jStatus,function(company_id,company_name){
-						html += '<option value='+company_id+'>'+company_name+'</option>';
-					});
-					
-					html += '<option value="other">Other</option>'+
-							'<select>'+
-							'<p class="formHint">Name of the company</p>'+
-							'</div>';
-					
-					$('#company_info').prepend(html);
-				}
-        	},
-        	error : function(response){
-
-        	}
-        });
     	$('form.uniForm').uniform({
     		prevent_submit : false
     	});
-
-    	$('select#company_id').change(function(){
-			if($('select#company_id').val() == 'other')
-			{
-				var html = '<div class="ctrlHolder" id="new_company_div">'+
-							'<label for="company_name"><em>*</em>New Company Name</label>'+
-							'<input name="company_name" id="company_name" value="" data-default-value="e.g. Infosys Ltd." size="35" maxlength="50" type="text" class="textInput required"/>'+
-							'<p class="formHint">Enter the name of new company</p>'+
-							'</div>';
-				$('select#company_id').parent().after(html);
-			}
-			else
-			{
-				$('#new_company_div').remove();
-			}
-    	});
-    });
-    serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
-    $("#date_of_selection").datepicker({
-    	dateFormat: 'yy-mm-dd',
-    	changeMonth: true,
-		changeYear: true,
-		yearRange: '-5:+5',
-		onClose : function(dateText, inst) {
-			this.focus();
-			}
     });
 
+	$('#field').val('<?php echo $company_info['field']?>');
+	
+	<?php 
+		if($company_info['verified'] == '1'){
+	        echo "$('#verified').attr('checked',true);";
+	    }
+	?>
+    
     function submit_company_info(){
         var data = {};
     	var company_info = {};
-    	var urlSaveCompanyInfo = "<?php echo $this->url(array('controller' => 'career', 'action' => 'saveaieeeinfo'))?>";
+    	var urlSaveCompanyInfo = "<?php echo $this->url(array('controller' => 'career', 'action' => 'addcompany'))?>";
 
 		$('#student_placement :input')
 		.not('button')
@@ -213,10 +127,10 @@
 			company_info[this.name] = this.value;
 		});
 		
-		if($('input[name="is_verified"]').is(':checked'))
-			company_info['is_verified'] = true;
+		if($('input[name="verified"]').is(':checked'))
+			company_info['verified'] = 1;
 		else
-			company_info['is_verified'] = false;
+			company_info['verified'] = 0;
     	
     	data['company_info'] = company_info;
     	$.ajax({

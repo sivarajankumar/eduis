@@ -1,0 +1,123 @@
+<div id="tpo_navigation">
+	<img alt="TPO" id="tpo_img" src="http://site.cdn.aceambala.com/images/tpo/tpo.jpg" width="40" height="46">
+	<ul id="list">
+		<li id="index"><a href="/admin/index">Home</a></li>
+		<li id="filterstudents"><a href="/admin/filterstudent">Filter Students</a></li>
+		<li id="viewstudentprofile"><a href="/admin/viewstudentprofile">View Student Profile</a></li>
+		<li id="notifications"><a href="">Notifications</a></li>
+	</ul>
+</div>
+<br>
+
+<link rel="stylesheet" href="<?php echo 'http://'. CDN_SERVER . '/css/admission.css';?>">
+
+<div id="main">
+	<div id="sidebar" style="float:left">
+	<ul class="menu">
+		<li class="item1">
+			<a href="#">Company</a>
+			<ul>
+				<li class="subitem1"><a href="/career/addcompany" target="content_frame">Add Company</a></li>
+				<li class="subitem1"><a href="/career/viewcompany" target="content_frame">View Company</a></li>
+			</ul>
+		</li>
+
+	</ul>
+	</div>
+	<div id="page_content">
+		<iframe id="content_frame" name="content_frame" width="100%" height="900" frameborder="0" scrolling="auto" onload="hide_top()"></iframe>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(function() {
+
+		$('#topnav').hide();
+		$('#academic_link').css('background-color','#b3cdd6');
+		$('#academic_link').css('border','1px solid black');
+		$('#academic_link').css('padding','5px 6px');
+
+		var urlfetchimagelocation = 'http://core.aceambala.com/student/getimagename';
+        $.ajax({
+			url : urlfetchimagelocation,
+			data : {format : 'jsonp'},
+			dataType : 'jsonp',
+			success : function(jStatus){
+				if((jStatus == null) || (jStatus == false)|| (jStatus == undefined))
+					$('#student_img').attr('src','http://site.cdn.aceambala.com/images/memberimages/dummy.jpg');
+				else
+					$('#student_img').attr('src','http://site.cdn.aceambala.com/images/memberimages/'+jStatus);
+			},
+			error : function(response){
+
+			}
+        });
+		
+        var menu_ul = $('.menu > li > ul'),
+		menu_a  = $('.menu > li > a');
+
+        menu_ul.hide();
+    
+        menu_a.click(function(e) {
+			e.preventDefault();
+            if(!$(this).hasClass('active')) {
+                menu_a.removeClass('active');
+                menu_ul.filter(':visible').slideUp('normal');
+                $(this).addClass('active').next().stop(true,true).slideDown('normal');
+            } else {
+                $(this).removeClass('active');
+                $(this).next().stop(true,true).slideUp('normal');
+            }
+        });
+
+        $('.menu > li > a:first').click();
+        var path = $('.subitem1 > a').attr('href');
+        $('#content_frame').attr('src',path);
+    });
+	function hide_top()
+	{
+		$('iframe#content_frame').contents().find('div#topContent').hide();
+	}
+</script>
+
+<style type="text/css">
+	#page_content{
+    	float:left;
+		width:65%;
+    }
+	div#main{
+    	margin-top:10px;
+	}
+div#tpo_navigation{
+		background-color:#d6ebf2;
+		border:0.1em solid #97afb7;
+		border-radius:2px;
+		margin:10px 0;
+		padding:11px;
+	}
+	ul#list{
+		padding:5px 5px 5px 5px;
+		list-style: none outside none;
+    	margin: 0;
+	}
+	ul#list>li{
+		display:inline;
+		padding:5px 6px 5px 6px;
+	}
+	ul#list>li:hover{
+		display:inline;
+		padding:5px 5px 5px 5px;
+		background-color:#b3cdd6;
+		border: 1px solid black;
+	}
+	ul#list>li>a{
+		text-decoration:none;
+		color:black;
+	}
+	#tpo_img{
+		float:left;
+		border:1px solid grey;
+		border-radius:2px;
+		margin: -5px 10px 0 -3px;
+	}
+</style>
