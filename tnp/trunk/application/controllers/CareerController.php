@@ -291,6 +291,21 @@ class CareerController extends Zend_Controller_Action
                 break;
         }
     }
+    public function addjobAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function editjobAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
+    public function viewjobAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
+    }
     public function savejobAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
@@ -300,35 +315,37 @@ class CareerController extends Zend_Controller_Action
         $my_array = $params['myarray'];
         $job_info = $my_array['job_info'];
         $company_id = null;
-        if (! empty($job_info['company_id'])) {
-            $company_id = $job_info['company_id'];
-            $save['company_id'] = $company_id;
+        if (! empty($job_info['company_job_id'])) {
+            $company_job_id = $job_info['company_job_id'];
+            $save['company_job_id'] = $company_job_id;
         }
-        $save['company_name'] = $job_info['company_name'];
-        $save['field'] = $job_info['field'];
+        $save['company_id'] = $job_info['company_id'];
+        $save['job'] = $job_info['job'];
+        $save['eligibility_criteria'] = $job_info['eligibility_criteria'];
         $save['description'] = $job_info['description'];
-        $save['verified'] = $job_info['verified'];
+        $save['date_of_announcement'] = $job_info['date_of_announcement'];
+        $save['external'] = $job_info['external'];
         $format = $this->_getParam('format', 'log');
-        $company_id_gen = $this->save($save);
+        $company_job_id = $this->saveJob($save);
         switch ($format) {
             case 'jsonp':
                 $callback = $this->getRequest()->getParam('callback');
                 echo $callback . '(' .
-                 $this->_helper->json($company_id_gen, false) . ')';
+                 $this->_helper->json($company_job_id, false) . ')';
                 break;
             case 'json':
-                $this->_helper->json($company_id_gen);
+                $this->_helper->json($company_job_id);
                 break;
             case 'log':
                 Zend_Registry::get('logger')->debug('No format was provided..');
-                Zend_Registry::get('logger')->debug($company_id_gen);
+                Zend_Registry::get('logger')->debug($company_job_id);
                 break;
             default:
                 ;
                 break;
         }
     }
-    public function editjobAction ()
+    public function fetchjobinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
@@ -424,6 +441,11 @@ class CareerController extends Zend_Controller_Action
     {
         $company = new Tnp_Model_Company();
         return $company->saveInfo($company_info);
+    }
+    private function saveJob ($company_job_info)
+    {
+        $company_job = new Tnp_Model_CompanyJob();
+        return $company_job->saveInfo($company_job_info);
     }
 }
 
