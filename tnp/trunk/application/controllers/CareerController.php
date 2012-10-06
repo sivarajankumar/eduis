@@ -355,6 +355,7 @@ class CareerController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $company_job_id = $params['company_job_id'];
         $job_info = $this->fetchJobInfo($company_job_id);
+        $job_info['company_job_id'] = $company_job_id;
         $this->view->assign('job_info', $job_info);
     }
     public function viewjobAction ()
