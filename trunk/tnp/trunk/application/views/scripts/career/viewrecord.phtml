@@ -1,0 +1,247 @@
+<h2>Student Placement Record</h2>
+<form id="student_placement" class="uniForm" action="javascript:check_values()">
+	<div class="ctrlHolder">
+		<label for="company_id"><em>*</em>Company Name</label>
+		<select id="company_id" name="company_id" class="selectInput required">
+		
+		</select>
+		<p class="formHint">Name of the company conducting the recruitment</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="company_job_id"><em>*</em>Job</label>
+		<select id="company_job_id" name="company_job_id" class="selectInput required">
+		
+		</select>
+		<p class="formHint">Select the job</p>
+	</div>
+	
+	<input type="button" value="View Students" onclick="javascript:get_students();">
+</form>
+
+<div id="search_results">
+	<div class="heading">
+		<h4>Search Results</h4>
+	</div>
+	<div class="student_data" style="padding:5px;">
+	
+	</div>
+</div>
+
+<script type="text/javascript">
+
+    $(function(){
+    	$('#topContent').hide();
+    	$('#search_results').hide();
+
+    	var urlfetchcompanies = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanies'))?>";
+    	$.ajax({
+        	url : urlfetchcompanies,
+        	dataType : 'json',
+        	async : false,
+        	data : {format : 'json'},
+        	success : function(jStatus){
+				if(jStatus == false)
+				{
+					
+				}
+				else
+				{
+					var html = '<option value="">Please select company</option>';
+					
+					$.each(jStatus,function(company_id,company_name){
+						html += '<option value='+company_id+'>'+company_name+'</option>';
+					});
+					
+					$('select#company_id').html(html);
+				}
+        	},
+        	error : function(response){}
+        });
+        
+    	$('form.uniForm').uniform({
+    		prevent_submit : true
+    	});
+
+    	$('select#company_id').change(function(){
+			if($('select#company_id').val() != '')
+			{
+				var urlfetchjobs = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanyjobs'))?>";
+		    	$.ajax({
+		        	url : urlfetchjobs,
+		        	dataType : 'json',
+		        	async : false,
+		        	data : {
+						company_id : $('select#company_id').val(),
+			        	format : 'json'
+					},
+		        	success : function(jStatus){
+						if(jStatus == false)
+						{
+							alert("No job has been registered with this company. Click on Add Job option in the sidebar");
+						}
+						else
+						{
+							var html = '<option value="">Please select job</option>';
+							
+							$.each(jStatus,function(job_id,job_details){
+								html += '<option value='+job_id+'>'+job_details['job']+' ('+job_details['date_of_announcement']+')'+'</option>';
+							});
+							
+							$('select#company_job_id').html(html);
+						}
+		        	},
+		        	error : function(response){
+
+		        	}
+		        });
+			}
+			else{}
+    	});
+    });
+
+	function get_students()
+	{
+		var company_job_id = $('#company_job_id').val();
+		if(company_job_id == '' || company_job_id == null)
+		{
+			alert("Please fill all the columns");
+		}
+		else
+		{
+			var urlfetchmemberids = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchstudents'))?>";
+			$.ajax({
+				url : urlfetchmemberids,
+				data : {
+					company_job_id : company_job_id,
+					format : 'json'
+				},
+				async : false,
+				success : function(jStatus){
+					if(jStatus != false)
+					{
+						var rollnumbersarray = new Array();
+						$.each(jStatus,function(index,rollnumbers){
+							rollnumbersarray.push(rollnumbers);
+						});
+						fetchrollnumbers(rollnumbersarray,company_job_id);
+					}
+					else
+					{
+						$('.student_data').html("No students are placed in this job");
+						$('#search_results').show();
+					}
+				},
+				error : function(response){
+
+				}
+			});
+		}
+	}
+    
+	function fetchrollnumbers(data,company_job_id)
+	{
+		var urlfetchmemberids = "http://core.aceambala.com/search/fetchrollnumbers";
+		$.ajax({
+			url : urlfetchmemberids,
+			dataType : 'jsonp',
+			data : {myarray:data,format:'jsonp'},
+			async : false,
+			success : function(jStatus){
+				var html = "";
+				if(jStatus != false)
+				{
+					var html = "";
+					$.each(jStatus,function(member_id,roll_no){
+						
+						var urlfetchrecord = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchrecord'))?>";
+						$.ajax({
+							url : urlfetchrecord,
+							dataType : 'json',
+							data : {
+								myarray : {member_id : member_id, company_job_id : company_job_id},
+								format:'json'
+							},
+							async : false,
+							success : function(jStatus1){
+								if(jStatus1 != false)
+								{
+									html += '<div id="'+member_id+'" class="student_info">'+roll_no;
+									if(jStatus1['appeared'] == 1)
+										html += '&nbsp;&nbsp;Appeared';
+									if(jStatus1['selected'] == 1)
+										html += '&nbsp;&nbsp;Selected';
+									if(jStatus1['registered'] == 1)
+										html += '&nbsp;&nbsp;Registered';
+									//html += '&nbsp;&nbsp;Package Offered: '+jStatus1['package'];
+									html += '</div>';
+								}
+							},
+							error : function(response){}
+						});
+						
+					});
+					$('.student_data').html(html);
+					$('#search_results').show();
+				}
+			},
+			error : function(response){
+
+			}
+		});
+	}
+    
+    	
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		width:auto;
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		font-size:17px;
+		font-weight:100;
+		margin-top:2px;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+	.student_info {
+		padding:2px 0 2px 5px;
+		background-color: white;
+		border-radius:3px;
+		border:0.1em solid grey;
+	}
+	.heading {
+		background-color:#E1E1E1;
+	}
+	.heading > h4{
+		font-size: 1.1em;
+		margin-top:0px;
+		margin-bottom:10px;
+		padding:2px 0 2px 10px;
+	}
+	.search_field_div{
+		padding:2px;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>

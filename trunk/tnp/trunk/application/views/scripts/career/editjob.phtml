@@ -81,10 +81,7 @@
         	async : false,
         	data : {format : 'json'},
         	success : function(jStatus){
-				if(jStatus == false)
-				{
-					
-				}
+				if(jStatus == false){}
 				else
 				{
 					var html = '<option value="">Please select company</option>';
@@ -121,7 +118,8 @@
 		});
     	
     	data['job_info'] = job_info;
-
+		data['company_job_id'] = <?php echo $job_info['company_job_id']?>;
+    	
     	if($('input[name="external"]').is(':checked'))
     		job_info['external'] = 1;
 		else
@@ -131,7 +129,6 @@
     		url : urlSaveJobInfo,
     		data : {
         		myarray : data,
-        		format : 'json'
         	},
     		success: function(jStatus){
         		if(jStatus){

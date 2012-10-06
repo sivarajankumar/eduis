@@ -72,7 +72,7 @@
 								html += '<br><input type="button" value="Edit Job" onclick="change_location('+job_id+')">';
 							});
 							
-							$('div#job_info').append(html);
+							$('div#job_info').html(html);
 						}
 		        	},
 		        	error : function(response){}
