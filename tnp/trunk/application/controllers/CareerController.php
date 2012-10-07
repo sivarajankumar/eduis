@@ -131,6 +131,12 @@ class CareerController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $company_job_id = $params['company_job_id'];
+        $member_id = $params['member_id'];
+        $record_info = $this->fetchRecord($company_job_id, $member_id);
+        $this->view->assign('record_info', $record_info);
     }
     public function saverecordAction ()
     {
