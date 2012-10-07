@@ -243,8 +243,8 @@
                 	myarray : data,
 					format : 'json'
                 	},
-            success: function(jStatus){
-                submit_in_acad(data);
+            success: function(class_info){
+                submit_in_acad(class_info);
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
@@ -253,7 +253,7 @@
     	});
     }
 
-    function submit_in_acad(data)
+    function submit_in_acad(class_info)
     {
     	var urlSaveInfo = 'http://academic.aceambala.com/student/saveclassinfo';
         $.ajax({
@@ -261,11 +261,12 @@
             async : false,
             dataType : 'jsonp',
             data : {
-                	myarray : data,
+                	class_info : class_info,
 					format : 'jsonp'
                 	},
             success: function(jStatus){
-                submit_in_tnp(data);
+                if(jStatus == true)
+                	submit_in_tnp(class_info);
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
@@ -274,7 +275,7 @@
     	});
     }
 
-    function submit_in_tnp(data)
+    function submit_in_tnp(class_info)
     {
     	var urlSaveInfo = 'http://tnp.aceambala.com/student/saveclassinfo';
         $.ajax({
@@ -282,11 +283,11 @@
             async : false,
             dataType : 'jsonp',
             data : {
-                	myarray : data,
+            		class_info : class_info,
 					format : 'jsonp'
                 	},
             success: function(jStatus){
-				window.location.replace('/student/viewclassinfo');
+				window.parent.location.replace('/student/');
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
