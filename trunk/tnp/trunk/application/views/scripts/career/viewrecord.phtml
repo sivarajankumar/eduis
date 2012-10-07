@@ -66,13 +66,14 @@
     	$('select#company_id').change(function(){
 			if($('select#company_id').val() != '')
 			{
+				var company_id = $('select#company_id').val();
 				var urlfetchjobs = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanyjobs'))?>";
 		    	$.ajax({
 		        	url : urlfetchjobs,
 		        	dataType : 'json',
 		        	async : false,
 		        	data : {
-						company_id : $('select#company_id').val(),
+						company_id : company_id,
 			        	format : 'json'
 					},
 		        	success : function(jStatus){
@@ -160,7 +161,7 @@
 							dataType : 'json',
 							data : {
 								myarray : {member_id : member_id, company_job_id : company_job_id},
-								format:'json'
+								format : 'json'
 							},
 							async : false,
 							success : function(jStatus1){
@@ -174,7 +175,7 @@
 									if(jStatus1['registered'] == 1)
 										html += '&nbsp;&nbsp;Registered';
 									//html += '&nbsp;&nbsp;Package Offered: '+jStatus1['package'];
-									html += '&nbsp;&nbsp;<span class="link" onclick="change_location()">Click here to edit</span>';
+									html += '&nbsp;&nbsp;<span class="link" onclick="change_location('+member_id+','+company_job_id+')">Click here to edit</span>';
 									html += '</div>';
 								}
 							},
@@ -191,9 +192,11 @@
 			}
 		});
 	}
-	function change_location()
+	function change_location(member_id,company_job_id)
 	{
-		window.location.replace('');
+		var company_id = $('#company_id').val();
+		window.location.replace('/career/editrecord?member_id='+member_id+'&company_job_id='+company_job_id+'&company_id='+company_id);
+		//alert(member_id+'  '+company_job_id);
 	}
     
     	
