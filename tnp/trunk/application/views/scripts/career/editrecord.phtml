@@ -1,0 +1,242 @@
+<?php 
+	$record_info = $this->record_info;
+?>
+<h2>Student Placement Record</h2>
+<form id="student_placement" class="uniForm" action="javascript:submit_record()">
+	<fieldset id="placement_record">
+		
+		<div class="ctrlHolder">
+			<label for="company_id"><em>*</em>Company Name</label>
+			<select id="company_id" name="company_id" disabled="disabled" class="selectInput required">
+			
+			</select>
+			<p class="formHint">Name of the company conducting the recruitment</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="company_job_id"><em>*</em>Job</label>
+				<select id="company_job_id" name="company_job_id" disabled="disabled" class="selectInput required">
+				
+				</select>
+			<p class="formHint">Select the job</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="package"><em>*</em>Package offered for the job</label>
+			<input name="package" id="package" value="<?php echo $record_info['package']?>" data-default-value="e.g. 300000" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
+			<p class="formHint">Package offered for the job</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="drive_location"><em>*</em>Location of the Placement drive</label>
+			<input name="drive_location" id="drive_location" value="<?php echo $record_info['drive_location']?>" data-default-value="e.g. MM University, Mullana" size="35" maxlength="50" type="text" class="textInput required"/>
+			<p class="formHint">Place where the company visited</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="date_of_selection"><em>*</em>Date of Selection</label>
+			<input name="date_of_selection" id="date_of_selection" data-default-value="2011-04-04" value="<?php echo $record_info['date_of_selection']?>"  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
+			<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of start</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="appeared">Appeared</label>
+			<input type="checkbox" name="appeared" id="appeared"><br>
+			<p class="formHint">Whether the student appeared in drive</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="selected">Selected</label>
+			<input type="checkbox" name="selected" id="selected"><br>
+			<p class="formHint">Whether the student selected in drive</p>
+		</div>
+		
+		<div class="ctrlHolder">
+			<label for="registered">Registered</label>
+			<input type="checkbox" name="registered" id="registered"><br>
+			<p class="formHint">Whether the student registered in drive</p>
+		</div>
+		
+		<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
+		<div class="buttonHolder">
+			<button type="reset" class="secondaryAction">Reset</button>
+			<button type="submit" class="primaryAction">Next</button>
+		</div>				
+	</fieldset>
+</form>
+
+<script type="text/javascript">
+
+    $(function(){
+    	$('#topContent').hide();
+
+    	var urlfetchcompanies = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanies'))?>";
+    	$.ajax({
+        	url : urlfetchcompanies,
+        	dataType : 'json',
+        	async : false,
+        	data : {format : 'json'},
+        	success : function(jStatus){
+				if(jStatus == false){}
+				else
+				{
+					var html = '<option value="">Please select company</option>';
+					
+					$.each(jStatus,function(company_id,company_name){
+						html += '<option value='+company_id+'>'+company_name+'</option>';
+					});
+					
+					$('select#company_id').append(html);
+				}
+        	},
+        	error : function(response){
+
+        	}
+        });
+
+		$('#company_id').val('<?php echo $record_info['company_id']?>');
+        
+    	var urlfetchjobs = "<?php echo $this->url(array('controller' => 'career', 'action' => 'fetchcompanyjobs'))?>";
+    	$.ajax({
+        	url : urlfetchjobs,
+        	dataType : 'json',
+        	async : false,
+        	data : {
+				company_id : $('select#company_id').val(),
+	        	format : 'json'
+			},
+        	success : function(jStatus){
+				if(jStatus == false)
+				{
+					alert("No job has been registered with this company. Click on Add Job option in the sidebar");
+				}
+				else
+				{
+					var html = '<option value="">Please select job</option>';
+					
+					$.each(jStatus,function(job_id,job_details){
+						html += '<option value='+job_id+'>'+job_details['job']+' ('+job_details['date_of_announcement']+')'+'</option>';
+					});
+					
+					$('select#company_job_id').html(html);
+				}
+        	},
+        	error : function(response){
+
+        	}
+        });
+
+    	$('#company_job_id').val('<?php echo $record_info['company_job_id']?>');
+
+    	<?php 
+			if($record_info['appeared'] == '1'){
+				echo "$('#appeared').attr('checked',true);";
+			} 
+			if($record_info['selected'] == '1'){
+				echo "$('#selected').attr('checked',true);";
+			}
+			if($record_info['registered'] == '1'){
+				echo "$('#registered').attr('checked',true);";
+			}
+		?>
+		
+    	$('form.uniForm').uniform({
+    		prevent_submit : true
+    	});
+        
+    });
+    
+    serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
+    $("#date_of_selection").datepicker({
+    	dateFormat: 'yy-mm-dd',
+    	changeMonth: true,
+		changeYear: true,
+		yearRange: '-5:+5',
+		onClose : function(dateText, inst) {
+			this.focus();
+			}
+    });
+
+    function submit_record(){
+        var final_data = {};
+    	var student_job_info = {};
+    	var urlSaveJobInfo = "<?php echo $this->url(array('controller' => 'career', 'action' => 'saverecord'))?>";
+	
+		$('fieldset#placement_record :input')
+		.not('button')
+		.each(function(){
+			student_job_info[this.name] = this.value;
+		});
+    	
+    	if($('input[name="selected"]').is(':checked'))
+    		student_job_info['selected'] = 1;
+		else
+			student_job_info['selected'] = 0;
+
+    	if($('input[name="appeared"]').is(':checked'))
+    		student_job_info['appeared'] = 1;
+		else
+			student_job_info['appeared'] = 0;
+
+    	if($('input[name="registered"]').is(':checked'))
+    		student_job_info['registered'] = 1;
+		else
+			student_job_info['registered'] = 0;
+
+    	final_data['student_job_info'] = student_job_info;
+    	var member_ids = new Array();
+    	member_ids.push(<?php echo $_GET['member_id'];?>);
+    	final_data['member_ids'] = member_ids;
+    	
+    	$.ajax({
+    		url : urlSaveJobInfo,
+    		data : {
+        		myarray : final_data
+        	},
+    		success: function(jStatus){
+        		if(jStatus){
+            		alert(jStatus);
+        		}
+            },
+            error: function(response) {
+    			$('#errorBox').text(response.responseText).parent().show();
+    				console.log(response);
+    		}
+    	});
+    }
+    	
+</script>
+<style>
+	.uniForm{
+		background-color:white;
+		padding:10px 10px 10px 25px;
+		border:1px solid #b4c1da;
+		margin:-5px 0 40px 0;
+		box-shadow:#e4e4e4 0px 0px 1px 1px;
+		width:auto;
+	}
+	h2,h3{
+		padding:3px 3px 3px 10px;
+		background-color:#eceff4;
+		border:1px solid #b4c1da;
+		font-size:17px;
+		font-weight:100;
+		margin-top:2px;
+	}
+	#goback a{
+		float:right;
+		color:red;
+		font-size:14px;
+		text-decoration: none;
+	}
+</style>
+<?php
+$this->headScript()->appendFile('http://' . CDN_SERVER . '/plugins/uni-form/js/uni-form-validation.jquery.js');
+    
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/css/smooth.uni-form.css');
+$this->headLink()->prependStylesheet(
+'http://' . CDN_SERVER .  '/plugins/uni-form/demos/css/demo.css');
+?>
