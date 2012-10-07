@@ -231,7 +231,8 @@ class SearchController extends Zend_Controller_Action
         }
         $students_given = array();
         $selected_students = array();
-        if ($my_array['range_specified'] == 'true') {
+        if (! empty($my_array['range_specified']) and
+         ($my_array['range_specified'] == 'true')) {
             $from = $roll_numbers['lower'];
             $to = $roll_numbers['upper'];
             $students_given = range($from, $to);
