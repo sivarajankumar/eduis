@@ -26,7 +26,8 @@ class AuthenticateController extends Zend_Controller_Action
             if ($response->isError()) {
                 $remoteErr = 'ERROR from ' . AUTH_SERVER . ' : (' .
                  $response->getStatus() . ') ' . $response->getMessage() .
-                 ', i.e. ' . $response->getHeader('Message').$response->getBody();
+                 ', i.e. ' . $response->getHeader('Message') .
+                 $response->getBody();
                 throw new Zend_Exception($remoteErr, Zend_Log::ERR);
             } else {
                 $jsonContent = $response->getBody();
@@ -72,7 +73,8 @@ class AuthenticateController extends Zend_Controller_Action
                 if ($response->isError()) {
                     $remoteErr = $remoteErr = 'REMOTE ERROR: (' .
                      $response->getStatus() . ') ' . $response->getMessage() .
-                     ', i.e. ' . $response->getHeader('Message').$response->getBody();
+                     ', i.e. ' . $response->getHeader('Message') .
+                     $response->getBody();
                     throw new Zend_Exception($remoteErr, Zend_Log::ERR);
                 }
             } else {
@@ -96,5 +98,6 @@ class AuthenticateController extends Zend_Controller_Action
         Zend_Auth::getInstance()->clearIdentity();
         Zend_Session::destroy();
         Zend_Session::regenerateId();
+        $this->_redirect('http://auth.aceambala.com');
     }
 }

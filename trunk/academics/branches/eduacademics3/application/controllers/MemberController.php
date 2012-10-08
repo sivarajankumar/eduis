@@ -141,9 +141,10 @@ class MemberController extends Zend_Controller_Action
         $member->register($info);
         if ($this->_department_id == 'MGMT' or $this->_department_id == 'mgmt') {
             $this->_redirect('http://' . TNP_SERVER . '/admin');
-        }
-        if ($this->_user_type == 'stu' or $this->_user_type == 'STU') {
+        } elseif ($this->_user_type == 'stu' or $this->_user_type == 'STU') {
             $this->_redirect('/member/profile');
+        } else {
+            $this->_redirect('http://auth.aceambala.com');
         }
     }
     private function savePersonalInfo ($member_id, $profile_info)
