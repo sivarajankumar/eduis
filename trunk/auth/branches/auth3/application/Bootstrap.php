@@ -31,6 +31,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         // Define path to Academics server.
         defined('ACCOUNT_SERVER') ||
          define('ACCOUNT_SERVER', 'account.' . DOMAIN_NAME);
+        defined('TNP_SERVER') || define('TNP_SERVER', 'tnp.aceambala.com');
     }
     protected function _initViewBase ()
     {
@@ -38,8 +39,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $view = $this->getResource('View');
         $view->addHelperPath('ZendX/JQuery/View/Helper/', 
         'ZendX_JQuery_View_Helper');
-        $pages = new Zend_Config_Xml(APPLICATION_PATH . '/configs/navigation.xml', 
-        'nav');
+        $pages = new Zend_Config_Xml(
+        APPLICATION_PATH . '/configs/navigation.xml', 'nav');
         $container = new Zend_Navigation($pages);
         $view->navigation($container);
         //Set default document type.
