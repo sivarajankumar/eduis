@@ -18,7 +18,7 @@
                     echo '<tr>';
                         echo '<td>';
                         echo '<span id="heading">Batch Year</span><span id="content">'.$key.'</span><br><span id="heading">Roll Number</span><span id="content">'.$value.'</span><br>';
-                        echo '<input type="button" value="Edit" onclick = "window.location.replace('."'".'/student/editclassinfo?class_id='.$batch_class[$key]."'".')"> ';
+                        echo '<input type="button" value="Edit" onclick = "window.location.replace('."'".'/student/editclassinfo?batch_start='.$key."'".')"> ';
                         echo ' <input type="button" value="Delete" onclick = "window.location.replace('."'".'/student/deleteclassinfo?class_id='.$batch_class[$key]."'".')">';
                         echo '</td>';
                     echo '</tr>';
