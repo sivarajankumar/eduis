@@ -40,30 +40,20 @@
 	    {
 	        echo '<h4>Please check the semester in which you are enrolled</h4>';
 	        echo '<h4>Note : Please donot select the semesters in which you are not enrolled. This information cannot be edited at later stage. If you make any mistake you have to contact your respective HOD.</h4>';
-	        
-    	    foreach ($class_info['semsters_added'] as $i)
-            {
-                echo '<div class="ctrlHolder">';
-    		    echo '<label for="sem_'.$i.'"></label>';
-    		    echo 'Semester '.$i.'<input name="sem_'.$i.'" id="sem_'.$i.'" size="35" maxlength="50" type="checkbox" class="checkbox"/>';
-    		    echo '<p class="formHint">Click if you are enrolled in semester '.$i.'</p>';
-                echo '</div>';
-            }
 	    }
 	    else
 	    {
 	        echo '<h4>Please check the semester in which you are enrolled</h4>';
 	        echo '<h4>Note : Please be carefull while filling this form. Deselecting on a semster in which a student is already enrolled may delete all of his information.</h4>';
-	        
-	        for($i=1;$i<=8;$i++)
-	        {
-                echo '<div class="ctrlHolder">';
-    		    echo '<label for="sem_'.$i.'"></label>';
-    		    echo 'Semester '.$i.'<input name="sem_'.$i.'" id="sem_'.$i.'" size="35" maxlength="50" type="checkbox" class="checkbox"/>';
-    		    echo '<p class="formHint">Click if you are enrolled in semester '.$i.'</p>';
-                echo '</div>';
-	        }
 	    }
+	    for($i=1;$i<=8;$i++)
+        {
+            echo '<div class="ctrlHolder">';
+		    echo '<label for="sem_'.$i.'"></label>';
+		    echo 'Semester '.$i.'<input name="sem_'.$i.'" id="sem_'.$i.'" size="35" maxlength="50" type="checkbox" class="checkbox"/>';
+		    echo '<p class="formHint">Click if you are enrolled in semester '.$i.'</p>';
+            echo '</div>';
+        }
     ?><br>
 	
 
@@ -123,6 +113,11 @@
 		    {
                 echo "$('#sem_".$i."').attr('checked',true);";   
 		    }
+		    
+		    if($usertype == 'STU')
+    	    {
+    	        echo "$('#sem_".$i."').attr('readonly','readonly');";
+    	    }
 		?>
 	});
 	
@@ -144,7 +139,27 @@
         		semesters_added.push(i);
     	}
     	class_info['semesters_added'] = semesters_added;
-    	class_info['semesters_deleted'] = false;
+
+    	<?php 
+    	if($usertype == 'STU')
+	    {
+	        echo "class_info['semesters_deleted'] = false;";
+	    }
+	    else
+	    {
+	        foreach ($class_info['semesters_added'] as $value)
+	        {
+                echo "if(!$('sem_".$value."').is(':checked'))";
+                echo '{';
+                    echo 'var semesters_deleted = new Array();';
+                    echo 'semesters_deleted.push('.$value.');';
+                echo '}';
+                
+                echo "class_info['semesters_deleted'] = semesters_deleted;";
+	        }
+	    }
+	    ?>
+    	
 		
     	return class_info;
 	}
