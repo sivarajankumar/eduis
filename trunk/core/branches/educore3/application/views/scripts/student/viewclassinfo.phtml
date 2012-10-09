@@ -2,6 +2,7 @@
     $departments = array('BT' => 'Biotechnology', 'CSE' => 'Computer Science', 'MECH' => 'Mechanical', 'ECE' => 'Electronics and Communication');
     $department_id = $this->department_id;
     $student_class_info = $this->student_class_info;
+    $batch_class=$this->batch_class;
 ?>
 
 <div class="ui-state-hover"><center><H3>Class Information</H3></center></div>
@@ -14,7 +15,13 @@
 		    if($student_class_info != false)
 		    {
                 foreach ($student_class_info as $key => $value) {
-                    echo '<tr><td><span id="heading">Batch Year</span><span id="content">'.$key.'</span><br><span id="heading">Roll Number</span><span id="content">'.$value.'</span></td></tr>';
+                    echo '<tr>';
+                        echo '<td>';
+                        echo '<span id="heading">Batch Year</span><span id="content">'.$key.'</span><br><span id="heading">Roll Number</span><span id="content">'.$value.'</span><br>';
+                        echo '<input type="button" value="Edit" onclick = "window.location.replace('."'".'/student/editclassinfo?class_id='.$batch_class[$key]."'".')"> ';
+                        echo ' <input type="button" value="Delete" onclick = "window.location.replace('."'".'/student/deleteclassinfo?class_id='.$batch_class[$key]."'".')">';
+                        echo '</td>';
+                    echo '</tr>';
                 }
 		    }
         ?>

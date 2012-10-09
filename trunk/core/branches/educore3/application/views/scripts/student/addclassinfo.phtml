@@ -1,17 +1,3 @@
-<?php 
-    $class_info = $this->class_info;
-    
-    $CSE = array('A1','A2','A3');
-    $ECE = array('B1','B2','B3');
-    $BT = array('C1','C2','C3');
-    $MECH = array('D1','D2','D3');
-    
-    if(Zend_Auth::getInstance()->hasIdentity()){
-		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
-		$usertype=$authInfo['userType'];
-	}
-?>
-
 <h2>Class Information:</h2>
 
 <form action="javascript:submit_info_in_core()" class="uniForm">
@@ -19,68 +5,64 @@
 
 	<div class="ctrlHolder">
 		<label for="department_id"><em>*</em>Department</label>
-		<input name="department_id" id="department_id" value="<?php echo $class_info['department_id']?>" readonly="readonly" size="35" disabled="disabled" maxlength="50" type="text" class="textInput required" />
-		<p class="formHint">Your Trade</p>
+		<select id="department_id" name="department_id" class="required">
+			<option value="">Please select the department</option>
+			<option value="CSE">Computer Science</option>
+			<option value="ECE">Electronics and Communication</option>
+			<option value="MECH">Mechanical</option>
+			<option value="BT">Biotechnology</option>
+		</select>
+		<p class="formHint">Select Department</p>
 	</div>
 
 	<div class="ctrlHolder">
 		<label for="programme_id"><em>*</em>Programme</label>
-		<input name="programme_id" id="programme_id" value="<?php echo $class_info['programme_id']?>" readonly="readonly" size="35" disabled="disabled" maxlength="50" type="text" class="textInput required" />
+		<select id="programme_id" name="programme_id" class="required">
+			<option value="">Select the programme</option>
+		</select>
 		<p class="formHint">Select the programme</p>
 	</div>
-	
+
 	<div class="ctrlHolder">
 		<label for="batch_start"><em>*</em>Batch Start</label>
-		<input name="batch_start" id="batch_start" value="<?php echo $class_info['batch_start']?>" readonly="readonly" size="35" disabled="disabled" maxlength="50" type="text" class="textInput required" />
+		<select id="batch_start" name="batch_start" class="required">
+			<option value="">Select the year</option>
+			<?php
+			    $current_year = intval(date('Y'));
+			    for($i=2002;$i<=$current_year;$i++)
+			    {
+			        echo '<option value="'.$i.'">'.$i.'</option>';
+			    }
+			?>
+		</select>
 		<p class="formHint">Select the starting year of the batch</p>
 	</div>
+
+	<h4>Please check the semester in which you are enrolled</h4>
+	<h4>Note : Please donot select the semesters in which you are not enrolled. This information cannot be edited at later stage. If you make any mistake you have to contact your respective HOD's.</h4>
 	
-	<?php
-	    if($usertype == 'STU')
-	    {
-	        echo '<h4>Please check the semester in which you are enrolled</h4>';
-	        echo '<h4>Note : Please donot select the semesters in which you are not enrolled. This information cannot be edited at later stage. If you make any mistake you have to contact your respective HOD.</h4>';
-	        
-    	    foreach ($class_info['semsters_added'] as $i)
-            {
-                echo '<div class="ctrlHolder">';
-    		    echo '<label for="sem_'.$i.'"></label>';
-    		    echo 'Semester '.$i.'<input name="sem_'.$i.'" id="sem_'.$i.'" size="35" maxlength="50" type="checkbox" class="checkbox"/>';
-    		    echo '<p class="formHint">Click if you are enrolled in semester '.$i.'</p>';
-                echo '</div>';
-            }
-	    }
-	    else
-	    {
-	        echo '<h4>Please check the semester in which you are enrolled</h4>';
-	        echo '<h4>Note : Please be carefull while filling this form. Deselecting on a semster in which a student is already enrolled may delete all of his information.</h4>';
-	        
-	        for($i=1;$i<=8;$i++)
-	        {
-                echo '<div class="ctrlHolder">';
-    		    echo '<label for="sem_'.$i.'"></label>';
-    		    echo 'Semester '.$i.'<input name="sem_'.$i.'" id="sem_'.$i.'" size="35" maxlength="50" type="checkbox" class="checkbox"/>';
-    		    echo '<p class="formHint">Click if you are enrolled in semester '.$i.'</p>';
-                echo '</div>';
-	        }
-	    }
+	<?php 
+	    for($i=1;$i<=8;$i++)
+        {
+            echo '<div class="ctrlHolder">';
+		    echo '<label for="sem_'.$i.'"></label>';
+		    echo 'Semester '.$i.'<input name="sem_'.$i.'" id="sem_'.$i.'" size="35" maxlength="50" type="checkbox" class="checkbox"/>';
+		    echo '<p class="formHint">Click if you are enrolled in semester '.$i.'</p>';
+            echo '</div>';
+        }
     ?><br>
 	
 
 	<div class="ctrlHolder">
 		<label for="group_id"><em>*</em>Group</label>
 		<select id="group_id" name="group_id" class="selectInput required">
-			<?php 
-			    foreach ($$class_info['department_id'] as $value) {
-			        echo '<option value="'.$value.'">'.$value.'</option>';
-			    }
-			?>
+			
 		</select>
 		<p class="formHint">Select Your Group</p>
 	</div>
 
 	<div class="ctrlHolder"><label for="roll_no"><em>*</em>Roll number</label>
-		<input name="roll_no" id="roll_no" value="<?php echo $class_info['roll_number'];?>" data-default-value="e.g. 2308015" size="35" maxlength="50" type="text" class="textInput required validateInteger" />
+		<input name="roll_no" id="roll_no" data-default-value="e.g. 2308015" size="35" maxlength="50" type="text" class="textInput required validateInteger" />
 		<p class="formHint">Enter your University Roll Number</p>
 	</div>
 	</fieldset>
@@ -115,15 +97,45 @@
     			console.log(response);
     		}
 		});
+	});
 
-		$('#group_id').val('<?php echo $class_info['group_id']?>');
+	$('#department_id').change(function(){
+		if($('#department_id').val() == 'CSE')
+		{
+			var html = '<option value=A1>A1</option>'+
+						'<option value=A2>A2</option>'+
+						'<option value=A3>A3</option>';
 
-		<?php 
-		    foreach ($class_info['semsters_added'] as $i)
-		    {
-                echo "$('#sem_".$i."').attr('checked',true);";   
-		    }
-		?>
+			$('select#group_id').html(html);
+		}
+		else if($('#department_id').val() == 'ME')
+		{
+			var html = '<option value=D1>D1</option>'+
+            			'<option value=D2>D2</option>'+
+            			'<option value=D3>D3</option>';
+
+			$('select#group_id').html(html);
+		}
+		else if($('#department_id').val() == 'ECE')
+		{
+			var html = '<option value=B1>B1</option>'+
+            			'<option value=B2>B2</option>'+
+            			'<option value=B3>B3</option>';
+
+			$('select#group_id').html(html);
+		}
+		else if($('#department_id').val() == 'BT')
+		{
+			var html = '<option value=C1>C1</option>'+
+            			'<option value=C2>C2</option>'+
+            			'<option value=C3>C3</option>';
+
+			$('select#group_id').html(html);
+		}
+		else
+		{
+			$('select#group_id').html('');
+		}
 	});
 	
 	function get_params()
