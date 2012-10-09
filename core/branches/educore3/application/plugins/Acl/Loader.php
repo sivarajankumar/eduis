@@ -91,7 +91,7 @@ class Core_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
                 $this->getRequest()->getParams(), 
                 $this->getRequest()->getUserParams());
                 self::getLogger()->debug(
-                'Redirecting to "' . self::AUTH_URL . '", redirecting core from');
+                'Redirecting to "' . self::AUTH_URL . '", redirecting from');
                 self::getLogger()->debug($remoteAcl->redirectedFrom);
                 $this->getResponse()->setRedirect(self::AUTH_URL, 303);
                 return;
@@ -184,6 +184,8 @@ class Core_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
                 Zend_Registry::get('logger')->debug(
                 '$_COOKIE["Last"] is not set');
             }
+            $this->getResponse()->setRedirect(
+            'http://auth.aceambala.com/authenticate');
         }
         if (isset($authContent['acl'])) {
             $userAcl = $authContent['acl'];
@@ -198,9 +200,10 @@ class Core_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
                     } else {
                         if ('development' != strtolower(APPLICATION_ENV)) {
                             throw new Exception(
-                            'ACL denied "' . str_ireplace('_', '/', 
-                            $reqResource) . '" to ' . $authContent['identity'] .
-                             ' at ' . $_SERVER['REMOTE_ADDR'], Zend_Log::ALERT);
+                            'ACL denied "' .
+                             str_ireplace('_', '/', $reqResource) . '" to ' .
+                             $authContent['identity'] . ' at ' .
+                             $_SERVER['REMOTE_ADDR'], Zend_Log::ALERT);
                         }
                         Zend_Registry::get('logger')->notice(
                         'ACL ERROR: BLOCKED BY ACL. BUT FUNCTIONAL DUE TO DEVELOPMENT ENV.');
