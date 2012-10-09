@@ -552,8 +552,11 @@ class StudentController extends Zend_Controller_Action
             $raw_class_info = array();
             foreach ($class_ids as $class_id) {
                 $info = $this->findStuClassInfo($member_id, $class_id);
+                Zend_Registry::get('logger')->debug($info);
                 $class_info = $this->findClassInfo($class_id);
                 $batch_id = $class_info['class_info']['batch_id'];
+                $semester_id = $class_info['class_info']['semester_id'];
+                $department = $class_info['class_info']['handled_by_dept'];
                 $raw_class_info[$batch_id] = $info['roll_no'];
             }
             $stu_class_info = array();
@@ -567,6 +570,11 @@ class StudentController extends Zend_Controller_Action
             Zend_Registry::get('logger')->debug($stu_class_info);
             $this->view->assign('student_class_info', $stu_class_info);
         }
+    }
+    public function addclassinfoAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->enableLayout();
     }
     public function editclassinfoAction ()
     {
@@ -590,10 +598,42 @@ class StudentController extends Zend_Controller_Action
             $member_id = $params['member_id'];
         }
         $my_array = $params['myarray'];
-        $student_class_info = $my_array['class_info'];
-        $this->saveClassInfo($member_id, $student_class_info);
+        $class_info = $my_array['class_info'];
+        $department_id = $class_info['department_id'];
+        $programme_id = $class_info['programme_id'];
+        $batch_start = $class_info['batch_start'];
+        $roll_no = $class_info['roll_no'];
+        $group_id = $class_info['group_id'];
+        $semesters = array();
+        $enrolled = array();
+        $removed = array();
+        if (! empty($class_info['semesters_added'])) {
+            $enrolled = $class_info['semesters_added'];
+        }
+        if (is_array($class_info['semesters_deleted']) and
+         ! empty($class_info['semesters_deleted'])) {
+            $removed = $class_info['semesters_deleted'];
+        }
+        $semesters = array_merge($enrolled, $removed);
+        $batch_ids = $this->findBatchId($batch_start, $department_id, 
+        $programme_id);
+        $batch_id = $batch_ids[0];
+        $class_ids = array();
+        foreach ($semesters as $semester_id) {
+            $result = $this->findClassId($batch_id, $semester_id);
+            $class_ids[] = $result[0];
+        }
+        $student_class_info = array('roll_no' => $roll_no, 
+        'group_id' => $group_id);
+        foreach ($class_ids as $class_id) {
+            $student_class_info['class_id'] = $class_id;
+            $this->saveClassInfo($member_id, $student_class_info);
+        }
         $format = $this->_getParam('format', 'log');
         $student_class_info['member_id'] = $member_id;
+        unset($student_class_info['class_id']);
+        $student_class_info['class_ids'] = $class_ids;
+        Zend_Registry::get('logger')->debug($student_class_info);
         switch ($format) {
             case 'html':
                 $this->_helper->viewRenderer->setNoRender(false);
@@ -1207,6 +1247,45 @@ class StudentController extends Zend_Controller_Action
             $jsonContent = $response->getBody($response);
             $class_info = Zend_Json::decode($jsonContent);
             return $class_info;
+        }
+    }
+    private function findClassId ($batch_id, $semester_id)
+    {
+        $httpClient = new Zend_Http_Client();
+        $httpClient->setUri('http://' . CORE_SERVER . '/class/getclassids');
+        $httpClient->setMethod('POST');
+        $httpClient->setParameterPost(
+        array(
+        'myarray' => array(
+        'class_finder' => array('batch_id' => $batch_id, 
+        'semester_id' => $semester_id)), 'format' => 'json'));
+        $response = $httpClient->request();
+        if ($response->isError()) {
+            $class_ids = false;
+        } else {
+            $jsonContent = $response->getBody($response);
+            $class_ids = Zend_Json::decode($jsonContent);
+            return $class_ids;
+        }
+    }
+    private function findBatchId ($batch_start, $department_id, $programme_id)
+    {
+        $httpClient = new Zend_Http_Client();
+        $httpClient->setUri('http://' . CORE_SERVER . '/batch/getbatchids');
+        $httpClient->setMethod('POST');
+        $httpClient->setParameterPost(
+        array(
+        'myarray' => array(
+        'batch_params' => array('department_id' => $department_id, 
+        'programme_id' => $programme_id, 'batch_start' => $batch_start)), 
+        'format' => 'json'));
+        $response = $httpClient->request();
+        if ($response->isError()) {
+            $batch_ids = false;
+        } else {
+            $jsonContent = $response->getBody($response);
+            $batch_ids = Zend_Json::decode($jsonContent);
+            return $batch_ids;
         }
     }
     private function findBatchInfo ($batch_id)

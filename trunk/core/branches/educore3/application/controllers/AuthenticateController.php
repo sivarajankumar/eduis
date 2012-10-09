@@ -31,6 +31,7 @@ class AuthenticateController extends Zend_Controller_Action
                 throw new Zend_Exception($remoteErr, Zend_Log::ERR);
             } else {
                 $jsonContent = $response->getBody();
+                //throw new Zend_Exception($jsonContent, Zend_Log::ERR);
                 $userInfo = Zend_Json_Decoder::decode($jsonContent);
                 if (! count($userInfo)) {
                     throw new Zend_Exception('No privileges found.', 

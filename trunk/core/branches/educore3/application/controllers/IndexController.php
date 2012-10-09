@@ -77,9 +77,15 @@ class IndexController extends Zend_Controller_Action
     }
     public function indexAction ()
     {
-        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
         $this->_redirect('/member/');
+    }
+    public function bounceAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $this->_redirect('http://' . AUTH_SERVER . '/index/markacad');
     }
 }
 ?>
