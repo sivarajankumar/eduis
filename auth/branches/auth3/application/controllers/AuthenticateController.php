@@ -60,7 +60,7 @@ class AuthenticateController extends Zend_Controller_Action
                 $lastLogin->setExpirationHops(1, null, 1);
                 $authAcl = new Zend_Session_Namespace('authAcl');
                 $authAcl->authId = $userName;
-                $this->_helper->redirector('index', 'index');
+                $this->_helper->redirector('markauth', 'index');
                 return;
             default:
                 /** do stuff for other failure **/

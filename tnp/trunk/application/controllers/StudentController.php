@@ -125,9 +125,15 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $class_info = $params['class_info'];
-        $class_id = $class_info['class_id'];
+        $class_ids = $class_info['class_ids'];
         $member_id = $class_info['member_id'];
-        $this->saveClassInfo($member_id, $class_info);
+        $student_class_info['member_id'] = $class_info['member_id'];
+        $student_class_info['roll_no'] = $class_info['roll_no'];
+        $student_class_info['group_id'] = $class_info['group_id'];
+        foreach ($class_ids as $class_id) {
+            $student_class_info['class_id'] = $class_id;
+            $this->saveClassInfo($member_id, $student_class_info);
+        }
         $format = $this->_getParam('format', 'log');
         switch ($format) {
             case 'jsonp':
@@ -629,7 +635,7 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $languages = $this->fetchLanguages();
-        Zend_Registry::get('logger')->debug($languages);
+        /*Zend_Registry::get('logger')->debug($languages);*/
         $this->view->assign('languages', $languages);
     }
     public function addcocurricularAction ()
@@ -750,7 +756,7 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $functional_areas = $this->fetchFunctionalAreas();
-        Zend_Registry::get('logger')->debug($functional_areas);
+        /*Zend_Registry::get('logger')->debug($functional_areas);*/
         $this->view->assign('functional_areas', $functional_areas);
     }
     public function addcertificationinfoAction ()
@@ -761,8 +767,8 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $functional_areas = $this->fetchFunctionalAreas();
         $certifications = $this->fetchCertifications();
-        Zend_Registry::get('logger')->debug($certifications);
-        Zend_Registry::get('logger')->debug($functional_areas);
+        /*Zend_Registry::get('logger')->debug($certifications);
+        Zend_Registry::get('logger')->debug($functional_areas);*/
         $this->view->assign('functional_areas', $functional_areas);
         $this->view->assign('certifications', $certifications);
     }

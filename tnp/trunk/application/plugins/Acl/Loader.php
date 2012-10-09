@@ -168,7 +168,7 @@ class Tnp_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
     {
         $request = $this->_request;
         $authContent = Zend_Auth::getInstance()->getStorage()->read();
-        Zend_Registry::get('logger')->debug($authContent);
+        //Zend_Registry::get('logger')->debug($authContent);
         if (isset($_COOKIE['last'])) {
             if ($_COOKIE['last'] != $authContent['last']) {
                 if ('production' == strtolower(APPLICATION_ENV)) {
@@ -196,10 +196,6 @@ class Tnp_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
                 $request->getModuleName() . '_' . $request->getControllerName() .
                  '_' . $request->getActionName());
                 if ($userAcl->has($reqResource)) {
-                    Zend_Registry::get('logger')->debug($userAcl->getRoles());
-                    Zend_Registry::get('logger')->debug(
-                    $authContent['identity']);
-                    Zend_Registry::get('logger')->debug($reqResource);
                     if ($userAcl->isAllowed($authContent['identity'], 
                     $reqResource)) {
                         return true;

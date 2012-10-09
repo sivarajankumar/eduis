@@ -7,6 +7,36 @@
  */
 class StudentController extends Zend_Controller_Action
 {
+    public function aclconfigAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $db = new Zend_Db_Table();
+        $qry = 'SELECT
+  `action_id`,
+  `controller_id`
+FROM `academics`.`mod_role_resource`';
+        $actions = $db->getAdapter()
+            ->query($qry)
+            ->fetchAll();
+        /*echo "<pre>";
+        print_r($actions);
+        echo "</pre>";*/
+        $delete2 = 'DELETE FROM `academics`.`mod_role_resource` WHERE `role_id`=?';
+        $db->getAdapter()->query($delete2, array('faculty'));
+        $sql = 'INSERT INTO `academics`.`mod_role_resource`(`role_id`,`module_id`,`controller_id`,`action_id`) VALUES (?,?,?,?)';
+        foreach ($actions as $row) {
+            $bind = array('faculty', 'academic', $row['controller_id'], 
+            $row['action_id']);
+            $db->getAdapter()->query($sql, $bind);
+        }
+        /*foreach ($actions as $action) {
+            echo '<pre>';
+            print_r($action);
+            echo '</pre>';
+        }
+        Zend_Registry::get('logger')->debug($actions);*/
+    }
     /**
      * 
      * @var int
@@ -131,11 +161,19 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $class_info = $params['class_info'];
-        $class_id = $class_info['class_id'];
+        $class_ids = $class_info['class_ids'];
         $member_id = $class_info['member_id'];
-        $this->saveClassInfo($member_id, $class_info);
-        $subject_ids = $this->findClassSubjects($class_id);
-        $this->assignSubjects($member_id, $class_id, $subject_ids);
+        $student_class_info['member_id'] = $class_info['member_id'];
+        $student_class_info['roll_no'] = $class_info['roll_no'];
+        $student_class_info['group_id'] = $class_info['group_id'];
+        foreach ($class_ids as $class_id) {
+            $student_class_info['class_id'] = $class_id;
+            $this->saveClassInfo($member_id, $student_class_info);
+        }
+        foreach ($class_ids as $class_id) {
+            $subject_ids = $this->findClassSubjects($class_id);
+            $this->assignSubjects($member_id, $class_id, $subject_ids);
+        }
         $format = $this->_getParam('format', 'log');
         switch ($format) {
             case 'jsonp':
