@@ -1,6 +1,6 @@
 <?php
 /**
- * @category   Auth
+ * @category   Tnp
  * @package    Plugin_Acl
  * @subpackage Loader
  * @copyright  Copyright (c) 2009-2010 HeAvi
@@ -206,10 +206,9 @@ class Tnp_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
                     } else {
                         if ('development' != strtolower(APPLICATION_ENV)) {
                             throw new Exception(
-                            'ACL denied "' .
-                             str_ireplace('_', '/', $reqResource) . '" to ' .
-                             $authContent['identity'] . ' at ' .
-                             $_SERVER['REMOTE_ADDR'], Zend_Log::ALERT);
+                            'ACL denied "' . str_ireplace('_', '/', 
+                            $reqResource) . '" to ' . $authContent['identity'] .
+                             ' at ' . $_SERVER['REMOTE_ADDR'], Zend_Log::ALERT);
                         }
                         Zend_Registry::get('logger')->notice(
                         'ACL ERROR: BLOCKED BY ACL. BUT FUNCTIONAL DUE TO DEVELOPMENT ENV.');
