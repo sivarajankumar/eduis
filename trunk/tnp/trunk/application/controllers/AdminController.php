@@ -78,6 +78,9 @@ class AdminController extends Zend_Controller_Action
             $this->setUser_name($authInfo['identity']);
             $this->setUser_type($authInfo['userType']);
             $this->setMember_id($authInfo['member_id']);
+            /*if ($authInfo['userType'] == 'STU' or $authInfo['userType'] == 'stu') {
+                $this->_redirect('/member/');
+            }*/
         }
     }
     public function viewstudentprofileAction ()

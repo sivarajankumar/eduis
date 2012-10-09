@@ -2,38 +2,34 @@
 <html>
 
 <head>
-<?php 
+<?php
 $baseTheme = 'ui-lightness';
 // Various Servers and Addresses
-$baseUrl = $this->baseUrl ();
+$baseUrl = $this->baseUrl();
 // Content Delievery Server i.e. static Files, e.g. CSS, JS, Themes and related images etc
-$cdnServer = 'http://'.CDN_SERVER;
+$cdnServer = 'http://' . CDN_SERVER;
 // Images of users, events etc
 $imageServer = $baseUrl;
-
 // Add most common CSS files
-$this->headLink()->prependStylesheet($cdnServer . '/css/layouts/login/default.css');
+$this->headLink()->prependStylesheet(
+$cdnServer . '/css/layouts/login/default.css');
 //Jquery UI Theme
-$this->jQuery ()->addStylesheet ( $cdnServer . '/css/themes/jqueryui/'.$baseTheme.'/jquery-ui.css' );
-
+$this->jQuery()->addStylesheet(
+$cdnServer . '/css/themes/jqueryui/' . $baseTheme . '/jquery-ui.css');
 // Add most common Script files
-$this->headScript()->prependFile($cdnServer . '/js/plugins/jquery.hoverIntent.minified.js');
-
+$this->headScript()->prependFile(
+$cdnServer . '/js/plugins/jquery.hoverIntent.minified.js');
 // Add most common Script files
-$this->headLink()
-    ->appendStylesheet($cdnServer . '/css/menu/stylesheet.css');
-
+$this->headLink()->appendStylesheet($cdnServer . '/css/menu/stylesheet.css');
 // Jquery
-$this->jQuery ()->setLocalPath ( $cdnServer . '/js/jquery-1.6.2.min.js' );
+$this->jQuery()->setLocalPath($cdnServer . '/js/jquery-1.6.2.min.js');
 // Jquery UI
-$this->jQuery ()->setUiLocalPath ( $cdnServer . '/js/jquery-ui-1.8.16.custom.min.js' );
-
-
+$this->jQuery()->setUiLocalPath(
+$cdnServer . '/js/jquery-ui-1.8.16.custom.min.js');
 echo $this->headMeta();
-echo $this->headTitle (); 
-echo $this->headLink ();
-echo $this->jQuery ()->uiEnable ();
-
+echo $this->headTitle();
+echo $this->headLink();
+echo $this->jQuery()->uiEnable();
 /*
  * set body color by -> style="background-image: url('<?php $cdnServer; ?>/css/themes/jqueryui/<?php echo $baseTheme;?>/images/ui-bg_glass_100_fdf5ce_1x400.png');"
  */
@@ -42,38 +38,58 @@ echo $this->jQuery ()->uiEnable ();
 </head>
 
 <body>
-<div id="topContent" >
-<span id="topRightInfo">
-<span style="float: left;" class="ui-state-default ui-corner-bottom">Today&rsquo;s date: <span id="datetext"><?php $date = new Zend_Date(); echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span>
-<?php if (Zend_Auth::getInstance()->hasIdentity()) {
-    $authContent = Zend_Auth::getInstance()->getStorage ()->read ();
-    if ($authContent['identity'] != Authz_Resource_Acl_Guest::GUEST_ID) { ?>
-	<span style="float: left;" class="ui-state-default ui-corner-bottom">Hi! <span id="userName"><?php echo $authContent['identity'];?></span></span>
-	<span style="width: 4.8em; float: left; " class="ui-state-default ui-corner-bottom">
-	<a style="float: left; text-decoration: none;"  id="logout" href="<?php echo $this->url ( array ( 'controller' =>'authenticate', 'action' => 'logout' ), 'default' )?>">
-	<span style="float: left;">Logout</span><span class="ui-icon ui-icon-closethick ui-corner-br" style="float: left; margin:0 -0.2em 0 0;"></span></a>
-	</span> 
-	<?php }?>
-<?php }?>
+<div id="topContent"><span id="topRightInfo">
+<?php
+if (Zend_Auth::getInstance()->hasIdentity()) {
+    $authContent = Zend_Auth::getInstance()->getStorage()->read();
+    if ($authContent['identity'] != Authz_Resource_Acl_Guest::GUEST_ID) {
+        ?>
+	<span style="float: left;" class="ui-state-default ui-corner-bottom">Hi!
+<span id="userName"><?php
+        echo $authContent['identity'];
+        ?></span></span>
+<span style="width: 4.8em; float: left;"
+	class="ui-state-default ui-corner-bottom"> <a
+	style="float: left; text-decoration: none;" id="logout"
+	href="<?php
+        echo $this->url(
+        array('controller' => 'authenticate', 'action' => 'logout'), 'default')?>">
+<span style="float: left;">Logout</span><span
+	class="ui-icon ui-icon-closethick ui-corner-br"
+	style="float: left; margin: 0 -0.2em 0 0;"></span></a> </span> 
+	<?php
+    } else {
+        echo '<a href="/authenticate"><b> Sign in </b></a>';
+    }
+    ?>
+<?php
+}
+?><span style="float: right;"
+	class="ui-state-default ui-corner-bottom">Today is : <span
+	id="datetext"><?php
+$date = new Zend_Date();
+echo $date->get(Zend_Date::DATE_MEDIUM)?></span></span> </span>
 
-</span>
-
-<div id="header" >
-<?php 
-echo $this->applicationLogo('smoothness','Ambala College of Engineering')?>
+<div id="header">
+<?php
+echo $this->applicationLogo('smoothness', 'Ambala College of Engineering')?>
 
 <div id="divTopNav">
 <div id="nav"><?php
-echo $this->navigation()->menu();?>
+echo $this->navigation()->menu();
+?>
 </div>
 </div>
 </div>
 </div>
 <div class="ui-widget container ui-corner-all">
-<hr/>
+<hr />
 <!-- Contents begin -->
-<div id="content"><?php echo $this->layout ()->content; ?> </div>
-<?php echo $this->headScript()?>
+<div id="content"><?php
+echo $this->layout()->content;
+?> </div>
+<?php
+echo $this->headScript()?>
 </div>
 </body>
 </html>

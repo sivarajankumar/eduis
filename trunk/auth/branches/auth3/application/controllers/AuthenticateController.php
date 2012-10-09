@@ -46,7 +46,7 @@ class AuthenticateController extends Zend_Controller_Action
         switch ($result->getCode()) {
             case Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND:
             case Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID:
-            	echo 'Incorrect User Name or Password.';
+                echo 'Incorrect User Name or Password.';
                 break;
             case Zend_Auth_Result::SUCCESS:
                 Zend_Session::regenerateId();
@@ -94,6 +94,7 @@ class AuthenticateController extends Zend_Controller_Action
     public function logoutAction ()
     {
         $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
         preg_match('/[^.]+\.[^.]+$/', $_SERVER['SERVER_NAME'], $domain);
         if (isset($_COOKIE[self::AUTH_SID])) {
             setcookie(self::AUTH_SID, '', time() - 360000, self::AUTH_PATH, 
@@ -108,6 +109,7 @@ class AuthenticateController extends Zend_Controller_Action
         Zend_Auth::getInstance()->clearIdentity();
         Zend_Session::destroy();
         Zend_Session::regenerateId();
+        $this->_redirect('http://auth.aceambala.com');
     }
     /**
      * 
