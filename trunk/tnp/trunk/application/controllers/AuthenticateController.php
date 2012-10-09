@@ -97,6 +97,6 @@ class AuthenticateController extends Zend_Controller_Action
         Zend_Auth::getInstance()->clearIdentity();
         Zend_Session::destroy();
         Zend_Session::regenerateId();
-        //$this->_redirect('http://auth.aceambala.com');
+         //$this->_redirect('http://auth.aceambala.com');
     }
 }
