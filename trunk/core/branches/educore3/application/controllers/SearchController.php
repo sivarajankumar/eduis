@@ -190,7 +190,9 @@ class SearchController extends Zend_Controller_Action
         foreach ($member_ids as $member_id) {
             $student->setMember_id($member_id);
             $roll_number = $student->fetchRollNumber();
-            $member_rolls[$member_id] = $roll_number;
+            if (! empty($roll_number)) {
+                $member_rolls[$member_id] = $roll_number;
+            }
         }
         if (empty($member_rolls)) {
             $member_rolls = false;
@@ -231,8 +233,7 @@ class SearchController extends Zend_Controller_Action
         }
         $students_given = array();
         $selected_students = array();
-        if (! empty($my_array['range_specified']) and
-         ($my_array['range_specified'] == 'true')) {
+        if ($my_array['range_specified'] == 'true') {
             $from = $roll_numbers['lower'];
             $to = $roll_numbers['upper'];
             $students_given = range($from, $to);
