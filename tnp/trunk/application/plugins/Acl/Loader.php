@@ -115,6 +115,7 @@ class Tnp_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
             $acl->addRole($userInfo['identity'], $userRoles);
             $userInfo['acl'] = $acl;
             Zend_Auth::getInstance()->getStorage()->write($userInfo);
+            Zend_Registry::get('logger')->debug($userInfo);
             Zend_Registry::get('logger')->debug(
             $userInfo['identity'] . ' specific ACL saved in session.');
         }
@@ -132,8 +133,8 @@ class Tnp_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
         $roleResources = $selectRes->from('mod_role_resource')
             ->query(Zend_Db::FETCH_GROUP)
             ->fetchAll();
-        //Zend_Registry::get ( 'logger' )->notice ( 'Role and Resources:' );
-        //Zend_Registry::get ( 'logger' )->debug ( $roleResources );
+        /*Zend_Registry::get ( 'logger' )->notice ( 'Role and Resources:' );
+        Zend_Registry::get ( 'logger' )->debug ( $roleResources );*/
         $acl = new Zend_Acl();
         $dbRoles = array(self::GUEST);
         $acl->addRole(self::GUEST);
@@ -167,6 +168,7 @@ class Tnp_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
     {
         $request = $this->_request;
         $authContent = Zend_Auth::getInstance()->getStorage()->read();
+        Zend_Registry::get('logger')->debug($authContent);
         if (isset($_COOKIE['last'])) {
             if ($_COOKIE['last'] != $authContent['last']) {
                 if ('production' == strtolower(APPLICATION_ENV)) {
@@ -184,6 +186,8 @@ class Tnp_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
                 Zend_Registry::get('logger')->debug(
                 '$_COOKIE["Last"] is not set');
             }
+            $this->getResponse()->setRedirect(
+            'http://auth.aceambala.com/authenticate');
         }
         if (isset($authContent['acl'])) {
             $userAcl = $authContent['acl'];
@@ -192,6 +196,10 @@ class Tnp_Plugin_Acl_Loader extends Zend_Controller_Plugin_Abstract
                 $request->getModuleName() . '_' . $request->getControllerName() .
                  '_' . $request->getActionName());
                 if ($userAcl->has($reqResource)) {
+                    Zend_Registry::get('logger')->debug($userAcl->getRoles());
+                    Zend_Registry::get('logger')->debug(
+                    $authContent['identity']);
+                    Zend_Registry::get('logger')->debug($reqResource);
                     if ($userAcl->isAllowed($authContent['identity'], 
                     $reqResource)) {
                         return true;
