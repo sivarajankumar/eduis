@@ -1,13 +1,6 @@
 <h2>Address Information</h2>
 
 <form id="address_info" action="javascript:submit()" class="uniForm">
-	
-	<div class="ctrlHolder noLabel">
-		<ul>
-			<li><label for="is_cp_same" style="font-size:1.2em;"><input name="is_cp_same" id="is_cp_same" value="false" type="checkbox"/> &nbsp;Check if Communication and Permanent Addesses are same. </label></li>
-		</ul>
-		<p class="formHint"></p>
-	</div>
     
 	<fieldset id="ca">
 	<h4>Communication Address:</h4>
@@ -42,7 +35,14 @@
 		<p class="formHint">Pincode of communication address.</p>
 	</div>
 
-	</fieldset>
+	</fieldset><br>
+	
+	<div class="ctrlHolder noLabel" id="is_cp_same_div">
+		<ul>
+			<li><label for="is_cp_same" style="font-size:1.2em;"><input name="is_cp_same" id="is_cp_same" value="false" type="checkbox"/> &nbsp;Check if Communication and Permanent Addesses are same. </label></li>
+		</ul>
+		<p class="formHint"></p>
+	</div>
 	
 	<fieldset id="pa">
 	<h4>Permanent Address:</h4>
@@ -94,9 +94,46 @@
     	
 		$('#is_cp_same').click(function(){
 			if($(this).is(':checked'))
-				$('fieldset#pa').hide();
+				$('fieldset#pa').remove();
 			else
-				$('fieldset#pa').show();
+			{
+				var html = '<fieldset id="pa">'+ 
+
+				'<h4>Permanent Address:</h4>'+
+				
+				'<div class="ctrlHolder">'+
+					'<label for="address"><em>*</em>Address</label>'+
+					'<textarea name="address" id="address"  data-default-value="e.g. H.no. 2135, Sector 9C" rows="25" cols="25"></textarea>'+
+					'<p class="formHint">House number and Area etc.</p>'+
+				'</div>'+
+				
+				'<div class="ctrlHolder">'+
+					'<label for="city"><em>*</em>City/Town/Village</label>'+
+					'<input name="city" id="city" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>'+
+					'<p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>'+
+				'</div>'+
+				
+				'<div class="ctrlHolder">'+
+					'<label for="district"><em>*</em>District</label>'+
+					'<input name="district" id="district" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>'+
+					'<p class="formHint">District of permanent address.<br/>(It should be same as above if Union Territory)</p>'+
+				'</div>'+
+				
+				'<div class="ctrlHolder">'+
+					'<label for="state"><em>*</em>State/Territory</label>'+
+					'<input name="state" id="state" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>'+
+					'<p class="formHint">State/Territory of permanent address.</p>'+
+				'</div>'+
+				
+				'<div class="ctrlHolder">'+
+					'<label for="postal_code">Pin Code</label>'+
+					'<input name="postal_code" id="postal_code" value="" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput validateInteger"/>'+
+					'<p class="formHint">Pincode of permanent address.</p>'+
+				'</div>'+
+				'</fieldset>';
+				
+				$('#is_cp_same_div').after(html);
+			}
 		});
 
         var urlgetinfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'fetchaddressinfo'))?>";
