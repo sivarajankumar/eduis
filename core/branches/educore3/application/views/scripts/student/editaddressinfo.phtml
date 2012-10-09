@@ -4,29 +4,18 @@
 	
 	<div class="ctrlHolder noLabel">
 		<ul>
-			<li><label for="is_cp_same"><input name="is_cp_same" id="is_cp_same" value="false" type="checkbox"/> Check if Communication and Permanent Addesses are same.</label></li>
+			<li><label for="is_cp_same" style="font-size:1.2em;"><input name="is_cp_same" id="is_cp_same" value="false" type="checkbox"/> &nbsp;Check if Communication and Permanent Addesses are same. </label></li>
 		</ul>
 		<p class="formHint"></p>
 	</div>
     
 	<fieldset id="ca">
 	<h4>Communication Address:</h4>
+	
 	<div class="ctrlHolder">
-		<label for="postal_code">Pin Code</label>
-		<input name="postal_code" id="postal_code" value="" data-default-value="e.g. 125001" size="35" maxlength="10" type="text" class="textInput validateInteger"/> 
-		<p class="formHint">Pincode of communication address.</p>
-	</div>
-
-	<div class="ctrlHolder">
-		<label for="state"><em>*</em>State/Provience</label>
-		<input name="state" id="state" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-		<p class="formHint">State/Territory of communication address.</p>
-	</div>
-
-	<div class="ctrlHolder">
-		<label for=""><em>*</em>District</label>
-		<input name="district" id="district" value="" data-default-value="e.g. Mohindergarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-		<p class="formHint">District of communication address.<br/>(It should be same as above if Union Territory)</p>
+		<label for="address"><em>*</em>Address</label>
+		<textarea name="address" id="address" data-default-value="e.g. H.no. 3, PWD B&R Colony, Near Old court"    rows="25" cols="25"></textarea>
+		<p class="formHint">House number and Area etc.</p>
 	</div>
 	
 	<div class="ctrlHolder">
@@ -34,26 +23,40 @@
 		<input name="city" id="city" value="" data-default-value="e.g. Narnaul" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
 		<p class="formHint">City/Town/Village of communication address.<br/>(It may be same as District)</p>
 	</div>
-        
-	<div class="ctrlHolder">
-		<label for="address"><em>*</em>Address</label>
-		<textarea name="address" id="address" data-default-value="e.g. H.no. 3, PWD B&R Colony, Near Old court"    rows="25" cols="25"></textarea>
-		<p class="formHint">House number and Area etc.</p>
+    
+    <div class="ctrlHolder">
+		<label for=""><em>*</em>District</label>
+		<input name="district" id="district" value="" data-default-value="e.g. Mohindergarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">District of communication address.<br/>(It should be same as above if Union Territory)</p>
 	</div>
+	
+	<div class="ctrlHolder">
+		<label for="state"><em>*</em>State/Provience</label>
+		<input name="state" id="state" value="" data-default-value="e.g. Haryana" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">State/Territory of communication address.</p>
+	</div>
+	    
+	<div class="ctrlHolder">
+		<label for="postal_code">Pin Code</label>
+		<input name="postal_code" id="postal_code" value="" data-default-value="e.g. 125001" size="35" maxlength="10" type="text" class="textInput validateInteger"/> 
+		<p class="formHint">Pincode of communication address.</p>
+	</div>
+
 	</fieldset>
 	
 	<fieldset id="pa">
 	<h4>Permanent Address:</h4>
+	
 	<div class="ctrlHolder">
-		<label for="postal_code">Pin Code</label>
-		<input name="postal_code" id="postal_code" value="" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
-		<p class="formHint">Pincode of permanent address.</p>
+		<label for="address"><em>*</em>Address</label>
+		<textarea name="address" id="address"  data-default-value="e.g. H.no. 2135, Sector 9C" rows="25" cols="25"></textarea>
+		<p class="formHint">House number and Area etc.</p>
 	</div>
-        
+	
 	<div class="ctrlHolder">
-		<label for="state"><em>*</em>State/Territory</label>
-		<input name="state" id="state" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-		<p class="formHint">State/Territory of permanent address.</p>
+		<label for="city"><em>*</em>City/Town/Village</label>
+		<input name="city" id="city" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
 	</div>
 	
 	<div class="ctrlHolder">
@@ -63,16 +66,17 @@
 	</div>
 	
 	<div class="ctrlHolder">
-		<label for="city"><em>*</em>City/Town/Village</label>
-		<input name="city" id="city" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
-		<p class="formHint">City/Town/Village of permanent address.<br/>(It may be same as District)</p>
+		<label for="state"><em>*</em>State/Territory</label>
+		<input name="state" id="state" value="" data-default-value="e.g. Chandigarh" size="35" maxlength="50" type="text" class="textInput required validatePhrase"/>
+		<p class="formHint">State/Territory of permanent address.</p>
+	</div>
+	
+	<div class="ctrlHolder">
+		<label for="postal_code">Pin Code</label>
+		<input name="postal_code" id="postal_code" value="" data-default-value="e.g. 160027" size="35" maxlength="10" type="text" class="textInput validateInteger"/>
+		<p class="formHint">Pincode of permanent address.</p>
 	</div>
         
-	<div class="ctrlHolder">
-		<label for="address"><em>*</em>Address</label>
-		<textarea name="address" id="address"  data-default-value="e.g. H.no. 2135, Sector 9C" rows="25" cols="25"></textarea>
-		<p class="formHint">House number and Area etc.</p>
-	</div>
     </fieldset>    
 	<div id="submitStatus" style="display:none;padding: 1em;" class="ui-state-highlight ui-corner-all" ></div> 
 	<div class="buttonHolder">
