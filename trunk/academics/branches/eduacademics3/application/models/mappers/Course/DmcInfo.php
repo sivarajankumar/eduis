@@ -167,18 +167,18 @@ class Acad_Model_Mapper_Course_DmcInfo
         if (isset($result_type_id)) {
             $select->where('result_type_id = ?', $result_type_id);
         }
-        if (isset($result_type_id)) {
+        if (isset($is_considered)) {
             $select->where('is_considered = ?', $is_considered);
         }
         if (isset($ordered_by_date)) {
             $select->order('dispatch_date DESC');
         }
-        $dmc_info_id = array();
-        $info = array();
-        if ($single_latest == false) {
+        if ($single_latest == true) {
             $select->order('dispatch_date DESC')->limit(1);
         }
+        $dmc_info_ids = array();
         $dmc_info_ids = $select->query()->fetchAll(Zend_Db::FETCH_UNIQUE);
+        $info = array();
         if (empty($dmc_info_ids)) {
             return false;
         } else {

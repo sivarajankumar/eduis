@@ -1,4 +1,4 @@
-  <?php
+<?php
 /**
  * StudentController
  * 
@@ -7,36 +7,6 @@
  */
 class StudentController extends Zend_Controller_Action
 {
-    public function aclconfigAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $db = new Zend_Db_Table();
-        $qry = 'SELECT
-  `action_id`,
-  `controller_id`
-FROM `academics`.`mod_role_resource`';
-        $actions = $db->getAdapter()
-            ->query($qry)
-            ->fetchAll();
-        /*echo "<pre>";
-        print_r($actions);
-        echo "</pre>";*/
-        $delete2 = 'DELETE FROM `academics`.`mod_role_resource` WHERE `role_id`=?';
-        $db->getAdapter()->query($delete2, array('faculty'));
-        $sql = 'INSERT INTO `academics`.`mod_role_resource`(`role_id`,`module_id`,`controller_id`,`action_id`) VALUES (?,?,?,?)';
-        foreach ($actions as $row) {
-            $bind = array('faculty', 'academic', $row['controller_id'], 
-            $row['action_id']);
-            $db->getAdapter()->query($sql, $bind);
-        }
-        /*foreach ($actions as $action) {
-            echo '<pre>';
-            print_r($action);
-            echo '</pre>';
-        }
-        Zend_Registry::get('logger')->debug($actions);*/
-    }
     /**
      * 
      * @var int
@@ -1645,7 +1615,7 @@ FROM `academics`.`mod_role_resource`';
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        Zend_Registry::get('logger')->debug('viewdmcinfoACTION');
+        //Zend_Registry::get('logger')->debug('viewdmcinfoACTION');
     }
     public function viewdmcAction ()
     {
@@ -1666,7 +1636,7 @@ FROM `academics`.`mod_role_resource`';
             case 'html':
                 if (! empty($response)) {
                     $this->view->assign('response', $response);
-                    Zend_Registry::get('logger')->debug($response);
+                    //Zend_Registry::get('logger')->debug($response);
                 }
                 break;
             case 'jsonp':
@@ -1780,6 +1750,7 @@ FROM `academics`.`mod_role_resource`';
             $response['class_info']['class_id'] = $class_id;
             $format = $this->_getParam('format', 'html');
             $dmc_info_ids = $this->fetchAllDmcInfoIds($member_id, $class_id);
+            Zend_Registry::get('logger')->debug($dmc_info_ids);
             if (! empty($dmc_info_ids)) {
                 foreach ($dmc_info_ids as $dmc_info_id => $dmc_id) {
                     $response['dmc_info'][$dmc_info_id] = $dmc_id;
@@ -2338,7 +2309,7 @@ FROM `academics`.`mod_role_resource`';
     private function fetchDmcSubjectMarks ($member_id, $dmc_info_id, 
     $subject_ids)
     {
-        Zend_Registry::get('logger')->debug($subject_ids);
+        //Zend_Registry::get('logger')->debug($subject_ids);
         $student_model = new Acad_Model_Member_Student();
         $student_model->setMember_id($member_id);
         $dmc_subject_marks = array();
@@ -2351,7 +2322,7 @@ FROM `academics`.`mod_role_resource`';
             $dmc_subject_marks = $this->getDmcSubjectMarks($member_id, 
             $dmc_info_id, $subject_id);
         }
-        Zend_Registry::get('logger')->debug($dmc_subject_marks);
+        //Zend_Registry::get('logger')->debug($dmc_subject_marks);
         return $dmc_subject_marks;
     }
     private function getDmcSubjectMarks ($member_id, $dmc_info_id, $subject_id)
@@ -2440,6 +2411,7 @@ FROM `academics`.`mod_role_resource`';
         $student = new Acad_Model_Member_Student();
         $student->setMember_id($member_id);
         $dmc_info_ids = $student->fetchDmcInfoIds($class_id);
+        Zend_Registry::get('logger')->debug($dmc_info_ids);
         if (is_array($dmc_info_ids)) {
             Zend_Registry::get('logger')->debug('Dmc_info_ids : ');
             Zend_Registry::get('logger')->debug($dmc_info_ids);

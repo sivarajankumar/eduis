@@ -10,7 +10,6 @@ class AuthenticateController extends Zend_Controller_Action
         $authContent = $auth->getStorage()->read();
         $authAcl = new Zend_Session_Namespace('authAcl');
         $guestID = Authz_Resource_Acl_Guest::GUEST_ID;
-        Zend_Registry::get('logger')->debug($authAcl);
         if (is_array($authContent) and $authContent['identity'] != $guestID) {
             return;
         }
