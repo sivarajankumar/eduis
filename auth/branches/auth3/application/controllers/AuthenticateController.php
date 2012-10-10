@@ -59,6 +59,7 @@ class AuthenticateController extends Zend_Controller_Action
                 $lastLogin->setExpirationHops(1, null, 1);
                 $authAcl = new Zend_Session_Namespace('authAcl');
                 $authAcl->authId = $userName;
+                //Zend_Registry::get('logger')->debug($authAcl->authId);
                 $this->_helper->redirector('markauth', 'index');
                 return;
             default:
