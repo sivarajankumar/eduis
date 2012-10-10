@@ -69,7 +69,18 @@ class MemberController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_helper->layout()->disableLayout();
-        $this->_redirect('/member/register');
+        $user_type = $this->getUser_type();
+        if (! empty($user_type)) {
+            if ($user_type == 'STU' or $user_type == 'stu') {
+                $this->_redirect('/member/profile');
+            }
+        }
+        $department_id = $this->getDepartment_id();
+        if (! empty($department_id)) {
+            if ($user_type == 'STAFF' and $department_id == 'MGMT') {
+                $this->_redirect('http://tnp.aceambala.com/admin');
+            }
+        }
     }
     public function init ()
     {
@@ -149,13 +160,7 @@ class MemberController extends Zend_Controller_Action
         $info['member_type_id'] = array_search($member_type, $member_types);
         $member = new Tnp_Model_Member_Member();
         $member->register($info);
-        if ($this->_department_id == 'MGMT' or $this->_department_id == 'mgmt') {
-            $this->_redirect('http://' . TNP_SERVER . '/admin');
-        } elseif ($this->_user_type == 'stu' or $this->_user_type == 'STU') {
-            $this->_redirect('/member/profile');
-        } else {
-            $this->_redirect('http://auth.aceambala.com');
-        }
+        $this->_redirect('http://auth.aceambala.com/?registeredMember=true');
     }
     private function savePersonalInfo ($member_id, $profile_info)
     {

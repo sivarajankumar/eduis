@@ -257,20 +257,20 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
         $this->_marks_obtained = $_marks_obtained;
     }
     /**
-	 * @return the $_max_marks
-	 */
-	public function getMax_marks() {
-		return $this->_max_marks;
-	}
-
-	/**
-	 * @param field_type $_max_marks
-	 */
-	public function setMax_marks($_max_marks) {
-		$this->_max_marks = $_max_marks;
-	}
-
-	/**
+     * @return the $_max_marks
+     */
+    public function getMax_marks ()
+    {
+        return $this->_max_marks;
+    }
+    /**
+     * @param field_type $_max_marks
+     */
+    public function setMax_marks ($_max_marks)
+    {
+        $this->_max_marks = $_max_marks;
+    }
+    /**
      * @param field_type $_scaled_marks
      */
     public function setScaled_marks ($_scaled_marks)
@@ -363,7 +363,6 @@ class Acad_Model_Course_DmcInfo extends Acad_Model_Generic
         $dmc_id = $this->getDmc_id(true);
         $dmc_info_id = $this->getMapper()->fetchDmcInfoIds(null, null, null, 
         null, null, null, $dmc_id);
-        Zend_Registry::get('logger')->debug($dmc_info_id);
         if (empty($dmc_info_id)) {
             return false;
         } else {
