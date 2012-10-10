@@ -1,34 +1,6 @@
 <?php
 class IndexController extends Authz_Base_BaseController
 {
-    public function aclconfigAction ()
-    {
-        $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
-        $db = new Zend_Db_Table();
-        $qry = 'SELECT
-        `action_id`,`controller_id`
-        FROM `auth`.`role_resource`';
-        $actions = $db->getAdapter()
-            ->query($qry)
-            ->fetchAll();
-        $delete2 = 'DELETE FROM `auth`.`role_resource` WHERE `role_id`=?';
-        $db->getAdapter()->query($delete2, array('guest'));
-        $sql = 'INSERT INTO `auth`.`role_resource`(`role_id`,`module_id`,`controller_id`,`action_id`) VALUES (?,?,?,?)';
-        $test = array();
-        foreach ($actions as $row) {
-            $str = 'guest' . ';' . 'login' . ';' . $row['controller_id'] . ';' .
-             $row['action_id'];
-            $test[] = $str;
-        }
-        $array = array();
-        $temp = array_unique($test);
-        foreach ($temp as $value) {
-            $tr = explode(';', $value);
-            $bind = array($tr[0], $tr[1], $tr[2], $tr[3]);
-            $db->getAdapter()->query($sql, $bind);
-        }
-    }
     /**
      * 
      * @var int

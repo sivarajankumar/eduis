@@ -1,6 +1,43 @@
 <?php
 class SearchController extends Zend_Controller_Action
 {
+    public function aclconfigAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $methods = get_class_methods('SearchController');
+        $actions = array();
+        foreach ($methods as $value) {
+            $actions[] = substr("$value", 0, strpos($value, 'Action'));
+        }
+        foreach ($actions as $key => $value) {
+            if ($value == null) {
+                unset($actions[$key]);
+            }
+        }
+        $db = new Zend_Db_Table();
+        $delete2 = 'DELETE FROM `core`.`mod_role_resource` WHERE `module_id`=? AND `controller_id`=?';
+        $db->getAdapter()->query($delete2, array('main', 'search'));
+        $delete1 = 'DELETE FROM `core`.`mod_action` WHERE `module_id`=? AND `controller_id`=?';
+        $db->getAdapter()->query($delete1, array('main', 'search'));
+        print_r(sizeof($actions));
+        $sql = 'INSERT INTO `core`.`mod_action`(`module_id`,`controller_id`,`action_id`) VALUES (?,?,?)';
+        foreach ($actions as $action) {
+            $bind = array('main', 'search', $action);
+            $db->getAdapter()->query($sql, $bind);
+        }
+        $sql = 'INSERT INTO `core`.`mod_role_resource`(`role_id`,`module_id`,`controller_id`,`action_id`) VALUES (?,?,?,?)';
+        foreach ($actions as $action) {
+            $bind = array('faculty', 'main', 'search', $action);
+            $db->getAdapter()->query($sql, $bind);
+        }
+        /*foreach ($actions as $action) {
+            echo '<pre>';
+            print_r($action);
+            echo '</pre>';
+        }*/
+        Zend_Registry::get('logger')->debug($actions);
+    }
     public function init ()
     {
         /* Initialize action controller here */
