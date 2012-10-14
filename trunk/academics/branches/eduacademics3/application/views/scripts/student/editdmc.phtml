@@ -16,26 +16,6 @@
 	</div>
 	
 	<div class="ctrlHolder">
-		<label for="custody_date"><em>*</em>Recieved by college on</label>
-		<input name="custody_date" id="custody_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
-		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of Custody</p>
-	</div>
-	
-	<div class="ctrlHolder">
-		<label for="receiving_date"><em>*</em>Recieved by student on</label>
-		<input name="receiving_date" id="receiving_date" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="text" readonly="readonly" class="textInput required"/>
-		<p class="formHint">1. Select year <br/>2. Select Month<br/>3. Click date of Receiving</p>
-	</div>
-	
-	<div class="ctrlHolder">
-		<label for="examination"><em>*</em>Examination</label>
-		<select id="examination" name="examination" class="selectInput required">
-			<option value="unv_exam">University Exam</option>
-		</select>
-		<p class="formHint">Select the type of result</p>
-	</div>
-	
-	<div class="ctrlHolder">
 		<label for="result_type_id"><em>*</em>Result Type</label>
 		<select id="result_type_id" name="result_type_id" class="selectInput required">
 			<option value="1">Regular Pass</option>
@@ -47,25 +27,7 @@
 		</select>
 		<p class="formHint">Select the type of result</p>
 	</div>
-    
-    <div class="ctrlHolder">
-		<label for="is_considered"><em>*</em>Is DMC Considered</label>
-		<input name="is_considered" id="is_considered" size="35" maxlength="50" type="checkbox" class="checkbox"/>
-		<p class="formHint">Click if this dmc is considered</p>
-	</div>
-	
-	<div class="ctrlHolder">
-		<label for="is_granted"><em>*</em>Is DMC Granted</label>
-		<input name="is_granted" id="is_granted" size="35" maxlength="50" type="checkbox" class="checkbox"/>
-		<p class="formHint">Click if this dmc is granted</p>
-	</div>
-	
-	<div class="ctrlHolder">
-		<label for="is_copied"><em>*</em>Is DMC Copied</label>
-		<input name="is_copied" id="is_copied" size="35" maxlength="50" type="checkbox" class="checkbox"/>
-		<p class="formHint">Click if this dmc is copied</p>
-	</div>
-    				
+    			
 	<div class="ctrlHolder">
 		<label for="marks_obtained"><em>*</em>Marks Obtained</label>
 		<input name="marks_obtained" id="marks_obtained" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
@@ -159,15 +121,6 @@
                 echo '$("#'.$key.'").val("'.$value.'");';
             }
         }
-        if($this->response['dmc_info_data']['is_considered'] == '1'){
-            echo "$('#is_considered').attr('checked',true);";
-        }
-        if($this->response['dmc_info_data']['is_granted'] == '1'){
-            echo "$('#is_granted').attr('checked',true);";
-        }
-        if($this->response['dmc_info_data']['is_copied'] == '1'){
-            echo "$('#is_copied').attr('checked',true);";
-        }
     ?>
     <?php 
         foreach ($this->response['dmc_data'] as $subject_id => $subject_info){
@@ -206,26 +159,6 @@
 			}
 	});
 
-	$("#custody_date").datepicker({
-		dateFormat: 'yy-mm-dd',
-		changeMonth: true,
-		changeYear: true,
-		yearRange: '5:+5',
-		onClose : function(dateText, inst) {
-			this.focus();
-			}
-	});
-
-	$("#receiving_date").datepicker({
-		dateFormat: 'yy-mm-dd',
-		changeMonth: true,
-		changeYear: true,
-		yearRange: '5:+5',
-		onClose : function(dateText, inst) {
-			this.focus();
-			}
-	});
-
     function get_dmc_info(){
     	dmc_info_data['class_id'] = <?php echo $this->response['dmc_info_data']['class_id'];?>;
     	
@@ -235,9 +168,6 @@
     	.each(function(){ 
     		dmc_info_data[this.name] = this.value;
     	});
-    	dmc_info_data['is_considered'] = $('#is_considered').is(':checked')?1:0;
-    	dmc_info_data['is_granted'] = $('#is_granted').is(':checked')?1:0;
-    	dmc_info_data['is_copied'] = $('#is_copied').is(':checked')?1:0;
     	
     	show_subject_div();
     }
