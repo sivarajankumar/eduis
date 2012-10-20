@@ -110,7 +110,7 @@ class StudentController extends Zend_Controller_Action
                     $this->_helper->json($member_id_exists);
                     break;
                 case 'log':
-                    Zend_Registry::get('logger')->debug($member_id_exists);
+                    //Zend_Registryget('logger')->debug($member_id_exists);
                     break;
                 default:
                     ;
@@ -144,7 +144,7 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json(true);
                 break;
             case 'log':
-                Zend_Registry::get('logger')->debug(true);
+                //Zend_Registryget('logger')->debug(true);
                 break;
             default:
                 ;
@@ -171,17 +171,17 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
             $member_id = $params['member_id'];
         }
         $test_record = $this->generateEmpTestRecords($member_id);
-        Zend_Registry::get('logger')->debug(
-        'Vars assigned to view are : \'test_record\' where the key is the test_record_id');
-        Zend_Registry::get('logger')->debug($test_record);
+        //Zend_Registryget('logger')->debug(
+        //'Vars assigned to view are : \'test_record\' where the key is the test_record_id');
+        //Zend_Registryget('logger')->debug($test_record);
         $this->view->assign('test_record', $test_record);
     }
     public function viewskillinfoAction ()
@@ -191,8 +191,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -200,7 +200,7 @@ class StudentController extends Zend_Controller_Action
         }
         $skill_info = $this->findSkillsInfo($member_id);
         $this->view->assign('skill_info', $skill_info);
-        Zend_Registry::get('logger')->debug($skill_info);
+        //Zend_Registryget('logger')->debug($skill_info);
     }
     public function viewlanguagesknownAction ()
     {
@@ -209,8 +209,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -218,7 +218,7 @@ class StudentController extends Zend_Controller_Action
         }
         $language_info = $this->findLanguageInfo($member_id);
         $this->view->assign('language_info', $language_info);
-        Zend_Registry::get('logger')->debug($language_info);
+        //Zend_Registryget('logger')->debug($language_info);
     }
     public function viewcocurricularAction ()
     {
@@ -227,15 +227,15 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
             $member_id = $params['member_id'];
         }
         $co_curicular_info = $this->findCocurricularInfo($member_id);
-        Zend_Registry::get('logger')->debug($co_curicular_info);
+        //Zend_Registryget('logger')->debug($co_curicular_info);
         $this->view->assign('co_curicular_info', $co_curicular_info);
     }
     public function viewjobpreferredAction ()
@@ -245,15 +245,15 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
             $member_id = $params['member_id'];
         }
         $job_preferred = $this->findJobPreferred($member_id);
-        Zend_Registry::get('logger')->debug($job_preferred);
+        //Zend_Registryget('logger')->debug($job_preferred);
         $this->view->assign('job_preferred', $job_preferred);
     }
     public function viewtraininginfoAction ()
@@ -263,8 +263,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -272,7 +272,7 @@ class StudentController extends Zend_Controller_Action
         }
         $training_info = $this->generateTrainingInfo($member_id);
         $this->view->assign('training_info', $training_info);
-        Zend_Registry::get('logger')->debug($training_info);
+        //Zend_Registryget('logger')->debug($training_info);
     }
     public function viewcertificationinfoAction ()
     {
@@ -281,8 +281,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -290,7 +290,7 @@ class StudentController extends Zend_Controller_Action
         }
         $certification_info = $this->generateCertificationInfo($member_id);
         $this->view->assign('certification_info', $certification_info);
-        Zend_Registry::get('logger')->debug($certification_info);
+        //Zend_Registryget('logger')->debug($certification_info);
     }
     /**
      * assigns test and section record for a given employability_test_id of member_id
@@ -304,8 +304,8 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -318,8 +318,8 @@ class StudentController extends Zend_Controller_Action
         $test_record['test_name'] = $test_info['test_name'];
         $test_record['date_of_conduct'] = $test_info['date_of_conduct'];
         $section_record = $this->generateSectionScore($employability_test_id);
-        Zend_Registry::get('logger')->debug($test_record);
-        Zend_Registry::get('logger')->debug($section_record);
+        //Zend_Registryget('logger')->debug($test_record);
+        //Zend_Registryget('logger')->debug($section_record);
         switch ($format) {
             case 'html':
                 $this->view->assign('test_record', $test_record);
@@ -341,8 +341,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -354,7 +354,7 @@ class StudentController extends Zend_Controller_Action
         $skill_info['skill_id'] = $skill_id;
         $skill_info['skill_name'] = $info[$skill_id]['skill_name'];
         $skill_info['proficiency'] = $info[$skill_id]['proficiency'];
-        Zend_Registry::get('logger')->debug($skill_info);
+        //Zend_Registryget('logger')->debug($skill_info);
         $this->view->assign('skill_info', $skill_info);
     }
     public function editlanguageknownAction ()
@@ -364,8 +364,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -377,7 +377,7 @@ class StudentController extends Zend_Controller_Action
         $language_info['language_id'] = $language_id;
         $language_info['language_name'] = $info[$language_id]['language_name'];
         $language_info['proficiency'] = $info[$language_id]['proficiency'];
-        Zend_Registry::get('logger')->debug($language_info);
+        //Zend_Registryget('logger')->debug($language_info);
         $this->view->assign('language_info', $language_info);
     }
     public function editcocurricularAction ()
@@ -387,15 +387,15 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
             $member_id = $params['member_id'];
         }
         $cocurricular_info = $this->findCocurricularInfo($member_id);
-        Zend_Registry::get('logger')->debug($cocurricular_info);
+        //Zend_Registryget('logger')->debug($cocurricular_info);
         $this->view->assign('cocurricular_info', $cocurricular_info);
     }
     public function editjobpreferredAction ()
@@ -405,15 +405,15 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
             $member_id = $params['member_id'];
         }
         $job_preferred = $this->findJobPreferred($member_id);
-        Zend_Registry::get('logger')->debug($job_preferred);
+        //Zend_Registryget('logger')->debug($job_preferred);
         $this->view->assign('job_preferred', $job_preferred);
     }
     public function edittraininginfoAction ()
@@ -423,8 +423,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -436,8 +436,8 @@ class StudentController extends Zend_Controller_Action
         $training_info['training_id'] = $training_id;
         $this->view->assign('functional_areas', $functional_areas);
         $this->view->assign('training_info', $training_info);
-        Zend_Registry::get('logger')->debug($functional_areas);
-        Zend_Registry::get('logger')->debug($training_info);
+        //Zend_Registryget('logger')->debug($functional_areas);
+        //Zend_Registryget('logger')->debug($training_info);
     }
     public function editcertificationAction ()
     {
@@ -446,18 +446,20 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
             $member_id = $params['member_id'];
         }
+        $functional_areas = $this->fetchFunctionalAreas();
+        $this->view->assign('functional_areas', $functional_areas);
         $certification_id = $params['certification_id'];
         $certification_info = $this->findCertificationsInfo($member_id, 
         $certification_id);
         $certification_info['certification_id'] = $certification_id;
-        Zend_Registry::get('logger')->debug($certification_info);
+        //Zend_Registryget('logger')->debug($certification_info);
         $this->view->assign('certification_info', $certification_info);
     }
     public function deletetestrecordAction ()
@@ -467,8 +469,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -484,8 +486,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -501,8 +503,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -518,8 +520,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -534,8 +536,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -550,8 +552,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -567,8 +569,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -602,7 +604,7 @@ class StudentController extends Zend_Controller_Action
         /*------------------------------------------------------------------------------*/
         /*------------------------------------------------------------------------------*/
         /*------------------------------------------------------------------------------*/
-        Zend_Registry::get('logger')->debug($response);
+        //Zend_Registryget('logger')->debug($response);
         switch ($format) {
             case 'html':
                 $this->view->assign('response', $response);
@@ -616,7 +618,7 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($response);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($response);
+                //Zend_Registryget('logger')->debug($response);
                 break;
             default:
                 ;
@@ -635,7 +637,7 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
         $languages = $this->fetchLanguages();
-        /*Zend_Registry::get('logger')->debug($languages);*/
+        /*//Zend_Registryget('logger')->debug($languages);*/
         $this->view->assign('languages', $languages);
     }
     public function addcocurricularAction ()
@@ -645,15 +647,15 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
             $member_id = $params['member_id'];
         }
         $co_curicular_info = $this->findCocurricularInfo($member_id);
-        Zend_Registry::get('logger')->debug($co_curicular_info);
+        //Zend_Registryget('logger')->debug($co_curicular_info);
         $this->view->assign('co_curicular_info', $co_curicular_info);
     }
     public function addskillAction ()
@@ -675,8 +677,8 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug(
-        'params required are \'test_info\' myarray[\'test_info\']');
+        //Zend_Registryget('logger')->debug(
+        //'params required are \'test_info\' myarray[\'test_info\']');
         $test_info = $params['myarray']['test_info'];
         $this->addEmpTest($test_info);
     }
@@ -687,9 +689,9 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         if (empty($params['myarray'])) {
-            Zend_Registry::get('logger')->debug(
-            'params required are  : myarray[\'language_info\'] where \'language_info\' is an array containing \'language name\'');
-            Zend_Registry::get('logger')->debug('\'myarray\' was EMPTY');
+            //Zend_Registryget('logger')->debug(
+            //'params required are  : myarray[\'language_info\'] where \'language_info\' is an array containing \'language name\'');
+            //Zend_Registryget('logger')->debug('\'myarray\' was EMPTY');
         } else {
             $language_info = $params['myarray']['language_info'];
             $this->addLanguage($language_info);
@@ -712,8 +714,8 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug(
-        'params requires are \'section_info\' myarray[\'section_info\']');
+        //Zend_Registryget('logger')->debug(
+        //'params requires are \'section_info\' myarray[\'section_info\']');
         $test_info = $params['myarray']['test_info'];
         $employability_test_id = $this->addEmpTest($test_info);
         $test_section_name = $params['myarray']['section_info']['test_section_name'];
@@ -756,7 +758,7 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $functional_areas = $this->fetchFunctionalAreas();
-        /*Zend_Registry::get('logger')->debug($functional_areas);*/
+        /*//Zend_Registryget('logger')->debug($functional_areas);*/
         $this->view->assign('functional_areas', $functional_areas);
     }
     public function addcertificationinfoAction ()
@@ -767,8 +769,8 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $functional_areas = $this->fetchFunctionalAreas();
         $certifications = $this->fetchCertifications();
-        /*Zend_Registry::get('logger')->debug($certifications);
-        Zend_Registry::get('logger')->debug($functional_areas);*/
+        /*//Zend_Registryget('logger')->debug($certifications);
+        //Zend_Registryget('logger')->debug($functional_areas);*/
         $this->view->assign('functional_areas', $functional_areas);
         $this->view->assign('certifications', $certifications);
     }
@@ -802,7 +804,7 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($test_record);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($test_record);
+                //Zend_Registryget('logger')->debug($test_record);
                 break;
             default:
                 ;
@@ -818,7 +820,7 @@ class StudentController extends Zend_Controller_Action
         $params = array_diff($request->getParams(), $request->getUserParams());
         $employability_test_id = $params['employability_test_id'];
         $section_record = $this->generateSectionScore($employability_test_id);
-        Zend_Registry::get('logger')->debug($section_record);
+        //Zend_Registryget('logger')->debug($section_record);
         switch ($format) {
             case 'html':
                 $this->view->assign('section_record', $section_record);
@@ -832,7 +834,7 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($section_record);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($section_record);
+                //Zend_Registryget('logger')->debug($section_record);
                 break;
             default:
                 ;
@@ -846,8 +848,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $format = $this->_getParam('format', 'html');
-        Zend_Registry::get('logger')->debug(
-        'params required are \'test_info\' myarray[\'test_info\']');
+        //Zend_Registryget('logger')->debug(
+        //'params required are \'test_info\' myarray[\'test_info\']');
         $test_info = $params['myarray']['test_info'];
         $employability_test_id = $this->addEmpTest($test_info);
         switch ($format) {
@@ -866,7 +868,7 @@ class StudentController extends Zend_Controller_Action
                 $this->_helper->json($employability_test_id);
                 break;
             case 'test':
-                Zend_Registry::get('logger')->debug($employability_test_id);
+                //Zend_Registryget('logger')->debug($employability_test_id);
                 break;
             default:
                 ;
@@ -884,8 +886,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -923,9 +925,9 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug($params);
-        Zend_Registry::get('logger')->debug(
-        'params required are \'test_info\' ,  \'test_record\' , \'test_section_record\' in myarray ex \'$params[\'myarray\'][\'test_info\']');
+        //Zend_Registryget('logger')->debug($params);
+        //Zend_Registryget('logger')->debug(
+        //'params required are \'test_info\' ,  \'test_record\' , \'test_section_record\' in myarray ex \'$params[\'myarray\'][\'test_info\']');
         /*
          * in case of edit ,the $params['myarray']['test_record'] will contain test_record_id
          */
@@ -935,9 +937,9 @@ class StudentController extends Zend_Controller_Action
         $test_record['employability_test_id'] = $employability_test_id;
         $test_record_id = $this->saveEmpTestRecord($test_record);
         $section_record = $params['myarray']['test_section_record'];
-        /* Zend_Registry::get('logger')->debug($test_info);
-        Zend_Registry::get('logger')->debug($test_record);
-        Zend_Registry::get('logger')->debug($section_record);*/
+        /* //Zend_Registryget('logger')->debug($test_info);
+        //Zend_Registryget('logger')->debug($test_record);
+        //Zend_Registryget('logger')->debug($section_record);*/
         foreach ($section_record as $section_id => $section_score) {
             $section_score['employability_test_id'] = $employability_test_id;
             $section_score['test_section_id'] = $section_id;
@@ -951,8 +953,8 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        Zend_Registry::get('logger')->debug(
-        'member_id may be sent in as parameter');
+        //Zend_Registryget('logger')->debug(
+        //'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -1013,12 +1015,12 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug($params);
+        //Zend_Registryget('logger')->debug($params);
         $student_certification = $params['myarray']['student_certification'];
         $certification_info = $params['myarray']['certification_info'];
         $certification_id = $this->saveCertificationInfo($certification_info);
         $student_certification['certification_id'] = $certification_id;
-        Zend_Registry::get('logger')->debug($student_certification);
+        //Zend_Registryget('logger')->debug($student_certification);
         $this->saveStuCertificationInfo($student_certification);
     }
     public function savetrainingAction ()
@@ -1038,7 +1040,7 @@ class StudentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
-        Zend_Registry::get('logger')->debug($params);
+        //Zend_Registryget('logger')->debug($params);
         $experience_info = $params['myarray']['experience_info'];
         $student_experience = $params['myarray']['student_experience'];
         $role_name = $experience_info['role_name'];
@@ -1085,9 +1087,9 @@ class StudentController extends Zend_Controller_Action
         $student->setMember_id($member_id_to_check);
         $member_id_exists = $student->memberIdCheck();
         if (! $member_id_exists) {
-            Zend_Registry::get('logger')->debug(
-            'Member with member_id : ' . $member_id_to_check .
-             ' is not registered in CORE');
+            //Zend_Registryget('logger')->debug(
+            //'Member with member_id : ' . $member_id_to_check .
+            // ' is not registered in CORE');
         }
         return $member_id_exists;
     }
@@ -1280,12 +1282,14 @@ class StudentController extends Zend_Controller_Action
             if ($certi_info instanceof Tnp_Model_Certification) {
                 $certi_name = $certi_info->getCertification_name();
                 $func_id = $certi_info->getFunctional_area_id();
+                $student_certifications['functional_area_id'] = $func_id;
                 $func_area_name = $this->findFunctionAreaName($func_id);
             }
             $student_certifications['certification_name'] = $certi_name;
             $student_certifications['functional_area_name'] = $func_area_name;
             $student_certifications['start_date'] = $certification->getStart_date();
-            $student_certifications['complete_date'] = $student_certifications['start_date'];
+            $student_certifications['description'] = $certification->getDescription();
+            $student_certifications['complete_date'] = $certification->getComplete_date();
         } else {
             $student_certifications = false;
         }
@@ -1512,7 +1516,7 @@ class StudentController extends Zend_Controller_Action
     {
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($this->getMember_id());
-        Zend_Registry::get('logger')->debug($info);
+        //Zend_Registryget('logger')->debug($info);
         $training_info = array();
         if (! empty($info['training_id'])) {
             $training_info['training_id'] = $info['training_id'];
