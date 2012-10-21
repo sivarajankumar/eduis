@@ -13,7 +13,13 @@
 		$.ajax({
     		url : urlgetinfo,
     		dataType : 'json',
-            data : {format:'json'},
+            data : {
+                format:'json',
+                <?php 
+            	    if(isset($_GET['member_id']) && !empty($_GET['member_id']))
+            	        echo "member_id : ".$_GET['member_id'];
+                ?>
+			},
     		success: function(jStatus){
     			$.each(jStatus,function(contact_type_id,data){
     				if((jStatus == null) || (jStatus == false)|| (jStatus == undefined))

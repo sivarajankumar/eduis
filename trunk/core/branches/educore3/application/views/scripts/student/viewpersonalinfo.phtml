@@ -18,7 +18,13 @@
         $.ajax({
     		url : urlgetinfo,
     		dataType : 'json',
-            data : {format:'json'},
+            data : {
+                format:'json',
+            	<?php 
+        		    if(isset($_GET['member_id']) && !empty($_GET['member_id']))
+        		        echo "member_id : ".$_GET['member_id'];
+                ?>
+			},
             success: function(jStatus){
             	if((jStatus == null) || (jStatus == false)|| (jStatus == undefined))
     			{
@@ -40,7 +46,9 @@
         			var urlfetchimagelocation = 'http://core.aceambala.com/student/getimagename';
         	        $.ajax({
         				url : urlfetchimagelocation,
-        				data : {format : 'jsonp'},
+        				data : {
+            				format : 'jsonp',
+                		},
         				dataType : 'jsonp',
         				success : function(jStatus){
         					if((jStatus == null) || (jStatus == false)|| (jStatus == undefined))
