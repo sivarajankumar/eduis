@@ -3,6 +3,11 @@
     $department_id = $this->department_id;
     $student_class_info = $this->student_class_info;
     $batch_class=$this->batch_class;
+    
+    if(Zend_Auth::getInstance()->hasIdentity()){
+		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
+		$usertype=$authInfo['userType'];
+	}
 ?>
 
 <div class="ui-state-hover"><center><H3>Class Information</H3></center></div>
@@ -18,8 +23,10 @@
                     echo '<tr>';
                         echo '<td>';
                         echo '<span id="heading">Batch Year</span><span id="content">'.$key.'</span><br><span id="heading">Roll Number</span><span id="content">'.$value.'</span><br>';
-                        echo '<input type="button" value="Edit" onclick = "window.location.replace('."'".'/student/editclassinfo?batch_start='.$key."'".')"> ';
-                        echo ' <input type="button" value="Delete" onclick = "window.location.replace('."'".'/student/deleteclassinfo?class_id='.$batch_class[$key]."'".')">';
+                        if($usertype == 'STU'){
+                            echo '<input type="button" value="Edit" onclick = "window.location.replace('."'".'/student/editclassinfo?batch_start='.$key."'".')"> ';
+                            echo ' <input type="button" value="Delete" onclick = "window.location.replace('."'".'/student/deleteclassinfo?class_id='.$batch_class[$key]."'".')">';
+                        }
                         echo '</td>';
                     echo '</tr>';
                 }
