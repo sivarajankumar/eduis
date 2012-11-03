@@ -9,7 +9,6 @@
 
 <div class="ui-state-hover"><center><H3>Job Area Preferred</H3></center></div>
 <div id="skill_details">
-	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
 	<?php 
 		if($job_preferred == false)
 		{
@@ -17,17 +16,18 @@
 		}
 		else
 		{
+            echo '<table id="corner" cellspacing="10" cellpadding="10">';
 				echo '<tr>';
 				echo '<td>'.ucfirst($job_preferred).'</td>';
 				echo '</tr>';
+			echo '</table>';
+			
+        	if($usertype == 'STU'){
+                echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editcocurricular'."'".');">';
+            }
 		}
 	?>
-	</table>
 </div>
-
-<?php if($usertype == 'STU') {?>
-<input type="button" value="Edit" onclick="window.location.replace('/student/editjobpreferred')">
-<?php }?>
 
 <script type="text/javascript">
 	$(function(){
