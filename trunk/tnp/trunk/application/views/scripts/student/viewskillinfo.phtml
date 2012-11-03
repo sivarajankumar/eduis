@@ -28,8 +28,10 @@
 				echo '<td>'.ucfirst($data['skill_name']).'</td>';
 				echo '<td>'.ucfirst($data['proficiency']).'</td>';
 				if($usertype == 'STU')
+				{
 					echo '<td><input type="button" value="Edit" onclick="javascript:change_location('."'".$skillId."'".')"></td>';
-				echo '<td><input type="button" value="Delete" onclick="javascript:delete_skill('."'".$skillId."'".')"></td>';
+					echo '<td><input type="button" value="Delete" onclick="javascript:delete_skill('."'".$skillId."'".')"></td>';
+				}
 				echo '</tr>'; 
 			}
 		}
