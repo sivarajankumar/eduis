@@ -9,14 +9,14 @@
 
 <div class="ui-state-hover"><center><H3>Cocurricular Details</H3></center></div>
 <div id="certification_details">
-	<table style="width: 100%" id="corner" cellspacing="10" cellpadding="10">
 	<?php
 		if($cocurricular == false)
 		{
 			echo "<h4>No information has been added yet.</h4>";
 		}
 		else
-		{
+        {
+            echo '<table id="corner" cellspacing="10" cellpadding="10">';
 			foreach ($cocurricular as $key => $value) 
 			{
 	        	echo '<tr>';
@@ -30,16 +30,13 @@
 	        		echo '</td>';
 	        	echo '</tr>';
 			}
-		}
+    		echo '</table>';
+        	if($usertype == 'STU'){
+                echo '<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('."'".'/student/editcocurricular'."'".');">';
+            }
+        }
 	?>
-	</table>
 </div>
-<?php 
-	if($usertype == 'STU')
-	{
-?>
-<input type="button" value="Edit" onclick="window.location.replace('/student/editcocurricular')">
-<?php }?>
 
 <script type="text/javascript">
 	$(function(){
