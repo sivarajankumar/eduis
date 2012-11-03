@@ -5,7 +5,7 @@
 	}
 ?>
 
-<div class="ui-state-hover"><center><H3>Language Proficiency</H3></center></div>
+<div class="ui-state-hover"><center><H3>Languages Known</H3></center></div>
 <div id="language_details">
 	<?php 
 		if($this->language_info == false)
@@ -29,8 +29,12 @@
 				echo '<td>'.ucfirst($data['proficiency']).'</td>';
 				if($usertype == 'STU')
 				{
-					echo '<td><input type="button" value="Edit" onclick="javascript:change_location('."'".$languageId."'".')"></td>';
-					echo '<td><input type="button" value="Delete" onclick="javascript:delete_skill('."'".$languageId."'".')"></td>';
+					echo '<td><input type="button" value="Edit" onclick="javascript:change_location
+
+('."'".$languageId."'".')"></td>';
+					echo '<td><input type="button" value="Delete" onclick="javascript:delete_skill
+
+('."'".$languageId."'".')"></td>';
 				}
 				echo '</tr>'; 
 			}
@@ -71,7 +75,9 @@
 
 	function delete_skill(languageId)
 	{
-		var urlDeleteSkill = '<?php echo $this->url(array('controller' => 'student', 'action' => 'deletelanguage'))?>';
+		var urlDeleteSkill = '<?php echo $this->url(array('controller' => 'student', 'action' => 
+
+'deletelanguage'))?>';
 		$.ajax({
 			url : urlDeleteSkill,
 			data : {language_id : languageId},
