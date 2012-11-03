@@ -73,14 +73,18 @@
                 	});
             		html += '</select> &nbsp;';
             		html += '<input type="button" value="View Details" onclick="change_location('+class_id+')">';
-            		html += '&nbsp;&nbsp;<input type="button" value="Add New" onclick="window.location.replace('+"'/student/adddmc?class_id="+class_id+"'"+')">';
-    
+            		<?php if($usertype == 'STU'){ ?>
+            			html += '&nbsp;&nbsp;<input type="button" value="Add New" onclick="window.location.replace('+"'/student/adddmc?class_id="+class_id+"'"+')">';
+					<?php }?>
+
             		$('#message'+class_id).html(html);
 				}
 				else
 				{
 					var html = '&nbsp;&nbsp;No dmc exist for this semester';
-					html += '&nbsp;&nbsp;<input type="button" value="Add New" onclick="window.location.replace('+"'/student/adddmc?class_id="+class_id+"'"+')">';
+					<?php if($usertype == 'STU'){ ?>
+						html += '&nbsp;&nbsp;<input type="button" value="Add New" onclick="window.location.replace('+"'/student/adddmc?class_id="+class_id+"'"+')">';
+                    <?php }?>
 					$('#message'+class_id).html(html);
 				}
             },
@@ -98,6 +102,11 @@
 		{
 			var dmc_info_id = $('#dmc_for_class_id'+class_id).val();
     		var location = "/student/viewdmc?dmc_info_id="+dmc_info_id;
+    		<?php 
+        	    if(isset($_GET['member_id']) && !empty($_GET['member_id']))
+        	        //echo '"&member_id="'.$_GET['member_id'];
+        	        echo "location += '&member_id=".$_GET['member_id']."';";
+            ?>
     		window.location.replace(location);
 		}
 	}
