@@ -502,12 +502,23 @@ class CareerController extends Zend_Controller_Action
         if ($info instanceof Tnp_Model_Company) {
             $company_info = array();
             $company_info['company_name'] = $info->getCompany_name();
-            $company_info['field'] = $info->getField();
+            $field_id = $info->getField();
+            $company_info['field_name'] = $this->findFunctionAreaName($field_id);
+            $company_info['field'] = $field_id;
             $company_info['description'] = $info->getDescription();
             $company_info['verified'] = $info->getVerified();
             return $company_info;
         } else {
             return false;
+        }
+    }
+    private function findFunctionAreaName ($func_id)
+    {
+        $func_area = new Tnp_Model_FunctionalArea();
+        $func_area->setFunctional_area_id($func_id);
+        $func_info = $func_area->fetchInfo();
+        if ($func_info instanceof Tnp_Model_FunctionalArea) {
+            return $func_info->getFunctional_area_name();
         }
     }
     private function fetchJobInfo ($company_job_id)
