@@ -79,7 +79,11 @@
 			dataType : 'json',
 			data : {
 					format:'json',
-					employability_test_id : employability_test_id
+					employability_test_id : employability_test_id,
+					<?php 
+						if(isset($_GET['member_id']) && !empty($_GET['member_id']))
+							echo "member_id : ".$_GET['member_id'];
+					?>
 				},
 			success: function(jStatus){
 				var html = '';
