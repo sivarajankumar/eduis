@@ -46,7 +46,7 @@ class SearchController extends Zend_Controller_Action
                         $diploma_fields[$diploma_key] = $params[$key];
                         break;
                     case ('3'):
-                        $btech_key = substr($key, 3);
+                        $btech_key = substr($key, 1);
                         $btech_fields[$btech_key] = $params[$key];
                         break;
                     default:
@@ -100,6 +100,7 @@ class SearchController extends Zend_Controller_Action
                 return $this->returnResult($format, false);
             }
         }
+        Zend_Registry::get('logger')->debug($backlog_filtered);
         $member_ids = $this->combineResult($member_ids, $backlog_filtered);
         $this->returnResult($format, $member_ids);
     }
@@ -156,6 +157,7 @@ class SearchController extends Zend_Controller_Action
             $student->setMember_id($member_id);
             $backlog_filter[$member_id] = $student->fetchCurrentBacklogCount();
         }
+        Zend_Registry::get('logger')->debug($backlog_filter);
         foreach ($backlog_filter as $member_id => $backlog_count) {
             if ($backlog_count <= $back_log_limit) {
                 $backlog_filtered[] = $member_id;
@@ -191,9 +193,8 @@ class SearchController extends Zend_Controller_Action
         $btech_range_fields = array('percentage' => '');
         $btech_range_params = array_intersect_key($btech_fields, 
         $btech_range_fields);
-        $btech_exact_params = array_diff_key($btech_fields, 
-        $btech_range_params);
-        $btech = new Acad_Model_Qualification_Btech();
+        $btech_exact_params = array_diff_key($btech_fields, $btech_range_params);
+        $btech = new Acad_Model_Course_DmcInfo();
         $btech_matches = $btech->search($btech_exact_params, 
         $btech_range_params);
         return $btech_matches;

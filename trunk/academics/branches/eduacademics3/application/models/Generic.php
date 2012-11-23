@@ -192,7 +192,8 @@ abstract class Acad_Model_Generic
             $invalid_range_params = array_keys(
             $this->invalidOptions($range_params));
         }
-        $error_append = ' is(are) invalid parameter(s), and were therefore not included in search.';
+        $error_append = 'In Class ' . get_class($this) .
+         ' is(are) invalid parameter(s), and were therefore not included in search.';
         $suggestion = 'Please try again with correct parameters to get more accurate results';
         $message = "$error_append " . ' ' . "$suggestion";
         $deciding_intersection = array_intersect($valid_options, 
