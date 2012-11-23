@@ -100,7 +100,6 @@ class SearchController extends Zend_Controller_Action
                 return $this->returnResult($format, false);
             }
         }
-        Zend_Registry::get('logger')->debug($backlog_filtered);
         $member_ids = $this->combineResult($member_ids, $backlog_filtered);
         $this->returnResult($format, $member_ids);
     }
