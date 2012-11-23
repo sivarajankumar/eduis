@@ -29,6 +29,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         defined('TNP_SERVER') || define('TNP_SERVER', 'tnp.aceambala.com');
         defined('IMAGE_DIR') ||
          define('IMAGE_DIR', $this->getOption('data_images'));
+        defined('DATA_EXCEL') ||
+         define('DATA_EXCEL', $this->getOption('data_excel'));
     }
     protected function _initViewBase ()
     {
