@@ -81,6 +81,11 @@ class IndexController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
         $this->_redirect('/member/');
     }
+    public function testAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(false);
+        $this->_helper->layout()->disableLayout();
+    }
     public function bounceAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);

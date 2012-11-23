@@ -79,16 +79,7 @@ $(function(){
 		prevent_submit : true
 	});
 
-	serverDateObj = $.datepicker.parseDate('dd-mm-yy', $('#datetext').text());
-	$("#date_of_conduct").datepicker({
-  	dateFormat: 'yy-mm-dd',
-  	changeMonth: true,
-		changeYear: true,
-		yearRange: '-5:+5',
-		onClose : function(dateText, inst) {
-			this.focus();
-		}
-	});
+
 });
 
 function submit() {

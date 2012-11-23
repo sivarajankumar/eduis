@@ -25,7 +25,7 @@ class SearchController extends Zend_Controller_Action
             return $this->returnResult($format, false);
         }
         $member_ids = $this->combineResult($member_ids, $member_ids);
-        $matric_matches = array();
+        $btech_matches = array();
         $twelfth_matches = array();
         $matric_matches = array();
         $diploma_matches = array();
@@ -45,11 +45,22 @@ class SearchController extends Zend_Controller_Action
                         $diploma_key = substr($key, 1);
                         $diploma_fields[$diploma_key] = $params[$key];
                         break;
+                    case ('3'):
+                        $btech_key = substr($key, 3);
+                        $btech_fields[$btech_key] = $params[$key];
+                        break;
                     default:
                         //throw new Exception('invalid params');
                         break;
                 }
             }
+            if (! empty($btech_fields)) {
+                $btech_matches = $this->btechSearch($btech_fields);
+                if (empty($btech_matches)) {
+                    return $this->returnResult($format, false);
+                }
+            }
+            $member_ids = $this->combineResult($member_ids, $btech_matches);
             if (! empty($tenth_fields)) {
                 $matric_matches = $this->tenthSearch($tenth_fields);
                 if (empty($matric_matches)) {
@@ -80,7 +91,6 @@ class SearchController extends Zend_Controller_Action
             $back_logs = $params['backlogs'];
             if ($back_logs == 'never') {
                 $backlog_filtered = $this->neverbackLogSearch($member_ids);
-                Zend_Registry::get('logger')->debug($backlog_filtered);
             } else {
                 $back_log_limit = $back_logs;
                 $backlog_filtered = $this->backLogSearch($back_log_limit, 
@@ -175,6 +185,18 @@ class SearchController extends Zend_Controller_Action
         $twelfth_matches = $twelfth->search($twelfth_exact_params, 
         $twelfth_range_params);
         return $twelfth_matches;
+    }
+    private function btechSearch ($btech_fields)
+    {
+        $btech_range_fields = array('percentage' => '');
+        $btech_range_params = array_intersect_key($btech_fields, 
+        $btech_range_fields);
+        $btech_exact_params = array_diff_key($btech_fields, 
+        $btech_range_params);
+        $btech = new Acad_Model_Qualification_Btech();
+        $btech_matches = $btech->search($btech_exact_params, 
+        $btech_range_params);
+        return $btech_matches;
     }
     private function DiplomaSearch ($diploma_fields)
     {
