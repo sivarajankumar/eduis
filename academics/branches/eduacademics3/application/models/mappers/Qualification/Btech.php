@@ -77,7 +77,7 @@ class Acad_Model_Mapper_Qualification_Btech
         }
         $member_ids = array();
         $member_ids = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
-        return $member_ids;
+        return array_unique($member_ids);
     }
     public function save ($prepared_data)
     {
