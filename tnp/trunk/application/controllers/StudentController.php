@@ -1,6 +1,37 @@
 <?php
 class StudentController extends Zend_Controller_Action
 {
+    public function aclconfigAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $methods = get_class_methods('StudentController');
+        $actions = array();
+        foreach ($methods as $value) {
+            $actions[] = substr("$value", 0, strpos($value, 'Action'));
+        }
+        foreach ($actions as $key => $value) {
+            if ($value == null) {
+                unset($actions[$key]);
+            }
+        }
+        $db = new Zend_Db_Table();
+        $delete2 = 'DELETE FROM `tnp`.`mod_role_resource` WHERE `module_id`=? AND `controller_id`=?';
+        $db->getAdapter()->query($delete2, array('tnp', 'student'));
+        $delete1 = 'DELETE FROM `tnp`.`mod_action` WHERE `module_id`=? AND `controller_id`=?';
+        $db->getAdapter()->query($delete1, array('tnp', 'student'));
+        print_r(sizeof($actions));
+        $sql = 'INSERT INTO `tnp`.`mod_action`(`module_id`,`controller_id`,`action_id`) VALUES (?,?,?)';
+        foreach ($actions as $action) {
+            $bind = array('tnp', 'student', $action);
+            $db->getAdapter()->query($sql, $bind);
+        }
+        $sql = 'INSERT INTO `tnp`.`mod_role_resource`(`role_id`,`module_id`,`controller_id`,`action_id`) VALUES (?,?,?,?)';
+        foreach ($actions as $action) {
+            $bind = array('faculty', 'tnp', 'student', $action);
+            $db->getAdapter()->query($sql, $bind);
+        }
+    }
     /**
      * 
      * @var int
@@ -150,6 +181,103 @@ class StudentController extends Zend_Controller_Action
                 ;
                 break;
         }
+    }
+    public function exportexcelAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $core_data = $params['myarray']['core_data'];
+        Zend_Registry::get('logger')->debug($core_data);
+        $academic_data = $params['myarray']['academic_data'];
+        $final_data = array();
+        foreach ($core_data as $member_id_core => $info) {
+            if (! empty($academic_data[$member_id_core])) {
+                $member_data = array_merge($core_data[$member_id_core], 
+                $academic_data[$member_id_core]);
+                $final_data[$member_id_core] = $member_data;
+            }
+        }
+        $exportable_data = $final_data;
+        $headings = array_pop($final_data);
+        $column_headers = array_keys($headings);
+        $file_id = time();
+        $this->exportToExcel($column_headers, $exportable_data, $file_id);
+        $format = $this->_getParam('format', 'log');
+        switch ($format) {
+            case 'html':
+                $this->_helper->viewRenderer->setNoRender(false);
+                $this->_helper->layout()->enableLayout();
+                $this->view->assign('data', $file_id);
+                break;
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($file_id, false) .
+                 ')';
+                break;
+            case 'json':
+                $this->_helper->json($file_id);
+                break;
+            case 'log':
+                //Zend_Registryget('logger')->debug($file_id);
+                break;
+            default:
+                ;
+                break;
+        }
+    }
+    public function saveexcelonclientAction ()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout()->disableLayout();
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $file_id = $params['file_id'];
+        $org_file = DATA_EXCEL . "/Student_Data-" . $file_id . ".xlsx";
+        $this->getResponse()
+            ->setRawHeader(
+        "Content-Type: application/vnd.ms-excel; charset=UTF-8")
+            ->setRawHeader(
+        "Content-Disposition: attachment; filename=Student_Data.xlsx")
+            ->setRawHeader("Content-Transfer-Encoding: binary")
+            ->setRawHeader("Expires: 0")
+            ->setRawHeader(
+        "Cache-Control: must-revalidate, post-check=0, pre-check=0")
+            ->setRawHeader("Pragma: public")
+            ->setRawHeader("Content-Length: " . filesize($org_file))
+            ->sendResponse();
+        $response = $this->_response;
+        ob_end_clean();
+        $bits = @file_get_contents($org_file);
+        $response->setBody($bits);
+    /**
+     * Old Code
+     * @deprecated
+     */
+    /*$temp_file = DATA_EXCEL . "/temp" . $file_id . ".xlsx";
+        $realPath = realpath($temp_file);
+        if ($realPath == false) {
+            touch($temp_file);
+            chmod($temp_file, 0777);
+        }
+        $handle = fopen($temp_file, "w");
+        $org_file = DATA_EXCEL . "/Student_Data-" . $file_id . ".xlsx";
+        $contents = @file_get_contents($org_file);
+        fputs($handle, $contents);
+        fclose($handle);
+        $this->getResponse()
+            ->setRawHeader(
+        "Content-Type: application/vnd.ms-excel; charset=UTF-8")
+            ->setRawHeader(
+        "Content-Disposition: attachment; filename=Student_Data.xlsx")
+            ->setRawHeader("Content-Transfer-Encoding: binary")
+            ->setRawHeader("Expires: 0")
+            ->setRawHeader(
+        "Cache-Control: must-revalidate, post-check=0, pre-check=0")
+            ->setRawHeader("Pragma: public")
+            ->setRawHeader("Content-Length: " . filesize($temp_file))
+            ->sendResponse();
+        readfile(realpath($temp_file));*/
     }
     public function fetchcriticalinfoAction ()
     {
@@ -1730,6 +1858,69 @@ class StudentController extends Zend_Controller_Action
         $student = new Tnp_Model_Member_Student();
         $student->setMember_id($member_id);
         return $student->saveClassInfo($class_info);
+    }
+    private function exportToExcel ($headers, $data, $file_id)
+    {
+        $php_excel = new PHPExcel();
+        $php_excel->getProperties()
+            ->setCreator("AMBALA COLLEGE")
+            ->setLastModifiedBy("AMBALA COLLEGE")
+            ->setTitle("Office 2007 XLSX Test Document")
+            ->setSubject("Office 2007 XLSX Test Document")
+            ->setDescription("Contains crucial student data")
+            ->setKeywords("office 2007 openxml php");
+        $excel_sheet = $php_excel->getActiveSheet();
+        $alphabets = range('A', 'Z');
+        $inc = 0;
+        for ($p = 26; $p < 50; $p ++) {
+            $alphabets[$p] = 'A' . $alphabets[$inc];
+            $inc ++;
+        }
+        $styleArray = array('font' => array('bold' => true, 'size' => 12), 
+        'alignment' => array(
+        'center' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER), 
+        'borders' => array(
+        'top' => array('style' => PHPExcel_Style_Border::BORDER_THIN)), 
+        'fill' => array('type' => PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR, 
+        'rotation' => 90, 'startcolor' => array('argb' => 'FFA0A0A0'), 
+        'endcolor' => array('argb' => 'FFFFFFFF')));
+        $excel_sheet->getStyle("A1:Z1")->applyFromArray($styleArray);
+        $excel_sheet->getStyle("AA1:AF1")->applyFromArray($styleArray);
+        $alphabets_index = 0;
+        $row_number = 1;
+        foreach ($headers as $header) {
+            $cell_coordinate = $alphabets[$alphabets_index] . $row_number;
+            $excel_sheet->setCellValue($cell_coordinate, 
+            strtoupper(' ' . $header . ' '));
+            $alphabets_index = ($alphabets_index + 1);
+        }
+        foreach ($alphabets as $alphabet) {
+            $excel_sheet->getColumnDimension($alphabet)->setAutoSize(true);
+        }
+        $data_to_export = array();
+        foreach ($data as $key => $row) {
+            foreach ($row as $col => $value) {
+                $data_to_export[$key][utf8_decode($col)] = utf8_decode($value);
+            }
+        }
+        $row_number = 2;
+        foreach ($data_to_export as $student_data) {
+            $index_to_get = 0;
+            foreach ($student_data as $info) {
+                if (empty($value)) {
+                    $value = 'NA';
+                }
+                $coordinate = $alphabets[$index_to_get];
+                $excel_sheet->setCellValue($coordinate . $row_number, 
+                ' ' . $info . ' ');
+                $index_to_get = ($index_to_get + 1);
+            }
+            $row_number += 1;
+        }
+        $php_excel->setActiveSheetIndex(0);
+        $filename = DATA_EXCEL . "/Student_Data-" . $file_id . ".xlsx";
+        $objWriter = PHPExcel_IOFactory::createWriter($php_excel, 'Excel2007');
+        $objWriter->save($filename);
     }
 }
 ?>

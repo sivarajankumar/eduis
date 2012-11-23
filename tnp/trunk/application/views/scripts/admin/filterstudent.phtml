@@ -471,25 +471,29 @@
 
 	function intersect_arrays()
 	{
-		personal_result.sort();
-		academic_result.sort();
-		//alert('personal: '+personal_result);
-		//alert('academic: '+academic_result);
-		var i=j=0;
-		var ret = new Array();
-		while(i<personal_result.length && j<academic_result.length)
-		{
-			if(personal_result[i]<academic_result[j])
-				i++;
-			else if(academic_result[j]<personal_result[i])
-				j++;
-			else 
-			{
-				ret.push(personal_result[i]);
-				i++,j++;
-			}
-		}
-		if(ret.length == 0)
+		var urlsubmitacademic = "http://academic.aceambala.com/utility/intersect",finalArray;
+		$.ajax({
+    		url : urlsubmitacademic,
+    		dataType : 'jsonp',
+    		async : 'false',
+    		data : {
+        			myarray : {arrayOne:personal_result,arrayTwo:academic_result},
+					format : 'jsonp'
+        			},
+    		success: function(response){       		
+        		proceed(response);    		
+    		},
+            error: function(response) {
+				//$('#errorBox').text(response.responseText).parent().show();
+    			//console.log(response);
+    		}
+		});
+		
+	}
+
+	function proceed(flag){
+		
+		if(flag == 'none')
 		{
 			alert('No students satisfy your criteria..Please try with some other options..');
 		}
@@ -499,7 +503,7 @@
 	    		url : urlGetRollNo,
 	    		dataType : 'jsonp',
 	    		data : {
-	        			myarray : ret,
+	        			myarray : flag,
 						format : 'jsonp'
 	        			},
 	    		success: function(jStatus){
@@ -521,7 +525,6 @@
 
 		}
 	}
-
 	function show_dialog_box()
 	{
 		$("#dialog").dialog();
@@ -636,8 +639,9 @@
 
 	function export_data(core_data,academic_data)
 	{
-		var urlsendmail = "http://core.aceambala.com/student/exportexcel";
+		var urlsendmail = "http://tnp.aceambala.com/student/exportexcel";
 		$.ajax({
+			type: 'POST',
 			url : urlsendmail,
 			dataType : 'jsonp',
 			data : { myarray :{
@@ -647,9 +651,12 @@
 					format : 'jsonp'
 			},
 			success : function(jStatus){
-				window.location.replace('http://core.aceambala.com/student/saveexcelonclient?file_id='+jStatus);
+				alert(jStatus);
+				window.location.replace('http://tnp.aceambala.com/student/saveexcelonclient?file_id='+jStatus);
 			},
-			error : function(response){
+			error : function (xhr, ajaxOptions, thrownError) {
+		        alert(xhr.responseText);
+		        alert(thrownError);
 				
 			}
 		});
