@@ -352,10 +352,10 @@ class StudentController extends Zend_Controller_Action
     public function exportexcelAction ()
     {
         $this->_helper->viewRenderer->setNoRender(true);
-        $this->_helper->layout()->disableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $core_data = $params['myarray']['core_data'];
+        Zend_Registry::get('logger')->debug($core_data);
         $academic_data = $params['myarray']['academic_data'];
         $final_data = array();
         foreach ($core_data as $member_id_core => $info) {
@@ -568,7 +568,8 @@ class StudentController extends Zend_Controller_Action
             //Zend_Registryget('logger')->debug(
             //'Name of varibale assigned to view is : student_class_info');
             //Zend_Registryget('logger')->debug($stu_class_info);
-            $this->view->assign('student_class_info', $stu_class_info);
+            $this->view->assign(
+            'student_class_info', $stu_class_info);
         }
     }
     public function addclassinfoAction ()
@@ -964,8 +965,8 @@ class StudentController extends Zend_Controller_Action
         $member_id_exists = $student->memberIdCheck();
         if (! $member_id_exists) {
             //Zend_Registryget('logger')->debug(
-            //'Member with member_id : ' . $member_id_to_check .
-             //' is not registered in CORE');
+        //'Member with member_id : ' . $member_id_to_check .
+        //' is not registered in CORE');
         }
         return $member_id_exists;
     }
