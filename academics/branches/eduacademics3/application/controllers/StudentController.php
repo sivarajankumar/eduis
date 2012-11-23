@@ -295,7 +295,8 @@ class StudentController extends Zend_Controller_Action
          * and the old data may still exist in academics database .thus in the case
          * of old data member_id still exists that is member_id_check will return true.
          * so drop the if statement
-         */        //if ($member_exists_in_acad == false) {
+         */
+        //if ($member_exists_in_acad == false) {
         $client = new Zend_Http_Client();
         $client->setUri('http://' . CORE_SERVER . '/student/fetchpersonalinfo');
         $client->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
@@ -2402,6 +2403,7 @@ class StudentController extends Zend_Controller_Action
         $dmc_subject_marks['max_marks'] = $max_marks;
         $marks_obtained = ($external + $internal);
         $percentage = (100 * ($marks_obtained / $max_marks));
+        $percentage = round($percentage, 2);
         $dmc_subject_marks['percentage'] = $percentage;
         $dmc_subject_marks['is_pass'] = $marks_info['is_pass'];
         $dmc_subject_marks['is_verified'] = $marks_info['is_verified'];
@@ -2616,7 +2618,8 @@ class StudentController extends Zend_Controller_Action
         $total_marks = $dmc_info['max_marks'];
         $save_info['max_marks'] = $total_marks;
         $save_info['scaled_marks'] = $dmc_info['scaled_marks'];
-        $save_info['percentage'] = (100 * ($marks_obtained / $total_marks));
+        $percentage = (100 * ($marks_obtained / $total_marks));
+        $save_info['percentage'] = round($percentage, 2);
         $result = $student->saveDmcInfo($save_info);
         return $result;
     }
@@ -2673,6 +2676,7 @@ class StudentController extends Zend_Controller_Action
                             $marks_obtained = $info->getMarks_obtained();
                         }
                         $percentage = (100 * ($marks_obtained / $total_marks));
+                        $percentage = round($percentage, 2);
                         $member_data['SEMESTER ' . $semester_id] = $percentage .
                          ' % ';
                     }
