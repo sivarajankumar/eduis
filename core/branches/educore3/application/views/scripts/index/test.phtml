@@ -1,0 +1,174 @@
+<html>
+<head>
+<title></title>
+<link rel="stylesheet" href="<?php echo 'http://'. CDN_SERVER . '/css/admission.css';?>">
+<style type="text/css">
+.clearer {
+	clear: both;
+}
+
+.container {
+	ovewflow: hidden;
+}
+
+#global {
+	padding: 4px 4px 4px 4px;
+	margin: 0;
+	background: #C0C0C0;
+	min-width: 1024px;
+	min-height: 768px;
+	background: #C0C0C0;
+}
+
+#topBar {
+	padding: 4px 4px 4px 4px;
+	margin: 0px 0px 5px 0px;
+	background: #00FFFF;
+	height: 15px;
+	background: #00FFFF;
+}
+
+#navbar {
+	padding: 4px 4px 4px 4px;
+	background: #000000;
+	height: 40px;
+}
+
+#blankDiv {
+	padding: 10px 40px 10px 40px;;
+	border: #ffffff;
+	width: 100px;
+	height: 15px;
+	border-style: dotted;
+	border-width: medium;
+	float: left;
+	color: #ffffff;
+}
+
+#logo {
+	padding: 10px 40px 10px 40px;;
+	border: #ffffff;
+	width: 100px;
+	height: 15px;
+	border-style: dotted;
+	border-width: medium;
+	float: left;
+	color: #ffffff;
+}
+
+#homeLink {
+	padding: 10px 40px 10px 40px;;
+	border: #ffffff;
+	width: 100px;
+	height: 15px;
+	border-style: dotted;
+	border-width: medium;
+	float: left;
+	color: #ffffff;
+}
+
+#tools {
+	padding: 10px 40px 10px 40px;;
+	border: #ffffff;
+	width: 100px;
+	height: 15px;
+	border-style: dotted;
+	border-width: medium;
+	float: right;
+	color: #ffffff;
+}
+
+#sideBarContainer {
+	border: #ffffff;
+	border-style: dotted;
+	padding: 4px 4px 4px 4px;
+	margin: 20px 0px 5px 0px;
+	background: #00FFFF;
+	height: 650px;
+	width: 200px;
+}
+</style>
+</head>
+<body>
+<div id="global" class="wrapper">
+<div id="topBar">TOP BAR</div>
+<div id="navbar" class="container">
+<div id="blankDiv"></div>
+<div id="logo">LOGO</div>
+<div id="homeLink">HOME</div>
+<div id="tools">TOOLS</div>
+<div class="clearer"></div>
+</div>
+<div id="main">
+<div id="sidebar">
+<ul  class="menu">
+	<li class="item1"><a href="#">Personal Information</a>
+	<ul>
+		<li class="subitem1"><a href="#">View</a></li>
+		<li class="subitem1"><a href="#">Update</a></li>
+	</ul>
+	</li>
+	<li class="item2"><a href="#">Class Information</a>
+	<ul>
+		<li class="subitem1"><a href="#">View</a></li>
+		<li class="subitem1"><a href="#">Update</a></li>
+	</ul>
+	</li>
+</ul>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+	$(function() {
+
+		$('#topnav').hide();
+		$('#core_link').css('background-color','#b3cdd6');
+		$('#core_link').css('border','1px solid black');
+		$('#core_link').css('padding','5px 6px');
+		
+        var menu_ul = $('.menu > li > ul'),
+		menu_a  = $('.menu > li > a');
+
+        menu_ul.hide();
+    
+        menu_a.click(function(e) {
+			e.preventDefault();
+            if(!$(this).hasClass('active')) {
+                menu_a.removeClass('active');
+                menu_ul.filter(':visible').slideUp('normal');
+                $(this).addClass('active').next().stop(true,true).slideDown('normal');
+            } else {
+                $(this).removeClass('active');
+                $(this).next().stop(true,true).slideUp('normal');
+            }
+        });
+
+        $('.menu > li > a:first').click();
+        var path = $('.subitem1 > a').attr('href');
+        $('#content_frame').attr('src',path);
+
+        var urlfetchimagelocation = 'http://core.aceambala.com/student/getimagename';
+        $.ajax({
+			url : urlfetchimagelocation,
+			data : {format : 'jsonp'},
+			dataType : 'jsonp',
+			success : function(jStatus){
+				if((jStatus == null) || (jStatus == false)|| (jStatus == undefined))
+					$('#student_img').attr('src','http://site.cdn.aceambala.com/images/memberimages/dummy.jpg');
+				else
+					$('#student_img').attr('src','http://site.cdn.aceambala.com/images/memberimages/'+jStatus);
+			},
+			error : function(response){
+
+			}
+        });
+    });
+
+	function hide_top()
+	{
+		$('iframe#content_frame').contents().find('div#topContent').hide();		
+	}
+
+</script>
+</body>
+</html>
