@@ -1633,6 +1633,23 @@ class StudentController extends Zend_Controller_Action
         }
         //Zend_Registry::get('logger')->debug();
         $response = self::fetchDMC($dmc_info_id, $member_id);
+        $response['dmc_info_id'] = $dmc_info_id;
+        $dmc_subject_data = $response['dmc_data'];
+        foreach ($dmc_subject_data as $subject_id => $subject_dmc) {
+            if ($subject_dmc['is_pass']) {
+                $response['dmc_data'][$subject_id]['is_pass'] = 'Yes';
+            } else {
+                $response['dmc_data'][$subject_id]['is_pass'] = 'No';
+            }
+            if ($subject_dmc['is_verified']) {
+                $response['dmc_data'][$subject_id]['is_verified'] = 'Yes';
+            } else {
+                $response['dmc_data'][$subject_id]['is_verified'] = 'No';
+            }
+        }
+        /*echo "<pre>";
+        print_r($response);
+        echo "</pre>";*/
         switch ($format) {
             case 'html':
                 if (! empty($response)) {
@@ -1659,8 +1676,6 @@ class StudentController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $this->_helper->viewRenderer->setNoRender(false);
-        $this->_helper->layout()->enableLayout();
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
@@ -1674,6 +1689,9 @@ class StudentController extends Zend_Controller_Action
         $format = $this->_getParam('format', 'html');
         if ((! empty($params['dmc_info_id'])) && ($member_id != null)) {
             $response = self::fetchDMC($params['dmc_info_id'], $member_id);
+            /*echo "<pre>";
+            print_r($response);
+            echo "</pre>";*/
             switch ($format) {
                 case 'html':
                     //Zend_Registry::get('logger')->debug('member_id may be sent in as parameter'get('logger')->debug($response);
@@ -1706,7 +1724,6 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         //Zend_Registry::get('logger')->debug('member_id may be sent in as parameter'get('logger')->debug($params);
-        $format = $this->_getParam('format', 'html');
         //Zend_Registry::get('logger')->debug('member_id may be sent in as parameter'get('logger')->debug(
         //Zend_Registry::get('logger')->debug('member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
@@ -1723,6 +1740,22 @@ class StudentController extends Zend_Controller_Action
             $marks_info['student_subject_id'] = $stu_subj_id;
             $marks_info['dmc_info_id'] = $dmc_info_id;
             $this->savedmcsubjectmarks($member_id, $marks_info);
+        }
+        $format = $this->_getParam('format', 'html');
+        $status = true;
+        switch ($format) {
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' . $this->_helper->json($status, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($status);
+                break;
+            case 'test':
+                break;
+            default:
+                ;
+                break;
         }
     }
     public function fetchdmcinfoidsAction ()
@@ -2336,13 +2369,15 @@ class StudentController extends Zend_Controller_Action
         if ($info instanceof Acad_Model_Course_DmcMarks) {
             $info->setStudent_subject_id($subject_id);
             $dmc_subject_marks = array();
-            $dmc_subject_marks['date'] = $info->getDate();
+            //$dmc_subject_marks['date'] = $info->getDate();
             $dmc_subject_marks['external'] = $info->getExternal();
             $dmc_subject_marks['internal'] = $info->getInternal();
             $dmc_subject_marks['max_marks'] = $info->getMax_marks();
             //$dmc_subject_marks['percentage'] = $info->getPercentage();
-            $dmc_subject_marks['is_pass'] = $info->getIs_pass();
-            $dmc_subject_marks['is_verified'] = $info->getIs_verified();
+            $pass_status = $info->getIs_pass();
+            $dmc_subject_marks['is_pass'] = $pass_status;
+            $verification_status = $info->getIs_verified();
+            $dmc_subject_marks['is_verified'] = $verification_status;
             //$dmc_subject_marks['date'] = $info->getDate();
             return $dmc_subject_marks;
         } elseif ($info == false) {

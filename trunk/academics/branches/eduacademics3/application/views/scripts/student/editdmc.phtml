@@ -37,7 +37,7 @@
 	<div class="ctrlHolder">
 		<label for="max_marks"><em>*</em>Total Marks</label>
 		<input name="max_marks" id="max_marks" value="" data-default-value="e.g. 145" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-		<p class="formHint">Total Marks</p>
+		<p class="formHint">Total Marks for percentage calculation</p>
 	</div>
 	
 	<div class="ctrlHolder">
@@ -70,36 +70,42 @@
 
 <h4><?php echo $subject_info['name']?></h4>
 
-<fieldset id="<?php echo str_replace(' ', '_', $subject_info['name'])?>" class="subjects" title="<?php echo $subject_id?>" >
+<fieldset id="<?php echo $subject_id;?>" class="subjects" title="<?php echo $subject_id;?>" >
 	<div class="ctrlHolder">
 		<label for="internal"><em>*</em>Internal Marks Obtained</label>
 		<input name="internal" id="internal" value="" data-default-value="e.g. 45" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-		<p class="formHint">Internal Marks of the Subject</p>
+		<p class="formHint">Internal Marks scored in the Subject</p>
 	</div>
 	
 	<div class="ctrlHolder">
 		<label for="external"><em>*</em>External Marks Obtained</label>
 		<input name="external" id="external" value="" data-default-value="e.g. 65" size="35" maxlength="50" type="text" class="textInput required validateInteger"/>
-		<p class="formHint">External Marks of the subject</p>
+		<p class="formHint">External Marks scored in the Subject</p>
 	</div>
 	
 	<div class="ctrlHolder">
-		<label for="max_marks"><em>*</em>Maximum Marks(Internal+External)</label>
+		<label for="max_marks"><em>*</em>Maximum Marks(Max Internal+ Max External)</label>
 		<input name="max_marks" id="max_marks" value="" data-default-value="e.g. 150" size="35" maxlength="50" type="text" class="textInput required validateNumber"/>
-		<p class="formHint">Maximum marks of the subject(Addition of External Maximum Marks + Internal Maximum Marks)</p>
+		<p class="formHint">Total Maximum marks for percentage calculation </p>
 	</div>
 	
-	<div class="ctrlHolder">
-		<label for="is_pass"><em>*</em>Is subject passed</label>
-		<input name="is_pass" id="is_pass" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
-		<p class="formHint">Click if this subject is passed</p>
-	</div>
 	
-	<div class="ctrlHolder">
-		<label for="is_verified"><em>*</em>Is Verified</label>
-		<input name="is_verified" id="is_verified" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
-		<p class="formHint">Click if this is verified</p>
-	</div>
+	<?php
+	if (Zend_Auth::getInstance()->hasIdentity()) {
+            $authInfo = Zend_Auth::getInstance()->getStorage()->read();
+            $user_type = $authInfo['userType'];
+            	if($user_type == 'STAFF' or $user_type == 'MGMT'){?>
+            	<div class="ctrlHolder">
+            		<label for="is_pass"><em>*</em>Is subject passed</label>
+            		<input name="is_pass" id="is_pass" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
+            		<p class="formHint">Click if this subject is passed</p>
+            	</div>
+            	<div class="ctrlHolder">
+            		<label for="is_verified"><em>*</em>Is Verified</label>
+            		<input name="is_verified" id="is_verified" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>
+            		<p class="formHint">Click if this is verified</p>
+            	</div>
+	<?php }}?>
 </fieldset>
 
 <?php 
@@ -124,7 +130,7 @@
     ?>
     <?php 
         foreach ($this->response['dmc_data'] as $subject_id => $subject_info){
-            $fieldset_name = str_replace(' ', '_', $this->response['subject_data'][$subject_id]['name']);
+            $fieldset_name = $subject_id;
             foreach ($subject_info as $key => $value){
                 $input_name="'".$key."'";
                 $jquery_command = '$("fieldset#'.$fieldset_name.' :input[name='.$input_name.']").val("'.$value.'");';
@@ -209,7 +215,7 @@
 
 			$('fieldset#'+div_id+' :input').each(function(){
 				sub_data[this.name] = this.value;
-			})
+			});
 			sub_data['is_pass'] = $('fieldset#'+div_id+' :input[name="is_pass"]').is(':checked')?1:0;
 			sub_data['is_verified'] = $('fieldset#'+div_id+' :input[name="is_verified"]').is(':checked')?1:0;
 						
@@ -220,13 +226,19 @@
 		});
 		$.ajax({
     		url : urlSaveDmcInfo,
-    		data : {myarray:data},
+    		dataType : 'jsonp',
+    		data : {myarray: data,
+        		format :'jsonp'},
     		success: function(jStatus){
         		if(jStatus){
             		//$('#dmc_info_div').hide();
         			//show_subject_div();
         			alert('Your data has been saved sucessfully');
-        			window.location.replace('/student/viewdmcinfo');
+        			window.location.replace('/student/viewdmc?dmc_info_id=<?php echo $_GET['dmc_info_id']; 
+        					if(!empty($_GET['member_id'])){ 
+        						echo '&member_id='.$_GET['member_id'];
+        						}
+        						?>');
         		}
             },
             error: function(response) {
