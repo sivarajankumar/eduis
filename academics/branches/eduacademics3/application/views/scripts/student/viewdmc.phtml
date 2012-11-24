@@ -2,7 +2,7 @@
     $subData = $this->response['subject_data'];
     $dmcData = $this->response['dmc_data'];
     $dmcInfoData = $this->response['dmc_info_data'];
-    $dmc_info_id =array_keys($dmcInfoData);
+    $dmc_info_id = $this->response['dmc_info_id'];
     
     if(Zend_Auth::getInstance()->hasIdentity()){
 		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
@@ -120,9 +120,15 @@
 ?>
 </table>
 
-<?php if($usertype == 'STU'){?>
-<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace('/student/editdmc?dmc_info_id=<?php echo $_GET['dmc_info_id'];?>');">
-<?php }?>
+<?php //if($usertype == 'STU'){?>
+<input type="button" class="ui-button" value="Edit Information" onclick="window.location.replace
+('/student/editdmc?dmc_info_id=<?php echo $dmc_info_id;?>
+<?php 
+if(!empty($_GET['member_id'])){ 
+echo '&member_id='.$_GET['member_id'];
+}
+?>');">
+<?php //}?>
 
 <script type="text/javascript">
 	$(function(){
