@@ -109,6 +109,32 @@ class IndexController extends Authz_Base_BaseController
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_redirect('http://core.aceambala.com/index/bounce');
     }
+    public function finddepartmentAction ()
+    {
+        $this->_helper->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $format = $params['format'];
+        $member_id = $params['member_id'];
+        $department_id = $this->findDepartmentId($member_id);
+        switch ($format) {
+            case 'jsonp':
+                $callback = $this->getRequest()->getParam('callback');
+                echo $callback . '(' .
+                 $this->_helper->json($department_id, false) . ')';
+                break;
+            case 'json':
+                $this->_helper->json($department_id);
+                break;
+            case 'log':
+                Zend_Registry::get('logger')->debug('No Format provided');
+                break;
+            default:
+                ;
+                break;
+        }
+    }
     public function markacadAction ()
     {
         $this->_helper->layout()->disableLayout();
@@ -120,5 +146,11 @@ class IndexController extends Authz_Base_BaseController
         $this->_helper->layout()->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
         $this->_redirect('http://tnp.aceambala.com/index/bounce');
+    }
+    private function findDepartmentId ($member_id)
+    {
+        $auth_user = new Auth_Model_Member_User();
+        $auth_user->setMember_id($member_id);
+        return $auth_user->fetchDepartment();
     }
 }

@@ -160,5 +160,11 @@ class Core_Model_Mapper_StudentClass
         $where2 = 'class_id = ' . $class_id;
         return $dbtable->update($prepared_data, array($where1, $where2));
     }
+    public function delete ($member_id, $class_id)
+    {
+        $where1 = 'member_id = ' . $member_id;
+        $where2 = 'class_id = ' . $class_id;
+        return $this->getDbTable()->delete(array($where1, $where2));
+    }
 }
 ?>

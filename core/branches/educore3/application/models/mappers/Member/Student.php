@@ -105,11 +105,21 @@ class Core_Model_Mapper_Member_Student
     }
     public function save ($prepared_data)
     {
+        foreach ($prepared_data as $key => $value) {
+            if (empty($value) or $value == '') {
+                unset($prepared_data[$key]);
+            }
+        }
         $dbtable = $this->getDbTable();
         return $dbtable->insert($prepared_data);
     }
     public function update ($prepared_data, $member_id)
     {
+        foreach ($prepared_data as $key => $value) {
+            if (empty($value) or $value == '') {
+                unset($prepared_data[$key]);
+            }
+        }
         $dbtable = $this->getDbTable();
         $where = 'member_id = ' . $member_id;
         return $dbtable->update($prepared_data, $where);

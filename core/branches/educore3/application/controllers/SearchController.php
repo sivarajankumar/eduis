@@ -41,6 +41,7 @@ class SearchController extends Zend_Controller_Action
             }
             $member_ids = $this->combineResult($member_ids, 
             $programme_member_ids);
+            Zend_Registry::get('logger')->debug($member_ids);
             if (! empty($params['discipline_id'])) {
                 $d_search = $this->disciplineSearch($params['discipline_id']);
                 Zend_Registry::get('logger')->debug($d_search);
@@ -48,7 +49,9 @@ class SearchController extends Zend_Controller_Action
                     return $this->returnResult($format, false);
                 }
             }
-            $member_ids = array_intersect($member_ids, $d_search);
+            if (! empty($d_search)) {
+                $member_ids = array_intersect($member_ids, $d_search);
+            }
             if (! empty($params['batch_start'])) {
                 $b_search = $this->batchStartSearch($params['batch_start']);
                 if (empty($b_search)) {

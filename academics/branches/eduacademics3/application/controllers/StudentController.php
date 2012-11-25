@@ -2674,16 +2674,16 @@ class StudentController extends Zend_Controller_Action
         $class_ids = $this->getAllClassIds($member_id);
         $member_data = array();
         for ($i = 1; $i < 9; $i ++) {
-            $member_data['SEMESTER ' . $i] = null;
+            $member_data['SEMESTER ' . $i] = '----';
         }
-        $member_data['TENTH BOARD'] = null;
-        $member_data['TENTH MARKS'] = null;
-        $member_data['TENTH YEAR'] = null;
-        $member_data['TWELFTH BOARD'] = null;
-        $member_data['TWELFTH MARKS'] = null;
-        $member_data['TWELFTH YEAR'] = null;
-        $member_data['AIEEE RANK'] = null;
-        $member_data['LEET RANK'] = null;
+        $member_data['TENTH BOARD'] = '----';
+        $member_data['TENTH MARKS'] = '----';
+        $member_data['TENTH YEAR'] = '----';
+        $member_data['TWELFTH BOARD'] = '----';
+        $member_data['TWELFTH MARKS'] = '----';
+        $member_data['TWELFTH YEAR'] = '----';
+        $member_data['AIEEE RANK'] = '----';
+        $member_data['LEET RANK'] = '----';
         if (is_array($class_ids)) {
             $class_backlog_count = array();
             foreach ($class_ids as $class_id) {
@@ -2721,7 +2721,7 @@ class StudentController extends Zend_Controller_Action
             }
             foreach ($member_data as $k => $value) {
                 if (empty($value)) {
-                    $member_data[$k] = null;
+                    $member_data[$k] = '----';
                 }
             }
             $matric_data = $this->fetchMatricData($member_id);
@@ -2734,13 +2734,13 @@ class StudentController extends Zend_Controller_Action
             $member_data['TWELFTH YEAR'] = $twelfth_data['passing_year'];
             $aieee_data = $this->fetchCompetitiveExamData('AIEEE', $member_id);
             if (empty($aieee_data['all_india_rank'])) {
-                $member_data['AIEEE RANK'] = null;
+                $member_data['AIEEE RANK'] = '----';
             } else {
                 $member_data['AIEEE RANK'] = $aieee_data['all_india_rank'];
             }
             $leet_data = $this->fetchCompetitiveExamData('LEET', $member_id);
             if (empty($leet_data['all_india_rank'])) {
-                $member_data['LEET RANK'] = null;
+                $member_data['LEET RANK'] = '----';
             } else {
                 $member_data['LEET RANK'] = $leet_data['all_india_rank'];
             }

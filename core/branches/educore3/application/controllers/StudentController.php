@@ -535,8 +535,6 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $member_id = null;
-        //Zend_Registryget('logger')->debug(
-        //////'member_id may be sent in as parameter');
         if (empty($params['member_id'])) {
             $member_id = $this->getMember_id();
         } else {
@@ -547,6 +545,7 @@ class StudentController extends Zend_Controller_Action
         if ($class_ids == false) {
             $this->view->assign('student_class_info', false);
         } else {
+            $stu_class_info = array();
             $student = new Core_Model_Member_Student();
             $student->setMember_id($member_id);
             $raw_class_info = array();
@@ -557,32 +556,31 @@ class StudentController extends Zend_Controller_Action
                 $batch_id = $class_info['class_info']['batch_id'];
                 $semester_id = $class_info['class_info']['semester_id'];
                 $department = $class_info['class_info']['handled_by_dept'];
-                $raw_class_info[$batch_id] = $info['roll_no'];
+                $raw_class_info[$batch_id]['roll_no'] = $info['roll_no'];
+                $raw_class_info[$batch_id]['group_id'] = $info['group_id'];
             }
-            $stu_class_info = array();
-            foreach ($raw_class_info as $batch_id => $roll_num) {
+            foreach ($raw_class_info as $batch_id => $info_array) {
                 $batch_info = $this->findBatchInfo($batch_id);
                 $batch_start = $batch_info['batch_info']['batch_start'];
-                $stu_class_info[$batch_start] = $roll_num;
+                $stu_class_info[$batch_start]['roll_no'] = $info_array['roll_no'];
+                $stu_class_info[$batch_start]['group_id'] = $info_array['group_id'];;
             }
-            //Zend_Registryget('logger')->debug(
-            //'Name of varibale assigned to view is : student_class_info');
-            //Zend_Registryget('logger')->debug($stu_class_info);
-            $this->view->assign(
-            'student_class_info', $stu_class_info);
+            $this->view->assign('student_class_info', $stu_class_info);
         }
     }
     public function addclassinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
+        $this->view->assign('department_id', $this->getDepartment_id());
     }
     public function editclassinfoAction ()
     {
         $this->_helper->viewRenderer->setNoRender(false);
         $this->_helper->layout()->enableLayout();
-        $department_id = $this->getDepartment_id();
-        $this->view->assign('department_id', $department_id);
+        $request = $this->getRequest();
+        $params = array_diff($request->getParams(), $request->getUserParams());
+        $this->view->assign('department_id', $this->getDepartment_id());
     }
     public function saveclassinfoAction ()
     {
@@ -605,35 +603,47 @@ class StudentController extends Zend_Controller_Action
         $batch_start = $class_info['batch_start'];
         $roll_no = $class_info['roll_no'];
         $group_id = $class_info['group_id'];
-        $semesters = array();
-        $enrolled = array();
-        $removed = array();
-        if (! empty($class_info['semesters_added'])) {
-            $enrolled = $class_info['semesters_added'];
-        }
-        if (is_array($class_info['semesters_deleted']) and
-         ! empty($class_info['semesters_deleted'])) {
-            $removed = $class_info['semesters_deleted'];
-        }
-        $semesters = array_merge($enrolled, $removed);
+        /*
+         * Enrollment in new classes
+         */
+        $enrolled_sems = array();
         $batch_ids = $this->findBatchId($batch_start, $department_id, 
         $programme_id);
         $batch_id = $batch_ids[0];
-        $class_ids = array();
-        foreach ($semesters as $semester_id) {
-            $result = $this->findClassId($batch_id, $semester_id);
-            $class_ids[] = $result[0];
+        $enroll_class_ids = array();
+        if (! empty($class_info['semesters_added'])) {
+            $enrolled_sems = $class_info['semesters_added'];
+            foreach ($enrolled_sems as $e_semester_id) {
+                $e_result = $this->findClassId($batch_id, $e_semester_id);
+                $enroll_class_ids[] = $e_result[0];
+            }
+        } else {
+            $batch_class_ids = $this->findClassId($batch_id);
+            $enroll_class_ids = $batch_class_ids;
         }
-        $student_class_info = array('roll_no' => $roll_no, 
+        $student_class_info = array();
+        $student_class_info = array('member_id' => $member_id, 
+        'class_ids' => $enroll_class_ids, 'roll_no' => $roll_no, 
         'group_id' => $group_id);
-        foreach ($class_ids as $class_id) {
-            $student_class_info['class_id'] = $class_id;
+        foreach ($enroll_class_ids as $e_class_id) {
+            $student_class_info['class_id'] = $e_class_id;
             $this->saveClassInfo($member_id, $student_class_info);
         }
+        /*
+         * Removes student from a class
+         */
+        /*$removed_sems = array();
+        $removed_class_ids = array();
+        if (is_array($class_info['semesters_deleted']) and
+         ! empty($class_info['semesters_deleted'])) {
+            $removed_sems = $class_info['semesters_deleted'];
+        }
+        foreach ($removed_sems as $r_semester_id) {
+            $r_result = $this->findClassId($batch_id, $r_semester_id);
+            $removed_class_ids[] = $r_result[0];
+        }
+        $this->deleteClassInfo($member_id, $removed_class_ids);*/
         $format = $this->_getParam('format', 'log');
-        $student_class_info['member_id'] = $member_id;
-        unset($student_class_info['class_id']);
-        $student_class_info['class_ids'] = $class_ids;
         //Zend_Registryget('logger')->debug($student_class_info);
         switch ($format) {
             case 'html':
@@ -982,6 +992,20 @@ class StudentController extends Zend_Controller_Action
         $student->setMember_id($member_id);
         return $student->saveClassInfo($class_info);
     }
+    /**
+     * 
+     * @desc Very dangerous to use because it will delete everything related to a members's 
+     * @desc class_id such as DMC's in acdemics etc
+     * @deprecated
+     * @param unknown_type $member_id
+     * @param unknown_type $class_ids
+     */
+    private function deleteClassInfo ($member_id, $class_ids)
+    {
+        $student = new Core_Model_Member_Student();
+        $student->setMember_id($member_id);
+        return $student->deleteClassInfo($class_ids);
+    }
     private function saveCriticalData ($member_id, $data_to_save)
     {
         /**
@@ -1250,7 +1274,7 @@ class StudentController extends Zend_Controller_Action
             return $class_info;
         }
     }
-    private function findClassId ($batch_id, $semester_id)
+    private function findClassId ($batch_id, $semester_id = null)
     {
         $httpClient = new Zend_Http_Client();
         $httpClient->setUri('http://' . CORE_SERVER . '/class/getclassids');
@@ -1359,6 +1383,20 @@ class StudentController extends Zend_Controller_Action
         $info_to_export = array();
         if ((! empty($member_ids)) and (is_array($member_ids))) {
             foreach ($member_ids as $member_id) {
+                $httpClient = new Zend_Http_Client(
+                'http://' . AUTH_SERVER . '/index/finddepartment');
+                $httpClient->setCookie('PHPSESSID', $_COOKIE['PHPSESSID']);
+                $httpClient->setMethod('POST');
+                $httpClient->setParameterPost(
+                array('member_id' => $member_id, 'format' => 'json'));
+                $response = $httpClient->request();
+                if ($response->isError()) {
+                    ;
+                } else {
+                    $jsonContent = $response->getBody($response);
+                    $department_info = Zend_Json::decode($jsonContent);
+                }
+                $info_to_export[$member_id]['Department'] = $department_info[0];
                 /*
                  * Personal Info
                  */
@@ -1386,7 +1424,7 @@ class StudentController extends Zend_Controller_Action
                 $relative_info = $this->findRelativeInfo($member_id, 
                 $relative_id);
                 if (empty($relative_info['name'])) {
-                    $info_to_export[$member_id]['father_name'] = null;
+                    $info_to_export[$member_id]['father_name'] = '----';
                 } else {
                     $info_to_export[$member_id]['father_name'] = $relative_info['name'];
                 }
@@ -1402,11 +1440,16 @@ class StudentController extends Zend_Controller_Action
                     $info_to_export[$member_id]['state'] = $address_req['state'];
                     $info_to_export[$member_id]['address'] = $address_req['address'];
                 } else {
-                    $info_to_export[$member_id]['postal_code'] = null;
-                    $info_to_export[$member_id]['city'] = null;
-                    $info_to_export[$member_id]['district'] = null;
-                    $info_to_export[$member_id]['state'] = null;
-                    $info_to_export[$member_id]['address'] = null;
+                    $info_to_export[$member_id]['postal_code'] = '----';
+                    $info_to_export[$member_id]['city'] = '----';
+                    $info_to_export[$member_id]['district'] = '----';
+                    $info_to_export[$member_id]['state'] = '----';
+                    $info_to_export[$member_id]['address'] = '----';
+                }
+                foreach ($info_to_export as $members_id => $members_info) {
+                    foreach ($members_info as $key => $value) {
+                        $info_to_export[$member_id][$key] = strtoupper($value);
+                    }
                 }
                 /*
                  * Contact Info
