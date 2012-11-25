@@ -111,7 +111,7 @@
 					for($i=0;$i<=10;$i++)
 						echo '<option value="'.$i.'">'.$i.'</option>';
 				?>
-				<option value="999">Any</option>
+				<option value="any">Any</option>
 			</select>
 		
 		</fieldset>
@@ -651,7 +651,6 @@
 					format : 'jsonp'
 			},
 			success : function(jStatus){
-				alert(jStatus);
 				window.location.replace('http://tnp.aceambala.com/student/saveexcelonclient?file_id='+jStatus);
 			},
 			error : function (xhr, ajaxOptions, thrownError) {

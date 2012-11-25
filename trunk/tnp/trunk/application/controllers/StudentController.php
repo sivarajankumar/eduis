@@ -28,7 +28,7 @@ class StudentController extends Zend_Controller_Action
         }
         $sql = 'INSERT INTO `tnp`.`mod_role_resource`(`role_id`,`module_id`,`controller_id`,`action_id`) VALUES (?,?,?,?)';
         foreach ($actions as $action) {
-            $bind = array('faculty', 'tnp', 'student', $action);
+            $bind = array('student', 'tnp', 'student', $action);
             $db->getAdapter()->query($sql, $bind);
         }
     }
@@ -188,7 +188,6 @@ class StudentController extends Zend_Controller_Action
         $request = $this->getRequest();
         $params = array_diff($request->getParams(), $request->getUserParams());
         $core_data = $params['myarray']['core_data'];
-        Zend_Registry::get('logger')->debug($core_data);
         $academic_data = $params['myarray']['academic_data'];
         $final_data = array();
         foreach ($core_data as $member_id_core => $info) {

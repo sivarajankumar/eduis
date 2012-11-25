@@ -726,6 +726,14 @@ class Core_Model_Member_Student extends Core_Model_Generic
             $member_id, $class_id);
         }
     }
+    public function deleteClassInfo ($class_ids)
+    {
+        $member_id = $this->getMember_id(true);
+        $student_class_object = new Core_Model_StudentClass();
+        foreach ($class_ids as $class_id) {
+            $student_class_object->getMapper()->delete($member_id, $class_id);
+        }
+    }
     public function fetchClassStudents ($batch_start = null, $department_id = null, 
     $programme_id = null, $semester_id = null)
     {

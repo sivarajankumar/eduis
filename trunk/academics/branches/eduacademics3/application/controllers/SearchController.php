@@ -87,7 +87,7 @@ class SearchController extends Zend_Controller_Action
             $member_ids = $this->combineResult($member_ids, $twelfth_matches);
             $member_ids = $this->combineResult($member_ids, $diploma_matches);
         }
-        if (! empty($params['backlogs'])) {
+        if (! empty($params['backlogs']) && ($params['backlogs'] != 'any')) {
             $back_logs = $params['backlogs'];
             if ($back_logs == 'never') {
                 $backlog_filtered = $this->neverbackLogSearch($member_ids);

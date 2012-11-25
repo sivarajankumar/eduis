@@ -58,6 +58,20 @@ class Auth_Model_Mapper_Member_User
             return $member_id[0];
         }
     }
+    public function fetchDepartment ($member_id)
+    {
+        $adapter = $this->getDbTable()->getAdapter();
+        $table_name = $this->getDbTable()->info('name');
+        if (isset($member_id)) {
+            $req_cols = array('department_id');
+            $select = $adapter->select()
+                ->from($table_name, $req_cols)
+                ->where('member_id = ?', $member_id);
+            $department = array();
+            $department = $select->query()->fetchAll(Zend_Db::FETCH_COLUMN);
+            return $department;
+        }
+    }
     public function save ($prepared_data)
     {
         $dbtable = $this->getDbTable();

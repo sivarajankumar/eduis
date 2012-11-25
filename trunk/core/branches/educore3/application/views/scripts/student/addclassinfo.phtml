@@ -108,7 +108,7 @@
 
 			$('select#group_id').html(html);
 		}
-		else if($('#department_id').val() == 'ME')
+		else if($('#department_id').val() == 'MECH')
 		{
 			var html = '<option value=D1>D1</option>'+
             			'<option value=D2>D2</option>'+
@@ -216,7 +216,7 @@
 					format : 'jsonp'
                 	},
             success: function(jStatus){
-				window.parent.location.replace('/student/');
+            	window.location.replace('/student/viewclassinfo');
             },
     		error: function(response) {
     			$('#errorBox').text(response.responseText).parent().show();
