@@ -95,18 +95,6 @@
 							'<input name="max_marks" id="max_marks" value="" data-default-value="e.g. 150" size="35" maxlength="50" type="text" class="textInput required validateNumber"/>'+
 							'<p class="formHint">Maximum marks of the subject(Addition of External Maximum Marks + Internal Maximum Marks)</p>'+
 						'</div>'+
-						
-						'<div class="ctrlHolder">'+
-							'<label for="is_pass"><em>*</em>Is subject passed</label>'+
-							'<input name="is_pass" id="is_pass" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>'+
-							'<p class="formHint">Click if this subject is passed</p>'+
-						'</div>'+
-						
-						'<div class="ctrlHolder">'+
-							'<label for="is_verified"><em>*</em>Is Verified</label>'+
-							'<input name="is_verified" id="is_verified" data-default-value="2011-04-04" value=""  size="35" maxlength="50" type="checkbox" class="checkbox"/>'+
-							'<p class="formHint">Click if this is verified</p>'+
-						'</div>'+
 					'</fieldset>';
 
 					$('#dmc_info_form').append(html);
@@ -169,13 +157,18 @@
     	dmc_info_data['class_id'] = class_id;
 		$.ajax({
     		url : urlSaveDmcInfo,
-    		data : {myarray:data},
+    		dataType : 'jsonp',
+    		data : {myarray:data,
+    			format :'jsonp'},
     		success: function(jStatus){
-        		if(jStatus){
+    			if(jStatus){
             		//$('#dmc_info_div').hide();
         			//show_subject_div();
         			alert('Your data has been saved sucessfully');
-        			window.location.replace('/student/viewdmcinfo');
+        			window.location.replace('/student/viewdmc?dmc_info_id='+jStatus<?php 
+        			if(!empty($_GET['member_id'])){
+        			    echo '\'&member_id='.$_GET['member_id'].'\'';
+        			}?>);
         		}
             },
             error: function(response) {

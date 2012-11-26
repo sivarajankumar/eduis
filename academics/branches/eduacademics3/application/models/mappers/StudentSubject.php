@@ -108,7 +108,14 @@ class Acad_Model_Mapper_StudentSubject
      */
     public function save ($prepared_data)
     {
+        $member_id = $prepared_data['member_id'];
+        $class_id = $prepared_data['class_id'];
+        $subject_id = $prepared_data['subject_id'];
         $dbtable = $this->getDbTable();
+        $where1 = 'member_id = ' . $member_id;
+        $where2 = 'class_id = ' . $class_id;
+        $where3 = 'subject_id = ' . $subject_id;
+        $dbtable->delete(array($where1, $where2, $where3));
         return $dbtable->insert($prepared_data);
     }
     /**
