@@ -1,3 +1,9 @@
+<?php
+    if(Zend_Auth::getInstance()->hasIdentity()){
+		$authInfo = Zend_Auth::getInstance()->getStorage()->read();
+		$usertype=$authInfo['userType'];
+	}
+?>
 <div class="ui-state-hover"><center><H3>Address Information</H3></center></div>
 <div class="info" id="address_info">
 	<table id="info_table" style="width: 100%" cellspacing="5" cellpadding="5">
@@ -28,7 +34,7 @@
         		}
         		else
         		{
-        			var html = '';
+            		var html = '';
         			$.each(jStatus,function(address_type,data){
             			html += '<tr class="heading"><td>'+address_type+' ADDRESS </td></tr>';
             			html += '<tr class="row"><td><span id="heading">Address</span><span id="content">'+data['address']+'</span></td></tr>';

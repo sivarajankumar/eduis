@@ -208,17 +208,20 @@
         var urlSaveDmcInfo = "<?php echo $this->url(array('controller' => 'student', 'action' => 'savedmc'))?>";
 		$('fieldset.subjects').each(function(){
 	        var sub_data = {};
+	        <?php if($user_type == 'STAFF' or $user_type == 'MGMT'){?>
 	        sub_data['is_pass'] = 0;
 	        sub_data['is_verified'] = 0;
+	        <?php }?>
 			var div_id = $(this).attr('id');
 			var div_title = $(this).attr('title');
 
 			$('fieldset#'+div_id+' :input').each(function(){
 				sub_data[this.name] = this.value;
 			});
+			<?php if($user_type == 'STAFF' or $user_type == 'MGMT'){?>
 			sub_data['is_pass'] = $('fieldset#'+div_id+' :input[name="is_pass"]').is(':checked')?1:0;
 			sub_data['is_verified'] = $('fieldset#'+div_id+' :input[name="is_verified"]').is(':checked')?1:0;
-						
+			<?php }?>		
 			dmc_data[div_title]=sub_data;
 			data['dmc_subject_marks'] = dmc_data;
 			data['dmc_info_id'] = '<?php echo $_GET['dmc_info_id']?>';

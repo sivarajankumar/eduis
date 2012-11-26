@@ -1742,14 +1742,13 @@ class StudentController extends Zend_Controller_Action
             $this->savedmcsubjectmarks($member_id, $marks_info);
         }
         $format = $this->_getParam('format', 'html');
-        $status = true;
         switch ($format) {
             case 'jsonp':
                 $callback = $this->getRequest()->getParam('callback');
-                echo $callback . '(' . $this->_helper->json($status, false) . ')';
+                echo $callback . '(' . $this->_helper->json($dmc_info_id, false) . ')';
                 break;
             case 'json':
-                $this->_helper->json($status);
+                $this->_helper->json($dmc_info_id);
                 break;
             case 'test':
                 break;
